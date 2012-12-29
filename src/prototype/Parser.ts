@@ -1646,9 +1646,9 @@ module Parser {
                    this.isStatement();
         }
         
-        private parseModuleElement(): ModuleElementSyntax {
+        private parseModuleElement(): IModuleElementSyntax {
             if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
-                return <ModuleElementSyntax>this.eatNode();
+                return <IModuleElementSyntax>this.eatNode();
             }
 
             if (this.isImportDeclaration()) {
@@ -1975,8 +1975,9 @@ module Parser {
         private isMemberFunctionDeclaration(): bool {
             var index = 0;
 
-            if (this.currentToken().keywordKind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().keywordKind() === SyntaxKind.PrivateKeyword) {
+            var token0KeywordKind = this.currentToken().keywordKind();
+            if (token0KeywordKind === SyntaxKind.PublicKeyword ||
+                token0KeywordKind === SyntaxKind.PrivateKeyword) {
                 index++;
             }
 
@@ -2028,11 +2029,11 @@ module Parser {
             return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
         }
 
-        private parseClassElement(): ClassElementSyntax {
+        private parseClassElement(): IClassElementSyntax {
             Debug.assert(this.isClassElement());
 
             if (this.currentNode() !== null && this.currentNode().isClassElement()) {
-                return <ClassElementSyntax>this.eatNode();
+                return <IClassElementSyntax>this.eatNode();
             }
 
             if (this.isConstructorDeclaration()) {
@@ -2383,9 +2384,9 @@ module Parser {
                    this.isDebuggerStatement();
         }
 
-        private parseStatement(): StatementSyntax {
+        private parseStatement(): IStatementSyntax {
             if (this.currentNode() !== null && this.currentNode().isStatement()) {
-                return <StatementSyntax>this.eatNode();
+                return <IStatementSyntax>this.eatNode();
             }
 
             if (this.isVariableStatement()) {
@@ -4030,7 +4031,7 @@ module Parser {
             }
         }
 
-        private parseTypeLiteral(): TypeSyntax {
+        private parseTypeLiteral(): ITypeSyntax {
             Debug.assert(this.isTypeLiteral(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true));
             if (this.isObjectType()) {
                 return this.parseObjectType();

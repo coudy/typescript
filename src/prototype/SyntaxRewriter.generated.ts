@@ -364,7 +364,7 @@
     public visitElseClause(node: ElseClauseSyntax): any {
         return node.update(
             this.visitToken(node.elseKeyword()),
-            <StatementSyntax>this.visitNode(node.statement()));
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()));
     }
 
     public visitIfStatement(node: IfStatementSyntax): any {
@@ -373,7 +373,7 @@
             this.visitToken(node.openParenToken()),
             <IExpressionSyntax>this.visitNodeOrToken(node.condition()),
             this.visitToken(node.closeParenToken()),
-            <StatementSyntax>this.visitNode(node.statement()),
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()),
             node.elseClause() === null ? null : <ElseClauseSyntax>this.visitNode(node.elseClause()));
     }
 
@@ -501,7 +501,7 @@
             this.visitToken(node.secondSemicolonToken()),
             node.incrementor() === null ? null : <IExpressionSyntax>this.visitNodeOrToken(node.incrementor()),
             this.visitToken(node.closeParenToken()),
-            <StatementSyntax>this.visitNode(node.statement()));
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()));
     }
 
     public visitForInStatement(node: ForInStatementSyntax): any {
@@ -513,7 +513,7 @@
             this.visitToken(node.inKeyword()),
             <IExpressionSyntax>this.visitNodeOrToken(node.expression()),
             this.visitToken(node.closeParenToken()),
-            <StatementSyntax>this.visitNode(node.statement()));
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()));
     }
 
     public visitWhileStatement(node: WhileStatementSyntax): any {
@@ -522,7 +522,7 @@
             this.visitToken(node.openParenToken()),
             <IExpressionSyntax>this.visitNodeOrToken(node.condition()),
             this.visitToken(node.closeParenToken()),
-            <StatementSyntax>this.visitNode(node.statement()));
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()));
     }
 
     public visitWithStatement(node: WithStatementSyntax): any {
@@ -531,7 +531,7 @@
             this.visitToken(node.openParenToken()),
             <IExpressionSyntax>this.visitNodeOrToken(node.condition()),
             this.visitToken(node.closeParenToken()),
-            <StatementSyntax>this.visitNode(node.statement()));
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()));
     }
 
     public visitEnumDeclaration(node: EnumDeclarationSyntax): any {
@@ -625,13 +625,13 @@
         return node.update(
             this.visitToken(node.identifier()),
             this.visitToken(node.colonToken()),
-            <StatementSyntax>this.visitNode(node.statement()));
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()));
     }
 
     public visitDoStatement(node: DoStatementSyntax): any {
         return node.update(
             this.visitToken(node.doKeyword()),
-            <StatementSyntax>this.visitNode(node.statement()),
+            <IStatementSyntax>this.visitNodeOrToken(node.statement()),
             this.visitToken(node.whileKeyword()),
             this.visitToken(node.openParenToken()),
             <IExpressionSyntax>this.visitNodeOrToken(node.condition()),

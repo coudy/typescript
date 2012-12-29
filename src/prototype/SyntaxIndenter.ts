@@ -146,7 +146,7 @@ class SyntaxIndenter extends SyntaxRewriter {
         result.push(Syntax.multiLineComment(newText));
     }
 
-    public static indentNode(node: SyntaxNode, indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode {
+    public static indentNode(node: ISyntaxNode, indentFirstToken: bool, indentAmount: number, options: FormattingOptions): SyntaxNode {
         var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
         return node.accept(indenter);
     }

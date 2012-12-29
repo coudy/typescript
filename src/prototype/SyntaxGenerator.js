@@ -1368,6 +1368,13 @@ var SyntaxFacts;
     SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
 })(SyntaxFacts || (SyntaxFacts = {}));
 var argumentChecks = true;
+var interfaces = {
+    IMemberDeclarationSyntax: "IClassElementSyntax",
+    IStatementSyntax: "IModuleElementSyntax",
+    INameSyntax: "ITypeSyntax",
+    ITypeSyntax: "IUnaryExpressionSyntax",
+    IUnaryExpressionSyntax: "IExpressionSyntax"
+};
 var definitions = [
     {
         name: 'SourceUnitSyntax',
@@ -1376,22 +1383,13 @@ var definitions = [
             {
                 name: 'moduleElements',
                 isList: true,
-                elementType: "ModuleElementSyntax"
+                elementType: 'IModuleElementSyntax'
             }, 
             {
                 name: 'endOfFileToken',
                 isToken: true
             }
         ]
-    }, 
-    {
-        name: 'ModuleElementSyntax',
-        baseType: 'SyntaxNode',
-        interfaces: [
-            'IModuleElementSyntax'
-        ],
-        isAbstract: true,
-        children: []
     }, 
     {
         name: 'ModuleReferenceSyntax',
@@ -1439,7 +1437,10 @@ var definitions = [
     }, 
     {
         name: 'ImportDeclarationSyntax',
-        baseType: 'ModuleElementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IModuleElementSyntax'
+        ],
         children: [
             {
                 name: 'importKeyword',
@@ -1469,7 +1470,10 @@ var definitions = [
     }, 
     {
         name: 'ClassDeclarationSyntax',
-        baseType: 'ModuleElementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IModuleElementSyntax'
+        ],
         children: [
             {
                 name: 'exportKeyword',
@@ -1509,7 +1513,7 @@ var definitions = [
             {
                 name: 'classElements',
                 isList: true,
-                elementType: "ClassElementSyntax"
+                elementType: "IClassElementSyntax"
             }, 
             {
                 name: 'closeBraceToken',
@@ -1520,7 +1524,10 @@ var definitions = [
     }, 
     {
         name: 'InterfaceDeclarationSyntax',
-        baseType: 'ModuleElementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IModuleElementSyntax'
+        ],
         children: [
             {
                 name: 'exportKeyword',
@@ -1586,7 +1593,10 @@ var definitions = [
     }, 
     {
         name: 'ModuleDeclarationSyntax',
-        baseType: 'ModuleElementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IModuleElementSyntax'
+        ],
         children: [
             {
                 name: 'exportKeyword',
@@ -1619,7 +1629,7 @@ var definitions = [
             {
                 name: 'moduleElements',
                 isList: true,
-                elementType: "ModuleElementSyntax"
+                elementType: 'IModuleElementSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -1629,17 +1639,11 @@ var definitions = [
         isTypeScriptSpecific: true
     }, 
     {
-        name: 'StatementSyntax',
-        baseType: 'ModuleElementSyntax',
+        name: 'FunctionDeclarationSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IStatementSyntax'
         ],
-        isAbstract: true,
-        children: []
-    }, 
-    {
-        name: 'FunctionDeclarationSyntax',
-        baseType: 'StatementSyntax',
         children: [
             {
                 name: 'exportKeyword',
@@ -1675,7 +1679,10 @@ var definitions = [
     }, 
     {
         name: 'VariableStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'exportKeyword',
@@ -1698,15 +1705,6 @@ var definitions = [
                 isToken: true
             }
         ]
-    }, 
-    {
-        name: 'ExpressionSyntax',
-        baseType: 'SyntaxNode',
-        interfaces: [
-            'IExpressionSyntax'
-        ],
-        isAbstract: true,
-        children: []
     }, 
     {
         name: 'VariableDeclarationSyntax',
@@ -1764,7 +1762,7 @@ var definitions = [
     }, 
     {
         name: 'PrefixUnaryExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -1793,7 +1791,7 @@ var definitions = [
     }, 
     {
         name: 'ArrayLiteralExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -1815,12 +1813,15 @@ var definitions = [
     }, 
     {
         name: 'OmittedExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IExpressionSyntax'
+        ],
         children: []
     }, 
     {
         name: 'ParenthesizedExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -1841,7 +1842,7 @@ var definitions = [
     }, 
     {
         name: 'ArrowFunctionExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -1891,26 +1892,11 @@ var definitions = [
         isTypeScriptSpecific: true
     }, 
     {
-        name: 'TypeSyntax',
-        baseType: 'ExpressionSyntax',
-        interfaces: [
-            "ITypeSyntax"
-        ],
-        isAbstract: true,
-        children: []
-    }, 
-    {
-        name: 'NameSyntax',
-        baseType: 'TypeSyntax',
+        name: 'QualifiedNameSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'INameSyntax'
         ],
-        isAbstract: true,
-        children: []
-    }, 
-    {
-        name: 'QualifiedNameSyntax',
-        baseType: 'NameSyntax',
         children: [
             {
                 name: 'left',
@@ -1931,7 +1917,10 @@ var definitions = [
     }, 
     {
         name: 'ConstructorTypeSyntax',
-        baseType: 'TypeSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeSyntax'
+        ],
         children: [
             {
                 name: 'newKeyword',
@@ -1954,7 +1943,10 @@ var definitions = [
     }, 
     {
         name: 'FunctionTypeSyntax',
-        baseType: 'TypeSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeSyntax'
+        ],
         children: [
             {
                 name: 'parameterList',
@@ -1973,7 +1965,10 @@ var definitions = [
     }, 
     {
         name: 'ObjectTypeSyntax',
-        baseType: 'TypeSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeSyntax'
+        ],
         children: [
             {
                 name: 'openBraceToken',
@@ -1993,7 +1988,10 @@ var definitions = [
     }, 
     {
         name: 'ArrayTypeSyntax',
-        baseType: 'TypeSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeSyntax'
+        ],
         children: [
             {
                 name: 'type',
@@ -2027,7 +2025,10 @@ var definitions = [
     }, 
     {
         name: 'BlockSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'openBraceToken',
@@ -2036,7 +2037,7 @@ var definitions = [
             {
                 name: 'statements',
                 isList: true,
-                elementType: "StatementSyntax"
+                elementType: 'IStatementSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -2093,7 +2094,7 @@ var definitions = [
     }, 
     {
         name: 'MemberAccessExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -2117,7 +2118,7 @@ var definitions = [
     }, 
     {
         name: 'PostfixUnaryExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -2142,7 +2143,7 @@ var definitions = [
     }, 
     {
         name: 'ElementAccessExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -2167,7 +2168,7 @@ var definitions = [
     }, 
     {
         name: 'InvocationExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -2203,7 +2204,10 @@ var definitions = [
     }, 
     {
         name: 'BinaryExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IExpressionSyntax'
+        ],
         children: [
             {
                 name: 'kind',
@@ -2263,7 +2267,10 @@ var definitions = [
     }, 
     {
         name: 'ConditionalExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IExpressionSyntax'
+        ],
         children: [
             {
                 name: 'condition',
@@ -2438,13 +2445,16 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }
         ]
     }, 
     {
         name: 'IfStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'ifKeyword',
@@ -2464,7 +2474,7 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }, 
             {
                 name: 'elseClause',
@@ -2475,7 +2485,10 @@ var definitions = [
     }, 
     {
         name: 'ExpressionStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'expression',
@@ -2488,18 +2501,11 @@ var definitions = [
         ]
     }, 
     {
-        name: 'ClassElementSyntax',
+        name: 'ConstructorDeclarationSyntax',
         baseType: 'SyntaxNode',
-        isAbstract: true,
         interfaces: [
             'IClassElementSyntax'
         ],
-        children: [],
-        isTypeScriptSpecific: true
-    }, 
-    {
-        name: 'ConstructorDeclarationSyntax',
-        baseType: 'ClassElementSyntax',
         children: [
             {
                 name: 'constructorKeyword',
@@ -2523,18 +2529,11 @@ var definitions = [
         isTypeScriptSpecific: true
     }, 
     {
-        name: 'MemberDeclarationSyntax',
-        baseType: 'ClassElementSyntax',
+        name: 'MemberFunctionDeclarationSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IMemberDeclarationSyntax'
         ],
-        isAbstract: true,
-        children: [],
-        isTypeScriptSpecific: true
-    }, 
-    {
-        name: 'MemberFunctionDeclarationSyntax',
-        baseType: 'MemberDeclarationSyntax',
         children: [
             {
                 name: 'publicOrPrivateKeyword',
@@ -2569,7 +2568,10 @@ var definitions = [
     }, 
     {
         name: 'MemberAccessorDeclarationSyntax',
-        baseType: 'MemberDeclarationSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IMemberDeclarationSyntax'
+        ],
         isAbstract: true,
         children: [],
         isTypeScriptSpecific: true
@@ -2661,7 +2663,10 @@ var definitions = [
     }, 
     {
         name: 'MemberVariableDeclarationSyntax',
-        baseType: 'MemberDeclarationSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IMemberDeclarationSyntax'
+        ],
         children: [
             {
                 name: 'publicOrPrivateKeyword',
@@ -2690,7 +2695,10 @@ var definitions = [
     }, 
     {
         name: 'ThrowStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'throwKeyword',
@@ -2708,7 +2716,10 @@ var definitions = [
     }, 
     {
         name: 'ReturnStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'returnKeyword',
@@ -2727,7 +2738,7 @@ var definitions = [
     }, 
     {
         name: 'ObjectCreationExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -2749,7 +2760,10 @@ var definitions = [
     }, 
     {
         name: 'SwitchStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'switchKeyword',
@@ -2810,7 +2824,7 @@ var definitions = [
             {
                 name: 'statements',
                 isList: true,
-                elementType: "StatementSyntax"
+                elementType: 'IStatementSyntax'
             }
         ]
     }, 
@@ -2829,13 +2843,16 @@ var definitions = [
             {
                 name: 'statements',
                 isList: true,
-                elementType: "StatementSyntax"
+                elementType: 'IStatementSyntax'
             }
         ]
     }, 
     {
         name: 'BreakStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'breakKeyword',
@@ -2857,7 +2874,10 @@ var definitions = [
     }, 
     {
         name: 'ContinueStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'continueKeyword',
@@ -2879,7 +2899,10 @@ var definitions = [
     }, 
     {
         name: 'IterationStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         isAbstract: true,
         children: []
     }, 
@@ -2941,7 +2964,7 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }
         ]
     }, 
@@ -2981,7 +3004,7 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }
         ]
     }, 
@@ -3007,13 +3030,16 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }
         ]
     }, 
     {
         name: 'WithStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'withKeyword',
@@ -3033,13 +3059,16 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }
         ]
     }, 
     {
         name: 'EnumDeclarationSyntax',
-        baseType: 'ModuleElementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IModuleElementSyntax'
+        ],
         children: [
             {
                 name: 'exportKeyword',
@@ -3075,7 +3104,7 @@ var definitions = [
     }, 
     {
         name: 'CastExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -3101,7 +3130,7 @@ var definitions = [
     }, 
     {
         name: 'ObjectLiteralExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -3223,7 +3252,7 @@ var definitions = [
     }, 
     {
         name: 'FunctionExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -3252,7 +3281,10 @@ var definitions = [
     }, 
     {
         name: 'EmptyStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'semicolonToken',
@@ -3262,7 +3294,10 @@ var definitions = [
     }, 
     {
         name: 'TryStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'tryKeyword',
@@ -3329,7 +3364,10 @@ var definitions = [
     }, 
     {
         name: 'LabeledStatement',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'identifier',
@@ -3344,7 +3382,7 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }
         ]
     }, 
@@ -3358,7 +3396,7 @@ var definitions = [
             }, 
             {
                 name: 'statement',
-                type: 'StatementSyntax'
+                type: 'IStatementSyntax'
             }, 
             {
                 name: 'whileKeyword',
@@ -3384,7 +3422,7 @@ var definitions = [
     }, 
     {
         name: 'TypeOfExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -3401,7 +3439,7 @@ var definitions = [
     }, 
     {
         name: 'DeleteExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -3418,7 +3456,7 @@ var definitions = [
     }, 
     {
         name: 'VoidExpressionSyntax',
-        baseType: 'ExpressionSyntax',
+        baseType: 'SyntaxNode',
         interfaces: [
             'IUnaryExpressionSyntax'
         ],
@@ -3435,7 +3473,10 @@ var definitions = [
     }, 
     {
         name: 'DebuggerStatementSyntax',
-        baseType: 'StatementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IStatementSyntax'
+        ],
         children: [
             {
                 name: 'debuggerKeyword',
@@ -3796,8 +3837,18 @@ function generateAcceptMethods(definition) {
 function generateIsMethod(definition) {
     var result = "";
     if(definition.interfaces) {
-        for(var i = 0; i < definition.interfaces.length; i++) {
-            var type = definition.interfaces[i];
+        var ifaces = definition.interfaces.slice(0);
+        for(var i = 0; i < ifaces.length; i++) {
+            var current = ifaces[i];
+            while(current !== undefined) {
+                if(!ArrayUtilities.contains(ifaces, current)) {
+                    ifaces.push(current);
+                }
+                current = interfaces[current];
+            }
+        }
+        for(var i = 0; i < ifaces.length; i++) {
+            var type = ifaces[i];
             type = getStringWithoutSuffix(type);
             if(isInterface(type)) {
                 type = type.substr(1);

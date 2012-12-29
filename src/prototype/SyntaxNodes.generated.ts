@@ -83,7 +83,7 @@ class SourceUnitSyntax extends SyntaxNode {
         return this.update(moduleElements, this._endOfFileToken);
     }
 
-    public withModuleElement(moduleElement: ModuleElementSyntax): SourceUnitSyntax {
+    public withModuleElement(moduleElement: IModuleElementSyntax): SourceUnitSyntax {
         return this.withModuleElements(Syntax.list([moduleElement]));
     }
 
@@ -150,28 +150,6 @@ class SourceUnitSyntax extends SyntaxNode {
         if (!Syntax.listStructuralEquals(this._moduleElements, other._moduleElements)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._endOfFileToken, other._endOfFileToken)) { return false; }
         return true;
-    }
-}
-
-class ModuleElementSyntax extends SyntaxNode implements IModuleElementSyntax {
-    constructor() {
-        super();
-    }
-
-    private isModuleElement(): bool {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleElementSyntax {
-        return <ModuleElementSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): ModuleElementSyntax {
-        return <ModuleElementSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return false;
     }
 }
 
@@ -504,7 +482,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
     }
 }
 
-class ImportDeclarationSyntax extends ModuleElementSyntax {
+class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     private _importKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
     private _equalsToken: ISyntaxToken;
@@ -547,6 +525,10 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ImportDeclaration;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -734,7 +716,7 @@ class ImportDeclarationSyntax extends ModuleElementSyntax {
     }
 }
 
-class ClassDeclarationSyntax extends ModuleElementSyntax {
+class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     private _exportKeyword: ISyntaxToken;
     private _declareKeyword: ISyntaxToken;
     private _classKeyword: ISyntaxToken;
@@ -805,6 +787,10 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ClassDeclaration;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -939,7 +925,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
     }
 
-    public withClassElement(classElement: ClassElementSyntax): ClassDeclarationSyntax {
+    public withClassElement(classElement: IClassElementSyntax): ClassDeclarationSyntax {
         return this.withClassElements(Syntax.list([classElement]));
     }
 
@@ -1110,7 +1096,7 @@ class ClassDeclarationSyntax extends ModuleElementSyntax {
     }
 }
 
-class InterfaceDeclarationSyntax extends ModuleElementSyntax {
+class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     private _exportKeyword: ISyntaxToken;
     private _interfaceKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
@@ -1159,6 +1145,10 @@ class InterfaceDeclarationSyntax extends ModuleElementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.InterfaceDeclaration;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -1647,7 +1637,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
     }
 }
 
-class ModuleDeclarationSyntax extends ModuleElementSyntax {
+class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     private _exportKeyword: ISyntaxToken;
     private _declareKeyword: ISyntaxToken;
     private _moduleKeyword: ISyntaxToken;
@@ -1715,6 +1705,10 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ModuleDeclaration;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -1837,7 +1831,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, moduleElements, this._closeBraceToken);
     }
 
-    public withModuleElement(moduleElement: ModuleElementSyntax): ModuleDeclarationSyntax {
+    public withModuleElement(moduleElement: IModuleElementSyntax): ModuleDeclarationSyntax {
         return this.withModuleElements(Syntax.list([moduleElement]));
     }
 
@@ -1995,29 +1989,7 @@ class ModuleDeclarationSyntax extends ModuleElementSyntax {
     }
 }
 
-class StatementSyntax extends ModuleElementSyntax implements IStatementSyntax {
-    constructor() {
-        super();
-    }
-
-    private isStatement(): bool {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): StatementSyntax {
-        return <StatementSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): StatementSyntax {
-        return <StatementSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return false;
-    }
-}
-
-class FunctionDeclarationSyntax extends StatementSyntax {
+class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
     private _exportKeyword: ISyntaxToken;
     private _declareKeyword: ISyntaxToken;
     private _functionKeyword: ISyntaxToken;
@@ -2074,6 +2046,14 @@ class FunctionDeclarationSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.FunctionDeclaration;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -2306,7 +2286,7 @@ class FunctionDeclarationSyntax extends StatementSyntax {
     }
 }
 
-class VariableStatementSyntax extends StatementSyntax {
+class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _exportKeyword: ISyntaxToken;
     private _declareKeyword: ISyntaxToken;
     private _variableDeclaration: VariableDeclarationSyntax;
@@ -2352,6 +2332,14 @@ class VariableStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.VariableStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -2523,28 +2511,6 @@ class VariableStatementSyntax extends StatementSyntax {
         if (!Syntax.nodeStructuralEquals(this._variableDeclaration, other._variableDeclaration)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
         return true;
-    }
-}
-
-class ExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
-    constructor() {
-        super();
-    }
-
-    private isExpression(): bool {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): ExpressionSyntax {
-        return <ExpressionSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): ExpressionSyntax {
-        return <ExpressionSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return false;
     }
 }
 
@@ -3022,7 +2988,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     }
 }
 
-class PrefixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
     private _operatorToken: ISyntaxToken;
     private _operand: IUnaryExpressionSyntax;
@@ -3056,6 +3022,10 @@ class PrefixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpr
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -3182,7 +3152,7 @@ class PrefixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpr
     }
 }
 
-class ArrayLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _openBracketToken: ISyntaxToken;
     private _expressions: ISeparatedSyntaxList;
     private _closeBracketToken: ISyntaxToken;
@@ -3222,6 +3192,10 @@ class ArrayLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryExp
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -3367,7 +3341,7 @@ class ArrayLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryExp
     }
 }
 
-class OmittedExpressionSyntax extends ExpressionSyntax {
+class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     constructor() {
         super();
     }
@@ -3378,6 +3352,10 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.OmittedExpression;
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -3438,7 +3416,7 @@ class OmittedExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class ParenthesizedExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _openParenToken: ISyntaxToken;
     private _expression: IExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
@@ -3473,6 +3451,10 @@ class ParenthesizedExpressionSyntax extends ExpressionSyntax implements IUnaryEx
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -3614,12 +3596,16 @@ class ParenthesizedExpressionSyntax extends ExpressionSyntax implements IUnaryEx
     }
 }
 
-class ArrowFunctionExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     constructor() {
         super();
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -3988,63 +3974,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     }
 }
 
-class TypeSyntax extends ExpressionSyntax implements ITypeSyntax {
-    constructor() {
-        super();
-    }
-
-    private isType(): bool {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeSyntax {
-        return <TypeSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeSyntax {
-        return <TypeSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return false;
-    }
-}
-
-class NameSyntax extends TypeSyntax implements INameSyntax {
-    constructor() {
-        super();
-    }
-
-    private isName(): bool {
-        return true;
-    }
-
-    public left(): INameSyntax {
-        throw Errors.abstract();
-    }
-
-    public dotToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public right(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): NameSyntax {
-        return <NameSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): NameSyntax {
-        return <NameSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return false;
-    }
-}
-
-class QualifiedNameSyntax extends NameSyntax {
+class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     private _left: INameSyntax;
     private _dotToken: ISyntaxToken;
     private _right: ISyntaxToken;
@@ -4077,6 +4007,22 @@ class QualifiedNameSyntax extends NameSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.QualifiedName;
+    }
+
+    private isName(): bool {
+        return true;
+    }
+
+    private isType(): bool {
+        return true;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -4217,7 +4163,7 @@ class QualifiedNameSyntax extends NameSyntax {
     }
 }
 
-class ConstructorTypeSyntax extends TypeSyntax {
+class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private _newKeyword: ISyntaxToken;
     private _parameterList: ParameterListSyntax;
     private _equalsGreaterThanToken: ISyntaxToken;
@@ -4254,6 +4200,18 @@ class ConstructorTypeSyntax extends TypeSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ConstructorType;
+    }
+
+    private isType(): bool {
+        return true;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -4418,7 +4376,7 @@ class ConstructorTypeSyntax extends TypeSyntax {
     }
 }
 
-class FunctionTypeSyntax extends TypeSyntax {
+class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private _parameterList: ParameterListSyntax;
     private _equalsGreaterThanToken: ISyntaxToken;
     private _type: ITypeSyntax;
@@ -4450,6 +4408,18 @@ class FunctionTypeSyntax extends TypeSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.FunctionType;
+    }
+
+    private isType(): bool {
+        return true;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -4590,7 +4560,7 @@ class FunctionTypeSyntax extends TypeSyntax {
     }
 }
 
-class ObjectTypeSyntax extends TypeSyntax {
+class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private _openBraceToken: ISyntaxToken;
     private _typeMembers: ISeparatedSyntaxList;
     private _closeBraceToken: ISyntaxToken;
@@ -4627,6 +4597,18 @@ class ObjectTypeSyntax extends TypeSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ObjectType;
+    }
+
+    private isType(): bool {
+        return true;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -4770,7 +4752,7 @@ class ObjectTypeSyntax extends TypeSyntax {
     }
 }
 
-class ArrayTypeSyntax extends TypeSyntax {
+class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private _type: ITypeSyntax;
     private _openBracketToken: ISyntaxToken;
     private _closeBracketToken: ISyntaxToken;
@@ -4802,6 +4784,18 @@ class ArrayTypeSyntax extends TypeSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ArrayType;
+    }
+
+    private isType(): bool {
+        return true;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -5083,7 +5077,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
     }
 }
 
-class BlockSyntax extends StatementSyntax {
+class BlockSyntax extends SyntaxNode implements IStatementSyntax {
     private _openBraceToken: ISyntaxToken;
     private _statements: ISyntaxList;
     private _closeBraceToken: ISyntaxToken;
@@ -5120,6 +5114,14 @@ class BlockSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.Block;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -5182,7 +5184,7 @@ class BlockSyntax extends StatementSyntax {
         return this.update(this._openBraceToken, statements, this._closeBraceToken);
     }
 
-    public withStatement(statement: StatementSyntax): BlockSyntax {
+    public withStatement(statement: IStatementSyntax): BlockSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
@@ -5556,7 +5558,7 @@ class ParameterSyntax extends SyntaxNode {
     }
 }
 
-class MemberAccessExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _dotToken: ISyntaxToken;
     private _identifierName: ISyntaxToken;
@@ -5592,6 +5594,10 @@ class MemberAccessExpressionSyntax extends ExpressionSyntax implements IUnaryExp
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -5733,7 +5739,7 @@ class MemberAccessExpressionSyntax extends ExpressionSyntax implements IUnaryExp
     }
 }
 
-class PostfixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
     private _operand: IExpressionSyntax;
     private _operatorToken: ISyntaxToken;
@@ -5757,6 +5763,10 @@ class PostfixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExp
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -5883,7 +5893,7 @@ class PostfixUnaryExpressionSyntax extends ExpressionSyntax implements IUnaryExp
     }
 }
 
-class ElementAccessExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _openBracketToken: ISyntaxToken;
     private _argumentExpression: IExpressionSyntax;
@@ -5924,6 +5934,10 @@ class ElementAccessExpressionSyntax extends ExpressionSyntax implements IUnaryEx
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -6091,7 +6105,7 @@ class ElementAccessExpressionSyntax extends ExpressionSyntax implements IUnaryEx
     }
 }
 
-class InvocationExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _argumentList: ArgumentListSyntax;
 
@@ -6121,6 +6135,10 @@ class InvocationExpressionSyntax extends ExpressionSyntax implements IUnaryExpre
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -6421,7 +6439,7 @@ class ArgumentListSyntax extends SyntaxNode {
     }
 }
 
-class BinaryExpressionSyntax extends ExpressionSyntax {
+class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     private _kind: SyntaxKind;
     private _left: IExpressionSyntax;
     private _operatorToken: ISyntaxToken;
@@ -6487,6 +6505,10 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitBinaryExpression(this);
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -6639,7 +6661,7 @@ class BinaryExpressionSyntax extends ExpressionSyntax {
     }
 }
 
-class ConditionalExpressionSyntax extends ExpressionSyntax {
+class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     private _condition: IExpressionSyntax;
     private _questionToken: ISyntaxToken;
     private _whenTrue: IExpressionSyntax;
@@ -6683,6 +6705,10 @@ class ConditionalExpressionSyntax extends ExpressionSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ConditionalExpression;
+    }
+
+    private isExpression(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -8027,10 +8053,10 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
 class ElseClauseSyntax extends SyntaxNode {
     private _elseKeyword: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
 
     constructor(elseKeyword: ISyntaxToken,
-                statement: StatementSyntax) {
+                statement: IStatementSyntax) {
         super();
 
         if (statement === null) { throw Errors.argumentNull('statement'); }
@@ -8040,7 +8066,7 @@ class ElseClauseSyntax extends SyntaxNode {
         this._statement = statement;
     }
 
-    public static create1(statement: StatementSyntax): ElseClauseSyntax {
+    public static create1(statement: IStatementSyntax): ElseClauseSyntax {
         return new ElseClauseSyntax(
             Syntax.token(SyntaxKind.ElseKeyword),
             statement);
@@ -8077,12 +8103,12 @@ class ElseClauseSyntax extends SyntaxNode {
         return this._elseKeyword;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
     public update(elseKeyword: ISyntaxToken,
-                  statement: StatementSyntax): ElseClauseSyntax {
+                  statement: IStatementSyntax): ElseClauseSyntax {
         if (this._elseKeyword === elseKeyword && this._statement === statement) {
             return this;
         }
@@ -8102,7 +8128,7 @@ class ElseClauseSyntax extends SyntaxNode {
         return this.update(elseKeyword, this._statement);
     }
 
-    public withStatement(statement: StatementSyntax): ElseClauseSyntax {
+    public withStatement(statement: IStatementSyntax): ElseClauseSyntax {
         return this.update(this._elseKeyword, statement);
     }
 
@@ -8163,24 +8189,24 @@ class ElseClauseSyntax extends SyntaxNode {
         if (this.kind() !== node.kind()) { return false; }
         var other = <ElseClauseSyntax>node;
         if (!Syntax.tokenStructuralEquals(this._elseKeyword, other._elseKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         return true;
     }
 }
 
-class IfStatementSyntax extends StatementSyntax {
+class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _ifKeyword: ISyntaxToken;
     private _openParenToken: ISyntaxToken;
     private _condition: IExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
     private _elseClause: ElseClauseSyntax;
 
     constructor(ifKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 condition: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
-                statement: StatementSyntax,
+                statement: IStatementSyntax,
                 elseClause: ElseClauseSyntax) {
         super();
 
@@ -8202,12 +8228,12 @@ class IfStatementSyntax extends StatementSyntax {
                          openParenToken: ISyntaxToken,
                          condition: IExpressionSyntax,
                          closeParenToken: ISyntaxToken,
-                         statement: StatementSyntax): IfStatementSyntax {
+                         statement: IStatementSyntax): IfStatementSyntax {
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, null);
     }
 
     public static create1(condition: IExpressionSyntax,
-                          statement: StatementSyntax): IfStatementSyntax {
+                          statement: IStatementSyntax): IfStatementSyntax {
         return new IfStatementSyntax(
             Syntax.token(SyntaxKind.IfKeyword),
             Syntax.token(SyntaxKind.OpenParenToken),
@@ -8223,6 +8249,14 @@ class IfStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.IfStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -8272,7 +8306,7 @@ class IfStatementSyntax extends StatementSyntax {
         return this._closeParenToken;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
@@ -8284,7 +8318,7 @@ class IfStatementSyntax extends StatementSyntax {
                   openParenToken: ISyntaxToken,
                   condition: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax,
+                  statement: IStatementSyntax,
                   elseClause: ElseClauseSyntax): IfStatementSyntax {
         if (this._ifKeyword === ifKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement && this._elseClause === elseClause) {
             return this;
@@ -8317,7 +8351,7 @@ class IfStatementSyntax extends StatementSyntax {
         return this.update(this._ifKeyword, this._openParenToken, this._condition, closeParenToken, this._statement, this._elseClause);
     }
 
-    public withStatement(statement: StatementSyntax): IfStatementSyntax {
+    public withStatement(statement: IStatementSyntax): IfStatementSyntax {
         return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, statement, this._elseClause);
     }
 
@@ -8437,13 +8471,13 @@ class IfStatementSyntax extends StatementSyntax {
         if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._elseClause, other._elseClause)) { return false; }
         return true;
     }
 }
 
-class ExpressionStatementSyntax extends StatementSyntax {
+class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _expression: IExpressionSyntax;
     private _semicolonToken: ISyntaxToken;
 
@@ -8470,6 +8504,14 @@ class ExpressionStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ExpressionStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -8586,29 +8628,7 @@ class ExpressionStatementSyntax extends StatementSyntax {
     }
 }
 
-class ClassElementSyntax extends SyntaxNode implements IClassElementSyntax {
-    constructor() {
-        super();
-    }
-
-    private isClassElement(): bool {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassElementSyntax {
-        return <ClassElementSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): ClassElementSyntax {
-        return <ClassElementSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return true;
-    }
-}
-
-class ConstructorDeclarationSyntax extends ClassElementSyntax {
+class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSyntax {
     private _constructorKeyword: ISyntaxToken;
     private _parameterList: ParameterListSyntax;
     private _block: BlockSyntax;
@@ -8651,6 +8671,10 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ConstructorDeclaration;
+    }
+
+    private isClassElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -8823,37 +8847,7 @@ class ConstructorDeclarationSyntax extends ClassElementSyntax {
     }
 }
 
-class MemberDeclarationSyntax extends ClassElementSyntax implements IMemberDeclarationSyntax {
-    constructor() {
-        super();
-    }
-
-    private isMemberDeclaration(): bool {
-        return true;
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberDeclarationSyntax {
-        return <MemberDeclarationSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberDeclarationSyntax {
-        return <MemberDeclarationSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return true;
-    }
-}
-
-class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
+class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
     private _publicOrPrivateKeyword: ISyntaxToken;
     private _staticKeyword: ISyntaxToken;
     private _functionSignature: FunctionSignatureSyntax;
@@ -8904,6 +8898,14 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.MemberFunctionDeclaration;
+    }
+
+    private isMemberDeclaration(): bool {
+        return true;
+    }
+
+    private isClassElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -9108,9 +9110,17 @@ class MemberFunctionDeclarationSyntax extends MemberDeclarationSyntax {
     }
 }
 
-class MemberAccessorDeclarationSyntax extends MemberDeclarationSyntax {
+class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
     constructor() {
         super();
+    }
+
+    private isMemberDeclaration(): bool {
+        return true;
+    }
+
+    private isClassElement(): bool {
+        return true;
     }
 
     public publicOrPrivateKeyword(): ISyntaxToken {
@@ -9735,7 +9745,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     }
 }
 
-class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
+class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
     private _publicOrPrivateKeyword: ISyntaxToken;
     private _staticKeyword: ISyntaxToken;
     private _variableDeclarator: VariableDeclaratorSyntax;
@@ -9781,6 +9791,14 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.MemberVariableDeclaration;
+    }
+
+    private isMemberDeclaration(): bool {
+        return true;
+    }
+
+    private isClassElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -9952,7 +9970,7 @@ class MemberVariableDeclarationSyntax extends MemberDeclarationSyntax {
     }
 }
 
-class ThrowStatementSyntax extends StatementSyntax {
+class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _throwKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
     private _semicolonToken: ISyntaxToken;
@@ -9984,6 +10002,14 @@ class ThrowStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ThrowStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -10124,7 +10150,7 @@ class ThrowStatementSyntax extends StatementSyntax {
     }
 }
 
-class ReturnStatementSyntax extends StatementSyntax {
+class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _returnKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
     private _semicolonToken: ISyntaxToken;
@@ -10160,6 +10186,14 @@ class ReturnStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ReturnStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -10304,7 +10338,7 @@ class ReturnStatementSyntax extends StatementSyntax {
     }
 }
 
-class ObjectCreationExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _newKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
     private _argumentList: ArgumentListSyntax;
@@ -10343,6 +10377,10 @@ class ObjectCreationExpressionSyntax extends ExpressionSyntax implements IUnaryE
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -10490,7 +10528,7 @@ class ObjectCreationExpressionSyntax extends ExpressionSyntax implements IUnaryE
     }
 }
 
-class SwitchStatementSyntax extends StatementSyntax {
+class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _switchKeyword: ISyntaxToken;
     private _openParenToken: ISyntaxToken;
     private _expression: IExpressionSyntax;
@@ -10551,6 +10589,14 @@ class SwitchStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.SwitchStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -10944,7 +10990,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.update(this._caseKeyword, this._expression, this._colonToken, statements);
     }
 
-    public withStatement(statement: StatementSyntax): CaseSwitchClauseSyntax {
+    public withStatement(statement: IStatementSyntax): CaseSwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
@@ -11139,7 +11185,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.update(this._defaultKeyword, this._colonToken, statements);
     }
 
-    public withStatement(statement: StatementSyntax): DefaultSwitchClauseSyntax {
+    public withStatement(statement: IStatementSyntax): DefaultSwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
@@ -11217,7 +11263,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 }
 
-class BreakStatementSyntax extends StatementSyntax {
+class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _breakKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
     private _semicolonToken: ISyntaxToken;
@@ -11256,6 +11302,14 @@ class BreakStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.BreakStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -11398,7 +11452,7 @@ class BreakStatementSyntax extends StatementSyntax {
     }
 }
 
-class ContinueStatementSyntax extends StatementSyntax {
+class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _continueKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
     private _semicolonToken: ISyntaxToken;
@@ -11437,6 +11491,14 @@ class ContinueStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.ContinueStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -11579,9 +11641,17 @@ class ContinueStatementSyntax extends StatementSyntax {
     }
 }
 
-class IterationStatementSyntax extends StatementSyntax {
+class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
     constructor() {
         super();
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public openParenToken(): ISyntaxToken {
@@ -11592,7 +11662,7 @@ class IterationStatementSyntax extends StatementSyntax {
         throw Errors.abstract();
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         throw Errors.abstract();
     }
 
@@ -11630,7 +11700,7 @@ class BaseForStatementSyntax extends IterationStatementSyntax {
         throw Errors.abstract();
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         throw Errors.abstract();
     }
 
@@ -11657,7 +11727,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
     private _secondSemicolonToken: ISyntaxToken;
     private _incrementor: IExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -11668,7 +11738,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
                 secondSemicolonToken: ISyntaxToken,
                 incrementor: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
-                statement: StatementSyntax) {
+                statement: IStatementSyntax) {
         super();
 
         if (statement === null) { throw Errors.argumentNull('statement'); }
@@ -11695,11 +11765,11 @@ class ForStatementSyntax extends BaseForStatementSyntax {
                          firstSemicolonToken: ISyntaxToken,
                          secondSemicolonToken: ISyntaxToken,
                          closeParenToken: ISyntaxToken,
-                         statement: StatementSyntax): ForStatementSyntax {
+                         statement: IStatementSyntax): ForStatementSyntax {
         return new ForStatementSyntax(forKeyword, openParenToken, null, null, firstSemicolonToken, null, secondSemicolonToken, null, closeParenToken, statement);
     }
 
-    public static create1(statement: StatementSyntax): ForStatementSyntax {
+    public static create1(statement: IStatementSyntax): ForStatementSyntax {
         return new ForStatementSyntax(
             Syntax.token(SyntaxKind.ForKeyword),
             Syntax.token(SyntaxKind.OpenParenToken),
@@ -11800,7 +11870,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return this._closeParenToken;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
@@ -11813,7 +11883,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
                   secondSemicolonToken: ISyntaxToken,
                   incrementor: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax): ForStatementSyntax {
+                  statement: IStatementSyntax): ForStatementSyntax {
         if (this._forKeyword === forKeyword && this._openParenToken === openParenToken && this._variableDeclaration === variableDeclaration && this._initializer === initializer && this._firstSemicolonToken === firstSemicolonToken && this._condition === condition && this._secondSemicolonToken === secondSemicolonToken && this._incrementor === incrementor && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -11865,7 +11935,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, closeParenToken, this._statement);
     }
 
-    public withStatement(statement: StatementSyntax): ForStatementSyntax {
+    public withStatement(statement: IStatementSyntax): ForStatementSyntax {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, statement);
     }
 
@@ -12046,7 +12116,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         if (!Syntax.tokenStructuralEquals(this._secondSemicolonToken, other._secondSemicolonToken)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._incrementor, other._incrementor)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         return true;
     }
 }
@@ -12059,7 +12129,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
     private _inKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -12068,7 +12138,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
                 inKeyword: ISyntaxToken,
                 expression: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
-                statement: StatementSyntax) {
+                statement: IStatementSyntax) {
         super();
 
         if (expression === null) { throw Errors.argumentNull('expression'); }
@@ -12093,12 +12163,12 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
                          inKeyword: ISyntaxToken,
                          expression: IExpressionSyntax,
                          closeParenToken: ISyntaxToken,
-                         statement: StatementSyntax): ForInStatementSyntax {
+                         statement: IStatementSyntax): ForInStatementSyntax {
         return new ForInStatementSyntax(forKeyword, openParenToken, null, null, inKeyword, expression, closeParenToken, statement);
     }
 
     public static create1(expression: IExpressionSyntax,
-                          statement: StatementSyntax): ForInStatementSyntax {
+                          statement: IStatementSyntax): ForInStatementSyntax {
         return new ForInStatementSyntax(
             Syntax.token(SyntaxKind.ForKeyword),
             Syntax.token(SyntaxKind.OpenParenToken),
@@ -12183,7 +12253,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return this._closeParenToken;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
@@ -12194,7 +12264,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
                   inKeyword: ISyntaxToken,
                   expression: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax): ForInStatementSyntax {
+                  statement: IStatementSyntax): ForInStatementSyntax {
         if (this._forKeyword === forKeyword && this._openParenToken === openParenToken && this._variableDeclaration === variableDeclaration && this._left === left && this._inKeyword === inKeyword && this._expression === expression && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -12238,7 +12308,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, closeParenToken, this._statement);
     }
 
-    public withStatement(statement: StatementSyntax): ForInStatementSyntax {
+    public withStatement(statement: IStatementSyntax): ForInStatementSyntax {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, statement);
     }
 
@@ -12385,7 +12455,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         if (!Syntax.tokenStructuralEquals(this._inKeyword, other._inKeyword)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         return true;
     }
 }
@@ -12395,13 +12465,13 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     private _openParenToken: ISyntaxToken;
     private _condition: IExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
 
     constructor(whileKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 condition: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
-                statement: StatementSyntax) {
+                statement: IStatementSyntax) {
         super();
 
         if (condition === null) { throw Errors.argumentNull('condition'); }
@@ -12418,7 +12488,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     }
 
     public static create1(condition: IExpressionSyntax,
-                          statement: StatementSyntax): WhileStatementSyntax {
+                          statement: IStatementSyntax): WhileStatementSyntax {
         return new WhileStatementSyntax(
             Syntax.token(SyntaxKind.WhileKeyword),
             Syntax.token(SyntaxKind.OpenParenToken),
@@ -12479,7 +12549,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return this._closeParenToken;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
@@ -12487,7 +12557,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
                   openParenToken: ISyntaxToken,
                   condition: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax): WhileStatementSyntax {
+                  statement: IStatementSyntax): WhileStatementSyntax {
         if (this._whileKeyword === whileKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -12519,7 +12589,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return this.update(this._whileKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
     }
 
-    public withStatement(statement: StatementSyntax): WhileStatementSyntax {
+    public withStatement(statement: IStatementSyntax): WhileStatementSyntax {
         return this.update(this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
     }
 
@@ -12618,23 +12688,23 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         return true;
     }
 }
 
-class WithStatementSyntax extends StatementSyntax {
+class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _withKeyword: ISyntaxToken;
     private _openParenToken: ISyntaxToken;
     private _condition: IExpressionSyntax;
     private _closeParenToken: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
 
     constructor(withKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 condition: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
-                statement: StatementSyntax) {
+                statement: IStatementSyntax) {
         super();
 
         if (condition === null) { throw Errors.argumentNull('condition'); }
@@ -12651,7 +12721,7 @@ class WithStatementSyntax extends StatementSyntax {
     }
 
     public static create1(condition: IExpressionSyntax,
-                          statement: StatementSyntax): WithStatementSyntax {
+                          statement: IStatementSyntax): WithStatementSyntax {
         return new WithStatementSyntax(
             Syntax.token(SyntaxKind.WithKeyword),
             Syntax.token(SyntaxKind.OpenParenToken),
@@ -12666,6 +12736,14 @@ class WithStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.WithStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -12712,7 +12790,7 @@ class WithStatementSyntax extends StatementSyntax {
         return this._closeParenToken;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
@@ -12720,7 +12798,7 @@ class WithStatementSyntax extends StatementSyntax {
                   openParenToken: ISyntaxToken,
                   condition: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
-                  statement: StatementSyntax): WithStatementSyntax {
+                  statement: IStatementSyntax): WithStatementSyntax {
         if (this._withKeyword === withKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement) {
             return this;
         }
@@ -12752,7 +12830,7 @@ class WithStatementSyntax extends StatementSyntax {
         return this.update(this._withKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
     }
 
-    public withStatement(statement: StatementSyntax): WithStatementSyntax {
+    public withStatement(statement: IStatementSyntax): WithStatementSyntax {
         return this.update(this._withKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
     }
 
@@ -12851,12 +12929,12 @@ class WithStatementSyntax extends StatementSyntax {
         if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         return true;
     }
 }
 
-class EnumDeclarationSyntax extends ModuleElementSyntax {
+class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     private _exportKeyword: ISyntaxToken;
     private _enumKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
@@ -12912,6 +12990,10 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.EnumDeclaration;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -13131,7 +13213,7 @@ class EnumDeclarationSyntax extends ModuleElementSyntax {
     }
 }
 
-class CastExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _lessThanToken: ISyntaxToken;
     private _type: ITypeSyntax;
     private _greaterThanToken: ISyntaxToken;
@@ -13172,6 +13254,10 @@ class CastExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionS
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -13337,7 +13423,7 @@ class CastExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionS
     }
 }
 
-class ObjectLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _openBraceToken: ISyntaxToken;
     private _propertyAssignments: ISeparatedSyntaxList;
     private _closeBraceToken: ISyntaxToken;
@@ -13377,6 +13463,10 @@ class ObjectLiteralExpressionSyntax extends ExpressionSyntax implements IUnaryEx
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -14248,7 +14338,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     }
 }
 
-class FunctionExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _functionKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
     private _callSignature: CallSignatureSyntax;
@@ -14296,6 +14386,10 @@ class FunctionExpressionSyntax extends ExpressionSyntax implements IUnaryExpress
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -14467,7 +14561,7 @@ class FunctionExpressionSyntax extends ExpressionSyntax implements IUnaryExpress
     }
 }
 
-class EmptyStatementSyntax extends StatementSyntax {
+class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _semicolonToken: ISyntaxToken;
 
     constructor(semicolonToken: ISyntaxToken) {
@@ -14489,6 +14583,14 @@ class EmptyStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.EmptyStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -14579,7 +14681,7 @@ class EmptyStatementSyntax extends StatementSyntax {
     }
 }
 
-class TryStatementSyntax extends StatementSyntax {
+class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _tryKeyword: ISyntaxToken;
     private _block: BlockSyntax;
     private _catchClause: CatchClauseSyntax;
@@ -14619,6 +14721,14 @@ class TryStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.TryStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -15168,14 +15278,14 @@ class FinallyClauseSyntax extends SyntaxNode {
     }
 }
 
-class LabeledStatement extends StatementSyntax {
+class LabeledStatement extends SyntaxNode implements IStatementSyntax {
     private _identifier: ISyntaxToken;
     private _colonToken: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
 
     constructor(identifier: ISyntaxToken,
                 colonToken: ISyntaxToken,
-                statement: StatementSyntax) {
+                statement: IStatementSyntax) {
         super();
 
         if (statement === null) { throw Errors.argumentNull('statement'); }
@@ -15188,7 +15298,7 @@ class LabeledStatement extends StatementSyntax {
     }
 
     public static create1(identifier: ISyntaxToken,
-                          statement: StatementSyntax): LabeledStatement {
+                          statement: IStatementSyntax): LabeledStatement {
         return new LabeledStatement(
             identifier,
             Syntax.token(SyntaxKind.ColonToken),
@@ -15201,6 +15311,14 @@ class LabeledStatement extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.LabeledStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {
@@ -15233,13 +15351,13 @@ class LabeledStatement extends StatementSyntax {
         return this._colonToken;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
     public update(identifier: ISyntaxToken,
                   colonToken: ISyntaxToken,
-                  statement: StatementSyntax): LabeledStatement {
+                  statement: IStatementSyntax): LabeledStatement {
         if (this._identifier === identifier && this._colonToken === colonToken && this._statement === statement) {
             return this;
         }
@@ -15263,7 +15381,7 @@ class LabeledStatement extends StatementSyntax {
         return this.update(this._identifier, colonToken, this._statement);
     }
 
-    public withStatement(statement: StatementSyntax): LabeledStatement {
+    public withStatement(statement: IStatementSyntax): LabeledStatement {
         return this.update(this._identifier, this._colonToken, statement);
     }
 
@@ -15336,14 +15454,14 @@ class LabeledStatement extends StatementSyntax {
         var other = <LabeledStatement>node;
         if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         return true;
     }
 }
 
 class DoStatementSyntax extends IterationStatementSyntax {
     private _doKeyword: ISyntaxToken;
-    private _statement: StatementSyntax;
+    private _statement: IStatementSyntax;
     private _whileKeyword: ISyntaxToken;
     private _openParenToken: ISyntaxToken;
     private _condition: IExpressionSyntax;
@@ -15351,7 +15469,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
     private _semicolonToken: ISyntaxToken;
 
     constructor(doKeyword: ISyntaxToken,
-                statement: StatementSyntax,
+                statement: IStatementSyntax,
                 whileKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 condition: IExpressionSyntax,
@@ -15376,7 +15494,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         this._semicolonToken = semicolonToken;
     }
 
-    public static create1(statement: StatementSyntax,
+    public static create1(statement: IStatementSyntax,
                           condition: IExpressionSyntax): DoStatementSyntax {
         return new DoStatementSyntax(
             Syntax.token(SyntaxKind.DoKeyword),
@@ -15434,7 +15552,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return this._doKeyword;
     }
 
-    public statement(): StatementSyntax {
+    public statement(): IStatementSyntax {
         return this._statement;
     }
 
@@ -15459,7 +15577,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
     }
 
     public update(doKeyword: ISyntaxToken,
-                  statement: StatementSyntax,
+                  statement: IStatementSyntax,
                   whileKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   condition: IExpressionSyntax,
@@ -15484,7 +15602,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return this.update(doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
     }
 
-    public withStatement(statement: StatementSyntax): DoStatementSyntax {
+    public withStatement(statement: IStatementSyntax): DoStatementSyntax {
         return this.update(this._doKeyword, statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
     }
 
@@ -15622,7 +15740,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         if (this.kind() !== node.kind()) { return false; }
         var other = <DoStatementSyntax>node;
         if (!Syntax.tokenStructuralEquals(this._doKeyword, other._doKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._statement, other._statement)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._whileKeyword, other._whileKeyword)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
@@ -15632,7 +15750,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
     }
 }
 
-class TypeOfExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _typeOfKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
 
@@ -15662,6 +15780,10 @@ class TypeOfExpressionSyntax extends ExpressionSyntax implements IUnaryExpressio
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -15779,7 +15901,7 @@ class TypeOfExpressionSyntax extends ExpressionSyntax implements IUnaryExpressio
     }
 }
 
-class DeleteExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _deleteKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
 
@@ -15809,6 +15931,10 @@ class DeleteExpressionSyntax extends ExpressionSyntax implements IUnaryExpressio
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -15926,7 +16052,7 @@ class DeleteExpressionSyntax extends ExpressionSyntax implements IUnaryExpressio
     }
 }
 
-class VoidExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionSyntax {
+class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _voidKeyword: ISyntaxToken;
     private _expression: IExpressionSyntax;
 
@@ -15956,6 +16082,10 @@ class VoidExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionS
     }
 
     private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
         return true;
     }
 
@@ -16073,7 +16203,7 @@ class VoidExpressionSyntax extends ExpressionSyntax implements IUnaryExpressionS
     }
 }
 
-class DebuggerStatementSyntax extends StatementSyntax {
+class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private _debuggerKeyword: ISyntaxToken;
     private _semicolonToken: ISyntaxToken;
 
@@ -16100,6 +16230,14 @@ class DebuggerStatementSyntax extends StatementSyntax {
 
     public kind(): SyntaxKind {
         return SyntaxKind.DebuggerStatement;
+    }
+
+    private isStatement(): bool {
+        return true;
+    }
+
+    private isModuleElement(): bool {
+        return true;
     }
 
     public firstToken(): ISyntaxToken {

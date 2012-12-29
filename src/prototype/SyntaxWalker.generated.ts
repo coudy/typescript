@@ -316,7 +316,7 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitElseClause(node: ElseClauseSyntax): void {
         this.visitToken(node.elseKeyword());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
     }
 
     public visitIfStatement(node: IfStatementSyntax): void {
@@ -324,7 +324,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.openParenToken());
         this.visitNodeOrToken(node.condition());
         this.visitToken(node.closeParenToken());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
         this.visitOptionalNode(node.elseClause());
     }
 
@@ -437,7 +437,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.secondSemicolonToken());
         this.visitOptionalNodeOrToken(node.incrementor());
         this.visitToken(node.closeParenToken());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
     }
 
     public visitForInStatement(node: ForInStatementSyntax): void {
@@ -448,7 +448,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.inKeyword());
         this.visitNodeOrToken(node.expression());
         this.visitToken(node.closeParenToken());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
     }
 
     public visitWhileStatement(node: WhileStatementSyntax): void {
@@ -456,7 +456,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.openParenToken());
         this.visitNodeOrToken(node.condition());
         this.visitToken(node.closeParenToken());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
     }
 
     public visitWithStatement(node: WithStatementSyntax): void {
@@ -464,7 +464,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.openParenToken());
         this.visitNodeOrToken(node.condition());
         this.visitToken(node.closeParenToken());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
     }
 
     public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
@@ -546,12 +546,12 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitLabeledStatement(node: LabeledStatement): void {
         this.visitToken(node.identifier());
         this.visitToken(node.colonToken());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
     }
 
     public visitDoStatement(node: DoStatementSyntax): void {
         this.visitToken(node.doKeyword());
-        this.visitNode(node.statement());
+        this.visitNodeOrToken(node.statement());
         this.visitToken(node.whileKeyword());
         this.visitToken(node.openParenToken());
         this.visitNodeOrToken(node.condition());

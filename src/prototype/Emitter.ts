@@ -55,12 +55,12 @@ module Emitter {
             return Syntax.triviaList(triviaArray);
         }
 
-        private indentationTriviaForStartOfNode(node: SyntaxNode): ISyntaxTriviaList {
+        private indentationTriviaForStartOfNode(node: ISyntaxNodeOrToken): ISyntaxTriviaList {
             var column = this.columnForStartOfToken(node.firstToken());
             return this.indentationTrivia(column);
         }
 
-        private changeIndentation(node: SyntaxNode, changeFirstToken: bool, indentAmount: number): SyntaxNode {
+        private changeIndentation(node: ISyntaxNode, changeFirstToken: bool, indentAmount: number): ISyntaxNode {
             if (indentAmount === 0) {
                 return node;
             }
@@ -86,8 +86,8 @@ module Emitter {
                 this.convertModuleElements(node.moduleElements())));
         }
 
-        private convertModuleElements(list: ISyntaxList): ModuleElementSyntax[] {
-            var moduleElements: ModuleElementSyntax[] = [];
+        private convertModuleElements(list: ISyntaxList): IModuleElementSyntax[] {
+            var moduleElements: IModuleElementSyntax[] = [];
 
             for (var i = 0, n = list.count(); i < n; i++) {
                 var moduleElement = list.itemAt(i);
@@ -98,7 +98,7 @@ module Emitter {
                         moduleElements.push.apply(moduleElements, converted);
                     }
                     else {
-                        moduleElements.push(<ModuleElementSyntax>converted);
+                        moduleElements.push(<IModuleElementSyntax>converted);
                     }
                 }
             }
@@ -139,7 +139,7 @@ module Emitter {
         }
 
         private exportModuleElement(moduleIdentifier: ISyntaxToken,
-                                    moduleElement: ModuleElementSyntax,
+                                    moduleElement: IModuleElementSyntax,
                                     elementIdentifier: ISyntaxToken): ExpressionStatementSyntax {
             elementIdentifier = this.withNoTrivia(elementIdentifier);
 
@@ -157,8 +157,8 @@ module Emitter {
         }
 
         private handleExportedModuleElement(parentModule: ISyntaxToken,
-            moduleElement: ModuleElementSyntax,
-            elements: ModuleElementSyntax[]): void {
+            moduleElement: IModuleElementSyntax,
+            elements: IModuleElementSyntax[]): void {
             if (moduleElement.kind() === SyntaxKind.VariableStatement) {
                 var variableStatement = <VariableStatementSyntax>moduleElement;
                 if (variableStatement.exportKeyword() !== null) {
@@ -191,7 +191,7 @@ module Emitter {
             }
         }
 
-        private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleElementSyntax[] {
+        private visitModuleDeclaration(node: ModuleDeclarationSyntax): IModuleElementSyntax[] {
             // Recurse downwards and get the rewritten children.
             var moduleElements = this.convertModuleElements(node.moduleElements());
 
@@ -199,7 +199,7 @@ module Emitter {
             var parentModule = this.rightmostName(node.moduleName());
             for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
                 this.handleExportedModuleElement(
-                    parentModule, <ModuleElementSyntax>node.moduleElements().itemAt(i), moduleElements);
+                    parentModule, <IModuleElementSyntax>node.moduleElements().itemAt(i), moduleElements);
             }
 
             // Break up the dotted name into pieces.
@@ -216,7 +216,7 @@ module Emitter {
                     moduleElements.push(this.exportModuleElement(
                         names[nameIndex - 1], node, names[nameIndex]));
 
-                    moduleElements = <ModuleElementSyntax[]>ArrayUtilities.select(moduleElements,
+                    moduleElements = <IModuleElementSyntax[]>ArrayUtilities.select(moduleElements,
                         e => this.changeIndentation(e, /*indentFirstToken:*/ true, this.options.indentSpaces));
                 }
             }
@@ -237,8 +237,8 @@ module Emitter {
 
         private convertModuleDeclaration(moduleDeclaration: ModuleDeclarationSyntax,
                                          moduleName: ISyntaxToken,
-                                         moduleElements: ModuleElementSyntax[],
-                                         outermost: bool): ModuleElementSyntax[] {
+                                         moduleElements: IModuleElementSyntax[],
+                                         outermost: bool): IModuleElementSyntax[] {
             moduleName = moduleName.withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList);
             var moduleIdentifier = moduleName;
 
@@ -319,7 +319,7 @@ module Emitter {
             // first, attach the expression to the return statement
             var returnStatement = new ReturnStatementSyntax(
                 Syntax.token(SyntaxKind.ReturnKeyword, { trailingTrivia: arrowToken.trailingTrivia().toArray() }),
-                <ExpressionSyntax>rewrittenBody,
+                <IExpressionSyntax>rewrittenBody,
                 Syntax.token(SyntaxKind.SemicolonToken)).withTrailingTrivia(this.newLine);
 
             // We want to adjust the indentation of the expression so that is aligns as it 
@@ -477,7 +477,7 @@ module Emitter {
                     parametersWithDefaults, p => this.generateDefaultValueAssignmentStatement(p));
 
                 var statementColumn = this.columnForStartOfToken(node.firstToken()) + this.options.indentSpaces;
-                var statements = <StatementSyntax[]>ArrayUtilities.select(defaultValueAssignmentStatements,
+                var statements = <IStatementSyntax[]>ArrayUtilities.select(defaultValueAssignmentStatements,
                     s => this.changeIndentation(s, /*indentFirstToken:*/ true, statementColumn));
 
                 statements.push.apply(statements, rewritten.block().statements().toArray());
@@ -544,7 +544,7 @@ module Emitter {
         private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
             var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
 
-            var statements: StatementSyntax[] = [];
+            var statements: IStatementSyntax[] = [];
             if (classDeclaration.extendsClause() !== null) {
                 statements.push(ExpressionStatementSyntax.create1(
                         new InvocationExpressionSyntax(
@@ -599,7 +599,7 @@ module Emitter {
             var block = constructorDeclaration.block();
             var allStatements = block.statements().toArray();
 
-            var normalStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
+            var normalStatements: IStatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
                 s => !Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
 
             var instanceAssignments = this.generatePropertyAssignments(classDeclaration, /*static:*/ false);
@@ -614,11 +614,11 @@ module Emitter {
                 p => this.generatePropertyAssignmentStatement(p));
 
             for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
-                normalStatements.unshift(<StatementSyntax>this.changeIndentation(
+                normalStatements.unshift(<IStatementSyntax>this.changeIndentation(
                     parameterPropertyAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn));
             }
 
-            var superStatements: StatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
+            var superStatements: IStatementSyntax[] = ArrayUtilities.select(ArrayUtilities.where(allStatements,
                 s => Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
 
             normalStatements.unshift.apply(normalStatements, superStatements);
@@ -628,7 +628,7 @@ module Emitter {
                 p => this.generateDefaultValueAssignmentStatement(p));
 
             for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
-                normalStatements.unshift(<StatementSyntax>this.changeIndentation(
+                normalStatements.unshift(<IStatementSyntax>this.changeIndentation(
                     defaultValueAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn));
             }
 
@@ -662,7 +662,7 @@ module Emitter {
 
             block = block.withTrailingTrivia(Syntax.emptyTriviaList);
 
-            var defaultValueAssignments = <StatementSyntax[]>ArrayUtilities.select(
+            var defaultValueAssignments = <IStatementSyntax[]>ArrayUtilities.select(
                 EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature()),
                 p => this.generateDefaultValueAssignmentStatement(p));
 
@@ -710,7 +710,7 @@ module Emitter {
 
         private convertMemberAccessorDeclaration(classDeclaration: ClassDeclarationSyntax,
                                                  memberAccessor: MemberAccessorDeclarationSyntax,
-                                                 classElements: ClassElementSyntax[]): StatementSyntax {
+                                                 classElements: IClassElementSyntax[]): IStatementSyntax {
             var name = <string>memberAccessor.identifier().value();
 
             // Find all the accessors with that name.
@@ -775,14 +775,14 @@ module Emitter {
                         .withLeadingTrivia(memberAccessor.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
-        private convertClassElements(classDeclaration: ClassDeclarationSyntax): StatementSyntax[] {
-            var result: StatementSyntax[] = [];
+        private convertClassElements(classDeclaration: ClassDeclarationSyntax): IStatementSyntax[] {
+            var result: IStatementSyntax[] = [];
 
-            var classElements = <ClassElementSyntax[]>classDeclaration.classElements().toArray();
+            var classElements = <IClassElementSyntax[]>classDeclaration.classElements().toArray();
             while (classElements.length > 0) {
                 var classElement = classElements.shift();
 
-                var converted: StatementSyntax = null;
+                var converted: IStatementSyntax = null;
                 if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
                     var converted = this.convertMemberFunctionDeclaration(classDeclaration, <MemberFunctionDeclarationSyntax>classElement);
                 }
@@ -805,7 +805,7 @@ module Emitter {
         private visitClassDeclaration(node: ClassDeclarationSyntax): VariableStatementSyntax {
             var identifier = this.withNoTrivia(node.identifier());
 
-            var statements: StatementSyntax[] = [];
+            var statements: IStatementSyntax[] = [];
             var statementIndentation = this.indentationTrivia( this.options.indentSpaces + this.columnForStartOfToken(node.firstToken()));
 
             if (node.extendsClause() !== null) {
@@ -954,7 +954,7 @@ module Emitter {
 
             var enumColumn = this.columnForStartOfToken(node.firstToken());
 
-            var statements: StatementSyntax[] = [];
+            var statements: IStatementSyntax[] = [];
 
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
@@ -1022,7 +1022,7 @@ module Emitter {
                 .withBlock(block);
         }
 
-        private visitEnumDeclaration(node: EnumDeclarationSyntax): StatementSyntax[] {
+        private visitEnumDeclaration(node: EnumDeclarationSyntax): IStatementSyntax[] {
             var identifier = this.withNoTrivia(node.identifier());
 
             // Copy existing leading trivia of the enum declaration to this node.

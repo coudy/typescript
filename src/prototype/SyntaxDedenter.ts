@@ -180,7 +180,7 @@ class SyntaxDedenter extends SyntaxRewriter {
         return Syntax.multiLineComment(result);
     }
 
-    public static dedentNode(node: SyntaxNode, dedentFirstToken: bool, dedentAmount: number, minimumIndent: number, options: FormattingOptions): SyntaxNode {
+    public static dedentNode(node: ISyntaxNode, dedentFirstToken: bool, dedentAmount: number, minimumIndent: number, options: FormattingOptions): ISyntaxNode {
         var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent, options);
         var result = node.accept(dedenter);
 
