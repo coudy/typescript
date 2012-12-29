@@ -519,13 +519,13 @@ class Scanner implements ISlidingWindowSource {
                 // Saw an ascii character that wasn't a backslash and wasn't an identifier 
                 // character.  This identifier is done.
                 var endIndex = this.slidingWindow.absoluteIndex();
-                this.width = endIndex - startIndex; // = this.substring(startIndex, endIndex, /*intern:*/ true);
+                this.width = endIndex - startIndex;
                 this.kind = SyntaxKind.IdentifierNameToken;
 
                 // Also check if it a keyword if it started with a lowercase letter.
                 if (Scanner.isKeywordStartCharacter[firstCharacter]) {
                     var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
-                    this.kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex); // SyntaxFacts.getTokenKind(this.tokenInfo.Text);
+                    this.kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
                 }
 
                 this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);

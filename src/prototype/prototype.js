@@ -2471,16 +2471,16 @@ var ArrayUtilities = (function () {
 var SlidingWindow = (function () {
     function SlidingWindow(source, defaultWindowSize, defaultValue, sourceLength) {
         if (typeof sourceLength === "undefined") { sourceLength = -1; }
+        this.source = source;
+        this.defaultValue = defaultValue;
+        this.sourceLength = sourceLength;
         this.window = [];
         this.windowCount = 0;
         this.windowAbsoluteStartIndex = 0;
         this.currentRelativeItemIndex = 0;
         this._pinCount = 0;
         this.firstPinnedAbsoluteIndex = -1;
-        this.source = source;
-        this.defaultValue = defaultValue;
         this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
-        this.sourceLength = sourceLength;
     }
     SlidingWindow.prototype.windowAbsoluteEndIndex = function () {
         return this.windowAbsoluteStartIndex + this.windowCount;
