@@ -7673,8 +7673,6 @@ var Unicode = (function () {
 })();
 var Scanner = (function () {
     function Scanner(text, languageVersion, stringTable) {
-        this.kind = 0 /* None */ ;
-        this.width = 0;
         Scanner.initializeStaticData();
         this.slidingWindow = new SlidingWindow(this, 2048, 0, text.length());
         this.text = text;
@@ -7729,9 +7727,11 @@ var Scanner = (function () {
     Scanner.prototype.scan = function (diagnostics, allowRegularExpression) {
         var fullStart = this.slidingWindow.absoluteIndex();
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
-        this.scanSyntaxToken(diagnostics, allowRegularExpression);
+        var start = this.slidingWindow.absoluteIndex();
+        var kind = this.scanSyntaxToken(diagnostics, allowRegularExpression);
+        var end = this.slidingWindow.absoluteIndex();
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        return Syntax.tokenFromText(this.text, fullStart, this.kind, leadingTriviaInfo, this.width, trailingTriviaInfo);
+        return Syntax.tokenFromText(this.text, fullStart, kind, leadingTriviaInfo, end - start, trailingTriviaInfo);
     };
     Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
         Debug.assert(length > 0);
@@ -7941,11 +7941,8 @@ var Scanner = (function () {
         }
     };
     Scanner.prototype.scanSyntaxToken = function (diagnostics, allowRegularExpression) {
-        this.kind = 0 /* None */ ;
-        this.width = 0;
         if(this.slidingWindow.isAtEndOfSource()) {
-            this.kind = 118 /* EndOfFileToken */ ;
-            return;
+            return 118 /* EndOfFileToken */ ;
         }
         var character = this.currentCharCode();
         switch(character) {
@@ -8052,19 +8049,18 @@ var Scanner = (function () {
             }
         }
         if(Scanner.isNumericLiteralStart[character]) {
-            this.scanNumericLiteral();
-            return;
+            return this.scanNumericLiteral();
         }
         if(Scanner.isIdentifierStartCharacter[character]) {
-            if(this.tryFastScanIdentifierOrKeyword(character)) {
-                return;
+            var result = this.tryFastScanIdentifierOrKeyword(character);
+            if(result !== 0 /* None */ ) {
+                return result;
             }
         }
         if(this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
-            this.slowScanIdentifier(diagnostics);
-            return;
+            return this.slowScanIdentifier(diagnostics);
         }
-        this.scanDefaultCharacter(character, diagnostics);
+        return this.scanDefaultCharacter(character, diagnostics);
     };
     Scanner.prototype.isIdentifierStart = function (interpretedChar) {
         if(Scanner.isIdentifierStartCharacter[interpretedChar]) {
@@ -8088,18 +8084,18 @@ var Scanner = (function () {
                 if(character === 92 /* backslash */  || character > 127 /* maxAsciiCharacter */ ) {
                     this.slidingWindow.rewindToPinnedIndex(startIndex);
                     this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                    return false;
+                    return 0 /* None */ ;
                 } else {
                     var endIndex = this.slidingWindow.absoluteIndex();
-                    this.width = endIndex - startIndex;
+                    var kind;
                     if(Scanner.isKeywordStartCharacter[firstCharacter]) {
                         var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
-                        this.kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
+                        kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
                     } else {
-                        this.kind = 9 /* IdentifierNameToken */ ;
+                        kind = 9 /* IdentifierNameToken */ ;
                     }
                     this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                    return true;
+                    return kind;
                 }
             }
         }
@@ -8109,19 +8105,16 @@ var Scanner = (function () {
         do {
             this.scanCharOrUnicodeEscape(diagnostics);
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
-        var endIndex = this.slidingWindow.absoluteIndex();
-        this.width = endIndex - startIndex;
-        this.kind = 9 /* IdentifierNameToken */ ;
+        return 9 /* IdentifierNameToken */ ;
     };
     Scanner.prototype.scanNumericLiteral = function () {
         if(this.isHexNumericLiteral()) {
-            this.scanHexNumericLiteral();
+            return this.scanHexNumericLiteral();
         } else {
-            this.scanDecimalNumericLiteral();
+            return this.scanDecimalNumericLiteral();
         }
     };
     Scanner.prototype.scanDecimalNumericLiteral = function () {
-        var startIndex = this.slidingWindow.absoluteIndex();
         while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.slidingWindow.moveToNextItem();
         }
@@ -8144,21 +8137,16 @@ var Scanner = (function () {
         while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.slidingWindow.moveToNextItem();
         }
-        var endIndex = this.slidingWindow.absoluteIndex();
-        this.width = endIndex - startIndex;
-        this.kind = 11 /* NumericLiteral */ ;
+        return 11 /* NumericLiteral */ ;
     };
     Scanner.prototype.scanHexNumericLiteral = function () {
         Debug.assert(this.isHexNumericLiteral());
-        var startIndex = this.slidingWindow.absoluteIndex();
         this.slidingWindow.moveToNextItem();
         this.slidingWindow.moveToNextItem();
         while(CharacterInfo.isHexDigit(this.currentCharCode())) {
             this.slidingWindow.moveToNextItem();
         }
-        var endIndex = this.slidingWindow.absoluteIndex();
-        this.width = endIndex - startIndex;
-        this.kind = 11 /* NumericLiteral */ ;
+        return 11 /* NumericLiteral */ ;
     };
     Scanner.prototype.isHexNumericLiteral = function () {
         if(this.currentCharCode() === 48 /* _0 */ ) {
@@ -8172,19 +8160,19 @@ var Scanner = (function () {
     };
     Scanner.prototype.advanceAndSetTokenKind = function (kind) {
         this.slidingWindow.moveToNextItem();
-        this.kind = kind;
+        return kind;
     };
     Scanner.prototype.scanGreaterThanToken = function () {
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 80 /* GreaterThanEqualsToken */ ;
+            return 80 /* GreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
-                this.scanGreaterThanGreaterThanToken();
+                return this.scanGreaterThanGreaterThanToken();
             } else {
-                this.kind = 78 /* GreaterThanToken */ ;
+                return 78 /* GreaterThanToken */ ;
             }
         }
     };
@@ -8193,12 +8181,12 @@ var Scanner = (function () {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 110 /* GreaterThanGreaterThanEqualsToken */ ;
+            return 110 /* GreaterThanGreaterThanEqualsToken */ ;
         } else {
             if(character === 62 /* greaterThan */ ) {
-                this.scanGreaterThanGreaterThanGreaterThanToken();
+                return this.scanGreaterThanGreaterThanGreaterThanToken();
             } else {
-                this.kind = 93 /* GreaterThanGreaterThanToken */ ;
+                return 93 /* GreaterThanGreaterThanToken */ ;
             }
         }
     };
@@ -8207,27 +8195,27 @@ var Scanner = (function () {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 111 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
+            return 111 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
         } else {
-            this.kind = 94 /* GreaterThanGreaterThanGreaterThanToken */ ;
+            return 94 /* GreaterThanGreaterThanGreaterThanToken */ ;
         }
     };
     Scanner.prototype.scanLessThanToken = function () {
         this.slidingWindow.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 79 /* LessThanEqualsToken */ ;
+            return 79 /* LessThanEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 60 /* lessThan */ ) {
                 this.slidingWindow.moveToNextItem();
                 if(this.currentCharCode() === 61 /* equals */ ) {
                     this.slidingWindow.moveToNextItem();
-                    this.kind = 109 /* LessThanLessThanEqualsToken */ ;
+                    return 109 /* LessThanLessThanEqualsToken */ ;
                 } else {
-                    this.kind = 92 /* LessThanLessThanToken */ ;
+                    return 92 /* LessThanLessThanToken */ ;
                 }
             } else {
-                this.kind = 77 /* LessThanToken */ ;
+                return 77 /* LessThanToken */ ;
             }
         }
     };
@@ -8235,13 +8223,13 @@ var Scanner = (function () {
         this.slidingWindow.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 113 /* BarEqualsToken */ ;
+            return 113 /* BarEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 124 /* bar */ ) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = 101 /* BarBarToken */ ;
+                return 101 /* BarBarToken */ ;
             } else {
-                this.kind = 96 /* BarToken */ ;
+                return 96 /* BarToken */ ;
             }
         }
     };
@@ -8249,9 +8237,9 @@ var Scanner = (function () {
         this.slidingWindow.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 114 /* CaretEqualsToken */ ;
+            return 114 /* CaretEqualsToken */ ;
         } else {
-            this.kind = 97 /* CaretToken */ ;
+            return 97 /* CaretToken */ ;
         }
     };
     Scanner.prototype.scanAmpersandToken = function () {
@@ -8259,13 +8247,13 @@ var Scanner = (function () {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 112 /* AmpersandEqualsToken */ ;
+            return 112 /* AmpersandEqualsToken */ ;
         } else {
             if(this.currentCharCode() === 38 /* ampersand */ ) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = 100 /* AmpersandAmpersandToken */ ;
+                return 100 /* AmpersandAmpersandToken */ ;
             } else {
-                this.kind = 95 /* AmpersandToken */ ;
+                return 95 /* AmpersandToken */ ;
             }
         }
     };
@@ -8273,9 +8261,9 @@ var Scanner = (function () {
         this.slidingWindow.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 108 /* PercentEqualsToken */ ;
+            return 108 /* PercentEqualsToken */ ;
         } else {
-            this.kind = 89 /* PercentToken */ ;
+            return 89 /* PercentToken */ ;
         }
     };
     Scanner.prototype.scanMinusToken = function () {
@@ -8283,13 +8271,13 @@ var Scanner = (function () {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 106 /* MinusEqualsToken */ ;
+            return 106 /* MinusEqualsToken */ ;
         } else {
             if(character === 45 /* minus */ ) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = 91 /* MinusMinusToken */ ;
+                return 91 /* MinusMinusToken */ ;
             } else {
-                this.kind = 87 /* MinusToken */ ;
+                return 87 /* MinusToken */ ;
             }
         }
     };
@@ -8298,13 +8286,13 @@ var Scanner = (function () {
         var character = this.currentCharCode();
         if(character === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 105 /* PlusEqualsToken */ ;
+            return 105 /* PlusEqualsToken */ ;
         } else {
             if(character === 43 /* plus */ ) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = 90 /* PlusPlusToken */ ;
+                return 90 /* PlusPlusToken */ ;
             } else {
-                this.kind = 86 /* PlusToken */ ;
+                return 86 /* PlusToken */ ;
             }
         }
     };
@@ -8312,9 +8300,9 @@ var Scanner = (function () {
         this.slidingWindow.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 107 /* AsteriskEqualsToken */ ;
+            return 107 /* AsteriskEqualsToken */ ;
         } else {
-            this.kind = 88 /* AsteriskToken */ ;
+            return 88 /* AsteriskToken */ ;
         }
     };
     Scanner.prototype.scanEqualsToken = function () {
@@ -8324,16 +8312,16 @@ var Scanner = (function () {
             this.slidingWindow.moveToNextItem();
             if(this.currentCharCode() === 61 /* equals */ ) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = 84 /* EqualsEqualsEqualsToken */ ;
+                return 84 /* EqualsEqualsEqualsToken */ ;
             } else {
-                this.kind = 81 /* EqualsEqualsToken */ ;
+                return 81 /* EqualsEqualsToken */ ;
             }
         } else {
             if(character === 62 /* greaterThan */ ) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = 82 /* EqualsGreaterThanToken */ ;
+                return 82 /* EqualsGreaterThanToken */ ;
             } else {
-                this.kind = 104 /* EqualsToken */ ;
+                return 104 /* EqualsToken */ ;
             }
         }
     };
@@ -8346,28 +8334,30 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanDotToken = function () {
         if(this.isDotPrefixedNumericLiteral()) {
-            this.scanNumericLiteral();
-            return;
+            return this.scanNumericLiteral();
         }
         this.slidingWindow.moveToNextItem();
         if(this.currentCharCode() === 46 /* dot */  && this.slidingWindow.peekItemN(1) === 46 /* dot */ ) {
             this.slidingWindow.moveToNextItem();
             this.slidingWindow.moveToNextItem();
-            this.kind = 74 /* DotDotDotToken */ ;
+            return 74 /* DotDotDotToken */ ;
         } else {
-            this.kind = 73 /* DotToken */ ;
+            return 73 /* DotToken */ ;
         }
     };
     Scanner.prototype.scanSlashToken = function (allowRegularExpression) {
-        if(allowRegularExpression && this.tryScanRegularExpressionToken()) {
-            return;
+        if(allowRegularExpression) {
+            var result = this.tryScanRegularExpressionToken();
+            if(result !== 0 /* None */ ) {
+                return result;
+            }
         }
         this.slidingWindow.moveToNextItem();
         if(this.currentCharCode() === 61 /* equals */ ) {
             this.slidingWindow.moveToNextItem();
-            this.kind = 116 /* SlashEqualsToken */ ;
+            return 116 /* SlashEqualsToken */ ;
         } else {
-            this.kind = 115 /* SlashToken */ ;
+            return 115 /* SlashToken */ ;
         }
     };
     Scanner.prototype.tryScanRegularExpressionToken = function () {
@@ -8381,7 +8371,7 @@ var Scanner = (function () {
                 var ch = this.currentCharCode();
                 if(this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
                     this.slidingWindow.rewindToPinnedIndex(startIndex);
-                    return false;
+                    return 0 /* None */ ;
                 }
                 this.slidingWindow.moveToNextItem();
                 if(inEscape) {
@@ -8421,10 +8411,7 @@ var Scanner = (function () {
             while(Scanner.isIdentifierPartCharacter[this.currentCharCode()]) {
                 this.slidingWindow.moveToNextItem();
             }
-            var endIndex = this.slidingWindow.absoluteIndex();
-            this.kind = 10 /* RegularExpressionLiteral */ ;
-            this.width = endIndex - startIndex;
-            return true;
+            return 10 /* RegularExpressionLiteral */ ;
         }finally {
             this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
         }
@@ -8435,24 +8422,23 @@ var Scanner = (function () {
             this.slidingWindow.moveToNextItem();
             if(this.currentCharCode() === 61 /* equals */ ) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = 85 /* ExclamationEqualsEqualsToken */ ;
+                return 85 /* ExclamationEqualsEqualsToken */ ;
             } else {
-                this.kind = 83 /* ExclamationEqualsToken */ ;
+                return 83 /* ExclamationEqualsToken */ ;
             }
         } else {
-            this.kind = 98 /* ExclamationToken */ ;
+            return 98 /* ExclamationToken */ ;
         }
     };
     Scanner.prototype.scanDefaultCharacter = function (character, diagnostics) {
         var position = this.slidingWindow.absoluteIndex();
         this.slidingWindow.moveToNextItem();
-        this.width = 1;
-        this.kind = 117 /* ErrorToken */ ;
         var text = String.fromCharCode(character);
         var messageText = this.getErrorMessageText(text);
         diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
             messageText
         ]));
+        return 117 /* ErrorToken */ ;
     };
     Scanner.prototype.getErrorMessageText = function (text) {
         if(text === "\\") {
@@ -8494,7 +8480,6 @@ var Scanner = (function () {
     Scanner.prototype.scanStringLiteral = function (diagnostics) {
         var quoteCharacter = this.currentCharCode();
         Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
-        var startIndex = this.slidingWindow.absoluteIndex();
         this.slidingWindow.moveToNextItem();
         while(true) {
             var ch = this.currentCharCode();
@@ -8514,9 +8499,7 @@ var Scanner = (function () {
                 }
             }
         }
-        var endIndex = this.slidingWindow.absoluteIndex();
-        this.width = endIndex - startIndex;
-        this.kind = 12 /* StringLiteral */ ;
+        return 12 /* StringLiteral */ ;
     };
     Scanner.prototype.isUnicodeOrHexEscape = function (character) {
         return this.isUnicodeEscape(character) || this.isHexEscape(character);

@@ -86,9 +86,6 @@ class Scanner implements ISlidingWindowSource {
         return this.slidingWindow.currentItem(/*argument:*/ null);
     }
 
-    private kind: SyntaxKind = SyntaxKind.None;
-    private width: number = 0;
-
     // Set's the scanner to a specific position in the text.
     public setAbsoluteIndex(index: number): void {
         this.slidingWindow.setAbsoluteIndex(index);
@@ -99,11 +96,15 @@ class Scanner implements ISlidingWindowSource {
     public scan(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): ISyntaxToken {
         var fullStart = this.slidingWindow.absoluteIndex();
         var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, /*isTrailing: */ false);
-        this.scanSyntaxToken(diagnostics, allowRegularExpression);
+
+        var start = this.slidingWindow.absoluteIndex();
+        var kind = this.scanSyntaxToken(diagnostics, allowRegularExpression);
+        var end = this.slidingWindow.absoluteIndex();
+
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
         return Syntax.tokenFromText(
-            this.text, fullStart, this.kind, leadingTriviaInfo, 
-            this.width, trailingTriviaInfo);
+            this.text, fullStart, kind, leadingTriviaInfo, 
+            end - start, trailingTriviaInfo);
     }
 
     // Scans a subsection of 'text' as trivia.
@@ -368,13 +369,9 @@ class Scanner implements ISlidingWindowSource {
         }
     }
 
-    private scanSyntaxToken(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): void {
-        this.kind = SyntaxKind.None;
-        this.width = 0;
-
+    private scanSyntaxToken(diagnostics: SyntaxDiagnostic[], allowRegularExpression: bool): SyntaxKind {
         if (this.slidingWindow.isAtEndOfSource()) {
-            this.kind = SyntaxKind.EndOfFileToken;
-            return;
+            return SyntaxKind.EndOfFileToken;
         }
 
         var character = this.currentCharCode();
@@ -442,7 +439,7 @@ class Scanner implements ISlidingWindowSource {
                 return this.advanceAndSetTokenKind(SyntaxKind.OpenParenToken);
 
             case CharacterCodes.closeParen:
-                return  this.advanceAndSetTokenKind(SyntaxKind.CloseParenToken);
+                return this.advanceAndSetTokenKind(SyntaxKind.CloseParenToken);
 
             case CharacterCodes.openBrace:
                 return this.advanceAndSetTokenKind(SyntaxKind.OpenBraceToken);
@@ -461,25 +458,24 @@ class Scanner implements ISlidingWindowSource {
         }
 
         if (Scanner.isNumericLiteralStart[character]) {
-            this.scanNumericLiteral();
-            return;
+            return this.scanNumericLiteral();
         }
 
         // We run into so many identifiers (and keywords) when scanning, that we want the code to
         // be as fast as possible.  To that end, we have an extremely fast path for scanning that
         // handles the 99.9% case of no-unicode characters and no unicode escapes.
         if (Scanner.isIdentifierStartCharacter[character]) {
-            if (this.tryFastScanIdentifierOrKeyword(character)) {
-                return;
+            var result = this.tryFastScanIdentifierOrKeyword(character);
+            if (result !== SyntaxKind.None) {
+                return result;
             }
         }
 
         if (this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
-            this.slowScanIdentifier(diagnostics);
-            return;
+            return this.slowScanIdentifier(diagnostics);
         }
 
-        this.scanDefaultCharacter(character, diagnostics);
+        return this.scanDefaultCharacter(character, diagnostics);
     }
 
     private isIdentifierStart(interpretedChar: number): bool {
@@ -498,7 +494,7 @@ class Scanner implements ISlidingWindowSource {
         return interpretedChar > CharacterCodes.maxAsciiCharacter && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
     }
 
-    private tryFastScanIdentifierOrKeyword(firstCharacter: number): bool {
+    private tryFastScanIdentifierOrKeyword(firstCharacter: number): SyntaxKind {
         var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
 
         while (true) {
@@ -513,32 +509,32 @@ class Scanner implements ISlidingWindowSource {
                 // go and try the slow path instead.
                 this.slidingWindow.rewindToPinnedIndex(startIndex);
                 this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                return false;
+                return SyntaxKind.None;
             }
             else {
                 // Saw an ascii character that wasn't a backslash and wasn't an identifier 
                 // character.  This identifier is done.
                 var endIndex = this.slidingWindow.absoluteIndex();
-                this.width = endIndex - startIndex;
 
                 // Also check if it a keyword if it started with a lowercase letter.
+                var kind;
                 if (Scanner.isKeywordStartCharacter[firstCharacter]) {
                     var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
-                    this.kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
+                    kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
                 }
                 else {
-                    this.kind = SyntaxKind.IdentifierNameToken;
+                    kind = SyntaxKind.IdentifierNameToken;
                 }
 
                 this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                return true;
+                return kind;
             }
         }
     }
 
     // A slow path for scanning identifiers.  Called when we run into a unicode character or 
     // escape sequence while processing the fast path.
-    private slowScanIdentifier(diagnostics: SyntaxDiagnostic[]): void {
+    private slowScanIdentifier(diagnostics: SyntaxDiagnostic[]): SyntaxKind {
         var startIndex = this.slidingWindow.absoluteIndex();
 
         do {
@@ -546,23 +542,19 @@ class Scanner implements ISlidingWindowSource {
         }
         while (this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
 
-        var endIndex = this.slidingWindow.absoluteIndex();
-        this.width = endIndex - startIndex;
-        this.kind = SyntaxKind.IdentifierNameToken;
+        return SyntaxKind.IdentifierNameToken;
     }
 
-    private scanNumericLiteral(): void {
+    private scanNumericLiteral(): SyntaxKind {
         if (this.isHexNumericLiteral()) {
-            this.scanHexNumericLiteral();
+            return this.scanHexNumericLiteral();
         }
         else {
-            this.scanDecimalNumericLiteral();
+            return this.scanDecimalNumericLiteral();
         }
     }
 
-    private scanDecimalNumericLiteral(): void {
-        var startIndex = this.slidingWindow.absoluteIndex();
-
+    private scanDecimalNumericLiteral(): SyntaxKind {
         while (CharacterInfo.isDecimalDigit(this.currentCharCode())) {
             this.slidingWindow.moveToNextItem();
         }
@@ -591,15 +583,11 @@ class Scanner implements ISlidingWindowSource {
             this.slidingWindow.moveToNextItem();
         }
 
-        var endIndex = this.slidingWindow.absoluteIndex();
-
-        this.width = endIndex - startIndex;
-        this.kind = SyntaxKind.NumericLiteral;
+        return SyntaxKind.NumericLiteral;
     }
-
-    private scanHexNumericLiteral(): void {
+    
+    private scanHexNumericLiteral(): SyntaxKind {
         Debug.assert(this.isHexNumericLiteral());
-        var startIndex = this.slidingWindow.absoluteIndex();
 
         // Move past the 0x.
         this.slidingWindow.moveToNextItem();
@@ -609,9 +597,7 @@ class Scanner implements ISlidingWindowSource {
             this.slidingWindow.moveToNextItem();
         }
 
-        var endIndex = this.slidingWindow.absoluteIndex();
-        this.width = endIndex - startIndex;
-        this.kind = SyntaxKind.NumericLiteral;
+        return SyntaxKind.NumericLiteral;
     }
 
     private isHexNumericLiteral(): bool {
@@ -628,175 +614,175 @@ class Scanner implements ISlidingWindowSource {
         return false;
     }
 
-    private advanceAndSetTokenKind(kind: SyntaxKind): void {
+    private advanceAndSetTokenKind(kind: SyntaxKind): SyntaxKind {
         this.slidingWindow.moveToNextItem();
-        this.kind = kind;
+        return kind;
     }
 
-    private scanGreaterThanToken(): void {
+    private scanGreaterThanToken(): SyntaxKind {
         // NOTE(cyrusn): If we want to support generics, we will likely have to stop lexing
         // the >> and >>> constructs here and instead construct those in the parser.
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
         if (character === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.GreaterThanEqualsToken;
+            return SyntaxKind.GreaterThanEqualsToken;
         }
         else if (character === CharacterCodes.greaterThan) {
-            this.scanGreaterThanGreaterThanToken();
+            return this.scanGreaterThanGreaterThanToken();
         } else {
-            this.kind = SyntaxKind.GreaterThanToken;
+            return SyntaxKind.GreaterThanToken;
         }
     }
 
-    private scanGreaterThanGreaterThanToken(): void {
+    private scanGreaterThanGreaterThanToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
 
         if (character === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.GreaterThanGreaterThanEqualsToken;
+            return SyntaxKind.GreaterThanGreaterThanEqualsToken;
         }
         else if (character === CharacterCodes.greaterThan) {
-            this.scanGreaterThanGreaterThanGreaterThanToken();
+            return this.scanGreaterThanGreaterThanGreaterThanToken();
         }
         else {
-            this.kind = SyntaxKind.GreaterThanGreaterThanToken;
+            return SyntaxKind.GreaterThanGreaterThanToken;
         }
     }
 
-    private scanGreaterThanGreaterThanGreaterThanToken(): void {
+    private scanGreaterThanGreaterThanGreaterThanToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
 
         if (character === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
+            return SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
         }
         else {
-            this.kind = SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
+            return SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
         }
     }
 
-    private scanLessThanToken(): void {
+    private scanLessThanToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.LessThanEqualsToken;
+            return SyntaxKind.LessThanEqualsToken;
         }
         else if (this.currentCharCode() === CharacterCodes.lessThan) {
             this.slidingWindow.moveToNextItem();
             if (this.currentCharCode() === CharacterCodes.equals) {
                 this.slidingWindow.moveToNextItem();
-                this.kind = SyntaxKind.LessThanLessThanEqualsToken;
+                return SyntaxKind.LessThanLessThanEqualsToken;
             }
             else {
-                this.kind = SyntaxKind.LessThanLessThanToken;
+                return SyntaxKind.LessThanLessThanToken;
             }
         }
         else {
-            this.kind = SyntaxKind.LessThanToken;
+            return SyntaxKind.LessThanToken;
         }
     }
 
-    private scanBarToken(): void {
+    private scanBarToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.BarEqualsToken;
+            return SyntaxKind.BarEqualsToken;
         }
         else if (this.currentCharCode() === CharacterCodes.bar) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.BarBarToken;
+            return SyntaxKind.BarBarToken;
         }
         else {
-            this.kind = SyntaxKind.BarToken;
+            return SyntaxKind.BarToken;
         }
     }
 
-    private scanCaretToken(): void {
+    private scanCaretToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.CaretEqualsToken;
+            return SyntaxKind.CaretEqualsToken;
         }
         else {
-            this.kind = SyntaxKind.CaretToken;
+            return SyntaxKind.CaretToken;
         }
     }
 
-    private scanAmpersandToken(): void {
+    private scanAmpersandToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
         if (character === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.AmpersandEqualsToken;
+            return SyntaxKind.AmpersandEqualsToken;
         }
         else if (this.currentCharCode() === CharacterCodes.ampersand) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.AmpersandAmpersandToken;
+            return SyntaxKind.AmpersandAmpersandToken;
         }
         else {
-            this.kind = SyntaxKind.AmpersandToken;
+            return SyntaxKind.AmpersandToken;
         }
     }
 
-    private scanPercentToken(): void {
+    private scanPercentToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.PercentEqualsToken;
+            return SyntaxKind.PercentEqualsToken;
         }
         else {
-            this.kind = SyntaxKind.PercentToken;
+            return SyntaxKind.PercentToken;
         }
     }
 
-    private scanMinusToken(): void {
+    private scanMinusToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
 
         if (character === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.MinusEqualsToken;
+            return SyntaxKind.MinusEqualsToken;
         }
         else if (character === CharacterCodes.minus) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.MinusMinusToken;
+            return SyntaxKind.MinusMinusToken;
         }
         else {
-            this.kind = SyntaxKind.MinusToken;
+            return SyntaxKind.MinusToken;
         }
     }
 
-    private scanPlusToken(): void {
+    private scanPlusToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
         if (character === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.PlusEqualsToken;
+            return SyntaxKind.PlusEqualsToken;
         }
         else if (character === CharacterCodes.plus) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.PlusPlusToken;
+            return SyntaxKind.PlusPlusToken;
         }
         else {
-            this.kind = SyntaxKind.PlusToken;
+            return SyntaxKind.PlusToken;
         }
     }
 
-    private scanAsteriskToken(): void {
+    private scanAsteriskToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.AsteriskEqualsToken;
+            return SyntaxKind.AsteriskEqualsToken;
         }
         else {
-            this.kind = SyntaxKind.AsteriskToken;
+            return SyntaxKind.AsteriskToken;
         }
     }
 
-    private scanEqualsToken(): void {
+    private scanEqualsToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode()
         if (character === CharacterCodes.equals) {
@@ -805,18 +791,18 @@ class Scanner implements ISlidingWindowSource {
             if (this.currentCharCode() === CharacterCodes.equals) {
                 this.slidingWindow.moveToNextItem();
 
-                this.kind = SyntaxKind.EqualsEqualsEqualsToken;
+                return SyntaxKind.EqualsEqualsEqualsToken;
             }
             else {
-                this.kind = SyntaxKind.EqualsEqualsToken;
+                return SyntaxKind.EqualsEqualsToken;
             }
         }
         else if (character === CharacterCodes.greaterThan) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.EqualsGreaterThanToken;
+            return SyntaxKind.EqualsGreaterThanToken;
         }
         else {
-            this.kind = SyntaxKind.EqualsToken;
+            return SyntaxKind.EqualsToken;
         }
     }
 
@@ -829,10 +815,9 @@ class Scanner implements ISlidingWindowSource {
         return false;
     }
 
-    private scanDotToken(): void {
+    private scanDotToken(): SyntaxKind {
         if (this.isDotPrefixedNumericLiteral()) {
-            this.scanNumericLiteral();
-            return;
+            return this.scanNumericLiteral();
         }
 
         this.slidingWindow.moveToNextItem();
@@ -841,33 +826,36 @@ class Scanner implements ISlidingWindowSource {
 
             this.slidingWindow.moveToNextItem();
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.DotDotDotToken;
+            return SyntaxKind.DotDotDotToken;
         }
         else {
-            this.kind = SyntaxKind.DotToken;
+            return SyntaxKind.DotToken;
         }
     }
 
-    private scanSlashToken(allowRegularExpression: bool): void {
+    private scanSlashToken(allowRegularExpression: bool): SyntaxKind {
         // NOTE: By default, we do not try scanning a / as a regexp here.  We instead consider it a
         // div or div-assign.  Later on, if the parser runs into a situation where it would like a 
         // term, and it sees one of these then it may restart us asking specifically if we could 
         // scan out a regex.
-        if (allowRegularExpression && this.tryScanRegularExpressionToken()) {
-            return;
+        if (allowRegularExpression) {
+            var result = this.tryScanRegularExpressionToken();
+            if (result !== SyntaxKind.None) {
+                return result;
+            }
         }
 
         this.slidingWindow.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
-            this.kind = SyntaxKind.SlashEqualsToken;
+            return SyntaxKind.SlashEqualsToken;
         }
         else {
-            this.kind = SyntaxKind.SlashToken;
+            return SyntaxKind.SlashToken;
         }
     }
 
-    private tryScanRegularExpressionToken(): bool {
+    private tryScanRegularExpressionToken(): SyntaxKind {
         Debug.assert(this.currentCharCode() === CharacterCodes.slash);
 
         var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
@@ -880,7 +868,7 @@ class Scanner implements ISlidingWindowSource {
                 var ch = this.currentCharCode();
                 if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
                     this.slidingWindow.rewindToPinnedIndex(startIndex);
-                    return false;
+                    return SyntaxKind.None;
                 }
 
                 this.slidingWindow.moveToNextItem();
@@ -934,17 +922,14 @@ class Scanner implements ISlidingWindowSource {
                 this.slidingWindow.moveToNextItem();
             }
 
-            var endIndex = this.slidingWindow.absoluteIndex();
-            this.kind = SyntaxKind.RegularExpressionLiteral;
-            this.width = endIndex - startIndex;
-            return true;
+            return SyntaxKind.RegularExpressionLiteral;
         }
         finally {
             this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
         }
     }
 
-    private scanExclamationToken(): void {
+    private scanExclamationToken(): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         if (this.currentCharCode() === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
@@ -952,27 +937,27 @@ class Scanner implements ISlidingWindowSource {
             if (this.currentCharCode() === CharacterCodes.equals) {
                 this.slidingWindow.moveToNextItem();
 
-                this.kind = SyntaxKind.ExclamationEqualsEqualsToken;
+                return SyntaxKind.ExclamationEqualsEqualsToken;
             }
             else {
-                this.kind = SyntaxKind.ExclamationEqualsToken;
+                return SyntaxKind.ExclamationEqualsToken;
             }
         }
         else {
-            this.kind = SyntaxKind.ExclamationToken;
+            return SyntaxKind.ExclamationToken;
         }
     }
 
-    private scanDefaultCharacter(character: number, diagnostics: SyntaxDiagnostic[]): void {
+    private scanDefaultCharacter(character: number, diagnostics: SyntaxDiagnostic[]): SyntaxKind {
         var position = this.slidingWindow.absoluteIndex();
         this.slidingWindow.moveToNextItem();
-        this.width = 1;
-        this.kind = SyntaxKind.ErrorToken;
 
         var text = String.fromCharCode(character);
         var messageText = this.getErrorMessageText(text);
         diagnostics.push(new SyntaxDiagnostic(
             position, 1, DiagnosticCode.Unexpected_character_0, [messageText]));
+
+        return SyntaxKind.ErrorToken;
     }
 
     // Convert text into a printable form usable for an error message.  This will both quote the 
@@ -1118,12 +1103,11 @@ class Scanner implements ISlidingWindowSource {
         }
     }
 
-    private scanStringLiteral(diagnostics: SyntaxDiagnostic[]): void {
+    private scanStringLiteral(diagnostics: SyntaxDiagnostic[]): SyntaxKind {
         var quoteCharacter = this.currentCharCode();
 
         Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
 
-        var startIndex = this.slidingWindow.absoluteIndex();
         this.slidingWindow.moveToNextItem();
 
         while (true) {
@@ -1145,9 +1129,7 @@ class Scanner implements ISlidingWindowSource {
             }
         }
 
-        var endIndex = this.slidingWindow.absoluteIndex();
-        this.width = endIndex - startIndex;
-        this.kind = SyntaxKind.StringLiteral;
+        return SyntaxKind.StringLiteral;
     }
 
     private isUnicodeOrHexEscape(character: number): bool {
