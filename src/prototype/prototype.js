@@ -28501,8 +28501,8 @@ var Parser;
         };
         ParserImpl.prototype.parseTerm = function (allowInvocation, insideObjectCreation) {
             var term = this.parseTermWorker(insideObjectCreation);
-            if(term.kind() === 9 /* IdentifierNameToken */  && (term).width() === 0) {
-                return term;
+            if(term === null) {
+                return this.eatIdentifierToken();
             }
             return this.parsePostFixExpression(term, allowInvocation);
         };
@@ -28657,7 +28657,7 @@ var Parser;
 
                 }
             }
-            return this.eatIdentifierToken();
+            return null;
         };
         ParserImpl.prototype.tryReparseDivideAsRegularExpression = function () {
             var currentToken = this.currentToken();

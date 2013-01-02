@@ -3241,9 +3241,9 @@ module Parser {
             // easier to read and understand in this form.
 
             var term = this.parseTermWorker(insideObjectCreation);
-            if (term.kind() === SyntaxKind.IdentifierNameToken &&
-                (<ISyntaxToken>term).width() === 0) {
-                return term;
+            if (term === null) {
+                // Nothing else worked, just try to consume an identifier so we report an error.
+                return this.eatIdentifierToken();
             }
 
             return this.parsePostFixExpression(term, allowInvocation);
@@ -3426,8 +3426,8 @@ module Parser {
                     break;
             }
 
-            // Nothing else worked, just try to consume an identifier so we report an error.
-            return this.eatIdentifierToken();
+            // Wasn't able to parse this as a term. 
+            return null;
         }
 
         private tryReparseDivideAsRegularExpression(): IUnaryExpressionSyntax {
