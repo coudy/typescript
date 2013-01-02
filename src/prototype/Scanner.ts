@@ -177,8 +177,7 @@ class Scanner implements ISlidingWindowSource {
     private scanTriviaInfo(diagnostics: SyntaxDiagnostic[], isTrailing: bool): number {
         // Keep this exactly in sync with scanTrivia
         var width = 0;
-        var hasComment = false;
-        var hasNewLine = false;
+        var hasCommentOrNewLine = 0;
 
         while (true) {
             var ch = this.currentCharCode();
@@ -199,13 +198,13 @@ class Scanner implements ISlidingWindowSource {
                     // Potential comment.  Consume if so.  Otherwise, break out and return.
                     var ch2 = this.slidingWindow.peekItemN(1);
                     if (ch2 === CharacterCodes.slash) {
-                        hasComment = true;
+                        hasCommentOrNewLine |= Constants.TriviaCommentMask;
                         width += this.scanSingleLineCommentTriviaLength();
                         continue;
                     }
 
                     if (ch2 === CharacterCodes.asterisk) {
-                        hasComment = true;
+                        hasCommentOrNewLine |= Constants.TriviaCommentMask;
                         width += this.scanMultiLineCommentTriviaLength(diagnostics);
                         continue;
                     }
@@ -217,7 +216,7 @@ class Scanner implements ISlidingWindowSource {
                 case CharacterCodes.lineFeed:
                 case CharacterCodes.paragraphSeparator:
                 case CharacterCodes.lineSeparator:
-                    hasNewLine = true;
+                    hasCommentOrNewLine |= Constants.TriviaNewLineMask;
                     width += this.scanLineTerminatorSequenceLength(ch);
 
                     // If we're consuming leading trivia, then we will continue consuming more 
@@ -230,9 +229,7 @@ class Scanner implements ISlidingWindowSource {
                     break;
             }
 
-            return (width << Constants.TriviaFullWidthShift)
-                 | (hasComment ? Constants.TriviaCommentMask : 0)
-                 | (hasNewLine ? Constants.TriviaNewLineMask : 0);
+            return (width << Constants.TriviaFullWidthShift) | hasCommentOrNewLine;
         }
     }
 

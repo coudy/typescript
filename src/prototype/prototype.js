@@ -7790,8 +7790,7 @@ var Scanner = (function () {
     };
     Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
         var width = 0;
-        var hasComment = false;
-        var hasNewLine = false;
+        var hasCommentOrNewLine = 0;
         while(true) {
             var ch = this.currentCharCode();
             switch(ch) {
@@ -7809,12 +7808,12 @@ var Scanner = (function () {
                 case 47 /* slash */ : {
                     var ch2 = this.slidingWindow.peekItemN(1);
                     if(ch2 === 47 /* slash */ ) {
-                        hasComment = true;
+                        hasCommentOrNewLine |= 2 /* TriviaCommentMask */ ;
                         width += this.scanSingleLineCommentTriviaLength();
                         continue;
                     }
                     if(ch2 === 42 /* asterisk */ ) {
-                        hasComment = true;
+                        hasCommentOrNewLine |= 2 /* TriviaCommentMask */ ;
                         width += this.scanMultiLineCommentTriviaLength(diagnostics);
                         continue;
                     }
@@ -7825,7 +7824,7 @@ var Scanner = (function () {
                 case 10 /* lineFeed */ :
                 case 8233 /* paragraphSeparator */ :
                 case 8232 /* lineSeparator */ : {
-                    hasNewLine = true;
+                    hasCommentOrNewLine |= 1 /* TriviaNewLineMask */ ;
                     width += this.scanLineTerminatorSequenceLength(ch);
                     if(!isTrailing) {
                         continue;
@@ -7834,7 +7833,7 @@ var Scanner = (function () {
 
                 }
             }
-            return (width << 2 /* TriviaFullWidthShift */ ) | (hasComment ? 2 /* TriviaCommentMask */  : 0) | (hasNewLine ? 1 /* TriviaNewLineMask */  : 0);
+            return (width << 2 /* TriviaFullWidthShift */ ) | hasCommentOrNewLine;
         }
     };
     Scanner.prototype.isNewLineCharacter = function (ch) {
