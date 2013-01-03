@@ -64,7 +64,7 @@ interface ISyntaxToken extends ISyntaxElement, INameSyntax {
     // in "foo.if".  Because of this, 'kind' for a contextual keyword is always 'IdentifierName',
     // and 'keywordKind' lets us know if this could be a keyword if it is used in the right 
     // context.
-    keywordKind(): SyntaxKind;
+    tokenKeywordKind: SyntaxKind;
 
     // Width of this token, not including leading or trailing trivia.
     width(): number;

@@ -4419,9 +4419,7 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
         result += "        private _fullStart: number;\r\n";
     }
     result += "        public tokenKind: SyntaxKind;\r\n";
-    if(isKeyword) {
-        result += "        private _keywordKind: SyntaxKind;\r\n";
-    }
+    result += "        public tokenKeywordKind: SyntaxKind;\r\n";
     if(leading) {
         result += "        private _leadingTriviaInfo: number;\r\n";
     }
@@ -4459,9 +4457,10 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
     }
     if(isKeyword) {
         result += "            this.tokenKind = SyntaxKind.IdentifierNameToken;\r\n";
-        result += "            this._keywordKind = keywordKind;\r\n";
+        result += "            this.tokenKeywordKind = keywordKind;\r\n";
     } else {
         result += "            this.tokenKind = kind;\r\n";
+        result += "            this.tokenKeywordKind = SyntaxKind.None;\r\n";
     }
     if(leading) {
         result += "            this._leadingTriviaInfo = leadingTriviaInfo;\r\n";
@@ -4480,7 +4479,7 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
         result += "                this._fullStart,\r\n";
     }
     if(isKeyword) {
-        result += "                this._keywordKind";
+        result += "                this.tokenKeywordKind";
     } else {
         result += "                this.tokenKind";
     }
@@ -4496,13 +4495,8 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
     result += ");\r\n";
     result += "        }\r\n\r\n";
     result += "        public isNode(): bool { return false; }\r\n" + "        public isToken(): bool { return true; }\r\n" + "        public isTrivia(): bool { return false; }\r\n" + "        public isList(): bool { return false; }\r\n" + "        public isSeparatedList(): bool { return false; }\r\n" + "        public isTriviaList(): bool { return false; }\r\n\r\n";
-    if(isKeyword) {
-        result += "        public kind(): SyntaxKind { return SyntaxKind.IdentifierNameToken; }\r\n";
-        result += "        public keywordKind(): SyntaxKind { return this._keywordKind; }\r\n\r\n";
-    } else {
-        result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
-        result += "        public keywordKind(): SyntaxKind { return SyntaxKind.None; }\r\n\r\n";
-    }
+    result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
+    result += "        public keywordKind(): SyntaxKind { return this.tokenKeywordKind; }\r\n\r\n";
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
     if(leading && trailing) {
@@ -4535,7 +4529,7 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
         result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     } else {
         if(isKeyword) {
-            result += "        public text(): string { return SyntaxFacts.getText(this._keywordKind); }\r\n";
+            result += "        public text(): string { return SyntaxFacts.getText(this.tokenKeywordKind); }\r\n";
         } else {
             result += "\r\n";
             result += "        public text(): string {\r\n";
