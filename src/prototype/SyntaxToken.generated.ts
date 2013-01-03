@@ -660,7 +660,7 @@ module Syntax {
         (<any>token.trailingTrivia()).collectTextElements(elements);
     }
 
-    function fixedWidthToken(sourceText: IText, fullStart: number,
+    export function fixedWidthToken(sourceText: IText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         trailingTriviaInfo: number): ISyntaxToken {
@@ -681,7 +681,7 @@ module Syntax {
         }
     }
 
-    function variableWidthToken(sourceText: IText, fullStart: number,
+    export function variableWidthToken(sourceText: IText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         width: number,
@@ -700,19 +700,6 @@ module Syntax {
         }
         else {
             return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
-        }
-    }
-
-    export function tokenFromText(text: IText, fullStart: number,
-        kind: SyntaxKind,
-        leadingTriviaInfo: number,
-        width: number,
-        trailingTriviaInfo: number): ISyntaxToken {
-        if (kind >= SyntaxKind.FirstFixedWidth) {
-            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
-        }
-        else {
-            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
         }
     }
 

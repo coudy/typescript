@@ -4690,6 +4690,7 @@ var Syntax;
             }
         }
     }
+    Syntax.fixedWidthToken = fixedWidthToken;
     function variableWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
         if(leadingTriviaInfo === 0) {
             if(trailingTriviaInfo === 0) {
@@ -4705,14 +4706,7 @@ var Syntax;
             }
         }
     }
-    function tokenFromText(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
-        if(kind >= 15 /* FirstFixedWidth */ ) {
-            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
-        } else {
-            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
-        }
-    }
-    Syntax.tokenFromText = tokenFromText;
+    Syntax.variableWidthToken = variableWidthToken;
     function getTriviaWidth(value) {
         return value >>> 2 /* TriviaFullWidthShift */ ;
     }
@@ -7143,7 +7137,11 @@ var Scanner = (function () {
         var kind = this.scanSyntaxToken(diagnostics, allowRegularExpression);
         var end = this.slidingWindow.absoluteIndex();
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        return Syntax.tokenFromText(this.text, fullStart, kind, leadingTriviaInfo, end - start, trailingTriviaInfo);
+        if(kind >= 15 /* FirstFixedWidth */ ) {
+            return Syntax.fixedWidthToken(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+        } else {
+            return Syntax.variableWidthToken(this.text, fullStart, kind, leadingTriviaInfo, end - start, trailingTriviaInfo);
+        }
     };
     Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
         Debug.assert(length > 0);

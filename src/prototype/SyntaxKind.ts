@@ -1,6 +1,7 @@
 // If you change anything in this enum, make sure you run SyntaxGenerator again!
 
 enum SyntaxKind {
+    // Variable width tokens, trivia and lists.
     None,
     List,
     SeparatedList,
@@ -25,6 +26,8 @@ enum SyntaxKind {
     RegularExpressionLiteral,
     NumericLiteral,
     StringLiteral,
+
+    // All fixed width tokens follow.
 
     // Keywords
     BreakKeyword,
@@ -144,12 +147,10 @@ enum SyntaxKind {
     SourceUnit,
 
     // Names
-    // IdentifierName,
     QualifiedName,
 
     // Types
     ObjectType,
-    //PredefinedType,
     FunctionType,
     ArrayType,
     ConstructorType,
@@ -206,11 +207,6 @@ enum SyntaxKind {
     DeleteExpression,
     TypeOfExpression,
     VoidExpression,
-    //BooleanLiteralExpression,
-    //NullLiteralExpression,
-    //NumericLiteralExpression,
-    //RegularExpressionLiteralExpression,
-    //StringLiteralExpression,
     CommaExpression,
     AssignmentExpression,
     AddAssignmentExpression,
@@ -252,7 +248,6 @@ enum SyntaxKind {
     PostDecrementExpression,
     MemberAccessExpression,
     InvocationExpression,
-    //ThisExpression,
     ArrayLiteralExpression,
     ObjectLiteralExpression,
     ObjectCreationExpression,
@@ -262,7 +257,6 @@ enum SyntaxKind {
     CastExpression,
     ElementAccessExpression,
     FunctionExpression,
-    //SuperExpression,
     OmittedExpression,
 
     // Variable declarations

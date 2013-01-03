@@ -2485,7 +2485,7 @@ function generateTokens(): string {
 "        (<any>token.trailingTrivia()).collectTextElements(elements);\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" +
+"    export function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
@@ -2506,7 +2506,7 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    function variableWidthToken(sourceText: IText, fullStart: number,\r\n" +
+"    export function variableWidthToken(sourceText: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        width: number,\r\n" +
@@ -2526,19 +2526,19 @@ function generateTokens(): string {
 "        else {\r\n" +
 "            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    export function tokenFromText(text: IText, fullStart: number,\r\n" +
-"        kind: SyntaxKind,\r\n" +
-"        leadingTriviaInfo: number,\r\n" +
-"        width: number,\r\n" +
-"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
-"        if (kind >= SyntaxKind.FirstFixedWidth) {\r\n" +
-"            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
-"        }\r\n" +
-"        else {\r\n" +
-"            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
-"        }\r\n" +
+//"    }\r\n" +
+//"\r\n" +
+//"    export function tokenFromText(text: IText, fullStart: number,\r\n" +
+//"        kind: SyntaxKind,\r\n" +
+//"        leadingTriviaInfo: number,\r\n" +
+//"        width: number,\r\n" +
+//"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
+//"        if (kind >= SyntaxKind.FirstFixedWidth) {\r\n" +
+//"            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
+//"        }\r\n" +
+//"        else {\r\n" +
+//"            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
+//"        }\r\n" +
 "    }\r\n\r\n"
 
     result += 

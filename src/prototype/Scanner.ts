@@ -102,9 +102,13 @@ class Scanner implements ISlidingWindowSource {
         var end = this.slidingWindow.absoluteIndex();
 
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
-        return Syntax.tokenFromText(
-            this.text, fullStart, kind, leadingTriviaInfo, 
-            end - start, trailingTriviaInfo);
+
+        if (kind >= SyntaxKind.FirstFixedWidth) {
+            return Syntax.fixedWidthToken(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+        }
+        else {
+            return Syntax.variableWidthToken(this.text, fullStart, kind, leadingTriviaInfo, end - start, trailingTriviaInfo);
+        }
     }
 
     // Scans a subsection of 'text' as trivia.
