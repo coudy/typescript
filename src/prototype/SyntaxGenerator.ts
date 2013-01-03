@@ -2212,8 +2212,7 @@ function generateRewriter(): string {
     return result;
 }
 
-function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trailing: bool): string {
-    var isFixedWidth = isPunctuation || isKeyword;
+function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): string {
     var isVariableWidth = !isFixedWidth;
     var hasAnyTrivia = leading || trailing;
 
@@ -2221,8 +2220,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 
     var needsSourcetext = hasAnyTrivia || isVariableWidth;
 
-    var className = isKeyword ? "Keyword" :
-         isPunctuation ? "FixedWidthToken" : "VariableWidthToken";
+    var className = isFixedWidth ? "FixedWidthToken" : "VariableWidthToken";
     className += leading && trailing ? "WithLeadingAndTrailingTrivia" :
              leading && !trailing ? "WithLeadingTrivia" :
              !leading && trailing ? "WithTrailingTrivia" : "WithNoTrivia";
@@ -2366,19 +2364,16 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        private end(): number { return this.start() + this.width(); }\r\n\r\n";
     }
 
-    if (isPunctuation || isKeyword) {
+    if (isFixedWidth) {
         result += "        public width(): number { return this.text().length; }\r\n";
     }
     else {
         result += "        public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }\r\n";
     }
 
-    if (isPunctuation || isKeyword) {
+    if (isFixedWidth) {
         result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     }
-    //else if (isKeyword) {
-    //    result += "        public text(): string { return SyntaxFacts.getText(this.tokenKeywordKind); }\r\n";
-    //}
     else {
         result += "\r\n";
         result += "        public text(): string {\r\n";
@@ -2398,10 +2393,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public fullText(): string { return this.text(); }\r\n\r\n";
     }
 
-    if (isPunctuation) {
-        result += "        public value(): any { return null; }\r\n";
-    }
-    else if (isKeyword) {
+    if (isFixedWidth) {
         result += "        public value(): any { return null; }\r\n";
         //result += "        public value(): any { return this._keywordKind === SyntaxKind.TrueKeyword  ? true  :\r\n";
         //result += "                                     this._keywordKind === SyntaxKind.FalseKeyword ? false : null; }\r\n";
@@ -2468,32 +2460,23 @@ function generateTokens(): string {
         "\r\n" +
         "module Syntax {\r\n";
 
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ false, /*leading:*/ false, /*trailing:*/ false);
+    result += generateToken(/*isFixedWidth:*/ false, /*leading:*/ false, /*trailing:*/ false);
     result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ false, /*leading:*/ true, /*trailing:*/ false);
+    result += generateToken(/*isFixedWidth:*/ false, /*leading:*/ true, /*trailing:*/ false);
     result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ false, /*leading:*/ false, /*trailing:*/ true);
+    result += generateToken(/*isFixedWidth:*/ false, /*leading:*/ false, /*trailing:*/ true);
     result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ false, /*leading:*/ true, /*trailing:*/ true);
-    result += "\r\n";
-
-    result += generateToken(/*isPunctuation:*/ true, /*isKeyword:*/ false, /*leading:*/ false, /*trailing:*/ false);
-    result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ true, /*isKeyword:*/ false, /*leading:*/ true, /*trailing:*/ false);
-    result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ true, /*isKeyword:*/ false, /*leading:*/ false, /*trailing:*/ true);
-    result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ true, /*isKeyword:*/ false, /*leading:*/ true, /*trailing:*/ true);
+    result += generateToken(/*isFixedWidth:*/ false, /*leading:*/ true, /*trailing:*/ true);
     result += "\r\n";
 
-    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ false, /*trailing:*/ false);
-    //result += "\r\n";
-    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ true, /*trailing:*/ false);
-    //result += "\r\n";
-    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ false, /*trailing:*/ true);
-    //result += "\r\n";
-    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ true, /*trailing:*/ true);
-    //result += "\r\n";
+    result += generateToken(/*isFixedWidth:*/ true, /*leading:*/ false, /*trailing:*/ false);
+    result += "\r\n";
+    result += generateToken(/*isFixedWidth:*/ true, /*leading:*/ true, /*trailing:*/ false);
+    result += "\r\n";
+    result += generateToken(/*isFixedWidth:*/ true, /*leading:*/ false, /*trailing:*/ true);
+    result += "\r\n";
+    result += generateToken(/*isFixedWidth:*/ true, /*leading:*/ true, /*trailing:*/ true);
+    result += "\r\n";
 
     result += 
 "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" +

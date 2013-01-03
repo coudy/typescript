@@ -783,6 +783,8 @@ var SyntaxKind;
     SyntaxKind.LastToken = SyntaxKind.EndOfFileToken;
     SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
     SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
+    SyntaxKind.FirstFixedWidth = SyntaxKind.FirstKeyword;
+    SyntaxKind.LastFixedWidth = SyntaxKind.LastPunctuation;
 })(SyntaxKind || (SyntaxKind = {}));
 var Errors = (function () {
     function Errors() { }
@@ -31514,19 +31516,19 @@ var Program = (function () {
         }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
         });
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -31534,19 +31536,19 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, false);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, true);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, true);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");

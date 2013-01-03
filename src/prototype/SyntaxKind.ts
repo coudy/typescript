@@ -310,4 +310,7 @@ enum SyntaxKind {
 
     FirstPunctuation = OpenBraceToken,
     LastPunctuation = SlashEqualsToken,
+
+    FirstFixedWidth = FirstKeyword,
+    LastFixedWidth = LastPunctuation,
 }

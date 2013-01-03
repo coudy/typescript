@@ -961,6 +961,8 @@ var SyntaxKind;
     SyntaxKind.LastToken = SyntaxKind.EndOfFileToken;
     SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
     SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
+    SyntaxKind.FirstFixedWidth = SyntaxKind.FirstKeyword;
+    SyntaxKind.LastFixedWidth = SyntaxKind.LastPunctuation;
 })(SyntaxKind || (SyntaxKind = {}));
 var SyntaxFacts;
 (function (SyntaxFacts) {
@@ -4399,13 +4401,12 @@ function generateRewriter() {
     result += "}";
     return result;
 }
-function generateToken(isPunctuation, isKeyword, leading, trailing) {
-    var isFixedWidth = isPunctuation || isKeyword;
+function generateToken(isFixedWidth, leading, trailing) {
     var isVariableWidth = !isFixedWidth;
     var hasAnyTrivia = leading || trailing;
     var result = "    class ";
     var needsSourcetext = hasAnyTrivia || isVariableWidth;
-    var className = isKeyword ? "Keyword" : isPunctuation ? "FixedWidthToken" : "VariableWidthToken";
+    var className = isFixedWidth ? "FixedWidthToken" : "VariableWidthToken";
     className += leading && trailing ? "WithLeadingAndTrailingTrivia" : leading && !trailing ? "WithLeadingTrivia" : !leading && trailing ? "WithTrailingTrivia" : "WithNoTrivia";
     result += className;
     result += " implements ISyntaxToken {\r\n";
@@ -4499,12 +4500,12 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
         }
         result += "        private end(): number { return this.start() + this.width(); }\r\n\r\n";
     }
-    if(isPunctuation || isKeyword) {
+    if(isFixedWidth) {
         result += "        public width(): number { return this.text().length; }\r\n";
     } else {
         result += "        public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }\r\n";
     }
-    if(isPunctuation || isKeyword) {
+    if(isFixedWidth) {
         result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     } else {
         result += "\r\n";
@@ -4522,14 +4523,10 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
     } else {
         result += "        public fullText(): string { return this.text(); }\r\n\r\n";
     }
-    if(isPunctuation) {
+    if(isFixedWidth) {
         result += "        public value(): any { return null; }\r\n";
     } else {
-        if(isKeyword) {
-            result += "        public value(): any { return null; }\r\n";
-        } else {
-            result += "        public value(): any { return this._value || (this._value = value(this)); }\r\n";
-        }
+        result += "        public value(): any { return this._value || (this._value = value(this)); }\r\n";
     }
     result += "        public hasLeadingTrivia(): bool { return " + (leading ? "true" : "false") + "; }\r\n";
     result += "        public hasLeadingComment(): bool { return " + (leading ? "hasTriviaComment(this._leadingTriviaInfo)" : "false") + "; }\r\n";
@@ -4552,21 +4549,21 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
 }
 function generateTokens() {
     var result = "///<reference path='ISyntaxToken.ts' />\r\n" + "///<reference path='IText.ts' />\r\n" + "///<reference path='SyntaxToken.ts' />\r\n" + "\r\n" + "module Syntax {\r\n";
-    result += generateToken(false, false, false, false);
+    result += generateToken(false, false, false);
     result += "\r\n";
-    result += generateToken(false, false, true, false);
+    result += generateToken(false, true, false);
     result += "\r\n";
-    result += generateToken(false, false, false, true);
+    result += generateToken(false, false, true);
     result += "\r\n";
-    result += generateToken(false, false, true, true);
+    result += generateToken(false, true, true);
     result += "\r\n";
-    result += generateToken(true, false, false, false);
+    result += generateToken(true, false, false);
     result += "\r\n";
-    result += generateToken(true, false, true, false);
+    result += generateToken(true, true, false);
     result += "\r\n";
-    result += generateToken(true, false, false, true);
+    result += generateToken(true, false, true);
     result += "\r\n";
-    result += generateToken(true, false, true, true);
+    result += generateToken(true, true, true);
     result += "\r\n";
     result += "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" + "        (<any>token.leadingTrivia()).collectTextElements(elements);\r\n" + "        elements.push(token.text());\r\n" + "        (<any>token.trailingTrivia()).collectTextElements(elements);\r\n" + "    }\r\n" + "\r\n" + "    function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new FixedWidthTokenWithNoTrivia(kind);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    function variableWidthToken(sourceText: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        width: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    export function tokenFromText(text: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        width: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "        if (SyntaxFacts.isAnyPunctuation(kind) || SyntaxFacts.isAnyKeyword(kind)) {\r\n" + "            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" + "        }\r\n" + "        else {\r\n" + "            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n\r\n";
     result += "    function getTriviaWidth(value: number): number {\r\n" + "        return value >>> Constants.TriviaFullWidthShift;\r\n" + "    }\r\n" + "\r\n" + "    function hasTriviaComment(value: number): bool {\r\n" + "        return (value & Constants.TriviaCommentMask) !== 0;\r\n" + "    }\r\n" + "\r\n" + "    function hasTriviaNewLine(value: number): bool {\r\n" + "        return (value & Constants.TriviaNewLineMask) !== 0;\r\n" + "    }\r\n";
