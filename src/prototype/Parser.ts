@@ -1432,11 +1432,32 @@ module Parser {
         }
 
         private isIdentifierName(token: ISyntaxToken): bool {
-            return token.tokenKind === SyntaxKind.IdentifierNameToken || SyntaxFacts.isAnyKeyword(token.tokenKind);
+            var tokenKind = token.tokenKind;
+            return tokenKind === SyntaxKind.IdentifierNameToken || SyntaxFacts.isAnyKeyword(tokenKind);
         }
 
         private isIdentifier(token: ISyntaxToken): bool {
-            return this.isIdentifierName(token) && !this.isKeyword(token.tokenKind);
+            var tokenKind = token.tokenKind;
+
+            if (tokenKind === SyntaxKind.IdentifierNameToken) {
+                return true;
+            }
+
+            // Keywords are only identifiers if they're FutureReservedStrictWords and we're in 
+            // strict mode.  *Or* if it's a typescript 'keyword'. 
+            if (tokenKind >= SyntaxKind.FirstFutureReservedStrictKeyword) {
+                if (tokenKind <= SyntaxKind.LastFutureReservedStrictKeyword) {
+                    // Could be a keyword or identifier.  It's an identifier if we're not in strict
+                    // mode.
+                    return !this.isInStrictMode;
+                }
+                
+                // If it's typescript keyword, then it's actually a javascript identifier.
+                return tokenKind <= SyntaxKind.LastTypeScriptKeyword;
+            }
+
+            // Anything else is not an identifier.
+            return false;
         }
 
         private isKeyword(kind: SyntaxKind): bool {
@@ -3889,7 +3910,7 @@ module Parser {
                 //
                 // we don't want consider 'return' to be the next property in the object literal.
                 if (inErrorRecovery) {
-                    return !this.isKeyword(token.tokenKind);
+                    return this.isIdentifier(token);
                 }
                 else {
                     return true;

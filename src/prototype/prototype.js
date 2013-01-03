@@ -26628,10 +26628,21 @@ var Parser;
             return this.eatToken(75 /* SemicolonToken */ );
         };
         ParserImpl.prototype.isIdentifierName = function (token) {
-            return token.tokenKind === 9 /* IdentifierNameToken */  || SyntaxFacts.isAnyKeyword(token.tokenKind);
+            var tokenKind = token.tokenKind;
+            return tokenKind === 9 /* IdentifierNameToken */  || SyntaxFacts.isAnyKeyword(tokenKind);
         };
         ParserImpl.prototype.isIdentifier = function (token) {
-            return this.isIdentifierName(token) && !this.isKeyword(token.tokenKind);
+            var tokenKind = token.tokenKind;
+            if(tokenKind === 9 /* IdentifierNameToken */ ) {
+                return true;
+            }
+            if(tokenKind >= SyntaxKind.FirstFutureReservedStrictKeyword) {
+                if(tokenKind <= SyntaxKind.LastFutureReservedStrictKeyword) {
+                    return !this.isInStrictMode;
+                }
+                return tokenKind <= SyntaxKind.LastTypeScriptKeyword;
+            }
+            return false;
         };
         ParserImpl.prototype.isKeyword = function (kind) {
             if(kind >= SyntaxKind.FirstKeyword) {
@@ -28295,7 +28306,7 @@ var Parser;
         ParserImpl.prototype.isPropertyName = function (token, inErrorRecovery) {
             if(this.isIdentifierName(token)) {
                 if(inErrorRecovery) {
-                    return !this.isKeyword(token.tokenKind);
+                    return this.isIdentifier(token);
                 } else {
                     return true;
                 }
