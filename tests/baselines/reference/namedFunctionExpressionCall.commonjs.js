@@ -4,3 +4,4 @@ var recurser = function foo() {
 };
 (function bar() {
     bar();
+})
