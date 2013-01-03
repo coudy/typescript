@@ -1341,11 +1341,47 @@ module Parser {
             return this.createMissingToken(kind, token);
         }
 
+        // An identifier name is basically any word, even if that work is a reserved keyword.  so 
+        // both 'foo' and 'return' are identifier names.  Note: a word is always an identifier or 
+        // not regardless of the state of the parser.
+        private static isIdentifierName(token: ISyntaxToken): bool {
+            var tokenKind = token.tokenKind;
+            return tokenKind === SyntaxKind.IdentifierNameToken || SyntaxFacts.isAnyKeyword(tokenKind);
+        }
+
+        // An identifier is basically any word, unless it is a reserved keyword.  so 'foo' is an 
+        // identifier and 'return' is not.  Note: a word may or may not be an identifier depending 
+        // on the state of the parser.  For example, 'yield' is an identifier *unless* the parser 
+        // is in strict mode.
+        private isIdentifier(token: ISyntaxToken): bool {
+            var tokenKind = token.tokenKind;
+
+            if (tokenKind === SyntaxKind.IdentifierNameToken) {
+                return true;
+            }
+
+            // Keywords are only identifiers if they're FutureReservedStrictWords and we're in 
+            // strict mode.  *Or* if it's a typescript 'keyword'. 
+            if (tokenKind >= SyntaxKind.FirstFutureReservedStrictKeyword) {
+                if (tokenKind <= SyntaxKind.LastFutureReservedStrictKeyword) {
+                    // Could be a keyword or identifier.  It's an identifier if we're not in strict
+                    // mode.
+                    return !this.isInStrictMode;
+                }
+                
+                // If it's typescript keyword, then it's actually a javascript identifier.
+                return tokenKind <= SyntaxKind.LastTypeScriptKeyword;
+            }
+
+            // Anything else is not an identifier.
+            return false;
+        }
+
         // This method should be called when the grammar calls for an *IdentifierName* and not an
         // *Identifier*.
         private eatIdentifierNameToken(): ISyntaxToken {
             var token = this.currentToken();
-            if (this.isIdentifierName(token)) {
+            if (ParserImpl.isIdentifierName(token)) {
                 this.moveToNextToken();
                 return token;
             }
@@ -1431,35 +1467,6 @@ module Parser {
             return this.eatToken(SyntaxKind.SemicolonToken);
         }
 
-        private isIdentifierName(token: ISyntaxToken): bool {
-            var tokenKind = token.tokenKind;
-            return tokenKind === SyntaxKind.IdentifierNameToken || SyntaxFacts.isAnyKeyword(tokenKind);
-        }
-
-        private isIdentifier(token: ISyntaxToken): bool {
-            var tokenKind = token.tokenKind;
-
-            if (tokenKind === SyntaxKind.IdentifierNameToken) {
-                return true;
-            }
-
-            // Keywords are only identifiers if they're FutureReservedStrictWords and we're in 
-            // strict mode.  *Or* if it's a typescript 'keyword'. 
-            if (tokenKind >= SyntaxKind.FirstFutureReservedStrictKeyword) {
-                if (tokenKind <= SyntaxKind.LastFutureReservedStrictKeyword) {
-                    // Could be a keyword or identifier.  It's an identifier if we're not in strict
-                    // mode.
-                    return !this.isInStrictMode;
-                }
-                
-                // If it's typescript keyword, then it's actually a javascript identifier.
-                return tokenKind <= SyntaxKind.LastTypeScriptKeyword;
-            }
-
-            // Anything else is not an identifier.
-            return false;
-        }
-
         private isKeyword(kind: SyntaxKind): bool {
             if (kind >= SyntaxKind.FirstKeyword) {
                 if (kind <= SyntaxKind.LastFutureReservedKeyword) {
@@ -1486,11 +1493,8 @@ module Parser {
         private getExpectedTokenDiagnostic(expectedKind: SyntaxKind, actual: ISyntaxToken): SyntaxDiagnostic {
             var token = this.currentToken();
 
-            if (SyntaxFacts.isAnyKeyword(expectedKind)) {
-                // They wanted a keyword, just report that that keyword was missing.
-                return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
-            }
-            else if (SyntaxFacts.isAnyPunctuation(expectedKind)) {
+            // They wanted something specific, just report that that token was missing.
+            if (SyntaxFacts.isAnyKeyword(expectedKind) || SyntaxFacts.isAnyPunctuation(expectedKind)) {
                 return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
             }
             else {
@@ -1702,7 +1706,7 @@ module Parser {
             // match any other legal javascript construct.  However, we need to verify that this is
             // actually the case.
             return this.currentToken().tokenKind === SyntaxKind.ImportKeyword &&
-                   this.isIdentifierName(this.peekToken(1)) && 
+                   ParserImpl.isIdentifierName(this.peekToken(1)) && 
                    this.peekToken(2).tokenKind === SyntaxKind.EqualsToken;
         }
 
@@ -1759,7 +1763,7 @@ module Parser {
         }
 
         private parseName(): INameSyntax {
-            var isIdentifierName = this.isIdentifierName(this.currentToken());
+            var isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
             var identifier = this.eatIdentifierToken();
 
             var current: INameSyntax = identifier;
@@ -1767,7 +1771,7 @@ module Parser {
             while (isIdentifierName && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
-                isIdentifierName = this.isIdentifierName(this.currentToken());
+                isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
                 identifier = this.eatIdentifierToken();
 
                 current = new QualifiedNameSyntax(current, dotToken, identifier);
@@ -2134,7 +2138,7 @@ module Parser {
                     return true;
                 }
 
-                if (this.isIdentifierName(token1)) {
+                if (ParserImpl.isIdentifierName(token1)) {
                     var token2 = this.peekToken(2);
 
                     // module id {
@@ -3901,7 +3905,7 @@ module Parser {
         private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
             // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierNameToken is 
             // allowed here, even reserved words like keywords.
-            if (this.isIdentifierName(token)) {
+            if (ParserImpl.isIdentifierName(token)) {
                 // Except: if we're in error recovery, then we don't want to consider keywords. 
                 // After all, if we have:
                 //
