@@ -2,6 +2,7 @@
 // See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='typescript.ts' />
+///<reference path='io.ts' />
 
 module TypeScript {
 
@@ -346,6 +347,7 @@ module TypeScript {
             mapDecl.init = new UnaryExpression(NodeType.ArrayLit, null);
             members.append(mapDecl);
             var lastValue: NumberLiteral = null;
+            var memberNames: Identifier[] = [];
             for (; ;) {
                 var minChar = this.scanner.startPos;
                 var limChar;
@@ -358,6 +360,7 @@ module TypeScript {
                     memberName = Identifier.fromToken(this.currentToken);
                     memberName.minChar = this.scanner.startPos;
                     memberName.limChar = this.scanner.pos;
+                    memberNames.push(memberName);
                 }
                 else if (this.currentToken.tokenId == TokenID.CloseBrace) {
                     break;
@@ -408,15 +411,29 @@ module TypeScript {
                 // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                 member.typeExpr = new TypeReference(this.createRef(name.actualText, name.hasEscapeSequence, -1), 0);
                 member.varFlags |= (VarFlags.Readonly | VarFlags.Property);
+
                 if (memberValue.nodeType == NodeType.NumberLit) {
                     member.varFlags |= VarFlags.Constant;
                 }
-                if (memberValue.nodeType === NodeType.Lsh) {
+                else if (memberValue.nodeType === NodeType.Lsh) {
                     var binop = <BinaryExpression>memberValue;
                     if (binop.operand1.nodeType === NodeType.NumberLit && binop.operand2.nodeType === NodeType.NumberLit) {
                         member.varFlags |= VarFlags.Constant;
                     }
                 }
+                else if (memberValue.nodeType === NodeType.Name) {
+                    // IO.stdout.WriteLine("Got an enum value that points to a name");
+                    var nameNode = <Identifier>memberValue;
+                    for (var i = 0; i < memberNames.length; i++) {
+                        var memberName = memberNames[i];
+                        if (memberName.text === nameNode.text) {
+                            // IO.stdout.WriteLine("Got an enum value that points to a member");
+                            member.varFlags |= VarFlags.Constant;
+                            break;
+                        }
+                    }
+                }
+
                 member.preComments = preComments;
                 members.append(member);
                 member.postComments = postComments;

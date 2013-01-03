@@ -250,6 +250,31 @@ module TypeScript {
             }
         }
 
+        private getConstantValue(init: AST): number {
+            if (init) {
+                if (init.nodeType === NodeType.NumberLit) {
+                    var numLit = <NumberLiteral>init;
+                    return numLit.value;
+                }
+                else if (init.nodeType === NodeType.Lsh) {
+                    var binop = <BinaryExpression>init;
+                    if (binop.operand1.nodeType === NodeType.NumberLit &&
+                        binop.operand2.nodeType === NodeType.NumberLit) {
+                        return (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
+                    }
+                }
+                else if (init.nodeType === NodeType.Name) {
+                    var ident = <Identifier>init;
+                    if (ident.sym !== null && ident.sym.declAST.nodeType === NodeType.VarDecl) {
+                        var varDecl = <VarDecl>ident.sym.declAST;
+                        return this.getConstantValue(varDecl.init);
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public tryEmitConstant(dotExpr: BinaryExpression) {
             if (!this.emitOptions.propagateConstants) {
                 return false;
@@ -259,34 +284,19 @@ module TypeScript {
                 if (hasFlag(propertyName.sym.flags, SymbolFlags.Constant)) {
                     if (propertyName.sym.declAST) {
                         var boundDecl = <BoundDecl>propertyName.sym.declAST;
-                        if (boundDecl.init) {
-                            if (boundDecl.init.nodeType === NodeType.NumberLit) {
-                                var numLit = <NumberLiteral>boundDecl.init;
-                                this.writeToOutput(numLit.value.toString());
-                                var comment = " /* ";
-                                comment += propertyName.actualText;
-                                comment += " */ ";
-                                this.writeToOutput(comment);
-                                return true;
-                            }
-                            else if (boundDecl.init.nodeType === NodeType.Lsh) {
-                                var binop = <BinaryExpression>boundDecl.init;
-                                if (binop.operand1.nodeType === NodeType.NumberLit &&
-                                    binop.operand2.nodeType === NodeType.NumberLit) {
-                                    var result = (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
-                                    
-                                    this.writeToOutput(result.toString());
-                                    var comment = " /* ";
-                                    comment += propertyName.actualText;
-                                    comment += " */ ";
-                                    this.writeToOutput(comment);
-                                    return true;
-                                }
-                            }
+                        var value = this.getConstantValue(boundDecl.init);
+                        if (value !== null) {
+                            this.writeToOutput(value.toString());
+                            var comment = " /* ";
+                            comment += propertyName.actualText;
+                            comment += " */ ";
+                            this.writeToOutput(comment);
+                            return true;
                         }
                     }
                 }
             }
+
             return false;
         }
 

@@ -1137,27 +1137,27 @@ var SyntaxFacts;
     }
     SyntaxFacts.getText = getText;
     function isTokenKind(kind) {
-        return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
+        return kind >= 9 /* FirstToken */  && kind <= 118 /* LastToken */ ;
     }
     SyntaxFacts.isTokenKind = isTokenKind;
     function isAnyKeyword(kind) {
-        return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
+        return kind >= 13 /* FirstKeyword */  && kind <= 66 /* LastKeyword */ ;
     }
     SyntaxFacts.isAnyKeyword = isAnyKeyword;
     function isStandardKeyword(kind) {
-        return kind >= SyntaxKind.FirstStandardKeyword && kind <= SyntaxKind.LastStandardKeyword;
+        return kind >= 13 /* FirstStandardKeyword */  && kind <= 41 /* LastStandardKeyword */ ;
     }
     SyntaxFacts.isStandardKeyword = isStandardKeyword;
     function isFutureReservedKeyword(kind) {
-        return kind >= SyntaxKind.FirstFutureReservedKeyword && kind <= SyntaxKind.LastFutureReservedKeyword;
+        return kind >= 42 /* FirstFutureReservedKeyword */  && kind <= 48 /* LastFutureReservedKeyword */ ;
     }
     SyntaxFacts.isFutureReservedKeyword = isFutureReservedKeyword;
     function isFutureReservedStrictKeyword(kind) {
-        return kind >= SyntaxKind.FirstFutureReservedStrictKeyword && kind <= SyntaxKind.LastFutureReservedStrictKeyword;
+        return kind >= 49 /* FirstFutureReservedStrictKeyword */  && kind <= 57 /* LastFutureReservedStrictKeyword */ ;
     }
     SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
     function isAnyPunctuation(kind) {
-        return kind >= SyntaxKind.FirstPunctuation && kind <= SyntaxKind.LastPunctuation;
+        return kind >= 67 /* FirstPunctuation */  && kind <= 116 /* LastPunctuation */ ;
     }
     SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
     function isPrefixUnaryExpressionOperatorToken(tokenKind) {
@@ -4706,7 +4706,7 @@ var Syntax;
         }
     }
     function tokenFromText(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
-        if(kind >= SyntaxKind.FirstFixedWidth && kind <= SyntaxKind.LastFixedWidth) {
+        if(kind >= 13 /* FirstFixedWidth */  && kind <= 116 /* LastFixedWidth */ ) {
             return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         } else {
             return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
@@ -7118,7 +7118,7 @@ var Scanner = (function () {
                 }
             }
             Scanner.isNumericLiteralStart[46 /* dot */ ] = true;
-            for(var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
+            for(var keywordKind = 13 /* FirstKeyword */ ; keywordKind <= 66 /* LastKeyword */ ; keywordKind++) {
                 var keyword = SyntaxFacts.getText(keywordKind);
                 Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
             }
@@ -26583,11 +26583,11 @@ var Parser;
             if(tokenKind === 9 /* IdentifierNameToken */ ) {
                 return true;
             }
-            if(tokenKind >= SyntaxKind.FirstFutureReservedStrictKeyword) {
-                if(tokenKind <= SyntaxKind.LastFutureReservedStrictKeyword) {
+            if(tokenKind >= 49 /* FirstFutureReservedStrictKeyword */ ) {
+                if(tokenKind <= 57 /* LastFutureReservedStrictKeyword */ ) {
                     return !this.isInStrictMode;
                 }
-                return tokenKind <= SyntaxKind.LastTypeScriptKeyword;
+                return tokenKind <= 66 /* LastTypeScriptKeyword */ ;
             }
             return false;
         };
@@ -26645,12 +26645,12 @@ var Parser;
             return this.eatToken(75 /* SemicolonToken */ );
         };
         ParserImpl.prototype.isKeyword = function (kind) {
-            if(kind >= SyntaxKind.FirstKeyword) {
-                if(kind <= SyntaxKind.LastFutureReservedKeyword) {
+            if(kind >= 13 /* FirstKeyword */ ) {
+                if(kind <= 48 /* LastFutureReservedKeyword */ ) {
                     return true;
                 }
                 if(this.isInStrictMode) {
-                    return kind <= SyntaxKind.LastFutureReservedStrictKeyword;
+                    return kind <= 57 /* LastFutureReservedStrictKeyword */ ;
                 }
             }
             return false;
@@ -28506,7 +28506,7 @@ var Parser;
         };
         ParserImpl.prototype.abortParsingListOrMoveToNextToken = function (currentListType, itemCount) {
             this.reportUnexpectedTokenDiagnostic(currentListType);
-            for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
+            for(var state = 32768 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
                 if((this.listParsingState & state) !== 0) {
                     if(this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, true)) {
                         return true;
