@@ -98,9 +98,20 @@ module FourSlashInterface {
         public signatureHelpPresent() {
             FourSlash.currentTestState.verifySignatureHelpPresent(!this.negative);
         }
+
+        public errorExistsBetweenMarkers(startMarker: string, endMarker: string) {
+            if (this.negative) {
+                FourSlash.currentTestState.verifyErrorDoesNotExistBetweenMarkers(startMarker, endMarker);
+            } else {
+                FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(startMarker, endMarker);
+            }
+        }
     }
 
     export class verify extends verifyNegatable {
+        public errorDoesNotExistBeyondMarker(markerName?: string) {
+            FourSlash.currentTestState.verifyErrorDoesNotExistBeyondMarker(markerName);
+        }
         public caretAtMarker(markerName?: string) {
             FourSlash.currentTestState.verifyCaretAtMarker(markerName);
         }
@@ -147,10 +158,6 @@ module FourSlashInterface {
 
         public currentQuickInfoType(expected: string) {
             FourSlash.currentTestState.verifyQuickInfoType(expected);
-        }
-
-        public errorExistsBetweenMarkers(startMarker: string, endMarker: string) {
-            FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(startMarker, endMarker);
         }
 
         public numberOfErrorsInCurrentFile(expected: number) {
