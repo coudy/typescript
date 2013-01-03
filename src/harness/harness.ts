@@ -716,7 +716,7 @@ module Harness {
                 return this.outputLines().join('\n');
             }
 
-            public outputLines() : string[] {
+            public outputLines(): string[] {
 
                 var result: string[] = [];
 
@@ -1109,8 +1109,6 @@ module Harness {
                 }
             }
 
-            // this will get you a copy of the reference... 
-            // not what you expect.
             var oldCompilerSettings = new TypeScript.CompilationSettings();
             clone(compiler.settings, oldCompilerSettings);
             var oldEmitSettings = new TypeScript.EmitOptions(compiler.settings);
@@ -1120,9 +1118,14 @@ module Harness {
 
             if (settingsCallback) {
                 settingsCallback(compiler.settings);
+                compiler.emitSettings.emitComments = compiler.settings.emitComments;
             }
             try {
                 compileString(code, filename, callback, context, references);
+
+                compiler.emitSettings.ioHost = stdout;
+                compiler.emitDeclarations();
+
             } finally {
             // if settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
             // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
