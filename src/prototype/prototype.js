@@ -27698,9 +27698,6 @@ var Parser;
                     return true;
 
                 }
-            }
-            var keywordKind = currentToken.tokenKind;
-            switch(keywordKind) {
                 case 48 /* SuperKeyword */ :
                 case 33 /* ThisKeyword */ :
                 case 35 /* TrueKeyword */ :

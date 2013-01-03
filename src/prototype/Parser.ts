@@ -2956,10 +2956,7 @@ module Parser {
                     // missing identifier and then will consume the / token naturally as a binary 
                     // expression.
                     return true;
-            }
 
-            var keywordKind = currentToken.tokenKind;
-            switch (keywordKind) {
                 case SyntaxKind.SuperKeyword:
                 case SyntaxKind.ThisKeyword:
                 case SyntaxKind.TrueKeyword:
