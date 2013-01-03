@@ -2235,7 +2235,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
     }
 
     result += "        public tokenKind: SyntaxKind;\r\n";
-    result += "        public tokenKeywordKind: SyntaxKind;\r\n";
+    // result += "        public tokenKeywordKind: SyntaxKind;\r\n";
 
     if (leading) {
         result += "        private _leadingTriviaInfo: number;\r\n";
@@ -2285,14 +2285,15 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "            this._fullStart = fullStart;\r\n";
     }
 
-    if (isKeyword) {
-        result += "            this.tokenKind = SyntaxKind.IdentifierNameToken;\r\n";
-        result += "            this.tokenKeywordKind = keywordKind;\r\n";
-    }
-    else {
-        result += "            this.tokenKind = kind;\r\n";
-        result += "            this.tokenKeywordKind = SyntaxKind.None;\r\n";
-    }
+    //if (isKeyword) {
+    //    result += "            this.tokenKind = SyntaxKind.IdentifierNameToken;\r\n";
+    //    result += "            this.tokenKeywordKind = keywordKind;\r\n";
+    //}
+    //else {
+    //    result += "            this.tokenKind = kind;\r\n";
+    //    result += "            this.tokenKeywordKind = SyntaxKind.None;\r\n";
+    //}
+    result += "            this.tokenKind = kind;\r\n";
 
     if (leading) {
         result += "            this._leadingTriviaInfo = leadingTriviaInfo;\r\n";
@@ -2316,12 +2317,13 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "                this._fullStart,\r\n";
     }
 
-    if (isKeyword) {
-        result += "                this.tokenKeywordKind";
-    }
-    else {
-        result += "                this.tokenKind";
-    }
+    //if (isKeyword) {
+    //    result += "                this.tokenKeywordKind";
+    //}
+    //else {
+    //    result += "                this.tokenKind";
+    //}
+    result += "                this.tokenKind";
 
     if (leading) {
         result += ",\r\n                this._leadingTriviaInfo";
@@ -2347,7 +2349,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 "        public isTriviaList(): bool { return false; }\r\n\r\n";
 
     result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
-    result += "        public keywordKind(): SyntaxKind { return this.tokenKeywordKind; }\r\n\r\n";
+    // result += "        public keywordKind(): SyntaxKind { return this.tokenKeywordKind; }\r\n\r\n";
 
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
@@ -2383,12 +2385,12 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }\r\n";
     }
 
-    if (isPunctuation) {
+    if (isPunctuation || isKeyword) {
         result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     }
-    else if (isKeyword) {
-        result += "        public text(): string { return SyntaxFacts.getText(this.tokenKeywordKind); }\r\n";
-    }
+    //else if (isKeyword) {
+    //    result += "        public text(): string { return SyntaxFacts.getText(this.tokenKeywordKind); }\r\n";
+    //}
     else {
         result += "\r\n";
         result += "        public text(): string {\r\n";
@@ -2496,14 +2498,14 @@ function generateTokens(): string {
     result += generateToken(/*isPunctuation:*/ true, /*isKeyword:*/ false, /*leading:*/ true, /*trailing:*/ true);
     result += "\r\n";
 
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ false, /*trailing:*/ false);
-    result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ true, /*trailing:*/ false);
-    result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ false, /*trailing:*/ true);
-    result += "\r\n";
-    result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ true, /*trailing:*/ true);
-    result += "\r\n";
+    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ false, /*trailing:*/ false);
+    //result += "\r\n";
+    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ true, /*trailing:*/ false);
+    //result += "\r\n";
+    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ false, /*trailing:*/ true);
+    //result += "\r\n";
+    //result += generateToken(/*isPunctuation:*/ false, /*isKeyword:*/ true, /*leading:*/ true, /*trailing:*/ true);
+    //result += "\r\n";
 
     result += 
 "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" +
@@ -2555,38 +2557,38 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    function keyword(sourceText: IText, fullStart: number,\r\n" +
-"        keywordKind: SyntaxKind,\r\n" +
-"        leadingTriviaInfo: number,\r\n" +
-"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
-"\r\n" +
-"        if (leadingTriviaInfo === 0) {\r\n" +
-"            if (trailingTriviaInfo === 0) {\r\n" +
-"                return new KeywordWithNoTrivia(keywordKind);\r\n" +
-"            }\r\n" +
-"            else {\r\n" +
-"                return new KeywordWithTrailingTrivia(sourceText, fullStart, keywordKind, trailingTriviaInfo);\r\n" +
-"            }\r\n" +
-"        }\r\n" +
-"        else if (trailingTriviaInfo === 0) {\r\n" +
-"            return new KeywordWithLeadingTrivia(sourceText, fullStart, keywordKind, leadingTriviaInfo);\r\n" +
-"        }\r\n" +
-"        else {\r\n" +
-"            return new KeywordWithLeadingAndTrailingTrivia(sourceText, fullStart, keywordKind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
-"        }\r\n" +
-"    }\r\n" +
-"\r\n" +
+//"    function keyword(sourceText: IText, fullStart: number,\r\n" +
+//"        keywordKind: SyntaxKind,\r\n" +
+//"        leadingTriviaInfo: number,\r\n" +
+//"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
+//"\r\n" +
+//"        if (leadingTriviaInfo === 0) {\r\n" +
+//"            if (trailingTriviaInfo === 0) {\r\n" +
+//"                return new KeywordWithNoTrivia(keywordKind);\r\n" +
+//"            }\r\n" +
+//"            else {\r\n" +
+//"                return new KeywordWithTrailingTrivia(sourceText, fullStart, keywordKind, trailingTriviaInfo);\r\n" +
+//"            }\r\n" +
+//"        }\r\n" +
+//"        else if (trailingTriviaInfo === 0) {\r\n" +
+//"            return new KeywordWithLeadingTrivia(sourceText, fullStart, keywordKind, leadingTriviaInfo);\r\n" +
+//"        }\r\n" +
+//"        else {\r\n" +
+//"            return new KeywordWithLeadingAndTrailingTrivia(sourceText, fullStart, keywordKind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
+//"        }\r\n" +
+//"    }\r\n" +
+//"\r\n" +
 "    export function tokenFromText(text: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        width: number,\r\n" +
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
-"        if (SyntaxFacts.isAnyPunctuation(kind)) {\r\n" +
+"        if (SyntaxFacts.isAnyPunctuation(kind) || SyntaxFacts.isAnyKeyword(kind)) {\r\n" +
 "            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
-"        else if (SyntaxFacts.isAnyKeyword(kind)) {\r\n" +
-"            return keyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
-"        }\r\n" +
+//"        else if (SyntaxFacts.isAnyKeyword(kind)) {\r\n" +
+//"            return keyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
+//"        }\r\n" +
 "        else {\r\n" +
 "            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
 "        }\r\n" +

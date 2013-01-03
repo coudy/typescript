@@ -10,7 +10,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "SuperExpression1.ts";
+    // "UsingConstructorAsIdentifier.ts";
     undefined;
 
 class Program {
@@ -25,6 +25,10 @@ class Program {
         if (true) {
             // return;
         }
+            
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
 
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5",
@@ -37,10 +41,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
             filePath => this.runScanner(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
-            
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
             
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",

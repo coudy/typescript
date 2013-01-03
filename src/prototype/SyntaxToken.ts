@@ -24,17 +24,19 @@ module Syntax {
     //}
 
     export function realize(token: ISyntaxToken): ISyntaxToken {
-        return new RealizedToken(token.tokenKind, token.keywordKind(),
+        return new RealizedToken(token.tokenKind, /*token.keywordKind(),*/
             token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
     }
 
     export function tokenToJSON(token: ISyntaxToken) {
-        var result: any = {
-            kind: (<any>SyntaxKind)._map[token.tokenKind]
-        };
-
-        if (token.keywordKind() !== SyntaxKind.None) {
-            result.keywordKind = (<any>SyntaxKind)._map[token.keywordKind()];
+        var result: any = {};
+        
+        if (SyntaxFacts.isAnyKeyword(token.tokenKind)) {
+            result.kind = (<any>SyntaxKind)._map[SyntaxKind.IdentifierNameToken];
+            result.keywordKind = (<any>SyntaxKind)._map[token.kind()];
+        }
+        else {
+            result.kind = (<any>SyntaxKind)._map[token.kind()];
         }
 
         result.width = token.width();
@@ -127,15 +129,13 @@ module Syntax {
 
     class EmptyToken implements ISyntaxToken {
         public tokenKind: SyntaxKind;
-        public tokenKeywordKind: SyntaxKind;
 
-        constructor(kind: SyntaxKind, keywordKind: SyntaxKind) {
+        constructor(kind: SyntaxKind) {
             this.tokenKind = kind;
-            this.tokenKeywordKind = keywordKind;
         }
 
         public clone(): ISyntaxToken {
-            return new EmptyToken(this.tokenKind, this.tokenKeywordKind);
+            return new EmptyToken(this.tokenKind);
         }
 
         public isToken(): bool { return true; }
@@ -159,7 +159,6 @@ module Syntax {
         private hasZeroWidthToken() { return true; }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
 
-        public keywordKind() { return this.tokenKeywordKind; }
         public fullWidth() { return 0; }
         public width() { return 0; }
         public text() { return ""; }
@@ -192,26 +191,26 @@ module Syntax {
         }
     }
 
-    export function emptyToken(kind: SyntaxKind, keywordKind: SyntaxKind): ISyntaxToken {
-        return new EmptyToken(kind, keywordKind);
+    export function emptyToken(kind: SyntaxKind): ISyntaxToken {
+        return new EmptyToken(kind);
     }
 
     class RealizedToken implements ISyntaxToken {
         public tokenKind: SyntaxKind;
-        public tokenKeywordKind: SyntaxKind;
+        // public tokenKeywordKind: SyntaxKind;
         private _leadingTrivia: ISyntaxTriviaList;
         private _text: string;
         private _value: any;
         private _trailingTrivia: ISyntaxTriviaList;
 
         constructor(tokenKind: SyntaxKind,
-                    keywordKind: SyntaxKind,
+                    // keywordKind: SyntaxKind,
                     leadingTrivia: ISyntaxTriviaList,
                     text: string,
                     value: any,
                     trailingTrivia: ISyntaxTriviaList) {
             this.tokenKind = tokenKind;
-            this.tokenKeywordKind = keywordKind;
+            // this.tokenKeywordKind = keywordKind;
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._value = value;
@@ -219,7 +218,7 @@ module Syntax {
         }
 
         public clone(): ISyntaxToken {
-            return new RealizedToken(this.tokenKind, this.tokenKeywordKind, this._leadingTrivia,
+            return new RealizedToken(this.tokenKind, /*this.tokenKeywordKind,*/ this._leadingTrivia,
                 this._text, this._value, this._trailingTrivia);
         }
 
@@ -239,7 +238,7 @@ module Syntax {
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
 
-        public keywordKind(): SyntaxKind { return this.tokenKeywordKind; }
+        // public keywordKind(): SyntaxKind { return this.tokenKeywordKind; }
 
         public fullWidth(): number { return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth(); }
         public width(): number { return this.text().length; }
@@ -278,14 +277,14 @@ module Syntax {
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
-                this.tokenKind, this.tokenKeywordKind,
+                this.tokenKind, /*this.tokenKeywordKind,*/
                 leadingTrivia, this._text, this._value,
                 this._trailingTrivia);
         }
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
-                this.tokenKind, this.tokenKeywordKind,
+                this.tokenKind, /*this.tokenKeywordKind,*/
                 this._leadingTrivia, this._text, this._value,
                 trailingTrivia);
         }
@@ -294,16 +293,10 @@ module Syntax {
     export function token(kind: SyntaxKind, info: ITokenInfo = null): ISyntaxToken {
         var text = (info !== null && info.text !== undefined) ? info.text : SyntaxFacts.getText(kind);
         var value = (info !== null && info.value !== undefined) ? info.value : null;
-        
-        var keywordKind = SyntaxKind.None;
-        if (SyntaxFacts.isAnyKeyword(kind)) {
-            keywordKind = kind;
-            kind = SyntaxKind.IdentifierNameToken;
-        }
 
         return new RealizedToken(
             kind,
-            keywordKind,
+            //keywordKind,
             Syntax.triviaList(info === null ? null : info.leadingTrivia),
             text,
             value,

@@ -18,10 +18,6 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         throw Errors.abstract();
     }
 
-    public keywordKind(): SyntaxKind {
-        return SyntaxKind.None;
-    }
-
     // Returns the first non-missing token inside this node (or null if there are no such token).
     public firstToken(): ISyntaxToken {
         throw Errors.abstract();

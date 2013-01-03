@@ -38,7 +38,7 @@ module Syntax {
         }
 
         return token1.kind() === token2.kind() &&
-               token1.keywordKind() === token2.keywordKind() &&
+               // token1.keywordKind() === token2.keywordKind() &&
                token1.width() === token2.width() &&
                token1.fullWidth() === token2.fullWidth() &&
                token1.text() === token2.text() &&
@@ -123,7 +123,7 @@ module Syntax {
 
     export function isSuperInvocationExpression(node: IExpressionSyntax): bool {
         return node.kind() === SyntaxKind.InvocationExpression &&
-            (<InvocationExpressionSyntax>node).expression().keywordKind() === SyntaxKind.SuperKeyword;
+            (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperKeyword;
     }
 
     export function isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
@@ -133,7 +133,7 @@ module Syntax {
 
     export function isSuperMemberAccessExpression(node: IExpressionSyntax): bool {
         return node.kind() === SyntaxKind.MemberAccessExpression &&
-            (<MemberAccessExpressionSyntax>node).expression().keywordKind() === SyntaxKind.SuperKeyword;
+            (<MemberAccessExpressionSyntax>node).expression().kind() === SyntaxKind.SuperKeyword;
     }
 
     export function isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {
