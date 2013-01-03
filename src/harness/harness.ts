@@ -976,10 +976,10 @@ module Harness {
                     if (fn.indexOf('.d.ts') >= 0) {
                         var writer = <Harness.Compiler.WriterAggregator>outputs[fn];
                         writer.Close();
-                        if (verifyNoDeclFile) {
+                        results = writer.lines.join('\n');
+                        if (verifyNoDeclFile && results != "") {
                             throw new Error('Compilation should not produce ' + fn);
                         }
-                        results = writer.lines.join('\n');
                     }
                 }
 
@@ -988,7 +988,7 @@ module Harness {
                 }
 
                 if (!verifyNoDeclFile) {
-                    throw new Error('Compilation did not produced .d.ts files');
+                    throw new Error('Compilation did not produce .d.ts files');
                 }
             } finally {
                 compiler.settings.generateDeclarationFiles = false;

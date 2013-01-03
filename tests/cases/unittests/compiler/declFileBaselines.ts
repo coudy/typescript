@@ -28,6 +28,7 @@ function checkDeclOutput(filename: string, unitName?: string, context?: Harness.
     });
 }
 
+// Verifies there's no decl file (i.e., .ts file had compilation errors) or an empty one (i.e., nothing was exported)
 function checkNoDeclFile(filename: string) {
     describe("Check no decl output for " + filename, function () {
         Harness.Compiler.generateDeclFile(IO.readFile(Harness.userSpecifiedroot + filename), true);
@@ -37,6 +38,7 @@ function checkNoDeclFile(filename: string) {
 checkNoDeclFile('tests/cases/compiler/giant.ts');
 checkNoDeclFile('tests/cases/compiler/declInput.ts');
 checkNoDeclFile('tests/cases/compiler/declInput-2.ts');
+checkNoDeclFile('tests/cases/compiler/withImportDecl.ts');
 checkDeclOutput('tests/cases/compiler/vardecl.ts');
 checkDeclOutput('tests/cases/compiler/funcdecl.ts');
 checkDeclOutput('tests/cases/compiler/classdecl.ts');
@@ -44,8 +46,6 @@ checkDeclOutput('tests/cases/compiler/interfacedecl.ts');
 checkDeclOutput('tests/cases/compiler/moduledecl.ts');
 checkDeclOutput('tests/cases/compiler/interfaceOnly.ts');
 checkDeclOutput('tests/cases/compiler/withExportDecl.ts');
-// DAN: review this
-//checkDeclOutput('tests/cases/compiler/withImportDecl.ts');
 checkDeclOutput('tests/cases/compiler/importDecl.ts');
 
 // Add multi-file tests to this list as necessary
