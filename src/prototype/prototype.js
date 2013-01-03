@@ -4706,7 +4706,7 @@ var Syntax;
         }
     }
     function tokenFromText(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
-        if(SyntaxFacts.isAnyPunctuation(kind) || SyntaxFacts.isAnyKeyword(kind)) {
+        if(kind >= SyntaxKind.FirstFixedWidth && kind <= SyntaxKind.LastFixedWidth) {
             return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         } else {
             return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);

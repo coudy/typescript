@@ -708,7 +708,7 @@ module Syntax {
         leadingTriviaInfo: number,
         width: number,
         trailingTriviaInfo: number): ISyntaxToken {
-        if (SyntaxFacts.isAnyPunctuation(kind) || SyntaxFacts.isAnyKeyword(kind)) {
+        if (kind >= SyntaxKind.FirstFixedWidth && kind <= SyntaxKind.LastFixedWidth) {
             return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
         }
         else {

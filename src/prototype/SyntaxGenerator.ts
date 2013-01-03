@@ -2533,7 +2533,7 @@ function generateTokens(): string {
 "        leadingTriviaInfo: number,\r\n" +
 "        width: number,\r\n" +
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
-"        if (SyntaxFacts.isAnyPunctuation(kind) || SyntaxFacts.isAnyKeyword(kind)) {\r\n" +
+"        if (kind >= SyntaxKind.FirstFixedWidth && kind <= SyntaxKind.LastFixedWidth) {\r\n" +
 "            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
 "        else {\r\n" +
