@@ -105,9 +105,11 @@ module Formatting {
                         }
 
                         authorNodes.forEach((authorParseNode) => {
-                            var node = new ParseNode();
-                            node.AuthorNode = authorParseNode;
-                            selfAndDescendantsNodes.add(node);
+                            if (authorParseNode.Details.Kind != AuthorParseNodeKind.apnkEndCode) {
+                                var node = new ParseNode();
+                                node.AuthorNode = authorParseNode;
+                                selfAndDescendantsNodes.add(node);
+                            }
                         });
 
                         ParseTree.AdjustNodeSpanIfNeeded(astCursor, selfAndDescendantsNodes.get(0));
