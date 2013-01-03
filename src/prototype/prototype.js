@@ -27502,14 +27502,12 @@ var Parser;
         ParserImpl.prototype.parseName = function () {
             var isIdentifier = this.currentToken().tokenKind === 9 /* IdentifierNameToken */ ;
             var identifier = this.eatIdentifierToken();
-            var identifierName = identifier;
-            var current = identifierName;
+            var current = identifier;
             while(isIdentifier && this.currentToken().tokenKind === 73 /* DotToken */ ) {
                 var dotToken = this.eatToken(73 /* DotToken */ );
                 isIdentifier = this.currentToken().tokenKind === 9 /* IdentifierNameToken */ ;
                 identifier = this.eatIdentifierToken();
-                identifierName = identifier;
-                current = new QualifiedNameSyntax(current, dotToken, identifierName);
+                current = new QualifiedNameSyntax(current, dotToken, identifier);
             }
             return current;
         };

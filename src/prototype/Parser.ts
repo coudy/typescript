@@ -1739,18 +1739,16 @@ module Parser {
         private parseName(): INameSyntax {
             var isIdentifier = this.currentToken().tokenKind === SyntaxKind.IdentifierNameToken;
             var identifier = this.eatIdentifierToken();
-            var identifierName = identifier;
 
-            var current: INameSyntax = identifierName;
+            var current: INameSyntax = identifier;
 
             while (isIdentifier && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
                 isIdentifier = this.currentToken().tokenKind === SyntaxKind.IdentifierNameToken;
                 identifier = this.eatIdentifierToken();
-                identifierName = identifier;
 
-                current = new QualifiedNameSyntax(current, dotToken, identifierName);
+                current = new QualifiedNameSyntax(current, dotToken, identifier);
             }
 
             return current;
