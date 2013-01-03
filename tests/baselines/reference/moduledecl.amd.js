@@ -208,7 +208,7 @@ module m1 {
             x: number;
             y: string;
         };
-        constructor (n, n2: number, n3, n4: string);
+        constructor(n, n2: number, n3, n4: string);
         public f: c.a.b;
     }
     interface i1 {

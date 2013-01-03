@@ -8,6 +8,6 @@ var A = (function () {
 })();
 ////[0.d.ts]
 class A {
-    constructor ();
+    constructor();
     public B(): number;
 }

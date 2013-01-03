@@ -110,8 +110,8 @@ var e = (function () {
 })();
 ////[0.d.ts]
 class a {
-    constructor (n: number);
-    constructor (s: string);
+    constructor(n: number);
+    constructor(s: string);
     public pgF(): void;
     public pv;
     public d : number;
@@ -143,8 +143,8 @@ class c extends m1.b {
 class ib2 implements m1.ib {
 }
 class aAmbient {
-    constructor (n: number);
-    constructor (s: string);
+    constructor(n: number);
+    constructor(s: string);
     public pgF(): void;
     public pv;
     public d: number;

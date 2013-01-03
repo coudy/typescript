@@ -391,7 +391,7 @@ module TypeScript {
             this.emitDeclarationComments(funcDecl);
             if (funcDecl.isConstructor) {
                 this.emitIndent();
-                this.declFile.Write("constructor ");
+                this.declFile.Write("constructor");
             }
             else {
                 var id = funcDecl.getNameText();

@@ -122,7 +122,7 @@ module m2 {
     var a, b2: number, b;
     class C2 {
         public b;
-        constructor (b);
+        constructor(b);
     }
     var mE;
     var d1E, d2E;
