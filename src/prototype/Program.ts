@@ -415,7 +415,7 @@ class Program {
         this.checkResult(filePath, result, verify, generateBaseline, false);
     }
 
-    run(useTypeScript: bool): void {
+    parseArguments(useTypeScript: bool): void {
         Environment.standardOut.WriteLine("Testing input files.");
         for (var index in Environment.arguments) {
             var filePath: string = Environment.arguments[index];
@@ -589,7 +589,7 @@ if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(false, true);
-    program.run(false);
+    program.parseArguments(false);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
@@ -599,7 +599,7 @@ if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, false);
-    program.run(true);
+    program.parseArguments(true);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }

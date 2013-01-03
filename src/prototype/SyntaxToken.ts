@@ -30,14 +30,8 @@ module Syntax {
 
     export function tokenToJSON(token: ISyntaxToken) {
         var result: any = {};
-        
-        if (SyntaxFacts.isAnyKeyword(token.tokenKind)) {
-            result.kind = (<any>SyntaxKind)._map[SyntaxKind.IdentifierNameToken];
-            result.keywordKind = (<any>SyntaxKind)._map[token.kind()];
-        }
-        else {
-            result.kind = (<any>SyntaxKind)._map[token.kind()];
-        }
+
+        result.kind = (<any>SyntaxKind)._map[token.kind()];
 
         result.width = token.width();
         if (token.fullWidth() !== token.width()) {

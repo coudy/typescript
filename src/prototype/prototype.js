@@ -8025,12 +8025,7 @@ var Syntax;
     function tokenToJSON(token) {
         var result = {
         };
-        if(SyntaxFacts.isAnyKeyword(token.tokenKind)) {
-            result.kind = (SyntaxKind)._map[9 /* IdentifierNameToken */ ];
-            result.keywordKind = (SyntaxKind)._map[token.kind()];
-        } else {
-            result.kind = (SyntaxKind)._map[token.kind()];
-        }
+        result.kind = (SyntaxKind)._map[token.kind()];
         result.width = token.width();
         if(token.fullWidth() !== token.width()) {
             result.fullWidth = token.fullWidth();
@@ -31519,19 +31514,19 @@ var Program = (function () {
         }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
         });
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, true);
         });
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, true);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, true);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -31539,19 +31534,19 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, false);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, true);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, true);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
@@ -31803,7 +31798,7 @@ var Program = (function () {
         };
         this.checkResult(filePath, result, verify, generateBaseline, false);
     };
-    Program.prototype.run = function (useTypeScript) {
+    Program.prototype.parseArguments = function (useTypeScript) {
         Environment.standardOut.WriteLine("Testing input files.");
         for(var index in Environment.arguments) {
             var filePath = Environment.arguments[index];
@@ -31936,7 +31931,7 @@ if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(false, true);
-    program.run(false);
+    program.parseArguments(false);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
@@ -31944,7 +31939,7 @@ if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, false);
-    program.run(true);
+    program.parseArguments(true);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
