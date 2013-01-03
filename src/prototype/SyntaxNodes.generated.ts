@@ -14,9 +14,6 @@ class SourceUnitSyntax extends SyntaxNode {
                 endOfFileToken: ISyntaxToken) {
         super();
 
-        if (moduleElements === null) { throw Errors.argumentNull('moduleElements'); }
-        if (endOfFileToken.tokenKind !== SyntaxKind.EndOfFileToken) { throw Errors.argument('endOfFileToken'); }
-
         this._moduleElements = moduleElements;
         this._endOfFileToken = endOfFileToken;
     }
@@ -186,11 +183,6 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
                 stringLiteral: ISyntaxToken,
                 closeParenToken: ISyntaxToken) {
         super();
-
-        if (moduleKeyword.tokenKind !== SyntaxKind.ModuleKeyword) { throw Errors.argument('moduleKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (stringLiteral.tokenKind !== SyntaxKind.StringLiteral) { throw Errors.argument('stringLiteral'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._moduleKeyword = moduleKeyword;
         this._openParenToken = openParenToken;
@@ -380,8 +372,6 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
     constructor(moduleName: INameSyntax) {
         super();
 
-        if (moduleName === null) { throw Errors.argumentNull('moduleName'); }
-
         this._moduleName = moduleName;
     }
 
@@ -495,12 +485,6 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
                 moduleReference: ModuleReferenceSyntax,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (moduleReference === null) { throw Errors.argumentNull('moduleReference'); }
-        if (importKeyword.tokenKind !== SyntaxKind.ImportKeyword) { throw Errors.argument('importKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (equalsToken.tokenKind !== SyntaxKind.EqualsToken) { throw Errors.argument('equalsToken'); }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._importKeyword = importKeyword;
         this._identifier = identifier;
@@ -737,18 +721,6 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
                 classElements: ISyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
-
-        if (classElements === null) { throw Errors.argumentNull('classElements'); }
-        if (exportKeyword !== null) {
-            if (exportKeyword.tokenKind !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
-        }
-        if (declareKeyword !== null) {
-            if (declareKeyword.tokenKind !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
-        }
-        if (classKeyword.tokenKind !== SyntaxKind.ClassKeyword) { throw Errors.argument('classKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
@@ -1110,13 +1082,6 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
                 body: ObjectTypeSyntax) {
         super();
 
-        if (body === null) { throw Errors.argumentNull('body'); }
-        if (exportKeyword !== null) {
-            if (exportKeyword.tokenKind !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
-        }
-        if (interfaceKeyword.tokenKind !== SyntaxKind.InterfaceKeyword) { throw Errors.argument('interfaceKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-
         this._exportKeyword = exportKeyword;
         this._interfaceKeyword = interfaceKeyword;
         this._identifier = identifier;
@@ -1353,9 +1318,6 @@ class ExtendsClauseSyntax extends SyntaxNode {
                 typeNames: ISeparatedSyntaxList) {
         super();
 
-        if (typeNames === null) { throw Errors.argumentNull('typeNames'); }
-        if (extendsKeyword.tokenKind !== SyntaxKind.ExtendsKeyword) { throw Errors.argument('extendsKeyword'); }
-
         this._extendsKeyword = extendsKeyword;
         this._typeNames = typeNames;
     }
@@ -1498,9 +1460,6 @@ class ImplementsClauseSyntax extends SyntaxNode {
     constructor(implementsKeyword: ISyntaxToken,
                 typeNames: ISeparatedSyntaxList) {
         super();
-
-        if (typeNames === null) { throw Errors.argumentNull('typeNames'); }
-        if (implementsKeyword.tokenKind !== SyntaxKind.ImplementsKeyword) { throw Errors.argument('implementsKeyword'); }
 
         this._implementsKeyword = implementsKeyword;
         this._typeNames = typeNames;
@@ -1656,20 +1615,6 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
                 moduleElements: ISyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
-
-        if (moduleElements === null) { throw Errors.argumentNull('moduleElements'); }
-        if (exportKeyword !== null) {
-            if (exportKeyword.tokenKind !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
-        }
-        if (declareKeyword !== null) {
-            if (declareKeyword.tokenKind !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
-        }
-        if (moduleKeyword.tokenKind !== SyntaxKind.ModuleKeyword) { throw Errors.argument('moduleKeyword'); }
-        if (stringLiteral !== null) {
-            if (stringLiteral.tokenKind !== SyntaxKind.StringLiteral) { throw Errors.argument('stringLiteral'); }
-        }
-        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
@@ -2005,18 +1950,6 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        if (functionSignature === null) { throw Errors.argumentNull('functionSignature'); }
-        if (exportKeyword !== null) {
-            if (exportKeyword.tokenKind !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
-        }
-        if (declareKeyword !== null) {
-            if (declareKeyword.tokenKind !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
-        }
-        if (functionKeyword.tokenKind !== SyntaxKind.FunctionKeyword) { throw Errors.argument('functionKeyword'); }
-        if (semicolonToken !== null) {
-            if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-        }
-
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._functionKeyword = functionKeyword;
@@ -2298,15 +2231,6 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        if (variableDeclaration === null) { throw Errors.argumentNull('variableDeclaration'); }
-        if (exportKeyword !== null) {
-            if (exportKeyword.tokenKind !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
-        }
-        if (declareKeyword !== null) {
-            if (declareKeyword.tokenKind !== SyntaxKind.DeclareKeyword) { throw Errors.argument('declareKeyword'); }
-        }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._variableDeclaration = variableDeclaration;
@@ -2522,9 +2446,6 @@ class VariableDeclarationSyntax extends SyntaxNode {
                 variableDeclarators: ISeparatedSyntaxList) {
         super();
 
-        if (variableDeclarators === null) { throw Errors.argumentNull('variableDeclarators'); }
-        if (varKeyword.tokenKind !== SyntaxKind.VarKeyword) { throw Errors.argument('varKeyword'); }
-
         this._varKeyword = varKeyword;
         this._variableDeclarators = variableDeclarators;
     }
@@ -2670,8 +2591,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
                 typeAnnotation: TypeAnnotationSyntax,
                 equalsValueClause: EqualsValueClauseSyntax) {
         super();
-
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
 
         this._identifier = identifier;
         this._typeAnnotation = typeAnnotation;
@@ -2853,9 +2772,6 @@ class EqualsValueClauseSyntax extends SyntaxNode {
                 value: IExpressionSyntax) {
         super();
 
-        if (value === null) { throw Errors.argumentNull('value'); }
-        if (equalsToken.tokenKind !== SyntaxKind.EqualsToken) { throw Errors.argument('equalsToken'); }
-
         this._equalsToken = equalsToken;
         this._value = value;
     }
@@ -2997,20 +2913,6 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
                 operatorToken: ISyntaxToken,
                 operand: IUnaryExpressionSyntax) {
         super();
-
-        if (kind === null) { throw Errors.argumentNull('kind'); }
-        if (operand === null) { throw Errors.argumentNull('operand'); }
-        switch (operatorToken.tokenKind) {
-            case SyntaxKind.PlusPlusToken:
-            case SyntaxKind.MinusMinusToken:
-            case SyntaxKind.PlusToken:
-            case SyntaxKind.MinusToken:
-            case SyntaxKind.TildeToken:
-            case SyntaxKind.ExclamationToken:
-                break;
-            default:
-                throw Errors.argument('operatorToken');
-        }
 
         this._kind = kind;
         this._operatorToken = operatorToken;
@@ -3161,10 +3063,6 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
                 expressions: ISeparatedSyntaxList,
                 closeBracketToken: ISyntaxToken) {
         super();
-
-        if (expressions === null) { throw Errors.argumentNull('expressions'); }
-        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
 
         this._openBracketToken = openBracketToken;
         this._expressions = expressions;
@@ -3426,10 +3324,6 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
                 closeParenToken: ISyntaxToken) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-
         this._openParenToken = openParenToken;
         this._expression = expression;
         this._closeParenToken = closeParenToken;
@@ -3640,10 +3534,6 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
                 body: ISyntaxNodeOrToken) {
         super();
 
-        if (body === null) { throw Errors.argumentNull('body'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
-
         this._identifier = identifier;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
@@ -3812,10 +3702,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
                 body: ISyntaxNodeOrToken) {
         super();
 
-        if (callSignature === null) { throw Errors.argumentNull('callSignature'); }
-        if (body === null) { throw Errors.argumentNull('body'); }
-        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
-
         this._callSignature = callSignature;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._body = body;
@@ -3983,10 +3869,6 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
                 dotToken: ISyntaxToken,
                 right: ISyntaxToken) {
         super();
-
-        if (left === null) { throw Errors.argumentNull('left'); }
-        if (dotToken.tokenKind !== SyntaxKind.DotToken) { throw Errors.argument('dotToken'); }
-        if (!SyntaxFacts.isIdentifierName(right.tokenKind)) { throw Errors.argument('right'); }
 
         this._left = left;
         this._dotToken = dotToken;
@@ -4174,11 +4056,6 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 equalsGreaterThanToken: ISyntaxToken,
                 type: ITypeSyntax) {
         super();
-
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (type === null) { throw Errors.argumentNull('type'); }
-        if (newKeyword.tokenKind !== SyntaxKind.NewKeyword) { throw Errors.argument('newKeyword'); }
-        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
 
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
@@ -4386,10 +4263,6 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 type: ITypeSyntax) {
         super();
 
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (type === null) { throw Errors.argumentNull('type'); }
-        if (equalsGreaterThanToken.tokenKind !== SyntaxKind.EqualsGreaterThanToken) { throw Errors.argument('equalsGreaterThanToken'); }
-
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
@@ -4569,10 +4442,6 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 typeMembers: ISeparatedSyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
-
-        if (typeMembers === null) { throw Errors.argumentNull('typeMembers'); }
-        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._openBraceToken = openBraceToken;
         this._typeMembers = typeMembers;
@@ -4762,10 +4631,6 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 closeBracketToken: ISyntaxToken) {
         super();
 
-        if (type === null) { throw Errors.argumentNull('type'); }
-        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
-
         this._type = type;
         this._openBracketToken = openBracketToken;
         this._closeBracketToken = closeBracketToken;
@@ -4943,9 +4808,6 @@ class TypeAnnotationSyntax extends SyntaxNode {
                 type: ITypeSyntax) {
         super();
 
-        if (type === null) { throw Errors.argumentNull('type'); }
-        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
-
         this._colonToken = colonToken;
         this._type = type;
     }
@@ -5086,10 +4948,6 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
                 statements: ISyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
-
-        if (statements === null) { throw Errors.argumentNull('statements'); }
-        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._openBraceToken = openBraceToken;
         this._statements = statements;
@@ -5281,17 +5139,6 @@ class ParameterSyntax extends SyntaxNode {
                 typeAnnotation: TypeAnnotationSyntax,
                 equalsValueClause: EqualsValueClauseSyntax) {
         super();
-
-        if (dotDotDotToken !== null) {
-            if (dotDotDotToken.tokenKind !== SyntaxKind.DotDotDotToken) { throw Errors.argument('dotDotDotToken'); }
-        }
-        if (publicOrPrivateKeyword !== null) {
-            if (publicOrPrivateKeyword.tokenKind !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.tokenKind !== SyntaxKind.PrivateKeyword) { throw Errors.argument('publicOrPrivateKeyword'); }
-        }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (questionToken !== null) {
-            if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
-        }
 
         this._dotDotDotToken = dotDotDotToken;
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
@@ -5568,10 +5415,6 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
                 identifierName: ISyntaxToken) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (dotToken.tokenKind !== SyntaxKind.DotToken) { throw Errors.argument('dotToken'); }
-        if (!SyntaxFacts.isIdentifierName(identifierName.tokenKind)) { throw Errors.argument('identifierName'); }
-
         this._expression = expression;
         this._dotToken = dotToken;
         this._identifierName = identifierName;
@@ -5749,10 +5592,6 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
                 operatorToken: ISyntaxToken) {
         super();
 
-        if (kind === null) { throw Errors.argumentNull('kind'); }
-        if (operand === null) { throw Errors.argumentNull('operand'); }
-        if (operatorToken.tokenKind !== SyntaxKind.PlusPlusToken && operatorToken.tokenKind !== SyntaxKind.MinusMinusToken) { throw Errors.argument('operatorToken'); }
-
         this._kind = kind;
         this._operand = operand;
         this._operatorToken = operatorToken;
@@ -5904,11 +5743,6 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
                 argumentExpression: IExpressionSyntax,
                 closeBracketToken: ISyntaxToken) {
         super();
-
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (argumentExpression === null) { throw Errors.argumentNull('argumentExpression'); }
-        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
 
         this._expression = expression;
         this._openBracketToken = openBracketToken;
@@ -6113,9 +5947,6 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
                 argumentList: ArgumentListSyntax) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (argumentList === null) { throw Errors.argumentNull('argumentList'); }
-
         this._expression = expression;
         this._argumentList = argumentList;
     }
@@ -6267,10 +6098,6 @@ class ArgumentListSyntax extends SyntaxNode {
                 arguments: ISeparatedSyntaxList,
                 closeParenToken: ISyntaxToken) {
         super();
-
-        if (arguments === null) { throw Errors.argumentNull('arguments'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._openParenToken = openParenToken;
         this._arguments = arguments;
@@ -6451,51 +6278,6 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
                 right: IExpressionSyntax) {
         super();
 
-        if (kind === null) { throw Errors.argumentNull('kind'); }
-        if (left === null) { throw Errors.argumentNull('left'); }
-        if (right === null) { throw Errors.argumentNull('right'); }
-        switch (operatorToken.tokenKind) {
-            case SyntaxKind.AsteriskToken:
-            case SyntaxKind.SlashToken:
-            case SyntaxKind.PercentToken:
-            case SyntaxKind.PlusToken:
-            case SyntaxKind.MinusToken:
-            case SyntaxKind.LessThanLessThanToken:
-            case SyntaxKind.GreaterThanGreaterThanToken:
-            case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
-            case SyntaxKind.LessThanToken:
-            case SyntaxKind.GreaterThanToken:
-            case SyntaxKind.LessThanEqualsToken:
-            case SyntaxKind.GreaterThanEqualsToken:
-            case SyntaxKind.InstanceOfKeyword:
-            case SyntaxKind.InKeyword:
-            case SyntaxKind.EqualsEqualsToken:
-            case SyntaxKind.ExclamationEqualsToken:
-            case SyntaxKind.EqualsEqualsEqualsToken:
-            case SyntaxKind.ExclamationEqualsEqualsToken:
-            case SyntaxKind.AmpersandToken:
-            case SyntaxKind.CaretToken:
-            case SyntaxKind.BarToken:
-            case SyntaxKind.AmpersandAmpersandToken:
-            case SyntaxKind.BarBarToken:
-            case SyntaxKind.BarEqualsToken:
-            case SyntaxKind.AmpersandEqualsToken:
-            case SyntaxKind.CaretEqualsToken:
-            case SyntaxKind.LessThanLessThanEqualsToken:
-            case SyntaxKind.GreaterThanGreaterThanEqualsToken:
-            case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken:
-            case SyntaxKind.PlusEqualsToken:
-            case SyntaxKind.MinusEqualsToken:
-            case SyntaxKind.AsteriskEqualsToken:
-            case SyntaxKind.SlashEqualsToken:
-            case SyntaxKind.PercentEqualsToken:
-            case SyntaxKind.EqualsToken:
-            case SyntaxKind.CommaToken:
-                break;
-            default:
-                throw Errors.argument('operatorToken');
-        }
-
         this._kind = kind;
         this._left = left;
         this._operatorToken = operatorToken;
@@ -6673,12 +6455,6 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
                 colonToken: ISyntaxToken,
                 whenFalse: IExpressionSyntax) {
         super();
-
-        if (condition === null) { throw Errors.argumentNull('condition'); }
-        if (whenTrue === null) { throw Errors.argumentNull('whenTrue'); }
-        if (whenFalse === null) { throw Errors.argumentNull('whenFalse'); }
-        if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
-        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._condition = condition;
         this._questionToken = questionToken;
@@ -6936,9 +6712,6 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (newKeyword.tokenKind !== SyntaxKind.NewKeyword) { throw Errors.argument('newKeyword'); }
-
         this._newKeyword = newKeyword;
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
@@ -7117,12 +6890,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
                 parameterList: ParameterListSyntax,
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
-
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (questionToken !== null) {
-            if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
-        }
 
         this._identifier = identifier;
         this._questionToken = questionToken;
@@ -7335,10 +7102,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        if (parameter === null) { throw Errors.argumentNull('parameter'); }
-        if (openBracketToken.tokenKind !== SyntaxKind.OpenBracketToken) { throw Errors.argument('openBracketToken'); }
-        if (closeBracketToken.tokenKind !== SyntaxKind.CloseBracketToken) { throw Errors.argument('closeBracketToken'); }
-
         this._openBracketToken = openBracketToken;
         this._parameter = parameter;
         this._closeBracketToken = closeBracketToken;
@@ -7543,11 +7306,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (questionToken !== null) {
-            if (questionToken.tokenKind !== SyntaxKind.QuestionToken) { throw Errors.argument('questionToken'); }
-        }
-
         this._identifier = identifier;
         this._questionToken = questionToken;
         this._typeAnnotation = typeAnnotation;
@@ -7727,10 +7485,6 @@ class ParameterListSyntax extends SyntaxNode {
                 closeParenToken: ISyntaxToken) {
         super();
 
-        if (parameters === null) { throw Errors.argumentNull('parameters'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-
         this._openParenToken = openParenToken;
         this._parameters = parameters;
         this._closeParenToken = closeParenToken;
@@ -7906,8 +7660,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
                 typeAnnotation: TypeAnnotationSyntax) {
         super();
 
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
     }
@@ -8058,9 +7810,6 @@ class ElseClauseSyntax extends SyntaxNode {
                 statement: IStatementSyntax) {
         super();
 
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (elseKeyword.tokenKind !== SyntaxKind.ElseKeyword) { throw Errors.argument('elseKeyword'); }
-
         this._elseKeyword = elseKeyword;
         this._statement = statement;
     }
@@ -8208,12 +7957,6 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 statement: IStatementSyntax,
                 elseClause: ElseClauseSyntax) {
         super();
-
-        if (condition === null) { throw Errors.argumentNull('condition'); }
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (ifKeyword.tokenKind !== SyntaxKind.IfKeyword) { throw Errors.argument('ifKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._ifKeyword = ifKeyword;
         this._openParenToken = openParenToken;
@@ -8484,9 +8227,6 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-
         this._expression = expression;
         this._semicolonToken = semicolonToken;
     }
@@ -8638,12 +8378,6 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
                 block: BlockSyntax,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (constructorKeyword.tokenKind !== SyntaxKind.ConstructorKeyword) { throw Errors.argument('constructorKeyword'); }
-        if (semicolonToken !== null) {
-            if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-        }
 
         this._constructorKeyword = constructorKeyword;
         this._parameterList = parameterList;
@@ -8859,17 +8593,6 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
                 block: BlockSyntax,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (functionSignature === null) { throw Errors.argumentNull('functionSignature'); }
-        if (publicOrPrivateKeyword !== null) {
-            if (publicOrPrivateKeyword.tokenKind !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.tokenKind !== SyntaxKind.PrivateKeyword) { throw Errors.argument('publicOrPrivateKeyword'); }
-        }
-        if (staticKeyword !== null) {
-            if (staticKeyword.tokenKind !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
-        }
-        if (semicolonToken !== null) {
-            if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-        }
 
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
@@ -9173,17 +8896,6 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
                 block: BlockSyntax) {
         super();
 
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (publicOrPrivateKeyword !== null) {
-            if (publicOrPrivateKeyword.tokenKind !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.tokenKind !== SyntaxKind.PrivateKeyword) { throw Errors.argument('publicOrPrivateKeyword'); }
-        }
-        if (staticKeyword !== null) {
-            if (staticKeyword.tokenKind !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
-        }
-        if (getKeyword.tokenKind !== SyntaxKind.GetKeyword) { throw Errors.argument('getKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
         this._getKeyword = getKeyword;
@@ -9482,17 +9194,6 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
                 block: BlockSyntax) {
         super();
 
-        if (parameterList === null) { throw Errors.argumentNull('parameterList'); }
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (publicOrPrivateKeyword !== null) {
-            if (publicOrPrivateKeyword.tokenKind !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.tokenKind !== SyntaxKind.PrivateKeyword) { throw Errors.argument('publicOrPrivateKeyword'); }
-        }
-        if (staticKeyword !== null) {
-            if (staticKeyword.tokenKind !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
-        }
-        if (setKeyword.tokenKind !== SyntaxKind.SetKeyword) { throw Errors.argument('setKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
         this._setKeyword = setKeyword;
@@ -9756,15 +9457,6 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
                 semicolonToken: ISyntaxToken) {
         super();
 
-        if (variableDeclarator === null) { throw Errors.argumentNull('variableDeclarator'); }
-        if (publicOrPrivateKeyword !== null) {
-            if (publicOrPrivateKeyword.tokenKind !== SyntaxKind.PublicKeyword && publicOrPrivateKeyword.tokenKind !== SyntaxKind.PrivateKeyword) { throw Errors.argument('publicOrPrivateKeyword'); }
-        }
-        if (staticKeyword !== null) {
-            if (staticKeyword.tokenKind !== SyntaxKind.StaticKeyword) { throw Errors.argument('staticKeyword'); }
-        }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-
         this._publicOrPrivateKeyword = publicOrPrivateKeyword;
         this._staticKeyword = staticKeyword;
         this._variableDeclarator = variableDeclarator;
@@ -9979,10 +9671,6 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 semicolonToken: ISyntaxToken) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (throwKeyword.tokenKind !== SyntaxKind.ThrowKeyword) { throw Errors.argument('throwKeyword'); }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-
         this._throwKeyword = throwKeyword;
         this._expression = expression;
         this._semicolonToken = semicolonToken;
@@ -10158,9 +9846,6 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 expression: IExpressionSyntax,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (returnKeyword.tokenKind !== SyntaxKind.ReturnKeyword) { throw Errors.argument('returnKeyword'); }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._returnKeyword = returnKeyword;
         this._expression = expression;
@@ -10346,9 +10031,6 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
                 expression: IExpressionSyntax,
                 argumentList: ArgumentListSyntax) {
         super();
-
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (newKeyword.tokenKind !== SyntaxKind.NewKeyword) { throw Errors.argument('newKeyword'); }
 
         this._newKeyword = newKeyword;
         this._expression = expression;
@@ -10544,14 +10226,6 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 switchClauses: ISyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
-
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (switchClauses === null) { throw Errors.argumentNull('switchClauses'); }
-        if (switchKeyword.tokenKind !== SyntaxKind.SwitchKeyword) { throw Errors.argument('switchKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._switchKeyword = switchKeyword;
         this._openParenToken = openParenToken;
@@ -10880,11 +10554,6 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
                 statements: ISyntaxList) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (statements === null) { throw Errors.argumentNull('statements'); }
-        if (caseKeyword.tokenKind !== SyntaxKind.CaseKeyword) { throw Errors.argument('caseKeyword'); }
-        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
-
         this._caseKeyword = caseKeyword;
         this._expression = expression;
         this._colonToken = colonToken;
@@ -11091,10 +10760,6 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
                 statements: ISyntaxList) {
         super();
 
-        if (statements === null) { throw Errors.argumentNull('statements'); }
-        if (defaultKeyword.tokenKind !== SyntaxKind.DefaultKeyword) { throw Errors.argument('defaultKeyword'); }
-        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
-
         this._defaultKeyword = defaultKeyword;
         this._colonToken = colonToken;
         this._statements = statements;
@@ -11271,12 +10936,6 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 identifier: ISyntaxToken,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (breakKeyword.tokenKind !== SyntaxKind.BreakKeyword) { throw Errors.argument('breakKeyword'); }
-        if (identifier !== null) {
-            if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._breakKeyword = breakKeyword;
         this._identifier = identifier;
@@ -11460,12 +11119,6 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 identifier: ISyntaxToken,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (continueKeyword.tokenKind !== SyntaxKind.ContinueKeyword) { throw Errors.argument('continueKeyword'); }
-        if (identifier !== null) {
-            if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._continueKeyword = continueKeyword;
         this._identifier = identifier;
@@ -11739,13 +11392,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax) {
         super();
-
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (forKeyword.tokenKind !== SyntaxKind.ForKeyword) { throw Errors.argument('forKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (firstSemicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('firstSemicolonToken'); }
-        if (secondSemicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('secondSemicolonToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
@@ -12140,13 +11786,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
                 statement: IStatementSyntax) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (forKeyword.tokenKind !== SyntaxKind.ForKeyword) { throw Errors.argument('forKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (inKeyword.tokenKind !== SyntaxKind.InKeyword) { throw Errors.argument('inKeyword'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-
         this._forKeyword = forKeyword;
         this._openParenToken = openParenToken;
         this._variableDeclaration = variableDeclaration;
@@ -12473,12 +12112,6 @@ class WhileStatementSyntax extends IterationStatementSyntax {
                 statement: IStatementSyntax) {
         super();
 
-        if (condition === null) { throw Errors.argumentNull('condition'); }
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (whileKeyword.tokenKind !== SyntaxKind.WhileKeyword) { throw Errors.argument('whileKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-
         this._whileKeyword = whileKeyword;
         this._openParenToken = openParenToken;
         this._condition = condition;
@@ -12705,12 +12338,6 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax) {
         super();
-
-        if (condition === null) { throw Errors.argumentNull('condition'); }
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (withKeyword.tokenKind !== SyntaxKind.WithKeyword) { throw Errors.argument('withKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._withKeyword = withKeyword;
         this._openParenToken = openParenToken;
@@ -12948,15 +12575,6 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
                 variableDeclarators: ISeparatedSyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
-
-        if (variableDeclarators === null) { throw Errors.argumentNull('variableDeclarators'); }
-        if (exportKeyword !== null) {
-            if (exportKeyword.tokenKind !== SyntaxKind.ExportKeyword) { throw Errors.argument('exportKeyword'); }
-        }
-        if (enumKeyword.tokenKind !== SyntaxKind.EnumKeyword) { throw Errors.argument('enumKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._exportKeyword = exportKeyword;
         this._enumKeyword = enumKeyword;
@@ -13224,11 +12842,6 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
                 expression: IUnaryExpressionSyntax) {
         super();
 
-        if (type === null) { throw Errors.argumentNull('type'); }
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (lessThanToken.tokenKind !== SyntaxKind.LessThanToken) { throw Errors.argument('lessThanToken'); }
-        if (greaterThanToken.tokenKind !== SyntaxKind.GreaterThanToken) { throw Errors.argument('greaterThanToken'); }
-
         this._lessThanToken = lessThanToken;
         this._type = type;
         this._greaterThanToken = greaterThanToken;
@@ -13431,10 +13044,6 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
                 propertyAssignments: ISeparatedSyntaxList,
                 closeBraceToken: ISyntaxToken) {
         super();
-
-        if (propertyAssignments === null) { throw Errors.argumentNull('propertyAssignments'); }
-        if (openBraceToken.tokenKind !== SyntaxKind.OpenBraceToken) { throw Errors.argument('openBraceToken'); }
-        if (closeBraceToken.tokenKind !== SyntaxKind.CloseBraceToken) { throw Errors.argument('closeBraceToken'); }
 
         this._openBraceToken = openBraceToken;
         this._propertyAssignments = propertyAssignments;
@@ -13643,12 +13252,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
                 expression: IExpressionSyntax) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (!SyntaxFacts.isIdentifierName(propertyName.tokenKind)) {
-            if (propertyName.tokenKind !== SyntaxKind.StringLiteral && propertyName.tokenKind !== SyntaxKind.NumericLiteral) { throw Errors.argument('propertyName'); }
-        }
-        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
-
         this._propertyName = propertyName;
         this._colonToken = colonToken;
         this._expression = expression;
@@ -13855,12 +13458,6 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                 closeParenToken: ISyntaxToken,
                 block: BlockSyntax) {
         super();
-
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (getKeyword.tokenKind !== SyntaxKind.GetKeyword) { throw Errors.argument('getKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(propertyName.tokenKind)) { throw Errors.argument('propertyName'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._getKeyword = getKeyword;
         this._propertyName = propertyName;
@@ -14087,13 +13684,6 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                 closeParenToken: ISyntaxToken,
                 block: BlockSyntax) {
         super();
-
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (setKeyword.tokenKind !== SyntaxKind.SetKeyword) { throw Errors.argument('setKeyword'); }
-        if (!SyntaxFacts.isIdentifierName(propertyName.tokenKind)) { throw Errors.argument('propertyName'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (!SyntaxFacts.isIdentifierName(parameterName.tokenKind)) { throw Errors.argument('parameterName'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
 
         this._setKeyword = setKeyword;
         this._propertyName = propertyName;
@@ -14344,13 +13934,6 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
                 block: BlockSyntax) {
         super();
 
-        if (callSignature === null) { throw Errors.argumentNull('callSignature'); }
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (functionKeyword.tokenKind !== SyntaxKind.FunctionKeyword) { throw Errors.argument('functionKeyword'); }
-        if (identifier !== null) {
-            if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        }
-
         this._functionKeyword = functionKeyword;
         this._identifier = identifier;
         this._callSignature = callSignature;
@@ -14561,8 +14144,6 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
     constructor(semicolonToken: ISyntaxToken) {
         super();
 
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
-
         this._semicolonToken = semicolonToken;
     }
 
@@ -14686,9 +14267,6 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 catchClause: CatchClauseSyntax,
                 finallyClause: FinallyClauseSyntax) {
         super();
-
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (tryKeyword.tokenKind !== SyntaxKind.TryKeyword) { throw Errors.argument('tryKeyword'); }
 
         this._tryKeyword = tryKeyword;
         this._block = block;
@@ -14913,12 +14491,6 @@ class CatchClauseSyntax extends SyntaxNode {
                 block: BlockSyntax) {
         super();
 
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (catchKeyword.tokenKind !== SyntaxKind.CatchKeyword) { throw Errors.argument('catchKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-
         this._catchKeyword = catchKeyword;
         this._openParenToken = openParenToken;
         this._identifier = identifier;
@@ -15137,9 +14709,6 @@ class FinallyClauseSyntax extends SyntaxNode {
                 block: BlockSyntax) {
         super();
 
-        if (block === null) { throw Errors.argumentNull('block'); }
-        if (finallyKeyword.tokenKind !== SyntaxKind.FinallyKeyword) { throw Errors.argument('finallyKeyword'); }
-
         this._finallyKeyword = finallyKeyword;
         this._block = block;
     }
@@ -15281,10 +14850,6 @@ class LabeledStatement extends SyntaxNode implements IStatementSyntax {
                 colonToken: ISyntaxToken,
                 statement: IStatementSyntax) {
         super();
-
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (!SyntaxFacts.isIdentifierName(identifier.tokenKind)) { throw Errors.argument('identifier'); }
-        if (colonToken.tokenKind !== SyntaxKind.ColonToken) { throw Errors.argument('colonToken'); }
 
         this._identifier = identifier;
         this._colonToken = colonToken;
@@ -15470,14 +15035,6 @@ class DoStatementSyntax extends IterationStatementSyntax {
                 closeParenToken: ISyntaxToken,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (statement === null) { throw Errors.argumentNull('statement'); }
-        if (condition === null) { throw Errors.argumentNull('condition'); }
-        if (doKeyword.tokenKind !== SyntaxKind.DoKeyword) { throw Errors.argument('doKeyword'); }
-        if (whileKeyword.tokenKind !== SyntaxKind.WhileKeyword) { throw Errors.argument('whileKeyword'); }
-        if (openParenToken.tokenKind !== SyntaxKind.OpenParenToken) { throw Errors.argument('openParenToken'); }
-        if (closeParenToken.tokenKind !== SyntaxKind.CloseParenToken) { throw Errors.argument('closeParenToken'); }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._doKeyword = doKeyword;
         this._statement = statement;
@@ -15752,9 +15309,6 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
                 expression: IExpressionSyntax) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (typeOfKeyword.tokenKind !== SyntaxKind.TypeOfKeyword) { throw Errors.argument('typeOfKeyword'); }
-
         this._typeOfKeyword = typeOfKeyword;
         this._expression = expression;
     }
@@ -15902,9 +15456,6 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
     constructor(deleteKeyword: ISyntaxToken,
                 expression: IExpressionSyntax) {
         super();
-
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (deleteKeyword.tokenKind !== SyntaxKind.DeleteKeyword) { throw Errors.argument('deleteKeyword'); }
 
         this._deleteKeyword = deleteKeyword;
         this._expression = expression;
@@ -16054,9 +15605,6 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
                 expression: IExpressionSyntax) {
         super();
 
-        if (expression === null) { throw Errors.argumentNull('expression'); }
-        if (voidKeyword.tokenKind !== SyntaxKind.VoidKeyword) { throw Errors.argument('voidKeyword'); }
-
         this._voidKeyword = voidKeyword;
         this._expression = expression;
     }
@@ -16204,9 +15752,6 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
     constructor(debuggerKeyword: ISyntaxToken,
                 semicolonToken: ISyntaxToken) {
         super();
-
-        if (debuggerKeyword.tokenKind !== SyntaxKind.DebuggerKeyword) { throw Errors.argument('debuggerKeyword'); }
-        if (semicolonToken.tokenKind !== SyntaxKind.SemicolonToken) { throw Errors.argument('semicolonToken'); }
 
         this._debuggerKeyword = debuggerKeyword;
         this._semicolonToken = semicolonToken;
