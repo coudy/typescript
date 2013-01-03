@@ -1018,15 +1018,13 @@ function generateIfKindCheck(child: IMemberDefinition, tokenKinds: string[], ind
     result += indent + "        if (";
 
     for (var j = 0; j < tokenKinds.length; j++) {
-        var tokenKind = tokenKinds[j];
-        var isKeyword = tokenKind.indexOf("Keyword") >= 0;
-
         if (j > 0) {
             result += " && ";
         }
 
-        if (isKeyword) {
-            result += child.name + ".keywordKind() !== SyntaxKind." + tokenKind;
+        var tokenKind = tokenKinds[j];
+        if (tokenKind === "IdentifierNameToken") {
+            result += "!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)";
         }
         else {
             result += child.name + ".tokenKind !== SyntaxKind." + tokenKind;
@@ -1076,31 +1074,35 @@ function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[],
 
     var result = "";
 
-    var keywords = ArrayUtilities.where(tokenKinds, v => v.indexOf("Keyword") >= 0);
-    var tokens = ArrayUtilities.where(tokenKinds, v => v.indexOf("Keyword") < 0);
+    var identifierName = ArrayUtilities.where(tokenKinds, v => v.indexOf("IdentifierNameToken") >= 0);
+    var notIdentifierName = ArrayUtilities.where(tokenKinds, v => v.indexOf("IdentifierNameToken") < 0);
 
-    if (tokens.length === 0) {
-        if (keywords.length <= 2) {
-            return generateIfKindCheck(child, keywords, indent);
+    if (identifierName.length > 0) {
+        result += indent + "        if (!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)) {\r\n";
+        if (notIdentifierName.length === 0) {
+            result += indent + "            throw Errors.argument('" + child.name + "');\r\n"; 
+            result += indent + "        }\r\n";
+            return result;
         }
-        else {
-            result += indent + "        switch (" + child.name + ".keywordKind()) {\r\n";
-            result += generateSwitchCases(keywords, indent);
-        }
+
+        indent += "    ";
     }
-    else {
+
+    if (notIdentifierName.length <= 2) {
+        result += generateIfKindCheck(child, notIdentifierName, indent);
+    }
+    else if (notIdentifierName.length > 2) {
         result += indent + "        switch (" + child.name + ".tokenKind) {\r\n";
-        result += generateSwitchCases(tokens, indent);
-
-        if (keywords.length > 0) {
-            result += generateSwitchCase("IdentifierNameToken", indent);
-            result += generateSwitchKindCheck(child, keywords, indent + "        ");
-            result += generateBreakStatement(indent);
-        }
+        result += generateSwitchCases(notIdentifierName, indent);
+        result += generateDefaultCase(child, indent);
+        result += indent + "        }\r\n";
     }
-    
-    result += generateDefaultCase(child, indent);
-    result += indent + "        }\r\n";
+
+    if (identifierName.length > 0) {
+        result += indent + "    }\r\n";
+    }
+
+    // result += indent + "        }\r\n";
     return result;
 }
 

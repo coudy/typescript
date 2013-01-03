@@ -1345,8 +1345,7 @@ module Parser {
         // both 'foo' and 'return' are identifier names.  Note: a word is always an identifier or 
         // not regardless of the state of the parser.
         private static isIdentifierName(token: ISyntaxToken): bool {
-            var tokenKind = token.tokenKind;
-            return tokenKind === SyntaxKind.IdentifierNameToken || SyntaxFacts.isAnyKeyword(tokenKind);
+            return SyntaxFacts.isIdentifierName(token.tokenKind);
         }
 
         // An identifier is basically any word, unless it is a reserved keyword.  so 'foo' is an 

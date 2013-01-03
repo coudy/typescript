@@ -1354,8 +1354,12 @@ var SyntaxFacts;
         }
     }
     SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
+    function isIdentifierName(kind) {
+        return kind === 9 /* IdentifierNameToken */  || isAnyKeyword(kind);
+    }
+    SyntaxFacts.isIdentifierName = isIdentifierName;
 })(SyntaxFacts || (SyntaxFacts = {}));
-var argumentChecks = false;
+var argumentChecks = true;
 var interfaces = {
     IMemberDeclarationSyntax: "IClassElementSyntax",
     IStatementSyntax: "IModuleElementSyntax",
@@ -3540,13 +3544,12 @@ function generateIfKindCheck(child, tokenKinds, indent) {
     var result = "";
     result += indent + "        if (";
     for(var j = 0; j < tokenKinds.length; j++) {
-        var tokenKind = tokenKinds[j];
-        var isKeyword = tokenKind.indexOf("Keyword") >= 0;
         if(j > 0) {
             result += " && ";
         }
-        if(isKeyword) {
-            result += child.name + ".keywordKind() !== SyntaxKind." + tokenKind;
+        var tokenKind = tokenKinds[j];
+        if(tokenKind === "IdentifierNameToken") {
+            result += "!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)";
         } else {
             result += child.name + ".tokenKind !== SyntaxKind." + tokenKind;
         }
@@ -3582,30 +3585,34 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
         return "";
     }
     var result = "";
-    var keywords = ArrayUtilities.where(tokenKinds, function (v) {
-        return v.indexOf("Keyword") >= 0;
+    var identifierName = ArrayUtilities.where(tokenKinds, function (v) {
+        return v.indexOf("IdentifierNameToken") >= 0;
     });
-    var tokens = ArrayUtilities.where(tokenKinds, function (v) {
-        return v.indexOf("Keyword") < 0;
+    var notIdentifierName = ArrayUtilities.where(tokenKinds, function (v) {
+        return v.indexOf("IdentifierNameToken") < 0;
     });
-    if(tokens.length === 0) {
-        if(keywords.length <= 2) {
-            return generateIfKindCheck(child, keywords, indent);
-        } else {
-            result += indent + "        switch (" + child.name + ".keywordKind()) {\r\n";
-            result += generateSwitchCases(keywords, indent);
+    if(identifierName.length > 0) {
+        result += indent + "        if (!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)) {\r\n";
+        if(notIdentifierName.length === 0) {
+            result += indent + "            throw Errors.argument('" + child.name + "');\r\n";
+            result += indent + "        }\r\n";
+            return result;
         }
+        indent += "    ";
+    }
+    if(notIdentifierName.length <= 2) {
+        result += generateIfKindCheck(child, notIdentifierName, indent);
     } else {
-        result += indent + "        switch (" + child.name + ".tokenKind) {\r\n";
-        result += generateSwitchCases(tokens, indent);
-        if(keywords.length > 0) {
-            result += generateSwitchCase("IdentifierNameToken", indent);
-            result += generateSwitchKindCheck(child, keywords, indent + "        ");
-            result += generateBreakStatement(indent);
+        if(notIdentifierName.length > 2) {
+            result += indent + "        switch (" + child.name + ".tokenKind) {\r\n";
+            result += generateSwitchCases(notIdentifierName, indent);
+            result += generateDefaultCase(child, indent);
+            result += indent + "        }\r\n";
         }
     }
-    result += generateDefaultCase(child, indent);
-    result += indent + "        }\r\n";
+    if(identifierName.length > 0) {
+        result += indent + "    }\r\n";
+    }
     return result;
 }
 function tokenKinds(child) {
