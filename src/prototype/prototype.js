@@ -26416,7 +26416,7 @@ var Parser;
         IncrementalParserSource.prototype.canReuseTokenFromOldSourceUnit = function (position, token) {
             if(token !== null) {
                 if(!this.intersectsWithChangeRangeSpan(position, token.fullWidth())) {
-                    if(!token.hasSkippedText() && token.width() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind())) {
+                    if(!token.hasSkippedText() && token.width() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind)) {
                         return true;
                     }
                 }
@@ -26561,14 +26561,14 @@ var Parser;
             return null;
         };
         ParserImpl.prototype.tryEatKeyword = function (kind) {
-            if(this.currentToken().kind() === kind) {
+            if(this.currentToken().tokenKind === kind) {
                 return this.eatKeyword(kind);
             }
             return null;
         };
         ParserImpl.prototype.eatKeyword = function (kind) {
             var token = this.currentToken();
-            if(token.kind() === kind) {
+            if(token.tokenKind === kind) {
                 this.moveToNextToken();
                 return token;
             }
@@ -26631,7 +26631,7 @@ var Parser;
             return token.tokenKind === 9 /* IdentifierNameToken */  || SyntaxFacts.isAnyKeyword(token.tokenKind);
         };
         ParserImpl.prototype.isIdentifier = function (token) {
-            return this.isIdentifierName(token) && !this.isKeyword(token.kind());
+            return this.isIdentifierName(token) && !this.isKeyword(token.tokenKind);
         };
         ParserImpl.prototype.isKeyword = function (kind) {
             if(kind >= SyntaxKind.FirstKeyword) {
@@ -26661,9 +26661,9 @@ var Parser;
                         SyntaxFacts.getText(expectedKind)
                     ]);
                 } else {
-                    if(actual !== null && SyntaxFacts.isAnyKeyword(actual.kind())) {
+                    if(actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
                         return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), 6 /* Identifier_expected__0_is_a_keyword */ , [
-                            SyntaxFacts.getText(actual.kind())
+                            SyntaxFacts.getText(actual.tokenKind)
                         ]);
                     } else {
                         return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), 3 /* Identifier_expected */ , null);
@@ -26849,7 +26849,7 @@ var Parser;
             }
         };
         ParserImpl.prototype.isImportDeclaration = function () {
-            return this.currentToken().kind() === 47 /* ImportKeyword */  && this.isIdentifierName(this.peekToken(1)) && this.peekToken(2).tokenKind === 104 /* EqualsToken */ ;
+            return this.currentToken().tokenKind === 47 /* ImportKeyword */  && this.isIdentifierName(this.peekToken(1)) && this.peekToken(2).tokenKind === 104 /* EqualsToken */ ;
         };
         ParserImpl.prototype.parseImportDeclaration = function () {
             var importKeyword = this.eatKeyword(47 /* ImportKeyword */ );
@@ -26867,7 +26867,7 @@ var Parser;
             }
         };
         ParserImpl.prototype.isExternalModuleReference = function () {
-            return this.currentToken().kind() === 63 /* ModuleKeyword */  && this.peekToken(1).tokenKind === 69 /* OpenParenToken */ ;
+            return this.currentToken().tokenKind === 63 /* ModuleKeyword */  && this.peekToken(1).tokenKind === 69 /* OpenParenToken */ ;
         };
         ParserImpl.prototype.parseExternalModuleReference = function () {
             var moduleKeyword = this.eatKeyword(63 /* ModuleKeyword */ );
@@ -26900,10 +26900,10 @@ var Parser;
             return current;
         };
         ParserImpl.prototype.isEnumDeclaration = function () {
-            if(this.currentToken().kind() === 45 /* ExportKeyword */  && this.peekToken(1).kind() === 44 /* EnumKeyword */ ) {
+            if(this.currentToken().tokenKind === 45 /* ExportKeyword */  && this.peekToken(1).tokenKind === 44 /* EnumKeyword */ ) {
                 return true;
             }
-            return this.currentToken().kind() === 44 /* EnumKeyword */  && this.isIdentifier(this.peekToken(1));
+            return this.currentToken().tokenKind === 44 /* EnumKeyword */  && this.isIdentifier(this.peekToken(1));
         };
         ParserImpl.prototype.parseEnumDeclaration = function () {
             var exportKeyword = this.tryEatKeyword(45 /* ExportKeyword */ );
@@ -26919,13 +26919,13 @@ var Parser;
         };
         ParserImpl.prototype.isClassDeclaration = function () {
             var token0 = this.currentToken();
-            if(token0.kind() === 45 /* ExportKeyword */  && this.peekToken(1).kind() === 42 /* ClassKeyword */ ) {
+            if(token0.tokenKind === 45 /* ExportKeyword */  && this.peekToken(1).tokenKind === 42 /* ClassKeyword */ ) {
                 return true;
             }
-            if(token0.kind() === 61 /* DeclareKeyword */  && this.peekToken(1).kind() === 42 /* ClassKeyword */ ) {
+            if(token0.tokenKind === 61 /* DeclareKeyword */  && this.peekToken(1).tokenKind === 42 /* ClassKeyword */ ) {
                 return true;
             }
-            return token0.kind() === 42 /* ClassKeyword */  && this.isIdentifier(this.peekToken(1));
+            return token0.tokenKind === 42 /* ClassKeyword */  && this.isIdentifier(this.peekToken(1));
         };
         ParserImpl.prototype.parseClassDeclaration = function () {
             var exportKeyword = this.tryEatKeyword(45 /* ExportKeyword */ );
@@ -26949,17 +26949,17 @@ var Parser;
             return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
         };
         ParserImpl.prototype.isConstructorDeclaration = function () {
-            return this.currentToken().kind() === 60 /* ConstructorKeyword */ ;
+            return this.currentToken().tokenKind === 60 /* ConstructorKeyword */ ;
         };
         ParserImpl.prototype.isMemberAccessorDeclaration = function () {
             var index = 0;
-            if(this.currentToken().kind() === 55 /* PublicKeyword */  || this.currentToken().kind() === 53 /* PrivateKeyword */ ) {
+            if(this.currentToken().tokenKind === 55 /* PublicKeyword */  || this.currentToken().tokenKind === 53 /* PrivateKeyword */ ) {
                 index++;
             }
-            if(this.peekToken(index).kind() === 56 /* StaticKeyword */ ) {
+            if(this.peekToken(index).tokenKind === 56 /* StaticKeyword */ ) {
                 index++;
             }
-            if(this.peekToken(index).kind() !== 62 /* GetKeyword */  && this.peekToken(index).kind() !== 65 /* SetKeyword */ ) {
+            if(this.peekToken(index).tokenKind !== 62 /* GetKeyword */  && this.peekToken(index).tokenKind !== 65 /* SetKeyword */ ) {
                 return false;
             }
             index++;
@@ -26967,14 +26967,14 @@ var Parser;
         };
         ParserImpl.prototype.parseMemberAccessorDeclaration = function () {
             var publicOrPrivateKeyword = null;
-            if(this.currentToken().kind() === 55 /* PublicKeyword */  || this.currentToken().kind() === 53 /* PrivateKeyword */ ) {
+            if(this.currentToken().tokenKind === 55 /* PublicKeyword */  || this.currentToken().tokenKind === 53 /* PrivateKeyword */ ) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
             var staticKeyword = this.tryEatKeyword(56 /* StaticKeyword */ );
-            if(this.currentToken().kind() === 62 /* GetKeyword */ ) {
+            if(this.currentToken().tokenKind === 62 /* GetKeyword */ ) {
                 return this.parseGetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
             } else {
-                if(this.currentToken().kind() === 65 /* SetKeyword */ ) {
+                if(this.currentToken().tokenKind === 65 /* SetKeyword */ ) {
                     return this.parseSetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
                 } else {
                     throw Errors.invalidOperation();
@@ -26998,13 +26998,13 @@ var Parser;
         };
         ParserImpl.prototype.isMemberVariableDeclaration = function () {
             var index = 0;
-            if(this.currentToken().kind() === 55 /* PublicKeyword */  || this.currentToken().kind() === 53 /* PrivateKeyword */ ) {
+            if(this.currentToken().tokenKind === 55 /* PublicKeyword */  || this.currentToken().tokenKind === 53 /* PrivateKeyword */ ) {
                 index++;
                 if(this.peekToken(index).tokenKind === 68 /* CloseBraceToken */  || this.peekToken(index).tokenKind === 118 /* EndOfFileToken */ ) {
                     return true;
                 }
             }
-            if(this.peekToken(index).kind() === 56 /* StaticKeyword */ ) {
+            if(this.peekToken(index).tokenKind === 56 /* StaticKeyword */ ) {
                 index++;
                 if(this.peekToken(index).tokenKind === 68 /* CloseBraceToken */  || this.peekToken(index).tokenKind === 118 /* EndOfFileToken */ ) {
                     return true;
@@ -27032,18 +27032,18 @@ var Parser;
         };
         ParserImpl.prototype.isMemberFunctionDeclaration = function () {
             var index = 0;
-            var token0KeywordKind = this.currentToken().kind();
+            var token0KeywordKind = this.currentToken().tokenKind;
             if(token0KeywordKind === 55 /* PublicKeyword */  || token0KeywordKind === 53 /* PrivateKeyword */ ) {
                 index++;
             }
-            if(this.peekToken(index).kind() === 56 /* StaticKeyword */ ) {
+            if(this.peekToken(index).tokenKind === 56 /* StaticKeyword */ ) {
                 index++;
             }
             return this.isFunctionSignature(index);
         };
         ParserImpl.prototype.parseMemberFunctionDeclaration = function () {
             var publicOrPrivateKeyword = null;
-            if(this.currentToken().kind() === 55 /* PublicKeyword */  || this.currentToken().kind() === 53 /* PrivateKeyword */ ) {
+            if(this.currentToken().tokenKind === 55 /* PublicKeyword */  || this.currentToken().tokenKind === 53 /* PrivateKeyword */ ) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
             var staticKeyword = this.tryEatKeyword(56 /* StaticKeyword */ );
@@ -27059,7 +27059,7 @@ var Parser;
         };
         ParserImpl.prototype.parseMemberVariableDeclaration = function () {
             var publicOrPrivateKeyword = null;
-            if(this.currentToken().kind() === 55 /* PublicKeyword */  || this.currentToken().kind() === 53 /* PrivateKeyword */ ) {
+            if(this.currentToken().tokenKind === 55 /* PublicKeyword */  || this.currentToken().tokenKind === 53 /* PrivateKeyword */ ) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
             var staticKeyword = this.tryEatKeyword(56 /* StaticKeyword */ );
@@ -27090,14 +27090,14 @@ var Parser;
             }
         };
         ParserImpl.prototype.isFunctionDeclaration = function () {
-            var token0KeywordKind = this.currentToken().kind();
+            var token0KeywordKind = this.currentToken().tokenKind;
             if(token0KeywordKind === 25 /* FunctionKeyword */ ) {
                 return true;
             }
-            if(token0KeywordKind === 45 /* ExportKeyword */  && this.peekToken(1).kind() === 25 /* FunctionKeyword */ ) {
+            if(token0KeywordKind === 45 /* ExportKeyword */  && this.peekToken(1).tokenKind === 25 /* FunctionKeyword */ ) {
                 return true;
             }
-            return token0KeywordKind === 61 /* DeclareKeyword */  && this.peekToken(1).kind() === 25 /* FunctionKeyword */ ;
+            return token0KeywordKind === 61 /* DeclareKeyword */  && this.peekToken(1).tokenKind === 25 /* FunctionKeyword */ ;
         };
         ParserImpl.prototype.parseFunctionDeclaration = function () {
             var exportKeyword = this.tryEatKeyword(45 /* ExportKeyword */ );
@@ -27115,13 +27115,13 @@ var Parser;
         };
         ParserImpl.prototype.isModuleDeclaration = function () {
             var token0 = this.currentToken();
-            if(token0.kind() === 45 /* ExportKeyword */  && this.peekToken(1).kind() === 63 /* ModuleKeyword */ ) {
+            if(token0.tokenKind === 45 /* ExportKeyword */  && this.peekToken(1).tokenKind === 63 /* ModuleKeyword */ ) {
                 return true;
             }
-            if(token0.kind() === 61 /* DeclareKeyword */  && this.peekToken(1).kind() === 63 /* ModuleKeyword */ ) {
+            if(token0.tokenKind === 61 /* DeclareKeyword */  && this.peekToken(1).tokenKind === 63 /* ModuleKeyword */ ) {
                 return true;
             }
-            if(token0.kind() === 63 /* ModuleKeyword */ ) {
+            if(token0.tokenKind === 63 /* ModuleKeyword */ ) {
                 var token1 = this.peekToken(1);
                 if(token1.tokenKind === 67 /* OpenBraceToken */ ) {
                     return true;
@@ -27160,10 +27160,10 @@ var Parser;
             return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
         };
         ParserImpl.prototype.isInterfaceDeclaration = function () {
-            if(this.currentToken().kind() === 45 /* ExportKeyword */  && this.peekToken(1).kind() === 50 /* InterfaceKeyword */ ) {
+            if(this.currentToken().tokenKind === 45 /* ExportKeyword */  && this.peekToken(1).tokenKind === 50 /* InterfaceKeyword */ ) {
                 return true;
             }
-            return this.currentToken().kind() === 50 /* InterfaceKeyword */  && this.isIdentifier(this.peekToken(1));
+            return this.currentToken().tokenKind === 50 /* InterfaceKeyword */  && this.isIdentifier(this.peekToken(1));
         };
         ParserImpl.prototype.parseInterfaceDeclaration = function () {
             var exportKeyword = this.tryEatKeyword(45 /* ExportKeyword */ );
@@ -27247,7 +27247,7 @@ var Parser;
             return this.currentToken().tokenKind === 69 /* OpenParenToken */ ;
         };
         ParserImpl.prototype.isConstructSignature = function () {
-            return this.currentToken().kind() === 29 /* NewKeyword */ ;
+            return this.currentToken().tokenKind === 29 /* NewKeyword */ ;
         };
         ParserImpl.prototype.isIndexSignature = function () {
             return this.currentToken().tokenKind === 71 /* OpenBracketToken */ ;
@@ -27267,7 +27267,7 @@ var Parser;
             return this.isIdentifier(this.currentToken());
         };
         ParserImpl.prototype.isExtendsClause = function () {
-            return this.currentToken().kind() === 46 /* ExtendsKeyword */ ;
+            return this.currentToken().tokenKind === 46 /* ExtendsKeyword */ ;
         };
         ParserImpl.prototype.parseExtendsClause = function () {
             var extendsKeyword = this.eatKeyword(46 /* ExtendsKeyword */ );
@@ -27275,7 +27275,7 @@ var Parser;
             return new ExtendsClauseSyntax(extendsKeyword, typeNames);
         };
         ParserImpl.prototype.isImplementsClause = function () {
-            return this.currentToken().kind() === 49 /* ImplementsKeyword */ ;
+            return this.currentToken().tokenKind === 49 /* ImplementsKeyword */ ;
         };
         ParserImpl.prototype.parseImplementsClause = function () {
             var implementsKeyword = this.eatKeyword(49 /* ImplementsKeyword */ );
@@ -27286,7 +27286,7 @@ var Parser;
             if(this.currentNode() !== null && this.currentNode().isStatement()) {
                 return true;
             }
-            switch(this.currentToken().kind()) {
+            switch(this.currentToken().tokenKind) {
                 case 55 /* PublicKeyword */ :
                 case 53 /* PrivateKeyword */ :
                 case 56 /* StaticKeyword */ : {
@@ -27373,7 +27373,7 @@ var Parser;
             }
         };
         ParserImpl.prototype.isDebuggerStatement = function () {
-            return this.currentToken().kind() === 17 /* DebuggerKeyword */ ;
+            return this.currentToken().tokenKind === 17 /* DebuggerKeyword */ ;
         };
         ParserImpl.prototype.parseDebuggerStatement = function () {
             var debuggerKeyword = this.eatKeyword(17 /* DebuggerKeyword */ );
@@ -27381,7 +27381,7 @@ var Parser;
             return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
         };
         ParserImpl.prototype.isDoStatement = function () {
-            return this.currentToken().kind() === 20 /* DoKeyword */ ;
+            return this.currentToken().tokenKind === 20 /* DoKeyword */ ;
         };
         ParserImpl.prototype.parseDoStatement = function () {
             var doKeyword = this.eatKeyword(20 /* DoKeyword */ );
@@ -27403,7 +27403,7 @@ var Parser;
             return new LabeledStatement(identifier, colonToken, statement);
         };
         ParserImpl.prototype.isTryStatement = function () {
-            return this.currentToken().kind() === 36 /* TryKeyword */ ;
+            return this.currentToken().tokenKind === 36 /* TryKeyword */ ;
         };
         ParserImpl.prototype.parseTryStatement = function () {
             var tryKeyword = this.eatKeyword(36 /* TryKeyword */ );
@@ -27419,7 +27419,7 @@ var Parser;
             return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
         };
         ParserImpl.prototype.isCatchClause = function () {
-            return this.currentToken().kind() === 15 /* CatchKeyword */ ;
+            return this.currentToken().tokenKind === 15 /* CatchKeyword */ ;
         };
         ParserImpl.prototype.parseCatchClause = function () {
             var catchKeyword = this.eatKeyword(15 /* CatchKeyword */ );
@@ -27430,7 +27430,7 @@ var Parser;
             return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
         };
         ParserImpl.prototype.isFinallyClause = function () {
-            return this.currentToken().kind() === 23 /* FinallyKeyword */ ;
+            return this.currentToken().tokenKind === 23 /* FinallyKeyword */ ;
         };
         ParserImpl.prototype.parseFinallyClause = function () {
             var finallyKeyword = this.eatKeyword(23 /* FinallyKeyword */ );
@@ -27438,7 +27438,7 @@ var Parser;
             return new FinallyClauseSyntax(finallyKeyword, block);
         };
         ParserImpl.prototype.isWithStatement = function () {
-            return this.currentToken().kind() === 41 /* WithKeyword */ ;
+            return this.currentToken().tokenKind === 41 /* WithKeyword */ ;
         };
         ParserImpl.prototype.parseWithStatement = function () {
             var withKeyword = this.eatKeyword(41 /* WithKeyword */ );
@@ -27449,7 +27449,7 @@ var Parser;
             return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
         };
         ParserImpl.prototype.isWhileStatement = function () {
-            return this.currentToken().kind() === 40 /* WhileKeyword */ ;
+            return this.currentToken().tokenKind === 40 /* WhileKeyword */ ;
         };
         ParserImpl.prototype.parseWhileStatement = function () {
             var whileKeyword = this.eatKeyword(40 /* WhileKeyword */ );
@@ -27467,13 +27467,13 @@ var Parser;
             return new EmptyStatementSyntax(semicolonToken);
         };
         ParserImpl.prototype.isForOrForInStatement = function () {
-            return this.currentToken().kind() === 24 /* ForKeyword */ ;
+            return this.currentToken().tokenKind === 24 /* ForKeyword */ ;
         };
         ParserImpl.prototype.parseForOrForInStatement = function () {
             var forKeyword = this.eatKeyword(24 /* ForKeyword */ );
             var openParenToken = this.eatToken(69 /* OpenParenToken */ );
             var currentToken = this.currentToken();
-            if(currentToken.kind() === 38 /* VarKeyword */ ) {
+            if(currentToken.tokenKind === 38 /* VarKeyword */ ) {
                 return this.parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken);
             } else {
                 if(currentToken.tokenKind === 75 /* SemicolonToken */ ) {
@@ -27485,7 +27485,7 @@ var Parser;
         };
         ParserImpl.prototype.parseForOrForInStatementWithVariableDeclaration = function (forKeyword, openParenToken) {
             var variableDeclaration = this.parseVariableDeclaration(false);
-            if(this.currentToken().kind() === 27 /* InKeyword */ ) {
+            if(this.currentToken().tokenKind === 27 /* InKeyword */ ) {
                 return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
             }
             return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
@@ -27499,7 +27499,7 @@ var Parser;
         };
         ParserImpl.prototype.parseForOrForInStatementWithInitializer = function (forKeyword, openParenToken) {
             var initializer = this.parseExpression(false);
-            if(this.currentToken().kind() === 27 /* InKeyword */ ) {
+            if(this.currentToken().tokenKind === 27 /* InKeyword */ ) {
                 return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
             } else {
                 return this.parseForStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
@@ -27528,7 +27528,7 @@ var Parser;
             return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
         };
         ParserImpl.prototype.isBreakStatement = function () {
-            return this.currentToken().kind() === 13 /* BreakKeyword */ ;
+            return this.currentToken().tokenKind === 13 /* BreakKeyword */ ;
         };
         ParserImpl.prototype.parseBreakStatement = function () {
             var breakKeyword = this.eatKeyword(13 /* BreakKeyword */ );
@@ -27542,7 +27542,7 @@ var Parser;
             return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
         };
         ParserImpl.prototype.isContinueStatement = function () {
-            return this.currentToken().kind() === 16 /* ContinueKeyword */ ;
+            return this.currentToken().tokenKind === 16 /* ContinueKeyword */ ;
         };
         ParserImpl.prototype.parseContinueStatement = function () {
             var continueKeyword = this.eatKeyword(16 /* ContinueKeyword */ );
@@ -27556,7 +27556,7 @@ var Parser;
             return new ContinueStatementSyntax(continueKeyword, identifier, semicolon);
         };
         ParserImpl.prototype.isSwitchStatement = function () {
-            return this.currentToken().kind() === 32 /* SwitchKeyword */ ;
+            return this.currentToken().tokenKind === 32 /* SwitchKeyword */ ;
         };
         ParserImpl.prototype.parseSwitchStatement = function () {
             var switchKeyword = this.eatKeyword(32 /* SwitchKeyword */ );
@@ -27572,10 +27572,10 @@ var Parser;
             return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken);
         };
         ParserImpl.prototype.isCaseSwitchClause = function () {
-            return this.currentToken().kind() === 14 /* CaseKeyword */ ;
+            return this.currentToken().tokenKind === 14 /* CaseKeyword */ ;
         };
         ParserImpl.prototype.isDefaultSwitchClause = function () {
-            return this.currentToken().kind() === 18 /* DefaultKeyword */ ;
+            return this.currentToken().tokenKind === 18 /* DefaultKeyword */ ;
         };
         ParserImpl.prototype.isSwitchClause = function () {
             if(this.currentNode() !== null && this.currentNode().isSwitchClause()) {
@@ -27611,7 +27611,7 @@ var Parser;
             return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
         };
         ParserImpl.prototype.isThrowStatement = function () {
-            return this.currentToken().kind() === 34 /* ThrowKeyword */ ;
+            return this.currentToken().tokenKind === 34 /* ThrowKeyword */ ;
         };
         ParserImpl.prototype.parseThrowStatement = function () {
             var throwKeyword = this.eatKeyword(34 /* ThrowKeyword */ );
@@ -27626,7 +27626,7 @@ var Parser;
             return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
         };
         ParserImpl.prototype.isReturnStatement = function () {
-            return this.currentToken().kind() === 31 /* ReturnKeyword */ ;
+            return this.currentToken().tokenKind === 31 /* ReturnKeyword */ ;
         };
         ParserImpl.prototype.parseReturnStatement = function () {
             var returnKeyword = this.eatKeyword(31 /* ReturnKeyword */ );
@@ -27643,7 +27643,7 @@ var Parser;
             if(kind === 67 /* OpenBraceToken */ ) {
                 return false;
             }
-            var keywordKind = currentToken.kind();
+            var keywordKind = currentToken.tokenKind;
             if(keywordKind === 25 /* FunctionKeyword */ ) {
                 return false;
             }
@@ -27703,7 +27703,7 @@ var Parser;
 
                 }
             }
-            var keywordKind = currentToken.kind();
+            var keywordKind = currentToken.tokenKind;
             switch(keywordKind) {
                 case 48 /* SuperKeyword */ :
                 case 33 /* ThisKeyword */ :
@@ -27739,7 +27739,7 @@ var Parser;
             return new ExpressionStatementSyntax(expression, semicolon);
         };
         ParserImpl.prototype.isIfStatement = function () {
-            return this.currentToken().kind() === 26 /* IfKeyword */ ;
+            return this.currentToken().tokenKind === 26 /* IfKeyword */ ;
         };
         ParserImpl.prototype.parseIfStatement = function () {
             var ifKeyword = this.eatKeyword(26 /* IfKeyword */ );
@@ -27754,7 +27754,7 @@ var Parser;
             return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
         };
         ParserImpl.prototype.isElseClause = function () {
-            return this.currentToken().kind() === 21 /* ElseKeyword */ ;
+            return this.currentToken().tokenKind === 21 /* ElseKeyword */ ;
         };
         ParserImpl.prototype.parseElseClause = function () {
             var elseKeyword = this.eatKeyword(21 /* ElseKeyword */ );
@@ -27762,14 +27762,14 @@ var Parser;
             return new ElseClauseSyntax(elseKeyword, statement);
         };
         ParserImpl.prototype.isVariableStatement = function () {
-            var token0KeywordKind = this.currentToken().kind();
+            var token0KeywordKind = this.currentToken().tokenKind;
             if(token0KeywordKind === 38 /* VarKeyword */ ) {
                 return true;
             }
-            if(token0KeywordKind === 45 /* ExportKeyword */  && this.peekToken(1).kind() === 38 /* VarKeyword */ ) {
+            if(token0KeywordKind === 45 /* ExportKeyword */  && this.peekToken(1).tokenKind === 38 /* VarKeyword */ ) {
                 return true;
             }
-            return token0KeywordKind === 61 /* DeclareKeyword */  && this.peekToken(1).kind() === 38 /* VarKeyword */ ;
+            return token0KeywordKind === 61 /* DeclareKeyword */  && this.peekToken(1).tokenKind === 38 /* VarKeyword */ ;
         };
         ParserImpl.prototype.parseVariableStatement = function () {
             var exportKeyword = this.tryEatKeyword(45 /* ExportKeyword */ );
@@ -27838,7 +27838,7 @@ var Parser;
         ParserImpl.prototype.parseBinaryOrConditionalExpressions = function (precedence, allowIn, leftOperand) {
             while(true) {
                 var currentTokenKind = this.currentToken().tokenKind;
-                var currentTokenKeywordKind = this.currentToken().kind();
+                var currentTokenKeywordKind = this.currentToken().tokenKind;
                 if(currentTokenKeywordKind === 28 /* InstanceOfKeyword */  || currentTokenKeywordKind === 27 /* InKeyword */ ) {
                     currentTokenKind = currentTokenKeywordKind;
                 }
@@ -27972,7 +27972,7 @@ var Parser;
                 }
             }
             var currentTokenKind = currentToken.tokenKind;
-            var currentTokenKeywordKind = currentToken.kind();
+            var currentTokenKeywordKind = currentToken.tokenKind;
             switch(currentTokenKeywordKind) {
                 case 33 /* ThisKeyword */ : {
                     return this.parseThisExpression();
@@ -28268,7 +28268,7 @@ var Parser;
             return this.isGetAccessorPropertyAssignment() || this.isSetAccessorPropertyAssignment() || this.isSimplePropertyAssignment(inErrorRecovery);
         };
         ParserImpl.prototype.isGetAccessorPropertyAssignment = function () {
-            return this.currentToken().kind() === 62 /* GetKeyword */  && this.isPropertyName(this.peekToken(1), false);
+            return this.currentToken().tokenKind === 62 /* GetKeyword */  && this.isPropertyName(this.peekToken(1), false);
         };
         ParserImpl.prototype.parseGetAccessorPropertyAssignment = function () {
             var getKeyword = this.eatKeyword(62 /* GetKeyword */ );
@@ -28279,7 +28279,7 @@ var Parser;
             return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
         };
         ParserImpl.prototype.isSetAccessorPropertyAssignment = function () {
-            return this.currentToken().kind() === 65 /* SetKeyword */  && this.isPropertyName(this.peekToken(1), false);
+            return this.currentToken().tokenKind === 65 /* SetKeyword */  && this.isPropertyName(this.peekToken(1), false);
         };
         ParserImpl.prototype.parseSetAccessorPropertyAssignment = function () {
             var setKeyword = this.eatKeyword(65 /* SetKeyword */ );
@@ -28302,7 +28302,7 @@ var Parser;
         ParserImpl.prototype.isPropertyName = function (token, inErrorRecovery) {
             if(this.isIdentifierName(token)) {
                 if(inErrorRecovery) {
-                    return !this.isKeyword(token.kind());
+                    return !this.isKeyword(token.tokenKind);
                 } else {
                     return true;
                 }
@@ -28441,14 +28441,14 @@ var Parser;
             return this.currentToken().tokenKind === 69 /* OpenParenToken */ ;
         };
         ParserImpl.prototype.isConstructorType = function () {
-            return this.currentToken().kind() === 29 /* NewKeyword */ ;
+            return this.currentToken().tokenKind === 29 /* NewKeyword */ ;
         };
         ParserImpl.prototype.parsePredefinedType = function () {
             var keyword = this.eatAnyToken();
             return keyword;
         };
         ParserImpl.prototype.isPredefinedType = function () {
-            switch(this.currentToken().kind()) {
+            switch(this.currentToken().tokenKind) {
                 case 58 /* AnyKeyword */ :
                 case 64 /* NumberKeyword */ :
                 case 59 /* BoolKeyword */ :
@@ -28468,7 +28468,7 @@ var Parser;
             if(token.tokenKind === 74 /* DotDotDotToken */ ) {
                 return true;
             }
-            if(token.kind() === 55 /* PublicKeyword */  || token.kind() === 53 /* PrivateKeyword */ ) {
+            if(token.tokenKind === 55 /* PublicKeyword */  || token.tokenKind === 53 /* PrivateKeyword */ ) {
                 return true;
             }
             return this.isIdentifier(token);
@@ -28479,7 +28479,7 @@ var Parser;
             }
             var dotDotDotToken = this.tryEatToken(74 /* DotDotDotToken */ );
             var publicOrPrivateToken = null;
-            if(this.currentToken().kind() === 55 /* PublicKeyword */  || this.currentToken().kind() === 53 /* PrivateKeyword */ ) {
+            if(this.currentToken().tokenKind === 55 /* PublicKeyword */  || this.currentToken().tokenKind === 53 /* PrivateKeyword */ ) {
                 publicOrPrivateToken = this.eatAnyToken();
             }
             var identifier = this.eatIdentifierToken();
@@ -28837,7 +28837,7 @@ var Parser;
             if(this.currentToken().tokenKind === 75 /* SemicolonToken */  || this.currentToken().tokenKind === 70 /* CloseParenToken */ ) {
                 return true;
             }
-            if(this.currentToken().kind() === 27 /* InKeyword */ ) {
+            if(this.currentToken().tokenKind === 27 /* InKeyword */ ) {
                 return true;
             }
             return false;
@@ -28852,7 +28852,7 @@ var Parser;
             return itemCount > 0 && this.canEatExplicitOrAutomaticSemicolon(false);
         };
         ParserImpl.prototype.isExpectedExtendsOrImplementsClause_TypeNameListTerminator = function () {
-            if(this.currentToken().kind() === 46 /* ExtendsKeyword */  || this.currentToken().kind() === 49 /* ImplementsKeyword */ ) {
+            if(this.currentToken().tokenKind === 46 /* ExtendsKeyword */  || this.currentToken().tokenKind === 49 /* ImplementsKeyword */ ) {
                 return true;
             }
             if(this.currentToken().tokenKind === 67 /* OpenBraceToken */  || this.currentToken().tokenKind === 68 /* CloseBraceToken */ ) {
@@ -28876,7 +28876,7 @@ var Parser;
             return this.currentToken().tokenKind === 68 /* CloseBraceToken */ ;
         };
         ParserImpl.prototype.isExtendsOrImplementsClause = function () {
-            if(this.currentToken().kind() === 49 /* ImplementsKeyword */  || this.currentToken().kind() === 46 /* ExtendsKeyword */ ) {
+            if(this.currentToken().tokenKind === 49 /* ImplementsKeyword */  || this.currentToken().tokenKind === 46 /* ExtendsKeyword */ ) {
                 return this.isIdentifier(this.peekToken(1));
             }
             return false;

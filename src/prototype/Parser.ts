@@ -688,7 +688,7 @@ module Parser {
 
         public currentTokenAllowingRegularExpression(): ISyntaxToken {
             // We better be on a divide token right now.
-            // Debug.assert(SyntaxFacts.isAnyDivideToken(this.currentToken().kind()));
+            // Debug.assert(SyntaxFacts.isAnyDivideToken(this.currentToken().tokenKind));
 
             // First, we're going to rewind all our data to the point where this / or /= token started.
             // That's because if it does turn out to be a regular expression, then any tokens or token 
@@ -708,7 +708,7 @@ module Parser {
 
             // We have better gotten some sort of regex token.  Otherwise, something *very* wrong has
             // occurred.
-            // Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind()));
+            // Debug.assert(SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind));
 
             return token;
         }
@@ -822,7 +822,7 @@ module Parser {
             {
                 var tokenAndFullStart = sourceUnit.findToken(start);
                 var token = tokenAndFullStart.token;
-                // Debug.assert(token.kind() !== SyntaxKind.None);
+                // Debug.assert(token.tokenKind !== SyntaxKind.None);
                 // Debug.assert(token.fullWidth() > 0);
 
                 var position = tokenAndFullStart.fullStart;
@@ -1032,7 +1032,7 @@ module Parser {
                     // Didn't intersect with the change range.
                     if (!token.hasSkippedText() &&
                         token.width() > 0 &&
-                        !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.kind())) {
+                        !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind)) {
 
                         // Didn't contain anything that would make it unusable.  Awesome.  This is
                         // a token we can reuse.
@@ -1321,7 +1321,7 @@ module Parser {
 
         // Eats the keyword if it is there.  Otherwise does nothing.  Will not report errors.
         private tryEatKeyword(kind: SyntaxKind): ISyntaxToken {
-            if (this.currentToken().kind() === kind) {
+            if (this.currentToken().tokenKind === kind) {
                 return this.eatKeyword(kind);
             }
 
@@ -1332,7 +1332,7 @@ module Parser {
             // Debug.assert(SyntaxFacts.isTokenKind(kind))
 
             var token = this.currentToken();
-            if (token.kind() === kind) {
+            if (token.tokenKind === kind) {
                 this.moveToNextToken();
                 return token;
             }
@@ -1436,7 +1436,7 @@ module Parser {
         }
 
         private isIdentifier(token: ISyntaxToken): bool {
-            return this.isIdentifierName(token) && !this.isKeyword(token.kind());
+            return this.isIdentifierName(token) && !this.isKeyword(token.tokenKind);
         }
 
         private isKeyword(kind: SyntaxKind): bool {
@@ -1476,8 +1476,8 @@ module Parser {
                 // They wanted an identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
-                if (actual !== null && SyntaxFacts.isAnyKeyword(actual.kind())) {
-                    return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.kind())]);
+                if (actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
+                    return new SyntaxDiagnostic(this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected__0_is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
@@ -1680,7 +1680,7 @@ module Parser {
             // an actual import declaration.  As such, i check for "import id =" as that shouldn't 
             // match any other legal javascript construct.  However, we need to verify that this is
             // actually the case.
-            return this.currentToken().kind() === SyntaxKind.ImportKeyword &&
+            return this.currentToken().tokenKind === SyntaxKind.ImportKeyword &&
                    this.isIdentifierName(this.peekToken(1)) && 
                    this.peekToken(2).tokenKind === SyntaxKind.EqualsToken;
         }
@@ -1707,7 +1707,7 @@ module Parser {
         }
 
         private isExternalModuleReference(): bool {
-            return this.currentToken().kind() === SyntaxKind.ModuleKeyword &&
+            return this.currentToken().tokenKind === SyntaxKind.ModuleKeyword &&
                    this.peekToken(1).tokenKind === SyntaxKind.OpenParenToken;
         }
 
@@ -1756,12 +1756,12 @@ module Parser {
         }
 
         private isEnumDeclaration(): bool {
-            if (this.currentToken().kind() === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.EnumKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.ExportKeyword &&
+                this.peekToken(1).tokenKind === SyntaxKind.EnumKeyword) {
                 return true;
             }
 
-            return this.currentToken().kind() === SyntaxKind.EnumKeyword &&
+            return this.currentToken().tokenKind === SyntaxKind.EnumKeyword &&
                    this.isIdentifier(this.peekToken(1));
         }
 
@@ -1788,17 +1788,17 @@ module Parser {
         private isClassDeclaration(): bool {
             var token0 = this.currentToken();
 
-            if (token0.kind() === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.ClassKeyword) {
+            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
+                this.peekToken(1).tokenKind === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
-            if (token0.kind() === SyntaxKind.DeclareKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.ClassKeyword) {
+            if (token0.tokenKind === SyntaxKind.DeclareKeyword &&
+                this.peekToken(1).tokenKind === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
-            return token0.kind() === SyntaxKind.ClassKeyword &&
+            return token0.tokenKind === SyntaxKind.ClassKeyword &&
                    this.isIdentifier(this.peekToken(1));
         }
 
@@ -1835,23 +1835,23 @@ module Parser {
         }
 
         private isConstructorDeclaration(): bool {
-            return this.currentToken().kind() === SyntaxKind.ConstructorKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ConstructorKeyword;
         }
 
         private isMemberAccessorDeclaration(): bool {
             var index = 0;
 
-            if (this.currentToken().kind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().kind() === SyntaxKind.PrivateKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
                 index++;
             }
 
-            if (this.peekToken(index).kind() === SyntaxKind.StaticKeyword) {
+            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
                 index++;
             }
 
-            if (this.peekToken(index).kind() !== SyntaxKind.GetKeyword &&
-                this.peekToken(index).kind() !== SyntaxKind.SetKeyword) {
+            if (this.peekToken(index).tokenKind !== SyntaxKind.GetKeyword &&
+                this.peekToken(index).tokenKind !== SyntaxKind.SetKeyword) {
                 return false;
             }
 
@@ -1863,17 +1863,17 @@ module Parser {
             // Debug.assert(this.isMemberAccessorDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (this.currentToken().kind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().kind() === SyntaxKind.PrivateKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
 
             var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
 
-            if (this.currentToken().kind() === SyntaxKind.GetKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.GetKeyword) {
                 return this.parseGetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
             }
-            else if (this.currentToken().kind() === SyntaxKind.SetKeyword) {
+            else if (this.currentToken().tokenKind === SyntaxKind.SetKeyword) {
                 return this.parseSetMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword);
             }
             else {
@@ -1883,7 +1883,7 @@ module Parser {
 
         private parseGetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
                                                   staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.GetKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.GetKeyword);
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
             var identifier = this.eatIdentifierToken();
@@ -1897,7 +1897,7 @@ module Parser {
 
         private parseSetMemberAccessorDeclaration(publicOrPrivateKeyword: ISyntaxToken,
                                                   staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.SetKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.SetKeyword);
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var identifier = this.eatIdentifierToken();
@@ -1911,8 +1911,8 @@ module Parser {
         private isMemberVariableDeclaration(): bool {
             var index = 0;
 
-            if (this.currentToken().kind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().kind() === SyntaxKind.PrivateKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
                 index++;
 
                 // ERROR RECOVERY: 
@@ -1924,7 +1924,7 @@ module Parser {
                 }
             }
 
-            if (this.peekToken(index).kind() === SyntaxKind.StaticKeyword) {
+            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
                 index++;
 
                 // ERROR RECOVERY: 
@@ -1974,13 +1974,13 @@ module Parser {
         private isMemberFunctionDeclaration(): bool {
             var index = 0;
 
-            var token0KeywordKind = this.currentToken().kind();
+            var token0KeywordKind = this.currentToken().tokenKind;
             if (token0KeywordKind === SyntaxKind.PublicKeyword ||
                 token0KeywordKind === SyntaxKind.PrivateKeyword) {
                 index++;
             }
 
-            if (this.peekToken(index).kind() === SyntaxKind.StaticKeyword) {
+            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
                 index++;
             }
 
@@ -1991,8 +1991,8 @@ module Parser {
             // Debug.assert(this.isMemberFunctionDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (this.currentToken().kind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().kind() === SyntaxKind.PrivateKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
 
@@ -2016,8 +2016,8 @@ module Parser {
             // Debug.assert(this.isMemberVariableDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (this.currentToken().kind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().kind() === SyntaxKind.PrivateKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
 
@@ -2053,18 +2053,18 @@ module Parser {
         }
 
         private isFunctionDeclaration(): bool {
-            var token0KeywordKind = this.currentToken().kind();
+            var token0KeywordKind = this.currentToken().tokenKind;
             if (token0KeywordKind === SyntaxKind.FunctionKeyword) {
                 return true;
             }
 
             if (token0KeywordKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.FunctionKeyword) {
+                this.peekToken(1).tokenKind === SyntaxKind.FunctionKeyword) {
                 return true;
             }
 
             return token0KeywordKind === SyntaxKind.DeclareKeyword &&
-                   this.peekToken(1).kind() === SyntaxKind.FunctionKeyword;
+                   this.peekToken(1).tokenKind === SyntaxKind.FunctionKeyword;
         }
 
         private parseFunctionDeclaration(): FunctionDeclarationSyntax {
@@ -2093,20 +2093,20 @@ module Parser {
             var token0 = this.currentToken();
 
             // export module
-            if (token0.kind() === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.ModuleKeyword) {
+            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
+                this.peekToken(1).tokenKind === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
             // declare module
-            if (token0.kind() === SyntaxKind.DeclareKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.ModuleKeyword) {
+            if (token0.tokenKind === SyntaxKind.DeclareKeyword &&
+                this.peekToken(1).tokenKind === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
             // Module is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
             // that we're actually looking at a module construct and not some javascript expression.
-            if (token0.kind() === SyntaxKind.ModuleKeyword) {
+            if (token0.tokenKind === SyntaxKind.ModuleKeyword) {
                 // module {
                 var token1 = this.peekToken(1);
                 if (token1.tokenKind === SyntaxKind.OpenBraceToken) {
@@ -2163,13 +2163,13 @@ module Parser {
 
         private isInterfaceDeclaration(): bool {
             // export interface
-            if (this.currentToken().kind() === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.InterfaceKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.ExportKeyword &&
+                this.peekToken(1).tokenKind === SyntaxKind.InterfaceKeyword) {
                 return true
             }
 
             // interface foo
-            return this.currentToken().kind() === SyntaxKind.InterfaceKeyword &&
+            return this.currentToken().tokenKind === SyntaxKind.InterfaceKeyword &&
                    this.isIdentifier(this.peekToken(1));
         }
 
@@ -2286,7 +2286,7 @@ module Parser {
         }
 
         private isConstructSignature(): bool {
-            return this.currentToken().kind() === SyntaxKind.NewKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.NewKeyword;
         }
 
         private isIndexSignature(): bool {
@@ -2317,7 +2317,7 @@ module Parser {
         }
 
         private isExtendsClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.ExtendsKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword;
         }
 
         private parseExtendsClause(): ExtendsClauseSyntax {
@@ -2330,7 +2330,7 @@ module Parser {
         }
 
         private isImplementsClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.ImplementsKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword;
         }
 
         private parseImplementsClause(): ImplementsClauseSyntax {
@@ -2348,7 +2348,7 @@ module Parser {
             }
 
             // ERROR RECOVERY
-            switch (this.currentToken().kind()) {
+            switch (this.currentToken().tokenKind) {
                 case SyntaxKind.PublicKeyword:
                 case SyntaxKind.PrivateKeyword:
                 case SyntaxKind.StaticKeyword:
@@ -2446,7 +2446,7 @@ module Parser {
         }
 
         private isDebuggerStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.DebuggerKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.DebuggerKeyword;
         }
 
         private parseDebuggerStatement(): DebuggerStatementSyntax {
@@ -2459,7 +2459,7 @@ module Parser {
         }
 
         private isDoStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.DoKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.DoKeyword;
         }
 
         private parseDoStatement(): DoStatementSyntax {
@@ -2496,7 +2496,7 @@ module Parser {
         }
 
         private isTryStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.TryKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.TryKeyword;
         }
 
         private parseTryStatement(): TryStatementSyntax {
@@ -2522,7 +2522,7 @@ module Parser {
         }
 
         private isCatchClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.CatchKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.CatchKeyword;
         }
 
         private parseCatchClause(): CatchClauseSyntax {
@@ -2538,7 +2538,7 @@ module Parser {
         }
 
         private isFinallyClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.FinallyKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.FinallyKeyword;
         }
 
         private parseFinallyClause(): FinallyClauseSyntax {
@@ -2551,7 +2551,7 @@ module Parser {
         }
 
         private isWithStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.WithKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.WithKeyword;
         }
 
         private parseWithStatement(): WithStatementSyntax {
@@ -2567,7 +2567,7 @@ module Parser {
         }
 
         private isWhileStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.WhileKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.WhileKeyword;
         }
 
         private parseWhileStatement(): WhileStatementSyntax {
@@ -2594,7 +2594,7 @@ module Parser {
         }
 
         private isForOrForInStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.ForKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ForKeyword;
         }
 
         private parseForOrForInStatement(): BaseForStatementSyntax {
@@ -2604,7 +2604,7 @@ module Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
 
             var currentToken = this.currentToken();
-            if (currentToken.kind() === SyntaxKind.VarKeyword) {
+            if (currentToken.tokenKind === SyntaxKind.VarKeyword) {
                 // for ( var VariableDeclarationListNoIn; Expressionopt ; Expressionopt ) Statement
                 // for ( var VariableDeclarationNoIn in Expression ) Statement
                 return this.parseForOrForInStatementWithVariableDeclaration(forKeyword, openParenToken);
@@ -2621,15 +2621,15 @@ module Parser {
         }
 
         private parseForOrForInStatementWithVariableDeclaration(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
-            // Debug.assert(forKeyword.kind() === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.VarKeyword);
+            // Debug.assert(forKeyword.tokenKind === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.VarKeyword);
 
             // for ( var VariableDeclarationListNoIn; Expressionopt ; Expressionopt ) Statement
             // for ( var VariableDeclarationNoIn in Expression ) Statement
 
             var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ false);
 
-            if (this.currentToken().kind() === SyntaxKind.InKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.InKeyword) {
                 return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, variableDeclaration, null);
             }
 
@@ -2641,7 +2641,7 @@ module Parser {
                 openParenToken: ISyntaxToken,
                 variableDeclaration: VariableDeclarationSyntax,
                 initializer: IExpressionSyntax): ForInStatementSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.InKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.InKeyword);
 
             // for ( var VariableDeclarationNoIn in Expression ) Statement
             var inKeyword = this.eatKeyword(SyntaxKind.InKeyword);
@@ -2654,13 +2654,13 @@ module Parser {
         }
 
         private parseForOrForInStatementWithInitializer(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): BaseForStatementSyntax {
-            // Debug.assert(forKeyword.kind() === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(forKeyword.tokenKind === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
 
             // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
             // for ( LeftHandSideExpression in Expression ) Statement
 
             var initializer = this.parseExpression(/*allowIn:*/ false);
-            if (this.currentToken().kind() === SyntaxKind.InKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.InKeyword) {
                 return this.parseForInStatementWithVariableDeclarationOrInitializer(forKeyword, openParenToken, null, initializer);
             }
             else {
@@ -2669,7 +2669,7 @@ module Parser {
         }
 
         private parseForStatement(forKeyword: ISyntaxToken, openParenToken: ISyntaxToken): ForStatementSyntax {
-            // Debug.assert(forKeyword.kind() === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
+            // Debug.assert(forKeyword.tokenKind === SyntaxKind.ForKeyword && openParenToken.tokenKind === SyntaxKind.OpenParenToken);
 
             // for ( ExpressionNoInopt; Expressionopt ; Expressionopt ) Statement
             var initializer: IExpressionSyntax = null;
@@ -2713,7 +2713,7 @@ module Parser {
         }
 
         private isBreakStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.BreakKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.BreakKeyword;
         }
 
         private parseBreakStatement(): BreakStatementSyntax {
@@ -2735,7 +2735,7 @@ module Parser {
         }
 
         private isContinueStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.ContinueKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ContinueKeyword;
         }
 
         private parseContinueStatement(): ContinueStatementSyntax {
@@ -2757,7 +2757,7 @@ module Parser {
         }
 
         private isSwitchStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.SwitchKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.SwitchKeyword;
         }
 
         private parseSwitchStatement() {
@@ -2781,11 +2781,11 @@ module Parser {
         }
 
         private isCaseSwitchClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.CaseKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.CaseKeyword;
         }
 
         private isDefaultSwitchClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.DefaultKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.DefaultKeyword;
         }
 
         private isSwitchClause(): bool {
@@ -2835,7 +2835,7 @@ module Parser {
         }
 
         private isThrowStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.ThrowKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ThrowKeyword;
         }
 
         private parseThrowStatement(): ThrowStatementSyntax {
@@ -2861,7 +2861,7 @@ module Parser {
         }
 
         private isReturnStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.ReturnKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ReturnKeyword;
         }
 
         private parseReturnStatement(): ReturnStatementSyntax {
@@ -2887,7 +2887,7 @@ module Parser {
                 return false;
             }
 
-            var keywordKind = currentToken.kind();
+            var keywordKind = currentToken.tokenKind;
             if (keywordKind === SyntaxKind.FunctionKeyword) {
                 return false;
             }
@@ -2962,7 +2962,7 @@ module Parser {
                     return true;
             }
 
-            var keywordKind = currentToken.kind();
+            var keywordKind = currentToken.tokenKind;
             switch (keywordKind) {
                 case SyntaxKind.SuperKeyword:
                 case SyntaxKind.ThisKeyword:
@@ -3001,7 +3001,7 @@ module Parser {
         }
 
         private isIfStatement(): bool {
-            return this.currentToken().kind() === SyntaxKind.IfKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.IfKeyword;
         }
 
         private parseIfStatement(): IfStatementSyntax {
@@ -3022,7 +3022,7 @@ module Parser {
         }
 
         private isElseClause(): bool {
-            return this.currentToken().kind() === SyntaxKind.ElseKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.ElseKeyword;
         }
 
         private parseElseClause(): ElseClauseSyntax {
@@ -3035,18 +3035,18 @@ module Parser {
         }
 
         private isVariableStatement(): bool {
-            var token0KeywordKind = this.currentToken().kind();
+            var token0KeywordKind = this.currentToken().tokenKind;
             if (token0KeywordKind === SyntaxKind.VarKeyword) {
                 return true;
             }
 
             if (token0KeywordKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).kind() === SyntaxKind.VarKeyword) {
+                this.peekToken(1).tokenKind === SyntaxKind.VarKeyword) {
                 return true;
             }
 
             return token0KeywordKind === SyntaxKind.DeclareKeyword &&
-                   this.peekToken(1).kind() === SyntaxKind.VarKeyword;
+                   this.peekToken(1).tokenKind === SyntaxKind.VarKeyword;
         }
 
         private parseVariableStatement(): VariableStatementSyntax {
@@ -3062,7 +3062,7 @@ module Parser {
         }
 
         private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.VarKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.VarKeyword);
             var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
 
             var listParsingState = allowIn
@@ -3154,7 +3154,7 @@ module Parser {
             while (true) {
                 // We either have a binary operator here, or we're finished.
                 var currentTokenKind = this.currentToken().tokenKind;
-                var currentTokenKeywordKind = this.currentToken().kind();
+                var currentTokenKeywordKind = this.currentToken().tokenKind;
 
                 if (currentTokenKeywordKind === SyntaxKind.InstanceOfKeyword || currentTokenKeywordKind === SyntaxKind.InKeyword) {
                     currentTokenKind = currentTokenKeywordKind;
@@ -3359,7 +3359,7 @@ module Parser {
             }
 
             var currentTokenKind = currentToken.tokenKind;
-            var currentTokenKeywordKind = currentToken.kind();
+            var currentTokenKeywordKind = currentToken.tokenKind;
             switch (currentTokenKeywordKind) {
                 case SyntaxKind.ThisKeyword:
                     return this.parseThisExpression();
@@ -3502,7 +3502,7 @@ module Parser {
         }
 
         private parseTypeOfExpression(): TypeOfExpressionSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.TypeOfKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.TypeOfKeyword);
 
             var typeOfKeyword = this.eatKeyword(SyntaxKind.TypeOfKeyword);
             var expression = this.parseUnaryExpression();
@@ -3511,7 +3511,7 @@ module Parser {
         }
 
         private parseDeleteExpression(): DeleteExpressionSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.DeleteKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.DeleteKeyword);
 
             var deleteKeyword = this.eatKeyword(SyntaxKind.DeleteKeyword);
             var expression = this.parseUnaryExpression();
@@ -3520,7 +3520,7 @@ module Parser {
         }
 
         private parseVoidExpression(): VoidExpressionSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.VoidKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.VoidKeyword);
 
             var voidKeyword = this.eatKeyword(SyntaxKind.VoidKeyword);
             var expression = this.parseUnaryExpression();
@@ -3529,14 +3529,14 @@ module Parser {
         }
 
         private parseSuperExpression(): IUnaryExpressionSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.SuperKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.SuperKeyword);
 
             var superKeyword = this.eatKeyword(SyntaxKind.SuperKeyword);
             return superKeyword;
         }
 
         private parseFunctionExpression(): FunctionExpressionSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.FunctionKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.FunctionKeyword);
 
             var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
             var identifier: ISyntaxToken = null;
@@ -3563,7 +3563,7 @@ module Parser {
         }
 
         private parseObjectCreationExpression(): ObjectCreationExpressionSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.NewKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.NewKeyword);
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
 
             // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
@@ -3836,7 +3836,7 @@ module Parser {
         }
 
         private isGetAccessorPropertyAssignment(): bool {
-            return this.currentToken().kind() === SyntaxKind.GetKeyword &&
+            return this.currentToken().tokenKind === SyntaxKind.GetKeyword &&
                    this.isPropertyName(this.peekToken(1), /*inErrorRecovery:*/ false);
         }
 
@@ -3853,7 +3853,7 @@ module Parser {
         }
 
         private isSetAccessorPropertyAssignment(): bool {
-            return this.currentToken().kind() === SyntaxKind.SetKeyword &&
+            return this.currentToken().tokenKind === SyntaxKind.SetKeyword &&
                    this.isPropertyName(this.peekToken(1), /*inErrorRecovery:*/ false);
         }
 
@@ -3896,7 +3896,7 @@ module Parser {
                 //
                 // we don't want consider 'return' to be the next property in the object literal.
                 if (inErrorRecovery) {
-                    return !this.isKeyword(token.kind());
+                    return !this.isKeyword(token.tokenKind);
                 }
                 else {
                     return true;
@@ -3929,7 +3929,7 @@ module Parser {
         }
 
         private parseThisExpression(): IUnaryExpressionSyntax {
-            // Debug.assert(this.currentToken().kind() === SyntaxKind.ThisKeyword);
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.ThisKeyword);
             var thisKeyword = this.eatKeyword(SyntaxKind.ThisKeyword);
             return thisKeyword;
         }
@@ -4085,7 +4085,7 @@ module Parser {
         }
 
         private isConstructorType(): bool {
-            return this.currentToken().kind() === SyntaxKind.NewKeyword;
+            return this.currentToken().tokenKind === SyntaxKind.NewKeyword;
         }
 
         private parsePredefinedType(): ITypeSyntax {
@@ -4095,7 +4095,7 @@ module Parser {
         }
 
         private isPredefinedType(): bool {
-            switch (this.currentToken().kind()) {
+            switch (this.currentToken().tokenKind) {
                 case SyntaxKind.AnyKeyword:
                 case SyntaxKind.NumberKeyword:
                 case SyntaxKind.BoolKeyword:
@@ -4117,8 +4117,8 @@ module Parser {
                 return true;
             }
 
-            if (token.kind() === SyntaxKind.PublicKeyword ||
-                token.kind() === SyntaxKind.PrivateKeyword) {
+            if (token.tokenKind === SyntaxKind.PublicKeyword ||
+                token.tokenKind === SyntaxKind.PrivateKeyword) {
                 return true;
             }
 
@@ -4133,8 +4133,8 @@ module Parser {
             var dotDotDotToken = this.tryEatToken(SyntaxKind.DotDotDotToken);
 
             var publicOrPrivateToken: ISyntaxToken = null;
-            if (this.currentToken().kind() === SyntaxKind.PublicKeyword ||
-                this.currentToken().kind() === SyntaxKind.PrivateKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
                 publicOrPrivateToken = this.eatAnyToken();
             }
 
@@ -4626,7 +4626,7 @@ module Parser {
                 return true;
             }
 
-            if (this.currentToken().kind() === SyntaxKind.InKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.InKeyword) {
                 return true;
             }
 
@@ -4656,8 +4656,8 @@ module Parser {
         }
 
         private isExpectedExtendsOrImplementsClause_TypeNameListTerminator(): bool {
-            if (this.currentToken().kind() === SyntaxKind.ExtendsKeyword ||
-                this.currentToken().kind() === SyntaxKind.ImplementsKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword) {
                 return true;
             }
 
@@ -4691,8 +4691,8 @@ module Parser {
         }
 
         private isExtendsOrImplementsClause(): bool {
-            if (this.currentToken().kind() === SyntaxKind.ImplementsKeyword ||
-                this.currentToken().kind() === SyntaxKind.ExtendsKeyword) {
+            if (this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword ||
+                this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword) {
 
                 return this.isIdentifier(this.peekToken(1));
             }
