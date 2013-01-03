@@ -2452,7 +2452,8 @@ module TypeScript {
 
         static consumeLeadingSpace(line: string, startIndex: number) {
             for (; startIndex < line.length; startIndex++) {
-                if (line.charCodeAt(startIndex) != LexCodeSpace) {
+                var charCode = line.charCodeAt(startIndex);
+                if (charCode != LexCodeSpace && charCode != LexCodeTAB) {
                     return startIndex;
                 }
             }
@@ -2463,8 +2464,9 @@ module TypeScript {
         static isSpaceChar(line: string, index: number) {
             var length = line.length;
             if (index < length) {
+                var charCode = line.charCodeAt(index);
                 // If the character is space
-                return line.charCodeAt(index) == LexCodeSpace;
+                return charCode == LexCodeSpace || charCode == LexCodeTAB;
             }
 
             // If the index is end of the line it is space

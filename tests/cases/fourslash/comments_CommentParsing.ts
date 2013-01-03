@@ -149,6 +149,15 @@
 ////function divide(a: number, b: number) {
 ////}
 ////divide(/*35*/10, /*36*/20);
+/////**
+////Function returns string concat of foo and bar
+////@param			{string}		foo		is string
+////@param		    {string}		bar		is second string
+////*/
+////function fooBar(foo: string, bar: string) {
+////    return foo + bar;
+////}
+////fooBar(/*37*/"foo",/*38*/"bar");
 
 goTo.marker('1');
 verify.currentSignatureHelpDocCommentIs("This is simple /// comments");
@@ -278,3 +287,11 @@ verify.currentParameterHelpArgumentDocCommentIs("this is a");
 goTo.marker('36');
 verify.currentSignatureHelpDocCommentIs("this is divide function\n@paramTag { number } g this is optional param g");
 verify.currentParameterHelpArgumentDocCommentIs("this is b");
+
+goTo.marker('37');
+verify.currentSignatureHelpDocCommentIs("Function returns string concat of foo and bar");
+verify.currentParameterHelpArgumentDocCommentIs("is string");
+
+goTo.marker('38');
+verify.currentSignatureHelpDocCommentIs("Function returns string concat of foo and bar");
+verify.currentParameterHelpArgumentDocCommentIs("is second string");
