@@ -6,6 +6,7 @@ class HarnessHost implements TypeScript.IResolverHost {
     resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment,
         resolver: TypeScript.ICodeResolver,
         traceDependencies: bool): TypeScript.CompilationEnvironment {
+
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
@@ -159,7 +160,6 @@ class HarnessBatch {
                 consumeUnit(this.resolvedEnvironment.code[iCode], false);
             }
         }
-
 
         if (!this.compilationSettings.parseOnly) {
             compiler.typeCheck();

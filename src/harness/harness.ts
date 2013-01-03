@@ -746,6 +746,7 @@ module Harness {
             compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
+            compiler.parseEmitOption(stdout);
             TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             compiler.addUnit(Harness.Compiler.libText, "lib.d.ts", true);
             return compiler;
@@ -1119,13 +1120,10 @@ module Harness {
             if (settingsCallback) {
                 settingsCallback(compiler.settings);
                 compiler.emitSettings.emitComments = compiler.settings.emitComments;
+                compiler.emitSettings.outputMany = true;
             }
             try {
                 compileString(code, filename, callback, context, references);
-
-                compiler.emitSettings.ioHost = stdout;
-                compiler.emitDeclarations();
-
             } finally {
             // if settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
             // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
@@ -1200,7 +1198,9 @@ module Harness {
             }
 
             compiler.emit(stdout);
-            // compiler.emitToOutfile(stdout); // emits all units into a single js file
+
+            // output decl file
+            compiler.emitDeclarations();
 
             if (context) {
                 context.postCompile();

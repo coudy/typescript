@@ -3,9 +3,12 @@
 // @declaration: true
 // @module: local
 // @out: bin\
+// @comments: true
 
+// my class comments
 class MyClass
 {
+    // my function comments
     public Count(): number
     {
         return 42;
