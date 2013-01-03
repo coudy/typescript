@@ -525,7 +525,8 @@ module TypeScript {
     export class ParameterSymbol extends InferenceSymbol {
         public name: string;
         public location: number;
-
+        private paramDocComment: string = null;
+        
         constructor (name: string, location: number, unitIndex: number,
                           public parameter: ValueLocation) {
             super(name, location, name.length, unitIndex);
@@ -569,6 +570,18 @@ module TypeScript {
             else {
                 return this;
             }
+        }
+
+        public getParameterDocComments() {
+            if (this.container && this.container.declAST) {
+                if (!this.paramDocComment) {
+                    var fncDocComments = this.container.declAST.getDocComments();
+                    this.paramDocComment = Comment.getParameterDocCommentText(this.name, fncDocComments);
+                }
+                return this.paramDocComment;
+            }
+
+            return "";
         }
     }
 

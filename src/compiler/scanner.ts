@@ -65,6 +65,7 @@ module TypeScript {
     export var LexCodeUnderscore = '_'.charCodeAt(0);
     export var LexCodeDollar = '$'.charCodeAt(0);
     export var LexCodeSpace = 32;
+    export var LexCodeAtSign = '@'.charCodeAt(0);
     export var LexCodeASCIIChars = 128;
 
     export var LexKeywordTable = undefined;

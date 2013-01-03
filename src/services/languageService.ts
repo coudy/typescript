@@ -979,6 +979,9 @@ module Services {
                             signatureParameterInfo.isOptional = p.isOptional();
                             signatureParameterInfo.name = p.name;
                             signatureParameterInfo.docComment = TypeScript.Comment.getDocCommentText(p.getDocComments());
+                            if (signatureParameterInfo.docComment == "") {
+                                signatureParameterInfo.docComment = p.getParameterDocComments();
+                            }
                             signatureParameterInfo.type = p.getType().getScopedTypeName(enclosingScopeContext.getScope());
                             signatureGroupInfo.parameters.push(signatureParameterInfo);
                         });
@@ -1409,6 +1412,9 @@ module Services {
                         entry.docComment = "";
                     } else {
                         entry.docComment = TypeScript.Comment.getDocCommentText(x.sym.getDocComments());
+                        if (entry.docComment == "" && x.sym.kind() == TypeScript.SymbolKind.Parameter) {
+                            entry.docComment = (<TypeScript.ParameterSymbol>x.sym).getParameterDocComments();
+                        }
                     }
                     entry.kindModifiers = this.getSymbolElementKindModifiers(x.sym);
                     result.entries.push(entry);
