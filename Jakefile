@@ -130,13 +130,19 @@ var harnessSources = [
 	path.join(runnersDirectory, "unittest/unittestrunner.ts")
 ];
 
-var librarySources = [
+var libraryFiles = [
 	"lib.d.ts",
 	"jquery.d.ts",
 	"winjs.d.ts",
 	"winrt.d.ts"
-].map(function (f) {
+];
+
+var librarySources = libraryFiles.map(function (f) {
 	return path.join(libraryDirectory, f);
+});
+
+var libraryTargets = libraryFiles.map(function (f) {
+	return path.join(builtLocalDirectory, f);
 });
 
 // Prepends the contents of prefixFile to destinationFile
@@ -180,11 +186,13 @@ function compileFile(outFile, sources, prereqs, prefixes, useBuiltCompiler) {
 // Prerequisite task for built directory and library typings
 directory(builtLocalDirectory);
 
-task("libraryDecls", [builtLocalDirectory].concat(librarySources), function() {
-	for (var i in librarySources) {
-		jake.cpR(librarySources[i], builtLocalDirectory);
-	}
-});	
+for (var i in libraryTargets) {
+	(function (i) {
+		file(libraryTargets[i], [builtLocalDirectory, librarySources[i]], function() {
+			jake.cpR(librarySources[i], builtLocalDirectory);
+		});
+	})(i);
+}
 
 var typescriptFile = path.join(builtLocalDirectory, "typescript.js");
 compileFile(typescriptFile, compilerSources, [builtLocalDirectory, copyright].concat(compilerSources), [copyright]);
@@ -197,7 +205,7 @@ compileFile(serviceFile, compilerSources.concat(servicesSources), [builtLocalDir
 
 // Local target to build the compiler and services
 desc("Builds the full compiler and services");
-task("local", ["libraryDecls", typescriptFile, tscFile, serviceFile]);
+task("local", libraryTargets.concat([typescriptFile, tscFile, serviceFile]));
 
 // Set the default task to "local"
 task("default", ["local"]);
@@ -210,7 +218,7 @@ task("clean", function() {
 	
 // Makes a new LKG. This target does not build anything, but errors if not all the outputs are present in the built/local directory
 desc("Makes a new LKG out of the built js files");
-task("LKG", [builtLocalDirectory, "libraryDecls"], function() {
+task("LKG", libraryTargets, function() {
 	var expectedFiles = [typescriptFile, tscFile, serviceFile];
 	var missingFiles = expectedFiles.filter(function (f) {
 		return !fs.existsSync(f);
@@ -222,7 +230,7 @@ task("LKG", [builtLocalDirectory, "libraryDecls"], function() {
 	// Copy all the targets into the LKG directory
 	jake.mkdirP(LKGDirectory);
 	for (var i in librarySources) {
-		jake.cpR(librarySources[i].replace(libraryDirectory, builtLocalDirectory), LKGDirectory);
+		jake.cpR(libraryTargets[i], LKGDirectory);
 	}
 	for (i in expectedFiles) {
 		jake.cpR(expectedFiles[i], LKGDirectory);
@@ -234,10 +242,10 @@ directory(builtTestDirectory);
 
 // Task to build the tests infrastructure using the built compiler
 var run = path.join(builtTestDirectory, "run.js");
-compileFile(run, harnessSources, [builtTestDirectory, tscFile, "libraryDecls"].concat(harnessSources), [], true);
+compileFile(run, harnessSources, [builtTestDirectory, tscFile].concat(libraryTargets).concat(harnessSources), [], true);
 
 desc("Builds the test infrastructure using the built compiler");
-task("tests", [run, serviceFile, "libraryDecls"], function() {
+task("tests", [run, serviceFile].concat(libraryTargets), function() {
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
 	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);
