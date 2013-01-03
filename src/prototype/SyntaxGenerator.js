@@ -489,226 +489,226 @@ var SyntaxKind;
     SyntaxKind.SingleLineCommentTrivia = 7;
     SyntaxKind._map[8] = "SkippedTextTrivia";
     SyntaxKind.SkippedTextTrivia = 8;
-    SyntaxKind._map[9] = "IdentifierNameToken";
-    SyntaxKind.IdentifierNameToken = 9;
-    SyntaxKind._map[10] = "RegularExpressionLiteral";
-    SyntaxKind.RegularExpressionLiteral = 10;
-    SyntaxKind._map[11] = "NumericLiteral";
-    SyntaxKind.NumericLiteral = 11;
-    SyntaxKind._map[12] = "StringLiteral";
-    SyntaxKind.StringLiteral = 12;
-    SyntaxKind._map[13] = "BreakKeyword";
-    SyntaxKind.BreakKeyword = 13;
-    SyntaxKind._map[14] = "CaseKeyword";
-    SyntaxKind.CaseKeyword = 14;
-    SyntaxKind._map[15] = "CatchKeyword";
-    SyntaxKind.CatchKeyword = 15;
-    SyntaxKind._map[16] = "ContinueKeyword";
-    SyntaxKind.ContinueKeyword = 16;
-    SyntaxKind._map[17] = "DebuggerKeyword";
-    SyntaxKind.DebuggerKeyword = 17;
-    SyntaxKind._map[18] = "DefaultKeyword";
-    SyntaxKind.DefaultKeyword = 18;
-    SyntaxKind._map[19] = "DeleteKeyword";
-    SyntaxKind.DeleteKeyword = 19;
-    SyntaxKind._map[20] = "DoKeyword";
-    SyntaxKind.DoKeyword = 20;
-    SyntaxKind._map[21] = "ElseKeyword";
-    SyntaxKind.ElseKeyword = 21;
-    SyntaxKind._map[22] = "FalseKeyword";
-    SyntaxKind.FalseKeyword = 22;
-    SyntaxKind._map[23] = "FinallyKeyword";
-    SyntaxKind.FinallyKeyword = 23;
-    SyntaxKind._map[24] = "ForKeyword";
-    SyntaxKind.ForKeyword = 24;
-    SyntaxKind._map[25] = "FunctionKeyword";
-    SyntaxKind.FunctionKeyword = 25;
-    SyntaxKind._map[26] = "IfKeyword";
-    SyntaxKind.IfKeyword = 26;
-    SyntaxKind._map[27] = "InKeyword";
-    SyntaxKind.InKeyword = 27;
-    SyntaxKind._map[28] = "InstanceOfKeyword";
-    SyntaxKind.InstanceOfKeyword = 28;
-    SyntaxKind._map[29] = "NewKeyword";
-    SyntaxKind.NewKeyword = 29;
-    SyntaxKind._map[30] = "NullKeyword";
-    SyntaxKind.NullKeyword = 30;
-    SyntaxKind._map[31] = "ReturnKeyword";
-    SyntaxKind.ReturnKeyword = 31;
-    SyntaxKind._map[32] = "SwitchKeyword";
-    SyntaxKind.SwitchKeyword = 32;
-    SyntaxKind._map[33] = "ThisKeyword";
-    SyntaxKind.ThisKeyword = 33;
-    SyntaxKind._map[34] = "ThrowKeyword";
-    SyntaxKind.ThrowKeyword = 34;
-    SyntaxKind._map[35] = "TrueKeyword";
-    SyntaxKind.TrueKeyword = 35;
-    SyntaxKind._map[36] = "TryKeyword";
-    SyntaxKind.TryKeyword = 36;
-    SyntaxKind._map[37] = "TypeOfKeyword";
-    SyntaxKind.TypeOfKeyword = 37;
-    SyntaxKind._map[38] = "VarKeyword";
-    SyntaxKind.VarKeyword = 38;
-    SyntaxKind._map[39] = "VoidKeyword";
-    SyntaxKind.VoidKeyword = 39;
-    SyntaxKind._map[40] = "WhileKeyword";
-    SyntaxKind.WhileKeyword = 40;
-    SyntaxKind._map[41] = "WithKeyword";
-    SyntaxKind.WithKeyword = 41;
-    SyntaxKind._map[42] = "ClassKeyword";
-    SyntaxKind.ClassKeyword = 42;
-    SyntaxKind._map[43] = "ConstKeyword";
-    SyntaxKind.ConstKeyword = 43;
-    SyntaxKind._map[44] = "EnumKeyword";
-    SyntaxKind.EnumKeyword = 44;
-    SyntaxKind._map[45] = "ExportKeyword";
-    SyntaxKind.ExportKeyword = 45;
-    SyntaxKind._map[46] = "ExtendsKeyword";
-    SyntaxKind.ExtendsKeyword = 46;
-    SyntaxKind._map[47] = "ImportKeyword";
-    SyntaxKind.ImportKeyword = 47;
-    SyntaxKind._map[48] = "SuperKeyword";
-    SyntaxKind.SuperKeyword = 48;
-    SyntaxKind._map[49] = "ImplementsKeyword";
-    SyntaxKind.ImplementsKeyword = 49;
-    SyntaxKind._map[50] = "InterfaceKeyword";
-    SyntaxKind.InterfaceKeyword = 50;
-    SyntaxKind._map[51] = "LetKeyword";
-    SyntaxKind.LetKeyword = 51;
-    SyntaxKind._map[52] = "PackageKeyword";
-    SyntaxKind.PackageKeyword = 52;
-    SyntaxKind._map[53] = "PrivateKeyword";
-    SyntaxKind.PrivateKeyword = 53;
-    SyntaxKind._map[54] = "ProtectedKeyword";
-    SyntaxKind.ProtectedKeyword = 54;
-    SyntaxKind._map[55] = "PublicKeyword";
-    SyntaxKind.PublicKeyword = 55;
-    SyntaxKind._map[56] = "StaticKeyword";
-    SyntaxKind.StaticKeyword = 56;
-    SyntaxKind._map[57] = "YieldKeyword";
-    SyntaxKind.YieldKeyword = 57;
-    SyntaxKind._map[58] = "AnyKeyword";
-    SyntaxKind.AnyKeyword = 58;
-    SyntaxKind._map[59] = "BoolKeyword";
-    SyntaxKind.BoolKeyword = 59;
-    SyntaxKind._map[60] = "ConstructorKeyword";
-    SyntaxKind.ConstructorKeyword = 60;
-    SyntaxKind._map[61] = "DeclareKeyword";
-    SyntaxKind.DeclareKeyword = 61;
-    SyntaxKind._map[62] = "GetKeyword";
-    SyntaxKind.GetKeyword = 62;
-    SyntaxKind._map[63] = "ModuleKeyword";
-    SyntaxKind.ModuleKeyword = 63;
-    SyntaxKind._map[64] = "NumberKeyword";
-    SyntaxKind.NumberKeyword = 64;
-    SyntaxKind._map[65] = "SetKeyword";
-    SyntaxKind.SetKeyword = 65;
-    SyntaxKind._map[66] = "StringKeyword";
-    SyntaxKind.StringKeyword = 66;
-    SyntaxKind._map[67] = "OpenBraceToken";
-    SyntaxKind.OpenBraceToken = 67;
-    SyntaxKind._map[68] = "CloseBraceToken";
-    SyntaxKind.CloseBraceToken = 68;
-    SyntaxKind._map[69] = "OpenParenToken";
-    SyntaxKind.OpenParenToken = 69;
-    SyntaxKind._map[70] = "CloseParenToken";
-    SyntaxKind.CloseParenToken = 70;
-    SyntaxKind._map[71] = "OpenBracketToken";
-    SyntaxKind.OpenBracketToken = 71;
-    SyntaxKind._map[72] = "CloseBracketToken";
-    SyntaxKind.CloseBracketToken = 72;
-    SyntaxKind._map[73] = "DotToken";
-    SyntaxKind.DotToken = 73;
-    SyntaxKind._map[74] = "DotDotDotToken";
-    SyntaxKind.DotDotDotToken = 74;
-    SyntaxKind._map[75] = "SemicolonToken";
-    SyntaxKind.SemicolonToken = 75;
-    SyntaxKind._map[76] = "CommaToken";
-    SyntaxKind.CommaToken = 76;
-    SyntaxKind._map[77] = "LessThanToken";
-    SyntaxKind.LessThanToken = 77;
-    SyntaxKind._map[78] = "GreaterThanToken";
-    SyntaxKind.GreaterThanToken = 78;
-    SyntaxKind._map[79] = "LessThanEqualsToken";
-    SyntaxKind.LessThanEqualsToken = 79;
-    SyntaxKind._map[80] = "GreaterThanEqualsToken";
-    SyntaxKind.GreaterThanEqualsToken = 80;
-    SyntaxKind._map[81] = "EqualsEqualsToken";
-    SyntaxKind.EqualsEqualsToken = 81;
-    SyntaxKind._map[82] = "EqualsGreaterThanToken";
-    SyntaxKind.EqualsGreaterThanToken = 82;
-    SyntaxKind._map[83] = "ExclamationEqualsToken";
-    SyntaxKind.ExclamationEqualsToken = 83;
-    SyntaxKind._map[84] = "EqualsEqualsEqualsToken";
-    SyntaxKind.EqualsEqualsEqualsToken = 84;
-    SyntaxKind._map[85] = "ExclamationEqualsEqualsToken";
-    SyntaxKind.ExclamationEqualsEqualsToken = 85;
-    SyntaxKind._map[86] = "PlusToken";
-    SyntaxKind.PlusToken = 86;
-    SyntaxKind._map[87] = "MinusToken";
-    SyntaxKind.MinusToken = 87;
-    SyntaxKind._map[88] = "AsteriskToken";
-    SyntaxKind.AsteriskToken = 88;
-    SyntaxKind._map[89] = "PercentToken";
-    SyntaxKind.PercentToken = 89;
-    SyntaxKind._map[90] = "PlusPlusToken";
-    SyntaxKind.PlusPlusToken = 90;
-    SyntaxKind._map[91] = "MinusMinusToken";
-    SyntaxKind.MinusMinusToken = 91;
-    SyntaxKind._map[92] = "LessThanLessThanToken";
-    SyntaxKind.LessThanLessThanToken = 92;
-    SyntaxKind._map[93] = "GreaterThanGreaterThanToken";
-    SyntaxKind.GreaterThanGreaterThanToken = 93;
-    SyntaxKind._map[94] = "GreaterThanGreaterThanGreaterThanToken";
-    SyntaxKind.GreaterThanGreaterThanGreaterThanToken = 94;
-    SyntaxKind._map[95] = "AmpersandToken";
-    SyntaxKind.AmpersandToken = 95;
-    SyntaxKind._map[96] = "BarToken";
-    SyntaxKind.BarToken = 96;
-    SyntaxKind._map[97] = "CaretToken";
-    SyntaxKind.CaretToken = 97;
-    SyntaxKind._map[98] = "ExclamationToken";
-    SyntaxKind.ExclamationToken = 98;
-    SyntaxKind._map[99] = "TildeToken";
-    SyntaxKind.TildeToken = 99;
-    SyntaxKind._map[100] = "AmpersandAmpersandToken";
-    SyntaxKind.AmpersandAmpersandToken = 100;
-    SyntaxKind._map[101] = "BarBarToken";
-    SyntaxKind.BarBarToken = 101;
-    SyntaxKind._map[102] = "QuestionToken";
-    SyntaxKind.QuestionToken = 102;
-    SyntaxKind._map[103] = "ColonToken";
-    SyntaxKind.ColonToken = 103;
-    SyntaxKind._map[104] = "EqualsToken";
-    SyntaxKind.EqualsToken = 104;
-    SyntaxKind._map[105] = "PlusEqualsToken";
-    SyntaxKind.PlusEqualsToken = 105;
-    SyntaxKind._map[106] = "MinusEqualsToken";
-    SyntaxKind.MinusEqualsToken = 106;
-    SyntaxKind._map[107] = "AsteriskEqualsToken";
-    SyntaxKind.AsteriskEqualsToken = 107;
-    SyntaxKind._map[108] = "PercentEqualsToken";
-    SyntaxKind.PercentEqualsToken = 108;
-    SyntaxKind._map[109] = "LessThanLessThanEqualsToken";
-    SyntaxKind.LessThanLessThanEqualsToken = 109;
-    SyntaxKind._map[110] = "GreaterThanGreaterThanEqualsToken";
-    SyntaxKind.GreaterThanGreaterThanEqualsToken = 110;
-    SyntaxKind._map[111] = "GreaterThanGreaterThanGreaterThanEqualsToken";
-    SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken = 111;
-    SyntaxKind._map[112] = "AmpersandEqualsToken";
-    SyntaxKind.AmpersandEqualsToken = 112;
-    SyntaxKind._map[113] = "BarEqualsToken";
-    SyntaxKind.BarEqualsToken = 113;
-    SyntaxKind._map[114] = "CaretEqualsToken";
-    SyntaxKind.CaretEqualsToken = 114;
-    SyntaxKind._map[115] = "SlashToken";
-    SyntaxKind.SlashToken = 115;
-    SyntaxKind._map[116] = "SlashEqualsToken";
-    SyntaxKind.SlashEqualsToken = 116;
-    SyntaxKind._map[117] = "ErrorToken";
-    SyntaxKind.ErrorToken = 117;
-    SyntaxKind._map[118] = "EndOfFileToken";
-    SyntaxKind.EndOfFileToken = 118;
+    SyntaxKind._map[9] = "ErrorToken";
+    SyntaxKind.ErrorToken = 9;
+    SyntaxKind._map[10] = "EndOfFileToken";
+    SyntaxKind.EndOfFileToken = 10;
+    SyntaxKind._map[11] = "IdentifierNameToken";
+    SyntaxKind.IdentifierNameToken = 11;
+    SyntaxKind._map[12] = "RegularExpressionLiteral";
+    SyntaxKind.RegularExpressionLiteral = 12;
+    SyntaxKind._map[13] = "NumericLiteral";
+    SyntaxKind.NumericLiteral = 13;
+    SyntaxKind._map[14] = "StringLiteral";
+    SyntaxKind.StringLiteral = 14;
+    SyntaxKind._map[15] = "BreakKeyword";
+    SyntaxKind.BreakKeyword = 15;
+    SyntaxKind._map[16] = "CaseKeyword";
+    SyntaxKind.CaseKeyword = 16;
+    SyntaxKind._map[17] = "CatchKeyword";
+    SyntaxKind.CatchKeyword = 17;
+    SyntaxKind._map[18] = "ContinueKeyword";
+    SyntaxKind.ContinueKeyword = 18;
+    SyntaxKind._map[19] = "DebuggerKeyword";
+    SyntaxKind.DebuggerKeyword = 19;
+    SyntaxKind._map[20] = "DefaultKeyword";
+    SyntaxKind.DefaultKeyword = 20;
+    SyntaxKind._map[21] = "DeleteKeyword";
+    SyntaxKind.DeleteKeyword = 21;
+    SyntaxKind._map[22] = "DoKeyword";
+    SyntaxKind.DoKeyword = 22;
+    SyntaxKind._map[23] = "ElseKeyword";
+    SyntaxKind.ElseKeyword = 23;
+    SyntaxKind._map[24] = "FalseKeyword";
+    SyntaxKind.FalseKeyword = 24;
+    SyntaxKind._map[25] = "FinallyKeyword";
+    SyntaxKind.FinallyKeyword = 25;
+    SyntaxKind._map[26] = "ForKeyword";
+    SyntaxKind.ForKeyword = 26;
+    SyntaxKind._map[27] = "FunctionKeyword";
+    SyntaxKind.FunctionKeyword = 27;
+    SyntaxKind._map[28] = "IfKeyword";
+    SyntaxKind.IfKeyword = 28;
+    SyntaxKind._map[29] = "InKeyword";
+    SyntaxKind.InKeyword = 29;
+    SyntaxKind._map[30] = "InstanceOfKeyword";
+    SyntaxKind.InstanceOfKeyword = 30;
+    SyntaxKind._map[31] = "NewKeyword";
+    SyntaxKind.NewKeyword = 31;
+    SyntaxKind._map[32] = "NullKeyword";
+    SyntaxKind.NullKeyword = 32;
+    SyntaxKind._map[33] = "ReturnKeyword";
+    SyntaxKind.ReturnKeyword = 33;
+    SyntaxKind._map[34] = "SwitchKeyword";
+    SyntaxKind.SwitchKeyword = 34;
+    SyntaxKind._map[35] = "ThisKeyword";
+    SyntaxKind.ThisKeyword = 35;
+    SyntaxKind._map[36] = "ThrowKeyword";
+    SyntaxKind.ThrowKeyword = 36;
+    SyntaxKind._map[37] = "TrueKeyword";
+    SyntaxKind.TrueKeyword = 37;
+    SyntaxKind._map[38] = "TryKeyword";
+    SyntaxKind.TryKeyword = 38;
+    SyntaxKind._map[39] = "TypeOfKeyword";
+    SyntaxKind.TypeOfKeyword = 39;
+    SyntaxKind._map[40] = "VarKeyword";
+    SyntaxKind.VarKeyword = 40;
+    SyntaxKind._map[41] = "VoidKeyword";
+    SyntaxKind.VoidKeyword = 41;
+    SyntaxKind._map[42] = "WhileKeyword";
+    SyntaxKind.WhileKeyword = 42;
+    SyntaxKind._map[43] = "WithKeyword";
+    SyntaxKind.WithKeyword = 43;
+    SyntaxKind._map[44] = "ClassKeyword";
+    SyntaxKind.ClassKeyword = 44;
+    SyntaxKind._map[45] = "ConstKeyword";
+    SyntaxKind.ConstKeyword = 45;
+    SyntaxKind._map[46] = "EnumKeyword";
+    SyntaxKind.EnumKeyword = 46;
+    SyntaxKind._map[47] = "ExportKeyword";
+    SyntaxKind.ExportKeyword = 47;
+    SyntaxKind._map[48] = "ExtendsKeyword";
+    SyntaxKind.ExtendsKeyword = 48;
+    SyntaxKind._map[49] = "ImportKeyword";
+    SyntaxKind.ImportKeyword = 49;
+    SyntaxKind._map[50] = "SuperKeyword";
+    SyntaxKind.SuperKeyword = 50;
+    SyntaxKind._map[51] = "ImplementsKeyword";
+    SyntaxKind.ImplementsKeyword = 51;
+    SyntaxKind._map[52] = "InterfaceKeyword";
+    SyntaxKind.InterfaceKeyword = 52;
+    SyntaxKind._map[53] = "LetKeyword";
+    SyntaxKind.LetKeyword = 53;
+    SyntaxKind._map[54] = "PackageKeyword";
+    SyntaxKind.PackageKeyword = 54;
+    SyntaxKind._map[55] = "PrivateKeyword";
+    SyntaxKind.PrivateKeyword = 55;
+    SyntaxKind._map[56] = "ProtectedKeyword";
+    SyntaxKind.ProtectedKeyword = 56;
+    SyntaxKind._map[57] = "PublicKeyword";
+    SyntaxKind.PublicKeyword = 57;
+    SyntaxKind._map[58] = "StaticKeyword";
+    SyntaxKind.StaticKeyword = 58;
+    SyntaxKind._map[59] = "YieldKeyword";
+    SyntaxKind.YieldKeyword = 59;
+    SyntaxKind._map[60] = "AnyKeyword";
+    SyntaxKind.AnyKeyword = 60;
+    SyntaxKind._map[61] = "BoolKeyword";
+    SyntaxKind.BoolKeyword = 61;
+    SyntaxKind._map[62] = "ConstructorKeyword";
+    SyntaxKind.ConstructorKeyword = 62;
+    SyntaxKind._map[63] = "DeclareKeyword";
+    SyntaxKind.DeclareKeyword = 63;
+    SyntaxKind._map[64] = "GetKeyword";
+    SyntaxKind.GetKeyword = 64;
+    SyntaxKind._map[65] = "ModuleKeyword";
+    SyntaxKind.ModuleKeyword = 65;
+    SyntaxKind._map[66] = "NumberKeyword";
+    SyntaxKind.NumberKeyword = 66;
+    SyntaxKind._map[67] = "SetKeyword";
+    SyntaxKind.SetKeyword = 67;
+    SyntaxKind._map[68] = "StringKeyword";
+    SyntaxKind.StringKeyword = 68;
+    SyntaxKind._map[69] = "OpenBraceToken";
+    SyntaxKind.OpenBraceToken = 69;
+    SyntaxKind._map[70] = "CloseBraceToken";
+    SyntaxKind.CloseBraceToken = 70;
+    SyntaxKind._map[71] = "OpenParenToken";
+    SyntaxKind.OpenParenToken = 71;
+    SyntaxKind._map[72] = "CloseParenToken";
+    SyntaxKind.CloseParenToken = 72;
+    SyntaxKind._map[73] = "OpenBracketToken";
+    SyntaxKind.OpenBracketToken = 73;
+    SyntaxKind._map[74] = "CloseBracketToken";
+    SyntaxKind.CloseBracketToken = 74;
+    SyntaxKind._map[75] = "DotToken";
+    SyntaxKind.DotToken = 75;
+    SyntaxKind._map[76] = "DotDotDotToken";
+    SyntaxKind.DotDotDotToken = 76;
+    SyntaxKind._map[77] = "SemicolonToken";
+    SyntaxKind.SemicolonToken = 77;
+    SyntaxKind._map[78] = "CommaToken";
+    SyntaxKind.CommaToken = 78;
+    SyntaxKind._map[79] = "LessThanToken";
+    SyntaxKind.LessThanToken = 79;
+    SyntaxKind._map[80] = "GreaterThanToken";
+    SyntaxKind.GreaterThanToken = 80;
+    SyntaxKind._map[81] = "LessThanEqualsToken";
+    SyntaxKind.LessThanEqualsToken = 81;
+    SyntaxKind._map[82] = "GreaterThanEqualsToken";
+    SyntaxKind.GreaterThanEqualsToken = 82;
+    SyntaxKind._map[83] = "EqualsEqualsToken";
+    SyntaxKind.EqualsEqualsToken = 83;
+    SyntaxKind._map[84] = "EqualsGreaterThanToken";
+    SyntaxKind.EqualsGreaterThanToken = 84;
+    SyntaxKind._map[85] = "ExclamationEqualsToken";
+    SyntaxKind.ExclamationEqualsToken = 85;
+    SyntaxKind._map[86] = "EqualsEqualsEqualsToken";
+    SyntaxKind.EqualsEqualsEqualsToken = 86;
+    SyntaxKind._map[87] = "ExclamationEqualsEqualsToken";
+    SyntaxKind.ExclamationEqualsEqualsToken = 87;
+    SyntaxKind._map[88] = "PlusToken";
+    SyntaxKind.PlusToken = 88;
+    SyntaxKind._map[89] = "MinusToken";
+    SyntaxKind.MinusToken = 89;
+    SyntaxKind._map[90] = "AsteriskToken";
+    SyntaxKind.AsteriskToken = 90;
+    SyntaxKind._map[91] = "PercentToken";
+    SyntaxKind.PercentToken = 91;
+    SyntaxKind._map[92] = "PlusPlusToken";
+    SyntaxKind.PlusPlusToken = 92;
+    SyntaxKind._map[93] = "MinusMinusToken";
+    SyntaxKind.MinusMinusToken = 93;
+    SyntaxKind._map[94] = "LessThanLessThanToken";
+    SyntaxKind.LessThanLessThanToken = 94;
+    SyntaxKind._map[95] = "GreaterThanGreaterThanToken";
+    SyntaxKind.GreaterThanGreaterThanToken = 95;
+    SyntaxKind._map[96] = "GreaterThanGreaterThanGreaterThanToken";
+    SyntaxKind.GreaterThanGreaterThanGreaterThanToken = 96;
+    SyntaxKind._map[97] = "AmpersandToken";
+    SyntaxKind.AmpersandToken = 97;
+    SyntaxKind._map[98] = "BarToken";
+    SyntaxKind.BarToken = 98;
+    SyntaxKind._map[99] = "CaretToken";
+    SyntaxKind.CaretToken = 99;
+    SyntaxKind._map[100] = "ExclamationToken";
+    SyntaxKind.ExclamationToken = 100;
+    SyntaxKind._map[101] = "TildeToken";
+    SyntaxKind.TildeToken = 101;
+    SyntaxKind._map[102] = "AmpersandAmpersandToken";
+    SyntaxKind.AmpersandAmpersandToken = 102;
+    SyntaxKind._map[103] = "BarBarToken";
+    SyntaxKind.BarBarToken = 103;
+    SyntaxKind._map[104] = "QuestionToken";
+    SyntaxKind.QuestionToken = 104;
+    SyntaxKind._map[105] = "ColonToken";
+    SyntaxKind.ColonToken = 105;
+    SyntaxKind._map[106] = "EqualsToken";
+    SyntaxKind.EqualsToken = 106;
+    SyntaxKind._map[107] = "PlusEqualsToken";
+    SyntaxKind.PlusEqualsToken = 107;
+    SyntaxKind._map[108] = "MinusEqualsToken";
+    SyntaxKind.MinusEqualsToken = 108;
+    SyntaxKind._map[109] = "AsteriskEqualsToken";
+    SyntaxKind.AsteriskEqualsToken = 109;
+    SyntaxKind._map[110] = "PercentEqualsToken";
+    SyntaxKind.PercentEqualsToken = 110;
+    SyntaxKind._map[111] = "LessThanLessThanEqualsToken";
+    SyntaxKind.LessThanLessThanEqualsToken = 111;
+    SyntaxKind._map[112] = "GreaterThanGreaterThanEqualsToken";
+    SyntaxKind.GreaterThanGreaterThanEqualsToken = 112;
+    SyntaxKind._map[113] = "GreaterThanGreaterThanGreaterThanEqualsToken";
+    SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken = 113;
+    SyntaxKind._map[114] = "AmpersandEqualsToken";
+    SyntaxKind.AmpersandEqualsToken = 114;
+    SyntaxKind._map[115] = "BarEqualsToken";
+    SyntaxKind.BarEqualsToken = 115;
+    SyntaxKind._map[116] = "CaretEqualsToken";
+    SyntaxKind.CaretEqualsToken = 116;
+    SyntaxKind._map[117] = "SlashToken";
+    SyntaxKind.SlashToken = 117;
+    SyntaxKind._map[118] = "SlashEqualsToken";
+    SyntaxKind.SlashEqualsToken = 118;
     SyntaxKind._map[119] = "SourceUnit";
     SyntaxKind.SourceUnit = 119;
     SyntaxKind._map[120] = "QualifiedName";
@@ -967,110 +967,110 @@ var SyntaxKind;
 var SyntaxFacts;
 (function (SyntaxFacts) {
     var textToKeywordKind = {
-        "any": 58 /* AnyKeyword */ ,
-        "bool": 59 /* BoolKeyword */ ,
-        "break": 13 /* BreakKeyword */ ,
-        "case": 14 /* CaseKeyword */ ,
-        "catch": 15 /* CatchKeyword */ ,
-        "class": 42 /* ClassKeyword */ ,
-        "continue": 16 /* ContinueKeyword */ ,
-        "const": 43 /* ConstKeyword */ ,
-        "constructor": 60 /* ConstructorKeyword */ ,
-        "debugger": 17 /* DebuggerKeyword */ ,
-        "declare": 61 /* DeclareKeyword */ ,
-        "default": 18 /* DefaultKeyword */ ,
-        "delete": 19 /* DeleteKeyword */ ,
-        "do": 20 /* DoKeyword */ ,
-        "else": 21 /* ElseKeyword */ ,
-        "enum": 44 /* EnumKeyword */ ,
-        "export": 45 /* ExportKeyword */ ,
-        "extends": 46 /* ExtendsKeyword */ ,
-        "false": 22 /* FalseKeyword */ ,
-        "finally": 23 /* FinallyKeyword */ ,
-        "for": 24 /* ForKeyword */ ,
-        "function": 25 /* FunctionKeyword */ ,
-        "get": 62 /* GetKeyword */ ,
-        "if": 26 /* IfKeyword */ ,
-        "implements": 49 /* ImplementsKeyword */ ,
-        "import": 47 /* ImportKeyword */ ,
-        "in": 27 /* InKeyword */ ,
-        "instanceof": 28 /* InstanceOfKeyword */ ,
-        "interface": 50 /* InterfaceKeyword */ ,
-        "let": 51 /* LetKeyword */ ,
-        "module": 63 /* ModuleKeyword */ ,
-        "new": 29 /* NewKeyword */ ,
-        "null": 30 /* NullKeyword */ ,
-        "number": 64 /* NumberKeyword */ ,
-        "package": 52 /* PackageKeyword */ ,
-        "private": 53 /* PrivateKeyword */ ,
-        "protected": 54 /* ProtectedKeyword */ ,
-        "public": 55 /* PublicKeyword */ ,
-        "return": 31 /* ReturnKeyword */ ,
-        "set": 65 /* SetKeyword */ ,
-        "static": 56 /* StaticKeyword */ ,
-        "string": 66 /* StringKeyword */ ,
-        "super": 48 /* SuperKeyword */ ,
-        "switch": 32 /* SwitchKeyword */ ,
-        "this": 33 /* ThisKeyword */ ,
-        "throw": 34 /* ThrowKeyword */ ,
-        "true": 35 /* TrueKeyword */ ,
-        "try": 36 /* TryKeyword */ ,
-        "typeof": 37 /* TypeOfKeyword */ ,
-        "var": 38 /* VarKeyword */ ,
-        "void": 39 /* VoidKeyword */ ,
-        "while": 40 /* WhileKeyword */ ,
-        "with": 41 /* WithKeyword */ ,
-        "yield": 57 /* YieldKeyword */ ,
-        "{": 67 /* OpenBraceToken */ ,
-        "}": 68 /* CloseBraceToken */ ,
-        "(": 69 /* OpenParenToken */ ,
-        ")": 70 /* CloseParenToken */ ,
-        "[": 71 /* OpenBracketToken */ ,
-        "]": 72 /* CloseBracketToken */ ,
-        ".": 73 /* DotToken */ ,
-        "...": 74 /* DotDotDotToken */ ,
-        ";": 75 /* SemicolonToken */ ,
-        ",": 76 /* CommaToken */ ,
-        "<": 77 /* LessThanToken */ ,
-        ">": 78 /* GreaterThanToken */ ,
-        "<=": 79 /* LessThanEqualsToken */ ,
-        ">=": 80 /* GreaterThanEqualsToken */ ,
-        "==": 81 /* EqualsEqualsToken */ ,
-        "=>": 82 /* EqualsGreaterThanToken */ ,
-        "!=": 83 /* ExclamationEqualsToken */ ,
-        "===": 84 /* EqualsEqualsEqualsToken */ ,
-        "!==": 85 /* ExclamationEqualsEqualsToken */ ,
-        "+": 86 /* PlusToken */ ,
-        "-": 87 /* MinusToken */ ,
-        "*": 88 /* AsteriskToken */ ,
-        "%": 89 /* PercentToken */ ,
-        "++": 90 /* PlusPlusToken */ ,
-        "--": 91 /* MinusMinusToken */ ,
-        "<<": 92 /* LessThanLessThanToken */ ,
-        ">>": 93 /* GreaterThanGreaterThanToken */ ,
-        ">>>": 94 /* GreaterThanGreaterThanGreaterThanToken */ ,
-        "&": 95 /* AmpersandToken */ ,
-        "|": 96 /* BarToken */ ,
-        "^": 97 /* CaretToken */ ,
-        "!": 98 /* ExclamationToken */ ,
-        "~": 99 /* TildeToken */ ,
-        "&&": 100 /* AmpersandAmpersandToken */ ,
-        "||": 101 /* BarBarToken */ ,
-        "?": 102 /* QuestionToken */ ,
-        ":": 103 /* ColonToken */ ,
-        "=": 104 /* EqualsToken */ ,
-        "+=": 105 /* PlusEqualsToken */ ,
-        "-=": 106 /* MinusEqualsToken */ ,
-        "*=": 107 /* AsteriskEqualsToken */ ,
-        "%=": 108 /* PercentEqualsToken */ ,
-        "<<=": 109 /* LessThanLessThanEqualsToken */ ,
-        ">>=": 110 /* GreaterThanGreaterThanEqualsToken */ ,
-        ">>>=": 111 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ,
-        "&=": 112 /* AmpersandEqualsToken */ ,
-        "|=": 113 /* BarEqualsToken */ ,
-        "^=": 114 /* CaretEqualsToken */ ,
-        "/": 115 /* SlashToken */ ,
-        "/=": 116 /* SlashEqualsToken */ 
+        "any": 60 /* AnyKeyword */ ,
+        "bool": 61 /* BoolKeyword */ ,
+        "break": 15 /* BreakKeyword */ ,
+        "case": 16 /* CaseKeyword */ ,
+        "catch": 17 /* CatchKeyword */ ,
+        "class": 44 /* ClassKeyword */ ,
+        "continue": 18 /* ContinueKeyword */ ,
+        "const": 45 /* ConstKeyword */ ,
+        "constructor": 62 /* ConstructorKeyword */ ,
+        "debugger": 19 /* DebuggerKeyword */ ,
+        "declare": 63 /* DeclareKeyword */ ,
+        "default": 20 /* DefaultKeyword */ ,
+        "delete": 21 /* DeleteKeyword */ ,
+        "do": 22 /* DoKeyword */ ,
+        "else": 23 /* ElseKeyword */ ,
+        "enum": 46 /* EnumKeyword */ ,
+        "export": 47 /* ExportKeyword */ ,
+        "extends": 48 /* ExtendsKeyword */ ,
+        "false": 24 /* FalseKeyword */ ,
+        "finally": 25 /* FinallyKeyword */ ,
+        "for": 26 /* ForKeyword */ ,
+        "function": 27 /* FunctionKeyword */ ,
+        "get": 64 /* GetKeyword */ ,
+        "if": 28 /* IfKeyword */ ,
+        "implements": 51 /* ImplementsKeyword */ ,
+        "import": 49 /* ImportKeyword */ ,
+        "in": 29 /* InKeyword */ ,
+        "instanceof": 30 /* InstanceOfKeyword */ ,
+        "interface": 52 /* InterfaceKeyword */ ,
+        "let": 53 /* LetKeyword */ ,
+        "module": 65 /* ModuleKeyword */ ,
+        "new": 31 /* NewKeyword */ ,
+        "null": 32 /* NullKeyword */ ,
+        "number": 66 /* NumberKeyword */ ,
+        "package": 54 /* PackageKeyword */ ,
+        "private": 55 /* PrivateKeyword */ ,
+        "protected": 56 /* ProtectedKeyword */ ,
+        "public": 57 /* PublicKeyword */ ,
+        "return": 33 /* ReturnKeyword */ ,
+        "set": 67 /* SetKeyword */ ,
+        "static": 58 /* StaticKeyword */ ,
+        "string": 68 /* StringKeyword */ ,
+        "super": 50 /* SuperKeyword */ ,
+        "switch": 34 /* SwitchKeyword */ ,
+        "this": 35 /* ThisKeyword */ ,
+        "throw": 36 /* ThrowKeyword */ ,
+        "true": 37 /* TrueKeyword */ ,
+        "try": 38 /* TryKeyword */ ,
+        "typeof": 39 /* TypeOfKeyword */ ,
+        "var": 40 /* VarKeyword */ ,
+        "void": 41 /* VoidKeyword */ ,
+        "while": 42 /* WhileKeyword */ ,
+        "with": 43 /* WithKeyword */ ,
+        "yield": 59 /* YieldKeyword */ ,
+        "{": 69 /* OpenBraceToken */ ,
+        "}": 70 /* CloseBraceToken */ ,
+        "(": 71 /* OpenParenToken */ ,
+        ")": 72 /* CloseParenToken */ ,
+        "[": 73 /* OpenBracketToken */ ,
+        "]": 74 /* CloseBracketToken */ ,
+        ".": 75 /* DotToken */ ,
+        "...": 76 /* DotDotDotToken */ ,
+        ";": 77 /* SemicolonToken */ ,
+        ",": 78 /* CommaToken */ ,
+        "<": 79 /* LessThanToken */ ,
+        ">": 80 /* GreaterThanToken */ ,
+        "<=": 81 /* LessThanEqualsToken */ ,
+        ">=": 82 /* GreaterThanEqualsToken */ ,
+        "==": 83 /* EqualsEqualsToken */ ,
+        "=>": 84 /* EqualsGreaterThanToken */ ,
+        "!=": 85 /* ExclamationEqualsToken */ ,
+        "===": 86 /* EqualsEqualsEqualsToken */ ,
+        "!==": 87 /* ExclamationEqualsEqualsToken */ ,
+        "+": 88 /* PlusToken */ ,
+        "-": 89 /* MinusToken */ ,
+        "*": 90 /* AsteriskToken */ ,
+        "%": 91 /* PercentToken */ ,
+        "++": 92 /* PlusPlusToken */ ,
+        "--": 93 /* MinusMinusToken */ ,
+        "<<": 94 /* LessThanLessThanToken */ ,
+        ">>": 95 /* GreaterThanGreaterThanToken */ ,
+        ">>>": 96 /* GreaterThanGreaterThanGreaterThanToken */ ,
+        "&": 97 /* AmpersandToken */ ,
+        "|": 98 /* BarToken */ ,
+        "^": 99 /* CaretToken */ ,
+        "!": 100 /* ExclamationToken */ ,
+        "~": 101 /* TildeToken */ ,
+        "&&": 102 /* AmpersandAmpersandToken */ ,
+        "||": 103 /* BarBarToken */ ,
+        "?": 104 /* QuestionToken */ ,
+        ":": 105 /* ColonToken */ ,
+        "=": 106 /* EqualsToken */ ,
+        "+=": 107 /* PlusEqualsToken */ ,
+        "-=": 108 /* MinusEqualsToken */ ,
+        "*=": 109 /* AsteriskEqualsToken */ ,
+        "%=": 110 /* PercentEqualsToken */ ,
+        "<<=": 111 /* LessThanLessThanEqualsToken */ ,
+        ">>=": 112 /* GreaterThanGreaterThanEqualsToken */ ,
+        ">>>=": 113 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ,
+        "&=": 114 /* AmpersandEqualsToken */ ,
+        "|=": 115 /* BarEqualsToken */ ,
+        "^=": 116 /* CaretEqualsToken */ ,
+        "/": 117 /* SlashToken */ ,
+        "/=": 118 /* SlashEqualsToken */ 
     };
     var kindToText = [];
     for(var name in textToKeywordKind) {
@@ -1079,7 +1079,7 @@ var SyntaxFacts;
             kindToText[textToKeywordKind[name]] = name;
         }
     }
-    kindToText[60 /* ConstructorKeyword */ ] = "constructor";
+    kindToText[62 /* ConstructorKeyword */ ] = "constructor";
     function getTokenKind(text) {
         if(textToKeywordKind.hasOwnProperty(text)) {
             return textToKeywordKind[text];
@@ -1093,27 +1093,27 @@ var SyntaxFacts;
     }
     SyntaxFacts.getText = getText;
     function isTokenKind(kind) {
-        return kind >= SyntaxKind.FirstToken && kind <= SyntaxKind.LastToken;
+        return kind >= 11 /* FirstToken */  && kind <= 10 /* LastToken */ ;
     }
     SyntaxFacts.isTokenKind = isTokenKind;
     function isAnyKeyword(kind) {
-        return kind >= SyntaxKind.FirstKeyword && kind <= SyntaxKind.LastKeyword;
+        return kind >= 15 /* FirstKeyword */  && kind <= 68 /* LastKeyword */ ;
     }
     SyntaxFacts.isAnyKeyword = isAnyKeyword;
     function isStandardKeyword(kind) {
-        return kind >= SyntaxKind.FirstStandardKeyword && kind <= SyntaxKind.LastStandardKeyword;
+        return kind >= 15 /* FirstStandardKeyword */  && kind <= 43 /* LastStandardKeyword */ ;
     }
     SyntaxFacts.isStandardKeyword = isStandardKeyword;
     function isFutureReservedKeyword(kind) {
-        return kind >= SyntaxKind.FirstFutureReservedKeyword && kind <= SyntaxKind.LastFutureReservedKeyword;
+        return kind >= 44 /* FirstFutureReservedKeyword */  && kind <= 50 /* LastFutureReservedKeyword */ ;
     }
     SyntaxFacts.isFutureReservedKeyword = isFutureReservedKeyword;
     function isFutureReservedStrictKeyword(kind) {
-        return kind >= SyntaxKind.FirstFutureReservedStrictKeyword && kind <= SyntaxKind.LastFutureReservedStrictKeyword;
+        return kind >= 51 /* FirstFutureReservedStrictKeyword */  && kind <= 59 /* LastFutureReservedStrictKeyword */ ;
     }
     SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
     function isAnyPunctuation(kind) {
-        return kind >= SyntaxKind.FirstPunctuation && kind <= SyntaxKind.LastPunctuation;
+        return kind >= 69 /* FirstPunctuation */  && kind <= 118 /* LastPunctuation */ ;
     }
     SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
     function isPrefixUnaryExpressionOperatorToken(tokenKind) {
@@ -1126,27 +1126,27 @@ var SyntaxFacts;
     SyntaxFacts.isBinaryExpressionOperatorToken = isBinaryExpressionOperatorToken;
     function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
-            case 86 /* PlusToken */ : {
+            case 88 /* PlusToken */ : {
                 return 159 /* PlusExpression */ ;
 
             }
-            case 87 /* MinusToken */ : {
+            case 89 /* MinusToken */ : {
                 return 160 /* NegateExpression */ ;
 
             }
-            case 99 /* TildeToken */ : {
+            case 101 /* TildeToken */ : {
                 return 161 /* BitwiseNotExpression */ ;
 
             }
-            case 98 /* ExclamationToken */ : {
+            case 100 /* ExclamationToken */ : {
                 return 162 /* LogicalNotExpression */ ;
 
             }
-            case 90 /* PlusPlusToken */ : {
+            case 92 /* PlusPlusToken */ : {
                 return 163 /* PreIncrementExpression */ ;
 
             }
-            case 91 /* MinusMinusToken */ : {
+            case 93 /* MinusMinusToken */ : {
                 return 164 /* PreDecrementExpression */ ;
 
             }
@@ -1159,11 +1159,11 @@ var SyntaxFacts;
     SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken = getPrefixUnaryExpressionFromOperatorToken;
     function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
-            case 90 /* PlusPlusToken */ : {
+            case 92 /* PlusPlusToken */ : {
                 return 205 /* PostIncrementExpression */ ;
 
             }
-            case 91 /* MinusMinusToken */ : {
+            case 93 /* MinusMinusToken */ : {
                 return 206 /* PostDecrementExpression */ ;
 
             }
@@ -1176,147 +1176,147 @@ var SyntaxFacts;
     SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken = getPostfixUnaryExpressionFromOperatorToken;
     function getBinaryExpressionFromOperatorToken(tokenKind) {
         switch(tokenKind) {
-            case 88 /* AsteriskToken */ : {
+            case 90 /* AsteriskToken */ : {
                 return 200 /* MultiplyExpression */ ;
 
             }
-            case 115 /* SlashToken */ : {
+            case 117 /* SlashToken */ : {
                 return 201 /* DivideExpression */ ;
 
             }
-            case 89 /* PercentToken */ : {
+            case 91 /* PercentToken */ : {
                 return 202 /* ModuloExpression */ ;
 
             }
-            case 86 /* PlusToken */ : {
+            case 88 /* PlusToken */ : {
                 return 203 /* AddExpression */ ;
 
             }
-            case 87 /* MinusToken */ : {
+            case 89 /* MinusToken */ : {
                 return 204 /* SubtractExpression */ ;
 
             }
-            case 92 /* LessThanLessThanToken */ : {
+            case 94 /* LessThanLessThanToken */ : {
                 return 197 /* LeftShiftExpression */ ;
 
             }
-            case 93 /* GreaterThanGreaterThanToken */ : {
+            case 95 /* GreaterThanGreaterThanToken */ : {
                 return 198 /* SignedRightShiftExpression */ ;
 
             }
-            case 94 /* GreaterThanGreaterThanGreaterThanToken */ : {
+            case 96 /* GreaterThanGreaterThanGreaterThanToken */ : {
                 return 199 /* UnsignedRightShiftExpression */ ;
 
             }
-            case 77 /* LessThanToken */ : {
+            case 79 /* LessThanToken */ : {
                 return 191 /* LessThanExpression */ ;
 
             }
-            case 78 /* GreaterThanToken */ : {
+            case 80 /* GreaterThanToken */ : {
                 return 192 /* GreaterThanExpression */ ;
 
             }
-            case 79 /* LessThanEqualsToken */ : {
+            case 81 /* LessThanEqualsToken */ : {
                 return 193 /* LessThanOrEqualExpression */ ;
 
             }
-            case 80 /* GreaterThanEqualsToken */ : {
+            case 82 /* GreaterThanEqualsToken */ : {
                 return 194 /* GreaterThanOrEqualExpression */ ;
 
             }
-            case 28 /* InstanceOfKeyword */ : {
+            case 30 /* InstanceOfKeyword */ : {
                 return 195 /* InstanceOfExpression */ ;
 
             }
-            case 27 /* InKeyword */ : {
+            case 29 /* InKeyword */ : {
                 return 196 /* InExpression */ ;
 
             }
-            case 81 /* EqualsEqualsToken */ : {
+            case 83 /* EqualsEqualsToken */ : {
                 return 187 /* EqualsWithTypeConversionExpression */ ;
 
             }
-            case 83 /* ExclamationEqualsToken */ : {
+            case 85 /* ExclamationEqualsToken */ : {
                 return 188 /* NotEqualsWithTypeConversionExpression */ ;
 
             }
-            case 84 /* EqualsEqualsEqualsToken */ : {
+            case 86 /* EqualsEqualsEqualsToken */ : {
                 return 189 /* EqualsExpression */ ;
 
             }
-            case 85 /* ExclamationEqualsEqualsToken */ : {
+            case 87 /* ExclamationEqualsEqualsToken */ : {
                 return 190 /* NotEqualsExpression */ ;
 
             }
-            case 95 /* AmpersandToken */ : {
+            case 97 /* AmpersandToken */ : {
                 return 186 /* BitwiseAndExpression */ ;
 
             }
-            case 97 /* CaretToken */ : {
+            case 99 /* CaretToken */ : {
                 return 185 /* BitwiseExclusiveOrExpression */ ;
 
             }
-            case 96 /* BarToken */ : {
+            case 98 /* BarToken */ : {
                 return 184 /* BitwiseOrExpression */ ;
 
             }
-            case 100 /* AmpersandAmpersandToken */ : {
+            case 102 /* AmpersandAmpersandToken */ : {
                 return 183 /* LogicalAndExpression */ ;
 
             }
-            case 101 /* BarBarToken */ : {
+            case 103 /* BarBarToken */ : {
                 return 182 /* LogicalOrExpression */ ;
 
             }
-            case 113 /* BarEqualsToken */ : {
+            case 115 /* BarEqualsToken */ : {
                 return 177 /* OrAssignmentExpression */ ;
 
             }
-            case 112 /* AmpersandEqualsToken */ : {
+            case 114 /* AmpersandEqualsToken */ : {
                 return 175 /* AndAssignmentExpression */ ;
 
             }
-            case 114 /* CaretEqualsToken */ : {
+            case 116 /* CaretEqualsToken */ : {
                 return 176 /* ExclusiveOrAssignmentExpression */ ;
 
             }
-            case 109 /* LessThanLessThanEqualsToken */ : {
+            case 111 /* LessThanLessThanEqualsToken */ : {
                 return 178 /* LeftShiftAssignmentExpression */ ;
 
             }
-            case 110 /* GreaterThanGreaterThanEqualsToken */ : {
+            case 112 /* GreaterThanGreaterThanEqualsToken */ : {
                 return 179 /* SignedRightShiftAssignmentExpression */ ;
 
             }
-            case 111 /* GreaterThanGreaterThanGreaterThanEqualsToken */ : {
+            case 113 /* GreaterThanGreaterThanGreaterThanEqualsToken */ : {
                 return 180 /* UnsignedRightShiftAssignmentExpression */ ;
 
             }
-            case 105 /* PlusEqualsToken */ : {
+            case 107 /* PlusEqualsToken */ : {
                 return 170 /* AddAssignmentExpression */ ;
 
             }
-            case 106 /* MinusEqualsToken */ : {
+            case 108 /* MinusEqualsToken */ : {
                 return 171 /* SubtractAssignmentExpression */ ;
 
             }
-            case 107 /* AsteriskEqualsToken */ : {
+            case 109 /* AsteriskEqualsToken */ : {
                 return 172 /* MultiplyAssignmentExpression */ ;
 
             }
-            case 116 /* SlashEqualsToken */ : {
+            case 118 /* SlashEqualsToken */ : {
                 return 173 /* DivideAssignmentExpression */ ;
 
             }
-            case 108 /* PercentEqualsToken */ : {
+            case 110 /* PercentEqualsToken */ : {
                 return 174 /* ModuloAssignmentExpression */ ;
 
             }
-            case 104 /* EqualsToken */ : {
+            case 106 /* EqualsToken */ : {
                 return 169 /* AssignmentExpression */ ;
 
             }
-            case 76 /* CommaToken */ : {
+            case 78 /* CommaToken */ : {
                 return 168 /* CommaExpression */ ;
 
             }
@@ -1329,8 +1329,8 @@ var SyntaxFacts;
     SyntaxFacts.getBinaryExpressionFromOperatorToken = getBinaryExpressionFromOperatorToken;
     function isAnyDivideToken(kind) {
         switch(kind) {
-            case 115 /* SlashToken */ :
-            case 116 /* SlashEqualsToken */ : {
+            case 117 /* SlashToken */ :
+            case 118 /* SlashEqualsToken */ : {
                 return true;
 
             }
@@ -1343,9 +1343,9 @@ var SyntaxFacts;
     SyntaxFacts.isAnyDivideToken = isAnyDivideToken;
     function isAnyDivideOrRegularExpressionToken(kind) {
         switch(kind) {
-            case 115 /* SlashToken */ :
-            case 116 /* SlashEqualsToken */ :
-            case 10 /* RegularExpressionLiteral */ : {
+            case 117 /* SlashToken */ :
+            case 118 /* SlashEqualsToken */ :
+            case 12 /* RegularExpressionLiteral */ : {
                 return true;
 
             }
@@ -1357,7 +1357,7 @@ var SyntaxFacts;
     }
     SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
     function isIdentifierName(kind) {
-        return kind === 9 /* IdentifierNameToken */  || isAnyKeyword(kind);
+        return kind === 11 /* IdentifierNameToken */  || isAnyKeyword(kind);
     }
     SyntaxFacts.isIdentifierName = isIdentifierName;
 })(SyntaxFacts || (SyntaxFacts = {}));
@@ -4565,7 +4565,7 @@ function generateTokens() {
     result += "\r\n";
     result += generateToken(true, true, true);
     result += "\r\n";
-    result += "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" + "        (<any>token.leadingTrivia()).collectTextElements(elements);\r\n" + "        elements.push(token.text());\r\n" + "        (<any>token.trailingTrivia()).collectTextElements(elements);\r\n" + "    }\r\n" + "\r\n" + "    function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new FixedWidthTokenWithNoTrivia(kind);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    function variableWidthToken(sourceText: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        width: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    export function tokenFromText(text: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        width: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "        if (kind >= SyntaxKind.FirstFixedWidth && kind <= SyntaxKind.LastFixedWidth) {\r\n" + "            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" + "        }\r\n" + "        else {\r\n" + "            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n\r\n";
+    result += "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" + "        (<any>token.leadingTrivia()).collectTextElements(elements);\r\n" + "        elements.push(token.text());\r\n" + "        (<any>token.trailingTrivia()).collectTextElements(elements);\r\n" + "    }\r\n" + "\r\n" + "    function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new FixedWidthTokenWithNoTrivia(kind);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    function variableWidthToken(sourceText: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        width: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "\r\n" + "        if (leadingTriviaInfo === 0) {\r\n" + "            if (trailingTriviaInfo === 0) {\r\n" + "                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);\r\n" + "            }\r\n" + "            else {\r\n" + "                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);\r\n" + "            }\r\n" + "        }\r\n" + "        else if (trailingTriviaInfo === 0) {\r\n" + "            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);\r\n" + "        }\r\n" + "        else {\r\n" + "            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    export function tokenFromText(text: IText, fullStart: number,\r\n" + "        kind: SyntaxKind,\r\n" + "        leadingTriviaInfo: number,\r\n" + "        width: number,\r\n" + "        trailingTriviaInfo: number): ISyntaxToken {\r\n" + "        if (kind >= SyntaxKind.FirstFixedWidth) {\r\n" + "            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" + "        }\r\n" + "        else {\r\n" + "            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" + "        }\r\n" + "    }\r\n\r\n";
     result += "    function getTriviaWidth(value: number): number {\r\n" + "        return value >>> Constants.TriviaFullWidthShift;\r\n" + "    }\r\n" + "\r\n" + "    function hasTriviaComment(value: number): bool {\r\n" + "        return (value & Constants.TriviaCommentMask) !== 0;\r\n" + "    }\r\n" + "\r\n" + "    function hasTriviaNewLine(value: number): bool {\r\n" + "        return (value & Constants.TriviaNewLineMask) !== 0;\r\n" + "    }\r\n";
     result += "}";
     return result;
@@ -4661,7 +4661,7 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
 function generateScannerUtilities() {
     var result = "///<reference path='CharacterCodes.ts' />\r\n" + "///<reference path='SyntaxKind.ts' />\r\n" + "\r\n" + "class ScannerUtilities {\r\n";
     var keywords = [];
-    for(var i = SyntaxKind.FirstKeyword; i <= SyntaxKind.LastKeyword; i++) {
+    for(var i = 15 /* FirstKeyword */ ; i <= 68 /* LastKeyword */ ; i++) {
         keywords.push({
             kind: i,
             text: SyntaxFacts.getText(i)

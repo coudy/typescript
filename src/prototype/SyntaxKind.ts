@@ -13,6 +13,11 @@ enum SyntaxKind {
     SingleLineCommentTrivia,
     SkippedTextTrivia,
 
+    // Note: all variable width tokens must come before all fixed width tokens.
+
+    ErrorToken,
+    EndOfFileToken,
+
     // Tokens
     IdentifierNameToken,
 
@@ -134,9 +139,6 @@ enum SyntaxKind {
     CaretEqualsToken,
     SlashToken,
     SlashEqualsToken,
-
-    ErrorToken,
-    EndOfFileToken,
 
     // SyntaxNodes
     SourceUnit,
