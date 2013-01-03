@@ -27640,11 +27640,7 @@ var Parser;
         ParserImpl.prototype.isExpressionStatement = function () {
             var currentToken = this.currentToken();
             var kind = currentToken.tokenKind;
-            if(kind === 67 /* OpenBraceToken */ ) {
-                return false;
-            }
-            var keywordKind = currentToken.tokenKind;
-            if(keywordKind === 25 /* FunctionKeyword */ ) {
+            if(kind === 67 /* OpenBraceToken */  || kind === 25 /* FunctionKeyword */ ) {
                 return false;
             }
             return this.isExpression();

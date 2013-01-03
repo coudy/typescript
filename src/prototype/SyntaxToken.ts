@@ -24,7 +24,7 @@ module Syntax {
     //}
 
     export function realize(token: ISyntaxToken): ISyntaxToken {
-        return new RealizedToken(token.tokenKind, /*token.keywordKind(),*/
+        return new RealizedToken(token.tokenKind,
             token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
     }
 
@@ -204,13 +204,11 @@ module Syntax {
         private _trailingTrivia: ISyntaxTriviaList;
 
         constructor(tokenKind: SyntaxKind,
-                    // keywordKind: SyntaxKind,
                     leadingTrivia: ISyntaxTriviaList,
                     text: string,
                     value: any,
                     trailingTrivia: ISyntaxTriviaList) {
             this.tokenKind = tokenKind;
-            // this.tokenKeywordKind = keywordKind;
             this._leadingTrivia = leadingTrivia;
             this._text = text;
             this._value = value;
@@ -237,8 +235,6 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
         public isTrivia(): bool { return false; }
         public isTriviaList(): bool { return false; }
-
-        // public keywordKind(): SyntaxKind { return this.tokenKeywordKind; }
 
         public fullWidth(): number { return this._leadingTrivia.fullWidth() + this.width() + this._trailingTrivia.fullWidth(); }
         public width(): number { return this.text().length; }
@@ -296,7 +292,6 @@ module Syntax {
 
         return new RealizedToken(
             kind,
-            //keywordKind,
             Syntax.triviaList(info === null ? null : info.leadingTrivia),
             text,
             value,

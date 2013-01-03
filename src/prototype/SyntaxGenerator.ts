@@ -2259,12 +2259,7 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "        constructor(";
     }
 
-    if (isKeyword) {
-        result += "keywordKind: SyntaxKind";
-    }
-    else {
-        result += "kind: SyntaxKind";
-    }
+    result += "kind: SyntaxKind";
 
     if (leading) {
         result += ", leadingTriviaInfo: number";
@@ -2285,14 +2280,6 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
         result += "            this._fullStart = fullStart;\r\n";
     }
 
-    //if (isKeyword) {
-    //    result += "            this.tokenKind = SyntaxKind.IdentifierNameToken;\r\n";
-    //    result += "            this.tokenKeywordKind = keywordKind;\r\n";
-    //}
-    //else {
-    //    result += "            this.tokenKind = kind;\r\n";
-    //    result += "            this.tokenKeywordKind = SyntaxKind.None;\r\n";
-    //}
     result += "            this.tokenKind = kind;\r\n";
 
     if (leading) {
@@ -2349,7 +2336,6 @@ function generateToken(isPunctuation: bool, isKeyword: bool, leading: bool, trai
 "        public isTriviaList(): bool { return false; }\r\n\r\n";
 
     result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
-    // result += "        public keywordKind(): SyntaxKind { return this.tokenKeywordKind; }\r\n\r\n";
 
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
@@ -2557,27 +2543,6 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-//"    function keyword(sourceText: IText, fullStart: number,\r\n" +
-//"        keywordKind: SyntaxKind,\r\n" +
-//"        leadingTriviaInfo: number,\r\n" +
-//"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
-//"\r\n" +
-//"        if (leadingTriviaInfo === 0) {\r\n" +
-//"            if (trailingTriviaInfo === 0) {\r\n" +
-//"                return new KeywordWithNoTrivia(keywordKind);\r\n" +
-//"            }\r\n" +
-//"            else {\r\n" +
-//"                return new KeywordWithTrailingTrivia(sourceText, fullStart, keywordKind, trailingTriviaInfo);\r\n" +
-//"            }\r\n" +
-//"        }\r\n" +
-//"        else if (trailingTriviaInfo === 0) {\r\n" +
-//"            return new KeywordWithLeadingTrivia(sourceText, fullStart, keywordKind, leadingTriviaInfo);\r\n" +
-//"        }\r\n" +
-//"        else {\r\n" +
-//"            return new KeywordWithLeadingAndTrailingTrivia(sourceText, fullStart, keywordKind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
-//"        }\r\n" +
-//"    }\r\n" +
-//"\r\n" +
 "    export function tokenFromText(text: IText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
@@ -2586,9 +2551,6 @@ function generateTokens(): string {
 "        if (SyntaxFacts.isAnyPunctuation(kind) || SyntaxFacts.isAnyKeyword(kind)) {\r\n" +
 "            return fixedWidthToken(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
 "        }\r\n" +
-//"        else if (SyntaxFacts.isAnyKeyword(kind)) {\r\n" +
-//"            return keyword(text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
-//"        }\r\n" +
 "        else {\r\n" +
 "            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
 "        }\r\n" +

@@ -1148,18 +1148,6 @@ var SyntaxFacts;
                 return 164 /* PreDecrementExpression */ ;
 
             }
-            case 19 /* DeleteKeyword */ : {
-                return 165 /* DeleteExpression */ ;
-
-            }
-            case 37 /* TypeOfKeyword */ : {
-                return 166 /* TypeOfExpression */ ;
-
-            }
-            case 39 /* VoidKeyword */ : {
-                return 167 /* VoidExpression */ ;
-
-            }
             default: {
                 return 0 /* None */ ;
 
@@ -4435,11 +4423,7 @@ function generateToken(isPunctuation, isKeyword, leading, trailing) {
     } else {
         result += "        constructor(";
     }
-    if(isKeyword) {
-        result += "keywordKind: SyntaxKind";
-    } else {
-        result += "kind: SyntaxKind";
-    }
+    result += "kind: SyntaxKind";
     if(leading) {
         result += ", leadingTriviaInfo: number";
     }

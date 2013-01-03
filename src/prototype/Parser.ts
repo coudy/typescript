@@ -2882,13 +2882,9 @@ module Parser {
         private isExpressionStatement(): bool {
             // As per the gramar, neither { nor 'function' can start an expression statement.
             var currentToken = this.currentToken();
-            var kind = currentToken.tokenKind;
-            if (kind === SyntaxKind.OpenBraceToken) {
-                return false;
-            }
 
-            var keywordKind = currentToken.tokenKind;
-            if (keywordKind === SyntaxKind.FunctionKeyword) {
+            var kind = currentToken.tokenKind;
+            if (kind === SyntaxKind.OpenBraceToken || kind === SyntaxKind.FunctionKeyword) {
                 return false;
             }
 

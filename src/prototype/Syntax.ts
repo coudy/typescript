@@ -38,7 +38,6 @@ module Syntax {
         }
 
         return token1.kind() === token2.kind() &&
-               // token1.keywordKind() === token2.keywordKind() &&
                token1.width() === token2.width() &&
                token1.fullWidth() === token2.fullWidth() &&
                token1.text() === token2.text() &&
