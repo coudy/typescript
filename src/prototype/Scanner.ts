@@ -104,10 +104,37 @@ class Scanner implements ISlidingWindowSource {
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
 
         if (kind >= SyntaxKind.FirstFixedWidth) {
-            return Syntax.fixedWidthToken(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+            if (leadingTriviaInfo === 0) {
+                if (trailingTriviaInfo === 0) {
+                    return new Syntax.FixedWidthTokenWithNoTrivia(kind);
+                }
+                else {
+                    return new Syntax.FixedWidthTokenWithTrailingTrivia(this.text, fullStart, kind, trailingTriviaInfo);
+                }
+            }
+            else if (trailingTriviaInfo === 0) {
+                return new Syntax.FixedWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo);
+            }
+            else {
+                return new Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+            }
         }
         else {
-            return Syntax.variableWidthToken(this.text, fullStart, kind, leadingTriviaInfo, end - start, trailingTriviaInfo);
+            var width = end - start;
+            if (leadingTriviaInfo === 0) {
+                if (trailingTriviaInfo === 0) {
+                    return new Syntax.VariableWidthTokenWithNoTrivia(this.text, fullStart, kind, width);
+                }
+                else {
+                    return new Syntax.VariableWidthTokenWithTrailingTrivia(this.text, fullStart, kind, width, trailingTriviaInfo);
+                }
+            }
+            else if (trailingTriviaInfo === 0) {
+                return new Syntax.VariableWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width);
+            }
+            else {
+                return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
+            }
         }
     }
 

@@ -3737,7 +3737,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return VariableWidthTokenWithNoTrivia;
-    })();    
+    })();
+    Syntax.VariableWidthTokenWithNoTrivia = VariableWidthTokenWithNoTrivia;    
     var VariableWidthTokenWithLeadingTrivia = (function () {
         function VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth) {
             this._value = null;
@@ -3874,7 +3875,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return VariableWidthTokenWithLeadingTrivia;
-    })();    
+    })();
+    Syntax.VariableWidthTokenWithLeadingTrivia = VariableWidthTokenWithLeadingTrivia;    
     var VariableWidthTokenWithTrailingTrivia = (function () {
         function VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, textOrWidth, trailingTriviaInfo) {
             this._value = null;
@@ -4011,7 +4013,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return VariableWidthTokenWithTrailingTrivia;
-    })();    
+    })();
+    Syntax.VariableWidthTokenWithTrailingTrivia = VariableWidthTokenWithTrailingTrivia;    
     var VariableWidthTokenWithLeadingAndTrailingTrivia = (function () {
         function VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth, trailingTriviaInfo) {
             this._value = null;
@@ -4149,7 +4152,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return VariableWidthTokenWithLeadingAndTrailingTrivia;
-    })();    
+    })();
+    Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia = VariableWidthTokenWithLeadingAndTrailingTrivia;    
     var FixedWidthTokenWithNoTrivia = (function () {
         function FixedWidthTokenWithNoTrivia(kind) {
             this.tokenKind = kind;
@@ -4272,7 +4276,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return FixedWidthTokenWithNoTrivia;
-    })();    
+    })();
+    Syntax.FixedWidthTokenWithNoTrivia = FixedWidthTokenWithNoTrivia;    
     var FixedWidthTokenWithLeadingTrivia = (function () {
         function FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo) {
             this._sourceText = sourceText;
@@ -4404,7 +4409,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return FixedWidthTokenWithLeadingTrivia;
-    })();    
+    })();
+    Syntax.FixedWidthTokenWithLeadingTrivia = FixedWidthTokenWithLeadingTrivia;    
     var FixedWidthTokenWithTrailingTrivia = (function () {
         function FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo) {
             this._sourceText = sourceText;
@@ -4536,7 +4542,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return FixedWidthTokenWithTrailingTrivia;
-    })();    
+    })();
+    Syntax.FixedWidthTokenWithTrailingTrivia = FixedWidthTokenWithTrailingTrivia;    
     var FixedWidthTokenWithLeadingAndTrailingTrivia = (function () {
         function FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo) {
             this._sourceText = sourceText;
@@ -4669,7 +4676,8 @@ var Syntax;
             return this.realize().withTrailingTrivia(trailingTrivia);
         };
         return FixedWidthTokenWithLeadingAndTrailingTrivia;
-    })();    
+    })();
+    Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia = FixedWidthTokenWithLeadingAndTrailingTrivia;    
     function collectTokenTextElements(token, elements) {
         (token.leadingTrivia()).collectTextElements(elements);
         elements.push(token.text());
@@ -7138,9 +7146,34 @@ var Scanner = (function () {
         var end = this.slidingWindow.absoluteIndex();
         var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
         if(kind >= 15 /* FirstFixedWidth */ ) {
-            return Syntax.fixedWidthToken(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+            if(leadingTriviaInfo === 0) {
+                if(trailingTriviaInfo === 0) {
+                    return new Syntax.FixedWidthTokenWithNoTrivia(kind);
+                } else {
+                    return new Syntax.FixedWidthTokenWithTrailingTrivia(this.text, fullStart, kind, trailingTriviaInfo);
+                }
+            } else {
+                if(trailingTriviaInfo === 0) {
+                    return new Syntax.FixedWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo);
+                } else {
+                    return new Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+                }
+            }
         } else {
-            return Syntax.variableWidthToken(this.text, fullStart, kind, leadingTriviaInfo, end - start, trailingTriviaInfo);
+            var width = end - start;
+            if(leadingTriviaInfo === 0) {
+                if(trailingTriviaInfo === 0) {
+                    return new Syntax.VariableWidthTokenWithNoTrivia(this.text, fullStart, kind, width);
+                } else {
+                    return new Syntax.VariableWidthTokenWithTrailingTrivia(this.text, fullStart, kind, width, trailingTriviaInfo);
+                }
+            } else {
+                if(trailingTriviaInfo === 0) {
+                    return new Syntax.VariableWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width);
+                } else {
+                    return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
+                }
+            }
         }
     };
     Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
@@ -29096,7 +29129,6 @@ var Parser;
     }
     Parser.incrementalParse = incrementalParse;
 })(Parser || (Parser = {}));
-
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
         try  {

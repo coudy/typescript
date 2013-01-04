@@ -2216,7 +2216,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     var isVariableWidth = !isFixedWidth;
     var hasAnyTrivia = leading || trailing;
 
-    var result = "    class ";
+    var result = "    export class ";
 
     var needsSourcetext = hasAnyTrivia || isVariableWidth;
 

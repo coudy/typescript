@@ -4404,7 +4404,7 @@ function generateRewriter() {
 function generateToken(isFixedWidth, leading, trailing) {
     var isVariableWidth = !isFixedWidth;
     var hasAnyTrivia = leading || trailing;
-    var result = "    class ";
+    var result = "    export class ";
     var needsSourcetext = hasAnyTrivia || isVariableWidth;
     var className = isFixedWidth ? "FixedWidthToken" : "VariableWidthToken";
     className += leading && trailing ? "WithLeadingAndTrailingTrivia" : leading && !trailing ? "WithLeadingTrivia" : !leading && trailing ? "WithTrailingTrivia" : "WithNoTrivia";

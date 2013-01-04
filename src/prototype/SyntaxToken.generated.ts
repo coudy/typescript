@@ -3,7 +3,7 @@
 ///<reference path='SyntaxToken.ts' />
 
 module Syntax {
-    class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
+    export class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
@@ -89,7 +89,7 @@ module Syntax {
         }
     }
 
-    class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
+    export class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
@@ -178,7 +178,7 @@ module Syntax {
         }
     }
 
-    class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
+    export class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
@@ -267,7 +267,7 @@ module Syntax {
         }
     }
 
-    class VariableWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
+    export class VariableWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
@@ -359,7 +359,7 @@ module Syntax {
         }
     }
 
-    class FixedWidthTokenWithNoTrivia implements ISyntaxToken {
+    export class FixedWidthTokenWithNoTrivia implements ISyntaxToken {
         public tokenKind: SyntaxKind;
 
         constructor(kind: SyntaxKind) {
@@ -423,7 +423,7 @@ module Syntax {
         }
     }
 
-    class FixedWidthTokenWithLeadingTrivia implements ISyntaxToken {
+    export class FixedWidthTokenWithLeadingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
@@ -499,7 +499,7 @@ module Syntax {
         }
     }
 
-    class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
+    export class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
@@ -575,7 +575,7 @@ module Syntax {
         }
     }
 
-    class FixedWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
+    export class FixedWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
         private _sourceText: IText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
