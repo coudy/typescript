@@ -1350,8 +1350,10 @@ module Harness {
                 var refs: TypeScript.IFileReference[] = null;
                 for (var i = 0; i < lines.length; i++) {
                     var line = lines[i];
+                    var isTripleSlashReference = line.substr(0, 3) === '///';
+                    var testMetaData = optionRegex.exec(line);
                     // Triple slash references need to be tracked as they are added to the compiler as an additional parameter to addUnit
-                    if (line.substr(0, 3) === '///') {
+                    if (isTripleSlashReference) {
                         var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
                         if (isRef) {
                             var ref = {
@@ -1366,42 +1368,39 @@ module Harness {
                             }
                             refs.push(ref);
                         }
-                    } else if (line.substr(0, 2) === '//') {
+                    } else if (testMetaData) {
                         // Comment line, check for global/file @options and record them
                         optionRegex.lastIndex = 0;
-                        var match = optionRegex.exec(line);
-                        if (match) {
-                            var fileNameIndex = fileMetadataNames.indexOf(match[1].toLowerCase());
-                            if (fileNameIndex == -1) {
-                                throw new Error('Unrecognized metadata name "' + match[1] + '". Available file metadata names are: ' + fileMetadataNames.join(', '));
-                            } else if (fileNameIndex == 0) {
-                                currentFileOptions[match[1]] = match[2];
-                            } else {
-                                continue;
-                            }
+                        var fileNameIndex = fileMetadataNames.indexOf(testMetaData[1].toLowerCase());
+                        if (fileNameIndex == -1) {
+                            throw new Error('Unrecognized metadata name "' + testMetaData[1] + '". Available file metadata names are: ' + fileMetadataNames.join(', '));
+                        } else if (fileNameIndex == 0) {
+                            currentFileOptions[testMetaData[1]] = testMetaData[2];
+                        } else {
+                            continue;
+                        }
 
-                            // New metadata statement after having collected some code to go with the previous metadata
-                            if (currentFileName) {
-                                // Store result file
-                                var newTestFile =
-                                    {
-                                        content: currentFileContent,
-                                        name: currentFileName,
-                                        fileOptions: currentFileOptions,
-                                        originalFilePath: filename,
-                                        references: refs
-                                    };
-                                files.push(newTestFile);
+                        // New metadata statement after having collected some code to go with the previous metadata
+                        if (currentFileName) {
+                            // Store result file
+                            var newTestFile =
+                                {
+                                    content: currentFileContent,
+                                    name: currentFileName,
+                                    fileOptions: currentFileOptions,
+                                    originalFilePath: filename,
+                                    references: refs
+                                };
+                            files.push(newTestFile);
 
-                                // Reset local data
-                                currentFileContent = null;
-                                currentFileOptions = {};
-                                currentFileName = match[2];
-                                refs = null;
-                            } else {
-                                // First metadata marker in the file
-                                currentFileName = match[2];
-                            }
+                            // Reset local data
+                            currentFileContent = null;
+                            currentFileOptions = {};
+                            currentFileName = testMetaData[2];
+                            refs = null;
+                        } else {
+                            // First metadata marker in the file
+                            currentFileName = testMetaData[2];
                         }
                     } else {
                         // Subfile content line
@@ -1423,7 +1422,7 @@ module Harness {
                         name: currentFileName,
                         fileOptions: currentFileOptions,
                         originalFilePath: filename,
-                        references: refs
+                        references: refs || []
                     };
                 files.push(newTestFile);
 
