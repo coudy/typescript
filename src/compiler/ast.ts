@@ -1036,6 +1036,9 @@ module TypeScript {
         public hasSelfReference() { return hasFlag(this.fncFlags, FncFlags.HasSelfReference); }
         public setHasSelfReference() { this.fncFlags |= FncFlags.HasSelfReference; }
 
+        public hasSuperReferenceInFatArrowFunction() { return hasFlag(this.fncFlags, FncFlags.HasSuperReferenceInFatArrowFunction); }
+        public setHasSuperReferenceInFatArrowFunction() { this.fncFlags |= FncFlags.HasSuperReferenceInFatArrowFunction; }
+
         public addCloRef(id: Identifier, sym: Symbol): number {
             if (this.envids == null) {
                 this.envids = new Identifier[];

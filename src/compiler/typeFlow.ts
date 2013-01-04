@@ -1018,6 +1018,24 @@ module TypeScript {
                 ast.type = this.thisType.baseClass();
             }
             else {
+                // redirect 'super' used within lambdas
+                if (!this.enclosingFncIsMethod &&
+                    this.thisType && this.thisType.baseClass() &&
+                    this.thisFnc && hasFlag(this.thisFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
+                    // Find the closest non lambda function
+                    var enclosingFnc = this.thisFnc.enclosingFnc;
+                    while (hasFlag(enclosingFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
+                        enclosingFnc = enclosingFnc.enclosingFnc;
+                    }
+
+                    // If the lambda is enclosed is a valid member, use the base type
+                    if (enclosingFnc && (enclosingFnc.isMethod() || enclosingFnc.isConstructor) && !enclosingFnc.isStatic()) {
+                        ast.type = this.thisType.baseClass();
+                        enclosingFnc.setHasSuperReferenceInFatArrowFunction();
+                        return ast;
+                    }
+                }
+
                 ast.type = this.anyType;
                 this.checker.errorReporter.invalidSuperReference(ast);
             }
