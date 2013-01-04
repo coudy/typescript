@@ -1,3 +1,4 @@
+// @declaration: true
 declare export module "m4" {
     export class d {
     };

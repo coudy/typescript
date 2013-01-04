@@ -1,3 +1,4 @@
+// @declaration: true
 class a {
     //constructor ();
     constructor (n: number);

@@ -706,14 +706,14 @@ module Harness {
                 this.fileCollection[s] = writer;
                 return writer;
             }
+
             public directoryExists(s: string) { return false; }
             public fileExists(s: string) { return typeof this.fileCollection[s] !== 'undefined'; }
             public resolvePath(s: string) { return s; }
 
             public reset() { this.fileCollection = {}; }
-            public output() {
-
-                return this.outputLines().join('\n');
+            public output() { 
+                return this.outputLines().join('\n'); 
             }
 
             public outputLines(): string[] {
@@ -723,6 +723,18 @@ module Harness {
                 for (var p in this.fileCollection) {
                     if (this.fileCollection.hasOwnProperty(p)) {
                         result = result.concat(this.fileCollection[p].lines);
+                    }
+                }
+
+                return result;
+            }
+
+            public toArray(): { filename: string; file: WriterAggregator; }[] {
+                var result: { filename: string; file: WriterAggregator; }[] = [];
+
+                for (var p in this.fileCollection) {
+                    if (this.fileCollection.hasOwnProperty(p)) {
+                        result.push({ filename: p, file: this.fileCollection[p] });
                     }
                 }
 
@@ -1010,8 +1022,12 @@ module Harness {
             public code: string;
             public errors: CompilerError[];
 
-            constructor(codeLines: string[], errorLines: string[], public scripts: TypeScript.Script[]) {
-                this.code = codeLines.join("\n")
+            // fileResults is an array of a string for the filename and an ITextWriter with its code
+            constructor(public fileResults: { filename: string; file: WriterAggregator; }[], errorLines: string[], public scripts: TypeScript.Script[]) {
+                var lines = [];
+                fileResults.forEach(v => lines = lines.concat(v.file.lines));
+                this.code = lines.join("\n")
+
                 this.errors = [];
 
                 for (var i = 0; i < errorLines.length; i++) {
@@ -1056,12 +1072,32 @@ module Harness {
             stdout.reset();
             stderr.reset();
 
-            for (var i = 0; i < compiler.units.length; i++) {
-                var fname = compiler.units[i].filename;
-                compiler.updateUnit('', fname, false/*setRecovery*/);
+            var files = compiler.units.map((value) => value.filename);
+
+            for (var i = files.length-1; i >=0 ; i--) {
+                var fname = files[i];
+
+                if (fname != '0.ts' && fname != 'lib.d.ts') {
+                    deleteUnit(fname);
+                } else {
+                    compiler.updateUnit('', fname, false/*setRecovery*/);
+                }
             }
 
             compiler.errorReporter.hasErrors = false;
+            compiler.typeCheck();
+        }
+
+        // removes a unit from the compiler. 
+        export function deleteUnit(filename: string) {
+            // update the units with empty files and reparse
+            var sourceText = new TypeScript.StringSourceText('');
+            var updateResult = compiler.partialUpdateUnit(sourceText, filename, false /*setRecovery*/);
+            compiler.applyUpdateResult(updateResult);
+
+            // delete the units
+            compiler.scripts.members.splice(updateResult.unitIndex, 1);
+            compiler.units.splice(updateResult.unitIndex, 1);
         }
 
         // Defines functions to invoke before compiling a piece of code and a post compile action intended to clean up the
@@ -1144,9 +1180,8 @@ module Harness {
 
             compiler.reTypeCheck();
             compiler.emit(stdout);
-            //compiler.emitToOutfile(stdout);
 
-            callback(new CompilerResult(stdout.outputLines(), stderr.lines, []));
+            callback(new CompilerResult(stdout.toArray(), stderr.lines, []));
 
             recreate();
             reset();
@@ -1206,7 +1241,7 @@ module Harness {
                 context.postCompile();
             }
 
-            callback(new CompilerResult(stdout.outputLines(), stderr.lines, scripts));
+            callback(new CompilerResult(stdout.toArray(), stderr.lines, scripts));
         }
 
         // Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that

@@ -1,3 +1,4 @@
+// @declaration: true
 /*
     Prefixes
     p -> public

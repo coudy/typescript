@@ -1,3 +1,4 @@
+// @declaration: true
 var simpleVar;
 
 var anotherVar: any;

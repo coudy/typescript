@@ -1,3 +1,4 @@
+// @declaration: true
 module M {
     class C { }
     export class E {}

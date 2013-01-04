@@ -24,5 +24,3 @@ class MyClass {
     public Count(): number;
     public SetCount(value: number): void;
 }
-////[importInsideModule_file1.d.ts]
-////[importInsideModule_file2.d.ts]

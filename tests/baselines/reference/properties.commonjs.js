@@ -18,5 +18,3 @@ var MyClass = (function () {
 class MyClass {
     public Count : number;
 }
-////[importInsideModule_file1.d.ts]
-////[importInsideModule_file2.d.ts]
