@@ -170,6 +170,10 @@ module FourSlashInterface {
     }
     
     export class edit {
+        public backspace(count?: number) {
+            FourSlash.currentTestState.deleteCharBehindMarker(count);
+        }
+
         public insert(text: string) {
             this.insertLines(text);
         }

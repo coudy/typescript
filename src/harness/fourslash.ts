@@ -358,6 +358,32 @@ module FourSlash {
             IO.printLine(JSON2.stringify(completions));
         }
 
+        public deleteCharBehindMarker(count ?= 1) {
+
+            var opts = new Services.FormatCodeOptions();
+            var offset = this.currentCaretPosition;
+            var ch = "";
+
+            for (var i = 0; i < count; i++) {
+
+                offset--;
+                // Make the edit
+                this.langSvc.editScript(this.activeFile.name, offset, offset + 1, ch);
+                this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
+                
+
+                // Handle post-keystroke formatting
+                var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
+                offset += this.applyEdits(this.activeFile.name, edits);
+            }
+
+            // Move the caret to wherever we ended up
+            this.currentCaretPosition = offset;
+
+            this.fixCaretPosition();
+
+        }
+
         // Enters lines of text at the current caret position
         public type(text: string) {
             var opts = new Services.FormatCodeOptions();
