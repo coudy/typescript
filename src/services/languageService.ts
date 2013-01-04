@@ -1402,11 +1402,10 @@ module Services {
                     var type = x.sym.getType();
                     if (type && type.isClass() && type.symbol.name == x.name) {
                         entry.docComment = TypeScript.Comment.getDocCommentText(type.getDocComments());
-                    } else if (x.sym.kind() == TypeScript.SymbolKind.Type && (<TypeScript.TypeSymbol>x.sym).isMethod &&
-                        x.sym.declAST && x.sym.declAST.nodeType == TypeScript.NodeType.FuncDecl &&
-                        !TypeScript.hasFlag((<TypeScript.FuncDecl>x.sym.declAST).fncFlags, TypeScript.FncFlags.Definition) &&
-                        type.callCount() > 1) {
-                        entry.docComment = "";
+                    } else if (x.sym.declAST && x.sym.declAST.nodeType == TypeScript.NodeType.FuncDecl &&
+                        type.call && type.call.signatures.length > 1) {
+                        // Overload method - combine docComments from all the signatures
+                        entry.docComment = TypeScript.Comment.getDocCommentTextOfSignatures(type.call.signatures);
                     } else {
                         if (x.sym.kind() == TypeScript.SymbolKind.Parameter) {
                             entry.docComment = (<TypeScript.ParameterSymbol>x.sym).getParameterDocComments();

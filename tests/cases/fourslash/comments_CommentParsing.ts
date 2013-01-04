@@ -258,7 +258,7 @@ verify.currentParameterHelpArgumentDocCommentIs("");
 
 goTo.marker('27');
 verify.completionListContains("multiply", "(a: number, b: number, c?: number, d?: any, e?: any) => void", "This is multiplication function\n@anotherTag\n@anotherTag");
-verify.completionListContains("f1", "{ (a: number): any; (b: string): any; }", "");
+verify.completionListContains("f1", "{ (a: number): any; (b: string): any; }", "fn f1 with number");
 
 goTo.marker('28');
 verify.currentSignatureHelpDocCommentIs("This is subtract function");
