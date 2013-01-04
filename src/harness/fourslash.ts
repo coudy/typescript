@@ -102,62 +102,39 @@ module FourSlash {
             this.activeFile = fileToOpen;
         }
 
-        public verifyErrorExistsBetweenMarkers(startMarker: string, endMarker: string) {
+        public verifyErrorExistsBetweenMarkers(condition: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: string, endMarker?: string, expectErrors? = true) {
             var startPos = this.getMarkerByName(startMarker).position;
-            var endPos = this.getMarkerByName(endMarker).position;
+            var endPos: number;
+
+            if (endMarker === undefined) {
+                endPos = this.getEOF();                
+            } else {
+                endPos = this.getMarkerByName(endMarker).position;
+            }
+
             var fileIndex = this.getScriptIndex(this.findFile(this.getMarkerByName(startMarker).fileName));
             var errors = this.realLangSvc.getErrors(9999);
             var exists = false;
             errors.forEach(function (error: TypeScript.ErrorEntry) {
                 if (error.unitIndex != fileIndex) return;
-                if ((error.minChar === startPos) && (error.limChar === endPos)) exists = true;
+                if (condition(error.minChar, error.limChar, startPos, endPos)) exists = true;
             });
-            if (!exists) {
+
+            if (exists != expectErrors) {
+                this.printErrorLog(expectErrors, errors);
+                throw new Error("Failure between markers: " + startMarker + ", " + endMarker);
+            }
+        }
+
+        private printErrorLog(expectErrors: bool, errors: TypeScript.ErrorEntry[]) {
+            if (expectErrors) {
                 IO.printLine("Expected error not found.  Error list is:");
-                errors.forEach(function (error: TypeScript.ErrorEntry) {
-                    IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message);
-                });
-                throw new Error("Error does not exist between markers: " + startMarker + ", " + endMarker);
-            }
-        }
-
-        public verifyErrorDoesNotExistBetweenMarkers(startMarker: string, endMarker: string) {
-            var startPos = this.getMarkerByName(startMarker).position;
-            var endPos = this.getMarkerByName(endMarker).position;
-            var fileIndex = this.getScriptIndex(this.findFile(this.getMarkerByName(startMarker).fileName));
-            var errors = this.realLangSvc.getErrors(9999);
-            var exists = false;
-            errors.forEach(function (error: TypeScript.ErrorEntry) {
-                if (error.unitIndex != fileIndex) return;
-                if ((error.minChar === startPos) && (error.limChar === endPos)) exists = true;
-            });
-            if (exists) {
+            } else {
                 IO.printLine("Unexpected error(s) found.  Error list is:");
-                errors.forEach(function (error: TypeScript.ErrorEntry) {
-                    IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message + "\n");
-                });
-                throw new Error("Error(s) exist between markers: " + startMarker + ", " + endMarker);
             }
-        }
-
-        public verifyErrorDoesNotExistBeyondMarker(markerName? = '') {
-            var startPos = this.getMarkerByName(markerName).position;
-            var fileIndex = this.getScriptIndex(this.findFile(this.getMarkerByName(markerName).fileName));
-            var errors = this.realLangSvc.getErrors(9999);
-            var exists = false;
             errors.forEach(function (error: TypeScript.ErrorEntry) {
-                if (error.unitIndex != fileIndex) return;
-                if ((error.minChar >= startPos) || (error.limChar > startPos)) exists = true;
-            });
-            if (exists) {
-                IO.printLine("Unexpected errors found.  Error list is:");
-                errors.forEach(function (error: TypeScript.ErrorEntry) {
-                    if ((error.minChar >= startPos) || (error.limChar > startPos)) {
-                        IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message);
-                    }
-                });
-                throw new Error("Errors exist beyond marker: " + markerName);
-            }
+                IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message + "\n");
+            });            
         }
 
         public verifyNumberOfErrorsInCurrentFile(expected: number) {
@@ -502,6 +479,10 @@ module FourSlash {
                 '\tExpected: "' + text + '"\n' +
                 '\t  Actual: "' + actual + '"');
             }
+        }
+
+        private getEOF(): number {
+            return this.langSvc.getScriptSourceLength(this.getActiveFileIndex())
         }
 
         // Get the text of the entire line the caret is currently at

@@ -7,4 +7,4 @@
 
 goTo.marker();
 verify.memberListContains("fun");
-verify.errorDoesNotExistBeyondMarker("1");
+verify.errorDoesNotExistAfterMarker("1");

@@ -1,6 +1,6 @@
 /// <reference path="fourslash.ts" />
 
-////var table: number[/*1*/;/*2*/
+////var table: number[;
 /////**/table.push(1)
 
-verify.errorDoesNotExistBeyondMarker();
+verify.errorDoesNotExistAfterMarker();

@@ -3,8 +3,8 @@
 ////class Foo { static fun() { }; }
 ////
 ////Foo./**/;
-/////*1*/var bar;/*2*/
+/////*1*/var bar;
 
 goTo.marker();
 verify.memberListContains("fun");
-verify.errorDoesNotExistBeyondMarker("1");
+verify.errorDoesNotExistAfterMarker("1");

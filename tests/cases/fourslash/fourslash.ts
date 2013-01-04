@@ -100,18 +100,22 @@ module FourSlashInterface {
         }
 
         public errorExistsBetweenMarkers(startMarker: string, endMarker: string) {
-            if (this.negative) {
-                FourSlash.currentTestState.verifyErrorDoesNotExistBetweenMarkers(startMarker, endMarker);
-            } else {
-                FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(startMarker, endMarker);
-            }
+            FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(
+                function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
+                    return ((errorMinChar === startPos) && (errorLimChar === endPos)) ? true : false;
+                }, startMarker, endMarker, !this.negative);
         }
     }
 
     export class verify extends verifyNegatable {
-        public errorDoesNotExistBeyondMarker(markerName?: string) {
-            FourSlash.currentTestState.verifyErrorDoesNotExistBeyondMarker(markerName);
-        }
+        public errorDoesNotExistAfterMarker(markerName?= "") {
+            FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(
+                            function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
+                                return ((errorMinChar >= startPos) && (errorLimChar >= endPos)) ? true : false;
+                            },
+                            markerName, undefined, false);
+            }
+
         public caretAtMarker(markerName?: string) {
             FourSlash.currentTestState.verifyCaretAtMarker(markerName);
         }

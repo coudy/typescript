@@ -5,4 +5,4 @@
 ////    alpha[beat/**/]++;
 ////}
 
-verify.errorDoesNotExistBeyondMarker();
+verify.errorDoesNotExistAfterMarker();

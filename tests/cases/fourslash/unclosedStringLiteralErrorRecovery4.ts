@@ -6,4 +6,4 @@
 ////}
 
 goTo.marker();
-verify.errorDoesNotExistBeyondMarker();
+verify.errorDoesNotExistAfterMarker();
