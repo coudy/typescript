@@ -35,11 +35,10 @@ class CompilerBaselineRunner extends RunnerBase {
     ];
 
     public checkTestCodeOutput(filename: string) {
-
+        var that = this;
         function setSettings(tcSettings: Harness.TestCaseParser.CompilerSetting[], settings: TypeScript.CompilationSettings) {
-
             tcSettings.forEach((item) => {
-                var idx = this.supportedFlags.filter((x) => x.flag === item.flag.toLowerCase());
+                var idx = that.supportedFlags.filter((x) => x.flag === item.flag.toLowerCase());
                 if (idx && idx.length != 1) {
                     throw new Error('Unsupported flag \'' + item.flag + '\'');
                 }

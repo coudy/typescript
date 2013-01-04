@@ -1078,21 +1078,20 @@ module TypeScript {
                 else {
                     var encFnc = this.thisFnc.enclosingFnc;
                     var firstEncFnc = encFnc;
-                    var foundMeth = false;
 
                     while (encFnc) {
-                        if (encFnc.isMethod() || encFnc.isConstructor || encFnc.hasSelfReference()) {
+                        if (!hasFlag(encFnc.fncFlags, FncFlags.IsFatArrowFunction) || encFnc.hasSelfReference()) {
                             encFnc.setHasSelfReference();
-                            foundMeth = true;
                             break;
                         }
                         encFnc = encFnc.enclosingFnc;
                     }
 
-                    if (!foundMeth && firstEncFnc) {
-                        firstEncFnc.setHasSelfReference();
+                    if (!encFnc && firstEncFnc) {
+                        encFnc = firstEncFnc;
+                        encFnc.setHasSelfReference();
                     }
-                    else if (!foundMeth) { // the lambda is bound at the top-level...
+                    else if (!encFnc) { // the lambda is bound at the top-level...
                         if (this.thisClassNode) {
                             (<ClassDeclaration>this.thisClassNode).varFlags |= VarFlags.MustCaptureThis;
                         }
@@ -1104,7 +1103,7 @@ module TypeScript {
                         }
                     }
 
-                    if (foundMeth && this.thisType) {
+                    if (encFnc && (encFnc.isMethod() || encFnc.isConstructor) && this.thisType) {
                         ast.type = this.thisType;
                     }
                 }

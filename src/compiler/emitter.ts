@@ -1383,7 +1383,7 @@ module TypeScript {
                     this.emitIndent();
                     this.recordSourceMappingStart(getter);
                     this.writeToOutput("get: ");
-                    this.emitInnerFunction(getter, false, isProto, null, funcDecl.hasSelfReference(), null);
+                    this.emitInnerFunction(getter, false, isProto, null, getter.hasSelfReference(), null);
                     this.writeLineToOutput(",");
                 }
 
@@ -1393,7 +1393,7 @@ module TypeScript {
                     this.emitIndent();
                     this.recordSourceMappingStart(setter);
                     this.writeToOutput("set: ");
-                    this.emitInnerFunction(setter, false, isProto, null, funcDecl.hasSelfReference(), null);
+                    this.emitInnerFunction(setter, false, isProto, null, setter.hasSelfReference(), null);
                     this.writeLineToOutput(",");
                 }
 
