@@ -123,6 +123,13 @@ function square(a) {
 */
 function divide(a, b) {
 }
+/** this is jsdoc style function with param tag as well as inline parameter help
+*@param a it is first parameter
+*@param c it is third parameter
+*/
+function jsDocParamTest(/** this is inline comment for a */ a, /** this is inline comment for b*/ b, c, d) {
+    return a + b + c + d;
+}
 ////[0.d.ts]
 /// This is simple /// comments
 function simple(): void;
@@ -198,3 +205,8 @@ function square(a: number): number;
 @param { number} b this is b
 */
 function divide(a: number, b: number): void;
+/** this is jsdoc style function with param tag as well as inline parameter help
+*@param a it is first parameter
+*@param c it is third parameter
+*/
+function jsDocParamTest(/** this is inline comment for a */ a: number, /** this is inline comment for b*/ b: number, c: number, d: number): number;

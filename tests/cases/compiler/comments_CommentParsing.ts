@@ -144,3 +144,10 @@ function square(a: number) {
 */
 function divide(a: number, b: number) {
 }
+/** this is jsdoc style function with param tag as well as inline parameter help
+*@param a it is first parameter
+*@param c it is third parameter
+*/
+function jsDocParamTest(/** this is inline comment for a */a: number, /** this is inline comment for b*/ b: number, c: number, d: number) {
+    return a + b + c + d;
+}

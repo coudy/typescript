@@ -158,6 +158,14 @@
 ////    return foo + bar;
 ////}
 ////fooBar(/*37*/"foo",/*38*/"bar");
+/////** this is jsdoc style function with param tag as well as inline parameter help
+////*@param a it is first parameter
+////*@param c it is third parameter
+////*/
+////function jsDocParamTest(/** this is inline comment for a */a: number, /** this is inline comment for b*/ b: number, c: number, d: number) {
+////    return /*39*/a + b + c + d;
+////}
+/////*44*/jsDocParamTest(/*40*/30, /*41*/40, /*42*/50, /*43*/60);
 
 goTo.marker('1');
 verify.currentSignatureHelpDocCommentIs("This is simple /// comments");
@@ -295,3 +303,28 @@ verify.currentParameterHelpArgumentDocCommentIs("is string");
 goTo.marker('38');
 verify.currentSignatureHelpDocCommentIs("Function returns string concat of foo and bar");
 verify.currentParameterHelpArgumentDocCommentIs("is second string");
+
+goTo.marker('39');
+verify.completionListContains("a", "number", "it is first parameter\nthis is inline comment for a ");
+verify.completionListContains("b", "number", "this is inline comment for b");
+verify.completionListContains("c", "number", "it is third parameter");
+verify.completionListContains("d", "number", "");
+
+goTo.marker('40');
+verify.currentSignatureHelpDocCommentIs("this is jsdoc style function with param tag as well as inline parameter help");
+verify.currentParameterHelpArgumentDocCommentIs("it is first parameter\nthis is inline comment for a ");
+
+goTo.marker('41');
+verify.currentSignatureHelpDocCommentIs("this is jsdoc style function with param tag as well as inline parameter help");
+verify.currentParameterHelpArgumentDocCommentIs("this is inline comment for b");
+
+goTo.marker('42');
+verify.currentSignatureHelpDocCommentIs("this is jsdoc style function with param tag as well as inline parameter help");
+verify.currentParameterHelpArgumentDocCommentIs("it is third parameter");
+
+goTo.marker('43');
+verify.currentSignatureHelpDocCommentIs("this is jsdoc style function with param tag as well as inline parameter help");
+verify.currentParameterHelpArgumentDocCommentIs("");
+
+goTo.marker('44');
+verify.completionListContains("jsDocParamTest", "(a: number, b: number, c: number, d: number) => number", "this is jsdoc style function with param tag as well as inline parameter help");

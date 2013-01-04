@@ -573,15 +573,24 @@ module TypeScript {
         }
 
         public getParameterDocComments() {
-            if (this.container && this.container.declAST) {
-                if (!this.paramDocComment) {
+            if (!this.paramDocComment) {
+                var parameterComments: string[] = [];
+                if (this.container && this.container.declAST) {
                     var fncDocComments = this.container.declAST.getDocComments();
-                    this.paramDocComment = Comment.getParameterDocCommentText(this.name, fncDocComments);
+                    var paramComment = Comment.getParameterDocCommentText(this.name, fncDocComments);
+                    if (paramComment != "") {
+                        parameterComments.push(paramComment);
+                    }
                 }
-                return this.paramDocComment;
+                var docComments = TypeScript.Comment.getDocCommentText(this.getDocComments());
+                if (docComments != "") {
+                    parameterComments.push(docComments);
+                }
+                
+                this.paramDocComment = parameterComments.join("\n");
             }
 
-            return "";
+            return this.paramDocComment;
         }
     }
 
