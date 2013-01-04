@@ -1,29 +1,8 @@
 ///<reference path='IEnvironment.ts' />
-
-declare class Enumerator {
-    public atEnd(): bool;
-    public moveNext();
-    public item(): any;
-    constructor (o: any);
-}
+///<reference path='..\compiler\Enumerator.ts' />
+///<reference path='..\compiler\process.ts' />
 
 declare var require: any;
-
-declare module process {
-    export var argv: string[];
-    export var platform: string;
-    export function on(event: string, handler: (any) => void ): void;
-    export module stdout {
-        export function write(str: string);
-    }
-    export module stderr {
-        export function write(str: string);
-    }
-    export module mainModule {
-        export var filename: string;
-    }
-    export function exit(exitCode?: number);
-}
 
 var Environment = (function () {
 

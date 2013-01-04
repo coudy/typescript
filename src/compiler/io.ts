@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 // See LICENSE.txt in the project root for complete license information.
 
+///<reference path='Enumerator.ts' />
+///<reference path='process.ts' />
+
 interface IResolvedFile {
     content: string;
     path: string;
@@ -30,29 +33,8 @@ interface IIO {
 }
 
 // Declare dependencies needed for all supported hosts
-declare class Enumerator {
-    public atEnd(): bool;
-    public moveNext();
-    public item(): any;
-    constructor (o: any);
-}
 declare function setTimeout(callback: () =>void , ms?: number);
 declare var require: any;
-declare module process {
-    export var argv: string[];
-    export var platform: string;
-    export function on(event: string, handler: (any) => void ): void;
-    export module stdout {
-        export function write(str: string);
-    }
-    export module stderr {
-        export function write(str: string);
-    }
-    export module mainModule {
-        export var filename: string;
-    }
-    export function exit(exitCode?: number);
-}
 
 var IO = (function() {
 
