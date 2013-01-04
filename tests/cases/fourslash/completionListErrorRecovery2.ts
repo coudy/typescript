@@ -6,5 +6,4 @@
 
 goTo.marker();
 edit.insert(".b");
-//verify.memberListContains("bar");
-verify.errorDoesNotExistBeyondMarker("1");
+verify.errorDoesNotExistAfterMarker("1");

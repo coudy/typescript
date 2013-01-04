@@ -6,5 +6,5 @@
 /////**/
 ////var bar = new Foo();
 
-verify.errorDoesNotExistBeyondMarker();
+verify.errorDoesNotExistAfterMarker();
 

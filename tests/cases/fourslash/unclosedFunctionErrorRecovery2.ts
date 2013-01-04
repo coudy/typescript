@@ -5,4 +5,4 @@
 ////function beta() {  alpha(); }
 ////
 
-verify.errorDoesNotExistBeyondMarker();
+verify.errorDoesNotExistAfterMarker();

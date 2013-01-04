@@ -7,4 +7,4 @@
 ////    var y = 1;   
 ////}
 
-verify.errorDoesNotExistBeyondMarker();
+verify.errorDoesNotExistAfterMarker();
