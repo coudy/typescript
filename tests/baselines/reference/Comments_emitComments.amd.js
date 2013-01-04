@@ -59,7 +59,7 @@ var m1;
 /// Variable comments
 var myVariable: number;
 /// function comments
-function foo(/** parameter comment*/p: number): void;
+function foo(/** parameter comment*/ p: number): void;
 /// variable with function type comment
 var fooVar: () => void;
 ///class comment
@@ -70,7 +70,8 @@ class c {
     public b: number;
     /** function comment */
     public myFoo(): number;
-    /// getter comment/** setter comment*/
+    /// getter comment
+    /** setter comment*/
     public prop1 : number;
     /// overload signature1
     public foo1(a: number): string;

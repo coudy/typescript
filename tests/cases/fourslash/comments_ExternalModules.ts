@@ -27,7 +27,7 @@
 
 // @Filename: file_1.ts
 ///////This is on import declaration
-////import ex/*9*/tMod = module("file_1");
+////import ex/*9*/tMod = module("file_0");
 /////*10*/extMod./*11*/m1./*12*/fooExport(/*13*/);
 ////var new/*14*/Var = new extMod.m1.m2./*15*/c();
 
@@ -67,22 +67,20 @@ verify.quickInfoIs("extMod");
 goTo.marker('10');
 verify.completionListContains("extMod", "extMod", "This is on import declaration");
 
-// TODO enable these - not working in test framework but working in vs 
+goTo.marker('11');
+verify.memberListContains("m1", "extMod.m1", "Module comment");
 
-//goTo.marker('11');
-//verify.memberListContains("m1", "extMod.m1", "Module comment");
+goTo.marker('12');
+verify.memberListContains("b", "number", "b's comment");
+verify.memberListContains("fooExport", "() => number", "exported function");
+verify.memberListContains("m2", "extMod.m1.m2", "m2 comments");
 
-//goTo.marker('12');
-//verify.memberListContains("b", "number", "b's comment");
-//verify.memberListContains("fooExport", "() => number", "exported function");
-//verify.memberListContains("m2", "extMod.m1.m2", "m2 comments");
+goTo.marker('13');
+verify.currentSignatureHelpDocCommentIs("exported function");
 
-//goTo.marker('13');
-//verify.currentSignatureHelpDocCommentIs("exported function");
+goTo.marker('14');
+verify.quickInfoIs("extMod.m1.m2.c\nclass comment;");
 
-//goTo.marker('14');
-//verify.quickInfoIs("extMod.m1.m2.c\nclass comment;");
-
-//goTo.marker('15');
-//verify.memberListContains("c", "new() => extMod.m1.m2.c", "class comment;");
-//verify.memberListContains("i", "extMod.m1.m2.c", "i");
+goTo.marker('15');
+verify.memberListContains("c", "new() => extMod.m1.m2.c", "class comment;");
+verify.memberListContains("i", "extMod.m1.m2.c", "i");

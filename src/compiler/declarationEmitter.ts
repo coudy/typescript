@@ -234,6 +234,9 @@ module TypeScript {
             var text = comment.getText();
             if (this.declFile.onNewLine) {
                 this.emitIndent();
+            } else if (!comment.isBlockComment) {
+                this.declFile.WriteLine("");
+                this.emitIndent();
             }
             
             this.declFile.Write(text[0]);
@@ -244,8 +247,10 @@ module TypeScript {
                 this.declFile.Write(text[i]);
             }
 
-            if (comment.endsLine) {
+            if (comment.endsLine || !comment.isBlockComment) {
                 this.declFile.WriteLine("");
+            } else {
+                this.declFile.Write(" ");
             }
         }
 
