@@ -339,6 +339,7 @@ module TypeScript {
     export class TypeSymbol extends InferenceSymbol {
         public additionalLocations: number[];
         public expansions: Type[] = []; // For types that may be "split", keep track of the subsequent definitions
+        public expansionsDeclAST: AST[] = [];
         public isDynamic = false;
 
         constructor (locName: string, location: number, length: number, unitIndex: number, public type: Type) {
@@ -443,6 +444,19 @@ module TypeScript {
             }
 
             return externalSymbol;
+        }
+
+        public getDocComments(): Comment[]{
+            var comments : Comment[] = [];
+            if (this.declAST != null) {
+                comments = comments.concat(this.declAST.getDocComments());
+            }
+
+            for (var i = 0; i < this.expansionsDeclAST.length; i++) {
+                comments = comments.concat(this.expansionsDeclAST[i].getDocComments());
+            }
+
+            return comments;
         }
     }
 
