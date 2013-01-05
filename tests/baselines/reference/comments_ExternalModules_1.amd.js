@@ -3,5 +3,5 @@ define(["require", "exports", "comments_ExternalModules_0"], function(require, e
     var extMod = __extMod__;
 
     extMod.m1.fooExport();
-    var newVar = new extMod.m1.m2.c();
+    exports.newVar = new extMod.m1.m2.c();
 })
