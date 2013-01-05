@@ -373,6 +373,14 @@ module TypeScript {
             var thisType = (funcDecl.isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) ? context.scopeChain.thisType : null;
             pushAssignScope(locals, context, thisType, null, funcDecl);
         }
+
+        if (funcDecl.name && hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression)) {
+            // If the function is an expression, the name will not be visible in the enclosing scope.
+            // Add the function symbol under its name to the local scope to allow for recursive calls.
+            if (funcDecl.name.sym) {
+                funcTable.add(funcDecl.name.actualText, funcDecl.name.sym);
+            }
+        }
     }
 
     export function preAssignCatchScopes(ast: AST, context: AssignScopeContext) {

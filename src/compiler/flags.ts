@@ -191,6 +191,7 @@ module TypeScript {
         IsFunctionExpression = 1 << 17,
         ClassMethod = 1 << 18,
         ClassPropertyMethodExported = 1 << 19,
+        HasSuperReferenceInFatArrowFunction = 1 << 20,
     }
 
     export enum SignatureFlags {

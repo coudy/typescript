@@ -18,6 +18,7 @@ module TypeScript {
 
         public preComments: Comment[] = null;
         public postComments: Comment[] = null;
+        private docComments: Comment[] = null;
 
         public isParenthesized = false;
 
@@ -32,6 +33,8 @@ module TypeScript {
         public isCompoundStatement() { return false; }
 
         public isLeaf() { return this.isStatementOrExpression() && (!this.isCompoundStatement()); }
+        
+        public isDeclaration() { return false; }
 
         public typeCheck(typeFlow: TypeFlow) {
             switch (this.nodeType) {
@@ -95,14 +98,11 @@ module TypeScript {
                     emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.EndCode:
-                    break;
                 case NodeType.Error:
                 case NodeType.EmptyExpr:
                     break;
-
                 case NodeType.Empty:
                     emitter.recordSourceMappingStart(this);
-                    emitter.writeToOutput("; ");
                     emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.Void:
@@ -176,6 +176,35 @@ module TypeScript {
             // Append remaining string
             resolved += name.substring(start);
             return resolved;
+        }
+
+        public getDocComments() : Comment[] {
+            if (!this.isDeclaration() || !this.preComments || this.preComments.length == 0) {
+                return [];
+            }
+
+            if (!this.docComments) {
+                var preCommentsLength = this.preComments.length;
+                var docComments: Comment[] = [];
+                for (var i = preCommentsLength - 1; i >= 0; i--) {
+                    if (this.preComments[i].isDocComment()) {
+                        var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
+                        if (prevDocComment == null || // If the help comments were not yet set then this is the comment
+                            (((this.preComments[i].isBlockComment && prevDocComment.isBlockComment) ||
+                             (!this.preComments[i].isBlockComment && !prevDocComment.isBlockComment)) && // The comments are of same type
+                             (this.preComments[i].limLine == prevDocComment.minLine ||
+                              this.preComments[i].limLine + 1 == prevDocComment.minLine))) { // On same line or next line
+                            docComments.push(this.preComments[i]);
+                            continue;
+                        }
+                    }
+                    break;
+                }
+
+                this.docComments = docComments.reverse();
+            }
+
+            return this.docComments;
         }
     }
 
@@ -829,6 +858,7 @@ module TypeScript {
         public isStatementOrExpression() { return true; }
         public varFlags = VarFlags.None;
         public isDynamicImport = false;
+        public isDeclaration() { return true; }
 
         constructor (public id: Identifier, public alias: AST) {
             super(NodeType.ImportDeclaration);
@@ -890,6 +920,7 @@ module TypeScript {
         public typeExpr: AST = null;
         public varFlags = VarFlags.None;
         public sym: Symbol = null;
+        public isDeclaration() { return true; }
 
         constructor (public id: Identifier, nodeType: NodeType, public nestingLevel: number) {
             super(nodeType);
@@ -980,6 +1011,7 @@ module TypeScript {
         public returnStatementsWithExpressions: ReturnStatement[] = [];
         public scopeType: Type = null; // Type of the FuncDecl, before target typing
         public endingToken: ASTSpan = null;
+        public isDeclaration() { return true; }
 
         constructor (public name: Identifier, public bod: ASTList, public isConstructor: bool,
                      public arguments: ASTList, public vars: ASTList, public scopes: ASTList, public statics: ASTList,
@@ -1003,6 +1035,9 @@ module TypeScript {
 
         public hasSelfReference() { return hasFlag(this.fncFlags, FncFlags.HasSelfReference); }
         public setHasSelfReference() { this.fncFlags |= FncFlags.HasSelfReference; }
+
+        public hasSuperReferenceInFatArrowFunction() { return hasFlag(this.fncFlags, FncFlags.HasSuperReferenceInFatArrowFunction); }
+        public setHasSuperReferenceInFatArrowFunction() { this.fncFlags |= FncFlags.HasSuperReferenceInFatArrowFunction; }
 
         public addCloRef(id: Identifier, sym: Symbol): number {
             if (this.envids == null) {
@@ -1096,8 +1131,6 @@ module TypeScript {
         }
 
         public isSignature() { return (this.fncFlags & FncFlags.Signature) != FncFlags.None; }
-
-        public hasStaticDeclarations() { return (!this.isConstructor && (this.statics.members.length > 0 || this.innerStaticFuncs.length > 0)); }
     }
 
     export class LocationInfo {
@@ -1122,6 +1155,12 @@ module TypeScript {
         // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
         public containsUnicodeChar = false;
         public containsUnicodeCharInComment = false;
+        public cachedEmitRequired: bool;
+
+        private setCachedEmitRequired(value: bool) {
+            this.cachedEmitRequired = value;
+            return this.cachedEmitRequired;
+        }
 
         constructor (vars: ASTList, scopes: ASTList) {
             super(new Identifier("script"), null, false, null, vars, scopes, null, NodeType.Script);
@@ -1138,35 +1177,39 @@ module TypeScript {
         }
 
         public emitRequired() {
+            if (this.cachedEmitRequired != undefined) {
+                return this.cachedEmitRequired;
+            }
+
             if (!this.isDeclareFile && !this.isResident && this.bod) {
                 for (var i = 0, len = this.bod.members.length; i < len; i++) {
                     var stmt = this.bod.members[i];
                     if (stmt.nodeType == NodeType.ModuleDeclaration) {
                         if (!hasFlag((<ModuleDeclaration>stmt).modFlags, ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
-                            return true;
+                            return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType == NodeType.ClassDeclaration) {
-                        if (!hasFlag((<InterfaceDeclaration>stmt).varFlags, VarFlags.Ambient)) {
-                            return true;
+                        if (!hasFlag((<ClassDeclaration>stmt).varFlags, VarFlags.Ambient)) {
+                            return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType == NodeType.VarDecl) {
                         if (!hasFlag((<VarDecl>stmt).varFlags, VarFlags.Ambient)) {
-                            return true;
+                            return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType == NodeType.FuncDecl) {
                         if (!(<FuncDecl>stmt).isSignature()) {
-                            return true;
+                            return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType != NodeType.InterfaceDeclaration && stmt.nodeType != NodeType.Empty) {
-                        return true;
+                        return this.setCachedEmitRequired(true);
                     }
                 }
             }
-            return false;
+            return this.setCachedEmitRequired(false);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
@@ -1178,11 +1221,41 @@ module TypeScript {
                 emitter.emitParensAndCommentsInPlace(this, false);
             }
         }
+
+        private externallyVisibleImportedSymbols: Symbol[] = [];
+
+        public AddExternallyVisibleImportedSymbol(symbol: Symbol, checker: TypeChecker) {
+            if (this.isExternallyVisibleSymbol(symbol)) {
+                return;
+            }
+
+            // Before adding check if the external symbol is also marked for visibility
+            if (!symbol.getType().symbol.isExternallyVisible(checker)) {
+                // Report error
+                var quotes = "";
+                var moduleName = symbol.getType().symbol.prettyName;
+                if (!isQuoted(moduleName)) {
+                    quotes = "'";
+                }
+                checker.errorReporter.simpleError(symbol.declAST, "Externally visible import statement uses non exported module " + quotes + moduleName + quotes);
+            }
+            this.externallyVisibleImportedSymbols.push(symbol);
+        }
+
+        public isExternallyVisibleSymbol(symbol: Symbol) {
+            for (var i = 0 ; i < this.externallyVisibleImportedSymbols.length; i++) {
+                if (this.externallyVisibleImportedSymbols[i] == symbol) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     export class NamedDeclaration extends ModuleElement {
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
+        public isDeclaration() { return true; }
 
         constructor (nodeType: NodeType,
                      public name: Identifier,
@@ -1466,7 +1539,7 @@ module TypeScript {
             emitter.writeToOutput("while(");
             emitter.emitJavascript(this.cond, TokenID.While, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, false, false);
+            emitter.emitJavascriptStatements(this.body, false);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
@@ -1520,7 +1593,7 @@ module TypeScript {
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingStart(this.whileAST);
             emitter.writeToOutput("while");
             emitter.recordSourceMappingEnd(this.whileAST);
@@ -1529,6 +1602,7 @@ module TypeScript {
             emitter.writeToOutput(")");
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
+            emitter.writeToOutput(";");
             emitter.emitParensAndCommentsInPlace(this, false);
         }
 
@@ -1583,10 +1657,10 @@ module TypeScript {
             emitter.emitJavascript(this.cond, TokenID.If, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
-            emitter.emitJavascriptStatements(this.thenBod, true, false);
+            emitter.emitJavascriptStatements(this.thenBod, true);
             if (this.elseBod) {
                 emitter.writeToOutput(" else");
-                emitter.emitJavascriptStatements(this.elseBod, true, true);
+                emitter.emitJavascriptStatements(this.elseBod, true);
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
@@ -1757,7 +1831,7 @@ module TypeScript {
             emitter.emitJavascript(this.obj, TokenID.For, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
@@ -1832,7 +1906,7 @@ module TypeScript {
             emitter.writeToOutput("; ");
             emitter.emitJavascript(this.incr, TokenID.For, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
@@ -1920,7 +1994,7 @@ module TypeScript {
             }
 
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -1956,7 +2030,6 @@ module TypeScript {
             for (var i = 0; i < casesLen; i++) {
                 var caseExpr = this.caseList.members[i];
                 emitter.emitJavascript(caseExpr, TokenID.Case, true);
-                emitter.writeLineToOutput("");
             }
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
@@ -2025,7 +2098,17 @@ module TypeScript {
                 emitter.writeToOutput("default");
             }
             emitter.writeToOutput(":");
-            emitter.emitJavascriptStatements(this.body, false, false);
+            if (this.body.members.length == 1 && this.body.members[0].nodeType == NodeType.Block) {
+                // The case statement was written with curly braces, so emit it with the appropriate formatting
+                emitter.emitJavascriptStatements(this.body, false);
+            }
+            else {
+                // No curly braces. Format in the expected way
+                emitter.writeLineToOutput("");
+                emitter.indenter.increaseIndent();
+                emitter.emitBareJavascriptStatements(this.body);
+                emitter.indenter.decreaseIndent();
+            }
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -2326,6 +2409,9 @@ module TypeScript {
     export class Comment extends AST {
 
         public text: string[] = null;
+        public minLine: number;
+        public limLine: number;
+        private docCommentText: string = null;
 
         constructor (public content: string, public isBlockComment: bool, public endsLine) {
             super(NodeType.Comment);
@@ -2345,6 +2431,247 @@ module TypeScript {
             }
 
             return this.text;
+        }
+
+        public isDocComment() {
+            if (this.isBlockComment) {
+                return this.content.charAt(2) == "*";
+            } else {
+                return this.content.charAt(2) == "/";
+            }
+        }
+
+        public getDocCommentText() {
+            if (this.docCommentText == null) {
+                if (this.isBlockComment) {
+                    this.docCommentText = Comment.cleanJSDocComment(this.content);
+                } else {
+                    this.docCommentText = Comment.cleanVSDocComment(this.content);
+                }
+            }
+
+            return this.docCommentText;
+        }
+
+        static consumeLeadingSpace(line: string, startIndex: number) {
+            for (; startIndex < line.length; startIndex++) {
+                var charCode = line.charCodeAt(startIndex);
+                if (charCode != LexCodeSpace && charCode != LexCodeTAB) {
+                    return startIndex;
+                }
+            }
+            
+            return -1;
+        }
+
+        static isSpaceChar(line: string, index: number) {
+            var length = line.length;
+            if (index < length) {
+                var charCode = line.charCodeAt(index);
+                // If the character is space
+                return charCode == LexCodeSpace || charCode == LexCodeTAB;
+            }
+
+            // If the index is end of the line it is space
+            return index == length;
+        }
+
+        static cleanDocCommentLine(line: string, jsDocStyleComment: bool) {
+            var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
+            if (nonSpaceIndex != -1) {
+                if (jsDocStyleComment && line.charAt(nonSpaceIndex) == '*') { // remove leading * in case of jsDocComment
+                    nonSpaceIndex++;
+                }
+
+                return {
+                    minChar: nonSpaceIndex,
+                    limChar: line.charAt(line.length - 1) == "\r" ? line.length - 1 : line.length
+                };
+            }
+
+            return null;
+        }
+
+        static cleanJSDocComment(content: string) {
+            var docCommentLines: string[] = [];
+            content = content.replace("/**", ""); // remove /**
+            if (content.length >= 2 && content.charAt(content.length - 1) == "/" && content.charAt(content.length - 2) == "*") {
+                content = content.substring(0, content.length - 2); // remove last */
+            }
+            var lines = content.split("\n");
+            var inParamTag = false;
+            for (var l = 0; l < lines.length; l++) {
+                var line = lines[l];
+                var cleanLinePos = Comment.cleanDocCommentLine(line, true);
+                if (!cleanLinePos) {
+                    // Whole line empty, read next line
+                    continue;
+                }
+
+                var docCommentText = "";
+                var prevPos = cleanLinePos.minChar;
+                for (var i = line.indexOf("@", cleanLinePos.minChar); 0 <= i && i < cleanLinePos.limChar; i = line.indexOf("@", i + 1)) {
+                    // We have encoutered @. 
+                    // If we were omitting param comment, we dont have to do anything
+                    // other wise the content of the text till @ tag goes as doc comment
+                    var wasInParamtag = inParamTag;
+
+                    // Parse contents next to @
+                    if (line.indexOf("param", i + 1) == i + 1 && Comment.isSpaceChar(line, i + 6)) {
+                        // It is param tag. 
+
+                        // If we were not in param tag earlier, push the contents from prev pos of the tag this tag start as docComment
+                        if (!wasInParamtag) {
+                            docCommentText += line.substring(prevPos, i);
+                        }
+
+                        // New start of contents 
+                        prevPos = i;
+                        inParamTag = true;
+                    } else if (wasInParamtag) {
+                        // Non param tag start
+                        prevPos = i;
+                        inParamTag = false;
+                    }
+                }
+
+                if (!inParamTag) {
+                    docCommentText += line.substring(prevPos, cleanLinePos.limChar);
+                }
+
+                // Add line to comment text if it is not only white space line
+                var newCleanPos = Comment.cleanDocCommentLine(docCommentText, false);
+                if (newCleanPos) {
+                    docCommentLines.push(docCommentText);
+                }
+            }
+            
+            return docCommentLines.join("\n");
+        }
+
+        static cleanVSDocComment(content: string) {
+            content = content.replace("///", ""); // remove ///
+            var cleanLinePos = Comment.cleanDocCommentLine(content, false);
+            if (cleanLinePos) {
+                return content.substring(cleanLinePos.minChar, cleanLinePos.limChar);
+            }
+            
+            return "";
+        }
+
+        static getDocCommentText(comments: Comment[]) {
+            var docCommentText: string[] = [];
+            for (var c = 0 ; c < comments.length; c++) {
+                var commentText = comments[c].getDocCommentText();
+                if (commentText != "") {
+                    docCommentText.push(commentText);
+                }
+            }
+            return docCommentText.join("\n");
+        }
+
+        static getParameterDocCommentText(param: string, fncDocComments: Comment[]) {
+            if (fncDocComments.length == 0 || !fncDocComments[0].isBlockComment) {
+                // there were no fnc doc comments and the comment is not block comment then it cannot have 
+                // @param comment that can be parsed
+                return "";
+            }
+            
+            for (var i = 0; i < fncDocComments.length; i++) {
+                var commentContents = fncDocComments[i].content;
+                for (var j = commentContents.indexOf("@param", 0); 0 <= j; j = commentContents.indexOf("@param", j)) {
+                    j += 6;
+                    if (!Comment.isSpaceChar(commentContents, j)) {
+                        // This is not param tag but a tag line @paramxxxxx
+                        continue;
+                    }
+
+                    // This is param tag. Check if it is what we are looking for
+                    j = Comment.consumeLeadingSpace(commentContents, j);
+                    if (j == -1) {
+                        break;
+                    }
+                    
+                    // Ignore the type expression
+                    if (commentContents.charCodeAt(j) == LexCodeLC) {
+                        j++;
+                        // Consume the type
+                        var charCode = 0;
+                        for (var curlies = 1; j < commentContents.length; j++) {
+                            charCode = commentContents.charCodeAt(j);
+                            // { character means we need to find another } to match the found one
+                            if (charCode == LexCodeLC) {
+                                curlies++;
+                                continue;
+                            }
+
+                            // } char
+                            if (charCode == LexCodeRC) {
+                                curlies--;
+                                if (curlies == 0) {
+                                    // We do not have any more } to match the type expression is ignored completely
+                                    break;
+                                } else {
+                                    // there are more { to be matched with }
+                                    continue;
+                                }
+                            }
+
+                            // Found start of another tag
+                            if (charCode == LexCodeAtSign) {
+                                break;
+                            }
+                        }
+
+                        // End of the comment
+                        if (j == commentContents.length) {
+                            break;
+                        }
+
+                        // End of the tag, go onto looking for next tag
+                        if (charCode == LexCodeAtSign) {
+                            continue;
+                        }
+
+                        j = Comment.consumeLeadingSpace(commentContents, j + 1);
+                        if (j == -1) {
+                            break;
+                        }
+                    }
+
+                    // Parameter name
+                    if (param != commentContents.substr(j, param.length) || !Comment.isSpaceChar(commentContents, j + param.length)) {
+                        // this is not the parameter we are looking for
+                        continue;
+                    }
+
+                    // Found the parameter we were looking for
+                    j = Comment.consumeLeadingSpace(commentContents, j + param.length);
+                    if (j == -1) {
+                        return "";
+                    }
+                    
+                    var endOfParam = commentContents.indexOf("@", j);
+                    var paramHelpString = commentContents.substring(j, endOfParam < 0 ? commentContents.length : endOfParam);
+
+                    // Clean jsDocComment and return
+                    return Comment.cleanJSDocComment(paramHelpString);
+                }
+            }
+
+            return "";
+        }
+
+        static getDocCommentTextOfSignatures(signatures: Signature[]) {
+            var comments: string[] = [];
+            for (var i = 0; i < signatures.length; i++) {
+                var signatureDocComment = TypeScript.Comment.getDocCommentText(signatures[i].declAST.getDocComments());
+                if (signatureDocComment != "") {
+                    comments.push(signatureDocComment);
+                }
+            }
+
+            return comments.join("\n");
         }
     }
 

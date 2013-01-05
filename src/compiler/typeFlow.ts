@@ -985,20 +985,31 @@ module TypeScript {
 
             // Check if variable satisfies type privacy
             if (varDecl.sym && varDecl.sym.container) {
-                this.checkTypePrivacy(varDecl.sym.getType(), varDecl.sym, (typeName: string) => this.varPrivacyErrorReporter(varDecl, typeName));
+                this.checkTypePrivacy(varDecl.sym.getType(), varDecl.sym, (typeName: string, isModuleName: bool) => this.varPrivacyErrorReporter(varDecl, typeName, isModuleName));
             }
             return <VarDecl>varDecl;
         }
 
-        private varPrivacyErrorReporter(varDecl: BoundDecl, typeName: string) {
+        private varPrivacyErrorReporter(varDecl: BoundDecl, typeName: string, isModuleName: bool) {
+            var typestring = "";
+            if (isModuleName) {
+                var quotestring = "";
+                if (!isQuoted(typeName)) {
+                    quotestring = "'";
+                }
+                typestring = " is using inaccessible module " + quotestring + typeName + quotestring;
+            } else {
+                typestring = " has or is using private type '" + typeName + "'";
+            }
+
             if (hasFlag(varDecl.varFlags, VarFlags.Public)) {
                 if (varDecl.sym.container.declAST.nodeType == NodeType.InterfaceDeclaration) {
-                    this.checker.errorReporter.simpleError(varDecl, "property '" + varDecl.sym.name + "' of exported interface has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(varDecl, "property '" + varDecl.sym.name + "' of exported interface" + typestring);
                 } else {
-                    this.checker.errorReporter.simpleError(varDecl, "public member '" + varDecl.sym.name + "' of exported class has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(varDecl, "public member '" + varDecl.sym.name + "' of exported class" + typestring);
                 }
             } else {
-                this.checker.errorReporter.simpleError(varDecl, "exported variable '" + varDecl.sym.name + "' has or is using private type '" + typeName + "'");
+                this.checker.errorReporter.simpleError(varDecl, "exported variable '" + varDecl.sym.name + "'" + typestring);
             }
         }
 
@@ -1007,6 +1018,24 @@ module TypeScript {
                 ast.type = this.thisType.baseClass();
             }
             else {
+                // redirect 'super' used within lambdas
+                if (!this.enclosingFncIsMethod &&
+                    this.thisType && this.thisType.baseClass() &&
+                    this.thisFnc && hasFlag(this.thisFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
+                    // Find the closest non lambda function
+                    var enclosingFnc = this.thisFnc.enclosingFnc;
+                    while (hasFlag(enclosingFnc.fncFlags, FncFlags.IsFatArrowFunction)) {
+                        enclosingFnc = enclosingFnc.enclosingFnc;
+                    }
+
+                    // If the lambda is enclosed is a valid member, use the base type
+                    if (enclosingFnc && (enclosingFnc.isMethod() || enclosingFnc.isConstructor) && !enclosingFnc.isStatic()) {
+                        ast.type = this.thisType.baseClass();
+                        enclosingFnc.setHasSuperReferenceInFatArrowFunction();
+                        return ast;
+                    }
+                }
+
                 ast.type = this.anyType;
                 this.checker.errorReporter.invalidSuperReference(ast);
             }
@@ -1067,21 +1096,20 @@ module TypeScript {
                 else {
                     var encFnc = this.thisFnc.enclosingFnc;
                     var firstEncFnc = encFnc;
-                    var foundMeth = false;
 
                     while (encFnc) {
-                        if (encFnc.isMethod() || encFnc.isConstructor || encFnc.hasSelfReference()) {
+                        if (!hasFlag(encFnc.fncFlags, FncFlags.IsFatArrowFunction) || encFnc.hasSelfReference()) {
                             encFnc.setHasSelfReference();
-                            foundMeth = true;
                             break;
                         }
                         encFnc = encFnc.enclosingFnc;
                     }
 
-                    if (!foundMeth && firstEncFnc) {
-                        firstEncFnc.setHasSelfReference();
+                    if (!encFnc && firstEncFnc) {
+                        encFnc = firstEncFnc;
+                        encFnc.setHasSelfReference();
                     }
-                    else if (!foundMeth) { // the lambda is bound at the top-level...
+                    else if (!encFnc) { // the lambda is bound at the top-level...
                         if (this.thisClassNode) {
                             (<ClassDeclaration>this.thisClassNode).varFlags |= VarFlags.MustCaptureThis;
                         }
@@ -1093,7 +1121,7 @@ module TypeScript {
                         }
                     }
 
-                    if (foundMeth && this.thisType) {
+                    if (encFnc && (encFnc.isMethod() || encFnc.isConstructor) && this.thisType) {
                         ast.type = this.thisType;
                     }
                 }
@@ -1881,12 +1909,18 @@ module TypeScript {
             var declTypeString = (declSymbol.declAST.nodeType == NodeType.InterfaceDeclaration) ? "interface" : "class";
             var baseListTypeString = extendsList ? "extends" : "implements";
             var baseTypeString = (baseSymbol.declAST.nodeType == NodeType.InterfaceDeclaration) ? "interface" : "class";
+            var typestring = "";
             if (isModuleName) {
-                baseTypeString = " " + baseTypeString + " from private module";
+                var quotestring = "";
+                if (!isQuoted(typeName)) {
+                    quotestring = "'";
+                }
+                typestring = " is using inaccessible module ";
+                baseTypeString = " " + baseTypeString + " from private module " + quotestring + typeName + quotestring;
             } else {
-                baseTypeString = " private " + baseTypeString;
+                baseTypeString = " private " + baseTypeString + " '" + typeName + "'";
             }
-            this.checker.errorReporter.simpleError(bases.members[i], "exported " + declTypeString + " '" + declSymbol.name + "' " + baseListTypeString + baseTypeString + " '" + typeName + "'");
+            this.checker.errorReporter.simpleError(bases.members[i], "exported " + declTypeString + " '" + declSymbol.name + "' " + baseListTypeString + baseTypeString);
         }
 
         // Check if declSymbol can satisfy baselist privacy
@@ -1899,40 +1933,42 @@ module TypeScript {
                         continue;
                     }
 
-                    this.checkSymbolPrivacy(bases.members[i].type.symbol, declSymbol, (typeName: string, isModuleName?: bool) => this.baseListPrivacyErrorReporter(bases, i, declSymbol, extendsList, typeName, isModuleName));
+                    this.checkSymbolPrivacy(bases.members[i].type.symbol, declSymbol, (typeName: string, isModuleName: bool) => this.baseListPrivacyErrorReporter(bases, i, declSymbol, extendsList, typeName, isModuleName));
                 }
             }
         }
 
         // Checks if the privacy is satisfied by typeSymbol that is used in the declaration inside container
-        private checkSymbolPrivacy(typeSymbol: TypeSymbol, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName? : bool) =>void ) {
-            var isImportedTypeSymbol = false;
+        private checkSymbolPrivacy(typeSymbol: TypeSymbol, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName: bool) => void ) {
+            var externalModuleSymbol: TypeSymbol = null;
             var declSymbolPath: Symbol[] = null;
-            var declSymbolPathLength = 0;
-            var topTypeSymbol: TypeSymbol = null;
 
             // Type is visible type, so this can be used by anyone.
             if (typeSymbol.isExternallyVisible(this.checker)) {
-                // Symbol could be visible externally but it might not be visible in declSymbol Scope
-                // if the top most parent of the symbol is dynamically imported symbol
+                // Symbol could be from external module, go ahead and find the external module
                 var typeSymbolPath = typeSymbol.pathToRoot();
                 declSymbolPath = declSymbol.pathToRoot();
                 var typeSymbolLength = typeSymbolPath.length;
-                declSymbolPathLength = declSymbolPath.length;
+                var declSymbolPathLength = declSymbolPath.length;
 
-                if (typeSymbolLength > 0 && declSymbolPathLength > 0) {
-                    topTypeSymbol = <TypeSymbol>typeSymbolPath[typeSymbolLength - 1];
-                    var topDeclSymbol = declSymbolPath[declSymbolPathLength - 1];
-                    if (topTypeSymbol != topDeclSymbol && 
-                        topTypeSymbol.getType().isModuleType() && 
-                        isQuoted(topTypeSymbol.prettyName)) {
-                        // The typeSymbol is imported from different module, 
-                        // so we would need to go ahead and look up later to see if it is really exported 
-                        isImportedTypeSymbol = true;
+                if (typeSymbolLength > 0) {
+                    if (typeSymbolPath[typeSymbolLength - 1].getType().isModuleType() &&
+                        (<TypeSymbol>typeSymbolPath[typeSymbolLength - 1]).isDynamic &&
+                        typeSymbolPath[typeSymbolLength - 1] != declSymbolPath[declSymbolPathLength - 1]) {
+                        // Symbol from external module that was imported using one of the import statement
+                        externalModuleSymbol = <TypeSymbol>typeSymbolPath[typeSymbolLength - 1];
+                    } else if (typeSymbolLength > 1) {
+                        // Is symbol from declared quoted module
+                        if (typeSymbolPath[typeSymbolLength - 2].getType().isModuleType() &&
+                            (<TypeSymbol>typeSymbolPath[typeSymbolLength - 2]).isDynamic &&
+                            (declSymbolPathLength == 1 || typeSymbolPath[typeSymbolLength - 2] != declSymbolPath[declSymbolPathLength - 2])) {
+                            // From quoted module name
+                            externalModuleSymbol = <TypeSymbol>typeSymbolPath[typeSymbolLength - 2];
+                        }
                     }
                 }
 
-                if (!isImportedTypeSymbol) {
+                if (externalModuleSymbol == null) {
                     return;
                 }
             }
@@ -1953,46 +1989,22 @@ module TypeScript {
                     // Its a member from class so check visibility of its container
                     checkVisibilitySymbol = declSymbol.container;
                 }
-            } 
-
-            var importDecl = declSymbol.getImportDeclFromSymbol();
-            if (importDecl) {
-                if (!hasFlag(importDecl.varFlags, VarFlags.Exported)) {
-                    return;
-                }
-                
-                checkVisibilitySymbol = declSymbol.container;
             }
 
             // If the container is visible from global scrope it is error
             if (checkVisibilitySymbol.isExternallyVisible(this.checker)) {
                 var privateSymbolName = typeSymbol.name;
 
-                // If imported typeSymbol check if it is externally visible in the declaration symbols scope
-                if (isImportedTypeSymbol) {
-                    var ignoreSymbols: Symbol[] = [];
-                    privateSymbolName = null;
-
-                    // Check in exported module members in each scope
-                    for (var i = 0; i < declSymbolPathLength; i++) {
-                        var symbolType = declSymbolPath[i].getType();
-                        if (symbolType.isModuleType()) {
-                            ignoreSymbols.push(declSymbolPath[i]);
-                            var moduleType = <ModuleType>symbolType;
-                            var prettyName = moduleType.findDynamicModuleName(<ModuleType>topTypeSymbol.type, "", true, ignoreSymbols);
-                            if (prettyName != null) {
-                                // Was able to find the publically visible moduleType name
-                                // This means the typeSymbol is visible externally from top decl Symbol scope
-                                return;
-                            }
-
-                            if (privateSymbolName == null) {
-                                privateSymbolName = moduleType.findDynamicModuleName(<ModuleType>topTypeSymbol.type, "", false, ignoreSymbols);
-                            }
-                        }
+                // If imported typeSymbol mark it as visible externally and verify that the symbol it imports is visible externally
+                if (externalModuleSymbol != null) {
+                    var prettyName = externalModuleSymbol.getPrettyNameOfDynamicModule(declSymbolPath);
+                    if (prettyName != null) {
+                        this.currentScript.AddExternallyVisibleImportedSymbol(prettyName.symbol, this.checker);
+                        return;
+                    } else {
+                        privateSymbolName = externalModuleSymbol.prettyName;
                     }
                 }
-           
 
                 // Visible declaration using non visible type.
                 errorCallback(privateSymbolName, typeSymbol.name != privateSymbolName);
@@ -2000,7 +2012,7 @@ module TypeScript {
         }
 
         // Checks if the privacy is satisfied by type that is used in the declaration inside container
-        private checkTypePrivacy(type: Type, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName? : bool) =>void ) {
+        private checkTypePrivacy(type: Type, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : bool) =>void ) {
             // Primitive types
             if (!(type && type.primitiveTypeClass == Primitive.None)) {
                 return;
@@ -2035,7 +2047,7 @@ module TypeScript {
         }
 
         // Checks if the privacy is satisfied by typeSymbol that is used in the declaration inside container
-        private checkSignatureGroupPrivacy(sgroup: SignatureGroup, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName? : bool) =>void ) {
+        private checkSignatureGroupPrivacy(sgroup: SignatureGroup, declSymbol: Symbol, errorCallback: (typeName: string, isModuleName : bool) =>void ) {
             if (sgroup) {
                 var len = sgroup.signatures.length;
                 for (var i = 0; i < sgroup.signatures.length; i++) {
@@ -2058,67 +2070,88 @@ module TypeScript {
             }
         }
 
-        private functionArgumentPrivacyErrorReporter(funcDecl: FuncDecl, p: number, paramSymbol: Symbol, typeName: string) {
+        private functionArgumentPrivacyErrorReporter(funcDecl: FuncDecl, p: number, paramSymbol: Symbol, typeName: string, isModuleName: bool) {
             var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor);
             var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
             var isPublicFunc = hasFlag(funcDecl.fncFlags, FncFlags.Public);
             var isContainerInterface = funcDecl.type.symbol.getInterfaceDeclFromSymbol(this.checker) != null;
+            var typestring = "";
+            if (isModuleName) {
+                var quotestring = "";
+                if (!isQuoted(typeName)) {
+                    quotestring = "'";
+                }
+                typestring = " is using inaccessible module " + quotestring + typeName + quotestring;
+            } else {
+                typestring = " has or is using private type '" + typeName + "'";
+            }
+
             if (!isContainerInterface) {
                 if (funcDecl.isConstructor) {
-                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported class's constructor parameter '" + paramSymbol.name + "' has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported class's constructor parameter '" + paramSymbol.name + "'" + typestring);
                 } else if (isSetter) {
-                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], (isPublicFunc ? "public" : "exported") + " setter parameter '" + paramSymbol.name + "' has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], (isPublicFunc ? "public" : "exported") + " setter parameter '" + paramSymbol.name + "'" + typestring);
                 } else if (!isGetter) {
-                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], (isPublicFunc ? "public" : "exported") + " function parameter '" + paramSymbol.name + "' has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], (isPublicFunc ? "public" : "exported") + " function parameter '" + paramSymbol.name + "'" + typestring);
                 }
             } else {
                 if (funcDecl.isConstructMember()) {
-                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported interface's constructor parameter '" + paramSymbol.name + "' has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported interface's constructor parameter '" + paramSymbol.name + "'" + typestring);
                 } else if (funcDecl.isCallMember()) {
-                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported interface's call parameter '" + paramSymbol.name + "' has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported interface's call parameter '" + paramSymbol.name + "'" + typestring);
                 } else if (!funcDecl.isIndexerMember()) {
-                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported interface's function parameter '" + paramSymbol.name + "' has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(funcDecl.arguments.members[p], "exported interface's function parameter '" + paramSymbol.name + "'" + typestring);
                 }
             }
         }
 
-        private returnTypePrivacyError(astError: AST, funcDecl: FuncDecl, typeName: string) {
+        private returnTypePrivacyError(astError: AST, funcDecl: FuncDecl, typeName: string, isModuleName: bool) {
             var isGetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor);
             var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
             var isPublicFunc = hasFlag(funcDecl.fncFlags, FncFlags.Public);
             var isContainerInterface = funcDecl.type.symbol.getInterfaceDeclFromSymbol(this.checker) != null;
+            var typestring = "";
+            if (isModuleName) {
+                var quotestring = "";
+                if (!isQuoted(typeName)) {
+                    quotestring = "'";
+                }
+                typestring = " is using inaccessible module " + quotestring + typeName + quotestring;
+            } else {
+                typestring = " has or is using private type '" + typeName + "'";
+            }
             if (!isContainerInterface) {
                 if (isGetter) {
-                    this.checker.errorReporter.simpleError(astError, (isPublicFunc ? "public" : "exported") + " getter return type has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(astError, (isPublicFunc ? "public" : "exported") + " getter return type" + typestring);
                 } else if (!isSetter) {
-                    this.checker.errorReporter.simpleError(astError, (isPublicFunc ? "public" : "exported") + " function return type has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(astError, (isPublicFunc ? "public" : "exported") + " function return type" + typestring);
                 }
             } else {
                 if (funcDecl.isConstructMember()) {
-                    this.checker.errorReporter.simpleError(astError, "exported interface's constructor return type has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(astError, "exported interface's constructor return type" + typestring);
                 } else if (funcDecl.isCallMember()) {
-                    this.checker.errorReporter.simpleError(astError, "exported interface's call return type has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(astError, "exported interface's call return type" + typestring);
                 } else if (funcDecl.isIndexerMember()) {
-                    this.checker.errorReporter.simpleError(astError, "exported interface's indexer return type has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(astError, "exported interface's indexer return type" + typestring);
                 } else {
-                    this.checker.errorReporter.simpleError(astError, "exported interface's function return type has or is using private type '" + typeName + "'");
+                    this.checker.errorReporter.simpleError(astError, "exported interface's function return type" + typestring);
                 }
             }
         }
 
-        private functionReturnTypePrivacyErrorReporter(funcDecl: FuncDecl, signature: Signature, typeName: string) {
+        private functionReturnTypePrivacyErrorReporter(funcDecl: FuncDecl, signature: Signature, typeName: string, isModuleName: bool) {
             var reportOnFuncDecl = false;
 
             // Error coming from return annotation
             if (funcDecl.returnTypeAnnotation != null &&
                 funcDecl.returnTypeAnnotation.type == signature.returnType.type) {
-                this.returnTypePrivacyError(funcDecl.returnTypeAnnotation, funcDecl, typeName);
+                this.returnTypePrivacyError(funcDecl.returnTypeAnnotation, funcDecl, typeName, isModuleName);
             }
 
             // Check if return statement's type matches the one that we concluded
             for (var i = 0; i < funcDecl.returnStatementsWithExpressions.length; i++) {
                 if (funcDecl.returnStatementsWithExpressions[i].type == signature.returnType.type) {
-                    this.returnTypePrivacyError(funcDecl.returnStatementsWithExpressions[i], funcDecl, typeName);
+                    this.returnTypePrivacyError(funcDecl.returnStatementsWithExpressions[i], funcDecl, typeName, isModuleName);
                 } else {
                     reportOnFuncDecl = true;
                 }
@@ -2126,7 +2159,7 @@ module TypeScript {
 
             if (reportOnFuncDecl) {
                 // Show on function decl
-                this.returnTypePrivacyError(funcDecl, funcDecl, typeName);
+                this.returnTypePrivacyError(funcDecl, funcDecl, typeName, isModuleName);
             }
         }
 
@@ -2392,7 +2425,7 @@ module TypeScript {
 
                     symbol.container = container;
                     // Verify the parameter for the privacy
-                    this.checkTypePrivacy(symbol.getType(), container, (typeName: string) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, symbol, typeName));
+                    this.checkTypePrivacy(symbol.getType(), container, (typeName: string, isModuleName: bool) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, symbol, typeName, isModuleName));
                     paramTable.publicMembers.add(symbol.name, symbol);
                 }
                 this.scope = tmpParamScope;
@@ -2405,7 +2438,7 @@ module TypeScript {
                 for (var p = 0; p < paramLen; p++) {
                     signature.parameters[p].parameter.typeLink.type = funcDecl.arguments.members[p].type;
                     // Verify the parameter for the privacy
-                    this.checkTypePrivacy(signature.parameters[p].getType(), container, (typeName: string) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, signature.parameters[p], typeName));
+                    this.checkTypePrivacy(signature.parameters[p].getType(), container, (typeName: string, isModuleName: bool) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, signature.parameters[p], typeName, isModuleName));
                     if ((<ArgDecl>funcDecl.arguments.members[p]).parameterPropertySym) {
                         (<ArgDecl>funcDecl.arguments.members[p]).parameterPropertySym.setType(funcDecl.arguments.members[p].type);
                     }
@@ -2576,7 +2609,7 @@ module TypeScript {
                 }
 
                 // Type check for return type Privacy
-                this.checkTypePrivacy(signature.returnType.type, container, (typeName: string) => this.functionReturnTypePrivacyErrorReporter(funcDecl, signature, typeName)); 
+                this.checkTypePrivacy(signature.returnType.type, container, (typeName: string, isModuleName: bool) => this.functionReturnTypePrivacyErrorReporter(funcDecl, signature, typeName, isModuleName));
             }
 
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
@@ -2613,6 +2646,7 @@ module TypeScript {
         public typeCheckBases(type: Type) {
             var seenInterface = false;
             var bases = type.extendsList;
+            var baseLinks = type.extendsTypeLinks;
             if (bases) {
                 var len = bases.length;
 
@@ -2622,6 +2656,7 @@ module TypeScript {
 
                 for (var i = 0; i < len; i++) {
                     var base = bases[i];
+                    var baseRef = baseLinks[i].ast;
 
                     // make sure it's the global 'Object' and not some alias
                     var baseTypeOfObject = base.symbol && base.symbol.name == "Object" && base.symbol.container == this.checker.gloMod;
@@ -2635,16 +2670,16 @@ module TypeScript {
                             this.currentScript.requiresInherits = true;
                         }
                         if (!(type.isClassInstance())) {
-                            this.checker.errorReporter.simpleErrorFromSym(base.symbol, "Interface base type must be interface");
+                            this.checker.errorReporter.simpleError(baseRef, "Interface base type must be interface");
                         }
                         else {
                             if (seenInterface) {
-                                this.checker.errorReporter.simpleErrorFromSym(base.symbol, "Class may not follow interface as base type");
+                                this.checker.errorReporter.simpleError(baseRef, "Class may not follow interface as base type");
                             }
                         }
                     }
                     else if (base.isModuleType()) {
-                        this.checker.errorReporter.simpleErrorFromSym(base.symbol, "Types may not be derived from module types");
+                        this.checker.errorReporter.simpleError(baseRef, "Types may not be derived from module types");
                     }
                     else if (base.members) {
                         if (!seenInterface) {
@@ -2653,11 +2688,11 @@ module TypeScript {
                     }
                     else {
                         if (!(type.isClassInstance())) {
-                            this.checker.errorReporter.simpleErrorFromSym(base.symbol,
+                            this.checker.errorReporter.simpleError(baseRef,
                                                                      "Interface base type must be interface");
                         }
                         else {
-                            this.checker.errorReporter.simpleErrorFromSym(base.symbol,
+                            this.checker.errorReporter.simpleError(baseRef,
                                                                      "Base type must be interface or class");
                         }
                         break;
@@ -2932,13 +2967,6 @@ module TypeScript {
                     (<ModuleDeclaration>mod.symbol.declAST).modFlags &= ~ModuleFlags.ShouldEmitModuleDecl;
                 }
 
-                this.checkSymbolPrivacy(mod.symbol, importDecl.id.sym, (typeName: string) => {
-                    var quotes = "";
-                    if (!isQuoted(mod.symbol.name)) {
-                        quotes = "'";
-                    }
-                    this.checker.errorReporter.simpleError(importDecl, "exported module '" + importDecl.id.sym.name + "' imports non exported module " + quotes + mod.symbol.name + quotes);
-                });
                 //importDecl.id.sym = sym;
                 // REVIEW: Uncomment when you can toggle module codegen targets from the language service
                 //else if (typeFlow.checker.currentModDecl == null && 
@@ -2971,12 +2999,6 @@ module TypeScript {
             var prevCurrentModDecl = this.checker.currentModDecl;
             this.checker.currentModDecl = moduleDecl;
             this.inBoundPropTypeCheck = false;
-
-
-            if (!this.inImportTypeCheck && prevCurrentModDecl &&
-                hasFlag(moduleDecl.modFlags, ModuleFlags.IsDynamic) && !hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {
-                this.checker.errorReporter.simpleError(moduleDecl, "Dynamic modules may not be nested within other modules");
-            }
 
             this.thisType = null;
             this.scope = mod.containedScope;
@@ -3103,6 +3125,7 @@ module TypeScript {
 
             var resultType = new Type();
             resultType.symbol = new TypeSymbol(this.checker.anon, objectLit.minChar,
+                                             objectLit.limChar - objectLit.minChar,
                                              this.checker.locationInfo.unitIndex,
                                              resultType);
 
@@ -3665,7 +3688,6 @@ module TypeScript {
 
         public postTypeCheckCallArgs(callEx: CallExpression) {
 
-
             var acceptedTargetType = false;
             var i = 0;
 
@@ -3678,21 +3700,35 @@ module TypeScript {
                 if (sig && callEx.arguments.members.length >= sig.nonOptionalParameterCount) {
                     acceptedTargetType = true;
                     var targetType: Type = null;
-                    var len = callEx.arguments.members.length < sig.parameters.length ? callEx.arguments.members.length : sig.parameters.length;
+                    var nonVarArgFormalParamLength = sig.hasVariableArgList ? sig.parameters.length - 1 : sig.parameters.length;
+                    var nonVarArgActualParamLength = callEx.arguments.members.length < nonVarArgFormalParamLength ? callEx.arguments.members.length : nonVarArgFormalParamLength
 
-                    for (i = 0; i < len; i++) {
+                    for (i = 0; i < nonVarArgActualParamLength; i++) {
                         targetType = sig.parameters[i].getType();
-                        if (targetType && sig.hasVariableArgList && i >= sig.nonOptionalParameterCount - 1) {
-                            targetType = targetType.elementType;
-                        }
                         switch (callEx.arguments.members[i].nodeType) {
                             case NodeType.FuncDecl:
                             case NodeType.ObjectLit:
                             case NodeType.ArrayLit:
                                 this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(), !sig.parameters[i].declAST.isParenthesized, callEx.arguments.members[i]);
                                 break;
-                            default:
-                                continue;
+                        }
+                    }
+
+                    if (sig.hasVariableArgList) {
+                        var varArgParamIndex = sig.nonOptionalParameterCount - 1;
+                        targetType = sig.parameters[varArgParamIndex].getType();
+                        if (targetType) {
+                            targetType = targetType.elementType;
+                        }
+                        var isParenthesized = !sig.parameters[varArgParamIndex].declAST.isParenthesized;
+                        for (i = nonVarArgActualParamLength; i < callEx.arguments.members.length; i++) {
+                            switch (callEx.arguments.members[i].nodeType) {
+                                case NodeType.FuncDecl:
+                                case NodeType.ObjectLit:
+                                case NodeType.ArrayLit:
+                                    this.checker.typeCheckWithContextualType(targetType, this.checker.inProvisionalTypecheckMode(), isParenthesized, callEx.arguments.members[i]);
+                                    break;
+                            }
                         }
                     }
                 }

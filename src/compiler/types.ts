@@ -468,6 +468,30 @@ module TypeScript {
         public getAllAmbientEnclosedTypes(): ScopedMembers { return null; }
         public getPublicEnclosedTypes(): ScopedMembers { return null; }
         public getpublicAmbientEnclosedTypes(): ScopedMembers { return null; }
+
+        public getDocComments(): Comment[]{
+            if (this.elementType || !this.symbol) {
+                return [];
+            }
+
+            if (this.isClassInstance() || this.isClass()) {
+                if (this.symbol.declAST.nodeType == NodeType.FuncDecl) {
+                    // Its a constructor - use the class declaration instead
+                    return (<FuncDecl>this.symbol.declAST).classDecl.getDocComments();
+                } else {
+                    // Its a class without constructor
+                    return this.symbol.getDocComments();
+                }
+            }
+
+            if (this.symbol.name && this.symbol.name != "_anonymous" &&
+                (((this.call == null) && (this.construct == null) && (this.index == null))
+                  || this.members)) {
+                return this.symbol.getDocComments();
+            }
+
+            return [];
+        }
     }
 
     export interface ITypeCollection {
@@ -491,39 +515,17 @@ module TypeScript {
         public getpublicAmbientEnclosedTypes(): ScopedMembers { return null; }
         public importedModules: ImportDeclaration[] = [];
 
-        // Hash table with dynamicModule type as key and its name in current scope and flag that tells if it is private as value
-        private prettyNames = new SimpleHashTable(); 
-
         // Finds the dynamic module name of moduleType in the members
         // ignoreSymbols define list of symbols already visited - to avoid recursion
-        static findDynamicModuleNameInHashTable(moduleType: ModuleType, members: IHashTable, ignoreSymbols: Symbol[]) : string {
-            var moduleName = null;
+        static findDynamicModuleNameInHashTable(moduleType: Type, members: IHashTable) {
+            var moduleName: { name: string; symbol: Symbol; } = null;
             members.map((key, s, c) => {
                 if (moduleName == null && !isQuoted(key)) {
                     var symbol = <Symbol>s;
                     var type = symbol.getType();
                     if (type == moduleType) {
                         // If this is the module type we were looking for
-                        moduleName = key;
-                    }
-                    else if (type) {
-                        var i = ignoreSymbols.length - 1;
-                        for (; i >= 0; i--) {
-                            if (ignoreSymbols[i] == s) {
-                                break;
-                            }
-                        }
-
-                        // if not ignored symbol and is moduleType
-                        if (i < 0 && type.isModuleType()) {
-                            ignoreSymbols.push(s);
-                            var keyBaseName = key + ".";
-                            var keyModuleType = <ModuleType>type;
-                            moduleName = keyModuleType.findDynamicModuleName(moduleType, keyBaseName, true, ignoreSymbols);
-                            if (moduleName != null) {
-                                moduleName = keyModuleType.findDynamicModuleName(moduleType, keyBaseName, true, ignoreSymbols);
-                            }
-                        }
+                        moduleName = { name: key, symbol: symbol };
                     }
                 }
             }, null);
@@ -533,41 +535,13 @@ module TypeScript {
 
         // Finds the Dynamic module name of the moduleType in this moduleType
         // onlyPublic tells if we are looking for module name in public members only
-        public findDynamicModuleName(moduleType: ModuleType, baseName: string, onlyPublic: bool, ignoreSymbols: Symbol[]) : string {
-            var moduleName: string = null;
-            var lookupInfo = this.prettyNames.lookup(moduleType);
-            if (lookupInfo != null) {
-                // Lookup cache
-                moduleName = (!lookupInfo.data.isPrivate || !onlyPublic) ? lookupInfo.data.moduleName : null;
-            } else {
-                // Not cached, so seach and add to the cache
-                moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.members.publicMembers, ignoreSymbols);
-                if (moduleName != null) {
-                    this.prettyNames.add(moduleType, { moduleName: moduleName, isPrivate: false });
-                } else {
-                    moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.ambientMembers.publicMembers, ignoreSymbols);
-                    if (moduleName != null) {
-                        this.prettyNames.add(moduleType, { moduleName: moduleName, isPrivate: false });
-                    } else {
-                        var privateModuleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.members.privateMembers, ignoreSymbols);
-                        if (privateModuleName != null) {
-                            this.prettyNames.add(moduleType, { moduleName: privateModuleName, isPrivate: true });
-                        } else {
-                            privateModuleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.ambientMembers.privateMembers, ignoreSymbols);
-                            this.prettyNames.add(moduleType, { moduleName: privateModuleName, isPrivate: true });
-                        }
-
-                        if (!onlyPublic) { 
-                            moduleName = privateModuleName;
-                        }
-                    }
-                }
+        public findDynamicModuleName(moduleType: Type): { name: string; symbol: Symbol; } {
+            var moduleName: { name: string; symbol: Symbol; } = null;
+            // Not cached, so seach and add to the cache
+            moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.members.allMembers);
+            if (moduleName == null) {
+                moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.ambientMembers.allMembers);
             }
-            
-            if (moduleName != null) {
-                return baseName + moduleName;
-            }
-
             return moduleName;
         }
     }

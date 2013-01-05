@@ -76,7 +76,6 @@ module TypeScript {
         public propagateConstants = false;
         public minWhitespace = false;
         public parseOnly = false;
-        public outputMany = true;
         public errorRecovery = false;
         public emitComments = false;
         public watch = false;
@@ -94,7 +93,9 @@ module TypeScript {
 
         public codeGenTarget = CodeGenTarget.ES3;
         public moduleGenTarget = ModuleGenTarget.Synchronous;
-        public outputFileName: string = "";
+        // --out option passed. 
+        // Default is the "" which leads to multiple files generated next to the.ts files
+        public outputOption: string = "";
         public mapSourceFiles = false;
         public generateDeclarationFiles = false;
 
@@ -102,11 +103,6 @@ module TypeScript {
 
         public setStyleOptions(str: string) {
             this.styleSettings.parseOptions(str);
-        }
-        
-        public outputOne(outFile: string) {
-            this.outputFileName = outFile;
-            this.outputMany = false;
         }
     }
 

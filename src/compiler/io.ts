@@ -9,6 +9,10 @@ interface IResolvedFile {
     path: string;
 }
 
+interface IFileWatcher {
+    close(): void;
+}
+
 interface IIO {
     readFile(path: string): string;
     writeFile(path: string, contents: string): void;
@@ -26,10 +30,33 @@ interface IIO {
     arguments: string[];
     stderr: ITextWriter;
     stdout: ITextWriter;
-    watchFiles(files: string[], callback: () => void ): bool;
+    watchFile(filename: string, callback: (string) => void ): IFileWatcher;
     run(source: string, filename: string): void;
     getExecutingFilePath(): string;
     quit(exitCode?: number);
+}
+
+module IOUtils {
+    // Creates the directory including its parent if not already present
+    function createDirectoryStructure(ioHost: IIO, dirName: string) {
+        if (ioHost.directoryExists(dirName)) {
+            return;
+        }
+
+        var parentDirectory = ioHost.dirName(dirName);
+        if (parentDirectory != "") {
+            createDirectoryStructure(ioHost, parentDirectory);
+        }
+        ioHost.createDirectory(dirName);
+    }
+
+    // Creates a file including its directory structure if not already present
+    export function createFileAndFolderStructure(ioHost: IIO, fileName: string, useUTF8?: bool) {
+        var path = ioHost.resolvePath(fileName);
+        var dirName = ioHost.dirName(path);
+        createDirectoryStructure(ioHost, dirName);
+        return ioHost.createFile(path, useUTF8);
+    }
 }
 
 // Declare dependencies needed for all supported hosts
@@ -211,7 +238,7 @@ var IO = (function() {
             arguments: <string[]>args,
             stderr: WScript.StdErr,
             stdout: WScript.StdOut,
-            watchFiles: null,
+            watchFile: null,
             run: function(source, filename) {
                 eval(source);
             },
@@ -377,41 +404,34 @@ var IO = (function() {
                 WriteLine: function(str) { process.stdout.write(str + '\n'); },
                 Close: function() { }
             },
-            watchFiles: function(files, callback) {
-                var watchers = [];
+            watchFile: function(filename: string, callback: (string) => void ): IFileWatcher {
                 var firstRun = true;
-                var isWindows = /^win/.test(process.platform);
                 var processingChange = false;
 
-                var fileChanged: any = function(e, fn) {
-                    if (!firstRun && !isWindows) {
-                        for (var i = 0; i < files.length; ++i) {
-                            _fs.unwatchFile(files[i]);
+                var fileChanged: any = function(curr, prev) {
+                    if (!firstRun) {
+                        if (curr.mtime < prev.mtime) {
+                            return;
+                        }
+
+                        _fs.unwatchFile(filename, fileChanged);
+                        if (!processingChange) {
+                            processingChange = true;
+                            callback(filename);
+                            setTimeout(function() { processingChange = false; }, 100);
                         }
                     }
                     firstRun = false;
-                    if (!processingChange) {
-                        processingChange = true;
-                        callback();
-                        setTimeout(function() { processingChange = false; }, 100);
-                    }
-                    if (isWindows && watchers.length === 0) {
-                        for (var i = 0; i < files.length; ++i) {
-                            var watcher = _fs.watch(files[i], fileChanged);
-                            watchers.push(watcher);
-                            watcher.on('error', function(e) {
-                                process.stderr.write("ERROR" + e);
-                            });
-                        }
-                    } else if (!isWindows) {
-                        for (var i = 0; i < files.length; ++i) {
-                            _fs.watchFile(files[i], { interval: 500 }, fileChanged);
-                        }
-                    }
+                    _fs.watchFile(filename, { persistent: true, interval: 500 }, fileChanged);
                 };
 
                 fileChanged();
-                return true;
+                return {
+                    filename: filename,
+                    close: function() {
+                        _fs.unwatchFile(filename, fileChanged);
+                    }
+                };
             },
             run: function(source, filename) {
                 require.main.filename = filename;

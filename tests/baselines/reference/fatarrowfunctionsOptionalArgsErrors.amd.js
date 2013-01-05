@@ -29,3 +29,4 @@ var tt2 = function (a, b, c) {
 function (arg1, arg2) {
     if (typeof arg1 === "undefined") { arg1 = 1; }
     return 1;
+}

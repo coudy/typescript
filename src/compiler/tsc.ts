@@ -10,8 +10,15 @@ class CommandLineHost implements TypeScript.IResolverHost {
     public pathMap: any = {};
     public resolvedPaths: any = {};
 
+    constructor(public compilationSettings: TypeScript.CompilationSettings) { 
+    }
+
+    public getPathIdentifier(path: string) { 
+        return this.compilationSettings.useCaseSensitiveFileResolution ? path : path.toLocaleUpperCase();
+    }
+
     public isResolved(path: string) {
-        return this.resolvedPaths[this.pathMap[path]] != undefined;
+        return this.resolvedPaths[this.getPathIdentifier(this.pathMap[path])] != undefined;
     }
 
     public resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment,
@@ -30,9 +37,10 @@ class CommandLineHost implements TypeScript.IResolverHost {
         var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
             postResolutionError: postResolutionError,
             postResolution: (path: string, code: TypeScript.ISourceText) => {
-                if (!this.resolvedPaths[path]) {
+                var pathId = this.getPathIdentifier(path);
+                if (!this.resolvedPaths[pathId]) {
                     resolvedEnv.code.push(<TypeScript.SourceUnit>code);
-                    this.resolvedPaths[path] = true;
+                    this.resolvedPaths[pathId] = true;
                 }
             }
         };
@@ -40,9 +48,10 @@ class CommandLineHost implements TypeScript.IResolverHost {
         var residentResolutionDispatcher: TypeScript.IResolutionDispatcher = {
             postResolutionError: postResolutionError,
             postResolution: (path: string, code: TypeScript.ISourceText) => {
-                if (!this.resolvedPaths[path]) {
+                var pathId = this.getPathIdentifier(path);
+                if (!this.resolvedPaths[pathId]) {
                     resolvedEnv.residentCode.push(<TypeScript.SourceUnit>code);
-                    this.resolvedPaths[path] = true;
+                    this.resolvedPaths[pathId] = true;
                 }
             }
         };
@@ -66,7 +75,6 @@ class CommandLineHost implements TypeScript.IResolverHost {
 class BatchCompiler {
     public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
-    public commandLineHost = new CommandLineHost();
     public resolvedEnvironment: TypeScript.CompilationEnvironment = null;
 
     constructor (public ioHost: IIO) { 
@@ -76,10 +84,11 @@ class BatchCompiler {
 
     public resolve() {
         var resolver = new TypeScript.CodeResolver(this.compilationEnvironment);
-        var ret = this.commandLineHost.resolveCompilationEnvironment(this.compilationEnvironment, resolver, true);
+        var commandLineHost = new CommandLineHost(this.compilationSettings);
+        var ret = commandLineHost.resolveCompilationEnvironment(this.compilationEnvironment, resolver, true);
 
         for (var i = 0; i < this.compilationEnvironment.residentCode.length; i++) {
-            if (!this.commandLineHost.isResolved(this.compilationEnvironment.residentCode[i].path)) {
+            if (!commandLineHost.isResolved(this.compilationEnvironment.residentCode[i].path)) {
                 var path = this.compilationEnvironment.residentCode[i].path;
                 if (!TypeScript.isSTRFile(path) && !TypeScript.isDSTRFile(path) && !TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
                     this.ioHost.stderr.WriteLine("Unknown extension for file: \"" + path + "\". Only .ts and .d.ts extensions are allowed.");
@@ -91,7 +100,7 @@ class BatchCompiler {
             }
         }
         for (var i = 0; i < this.compilationEnvironment.code.length; i++) {
-            if (!this.commandLineHost.isResolved(this.compilationEnvironment.code[i].path)) {
+            if (!commandLineHost.isResolved(this.compilationEnvironment.code[i].path)) {
                 var path = this.compilationEnvironment.code[i].path;
                 if (!TypeScript.isSTRFile(path) && !TypeScript.isDSTRFile(path) && !TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
                     this.ioHost.stderr.WriteLine("Unknown extension for file: \""+path+"\". Only .ts and .d.ts extensions are allowed.");
@@ -107,10 +116,7 @@ class BatchCompiler {
     
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
-    public compile() {
-        if (this.compilationSettings.outputFileName) {
-            this.compilationSettings.outputFileName = TypeScript.switchToForwardSlashes(this.ioHost.resolvePath(this.compilationSettings.outputFileName));
-        }
+    public compile(): bool {
         var compiler: TypeScript.TypeScriptCompiler;
 
         compiler = new TypeScript.TypeScriptCompiler(this.ioHost.stderr, new TypeScript.NullLogger(), this.compilationSettings);
@@ -180,10 +186,17 @@ class BatchCompiler {
             }
         }
 
+        var emitterIOHost = {
+            createFile: (fileName: string, useUTF8?: bool) => IOUtils.createFileAndFolderStructure(this.ioHost, fileName, useUTF8),
+            directoryExists: this.ioHost.directoryExists,
+            fileExists: this.ioHost.fileExists,
+            resolvePath: this.ioHost.resolvePath
+        };
+
         if (!this.compilationSettings.parseOnly) {
             compiler.typeCheck();
             try {
-                compiler.emit(this.ioHost.createFile);
+                compiler.emit(emitterIOHost);
             } catch (err) {
                 compiler.errorReporter.hasErrors = true;
                 // Catch emitter exceptions
@@ -191,16 +204,13 @@ class BatchCompiler {
                     throw err;
                 }
             }
-
-            compiler.emitDeclarationFile(this.ioHost.createFile);
+            compiler.emitDeclarations();
         }
         else { 
-            compiler.emitAST(this.compilationSettings.outputMany, this.ioHost.createFile);
+            compiler.emitAST(emitterIOHost);
         }
 
-        if (compiler.errorReporter.hasErrors) {
-            this.ioHost.quit(1);
-        }
+        return compiler.errorReporter.hasErrors;
     }
 
     // Execute the provided inputs
@@ -230,10 +240,10 @@ class BatchCompiler {
         var opts = new OptionsParser(this.ioHost);
 
         opts.option('out', {
-            usage: 'Concatenate and emit output to single file',
-            type: 'file',
+            usage: 'Concatenate and emit output to single file | Redirect output structure to the directory',
+            type: 'file|directory',
             set: (str) => {
-                this.compilationSettings.outputOne(str);
+                this.compilationSettings.outputOption = str;
             }
         });
 
@@ -269,7 +279,7 @@ class BatchCompiler {
             }
         }, 'r');
 
-        if (this.ioHost.watchFiles) {
+        if (this.ioHost.watchFile) {
             opts.flag('watch', {
                 usage: 'Watch output files',
                 set: () => {
@@ -292,7 +302,7 @@ class BatchCompiler {
                 this.compilationSettings.parseOnly = true;
             }
         });
-        
+
         opts.flag('minw', {
             usage: 'Minimize whitespace',
             experimental: true,
@@ -430,7 +440,7 @@ class BatchCompiler {
                     TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
                 } else if (type === 'amd') {
                     TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
-                }else {
+                } else {
                     this.ioHost.printLine("Module code generation '" + type + "' not supported.  Using default 'commonjs' code generation");
                 }
             }
@@ -455,7 +465,7 @@ class BatchCompiler {
         });
 
         opts.parse(this.ioHost.arguments);
-
+        
         if (this.compilationSettings.useDefaultLib) {
             var compilerFilePath = this.ioHost.getExecutingFilePath()
             var binDirPath = this.ioHost.dirName(compilerFilePath);
@@ -473,51 +483,145 @@ class BatchCompiler {
         if (this.compilationEnvironment.code.length == (this.compilationSettings.useDefaultLib ? 1 : 0) && this.compilationEnvironment.residentCode.length == 0) {
             if (!printedUsage) {
                 opts.printUsage();
+                this.ioHost.quit(1);
             }
             return;
         }
 
-        // resolve file dependencies, if requested
+        var sourceFiles: TypeScript.SourceUnit[] = [];
+        var referenceFiles: TypeScript.SourceUnit[] = [];
+        if (this.compilationSettings.watch) {
+            // Capture the state before calling resolve
+            sourceFiles = this.compilationEnvironment.code.slice(0);
+            referenceFiles = this.compilationEnvironment.residentCode.slice(0);
+        }
+
+        // Resolve file dependencies, if requested
         this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
 
-        // REVIEW: Update to use compilation settings / env
-        if (this.compilationSettings.watch) {
-            var files: string[] = []
-            for (var iResCode = 0 ; iResCode < this.resolvedEnvironment.residentCode.length; iResCode++) {
-                files.push(this.resolvedEnvironment.residentCode[iResCode].path);
-            }
-            for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-                files.push(this.resolvedEnvironment.code[iCode].path);
-            }
-            if (this.ioHost.watchFiles) {
-                this.ioHost.watchFiles(files, () => {
-                    this.ioHost.printLine("Recompiling(" + new Date() + "): " + files);
-
-                    this.compilationEnvironment.code = [];
-                    for (var i = 0; i < opts.unnamed.length; i++) {
-                        code = new TypeScript.SourceUnit(opts.unnamed[i], null);
-                        this.compilationEnvironment.code.push(code);
-                    }
-
-                    // resolve file dependencies, if requested
-                    this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
-
-                    this.compile();
-                    if (this.compilationSettings.exec) {
-                        this.run();
-                    }
-                    this.ioHost.printLine("");
-                });
-            } else {
-                this.ioHost.printLine("Error: Current host does not support -w[atch] option");
-            }
-        } else {
-            this.compile();
+        var hasErrors = this.compile();
+        if (!hasErrors) {
             if (this.compilationSettings.exec) {
                 this.run();
             }
         }
 
+
+        if (this.compilationSettings.watch) {
+            // Watch will cause the program to stick around as long as the files exist
+            this.watchFiles(sourceFiles, referenceFiles);
+        }
+        else {  
+            // Exit with the appropriate error code
+            this.ioHost.quit(hasErrors ? 1 : 0);
+        }
+    }
+
+    public watchFiles(soruceFiles: TypeScript.SourceUnit[], referenceFiles: TypeScript.SourceUnit[]) {
+        if (!this.ioHost.watchFile) {
+            this.ioHost.printLine("Error: Current host does not support -w[atch] option");
+            return;
+        }
+
+        var resolvedFiles: string[] = []
+        var watchers: { [x: string]: IFileWatcher; } = {};
+
+        var addWatcher = (filename: string) => {
+            if (!watchers[filename]) {
+                var watcher = this.ioHost.watchFile(filename, onWatchedFileChange);
+                watchers[filename] = watcher;
+            }
+            else {
+                throw new Error("Cannot watch file, it is already watched.");
+            }
+        };
+
+        var removeWatcher = (filename: string) => {
+            if (watchers[filename]) {
+                watchers[filename].close();
+                delete watchers[filename];
+            }
+            else {
+                throw new Error("Cannot stop watching file, it is not being watched.");
+            }
+        };
+
+        var onWatchedFileChange = () => {
+            // Reset the state
+            this.compilationEnvironment.code = soruceFiles;
+            this.compilationEnvironment.residentCode = referenceFiles;
+
+            // Resolve file dependencies, if requested
+            this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
+
+            // Check if any new files were added to the environment as a result of the file change
+            var oldFiles = resolvedFiles;
+            var newFiles: string[] = [];
+            this.resolvedEnvironment.code.forEach((sf) => newFiles.push(sf.path));
+            this.resolvedEnvironment.residentCode.forEach((rf) => newFiles.push(rf.path));
+            newFiles = newFiles.sort();
+
+            var i = 0, j = 0;
+            while (i < oldFiles.length && j < newFiles.length) {
+
+                var compareResult = oldFiles[i].localeCompare(newFiles[j]);
+                if (compareResult == 0) {
+                    // No change here
+                    i++;
+                    j++;
+                }
+                else if (compareResult < 0) {
+                    // Entry in old list does not exist in the new one, it was removed
+                    removeWatcher(oldFiles[i]);
+                    i++;
+                }
+                else {
+                    // Entry in new list does exist in the new one, it was added
+                    addWatcher(newFiles[j]);
+                    j++;
+                }
+            }
+
+            // All remaining unmatched items in the old list have been removed
+            for (var k = i; k < oldFiles.length; k++) {
+                removeWatcher(oldFiles[k]);
+            }
+
+            // All remaing unmatched items in the new list have been added
+            for (var k = j; k < newFiles.length; k++) {
+                addWatcher(newFiles[k]);
+            }
+
+            // Update the state
+            resolvedFiles = newFiles;;
+
+            // Print header
+            this.ioHost.printLine("");
+            this.ioHost.printLine("Recompiling (" + new Date() + "): ");
+            resolvedFiles.forEach((f) => this.ioHost.printLine("    " + f));
+
+            // Trigger a new compilation
+            var hasErrors = this.compile();
+            if (!hasErrors) {
+                if (this.compilationSettings.exec) {
+                    this.run();
+                }
+            }
+        };
+
+        // Switch to using stdout for all error messages
+        this.ioHost.stderr = this.ioHost.stdout;
+
+        // Initialize the initial list of resolved files, and add watches to them
+        this.resolvedEnvironment.code.forEach((sf) => {
+            resolvedFiles.push(sf.path);
+            addWatcher(sf.path);
+        });
+        this.resolvedEnvironment.residentCode.forEach((rf) => {
+            resolvedFiles.push(rf.path);
+            addWatcher(rf.path);
+        });
+        resolvedFiles.sort();
     }
 }
 

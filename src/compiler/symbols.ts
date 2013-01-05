@@ -56,7 +56,7 @@ module TypeScript {
 
         public passSymbolCreated: number = CompilerDiagnostics.analysisPass;
 
-        constructor(public name: string, public location: number,
+        constructor(public name: string, public location: number, public length: number,
                  public unitIndex: number) { }
 
         public isInstanceProperty() {
@@ -120,20 +120,21 @@ module TypeScript {
         }
 
         // Gets the pretty Name for the symbol withing the scope
-        public getPrettyName(scopeSymbol: Symbol, searchTillRoot: bool) {
+        public getPrettyName(scopeSymbol: Symbol) {
             return this.name;
         }
 
         public scopeRelativeName(scope: SymbolScope): string {
             if (scope == null) {
-                return this.name;
+                return this.getPrettyName(null) + this.getOptionalNameString();
             }
             var lca = this.findCommonAncestorPath(scope.container);
             var builder = "";
             for (var i = 0, len = lca.length; i < len; i++) {
-                builder = lca[i].name + "." + builder;
+                var prettyName = lca[i].getPrettyName(i == len - 1 ? scope.container : lca[i + 1]);
+                builder = prettyName + "." + builder;
             }
-            builder += this.name;
+            builder += this.getPrettyName(len == 0 ? scope.container : lca[0]) + this.getOptionalNameString();
             return builder;
         }
 
@@ -286,12 +287,12 @@ module TypeScript {
             return null;
         }
 
-        public getImportDeclFromSymbol() {
-            if (this.declAST != null && this.declAST.nodeType == NodeType.ImportDeclaration) {
-                return <ImportDeclaration>this.declAST;
+        public getDocComments() : Comment[] {
+            if (this.declAST != null) {
+                return this.declAST.getDocComments();
             }
 
-            return null;
+            return [];
         }
     }
 
@@ -301,8 +302,8 @@ module TypeScript {
     }
 
     export class InferenceSymbol extends Symbol {
-        constructor (name: string, location: number, unitIndex: number) {
-            super(name, location, unitIndex);
+        constructor (name: string, location: number, length: number, unitIndex: number) {
+            super(name, location, length, unitIndex);
         }
 
         public typeCheckStatus = TypeCheckStatus.NotStarted;
@@ -338,9 +339,10 @@ module TypeScript {
     export class TypeSymbol extends InferenceSymbol {
         public additionalLocations: number[];
         public expansions: Type[] = []; // For types that may be "split", keep track of the subsequent definitions
+        public isDynamic = false;
 
-        constructor (locName: string, location: number, unitIndex: number, public type: Type) {
-            super(locName, location, unitIndex);
+        constructor (locName: string, location: number, length: number, unitIndex: number, public type: Type) {
+            super(locName, location, length, unitIndex);
             this.prettyName = this.name;
         }
 
@@ -392,7 +394,7 @@ module TypeScript {
             else {
                 var replType = this.type.specializeType(pattern, replacement, checker, false);
                 if (replType != this.type) {
-                    var result = new TypeSymbol(this.name, 0, -1, replType);
+                    var result = new TypeSymbol(this.name, -1, 0, -1, replType);
                     return result;
                 }
                 else {
@@ -403,47 +405,50 @@ module TypeScript {
 
         // Gets the pretty name of the symbol with respect to symbol of the scope (scopeSymbol)
         // searchTillRoot specifies if the name need to searched in the root path of the scope
-        public getPrettyName(scopeSymbol: Symbol, searchTillRoot: bool) {
-            if (isQuoted(this.prettyName) && this.type.isModuleType()) {
+        public getPrettyName(scopeSymbol: Symbol) {
+            if (!!scopeSymbol && isQuoted(this.prettyName) && this.type.isModuleType()) {
                 // Its a dynamic module - and need to be specialized with the scope
-                var scopePath = searchTillRoot ? scopeSymbol.pathToRoot() : [scopeSymbol];
-                var ignoreSymbols: Symbol[] = [];
-
                 // Check in exported module members in each scope
-                for (var i = 0; i < scopePath.length; i++) {
-                    var symbolType = scopePath[i].getType();
-                    if (symbolType.isModuleType()) {
-                        ignoreSymbols.push(scopePath[i]);
-                        var moduleType = <ModuleType>symbolType;
-                        var prettyName = moduleType.findDynamicModuleName(<ModuleType>this.type, "", false, ignoreSymbols);
-                        if (prettyName != null) {
-                            return prettyName;
-                        }
-                    }
+                var symbolPath = scopeSymbol.pathToRoot();
+                var prettyName = this.getPrettyNameOfDynamicModule(symbolPath);
+                if (prettyName != null) {
+                    return prettyName.name;
                 }
             }
 
             return this.prettyName;
         }
 
-        public scopeRelativeName(scope: SymbolScope): string {
-            if (scope == null) {
-                return this.prettyName + this.getOptionalNameString();
+        public getPrettyNameOfDynamicModule(scopeSymbolPath: Symbol[]) {
+            var scopeSymbolPathLength = scopeSymbolPath.length;
+            var externalSymbol: { name: string; symbol: Symbol; } = null;
+            if (scopeSymbolPath.length > 0 &&
+                scopeSymbolPath[scopeSymbolPathLength - 1].getType().isModuleType() &&
+                (<TypeSymbol>scopeSymbolPath[scopeSymbolPathLength - 1]).isDynamic) {
+
+                // Check if submodule is dynamic
+                if (scopeSymbolPathLength > 1 &&
+                    scopeSymbolPath[scopeSymbolPathLength - 2].getType().isModuleType() &&
+                    (<TypeSymbol>scopeSymbolPath[scopeSymbolPathLength - 2]).isDynamic) {
+                    var moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 2].getType();
+                    externalSymbol = moduleType.findDynamicModuleName(this.type);
+
+                }
+
+                if (externalSymbol == null) {
+                    // Check in this module
+                    var moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 1].getType();
+                    externalSymbol = moduleType.findDynamicModuleName(this.type);
+                }
             }
-            var lca = this.findCommonAncestorPath(scope.container);
-            var builder = "";
-            for (var i = 0, len = lca.length; i < len; i++) {
-                var prettyName = lca[i].getPrettyName(i == len - 1 ? scope.container : lca[i + 1], i == len - 1);
-                builder = prettyName + "." + builder;
-            }
-            builder += this.getPrettyName(len == 0 ? scope.container : lca[0], len == 0) + this.getOptionalNameString();
-            return builder;
+
+            return externalSymbol;
         }
     }
 
     export class WithSymbol extends TypeSymbol {
         constructor (location: number, unitIndex: number, withType: Type) {
-            super("with", location, unitIndex, withType);
+            super("with", location, 4, unitIndex, withType);
         }
         public isWith() { return true; }
     }
@@ -455,7 +460,7 @@ module TypeScript {
         constructor (name: string, location: number, unitIndex: number, public canWrite: bool,
                       public field: ValueLocation) {
 
-            super(name, location, unitIndex);
+            super(name, location, name.length, unitIndex);
             this.name = name;
             this.location = location;
         }
@@ -496,15 +501,35 @@ module TypeScript {
                 return this;
             }
         }
+
+        public getDocComments(): Comment[] {
+            if (this.getter != null || this.setter != null) {
+                var comments : Comment[] = [];
+                if (this.getter != null) {
+                    comments = comments.concat(this.getter.getDocComments());
+                }
+                if (this.setter != null) {
+                    comments = comments.concat(this.setter.getDocComments());
+                }
+                return comments;
+            }
+            else if (this.declAST != null) {
+                return this.declAST.getDocComments();
+            }
+
+            return [];
+        }
+
     }
 
     export class ParameterSymbol extends InferenceSymbol {
         public name: string;
         public location: number;
-
+        private paramDocComment: string = null;
+        
         constructor (name: string, location: number, unitIndex: number,
                           public parameter: ValueLocation) {
-            super(name, location, unitIndex);
+            super(name, location, name.length, unitIndex);
 
             this.name = name;
             this.location = location;
@@ -546,12 +571,33 @@ module TypeScript {
                 return this;
             }
         }
+
+        public getParameterDocComments() {
+            if (!this.paramDocComment) {
+                var parameterComments: string[] = [];
+                if (this.container && this.container.declAST) {
+                    var fncDocComments = this.container.declAST.getDocComments();
+                    var paramComment = Comment.getParameterDocCommentText(this.name, fncDocComments);
+                    if (paramComment != "") {
+                        parameterComments.push(paramComment);
+                    }
+                }
+                var docComments = TypeScript.Comment.getDocCommentText(this.getDocComments());
+                if (docComments != "") {
+                    parameterComments.push(docComments);
+                }
+                
+                this.paramDocComment = parameterComments.join("\n");
+            }
+
+            return this.paramDocComment;
+        }
     }
 
     export class VariableSymbol extends InferenceSymbol {
 
         constructor (name: string, location: number, unitIndex: number, public variable: ValueLocation) {
-            super(name, location, unitIndex);
+            super(name, location, name.length, unitIndex);
         }
         public kind() { return SymbolKind.Variable; }
         public writeable() { return true; }

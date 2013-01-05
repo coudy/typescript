@@ -46,7 +46,7 @@ module FourSlash {
 
     // List of allowed metadata names
     var fileMetadataNames = ['Filename'];
-    var globalMetadataNames = ['Module', 'Target']; // Note: Neither actually supported at the moment
+    var globalMetadataNames = ['Module', 'Target', 'BaselineFile']; // Note: Only BaselineFile is actually supported at the moment
 
     export var currentTestState: TestState = null;
 
@@ -121,9 +121,21 @@ module FourSlash {
             }
         }
 
-        public verifyMemberListContains(symbol: string) {
+        public verifyNumberOfErrorsInCurrentFile(expected: number) {
+            var fileIndex = this.getScriptIndex(this.activeFile);
+            var errors = this.realLangSvc.getErrors(9999);
+            errors = errors.filter( (error: TypeScript.ErrorEntry) => error.unitIndex == fileIndex);
+            var actual = errors.length;
+            if (actual != expected) {
+                var errorMsg = "Actual number of errors (" + actual + ") does not match expected number (" + expected + ")";
+                IO.printLine(errorMsg);
+                throw new Error(errorMsg);
+            }
+        }
+
+        public verifyMemberListContains(symbol: string, type?: string, docComment?: string) {
             var members = this.getMemberListAtCaret();
-            this.assertItemInList(members.entries.map(c => c.name), symbol);
+            this.assertItemInCompletionList(members.entries, symbol, type, docComment);
         }
 
         public verifyMemberListDoesNotContain(symbol: string) {
@@ -133,9 +145,9 @@ module FourSlash {
             }
         }
 
-        public verifyCompletionListContains(symbol: string) {
+        public verifyCompletionListContains(symbol: string, type?: string, docComment?: string) {
             var completions = this.getCompletionListAtCaret();
-            this.assertItemInList(completions.entries.map(c => c.name), symbol);
+            this.assertItemInCompletionList(completions.entries, symbol, type, docComment);
         }
 
         public verifyCompletionListDoesNotContain(symbol: string) {
@@ -155,7 +167,11 @@ module FourSlash {
 
         public verifyQuickInfo(expectedTypeName: string) {
             var actualQuickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition);
-            assert.equal(actualQuickInfo.memberName.toString(), expectedTypeName);
+            var actualQuickInfoString = actualQuickInfo.memberName.toString();
+            if (actualQuickInfo.docComment != "") {
+                actualQuickInfoString += "\n" + actualQuickInfo.docComment;
+            }
+            assert.equal(actualQuickInfoString, expectedTypeName);
         }
 
         public verifyCurrentParameterIsVariable(isVariable: bool) {
@@ -164,6 +180,10 @@ module FourSlash {
 
         public verifyCurrentParameterHelpName(name: string) {
             assert.equal(this.getActiveParameter().name, name);
+        }
+
+        public verifyCurrentParameterHelpDocComment(docComment: string) {
+            assert.equal(this.getActiveParameter().docComment, docComment);
         }
 
         public verifyCurrentParameterHelpType(typeName: string) {
@@ -179,6 +199,11 @@ module FourSlash {
         public verifyCurrentSignatureHelpReturnType(returnTypeName: string) {
             var actualReturnType = this.getActiveSignatureHelp().returnType;
             assert.equal(actualReturnType, returnTypeName);
+        }
+
+        public verifyCurrentSignatureHelpDocComment(docComment: string) {
+            var actualDocComment = this.getActiveSignatureHelp().docComment;
+            assert.equal(actualDocComment, docComment);
         }
 
         public verifyCurrentSignatureHelpCount(expected: number) {
@@ -220,8 +245,36 @@ module FourSlash {
             // Same logic as in getActiveSignatureHelp - this value might be -1 until a parameter value actually gets typed
             var currentParam = help.actual.currentParameter;
             if (currentParam === -1) currentParam = 0;
-            
+
             return currentSig.parameters[currentParam];
+        }
+
+        public getBreakpointStatementLocation(pos: number) {
+            var spanInfo = this.realLangSvc.getBreakpointStatementAtPosition(this.activeFile.name, pos);
+            var resultString = "\n**Pos: " + pos + " SpanInfo: " + JSON2.stringify(spanInfo) + "\n** Statement: ";
+            if (spanInfo !== null) {
+                resultString = resultString + this.activeFile.content.substr(spanInfo.minChar, spanInfo.limChar - spanInfo.minChar);
+            }
+            return resultString;
+        }
+
+        public baselineCurrentFileBreakpointLocations() {
+            Harness.Baseline.runBaseline(
+                "Breakpoint Locations for " + this.activeFile.name,
+                this.testData.globalOptions['BaselineFile'],
+                () => {
+                    var fileLength = this.langSvc.getScriptSourceLength(this.getActiveFileIndex());
+                    var resultString = "";
+                    for (var pos = 0; pos < fileLength; pos++) {
+                        resultString = resultString + this.getBreakpointStatementLocation(pos);
+                    }
+                    return resultString;
+                },
+                true /* run immediately */);
+        }
+
+        public printBreakpointLocation(pos: number) {
+            IO.printLine(this.getBreakpointStatementLocation(pos));
         }
 
         public printCurrentParameterHelp() {
@@ -413,13 +466,51 @@ module FourSlash {
             return this.langSvc.positionToLineCol(this.activeFile.name, this.currentCaretPosition);
         }
 
-        private assertItemInList(items: any[], value: any) {
-            var index = items.indexOf(value);
-            if (index === -1) {
-                var itemsDigest = items.slice(0, 10);
-                if (items.length > 10) itemsDigest.push('...');
-                throw new Error('Expected "' + value + '" to be in list [' + items.map(elem => '"' + elem + '"').join(',') + ']');
+        private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string) {
+            var items: { name: string; type: string; docComment: string; }[] = completionList.map(element => {
+                return {
+                    name: element.name,
+                    type: element.type,
+                    docComment: element.docComment
+                };
+            });
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item.name == name) {
+                    if (docComment != undefined) {
+                        assert.equal(item.docComment, docComment);
+                    }
+                    if (type != undefined) {
+                        assert.equal(item.type, type);
+                    }
+                    return;
+                }
             }
+
+            var getItemString = (item: { name: string; type: string; docComment: string; }) => {
+                if (docComment == undefined && type == undefined) {
+                    return item.name;
+                }
+
+                var returnString = "\n{ name: " + item.name;
+                if (type != undefined) {
+                    returnString += ",type: " + item.type;
+                }
+                if (docComment != undefined) {
+                    returnString += ",docComment: " + item.docComment;
+                }
+                returnString += " }"
+
+                return returnString;
+            };
+
+            var itemsDigest = items.slice(0, 10);
+            var itemsString = items.map(elem => getItemString(elem)).join(",");
+            if (items.length > 10) {
+                itemsString += ', ...';
+            }
+            throw new Error('Expected "' + getItemString({ name: name, type: type, docComment: docComment }) + '" to be in list [' + itemsString + ']');
         }
 
         private getScriptIndex(file: FourSlashFile) {
@@ -508,11 +599,7 @@ module FourSlash {
         // Parse out the files and their metadata
         var testData = parseTestData(content);
 
-        // Log any bugs associated with the test
-        var bugs = content.match(/\bbug (\d+)/i);
-        if (bugs) {
-            bugs.forEach(bug => assert.bug(bug));
-        }
+        assert.bugs(content);
 
         currentTestState = new TestState(testData);
 
@@ -520,12 +607,12 @@ module FourSlash {
         if (fsCompiler === undefined) {
             // Set up the compiler
             var settings = new TypeScript.CompilationSettings();
-            settings.outputMany = false;
+            settings.outputOption = "fourslash.js";
             settings.resolve = true;
             fsCompiler = new TypeScript.TypeScriptCompiler(fsErrors, new TypeScript.NullLogger(), settings);
             
             // TODO: Figure out how to make the reference tags in the input file resolve correctly?
-            var tsFn = './tests/ls/fourslash/fourslash.ts';
+            var tsFn = './tests/cases/fourslash/fourslash.ts';
             fsCompiler.addUnit(IO.readFile(tsFn), tsFn);
             fsCompiler.addUnit(content, mockFilename);
             fsCompiler.addUnit(Harness.Compiler.libText, 'lib.d.ts', true);
@@ -538,7 +625,15 @@ module FourSlash {
 
         var result = '';
         fsCompiler.typeCheck();
-        fsCompiler.emit((s) => fsOutput);
+
+        var emitterIOHost: TypeScript.EmitterIOHost = {
+            createFile: (s) => fsOutput,
+            directoryExists: (s: string) => false,
+            fileExists: (s: string) => true,
+            resolvePath: (s: string)=>s
+        }
+
+        fsCompiler.emit(emitterIOHost);
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + filename + ': ' + fsErrors.lines.join('\r\n'));
         }
@@ -574,10 +669,7 @@ module FourSlash {
         // Split up the input file by line
         // Note: IE JS engine incorrectly handles consecutive delimiters here when using RegExp split, so
         // we have to string-based splitting instead and try to figure out the delimiting chars
-        var lines = contents.split('\r\n');
-        if (lines.length === 1) {
-            lines = contents.split('\n');
-        }
+        var lines = contents.split('\n');
 
         var markers: MarkerMap = {};
         var markerNames: string[] = [];
@@ -589,6 +681,11 @@ module FourSlash {
 
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
+            var lineLength = line.length;
+            
+            if (lineLength > 0 && line.charAt(lineLength - 1) == '\r') {
+                line = line.substr(0, lineLength - 1);
+            }
 
             if (line.substr(0, 4) === '////') {
                 // Subfile content line
