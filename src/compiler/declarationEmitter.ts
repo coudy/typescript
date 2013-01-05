@@ -26,10 +26,11 @@ module TypeScript {
 
     export class DeclarationEmitter implements AstWalkerWithDetailCallback.AstWalkerDetailCallback {
         private declFile: DeclFileWriter = null;
-        public indenter = new Indenter();
-        public declarationContainerStack: AST[] = [];
-        public isDottedModuleName: bool[] = [];
-        public ignoreCallbackAst: AST = null;
+        private indenter = new Indenter();
+        private declarationContainerStack: AST[] = [];
+        private isDottedModuleName: bool[] = [];
+        private dottedModuleEmit: string;
+        private ignoreCallbackAst: AST = null;
         private singleDeclFile: DeclFileWriter = null;
         private varListCount: number = 0;
 
@@ -102,8 +103,8 @@ module TypeScript {
             return true;
         }
 
-        private emitDeclFlags(declFlags: DeclFlags, typeString: string) {
-            this.emitIndent();
+        private getDeclFlagsString(declFlags: DeclFlags, typeString: string) {
+            var result = this.getIndentString();
 
             // Accessor strings
             var accessorString = "";
@@ -119,28 +120,34 @@ module TypeScript {
             if (container.nodeType == NodeType.ModuleDeclaration &&
                 hasFlag((<ModuleDeclaration>container).modFlags, ModuleFlags.IsWholeFile) &&
                 hasFlag(declFlags, DeclFlags.Exported)) {
-                this.declFile.Write("export ");
+                result += "export ";
             }
 
             // Static/public/private/global declare
             if (hasFlag(declFlags, DeclFlags.LocalStatic) || hasFlag(declFlags, DeclFlags.Static)) {
-                this.declFile.Write("static " + accessorString);
+                result += "static " + accessorString;
             }
             else {
                 if (hasFlag(declFlags, DeclFlags.Private)) {
-                    this.declFile.Write("private " + accessorString);
+                    result += "private " + accessorString;
                 }
                 else if (hasFlag(declFlags, DeclFlags.Public)) {
-                    this.declFile.Write("public " + accessorString);
+                    result += "public " + accessorString;
                 }
                 else {
                     if (accessorString == "") {
-                        this.declFile.Write(typeString + " ");
+                        result += typeString + " ";
                     } else {
-                        this.declFile.Write(accessorString);
+                        result += accessorString;
                     }
                 }
             }
+
+            return result;
+        }
+
+        private emitDeclFlags(declFlags: DeclFlags, typeString: string) {
+            this.declFile.Write(this.getDeclFlagsString(declFlags, typeString));
         }
 
         private canEmitTypeAnnotationSignature(declFlag: DeclFlags = DeclFlags.None) {
@@ -672,22 +679,27 @@ module TypeScript {
 
             if (pre) {
                 if (this.emitDottedModuleName()) {
-                    this.declFile.Write(".");
+                    this.dottedModuleEmit += ".";
                 } else {
-                    this.emitDeclarationComments(moduleDecl);
-                    this.emitDeclFlags(ToDeclFlags(moduleDecl.modFlags), "module");
+                    this.dottedModuleEmit = this.getDeclFlagsString(ToDeclFlags(moduleDecl.modFlags), "module");
                 }
-                this.declFile.Write(moduleDecl.name.text);
+                this.dottedModuleEmit += moduleDecl.name.text;
 
                 var isCurrentModuleDotted = (moduleDecl.members.members.length == 1 &&
                     moduleDecl.members.members[0].nodeType == NodeType.ModuleDeclaration &&
                     !(<ModuleDeclaration>moduleDecl.members.members[0]).isEnum() &&
                     hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).modFlags, ModuleFlags.Exported));
 
+                // Module is dotted only if it does not have doc comments for it
+                var moduleDeclComments = moduleDecl.getDocComments();
+                isCurrentModuleDotted = isCurrentModuleDotted && (moduleDeclComments == null || moduleDeclComments.length == 0);
+
                 this.isDottedModuleName.push(isCurrentModuleDotted);
                 this.pushDeclarationContainer(moduleDecl);
 
                 if (!isCurrentModuleDotted) {
+                    this.emitDeclarationComments(moduleDecl);
+                    this.declFile.Write(this.dottedModuleEmit);
                     this.declFile.WriteLine(" {");
                     this.indenter.increaseIndent();
                 }
