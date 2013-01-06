@@ -1420,12 +1420,18 @@ module TypeScript {
                         this.reportParseError("max number of args exceeded");
                         break;
                     }
-                    var arg = this.parseExpr(ErrorRecoverySet.Comma | errorRecoverySet,
-                                        OperatorPrecedence.Comma, false, TypeContext.NoTypes);
+
+                    var arg = this.parseExpr(
+                        ErrorRecoverySet.Comma | errorRecoverySet,
+                        OperatorPrecedence.Comma, 
+                        /*allowIn:*/ true,
+                        TypeContext.NoTypes);
+
                     args.append(arg);
                     if (this.currentToken.tokenId != TokenID.Comma) {
                         break;
                     }
+
                     this.currentToken = this.scanner.scan();
                 }
             }
