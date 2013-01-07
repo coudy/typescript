@@ -128,8 +128,12 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         return (this.data() & Constants.NodeRegularExpressionTokenMask) !== 0;
     }
 
+    // True if this node was parsed while the parser was in 'strict' mode.  A node parsed in strict
+    // mode cannot be reused if the parser is non-strict mode (and vice versa).  This is because 
+    // the parser parses things differently in strict mode and thus the tokens may be interpretted
+    // differently if the mode is changed. 
     public parsedInStrictMode(): bool {
-        throw Errors.notYetImplemented();
+        return (this.data() & Constants.NodeParsedInStrictModeMask) !== 0;
     }
 
     public fullWidth(): number {

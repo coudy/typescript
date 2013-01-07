@@ -919,7 +919,7 @@ var SyntaxNode = (function () {
         return (this.data() & 4 /* NodeRegularExpressionTokenMask */ ) !== 0;
     };
     SyntaxNode.prototype.parsedInStrictMode = function () {
-        throw Errors.notYetImplemented();
+        return (this.data() & 8 /* NodeParsedInStrictModeMask */ ) !== 0;
     };
     SyntaxNode.prototype.fullWidth = function () {
         return this.data() >>> 4 /* NodeFullWidthShift */ ;
