@@ -381,7 +381,7 @@ module Syntax {
         return separatedListAndValidate(nodes, false);
     }
 
-    export function separatedListAndValidate(nodes: ISyntaxNodeOrToken[], validate: bool): ISeparatedSyntaxList {
+    function separatedListAndValidate(nodes: ISyntaxNodeOrToken[], validate: bool): ISeparatedSyntaxList {
         if (nodes === undefined || nodes === null || nodes.length === 0) {
             return emptySeparatedList;
         }

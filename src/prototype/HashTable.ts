@@ -13,7 +13,7 @@ module Collections {
     }
 
     export class HashTable {
-        // TODO: figure out why the type checker dosn't like "StringTableEntry[]" here.
+        // TODO: figure out why the type checker dosn't like "HashTableEntry[]" here.
         private entries/*: HashTableEntry[]*/ = [];
         private count: number = 0;
 

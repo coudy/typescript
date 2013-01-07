@@ -1817,7 +1817,6 @@ var Syntax;
         }
         return new NormalSeparatedSyntaxList(nodes);
     }
-    Syntax.separatedListAndValidate = separatedListAndValidate;
 })(Syntax || (Syntax = {}));
 var Syntax;
 (function (Syntax) {
