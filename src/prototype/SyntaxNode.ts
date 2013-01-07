@@ -58,6 +58,10 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             result.hasRegularExpressionToken = true;
         }
 
+        if (this.parsedInStrictMode()) {
+            result.parsedInStrictMode = true;
+        }
+
         for (var name in this) {
             if (name !== "_data") {
                 var value = this[name];

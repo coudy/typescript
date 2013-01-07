@@ -876,6 +876,9 @@ var SyntaxNode = (function () {
         if(this.hasRegularExpressionToken()) {
             result.hasRegularExpressionToken = true;
         }
+        if(this.parsedInStrictMode()) {
+            result.parsedInStrictMode = true;
+        }
         for(var name in this) {
             if(name !== "_data") {
                 var value = this[name];
