@@ -27096,7 +27096,11 @@ var Parser;
             return this.previousTokenStart() + this.previousToken().width();
         };
         ParserImpl.prototype.currentNode = function () {
-            return this.source.currentNode();
+            var node = this.source.currentNode();
+            if(node === null || node.parsedInStrictMode() !== this.isInStrictMode) {
+                return null;
+            }
+            return node;
         };
         ParserImpl.prototype.currentToken = function () {
             return this.source.currentToken();

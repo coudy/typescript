@@ -1262,7 +1262,22 @@ module Parser {
         }
 
         private currentNode(): SyntaxNode {
-            return this.source.currentNode();
+            var node = this.source.currentNode();
+
+            // We can only reuse a node if it was parsed under the same strict mode that we're 
+            // currently in.  i.e. if we originally parsed a node in non-strict mode, but then
+            // the user added 'using strict' at hte top of the file, then we can't use that node
+            // again as the presense of strict mode may cause us to parse the tokens in the file
+            // differetly.
+            //
+            // Note: we *can* reuse tokens when the strict mode changes.  That's because tokens
+            // are unaffected by strict mode.  It's just the parser will decide what to do with it
+            // differently depending on what mode it is in.
+            if (node === null || node.parsedInStrictMode() !== this.isInStrictMode) {
+                return null;
+            }
+
+            return node;
         }
 
         private currentToken(): ISyntaxToken {
