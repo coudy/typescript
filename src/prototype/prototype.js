@@ -27376,10 +27376,14 @@ var Parser;
             }
             return sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
         };
+        ParserImpl.prototype.setStrictMode = function (isInStrictMode) {
+            this.isInStrictMode = isInStrictMode;
+            this.factory = isInStrictMode ? Syntax.strictModeFactory : Syntax.normalModeFactory;
+        };
         ParserImpl.prototype.parseSourceUnit = function () {
             var savedIsInStrictMode = this.isInStrictMode;
             var moduleElements = this.parseSyntaxList(1 /* SourceUnit_ModuleElements */ , ParserImpl.updateStrictModeState);
-            this.isInStrictMode = savedIsInStrictMode;
+            this.setStrictMode(savedIsInStrictMode);
             return this.factory.sourceUnit(moduleElements, this.currentToken());
         };
         ParserImpl.updateStrictModeState = function updateStrictModeState(parser, items) {
@@ -27390,7 +27394,7 @@ var Parser;
                         return;
                     }
                 }
-                parser.isInStrictMode = ParserImpl.isUseStrictDirective(items[items.length - 1]);
+                parser.setStrictMode(ParserImpl.isUseStrictDirective(items[items.length - 1]));
             }
         }
         ParserImpl.prototype.isModuleElement = function () {
@@ -28912,7 +28916,7 @@ var Parser;
             if(openBraceToken.width() > 0) {
                 var savedIsInStrictMode = this.isInStrictMode;
                 statements = this.parseSyntaxList(32 /* Block_Statements */ , ParserImpl.updateStrictModeState);
-                this.isInStrictMode = savedIsInStrictMode;
+                this.setStrictMode(savedIsInStrictMode);
             }
             var closeBraceToken = this.eatToken(70 /* CloseBraceToken */ );
             return this.factory.block(openBraceToken, statements, closeBraceToken);

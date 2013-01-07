@@ -1636,13 +1636,18 @@ module Parser {
             return sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
         }
 
+        private setStrictMode(isInStrictMode: bool) {
+            this.isInStrictMode = isInStrictMode;
+            this.factory = isInStrictMode ? Syntax.strictModeFactory : Syntax.normalModeFactory;
+        }
+
         private parseSourceUnit(): SourceUnitSyntax {
             // Note: technically we don't need to save and restore this here.  After all, this the top
             // level parsing entrypoint.  So it will always start as false and be reset to false when the
             // loop ends.  However, for sake of symmetry and consistancy we do this.
             var savedIsInStrictMode = this.isInStrictMode;
             var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, ParserImpl.updateStrictModeState);
-            this.isInStrictMode = savedIsInStrictMode;
+            this.setStrictMode(savedIsInStrictMode);
 
             return this.factory.sourceUnit(moduleElements, this.currentToken());
         }
@@ -1657,7 +1662,7 @@ module Parser {
                     }
                 }
 
-                parser.isInStrictMode = ParserImpl.isUseStrictDirective(items[items.length - 1]);
+                parser.setStrictMode(ParserImpl.isUseStrictDirective(items[items.length - 1]));
             }
         }
 
@@ -3962,7 +3967,7 @@ module Parser {
             if (openBraceToken.width() > 0) {
                 var savedIsInStrictMode = this.isInStrictMode;
                 statements = this.parseSyntaxList(ListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
-                this.isInStrictMode = savedIsInStrictMode;
+                this.setStrictMode(savedIsInStrictMode);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
