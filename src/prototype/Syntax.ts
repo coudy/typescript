@@ -1,7 +1,8 @@
+/// <reference path='SyntaxFactory.generated.ts' />
 
 module Syntax {
     export function emptySourceUnit() {
-        return new SourceUnitSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
+        return Syntax.normalModeFactory.sourceUnit(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
     }
 
     export function nodeStructuralEquals(node1: SyntaxNode, node2: SyntaxNode): bool {
@@ -141,6 +142,6 @@ module Syntax {
     }
 
     export function assignmentExpression(left: IExpressionSyntax, token: ISyntaxToken, right: IExpressionSyntax): BinaryExpressionSyntax {
-        return new BinaryExpressionSyntax(SyntaxKind.AssignmentExpression, left, token, right);
+        return Syntax.normalModeFactory.binaryExpression(SyntaxKind.AssignmentExpression, left, token, right);
     }
 }

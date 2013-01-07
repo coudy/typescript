@@ -74,7 +74,7 @@ interface ISyntaxVisitor {
     visitTryStatement(node: TryStatementSyntax): any;
     visitCatchClause(node: CatchClauseSyntax): any;
     visitFinallyClause(node: FinallyClauseSyntax): any;
-    visitLabeledStatement(node: LabeledStatement): any;
+    visitLabeledStatement(node: LabeledStatementSyntax): any;
     visitDoStatement(node: DoStatementSyntax): any;
     visitTypeOfExpression(node: TypeOfExpressionSyntax): any;
     visitDeleteExpression(node: DeleteExpressionSyntax): any;
@@ -379,7 +379,7 @@ class SyntaxVisitor implements ISyntaxVisitor {
         return this.defaultVisit(node);
     }
 
-    private visitLabeledStatement(node: LabeledStatement): any {
+    private visitLabeledStatement(node: LabeledStatementSyntax): any {
         return this.defaultVisit(node);
     }
 

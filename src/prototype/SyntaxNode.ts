@@ -7,6 +7,9 @@
 class SyntaxNode implements ISyntaxNodeOrToken {
     private _data: number = -1;
 
+    constructor(parsedInStrictMode: bool) {
+    }
+
     public isNode(): bool{ return true; }
     public isToken(): bool { return false; }
     public isTrivia(): bool { return false; }
@@ -122,6 +125,10 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     // token which we would then realize was a regex.
     public hasRegularExpressionToken(): bool {
         return (this.data() & Constants.NodeRegularExpressionTokenMask) !== 0;
+    }
+
+    public parsedInStrictMode(): bool {
+        throw Errors.notYetImplemented();
     }
 
     public fullWidth(): number {

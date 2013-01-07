@@ -878,7 +878,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'block', type: 'BlockSyntax' }]
     },
     <any>{
-        name: 'LabeledStatement',
+        name: 'LabeledStatementSyntax',
         baseType: 'SyntaxNode',
         interfaces: ['IStatementSyntax'],
         children: [
@@ -1183,15 +1183,12 @@ function generateConstructor(definition: ITypeDefinition): string {
         var child = definition.children[i];
 
         result += child.name + ": " + getType(child);
-
-        if (i < definition.children.length - 1) {
-            result += ",\r\n                ";
-        }
+        result += ",\r\n                ";
     }
 
-    result += ") {\r\n";
+    result += "parsedInStrictMode: bool) {\r\n";
 
-    result += "        super();\r\n";
+    result += "        super(parsedInStrictMode);\r\n";
     if (definition.children.length > 0) {
         result += "\r\n";
     }
@@ -1251,10 +1248,6 @@ function generateFactory1Method(definition: ITypeDefinition): string {
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
 
-        if (i > 0) {
-            result += ", ";
-        }
-
         if (!isOptional(child)) {
             result += child.name;
         }
@@ -1267,9 +1260,11 @@ function generateFactory1Method(definition: ITypeDefinition): string {
         else {
             result += "null";
         }
+
+        result += ", ";
     }
 
-    result += ");\r\n";
+    result += "/*parsedInStrictMode:*/ false);\r\n";
     result += "    }\r\n";
 
     return result;
@@ -1354,31 +1349,29 @@ function generateFactory2Method(definition: ITypeDefinition): string {
     for (var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
 
-        if (i > 0) {
-            result += ",";
-        }
-
         if (isMandatory(child)) {
-            result += "\r\n            " + child.name;
+            result += child.name;
         }
         else if (child.isList) {
-            result += "\r\n            Syntax.emptyList";
+            result += "Syntax.emptyList";
         }
         else if (child.isSeparatedList) {
-            result += "\r\n            Syntax.emptySeparatedList";
+            result += "Syntax.emptySeparatedList";
         }
         else if (isOptional(child)) {
-            result += "\r\n            null";
+            result += "null";
         }
         else if (child.isToken) {
-            result += "\r\n            Syntax.token(SyntaxKind." + tokenKinds(child)[0] + ")";
+            result += "Syntax.token(SyntaxKind." + tokenKinds(child)[0] + ")";
         }
         else {
-            result += "\r\n            " + child.type + ".create1()";
+            result += child.type + ".create1()";
         }
+
+        result += ", ";
     }
 
-    result += ");\r\n";
+    result += "/*parsedInStrictMode:*/ false);\r\n";
     result += "    }\r\n";
 
     return result;
@@ -1784,14 +1777,11 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
         for (var i = 0; i < definition.children.length; i++) {
             var child: IMemberDefinition = definition.children[i];
 
-            if (i !== 0) {
-                result += ", ";
-            }
-
             result += getSafeName(child);
+            result += ", ";
         }
 
-        result += ");\r\n";
+        result += "/*parsedInStrictMode:*/ false);\r\n";
     }
 
     result += "    }\r\n";
@@ -2826,7 +2816,8 @@ function generateFactory(): string {
 
     result += "    }\r\n\r\n";
 
-    result += "    class NormalModeFactory implements IFactory {\r\n";
+    // TODO: stop exporting these once compiler bugs are fixed.
+    result += "    export class NormalModeFactory implements IFactory {\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -2845,15 +2836,44 @@ function generateFactory(): string {
         result += "            return new " + definition.name + "(";
 
         for (var j = 0; j < definition.children.length; j++) {
+            var child = definition.children[j];
+            result += getSafeName(child);
+            result += ", ";
+        }
+
+        result += "/*parsedInStrictMode:*/ false);\r\n";
+
+        result += "        }\r\n"
+    }
+
+    result += "    }\r\n\r\n";
+    
+    // TODO: stop exporting these once compiler bugs are fixed.
+    result += "    export class StrictModeFactory implements IFactory {\r\n";
+
+    for (var i = 0; i < definitions.length; i++) {
+        var definition = definitions[i];
+        result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
+
+        for (var j = 0; j < definition.children.length; j++) {
             if (j > 0) {
                 result += ", ";
             }
 
             var child = definition.children[j];
-            result += getSafeName(child);
+            result += getSafeName(child) + ": " + getType(child);
         }
 
-        result += ");\r\n";
+        result += "): " + definition.name + " {\r\n";
+        result += "            return new " + definition.name + "(";
+
+        for (var j = 0; j < definition.children.length; j++) {
+            var child = definition.children[j];
+            result += getSafeName(child);
+            result += ", ";
+        }
+
+        result += "/*parsedInStrictMode:*/ true);\r\n";
 
         result += "        }\r\n"
     }
@@ -2862,6 +2882,7 @@ function generateFactory(): string {
 
 
     result += "    export var normalModeFactory: IFactory = new NormalModeFactory();\r\n";
+    result += "    export var strictModeFactory: IFactory = new StrictModeFactory();\r\n";
     result += "}";
 
     return result;

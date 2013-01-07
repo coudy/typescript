@@ -1644,7 +1644,7 @@ module Parser {
             var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, ParserImpl.updateStrictModeState);
             this.isInStrictMode = savedIsInStrictMode;
 
-            return new SourceUnitSyntax(moduleElements, this.currentToken());
+            return this.factory.sourceUnit(moduleElements, this.currentToken());
         }
 
         private static updateStrictModeState(parser: ParserImpl, items: any[]): void {
@@ -1721,7 +1721,7 @@ module Parser {
             var moduleReference = this.parseModuleReference();
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
+            return this.factory.importDeclaration(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
         }
 
         private parseModuleReference(): ModuleReferenceSyntax {
@@ -1746,12 +1746,12 @@ module Parser {
             var stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
-            return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
+            return this.factory.externalModuleReference(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
         }
 
         private parseModuleNameModuleReference(): ModuleNameModuleReferenceSyntax {
             var name = this.parseName();
-            return new ModuleNameModuleReferenceSyntax(name);
+            return this.factory.moduleNameModuleReference(name);
         }
 
         // NOTE: This will allow all identifier names.  Even the ones that are keywords.
@@ -1776,7 +1776,7 @@ module Parser {
                 isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
                 identifier = this.eatIdentifierToken();
 
-                current = new QualifiedNameSyntax(current, dotToken, identifier);
+                current = this.factory.qualifiedName(current, dotToken, identifier);
             }
 
             return current;
@@ -1808,7 +1808,7 @@ module Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
-            return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier,
+            return this.factory.enumDeclaration(exportKeyword, enumKeyword, identifier,
                 openBraceToken, variableDeclarators, closeBraceToken);
         }
 
@@ -1856,7 +1856,7 @@ module Parser {
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
-            return new ClassDeclarationSyntax(
+            return this.factory.classDeclaration(
                 exportKeyword, declareKeyword, classKeyword, identifier, extendsClause,
                 implementsClause, openBraceToken, classElements, closeBraceToken);
         }
@@ -1918,7 +1918,7 @@ module Parser {
             var typeAnnotation = this.parseOptionalTypeAnnotation();
             var block = this.parseBlock();
 
-            return new GetMemberAccessorDeclarationSyntax(
+            return this.factory.getMemberAccessorDeclaration(
                 publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
         }
 
@@ -1931,7 +1931,7 @@ module Parser {
             var parameterList = this.parseParameterList();
             var block = this.parseBlock();
 
-            return new SetMemberAccessorDeclarationSyntax(
+            return this.factory.setMemberAccessorDeclaration(
                 publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
         }
 
@@ -1995,7 +1995,7 @@ module Parser {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
             }
 
-            return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
+            return this.factory.constructorDeclaration(constructorKeyword, parameterList, block, semicolonToken);
         }
 
         private isMemberFunctionDeclaration(): bool {
@@ -2036,7 +2036,7 @@ module Parser {
                 semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
             }
 
-            return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
+            return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
         }
 
         private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
@@ -2052,7 +2052,7 @@ module Parser {
             var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
             var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
+            return this.factory.memberVariableDeclaration(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
         }
 
         private parseClassElement(): IClassElementSyntax {
@@ -2113,7 +2113,7 @@ module Parser {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
             }
 
-            return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
+            return this.factory.functionDeclaration(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
         }
 
         private isModuleDeclaration(): bool {
@@ -2183,7 +2183,7 @@ module Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
-            return new ModuleDeclarationSyntax(
+            return this.factory.moduleDeclaration(
                 exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral,
                 openBraceToken, moduleElements, closeBraceToken);
         }
@@ -2213,7 +2213,7 @@ module Parser {
             }
 
             var objectType = this.parseObjectType();
-            return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, objectType);
+            return this.factory.interfaceDeclaration(exportKeyword, interfaceKeyword, identifier, extendsClause, objectType);
         }
 
         private parseObjectType(): ObjectTypeSyntax {
@@ -2225,7 +2225,7 @@ module Parser {
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
-            return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
+            return this.factory.objectType(openBraceToken, typeMembers, closeBraceToken);
         }
 
         private isTypeMember(): bool {
@@ -2274,7 +2274,7 @@ module Parser {
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
+            return this.factory.constructSignature(newKeyword, parameterList, typeAnnotation);
         }
 
         private parseIndexSignature(): IndexSignatureSyntax {
@@ -2285,7 +2285,7 @@ module Parser {
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
+            return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
         }
 
         private parseFunctionSignature(): FunctionSignatureSyntax {
@@ -2295,7 +2295,7 @@ module Parser {
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
+            return this.factory.functionSignature(identifier, questionToken, parameterList, typeAnnotation);
         }
 
         private parsePropertySignature(): PropertySignatureSyntax {
@@ -2305,7 +2305,7 @@ module Parser {
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
+            return this.factory.propertySignature(identifier, questionToken, typeAnnotation);
         }
 
         private isCallSignature(): bool {
@@ -2353,7 +2353,7 @@ module Parser {
             var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
             var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
 
-            return new ExtendsClauseSyntax(extendsKeyword, typeNames);
+            return this.factory.extendsClause(extendsKeyword, typeNames);
         }
 
         private isImplementsClause(): bool {
@@ -2366,7 +2366,7 @@ module Parser {
             var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
             var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
 
-            return new ImplementsClauseSyntax(implementsKeyword, typeNames);
+            return this.factory.implementsClause(implementsKeyword, typeNames);
         }
 
         private isStatement(): bool {
@@ -2482,7 +2482,7 @@ module Parser {
             var debuggerKeyword = this.eatKeyword(SyntaxKind.DebuggerKeyword);
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
+            return this.factory.debuggerStatement(debuggerKeyword, semicolonToken);
         }
 
         private isDoStatement(): bool {
@@ -2505,21 +2505,21 @@ module Parser {
             //  do;while(0)x will have a semicolon inserted before x.
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ true);
 
-            return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
+            return this.factory.doStatement(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
         }
 
         private isLabeledStatement(): bool {
             return this.isIdentifier(this.currentToken()) && this.peekToken(1).tokenKind === SyntaxKind.ColonToken;
         }
 
-        private parseLabeledStatement(): LabeledStatement {
+        private parseLabeledStatement(): LabeledStatementSyntax {
             // Debug.assert(this.isLabeledStatement());
 
             var identifier = this.eatIdentifierToken();
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var statement = this.parseStatement();
 
-            return new LabeledStatement(identifier, colonToken, statement);
+            return this.factory.labeledStatement(identifier, colonToken, statement);
         }
 
         private isTryStatement(): bool {
@@ -2545,7 +2545,7 @@ module Parser {
             // TODO: Report error if both catch and finally clauses are missing.
             // (Alternatively, report that at semantic checking time).
 
-            return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
+            return this.factory.tryStatement(tryKeyword, block, catchClause, finallyClause);
         }
 
         private isCatchClause(): bool {
@@ -2561,7 +2561,7 @@ module Parser {
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var block = this.parseBlock();
 
-            return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
+            return this.factory.catchClause(catchKeyword, openParenToken, identifier, closeParenToken, block);
         }
 
         private isFinallyClause(): bool {
@@ -2574,7 +2574,7 @@ module Parser {
             var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
             var block = this.parseBlock();
 
-            return new FinallyClauseSyntax(finallyKeyword, block);
+            return this.factory.finallyClause(finallyKeyword, block);
         }
 
         private isWithStatement(): bool {
@@ -2590,7 +2590,7 @@ module Parser {
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var statement = this.parseStatement();
 
-            return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
+            return this.factory.withStatement(withKeyword, openParenToken, condition, closeParenToken, statement);
         }
 
         private isWhileStatement(): bool {
@@ -2606,7 +2606,7 @@ module Parser {
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var statement = this.parseStatement();
 
-            return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
+            return this.factory.whileStatement(whileKeyword, openParenToken, condition, closeParenToken, statement);
         }
 
         private isEmptyStatement(): bool {
@@ -2617,7 +2617,7 @@ module Parser {
             // Debug.assert(this.isEmptyStatement());
 
             var semicolonToken = this.eatToken(SyntaxKind.SemicolonToken);
-            return new EmptyStatementSyntax(semicolonToken);
+            return this.factory.emptyStatement(semicolonToken);
         }
 
         private isForOrForInStatement(): bool {
@@ -2676,7 +2676,7 @@ module Parser {
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var statement = this.parseStatement();
 
-            return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration,
+            return this.factory.forInStatement(forKeyword, openParenToken, variableDeclaration,
                 initializer, inKeyword, expression, closeParenToken, statement);
         }
 
@@ -2735,7 +2735,7 @@ module Parser {
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var statement = this.parseStatement();
 
-            return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer,
+            return this.factory.forStatement(forKeyword, openParenToken, variableDeclaration, initializer,
                 firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
         }
 
@@ -2758,7 +2758,7 @@ module Parser {
             }
 
             var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
-            return new BreakStatementSyntax(breakKeyword, identifier, semicolon);
+            return this.factory.breakStatement(breakKeyword, identifier, semicolon);
         }
 
         private isContinueStatement(): bool {
@@ -2780,7 +2780,7 @@ module Parser {
             }
 
             var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
-            return new ContinueStatementSyntax(continueKeyword, identifier, semicolon);
+            return this.factory.continueStatement(continueKeyword, identifier, semicolon);
         }
 
         private isSwitchStatement(): bool {
@@ -2803,7 +2803,7 @@ module Parser {
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
-            return new SwitchStatementSyntax(switchKeyword, openParenToken, expression,
+            return this.factory.switchStatement(switchKeyword, openParenToken, expression,
                 closeParenToken, openBraceToken, switchClauses, closeBraceToken);
         }
 
@@ -2848,7 +2848,7 @@ module Parser {
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
 
-            return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
+            return this.factory.caseSwitchClause(caseKeyword, expression, colonToken, statements);
         }
 
         private parseDefaultSwitchClause(): DefaultSwitchClauseSyntax {
@@ -2858,7 +2858,7 @@ module Parser {
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
 
-            return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
+            return this.factory.defaultSwitchClause(defaultKeyword, colonToken, statements);
         }
 
         private isThrowStatement(): bool {
@@ -2884,7 +2884,7 @@ module Parser {
 
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
+            return this.factory.throwStatement(throwKeyword, expression, semicolonToken);
         }
 
         private isReturnStatement(): bool {
@@ -2903,7 +2903,7 @@ module Parser {
 
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
+            return this.factory.returnStatement(returnKeyword, expression, semicolonToken);
         }
 
         private isExpressionStatement(): bool {
@@ -2930,7 +2930,7 @@ module Parser {
             // Debug.assert(this.isAssignmentOrOmittedExpression());
 
             if (this.currentToken().tokenKind === SyntaxKind.CommaToken) {
-                return new OmittedExpressionSyntax();
+                return this.factory.omittedExpression();
             }
 
             return this.parseAssignmentExpression(/*allowIn:*/ true);
@@ -3017,7 +3017,7 @@ module Parser {
 
             var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return new ExpressionStatementSyntax(expression, semicolon);
+            return this.factory.expressionStatement(expression, semicolon);
         }
 
         private isIfStatement(): bool {
@@ -3038,7 +3038,7 @@ module Parser {
                 elseClause = this.parseElseClause();
             }
 
-            return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
+            return this.factory.ifStatement(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
         }
 
         private isElseClause(): bool {
@@ -3051,7 +3051,7 @@ module Parser {
             var elseKeyword = this.eatKeyword(SyntaxKind.ElseKeyword);
             var statement = this.parseStatement();
 
-            return new ElseClauseSyntax(elseKeyword, statement);
+            return this.factory.elseClause(elseKeyword, statement);
         }
 
         private isVariableStatement(): bool {
@@ -3078,7 +3078,7 @@ module Parser {
             var variableDeclaration = this.parseVariableDeclaration(/*allowIn:*/ true);
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
-            return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
+            return this.factory.variableStatement(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
         }
 
         private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {
@@ -3090,7 +3090,7 @@ module Parser {
                 : ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn;
 
             var variableDeclarators = this.parseSeparatedSyntaxList(listParsingState);
-            return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
+            return this.factory.variableDeclaration(varKeyword, variableDeclarators);
         }
 
         private isVariableDeclarator(): bool {
@@ -3118,7 +3118,7 @@ module Parser {
                 }
             }
 
-            return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
+            return this.factory.variableDeclarator(identifier, typeAnnotation, equalsValueClause);
         }
 
         private isEqualsValueClause(): bool {
@@ -3131,7 +3131,7 @@ module Parser {
             var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
             var value = this.parseAssignmentExpression(allowIn);
 
-            return new EqualsValueClauseSyntax(equalsToken, value);
+            return this.factory.equalsValueClause(equalsToken, value);
         }
 
         private parseExpression(allowIn: bool): IExpressionSyntax {
@@ -3154,7 +3154,7 @@ module Parser {
                 var operatorToken = this.eatAnyToken();
 
                 var operand = this.parseUnaryExpression();
-                return new PrefixUnaryExpressionSyntax(operatorKind, operatorToken, operand);
+                return this.factory.prefixUnaryExpression(operatorKind, operatorToken, operand);
             }
             else {
                 return this.parseTerm(/*allowInvocation*/ true, /*insideObjectCreation:*/ false);
@@ -3205,7 +3205,7 @@ module Parser {
 
                     // Precedence is okay, so we'll "take" this operator.
                     var operatorToken = this.eatAnyToken();
-                    leftOperand = new BinaryExpressionSyntax(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
+                    leftOperand = this.factory.binaryExpression(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
                     continue;
                 }
 
@@ -3223,7 +3223,7 @@ module Parser {
                     var colon = this.eatToken(SyntaxKind.ColonToken);
 
                     var whenFalseExpression = this.parseAssignmentExpression(allowIn);
-                    leftOperand = new ConditionalExpressionSyntax(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
+                    leftOperand = this.factory.conditionalExpression(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
                     continue;
                 }
 
@@ -3277,7 +3277,7 @@ module Parser {
                             return expression;
                         }
 
-                        expression = new InvocationExpressionSyntax(expression, this.parseArgumentList());
+                        expression = this.factory.invocationExpression(expression, this.parseArgumentList());
                         break;
 
                     case SyntaxKind.OpenBracketToken:
@@ -3292,12 +3292,12 @@ module Parser {
                             return expression;
                         }
 
-                        expression = new PostfixUnaryExpressionSyntax(
+                        expression = this.factory.postfixUnaryExpression(
                             SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
                         break;
 
                     case SyntaxKind.DotToken:
-                        expression = new MemberAccessExpressionSyntax(
+                        expression = this.factory.memberAccessExpression(
                             expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
                         break;
 
@@ -3318,7 +3318,7 @@ module Parser {
             var arguments = this.parseSeparatedSyntaxList(ListParsingState.ArgumentList_AssignmentExpressions);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
-            return new ArgumentListSyntax(openParenToken, arguments, closeParenToken);
+            return this.factory.argumentList(openParenToken, arguments, closeParenToken);
         }
 
         private parseElementAccessExpression(expression: IExpressionSyntax): ElementAccessExpressionSyntax {
@@ -3328,7 +3328,7 @@ module Parser {
             var argumentExpression = this.parseExpression(/*allowIn:*/ true);
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
-            return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
+            return this.factory.elementAccessExpression(expression, openBracketToken, argumentExpression, closeBracketToken);
         }
 
         private parseTermWorker(insideObjectCreation: bool): IUnaryExpressionSyntax {
@@ -3527,7 +3527,7 @@ module Parser {
             var typeOfKeyword = this.eatKeyword(SyntaxKind.TypeOfKeyword);
             var expression = this.parseUnaryExpression();
 
-            return new TypeOfExpressionSyntax(typeOfKeyword, expression);
+            return this.factory.typeOfExpression(typeOfKeyword, expression);
         }
 
         private parseDeleteExpression(): DeleteExpressionSyntax {
@@ -3536,7 +3536,7 @@ module Parser {
             var deleteKeyword = this.eatKeyword(SyntaxKind.DeleteKeyword);
             var expression = this.parseUnaryExpression();
 
-            return new DeleteExpressionSyntax(deleteKeyword, expression);
+            return this.factory.deleteExpression(deleteKeyword, expression);
         }
 
         private parseVoidExpression(): VoidExpressionSyntax {
@@ -3545,7 +3545,7 @@ module Parser {
             var voidKeyword = this.eatKeyword(SyntaxKind.VoidKeyword);
             var expression = this.parseUnaryExpression();
 
-            return new VoidExpressionSyntax(voidKeyword, expression);
+            return this.factory.voidExpression(voidKeyword, expression);
         }
 
         private parseSuperExpression(): IUnaryExpressionSyntax {
@@ -3568,7 +3568,7 @@ module Parser {
             var callSignature = this.parseCallSignature();
             var block = this.parseBlock();
 
-            return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
+            return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         }
 
         private parseCastExpression(): CastExpressionSyntax {
@@ -3579,7 +3579,7 @@ module Parser {
             var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
             var expression = this.parseUnaryExpression();
 
-            return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
+            return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
         }
 
         private parseObjectCreationExpression(): ObjectCreationExpressionSyntax {
@@ -3595,7 +3595,7 @@ module Parser {
                 argumentList = this.parseArgumentList();
             }
 
-            return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
+            return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
         }
 
         private parseParenthesizedOrArrowFunctionExpression(): IUnaryExpressionSyntax {
@@ -3611,7 +3611,7 @@ module Parser {
             var expression = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
-            return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
+            return this.factory.parenthesizedExpression(openParenToken, expression, closeParenToken);
         }
 
         private tryParseArrowFunctionExpression(): ArrowFunctionExpressionSyntax {
@@ -3662,7 +3662,7 @@ module Parser {
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var body = this.parseArrowFunctionBody();
 
-            return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
+            return this.factory.parenthesizedArrowFunctionExpression(callSignature, equalsGreaterThanToken, body);
         }
 
         private parseArrowFunctionBody(): ISyntaxNodeOrToken {
@@ -3691,7 +3691,7 @@ module Parser {
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var body = this.parseArrowFunctionBody();
 
-            return new SimpleArrowFunctionExpressionSyntax(
+            return this.factory.simpleArrowFunctionExpression(
                 identifier, equalsGreaterThanToken, body);
         }
 
@@ -3829,7 +3829,7 @@ module Parser {
             var propertyAssignments = this.parseSeparatedSyntaxList(ListParsingState.ObjectLiteralExpression_PropertyAssignments);
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
-            return new ObjectLiteralExpressionSyntax(
+            return this.factory.objectLiteralExpression(
                 openBraceToken, propertyAssignments, closeBraceToken);
         }
 
@@ -3869,7 +3869,7 @@ module Parser {
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var block = this.parseBlock();
 
-            return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
+            return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, block);
         }
 
         private isSetAccessorPropertyAssignment(): bool {
@@ -3887,7 +3887,7 @@ module Parser {
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var block = this.parseBlock();
 
-            return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
+            return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
         }
 
         private isSimplePropertyAssignment(inErrorRecovery: bool): bool {
@@ -3901,7 +3901,7 @@ module Parser {
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var expression = this.parseAssignmentExpression(/*allowIn:*/ true);
 
-            return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
+            return this.factory.simplePropertyAssignment(propertyName, colonToken, expression);
         }
 
         private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
@@ -3940,7 +3940,7 @@ module Parser {
             var expressions = this.parseSeparatedSyntaxList(ListParsingState.ArrayLiteralExpression_AssignmentExpressions);
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
-            return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
+            return this.factory.arrayLiteralExpression(openBracketToken, expressions, closeBracketToken);
         }
 
         private parseLiteralExpression(): IUnaryExpressionSyntax {
@@ -3967,14 +3967,14 @@ module Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
-            return new BlockSyntax(openBraceToken, statements, closeBraceToken);
+            return this.factory.block(openBraceToken, statements, closeBraceToken);
         }
 
         private parseCallSignature(): CallSignatureSyntax {
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return new CallSignatureSyntax(parameterList, typeAnnotation);
+            return this.factory.callSignature(parameterList, typeAnnotation);
         }
 
         private parseParameterList(): ParameterListSyntax {
@@ -3986,7 +3986,7 @@ module Parser {
             }
 
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
+            return this.factory.parameterList(openParenToken, parameters, closeParenToken);
         }
 
         private isTypeAnnotation(): bool {
@@ -4005,7 +4005,7 @@ module Parser {
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
 
-            return new TypeAnnotationSyntax(colonToken, type);
+            return this.factory.typeAnnotation(colonToken, type);
         }
 
         private isType(allowFunctionType: bool, allowConstructorType: bool): bool {
@@ -4025,7 +4025,7 @@ module Parser {
                 var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
                 var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
-                type = new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
+                type = this.factory.arrayType(type, openBracketToken, closeBracketToken);
             }
 
             return type;
@@ -4066,7 +4066,7 @@ module Parser {
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var returnType = this.parseType(/*requireCompleteArraySuffix:*/ false);
 
-            return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, returnType);
+            return this.factory.functionType(parameterList, equalsGreaterThanToken, returnType);
         }
 
         private parseConstructorType(): ConstructorTypeSyntax {
@@ -4077,7 +4077,7 @@ module Parser {
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var type = this.parseType(/*requreCompleteArraySuffix:*/ false);
 
-            return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
+            return this.factory.constructorType(newKeyword, parameterList, equalsGreaterThanToken, type);
         }
 
         private isTypeLiteral(allowFunctionType: bool, allowConstructorType: bool): bool {
@@ -4167,7 +4167,7 @@ module Parser {
                 equalsValueClause = this.parseEqualsValuesClause(/*allowIn:*/ true);
             }
 
-            return new ParameterSyntax(
+            return this.factory.parameter(
                 dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
         }
 

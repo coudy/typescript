@@ -621,7 +621,7 @@
             <BlockSyntax>this.visitNode(node.block()));
     }
 
-    public visitLabeledStatement(node: LabeledStatement): any {
+    public visitLabeledStatement(node: LabeledStatementSyntax): any {
         return node.update(
             this.visitToken(node.identifier()),
             this.visitToken(node.colonToken()),

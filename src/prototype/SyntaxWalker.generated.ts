@@ -543,7 +543,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitNode(node.block());
     }
 
-    public visitLabeledStatement(node: LabeledStatement): void {
+    public visitLabeledStatement(node: LabeledStatementSyntax): void {
         this.visitToken(node.identifier());
         this.visitToken(node.colonToken());
         this.visitNodeOrToken(node.statement());
