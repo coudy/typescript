@@ -827,7 +827,7 @@ var SyntaxTokenReplacer = (function (_super) {
 })(SyntaxRewriter);
 var SyntaxNode = (function () {
     function SyntaxNode(parsedInStrictMode) {
-        this._data = -1;
+        this._data = parsedInStrictMode ? 8 /* NodeParsedInStrictModeMask */  : 0;
     }
     SyntaxNode.prototype.isNode = function () {
         return true;
@@ -928,8 +928,8 @@ var SyntaxNode = (function () {
         throw Errors.abstract();
     };
     SyntaxNode.prototype.data = function () {
-        if(this._data === -1) {
-            this._data = this.computeData();
+        if(this._data === 0 || this._data === 8 /* NodeParsedInStrictModeMask */ ) {
+            this._data |= this.computeData();
         }
         return this._data;
     };

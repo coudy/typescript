@@ -5,9 +5,10 @@
 ///<reference path='SyntaxVisitor.generated.ts' />
 
 class SyntaxNode implements ISyntaxNodeOrToken {
-    private _data: number = -1;
+    private _data: number;
 
     constructor(parsedInStrictMode: bool) {
+        this._data = parsedInStrictMode ? Constants.NodeParsedInStrictModeMask : 0;
     }
 
     public isNode(): bool{ return true; }
@@ -140,8 +141,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
     
     private data(): number {
-        if (this._data === -1) {
-            this._data = this.computeData();
+        if (this._data === 0 || this._data === Constants.NodeParsedInStrictModeMask) {
+            this._data |= this.computeData();
         }
 
         return this._data;
