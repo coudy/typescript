@@ -200,4 +200,94 @@ class IncrementalParserTests {
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 53);
     }
+
+    public static testStrictMode1() {
+        // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
+        // we'll have to reparse the nodes (and generate an error for 'static();'
+        //
+        // Note: in this test we don't actually add 'use strict'.  This is so we can compare 
+        // reuse with/without a strict mode change.
+        var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'strict';\r\n");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+    }
+
+    public static testStrictMode2() {
+        // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
+        // we'll have to reparse the nodes (and generate an error for 'static();'
+        var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'use strict';\r\n");
+
+        // Note the decreased reuse of nodes compared to testStrictMode1
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
+    }
+
+    public static testStrictMode3() {
+        // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
+        // we'll have to reparse the nodes (and generate an error for 'static();'
+        //
+        // Note: in this test we don't actually remove 'use strict'.  This is so we can compare 
+        // reuse with/without a strict mode change.
+        var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+
+        var index = source.indexOf('f');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 17);
+    }
+
+    public static testStrictMode4() {
+        // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
+        // we'll have to reparse the nodes (and generate an error for 'static();'
+        var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+
+        var index = source.indexOf('f');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+    }
+
+    public static testIncremental5() {
+        var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+
+        var index = source.indexOf('b');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "strict");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+    }
+
+    public static testIncremental6() {
+        var source = "'use strict';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+
+        var index = source.indexOf('s');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "blahhh");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+    }
+
+    public static testDelete1() {
+        var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+
+        var index = source.indexOf('f');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 49);
+    }
 }

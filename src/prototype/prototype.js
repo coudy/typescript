@@ -27046,9 +27046,11 @@ var Parser;
             } else {
                 this._changeDelta -= currentToken.fullWidth();
                 this._normalParserSource.moveToNextToken();
-                if(this._changeRange !== null && this.absolutePosition() > this._changeRange.span().end()) {
-                    this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
-                    this._changeRange = null;
+                if(this._changeRange !== null) {
+                    if(this.absolutePosition() > this._changeRange.span().end()) {
+                        this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
+                        this._changeRange = null;
+                    }
                 }
             }
         };
@@ -32081,6 +32083,53 @@ var IncrementalParserTests = (function () {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 53);
+    }
+    IncrementalParserTests.testStrictMode1 = function testStrictMode1() {
+        var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'strict';\r\n");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
+    }
+    IncrementalParserTests.testStrictMode2 = function testStrictMode2() {
+        var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'use strict';\r\n");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
+    }
+    IncrementalParserTests.testStrictMode3 = function testStrictMode3() {
+        var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+        var index = source.indexOf('f');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 17);
+    }
+    IncrementalParserTests.testStrictMode4 = function testStrictMode4() {
+        var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+        var index = source.indexOf('f');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+    }
+    IncrementalParserTests.testIncremental5 = function testIncremental5() {
+        var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+        var index = source.indexOf('b');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "strict");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+    }
+    IncrementalParserTests.testIncremental6 = function testIncremental6() {
+        var source = "'use strict';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+        var index = source.indexOf('s');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "blahhh");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
+    }
+    IncrementalParserTests.testDelete1 = function testDelete1() {
+        var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
+        var index = source.indexOf('f');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 49);
     }
     return IncrementalParserTests;
 })();

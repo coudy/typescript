@@ -1158,9 +1158,12 @@ module Parser {
                 // Because we read a token from the new text, we may have moved ourselves past the
                 // change range.  If we did, then we may also have to update our change delta to
                 // compensate for the length change between the old and new text.
-                if (this._changeRange !== null && this.absolutePosition() > this._changeRange.span().end()) {
-                    this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
-                    this._changeRange = null;
+                if (this._changeRange !== null) {
+                    // var changeEndInNewText = this._changeRange.span().start() + this._changeRange.newLength();
+                    if (this.absolutePosition() > this._changeRange.span().end()) {
+                        this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
+                        this._changeRange = null;
+                    }
                 }
             }
         }
