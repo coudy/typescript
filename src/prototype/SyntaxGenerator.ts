@@ -2817,7 +2817,7 @@ function generateFactory(): string {
     result += "    }\r\n\r\n";
 
     // TODO: stop exporting these once compiler bugs are fixed.
-    result += "    export class NormalModeFactory implements IFactory {\r\n";
+    result += "    class NormalModeFactory implements IFactory {\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -2849,7 +2849,7 @@ function generateFactory(): string {
     result += "    }\r\n\r\n";
     
     // TODO: stop exporting these once compiler bugs are fixed.
-    result += "    export class StrictModeFactory implements IFactory {\r\n";
+    result += "    class StrictModeFactory implements IFactory {\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
