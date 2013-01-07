@@ -91,6 +91,10 @@ module FourSlashInterface {
             }
         }
 
+        public completionListIsEmpty() {
+            FourSlash.currentTestState.verifyCompletionListIsEmpty(this.negative);
+        }
+
         public currentParameterIsVariable() {
             FourSlash.currentTestState.verifyCurrentParameterIsVariable(!this.negative);
         }

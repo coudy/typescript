@@ -161,6 +161,21 @@ module FourSlash {
             }
         }
 
+
+        public verifyCompletionListIsEmpty(negative? = false) {
+            var completions = this.getCompletionListAtCaret().entries;
+            if (!((completions.length === 0) ^ negative)) {
+                
+                var errorMsg = ("\n" + "Completion List contains: [" + completions[0].name);                
+                for (var i = 1; i < completions.length; i++) {
+                    errorMsg += ", " + completions[i].name;
+                }
+                errorMsg += "]\n";
+                IO.printLine(errorMsg);
+                throw new Error("Completion list is not empty at Caret");
+            }
+        }
+
         public verifyCompletionListContains(symbol: string, type?: string, docComment?: string) {
             var completions = this.getCompletionListAtCaret();
             this.assertItemInCompletionList(completions.entries, symbol, type, docComment);
