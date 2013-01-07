@@ -50,7 +50,6 @@ module Services {
         getEmitOutput(fileName: string) : IOutputFile[];
     }
 
-
     //
     // Public interface of the host of a language service instance.
     //
@@ -65,15 +64,12 @@ module Services {
         getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.ScriptEditRange;
     }
 
-
     export function logInternalError(logger: TypeScript.ILogger, err: Error) {
         logger.log("*INTERNAL ERROR* - Exception in typescript services: " + err.message);
     }
 
     // Provides ISourceText implementation over a host script
     export class SourceTextAdapter implements TypeScript.ISourceText {
-
-
         constructor (private host: ILanguageServiceHost, private scriptIndex: number) {
         }
 
@@ -89,14 +85,12 @@ module Services {
     // Provide a ISourceText implementation over a host script where the implementation minimizes the 
     // # of callbacks to the host at the cost of an increased memory usage.
     export class CachedSourceTextAdapter implements TypeScript.ISourceText {
-
         private length: number;
         private text: string;
 
         constructor (host: ILanguageServiceHost, scriptIndex: number) {
             this.length = host.getScriptSourceLength(scriptIndex);
-            this.text = host.getScriptSourceText(scriptIndex, 0, this.length);
-
+            this.text = host.getScriptSourceText(scriptIndex, 0, this.length)
         }
 
         public getText(start: number, end: number): string {
@@ -110,9 +104,7 @@ module Services {
 
     // Provides ISourceText implementation over a text range of another ISourceText
     export class SourceTextRange implements TypeScript.ISourceText {
-
         constructor (private sourceText: TypeScript.ISourceText, private minChar: number, private limChar: number) {
-
         }
 
         public getText(start: number, end: number): string {

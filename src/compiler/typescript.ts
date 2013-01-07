@@ -43,7 +43,6 @@ module TypeScript {
     }
 
     export class ScriptEditRange {
-
         constructor (public minChar: number,
                      public limChar: number,
                      public delta: number) { }
