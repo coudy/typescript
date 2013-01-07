@@ -25974,6 +25974,275 @@ var Strings = (function () {
     Strings.parameter = "parameter";
     return Strings;
 })();
+var Syntax;
+(function (Syntax) {
+    var NormalModeFactory = (function () {
+        function NormalModeFactory() { }
+        NormalModeFactory.prototype.sourceUnit = function (moduleElements, endOfFileToken) {
+            return new SourceUnitSyntax(moduleElements, endOfFileToken);
+        };
+        NormalModeFactory.prototype.moduleReference = function () {
+            return new ModuleReferenceSyntax();
+        };
+        NormalModeFactory.prototype.externalModuleReference = function (moduleKeyword, openParenToken, stringLiteral, closeParenToken) {
+            return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken);
+        };
+        NormalModeFactory.prototype.moduleNameModuleReference = function (moduleName) {
+            return new ModuleNameModuleReferenceSyntax(moduleName);
+        };
+        NormalModeFactory.prototype.importDeclaration = function (importKeyword, identifier, equalsToken, moduleReference, semicolonToken) {
+            return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
+        };
+        NormalModeFactory.prototype.classDeclaration = function (exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
+            return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
+        };
+        NormalModeFactory.prototype.interfaceDeclaration = function (exportKeyword, interfaceKeyword, identifier, extendsClause, body) {
+            return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body);
+        };
+        NormalModeFactory.prototype.extendsClause = function (extendsKeyword, typeNames) {
+            return new ExtendsClauseSyntax(extendsKeyword, typeNames);
+        };
+        NormalModeFactory.prototype.implementsClause = function (implementsKeyword, typeNames) {
+            return new ImplementsClauseSyntax(implementsKeyword, typeNames);
+        };
+        NormalModeFactory.prototype.moduleDeclaration = function (exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken) {
+            return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken);
+        };
+        NormalModeFactory.prototype.functionDeclaration = function (exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken) {
+            return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
+        };
+        NormalModeFactory.prototype.variableStatement = function (exportKeyword, declareKeyword, variableDeclaration, semicolonToken) {
+            return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken);
+        };
+        NormalModeFactory.prototype.variableDeclaration = function (varKeyword, variableDeclarators) {
+            return new VariableDeclarationSyntax(varKeyword, variableDeclarators);
+        };
+        NormalModeFactory.prototype.variableDeclarator = function (identifier, typeAnnotation, equalsValueClause) {
+            return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause);
+        };
+        NormalModeFactory.prototype.equalsValueClause = function (equalsToken, value) {
+            return new EqualsValueClauseSyntax(equalsToken, value);
+        };
+        NormalModeFactory.prototype.prefixUnaryExpression = function (kind, operatorToken, operand) {
+            return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand);
+        };
+        NormalModeFactory.prototype.arrayLiteralExpression = function (openBracketToken, expressions, closeBracketToken) {
+            return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken);
+        };
+        NormalModeFactory.prototype.omittedExpression = function () {
+            return new OmittedExpressionSyntax();
+        };
+        NormalModeFactory.prototype.parenthesizedExpression = function (openParenToken, expression, closeParenToken) {
+            return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken);
+        };
+        NormalModeFactory.prototype.arrowFunctionExpression = function () {
+            return new ArrowFunctionExpressionSyntax();
+        };
+        NormalModeFactory.prototype.simpleArrowFunctionExpression = function (identifier, equalsGreaterThanToken, body) {
+            return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body);
+        };
+        NormalModeFactory.prototype.parenthesizedArrowFunctionExpression = function (callSignature, equalsGreaterThanToken, body) {
+            return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body);
+        };
+        NormalModeFactory.prototype.qualifiedName = function (left, dotToken, right) {
+            return new QualifiedNameSyntax(left, dotToken, right);
+        };
+        NormalModeFactory.prototype.constructorType = function (newKeyword, parameterList, equalsGreaterThanToken, type) {
+            return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type);
+        };
+        NormalModeFactory.prototype.functionType = function (parameterList, equalsGreaterThanToken, type) {
+            return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type);
+        };
+        NormalModeFactory.prototype.objectType = function (openBraceToken, typeMembers, closeBraceToken) {
+            return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken);
+        };
+        NormalModeFactory.prototype.arrayType = function (type, openBracketToken, closeBracketToken) {
+            return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken);
+        };
+        NormalModeFactory.prototype.typeAnnotation = function (colonToken, type) {
+            return new TypeAnnotationSyntax(colonToken, type);
+        };
+        NormalModeFactory.prototype.block = function (openBraceToken, statements, closeBraceToken) {
+            return new BlockSyntax(openBraceToken, statements, closeBraceToken);
+        };
+        NormalModeFactory.prototype.parameter = function (dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause) {
+            return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause);
+        };
+        NormalModeFactory.prototype.memberAccessExpression = function (expression, dotToken, identifierName) {
+            return new MemberAccessExpressionSyntax(expression, dotToken, identifierName);
+        };
+        NormalModeFactory.prototype.postfixUnaryExpression = function (kind, operand, operatorToken) {
+            return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken);
+        };
+        NormalModeFactory.prototype.elementAccessExpression = function (expression, openBracketToken, argumentExpression, closeBracketToken) {
+            return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken);
+        };
+        NormalModeFactory.prototype.invocationExpression = function (expression, argumentList) {
+            return new InvocationExpressionSyntax(expression, argumentList);
+        };
+        NormalModeFactory.prototype.argumentList = function (openParenToken, _arguments, closeParenToken) {
+            return new ArgumentListSyntax(openParenToken, _arguments, closeParenToken);
+        };
+        NormalModeFactory.prototype.binaryExpression = function (kind, left, operatorToken, right) {
+            return new BinaryExpressionSyntax(kind, left, operatorToken, right);
+        };
+        NormalModeFactory.prototype.conditionalExpression = function (condition, questionToken, whenTrue, colonToken, whenFalse) {
+            return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse);
+        };
+        NormalModeFactory.prototype.typeMember = function () {
+            return new TypeMemberSyntax();
+        };
+        NormalModeFactory.prototype.constructSignature = function (newKeyword, parameterList, typeAnnotation) {
+            return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation);
+        };
+        NormalModeFactory.prototype.functionSignature = function (identifier, questionToken, parameterList, typeAnnotation) {
+            return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation);
+        };
+        NormalModeFactory.prototype.indexSignature = function (openBracketToken, parameter, closeBracketToken, typeAnnotation) {
+            return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation);
+        };
+        NormalModeFactory.prototype.propertySignature = function (identifier, questionToken, typeAnnotation) {
+            return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation);
+        };
+        NormalModeFactory.prototype.parameterList = function (openParenToken, parameters, closeParenToken) {
+            return new ParameterListSyntax(openParenToken, parameters, closeParenToken);
+        };
+        NormalModeFactory.prototype.callSignature = function (parameterList, typeAnnotation) {
+            return new CallSignatureSyntax(parameterList, typeAnnotation);
+        };
+        NormalModeFactory.prototype.elseClause = function (elseKeyword, statement) {
+            return new ElseClauseSyntax(elseKeyword, statement);
+        };
+        NormalModeFactory.prototype.ifStatement = function (ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause) {
+            return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause);
+        };
+        NormalModeFactory.prototype.expressionStatement = function (expression, semicolonToken) {
+            return new ExpressionStatementSyntax(expression, semicolonToken);
+        };
+        NormalModeFactory.prototype.constructorDeclaration = function (constructorKeyword, parameterList, block, semicolonToken) {
+            return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken);
+        };
+        NormalModeFactory.prototype.memberFunctionDeclaration = function (publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
+            return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken);
+        };
+        NormalModeFactory.prototype.memberAccessorDeclaration = function () {
+            return new MemberAccessorDeclarationSyntax();
+        };
+        NormalModeFactory.prototype.getMemberAccessorDeclaration = function (publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block) {
+            return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
+        };
+        NormalModeFactory.prototype.setMemberAccessorDeclaration = function (publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block) {
+            return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
+        };
+        NormalModeFactory.prototype.memberVariableDeclaration = function (publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken) {
+            return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken);
+        };
+        NormalModeFactory.prototype.throwStatement = function (throwKeyword, expression, semicolonToken) {
+            return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken);
+        };
+        NormalModeFactory.prototype.returnStatement = function (returnKeyword, expression, semicolonToken) {
+            return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken);
+        };
+        NormalModeFactory.prototype.objectCreationExpression = function (newKeyword, expression, argumentList) {
+            return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList);
+        };
+        NormalModeFactory.prototype.switchStatement = function (switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken) {
+            return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken);
+        };
+        NormalModeFactory.prototype.switchClause = function () {
+            return new SwitchClauseSyntax();
+        };
+        NormalModeFactory.prototype.caseSwitchClause = function (caseKeyword, expression, colonToken, statements) {
+            return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements);
+        };
+        NormalModeFactory.prototype.defaultSwitchClause = function (defaultKeyword, colonToken, statements) {
+            return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements);
+        };
+        NormalModeFactory.prototype.breakStatement = function (breakKeyword, identifier, semicolonToken) {
+            return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken);
+        };
+        NormalModeFactory.prototype.continueStatement = function (continueKeyword, identifier, semicolonToken) {
+            return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken);
+        };
+        NormalModeFactory.prototype.iterationStatement = function () {
+            return new IterationStatementSyntax();
+        };
+        NormalModeFactory.prototype.baseForStatement = function () {
+            return new BaseForStatementSyntax();
+        };
+        NormalModeFactory.prototype.forStatement = function (forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement) {
+            return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
+        };
+        NormalModeFactory.prototype.forInStatement = function (forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement) {
+            return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement);
+        };
+        NormalModeFactory.prototype.whileStatement = function (whileKeyword, openParenToken, condition, closeParenToken, statement) {
+            return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement);
+        };
+        NormalModeFactory.prototype.withStatement = function (withKeyword, openParenToken, condition, closeParenToken, statement) {
+            return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement);
+        };
+        NormalModeFactory.prototype.enumDeclaration = function (exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken) {
+            return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
+        };
+        NormalModeFactory.prototype.castExpression = function (lessThanToken, type, greaterThanToken, expression) {
+            return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression);
+        };
+        NormalModeFactory.prototype.objectLiteralExpression = function (openBraceToken, propertyAssignments, closeBraceToken) {
+            return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken);
+        };
+        NormalModeFactory.prototype.propertyAssignment = function () {
+            return new PropertyAssignmentSyntax();
+        };
+        NormalModeFactory.prototype.simplePropertyAssignment = function (propertyName, colonToken, expression) {
+            return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression);
+        };
+        NormalModeFactory.prototype.accessorPropertyAssignment = function () {
+            return new AccessorPropertyAssignmentSyntax();
+        };
+        NormalModeFactory.prototype.getAccessorPropertyAssignment = function (getKeyword, propertyName, openParenToken, closeParenToken, block) {
+            return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block);
+        };
+        NormalModeFactory.prototype.setAccessorPropertyAssignment = function (setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block) {
+            return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
+        };
+        NormalModeFactory.prototype.functionExpression = function (functionKeyword, identifier, callSignature, block) {
+            return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block);
+        };
+        NormalModeFactory.prototype.emptyStatement = function (semicolonToken) {
+            return new EmptyStatementSyntax(semicolonToken);
+        };
+        NormalModeFactory.prototype.tryStatement = function (tryKeyword, block, catchClause, finallyClause) {
+            return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause);
+        };
+        NormalModeFactory.prototype.catchClause = function (catchKeyword, openParenToken, identifier, closeParenToken, block) {
+            return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block);
+        };
+        NormalModeFactory.prototype.finallyClause = function (finallyKeyword, block) {
+            return new FinallyClauseSyntax(finallyKeyword, block);
+        };
+        NormalModeFactory.prototype.labeledStatement = function (identifier, colonToken, statement) {
+            return new LabeledStatement(identifier, colonToken, statement);
+        };
+        NormalModeFactory.prototype.doStatement = function (doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken) {
+            return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken);
+        };
+        NormalModeFactory.prototype.typeOfExpression = function (typeOfKeyword, expression) {
+            return new TypeOfExpressionSyntax(typeOfKeyword, expression);
+        };
+        NormalModeFactory.prototype.deleteExpression = function (deleteKeyword, expression) {
+            return new DeleteExpressionSyntax(deleteKeyword, expression);
+        };
+        NormalModeFactory.prototype.voidExpression = function (voidKeyword, expression) {
+            return new VoidExpressionSyntax(voidKeyword, expression);
+        };
+        NormalModeFactory.prototype.debuggerStatement = function (debuggerKeyword, semicolonToken) {
+            return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken);
+        };
+        return NormalModeFactory;
+    })();    
+    Syntax.normalModeFactory = new NormalModeFactory();
+})(Syntax || (Syntax = {}));
 var SyntaxTree = (function () {
     function SyntaxTree(sourceUnit, diagnostics) {
         this._sourceUnit = sourceUnit;
@@ -26516,6 +26785,7 @@ var Parser;
             this.isInStrictMode = false;
             this.skippedTokens = [];
             this.diagnostics = [];
+            this.factory = Syntax.normalModeFactory;
             this.source = source;
             this.options = options;
         }

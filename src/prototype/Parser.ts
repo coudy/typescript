@@ -4,6 +4,7 @@
 /// <reference path='ParseOptions.ts' />
 /// <reference path='Scanner.ts' />
 /// <reference path='Strings.ts' />
+/// <reference path='SyntaxFactory.generated.ts' />
 /// <reference path='SyntaxTree.ts' />
 /// <reference path='SyntaxTriviaList.ts' />
 /// <reference path='TextChangeRange.ts' />
@@ -1203,6 +1204,8 @@ module Parser {
         // we start speculative parsing.  And if we rewind, we restore this to the same count that we 
         // started at.
         private diagnostics: SyntaxDiagnostic[] = [];
+
+        private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
         constructor(source: IParserSource, options?: ParseOptions) {
             this.source = source;

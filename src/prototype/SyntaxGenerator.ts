@@ -968,6 +968,10 @@ function pascalCase(value: string): string {
     return value.substr(0, 1).toUpperCase() + value.substr(1);
 }
 
+function camelCase(value: string): string {
+    return value.substr(0, 1).toLowerCase() + value.substr(1);
+}
+
 function getSafeName(child: IMemberDefinition) {
     if (child.name === "arguments") {
         return "_" + child.name;
@@ -2797,12 +2801,79 @@ function generateVisitor(): string {
     return result;
 }
 
+function generateFactory(): string {
+    var result = "///<reference path='ISyntaxList.ts' />\r\n";
+
+    result += "\r\nmodule Syntax {\r\n";
+
+    result += "    export interface IFactory {\r\n";
+
+    for (var i = 0; i < definitions.length; i++) {
+        var definition = definitions[i];
+        result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
+
+        for (var j = 0; j < definition.children.length; j++) {
+            if (j > 0) {
+                result += ", ";
+            }
+
+            var child = definition.children[j];
+            result += child.name + ": " + getType(child);
+        }
+
+        result += "): " + definition.name + ";\r\n";
+    }
+
+    result += "    }\r\n\r\n";
+
+    result += "    class NormalModeFactory implements IFactory {\r\n";
+
+    for (var i = 0; i < definitions.length; i++) {
+        var definition = definitions[i];
+        result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
+
+        for (var j = 0; j < definition.children.length; j++) {
+            if (j > 0) {
+                result += ", ";
+            }
+
+            var child = definition.children[j];
+            result += getSafeName(child) + ": " + getType(child);
+        }
+
+        result += "): " + definition.name + " {\r\n";
+        result += "            return new " + definition.name + "(";
+
+        for (var j = 0; j < definition.children.length; j++) {
+            if (j > 0) {
+                result += ", ";
+            }
+
+            var child = definition.children[j];
+            result += getSafeName(child);
+        }
+
+        result += ");\r\n";
+
+        result += "        }\r\n"
+    }
+
+    result += "    }\r\n\r\n";
+
+
+    result += "    export var normalModeFactory: IFactory = new NormalModeFactory();\r\n";
+    result += "}";
+
+    return result;
+}
+
 var syntaxNodes = generateNodes();
 var rewriter = generateRewriter();
 var tokens = generateTokens();
 var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
+var factory = generateFactory();
 
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
@@ -2810,3 +2881,4 @@ Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxToken.generated.ts", 
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);
 Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxVisitor.generated.ts", visitor, true);
+Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxFactory.generated.ts", factory, true);
