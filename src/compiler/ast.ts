@@ -1659,8 +1659,14 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this.statement);
             emitter.emitJavascriptStatements(this.thenBod, true);
             if (this.elseBod) {
-                emitter.writeToOutput(" else");
-                emitter.emitJavascriptStatements(this.elseBod, true);
+                if (this.elseBod.nodeType === NodeType.If) {
+                    emitter.writeToOutput(" else ");
+                    this.elseBod.emit(emitter, tokenId, /*startLine:*/ false);
+                }
+                else {
+                    emitter.writeToOutput(" else");
+                    emitter.emitJavascriptStatements(this.elseBod, true);
+                }
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);

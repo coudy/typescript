@@ -610,7 +610,7 @@ module TypeScript {
             return importDecl;
         }
 
-        private parseModuleDecl(errorRecoverySet: ErrorRecoverySet, modifiers: Modifiers): ModuleDeclaration {
+        private parseModuleDecl(errorRecoverySet: ErrorRecoverySet, modifiers: Modifiers, preComments: Comment[]): ModuleDeclaration {
             var leftCurlyCount = this.scanner.leftCurlyCount;
             var rightCurlyCount = this.scanner.rightCurlyCount;
 
@@ -625,7 +625,6 @@ module TypeScript {
             var name: AST = null;
             var enclosedList: AST[] = null;
             this.pushDeclLists();
-            var modulePreComments = this.parseComments();
             var minChar = this.scanner.startPos;
             var isDynamicMod = false;
 
@@ -696,6 +695,7 @@ module TypeScript {
                 var innerName = <Identifier>enclosedList[len - 1];
                 var innerDecl = new ModuleDeclaration(innerName, moduleBody, this.topVarList(),
                                                 this.topScopeList(), endingToken);
+                innerDecl.preComments = preComments;
 
                 if (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)) {
                     innerDecl.modFlags |= ModuleFlags.Ambient;
@@ -733,6 +733,7 @@ module TypeScript {
             }
             else {
                 moduleDecl = new ModuleDeclaration(<Identifier>name, moduleBody, this.topVarList(), this.topScopeList(), endingToken);
+                moduleDecl.preComments = preComments;
                 this.popDeclLists();
             }
 
@@ -746,7 +747,6 @@ module TypeScript {
                 moduleDecl.modFlags |= ModuleFlags.IsDynamic;
             }
 
-            moduleDecl.preComments = modulePreComments;
             this.ambientModule = svAmbient;
 
             this.topLevel = svTopLevel;
@@ -1443,12 +1443,18 @@ module TypeScript {
                         this.reportParseError("max number of args exceeded");
                         break;
                     }
-                    var arg = this.parseExpr(ErrorRecoverySet.Comma | errorRecoverySet,
-                                        OperatorPrecedence.Comma, false, TypeContext.NoTypes);
+
+                    var arg = this.parseExpr(
+                        ErrorRecoverySet.Comma | errorRecoverySet,
+                        OperatorPrecedence.Comma, 
+                        /*allowIn:*/ true,
+                        TypeContext.NoTypes);
+
                     args.append(arg);
                     if (this.currentToken.tokenId != TokenID.Comma) {
                         break;
                     }
+
                     this.currentToken = this.scanner.scan();
                 }
             }
@@ -3410,7 +3416,8 @@ module TypeScript {
                             ast.limChar = this.scanner.lastTokenLimChar();
                         }
                         else {
-                            ast = this.parseModuleDecl(errorRecoverySet, modifiers);
+                            ast = this.parseModuleDecl(errorRecoverySet, modifiers, preComments);
+                            preComments = null;
                         }
                         break;
                     case TokenID.Import:
@@ -4129,7 +4136,9 @@ module TypeScript {
             //
             ///////////////////////////////////////////////////////////
 
-            ast.preComments = preComments;
+            if (preComments) {
+                ast.preComments = preComments;
+            }
             if (this.ambientModule && (!this.okAmbientModuleMember(ast))) {
                 this.reportParseError("statement not permitted within ambient module");
             }

@@ -263,6 +263,7 @@ module TypeScript {
 
             typeSymbol.addLocation(moduleDecl.minChar);
             typeSymbol.expansions.push(modType);
+            typeSymbol.expansionsDeclAST.push(moduleDecl);
 
         }
         if (context.scopeChain.moduleDecl) {

@@ -31,4 +31,4 @@ var myvar = new m1.m2.c();
 ///This is on import declaration
 import extMod = module("comments_ExternalModules_0");
 extMod.m1.fooExport();
-var newVar = new extMod.m1.m2.c();
+export var newVar = new extMod.m1.m2.c();

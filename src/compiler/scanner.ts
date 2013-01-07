@@ -277,12 +277,13 @@ module TypeScript {
 
     // Implementation on top of a contiguous string
     export class StringSourceText implements ISourceText {
-
-        constructor (public text: string) { }
+        constructor (public text: string) {
+        }
 
         public getText(start: number, end: number): string {
             return this.text.substring(start, end);
         }
+
         public getLength(): number {
             return this.text.length;
         }
