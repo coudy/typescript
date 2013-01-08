@@ -2580,6 +2580,8 @@ module TypeScript {
                 }
             }
 
+            var onlyHasThrow = false;
+
             if (signature.returnType.type == null) {
                 if (hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
                     if (this.checker.styleSettings.implicitAny) {
@@ -2601,7 +2603,7 @@ module TypeScript {
                     !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression) &&
                     !hasFlag(funcDecl.fncFlags, FncFlags.IsFatArrowFunction)) {
                         // relax the restriction if the method only contains a single "throw" statement
-                    var onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType == NodeType.Throw)
+                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType == NodeType.Throw)
 
                     if (!onlyHasThrow) {
                         this.checker.errorReporter.simpleError(funcDecl, "Function declared a non-void return type, but has no return expression");
@@ -2615,7 +2617,7 @@ module TypeScript {
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
             if (funcDecl.accessorSymbol) {
                 var accessorType = funcDecl.accessorSymbol.getType();
-                if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
+                if (!onlyHasThrow && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
                     this.checker.errorReporter.simpleError(funcDecl, "Getters must return a value");
                 }
                 if (accessorType) {
