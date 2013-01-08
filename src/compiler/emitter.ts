@@ -104,7 +104,9 @@ module TypeScript {
         public allSourceMappers: SourceMapper[] = [];
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
-        private varListCount: number = 0; 
+
+        // private varListCount: number = 0; 
+        private varListCountStack: number[] = [0]; 
 
         constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions) {
         }
@@ -151,7 +153,7 @@ module TypeScript {
         }
 
         public setInVarBlock(count: number) {
-            this.varListCount = count;
+            this.varListCountStack[this.varListCountStack.length - 1] = count;
         }
 
         public setInObjectLiteral(val: bool): bool {
@@ -897,23 +899,27 @@ module TypeScript {
             }
         }
 
+        private varListCount(): number {
+            return this.varListCountStack[this.varListCountStack.length - 1];
+        }
+
         // Emits "var " if it is allowed
         private emitVarDeclVar() {
             // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
             // If it is var list of form  var a = varList count will be 0
-            if (this.varListCount >= 0) {
+            if (this.varListCount() >= 0) {
                 this.writeToOutput("var ");
-                this.varListCount = -this.varListCount;
+                this.setInVarBlock(-this.varListCount());
             }
             return true;
         }
 
         private onEmitVar() {
-            if (this.varListCount > 0) {
-                this.varListCount--;
+            if (this.varListCount() > 0) {
+                this.setInVarBlock(this.varListCount() - 1);
             }
-            else if (this.varListCount < 0) {
-                this.varListCount++;
+            else if (this.varListCount() < 0) {
+                this.setInVarBlock(this.varListCount() + 1);
             }
         }
 
@@ -980,7 +986,13 @@ module TypeScript {
                 this.recordSourceMappingEnd(varDecl.id);
                 if (hasInitializer) {
                     this.writeToOutputTrimmable(" = ");
+
+                    // Ensure we have a fresh var list count when recursing into the variable 
+                    // initializer.  We don't want our current list of variables to affect how we
+                    // emit nested variable lists.
+                    this.varListCountStack.push(0);
                     this.emitJavascript(varDecl.init, TokenID.Comma, false);
+                    this.varListCountStack.pop();
                 }
                 else if (sym && sym.isMember() &&
                          (this.emitState.container == EmitContainer.Constructor)) {
@@ -989,7 +1001,7 @@ module TypeScript {
                 }
                 this.onEmitVar();
                 if ((tokenId != TokenID.OpenParen)) {
-                    if (this.varListCount < 0) {
+                    if (this.varListCount() < 0) {
                         this.writeToOutput(", ");
                     } else if (tokenId != TokenID.For) {
                         this.writeToOutputTrimmable(";");
@@ -1312,7 +1324,7 @@ module TypeScript {
                              (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
                              (!((emitNode.nodeType == NodeType.VarDecl) &&
                                 ((((<VarDecl>emitNode).varFlags) & VarFlags.Ambient) == VarFlags.Ambient) &&
-                                (((<VarDecl>emitNode).init) == null)) && this.varListCount >= 0) &&
+                                (((<VarDecl>emitNode).init) == null)) && this.varListCount() >= 0) &&
                              (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
                              (emitNode.nodeType != NodeType.EndCode) &&
                              (emitNode.nodeType != NodeType.FuncDecl)) {
@@ -1336,7 +1348,7 @@ module TypeScript {
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
                     (!((ast.nodeType == NodeType.VarDecl) &&
                        ((((<VarDecl>ast).varFlags) & VarFlags.Ambient) == VarFlags.Ambient) &&
-                       (((<VarDecl>ast).init) == null)) && this.varListCount >= 0) &&
+                       (((<VarDecl>ast).init) == null)) && this.varListCount() >= 0) &&
                     (ast.nodeType != NodeType.EndCode) &&
                     ((ast.nodeType != NodeType.FuncDecl) ||
                      (this.emitState.container != EmitContainer.Constructor))) {
