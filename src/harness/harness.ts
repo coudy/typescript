@@ -1124,8 +1124,7 @@ module Harness {
 
             if (settingsCallback) {
                 settingsCallback(compiler.settings);
-                compiler.emitSettings.emitComments = compiler.settings.emitComments;
-                compiler.emitSettings.outputMany = true;
+                compiler.emitSettings = new TypeScript.EmitOptions(compiler.settings);
             }
             try {
                 compileString(code, filename, callback, context, references);
