@@ -1928,8 +1928,9 @@ module TypeScript {
             if (bases) {
                 var basesLen = bases.members.length;
                 for (var i = 0; i < basesLen; i++) {
-                    if (bases.members[i].type == this.checker.anyType) {
-                        // This type is coming from external module so it has to be exported.
+                    if (!bases.members[i].type || bases.members[i].type == this.checker.anyType) {
+                        // This type is coming from external module so it has to be exported, or we're recovering from an
+                        // error condition
                         continue;
                     }
 
