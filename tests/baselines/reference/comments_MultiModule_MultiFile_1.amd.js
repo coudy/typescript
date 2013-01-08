@@ -9,3 +9,9 @@ var multiM;
     multiM.d = d;    
 })(multiM || (multiM = {}));
 new multiM.d();
+////[comments_MultiModule_MultiFile_1.d.ts]
+module multiM {
+    /// class d comment
+    class d {
+    }
+}

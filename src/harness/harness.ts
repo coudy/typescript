@@ -702,7 +702,6 @@ module Harness {
                 }
 
                 var writer = new Harness.Compiler.WriterAggregator();
-                if (s != '0.js') { writer.WriteLine('////[' + s + ']'); }
                 this.fileCollection[s] = writer;
                 return writer;
             }
@@ -712,29 +711,17 @@ module Harness {
             public resolvePath(s: string) { return s; }
 
             public reset() { this.fileCollection = {}; }
-            public output() { 
-                return this.outputLines().join('\n'); 
-            }
-
-            public outputLines(): string[] {
-
-                var result: string[] = [];
-
-                for (var p in this.fileCollection) {
-                    if (this.fileCollection.hasOwnProperty(p)) {
-                        result = result.concat(this.fileCollection[p].lines);
-                    }
-                }
-
-                return result;
-            }
 
             public toArray(): { filename: string; file: WriterAggregator; }[] {
                 var result: { filename: string; file: WriterAggregator; }[] = [];
 
                 for (var p in this.fileCollection) {
                     if (this.fileCollection.hasOwnProperty(p)) {
-                        result.push({ filename: p, file: this.fileCollection[p] });
+                        var current = <Harness.Compiler.WriterAggregator>this.fileCollection[p];
+                        if (current.lines.length > 0) {
+                            if (p !== '0.js') { current.lines.unshift('////[' + p + ']'); }
+                            result.push({ filename: p, file: this.fileCollection[p] });
+                        }
                     }
                 }
 
@@ -1074,30 +1061,12 @@ module Harness {
 
             var files = compiler.units.map((value) => value.filename);
 
-            for (var i = files.length-1; i >=0 ; i--) {
+            for (var i = 0; i < files.length; i++) {
                 var fname = files[i];
-
-                if (fname != '0.ts' && fname != 'lib.d.ts') {
-                    deleteUnit(fname);
-                } else {
-                    compiler.updateUnit('', fname, false/*setRecovery*/);
-                }
+                compiler.updateUnit('', fname, false/*setRecovery*/);
             }
 
             compiler.errorReporter.hasErrors = false;
-            compiler.typeCheck();
-        }
-
-        // removes a unit from the compiler. 
-        export function deleteUnit(filename: string) {
-            // update the units with empty files and reparse
-            var sourceText = new TypeScript.StringSourceText('');
-            var updateResult = compiler.partialUpdateUnit(sourceText, filename, false /*setRecovery*/);
-            compiler.applyUpdateResult(updateResult);
-
-            // delete the units
-            compiler.scripts.members.splice(updateResult.unitIndex, 1);
-            compiler.units.splice(updateResult.unitIndex, 1);
         }
 
         // Defines functions to invoke before compiling a piece of code and a post compile action intended to clean up the

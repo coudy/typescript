@@ -9,8 +9,6 @@ var multiM;
     multiM.d = d;    
 })(multiM || (multiM = {}));
 new multiM.d();
-////[0.d.ts]
-////[comments_MultiModule_MultiFile_0.d.ts]
 ////[comments_MultiModule_MultiFile_1.d.ts]
 module multiM {
     /// class d comment
