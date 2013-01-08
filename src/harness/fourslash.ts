@@ -196,13 +196,17 @@ module FourSlash {
             return this.realLangSvc.getCompletionsAtPosition(this.activeFile.name, this.currentCaretPosition, false);
         }
 
-        public verifyQuickInfo(expectedTypeName: string) {
+        public verifyQuickInfo(expectedTypeName: string, negative: number) {
             var actualQuickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition);
             var actualQuickInfoString = actualQuickInfo.memberName.toString();
             if (actualQuickInfo.docComment != "") {
                 actualQuickInfoString += "\n" + actualQuickInfo.docComment;
             }
-            assert.equal(actualQuickInfoString, expectedTypeName);
+            if (negative) {
+                assert.notEqual(actualQuickInfoString, expectedTypeName);
+            } else {
+                assert.equal(actualQuickInfoString, expectedTypeName);
+            }
         }
 
         public verifyCurrentParameterIsVariable(isVariable: bool) {

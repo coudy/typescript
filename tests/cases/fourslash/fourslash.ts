@@ -108,7 +108,12 @@ module FourSlashInterface {
                 function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
                     return ((errorMinChar === startPos) && (errorLimChar === endPos)) ? true : false;
                 }, startMarker, endMarker, !this.negative);
+            }
+
+        public quickInfoIs(typeName: string) {
+            FourSlash.currentTestState.verifyQuickInfo(typeName, this.negative);
         }
+
     }
 
     export class verify extends verifyNegatable {
@@ -150,10 +155,6 @@ module FourSlashInterface {
 
         public currentSignatureHelpDocCommentIs(docComment: string) {
             FourSlash.currentTestState.verifyCurrentSignatureHelpDocComment(docComment);
-        }
-
-        public quickInfoIs(typeName: string) {
-            FourSlash.currentTestState.verifyQuickInfo(typeName);
         }
 
         public currentSignatureHelpCountIs(expected: number) {
