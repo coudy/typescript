@@ -80,7 +80,8 @@ module Services {
                 return null;
 
             if ((this.isMethod(memberSym) === this.isMethod(override)) &&
-                (this.isField(memberSym) === this.isField(override))) {
+                (this.isField(memberSym) === this.isField(override)) &&
+                (this.isStatic(memberSym) === this.isStatic(override))) {
                 return override;
             }
 
@@ -203,6 +204,10 @@ module Services {
         public isField(sym: TypeScript.Symbol): bool {
             return sym != null &&
                 sym.kind() === TypeScript.SymbolKind.Field;
+        }
+
+        public isStatic(sym: TypeScript.Symbol): bool {
+            return sym != null && sym.isStatic();
         }
     }
 }
