@@ -10,7 +10,3 @@ goTo.marker("3");
 verify.not.quickInfoIs("RegExp");
 goTo.marker("4");
 verify.not.quickInfoIs("RegExp");
-
-
-var x = /[^0-9]*[^0-9]*/;
-x.exec("00TYPESCRIPT00");
