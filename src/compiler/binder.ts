@@ -5,22 +5,14 @@
 
 module TypeScript {
     export class Binder {
-        constructor (public checker: TypeChecker) { }
+        constructor(public checker: TypeChecker) { }
+        
         public resolveBaseTypeLinks(typeLinks: TypeLink[], scope: SymbolScope) {
             var extendsList: Type[] = null;
             if (typeLinks) {
                 extendsList = new Type[];
                 for (var i = 0, len = typeLinks.length; i < len; i++) {
-                    var typeLink = typeLinks[i];
-                    this.checker.resolvingBases = true;
-                    this.checker.resolveTypeLink(scope, typeLink, true);
-                    this.checker.resolvingBases = false;
-                    if (typeLink.type.isClass()) {
-                        extendsList[i] = typeLink.type.instanceType;
-                    }
-                    else {
-                        extendsList[i] = typeLink.type;
-                    }
+                    extendsList[i] = this.checker.resolveBaseTypeLink(typeLinks[i], scope);
                 }
             }
             return extendsList;

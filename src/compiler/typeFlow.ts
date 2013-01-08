@@ -2655,6 +2655,19 @@ module TypeScript {
                 }
 
                 for (var i = 0; i < len; i++) {
+                    if (bases[i] == this.checker.anyType) {
+                        // This may be the type from imported module and hence the type was not really resolved to the correct one.
+                        // Try resolving it again
+                        baseLinks[i].type = null;
+                        // There are no contextual errors when trying to verify the base class
+                        var oldErrors = this.checker.errorReporter.getCapturedErrors();
+                        CompilerDiagnostics.assert(oldErrors.length == 0, "There shouldnt be any contextual errors when typechecking base type names");
+                        this.checker.errorReporter.pushToErrorSink = true;
+                        bases[i] = this.checker.resolveBaseTypeLink(baseLinks[i], type.containedScope);
+                        this.checker.errorReporter.pushToErrorSink = false;
+                        this.checker.errorReporter.freeCapturedErrors();
+                    }
+
                     var base = bases[i];
                     var baseRef = baseLinks[i].ast;
 

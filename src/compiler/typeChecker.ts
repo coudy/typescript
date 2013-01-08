@@ -1139,6 +1139,21 @@ module TypeScript {
             // else wait for type inference
         }
 
+        public resolveBaseTypeLink(typeLink: TypeLink, scope: SymbolScope) {
+            this.resolvingBases = true;
+            this.resolveTypeLink(scope, typeLink, true);
+            this.resolvingBases = false;
+            var extendsType: Type = null;
+            if (typeLink.type.isClass()) {
+                extendsType = typeLink.type.instanceType;
+            }
+            else {
+                extendsType = typeLink.type;
+            }
+
+            return extendsType;
+        }
+
         public findMostApplicableSignature(signatures: ApplicableSignature[], args: ASTList): { sig: Signature; ambiguous: bool; } {
 
             if (signatures.length == 1) {
