@@ -1738,6 +1738,10 @@ module TypeScript {
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
                 emitter.emitJavascript(this.returnExpression, TokenID.Semicolon, false);
+
+                if (this.returnExpression.nodeType === NodeType.FuncDecl) {
+                    emitter.writeToOutput(";");
+                }
             }
             else {
                 emitter.writeToOutput("return;");
