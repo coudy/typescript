@@ -1115,7 +1115,7 @@ module Services {
             this.minimalRefresh();
 
             var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new BraceMathingManager(syntaxAST);
+            var manager = new BraceMatchingManager(syntaxAST);
             return manager.getBraceMatchingAtPosition(position);
         }
 
