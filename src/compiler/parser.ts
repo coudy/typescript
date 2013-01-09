@@ -83,7 +83,7 @@ module TypeScript {
         private parsingDeclareFile = false;
         private amdDependencies: string[] = [];
         public inferPropertiesFromThisAssignment = false;
-        public requiresInherits = false;
+        public requiresExtendsBlock = false;
 
         private resetStmtStack() {
             this.statementInfoStack = new IStatementInfo[];
@@ -1456,8 +1456,8 @@ module TypeScript {
                         }
                         currentList = implementsList;
                     }
-                    else if (this.currentToken.tokenId == TokenID.Extends) {
-                        this.requiresInherits = isClass;
+                    else if (this.currentToken.tokenId == TokenID.Extends && !this.requiresExtendsBlock) {
+                        this.requiresExtendsBlock = isClass;
                     }
                     this.currentToken = this.scanner.scan();
                     keyword = false;
@@ -1504,8 +1504,8 @@ module TypeScript {
                 else if ((this.currentToken.tokenId == TokenID.Extends) ||
                          (this.currentToken.tokenId == TokenID.Implements)) {
 
-                    if (this.currentToken.tokenId == TokenID.Extends) {
-                        this.requiresInherits = isClass;
+                    if (this.currentToken.tokenId == TokenID.Extends && !this.requiresExtendsBlock) {
+                        this.requiresExtendsBlock = isClass;
                     }
 
                     currentList = extendsList;
@@ -4225,7 +4225,7 @@ module TypeScript {
             this.ambientModule = false;
             this.topLevel = true;
             this.hasTopLevelImportOrExport = false;
-            this.requiresInherits = false;
+            this.requiresExtendsBlock = false;
             this.fname = filename;
             this.currentUnitIndex = unitIndex;
             this.amdDependencies = [];
@@ -4296,7 +4296,7 @@ module TypeScript {
             script.topLevelMod = topLevelMod;
             script.containsUnicodeChar = this.scanner.seenUnicodeChar;
             script.containsUnicodeCharInComment = this.scanner.seenUnicodeCharInComment;
-            script.requiresInherits = this.requiresInherits;
+            script.requiresExtendsBlock = this.requiresExtendsBlock;
             return script;
         }
     }

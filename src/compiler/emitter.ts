@@ -1220,7 +1220,7 @@ module TypeScript {
             this.outfile.Close();
         }
 
-        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresInherit?: bool) {
+        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
             if (ast == null) {
                 return;
             }
@@ -1241,7 +1241,7 @@ module TypeScript {
                         // If the list has Strict mode flags, emit prologue after first statement
                         // otherwise emit before first statement
                         if (i == 1 || !hasFlag(list.flags, ASTFlags.StrictMode)) {
-                            this.emitPrologue(requiresInherit);
+                            this.emitPrologue(requiresExtendsBlock);
                             emitPrologue = false;
                         }
                     }
