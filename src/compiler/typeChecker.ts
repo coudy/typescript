@@ -367,7 +367,7 @@ module TypeScript {
 
         public cleanStartedPTO() {
             for (var i = 0; i < this.provisionalStartedTypecheckObjects.length; i++) {
-                if (this.provisionalStartedTypecheckObjects[i].typeCheckStatus == this.typingContextStack.getContextID()) {
+                if (this.provisionalStartedTypecheckObjects[i].typeCheckStatus >= this.typingContextStack.getContextID()) {
                     this.provisionalStartedTypecheckObjects[i].typeCheckStatus = TypeCheckStatus.NotStarted;
                 }
             }
