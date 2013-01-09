@@ -1101,13 +1101,12 @@ module Harness {
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             path = switchToForwardSlashes(path);
             var filename = path.match(/[^\/]*$/)[0];
-            var code = readFile(path);
+            var code = readFile(path);            
 
             compileUnit(code, filename, callback, settingsCallback, context, references);
         }
 
-        export function compileUnit(code: string, filename: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
-
+        export function compileUnit(code: string, filename: string, callback: (res: CompilerResult) => void, settingsCallback?: (settings?: TypeScript.CompilationSettings) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             // not recursive
             function clone/* <T> */(source: any, target: any) {
                 for (var prop in source) {
@@ -1129,9 +1128,8 @@ module Harness {
             try {
                 compileString(code, filename, callback, context, references);
             } finally {
-            // if settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
-            // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
-            // except that this doesn't work like that... you only copied a reference.
+                // If settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
+                // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
                 if (settingsCallback) {
                     compiler.settings = oldCompilerSettings;
                     compiler.emitSettings = oldEmitSettings;
@@ -1140,66 +1138,31 @@ module Harness {
             }
         }
 
-        export function compileUnits(callback: (res: Compiler.CompilerResult) => void , settingsCallback?: () => void ) {
-            reset();
-            if (settingsCallback) {
-                settingsCallback();
-            }
+        export function compileUnits(units: TestCaseParser.TestUnitData[], callback: (res: Compiler.CompilerResult) => void , settingsCallback?: () => void ) {
+            var lastUnit = units[units.length - 1];
+            var basePath = 'tests/cases/compiler/';
+            var unitPath = switchToForwardSlashes(basePath + lastUnit.name).match(/[^\/]*$/)[0];
 
-            compiler.reTypeCheck();
-            compiler.emit(stdout);
+            var dependencies = units.slice(0, units.length - 1);
+            var compilationContext = Harness.Compiler.defineCompilationContextForTest(unitPath, dependencies);
 
-            callback(new CompilerResult(stdout.toArray(), stderr.lines, []));
-
-            recreate();
-            reset();
+            compileUnit(lastUnit.content, unitPath, callback, settingsCallback, compilationContext, lastUnit.references);            
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             var scripts: TypeScript.Script[] = [];
-
-            // TODO: How to overload?
-            if (typeof unitName === 'function') {
-                callback = <(res: CompilerResult) => void >(<any>unitName);
-                unitName = 'test.ts';
-            }
-
+            
             reset();
 
             if (context) {
                 context.preCompile();
             }
 
-            // TODO: something isn't getting cleaned up correctly and adding with a real unit name is causing some failures (duplicate identifier)
-            // For now just only add via unitName for a multi file test
-            if (!context) {
-                var testCaseContent = TestCaseParser.makeUnitsFromTest(code, unitName);
-                var units = testCaseContent.testUnitData;
-                var dependencies = units.slice(0, units.length - 1);
-                var lastUnit = units[units.length - 1];
-                context = defineCompilationContextForTest(lastUnit.name, dependencies);
-                if (context) {
-                    context.preCompile();
-                }
-                scripts.push(addUnit(lastUnit.content, undefined, false, Harness.Compiler.isDeclareFile(unitName)));
-            }
-            else {
-                scripts.push(addUnit(code, unitName, false, Harness.Compiler.isDeclareFile(unitName), references));
-            }
+            // for single file tests just add them as using the old '0.ts' naming scheme
+            var uName = context ? unitName : '0.ts';
+            scripts.push(addUnit(code, uName, false, Harness.Compiler.isDeclareFile(unitName), references));
 
             compiler.reTypeCheck();
-
-            // Before emitting JS, clean any units other than the current one or 0.ts 
-            // 0.ts is the unit name where single file units go (which includes when baselining the first unit in a multi file test)
-            // Without this, the emitted baseline for a test will include all (non-resident) units in the compiler, so for example a
-            // multi file test's baseline for footest_file2.ts would include the JS from footest_file1.ts and footest_file2.ts concatenated.
-            for (var i = 0; i < compiler.units.length; i++) {
-                var curUnit = compiler.units[i].filename;
-                if (curUnit != unitName && curUnit != '0.ts') {
-                    compiler.updateUnit('', compiler.units[i].filename, false/*setRecovery*/);
-                }
-            }
-
             compiler.emit(stdout);
 
             // output decl file
@@ -1214,9 +1177,7 @@ module Harness {
 
         // Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that
         // a file can be successfully compiled. These functions will add/remove named units and code to the compiler for each dependency.
-        // If basePathForTempFiles is provided then those named units will also be written to temp files (necessary for baseline tests)
-        // and deleted by the postCompile function.
-        export function defineCompilationContextForTest(filename: string, dependencies: TestCaseParser.TestUnitData[], basePathForTempFiles?: string): CompilationContext {
+        export function defineCompilationContextForTest(filename: string, dependencies: TestCaseParser.TestUnitData[]): CompilationContext {
             // if the given file has no dependencies, there is no context to return, it can be compiled without additional work
             if (dependencies.length == 0) {
                 return null;
@@ -1228,21 +1189,11 @@ module Harness {
                     dependencies.forEach(dep => {
                         addUnit(dep.content, dep.name, false, Harness.Compiler.isDeclareFile(dep.name));
                         addedFiles.push(dep.name);
-
-                        if (basePathForTempFiles) {
-                            var tempFilePath = basePathForTempFiles + dep.name;
-                            IO.writeFile(tempFilePath, dep.content);
-                        }
                     });
                 };
                 var postcompile = () => {
                     addedFiles.forEach(file => {
                         Harness.Compiler.updateUnit('', file, false/*setRecovery*/);
-
-                        if (basePathForTempFiles) {
-                            var tempFilePath = basePathForTempFiles + file;
-                            IO.deleteFile(tempFilePath);
-                        }
                     });
                 };
                 var context = {
@@ -1318,7 +1269,7 @@ module Harness {
                 var refs: TypeScript.IFileReference[] = null;
                 for (var i = 0; i < lines.length; i++) {
                     var line = lines[i];
-                    var isTripleSlashReference = line.substr(0, 3) === '///';
+                    var isTripleSlashReference = /[\/]{3}\s*<reference path/.test(line);
                     var testMetaData = optionRegex.exec(line);
                     // Triple slash references need to be tracked as they are added to the compiler as an additional parameter to addUnit
                     if (isTripleSlashReference) {
