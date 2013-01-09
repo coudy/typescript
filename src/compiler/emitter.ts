@@ -404,7 +404,14 @@ module TypeScript {
             var hasNonObjectBaseType = isClassConstructor && hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseType) && !hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
             var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor);
 
+            // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
+            // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
+            var shouldParenthesize = hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) && !funcDecl.isParenthesized && !funcDecl.isAccessor() && (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon));
+
             this.emitParensAndCommentsInPlace(funcDecl, true);
+            if (shouldParenthesize) {
+                this.writeToOutput("(");
+            }
             this.recordSourceMappingStart(funcDecl);
             if (!(funcDecl.isAccessor() && (<FieldSymbol>funcDecl.accessorSymbol).isObjectLitField)) {
                 this.writeToOutput("function ");
@@ -568,19 +575,31 @@ module TypeScript {
             this.emitIndent();
             this.recordSourceMappingStart(funcDecl.endingToken);
             this.writeToOutput("}");
+           
             this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl.endingToken);
             this.recordSourceMappingEnd(funcDecl);
 
+            if (shouldParenthesize) {
+                this.writeToOutput(")");
+            }
+
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
             this.recordSourceMappingEnd(funcDecl);
+
+            this.emitParensAndCommentsInPlace(funcDecl, false);
+
             if (!isMember &&
                 //funcDecl.name != null &&
                 !hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) &&
                 (hasFlag(funcDecl.fncFlags, FncFlags.Definition) || funcDecl.isConstructor)) {
                 this.writeLineToOutput("");
+            } else if (hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression)) {
+                if (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon)) {
+                    // If either of these two flags are set, then the function expression is a statement. Terminate it.
+                    this.writeLineToOutput(";");
+                }
             }
-            this.emitParensAndCommentsInPlace(funcDecl, false);
             /// TODO: See the other part of this at the beginning of function
             //if (funcDecl.preComments!=null && funcDecl.preComments.length>0) {
             //    this.decreaseIndent();
@@ -1335,7 +1354,6 @@ module TypeScript {
                 return;
             }
 
-            var parenthesize = false;
             // REVIEW: simplify rules for indenting
             if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) &&
                 (ast.nodeType != NodeType.Block)) {
@@ -1350,15 +1368,7 @@ module TypeScript {
                 }
             }
 
-            if (parenthesize) {
-                this.writeToOutput("(");
-            }
-
             ast.emit(this, tokenId, startLine);
-
-            if (parenthesize) {
-                this.writeToOutput(")");
-            }
 
             if ((tokenId == TokenID.Semicolon) && (ast.nodeType < NodeType.GeneralNode)) {
                 this.writeToOutput(";");

@@ -1,32 +1,37 @@
-function (arg1, arg2) {
+(function (arg1, arg2) {
     return 101;
-}function () {
+});
+(function () {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
         arg[_i] = arguments[_i + 0];
     }
     return 102;
-}function () {
+});
+(function () {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
         arg[_i] = arguments[_i + 0];
     }
     return 103;
-}function () {
+});
+(function () {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
         arg[_i] = arguments[_i + 0];
     }
     return 104;
-}function () {
+});
+(function () {
     return 105;
-}var tt1 = function (a, b, c) {
+});
+var tt1 = function (a, b, c) {
     return a + b + c;
 };
 var tt2 = function (a, b, c) {
     return a + b + c;
 };
-function (arg1, arg2) {
+(function (arg1, arg2) {
     if (typeof arg1 === "undefined") { arg1 = 1; }
     return 1;
-}
+});

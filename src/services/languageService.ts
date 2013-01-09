@@ -2040,7 +2040,7 @@ module Services {
         // of an AST node referencing a known declaration kind.
         //
         private getDeclNodeElementKindModifiers(ast: TypeScript.AST): string {
-            var addMofifier = (result: string, testValue: bool, value: string): string {
+            var addModifier = (result: string, testValue: bool, value: string): string => {
                 if (!testValue)
                     return result;
 
@@ -2054,49 +2054,49 @@ module Services {
 
             var typeDeclToKindModifiers = (decl: TypeScript.InterfaceDeclaration): string => {
                 var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
+                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
+                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
                 return result;
             }
 
             var classDeclToKindModifiers = (decl: TypeScript.ClassDeclaration): string => {
                 var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
+                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
+                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
                 return result;
             }
 
             var moduleDeclToKindModifiers = (decl: TypeScript.ModuleDeclaration): string => {
                 var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
+                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
+                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
                 return result;
             }
 
             var varDeclToKindModifiers = (decl: TypeScript.VarDecl): string => {
                 var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                result = addMofifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addMofifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                result = addMofifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
+                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
+                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
+                result = addModifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
+                result = addModifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
+                result = addModifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
                 return result;
             }
 
             var argDeclToKindModifiers = (decl: TypeScript.ArgDecl): string => {
                 var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addMofifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
+                result = addModifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
+                result = addModifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
                 return result;
             }
 
             var funcDeclToKindModifiers = (decl: TypeScript.FuncDecl): string => {
                 var result = ScriptElementKindModifier.none;
-                result = addMofifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
-                result = addMofifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
-                result = addMofifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
-                result = addMofifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
-                result = addMofifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
+                result = addModifier(result, decl.isExported(), ScriptElementKindModifier.exportedModifier);
+                result = addModifier(result, decl.isAmbient(), ScriptElementKindModifier.ambientModifier);
+                result = addModifier(result, decl.isPublic(), ScriptElementKindModifier.publicMemberModifier);
+                result = addModifier(result, decl.isPrivate(), ScriptElementKindModifier.privateMemberModifier);
+                result = addModifier(result, decl.isStatic(), ScriptElementKindModifier.staticModifier);
                 return result;
             }
 

@@ -1311,6 +1311,7 @@ module TypeScript {
             var minChar = this.scanner.pos;
             var prevNestingLevel = this.nestingLevel;
             var preComments = this.parseComments();
+            var isLambda = !!lambdaArgContext;
             this.nestingLevel = 0;
             if ((!this.style_funcInLoop) && this.inLoop()) {
                 this.reportParseStyleError("function declaration in loop");
@@ -1348,7 +1349,7 @@ module TypeScript {
             var isSetter = hasFlag(modifiers, Modifiers.Setter);
             if ((this.currentToken.tokenId == TokenID.OpenParen) || (indexer && (this.currentToken.tokenId == TokenID.OpenBracket)) || (lambdaArgContext && (lambdaArgContext.preProcessedLambdaArgs || this.currentToken.tokenId == TokenID.DotDotDot))) {
                 // arg list
-                variableArgList = this.parseFormalParameterList(errorRecoverySet, args, false, requiresSignature, indexer, isGetter, isSetter, !!lambdaArgContext, lambdaArgContext ? lambdaArgContext.preProcessedLambdaArgs : null, expectClosingRParen);
+                variableArgList = this.parseFormalParameterList(errorRecoverySet, args, false, requiresSignature, indexer, isGetter, isSetter, isLambda, lambdaArgContext ? lambdaArgContext.preProcessedLambdaArgs : null, expectClosingRParen);
             }
             this.state = ParseState.FncDeclArgs;
             var returnType: AST = null;
@@ -1364,6 +1365,10 @@ module TypeScript {
                 this.reportParseError("Index signatures require a parameter type to be specified");
             }
             this.state = ParseState.FncDeclReturnType;
+
+            if (isLambda && this.currentToken.tokenId != TokenID.EqualsGreaterThan) {
+                this.reportParseError("Expected '=>'");
+            }
 
             // REVIEW:
             // Currently, it's imperative that ambient functions *not* be marked as overloads.  At some point, we may
