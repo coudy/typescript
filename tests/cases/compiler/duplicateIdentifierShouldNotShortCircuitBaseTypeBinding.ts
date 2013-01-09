@@ -1,4 +1,4 @@
-// @FileName: A.ts
+// @FileName: duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.ts
 interface IPoint {}
 
 module Shapes {
@@ -7,7 +7,7 @@ module Shapes {
 
 }
 
-// @FileName: B.ts
+// @FileName: duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts
 interface IPoint {}
 
 module Shapes {
