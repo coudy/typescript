@@ -1082,7 +1082,7 @@ module TypeScript {
                                     var propDecl = props[j];
                                     var propSym: Symbol = null;
                                     var addMember = true;
-                                    var id: AST = null;
+                                    var id: Identifier = null;
                                     if (propDecl.nodeType == NodeType.FuncDecl) {
                                         var funcDecl = <FuncDecl>propDecl;
                                         id = funcDecl.name;
@@ -1100,7 +1100,13 @@ module TypeScript {
                                     else {
                                         id = (<VarDecl>propDecl).id;
                                         propSym = this.resolveVarDecl(<VarDecl>propDecl, scope);
+
+                                        // Don't add the member if it was missing a name.  This 
+                                        // generally just leads to cascading errors that make things
+                                        // more confusing for the user.
+                                        addMember = !id.isMissing();
                                     }
+
                                     if (addMember) {
                                         if (id && hasFlag(id.flags, ASTFlags.OptionalName)) {
                                             propSym.flags |= SymbolFlags.Optional;
