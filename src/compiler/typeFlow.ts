@@ -1928,8 +1928,9 @@ module TypeScript {
             if (bases) {
                 var basesLen = bases.members.length;
                 for (var i = 0; i < basesLen; i++) {
-                    if (bases.members[i].type == this.checker.anyType) {
-                        // This type is coming from external module so it has to be exported.
+                    if (!bases.members[i].type || bases.members[i].type == this.checker.anyType) {
+                        // This type is coming from external module so it has to be exported, or we're recovering from an
+                        // error condition
                         continue;
                     }
 
@@ -2580,6 +2581,8 @@ module TypeScript {
                 }
             }
 
+            var onlyHasThrow = false;
+
             if (signature.returnType.type == null) {
                 if (hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
                     if (this.checker.styleSettings.implicitAny) {
@@ -2601,7 +2604,7 @@ module TypeScript {
                     !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression) &&
                     !hasFlag(funcDecl.fncFlags, FncFlags.IsFatArrowFunction)) {
                         // relax the restriction if the method only contains a single "throw" statement
-                    var onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType == NodeType.Throw)
+                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType == NodeType.Throw)
 
                     if (!onlyHasThrow) {
                         this.checker.errorReporter.simpleError(funcDecl, "Function declared a non-void return type, but has no return expression");
@@ -2615,7 +2618,7 @@ module TypeScript {
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
             if (funcDecl.accessorSymbol) {
                 var accessorType = funcDecl.accessorSymbol.getType();
-                if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
+                if (!onlyHasThrow && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
                     this.checker.errorReporter.simpleError(funcDecl, "Getters must return a value");
                 }
                 if (accessorType) {

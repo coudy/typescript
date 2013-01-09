@@ -172,11 +172,11 @@ function (a) {
 } ? function (b) {
     return function (c) {
         return 81;
-    }
+    };
 } : function (c) {
     return function (d) {
         return 82;
-    }
+    };
 };
 (function (arg) {
     return 90;
@@ -319,8 +319,8 @@ foo(function (a) {
     return function (b) {
         return function (c) {
             return 121;
-        }
-    }
+        };
+    };
 }, false ? function (a) {
     return 0;
 } : function (b) {

@@ -42,8 +42,8 @@ var RegisteredUser2 = (function (_super) {
             return function () {
                 return function () {
                     return _super.prototype.sayHello.call(_this);
-                }
-            }
+                };
+            };
         };
     }
     RegisteredUser2.prototype.sayHello = function () {
@@ -52,8 +52,8 @@ var RegisteredUser2 = (function (_super) {
             return function () {
                 return function () {
                     return _super.prototype.sayHello.call(_this);
-                }
-            }
+                };
+            };
         };
     };
     return RegisteredUser2;
@@ -68,8 +68,8 @@ var RegisteredUser3 = (function (_super) {
             return function () {
                 return function () {
                     return _super.prototype.name;
-                }
-            }
+                };
+            };
         };
     }
     RegisteredUser3.prototype.sayHello = function () {
@@ -78,8 +78,8 @@ var RegisteredUser3 = (function (_super) {
             return function () {
                 return function () {
                     return _super.prototype.name;
-                }
-            }
+                };
+            };
         };
     };
     return RegisteredUser3;
@@ -93,7 +93,7 @@ var RegisteredUser4 = (function (_super) {
         var x = function () {
             return function () {
                 return _super.prototype;
-            }
+            };
         };
     }
     RegisteredUser4.prototype.sayHello = function () {
@@ -101,7 +101,7 @@ var RegisteredUser4 = (function (_super) {
         var x = function () {
             return function () {
                 return _super.prototype;
-            }
+            };
         };
     };
     return RegisteredUser4;
