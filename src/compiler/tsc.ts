@@ -76,6 +76,7 @@ class BatchCompiler {
     public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public resolvedEnvironment: TypeScript.CompilationEnvironment = null;
+    public hasResolveErrors: bool = false;
 
     constructor (public ioHost: IIO) { 
         this.compilationSettings = new TypeScript.CompilationSettings();
@@ -87,9 +88,13 @@ class BatchCompiler {
         var commandLineHost = new CommandLineHost(this.compilationSettings);
         var ret = commandLineHost.resolveCompilationEnvironment(this.compilationEnvironment, resolver, true);
 
+        // Reset resolve error status
+        this.hasResolveErrors = false;
+
         for (var i = 0; i < this.compilationEnvironment.residentCode.length; i++) {
             if (!commandLineHost.isResolved(this.compilationEnvironment.residentCode[i].path)) {
                 var path = this.compilationEnvironment.residentCode[i].path;
+                this.hasResolveErrors = true;
                 if (!TypeScript.isSTRFile(path) && !TypeScript.isDSTRFile(path) && !TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
                     this.ioHost.stderr.WriteLine("Unknown extension for file: \"" + path + "\". Only .ts and .d.ts extensions are allowed.");
                 }
@@ -101,6 +106,7 @@ class BatchCompiler {
         }
         for (var i = 0; i < this.compilationEnvironment.code.length; i++) {
             if (!commandLineHost.isResolved(this.compilationEnvironment.code[i].path)) {
+                this.hasResolveErrors = true;
                 var path = this.compilationEnvironment.code[i].path;
                 if (!TypeScript.isSTRFile(path) && !TypeScript.isDSTRFile(path) && !TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
                     this.ioHost.stderr.WriteLine("Unknown extension for file: \""+path+"\". Only .ts and .d.ts extensions are allowed.");
@@ -499,7 +505,9 @@ class BatchCompiler {
         // Resolve file dependencies, if requested
         this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
 
-        var hasErrors = this.compile();
+        var hasCompileErrors = this.compile();
+
+        var hasErrors = hasCompileErrors || this.hasResolveErrors;
         if (!hasErrors) {
             if (this.compilationSettings.exec) {
                 this.run();
@@ -601,7 +609,9 @@ class BatchCompiler {
             resolvedFiles.forEach((f) => this.ioHost.printLine("    " + f));
 
             // Trigger a new compilation
-            var hasErrors = this.compile();
+            var hasCompileErrors = this.compile();
+
+            var hasErrors = hasCompileErrors || this.hasResolveErrors;
             if (!hasErrors) {
                 if (this.compilationSettings.exec) {
                     this.run();
