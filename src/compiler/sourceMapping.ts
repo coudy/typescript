@@ -30,7 +30,7 @@ module TypeScript {
         public jsFileName: string;
         public tsFileName: string;
 
-        constructor(tsFileName: string, jsFileName: string, public jsFile: ITextWriter, public sourceMapOut: ITextWriter) {
+        constructor(tsFileName: string, jsFileName: string, public jsFile: ITextWriter, public sourceMapOut: ITextWriter, public errorReporter: ErrorReporter) {
             this.currentMappings.push(this.sourceMappings);
 
             jsFileName = switchToForwardSlashes(jsFileName);
@@ -79,7 +79,7 @@ module TypeScript {
                     namesList.push(sourceMapper.names.join('","'));
                 }
 
-                var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) {
+                var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
                     if (recordedPosition != null &&
                         recordedPosition.emittedColumn == mappedPosition.emittedColumn &&
                         recordedPosition.emittedLine == mappedPosition.emittedLine) {
@@ -127,7 +127,7 @@ module TypeScript {
                 }
 
                 // Record starting spans
-                var recordSourceMappingSiblings = (sourceMappings: SourceMapping[]) {
+                var recordSourceMappingSiblings = (sourceMappings: SourceMapping[]) => {
                     for (var i = 0; i < sourceMappings.length; i++) {
                         var sourceMapping = sourceMappings[i];
                         recordSourceMapping(sourceMapping.start, sourceMapping.nameIndex);
@@ -154,7 +154,12 @@ module TypeScript {
             }
 
             // Done, close the file
-            sourceMapOut.Close();
+            try {
+                // Closing files could result in exceptions, report them if they occur
+                sourceMapOut.Close();
+            } catch (ex) {
+                sourceMapper.errorReporter.emitterError(null, ex.message);
+            }
         }
     }
 }

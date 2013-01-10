@@ -104,10 +104,9 @@ module TypeScript {
         public allSourceMappers: SourceMapper[] = [];
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
-
         private varListCountStack: number[] = [0]; 
 
-        constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions) {
+        constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
         }
 
         public setSourceMappings(mapper: SourceMapper) {
@@ -404,7 +403,14 @@ module TypeScript {
             var hasNonObjectBaseType = isClassConstructor && hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseType) && !hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
             var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor);
 
+            // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
+            // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
+            var shouldParenthesize = hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) && !funcDecl.isParenthesized && !funcDecl.isAccessor() && (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon));
+
             this.emitParensAndCommentsInPlace(funcDecl, true);
+            if (shouldParenthesize) {
+                this.writeToOutput("(");
+            }
             this.recordSourceMappingStart(funcDecl);
             if (!(funcDecl.isAccessor() && (<FieldSymbol>funcDecl.accessorSymbol).isObjectLitField)) {
                 this.writeToOutput("function ");
@@ -527,7 +533,7 @@ module TypeScript {
                 this.recordSourceMappingStart(lastArg);
                 this.writeToOutput("_i < (arguments.length - " + (argsLen - 1) + ")");
                 this.recordSourceMappingEnd(lastArg);
-                this.writeToOutput("; "); 
+                this.writeToOutput("; ");
                 this.recordSourceMappingStart(lastArg);
                 this.writeToOutput("_i++");
                 this.recordSourceMappingEnd(lastArg);
@@ -568,19 +574,31 @@ module TypeScript {
             this.emitIndent();
             this.recordSourceMappingStart(funcDecl.endingToken);
             this.writeToOutput("}");
+
             this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl.endingToken);
             this.recordSourceMappingEnd(funcDecl);
 
+            if (shouldParenthesize) {
+                this.writeToOutput(")");
+            }
+
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
             this.recordSourceMappingEnd(funcDecl);
+
+            this.emitParensAndCommentsInPlace(funcDecl, false);
+
             if (!isMember &&
                 //funcDecl.name != null &&
                 !hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) &&
                 (hasFlag(funcDecl.fncFlags, FncFlags.Definition) || funcDecl.isConstructor)) {
                 this.writeLineToOutput("");
+            } else if (hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression)) {
+                if (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon)) {
+                    // If either of these two flags are set, then the function expression is a statement. Terminate it.
+                    this.writeLineToOutput(";");
+                }
             }
-            this.emitParensAndCommentsInPlace(funcDecl, false);
             /// TODO: See the other part of this at the beginning of function
             //if (funcDecl.preComments!=null && funcDecl.preComments.length>0) {
             //    this.decreaseIndent();
@@ -626,10 +644,11 @@ module TypeScript {
                         if (switchToForwardSlashes(modFilePath) != switchToForwardSlashes(this.emittingFileName)) {
                             this.emittingFileName = modFilePath;
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.emitComments && moduleDecl.containsUnicodeCharInComment);
-                            this.outfile = this.emitOptions.ioHost.createFile(this.emittingFileName, useUTF8InOutputfile);
+                            this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
                             if (prevSourceMapper != null) {
                                 this.allSourceMappers = [];
-                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, this.emitOptions.ioHost.createFile(this.emittingFileName + SourceMapper.MapFileExtension)));
+                                var sourceMappingFile = this.createFile(this.emittingFileName + SourceMapper.MapFileExtension, false);
+                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, sourceMappingFile, this.errorReporter));
                                 this.emitState.column = 0;
                                 this.emitState.line = 0;
                             }
@@ -1209,7 +1228,7 @@ module TypeScript {
         public recordSourceMappingEnd(ast: ASTSpan) {
             if (this.sourceMapper && isValidAstNode(ast)) {
                 // Pop source mapping childs
-                this.sourceMapper.currentMappings.pop(); 
+                this.sourceMapper.currentMappings.pop();
 
                 // Get the last source mapping from sibling list = which is the one we are recording end for
                 var siblings = this.sourceMapper.currentMappings[this.sourceMapper.currentMappings.length - 1];
@@ -1224,7 +1243,12 @@ module TypeScript {
             if (this.sourceMapper != null) {
                 SourceMapper.EmitSourceMapping(this.allSourceMappers);
             }
-            this.outfile.Close();
+            try {
+                // Closing files could result in exceptions, report them if they occur
+                this.outfile.Close();
+            } catch (ex) {
+                this.errorReporter.emitterError(null, ex.message);
+            }
         }
 
         public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
@@ -1335,7 +1359,6 @@ module TypeScript {
                 return;
             }
 
-            var parenthesize = false;
             // REVIEW: simplify rules for indenting
             if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) &&
                 (ast.nodeType != NodeType.Block)) {
@@ -1350,15 +1373,7 @@ module TypeScript {
                 }
             }
 
-            if (parenthesize) {
-                this.writeToOutput("(");
-            }
-
             ast.emit(this, tokenId, startLine);
-
-            if (parenthesize) {
-                this.writeToOutput(")");
-            }
 
             if ((tokenId == TokenID.Semicolon) && (ast.nodeType < NodeType.GeneralNode)) {
                 this.writeToOutput(";");
@@ -1444,7 +1459,7 @@ module TypeScript {
                 if (baseSymbol.declModule != classDecl.type.symbol.declModule) {
                     baseName = baseSymbol.fullName();
                 }
-                base.members.allMembers.map(function (key, s, c) {
+                base.members.allMembers.map(function(key, s, c) {
                     var sym = <Symbol>s;
                     if ((sym.kind() == SymbolKind.Type) && (<TypeSymbol>sym).type.call) {
                         this.recordSourceMappingStart(sym.declAST);
@@ -1691,10 +1706,17 @@ module TypeScript {
             }
         }
 
-        private static shouldCaptureThis(func: FuncDecl): bool{
+        private static shouldCaptureThis(func: FuncDecl): bool {
             // Super calls use 'this' reference. If super call is in a lambda, 'this' value needs to be captured in the parent.
             return func.hasSelfReference() || func.hasSuperReferenceInFatArrowFunction();
         }
-    }
 
+        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+            try {
+                return this.emitOptions.ioHost.createFile(fileName, useUTF8);
+            } catch (ex) {
+                this.errorReporter.emitterError(null, ex.message);
+            }
+        }
+    }
 }

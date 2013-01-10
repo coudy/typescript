@@ -1756,7 +1756,9 @@ module Harness {
         }
 
         export function reset() {
-            IO.deleteFile(reportFilename);
+            if (IO.fileExists(reportFilename)) {
+                IO.deleteFile(reportFilename);
+            }
         }
 
         function prepareBaselineReport(): string {
