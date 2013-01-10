@@ -261,7 +261,14 @@ module TypeScript {
         public emitNew(target: AST, args: ASTList) {
             this.writeToOutput("new ");
             if (target.nodeType == NodeType.TypeRef) {
-                this.writeToOutput("Array()");
+                var typeRef = <TypeReference>target;
+                if (typeRef.arrayCount) {
+                    this.writeToOutput("Array()");
+                }
+                else {
+                    this.emitJavascript(typeRef.term, TokenID.Tilde, false);
+                    this.writeToOutput("()");
+                }
             }
             else {
                 this.emitJavascript(target, TokenID.Tilde, false);

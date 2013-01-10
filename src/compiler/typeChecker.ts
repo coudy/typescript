@@ -1214,7 +1214,7 @@ module TypeScript {
                         setTypeAtIndex: (index: number, type: Type) => { }, // no contextual typing here, so no need to do anything
                         getTypeAtIndex: (index: number) => { return index ? Q.signature.returnType.type : best.signature.returnType.type; } // we only want the "second" type - the "first" is skipped
                     }
-                    var bct = this.findBestCommonType(best.signature.returnType.type, null, collection, false);
+                    var bct = this.findBestCommonType(best.signature.returnType.type, null, collection, true);
                     ambiguous = !bct;
                 }
                 else {
