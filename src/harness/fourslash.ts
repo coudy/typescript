@@ -125,25 +125,20 @@ module FourSlash {
 
         public verifyErrorExistsAfterMarker(markerName: string, negative: bool, after: bool) {
 
-            var startMarker: Marker;
-            var endMarker: Marker;
+            var marker: Marker = this.getMarkerByName(markerName);
             var predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool;
 
             if (after) {
-                startMarker = this.getMarkerByName(markerName);
-                endMarker = { fileName: this.getMarkerByName(markerName).fileName, position: this.getEOF() };
                 predicate = function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
-                    return ((errorMinChar >= startPos) && (errorLimChar >= endPos)) ? true : false;
+                    return ((errorMinChar >= startPos) && (errorLimChar >= startPos)) ? true : false;
                 };
             } else {
-                startMarker = { fileName: this.getMarkerByName(markerName).fileName, position: this.getBOF() };
-                endMarker = this.getMarkerByName(markerName);
                 predicate = function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
-                    return ((errorMinChar <= startPos) && (errorLimChar <= endPos)) ? true : false;
+                    return ((errorMinChar <= startPos) && (errorLimChar <= startPos)) ? true : false;
                 };
             }
 
-            var exists = this.anyErrorInRange(predicate, startMarker, endMarker);
+            var exists = this.anyErrorInRange(predicate, marker);
             var errors = this.realLangSvc.getErrors(9999);
 
             if (exists != negative) {
@@ -153,14 +148,16 @@ module FourSlash {
 
         }
 
-        private anyErrorInRange(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: Marker, endMarker: Marker) {
+        private anyErrorInRange(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: Marker, endMarker?: Marker) {
 
             var fileIndex = this.getScriptIndex(this.findFile(startMarker.fileName));
             var errors = this.realLangSvc.getErrors(9999);
             var exists = false;
 
             var startPos = startMarker.position;
-            var endPos = endMarker.position;
+            if (endMarker !== undefined) {
+                var endPos = endMarker.position;
+            }
 
             errors.forEach(function (error: TypeScript.ErrorEntry) {
                 if (error.unitIndex != fileIndex) return;
