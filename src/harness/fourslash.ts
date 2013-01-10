@@ -114,7 +114,7 @@ module FourSlash {
                 return ((errorMinChar === startPos) && (errorLimChar === endPos)) ? true : false;
             };
 
-            var exists = this.verifyErrorExistsHelper(predicate, startMarker, endMarker);
+            var exists = this.anyErrorInRange(predicate, startMarker, endMarker);
             var errors = this.realLangSvc.getErrors(9999);
 
             if (exists != negative) {
@@ -143,7 +143,7 @@ module FourSlash {
                 };
             }
 
-            var exists = this.verifyErrorExistsHelper(predicate, startMarker, endMarker);
+            var exists = this.anyErrorInRange(predicate, startMarker, endMarker);
             var errors = this.realLangSvc.getErrors(9999);
 
             if (exists != negative) {
@@ -153,7 +153,7 @@ module FourSlash {
 
         }
 
-        private verifyErrorExistsHelper(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: Marker, endMarker: Marker) {
+        private anyErrorInRange(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: Marker, endMarker: Marker) {
 
             var fileIndex = this.getScriptIndex(this.findFile(startMarker.fileName));
             var errors = this.realLangSvc.getErrors(9999);
@@ -210,7 +210,6 @@ module FourSlash {
             var members = this.getMemberListAtCaret().entries;
             if ((members.length === 0) && negative) {
 
-                IO.printLine(errorMsg);
                 throw new Error("Member list is empty at Caret");
 
             } else if ((members.length !== 0) && !negative) {
@@ -231,7 +230,6 @@ module FourSlash {
             var completions = this.getCompletionListAtCaret().entries;
             if ((completions.length === 0) && negative) {
 
-                IO.printLine(errorMsg);
                 throw new Error("Completion list is empty at Caret");
 
             } else if ((completions.length !== 0) && !negative) {
