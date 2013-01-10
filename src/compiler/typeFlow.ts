@@ -2607,7 +2607,8 @@ module TypeScript {
                     onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType == NodeType.Throw)
 
                     if (!onlyHasThrow) {
-                        this.checker.errorReporter.simpleError(funcDecl, "Function declared a non-void return type, but has no return expression");
+                        this.checker.errorReporter.simpleError(funcDecl.returnTypeAnnotation || funcDecl,
+                             "Function declared a non-void return type, but has no return expression");
                     }
                 }
 
