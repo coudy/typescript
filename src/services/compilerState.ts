@@ -751,7 +751,7 @@ module Services {
 
             var result: IOutputFile[] = [];
 
-            // Check for errors
+            // Check for parse errors
             var errors = this.errorCollector.fileMap[unitIndex];
             if (errors !== undefined && errors.parseErrors.length > 0) {
                 return result;
@@ -773,7 +773,10 @@ module Services {
             var script = <TypeScript.Script>this.compiler.scripts.members[unitIndex];
             this.compiler.parseEmitOption(emitterIOHost)
             this.compiler.emitUnit(script);
-            this.compiler.emitDeclarationsUnit(script);
+            // Only emit declarations if there are no type errors
+            if (errors == undefined || errors.typeCheckErrors.length == 0) {
+                this.compiler.emitDeclarationsUnit(script);
+            }
 
             return result;
         }

@@ -518,11 +518,6 @@ module TypeScript {
                 return false;
             }
 
-            if (this.errorReporter.hasErrors) {
-                // There were errors reported, do not generate declaration file
-                return false;
-            }
-
             // If its already a declare file or is resident or does not contain body 
             if (!!script && (script.isDeclareFile || script.isResident || script.bod == null)) {
                 return false;
@@ -555,6 +550,11 @@ module TypeScript {
 
         public emitDeclarations() {
             if (!this.canEmitDeclarations()) {
+                return;
+            }
+
+            if (this.errorReporter.hasErrors) {
+                // There were errors reported, do not generate declaration file
                 return;
             }
 
