@@ -14,7 +14,7 @@ module Collections {
 
     export class HashTable {
         // TODO: figure out why the type checker dosn't like "HashTableEntry[]" here.
-        private entries/*: HashTableEntry[]*/ = [];
+        private entries /*: HashTableEntry[]*/ = [];
         private count: number = 0;
 
         constructor(capacity: number,
@@ -27,7 +27,7 @@ module Collections {
         }
 
         // Maps 'key' to 'value' in this table.  Does not throw if 'key' is already in the table.
-        public set (key: any, value: any) {
+        public set(key: any, value: any) {
             this.addOrSet(key, value, /*throwOnExistingEntry:*/ false);
         }
 
