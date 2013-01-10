@@ -127,8 +127,8 @@ module Parser {
     // Error recovery will walk up the list of states we're in seeing if the token is a stop token
     // for that construct *or* could start another element within what construct.  For example, if
     // the unexpected token was '}' then that would be a stop token for Block_Statements. 
-    // Alternatively, if the unexpected token was 'return', then that would be
-    // a start token for the next statment in Block_Statements.
+    // Alternatively, if the unexpected token was 'return', then that would be a start token for 
+    // the next statment in Block_Statements.
     // 
     // If either of those cases are true, We will then return *without* consuming  that token. 
     // (Remember, we've already reported an error).  Now we're just letting the higher up parse 
@@ -445,10 +445,10 @@ module Parser {
     //
     // Additional special abilities include:
     //  1) Being able to peek an arbitrary number of tokens ahead efficiently.
-    //  2) Being able to retrived fully parsed nodes from the source, not just tokens. This happens
+    //  2) Being able to retrieve fully parsed nodes from the source, not just tokens. This happens
     //     in incremental scenarios when the source is certain that the node is completley safe to
     //     reuse.
-    //  3) Being able to get a 'rewind point' to the current location.  THis allows hte parser to
+    //  3) Being able to get a 'rewind point' to the current location.  This allows the parser to
     //     speculatively parse as much as it wants, and then reset itself back to that point, 
     //     ensuring that no state changes that occurred after getting the 'rewing point' are 
     //     observable.
