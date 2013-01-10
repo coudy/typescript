@@ -54,7 +54,7 @@ class ConsoleLogger extends Harness.Logger {
     }
 
     public start() {
-        IO.printLine("Running tests.");
+        IO.printLine("Running tests" + ( reverse ? " in reverse." : "."));
     }
 
     public end() {
@@ -181,14 +181,20 @@ class JSONLogger extends Harness.Logger {
 
 function runTests(tests: RunnerBase[]) {
 
+    if (reverse) {
+        tests = tests.reverse();
+    }
+
     for (var i = 0; i < tests.length; i++) {
         tests[i].runTests();
+        Harness.Compiler.recreate();
     }
 
     run();
 }
 
 var runners: RunnerBase[] = [];
+var reverse: bool = false;
 
 var opts = new OptionsParser(IO);
 
@@ -242,6 +248,14 @@ opts.option('root', {
         Harness.userSpecifiedroot = str;
     }
 });
+
+opts.option('reverse', {
+    experimental: true,
+    set: function (str) {
+        reverse = true;
+    }
+});
+
 opts.parse(IO.arguments)
 
 if (runners.length === 0) {
