@@ -95,6 +95,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyCompletionListIsEmpty(this.negative);
         }
 
+        public memberListIsEmpty() {
+            FourSlash.currentTestState.verifyMemberListIsEmpty(this.negative);
+        }
+
         public currentParameterIsVariable() {
             FourSlash.currentTestState.verifyCurrentParameterIsVariable(!this.negative);
         }
@@ -123,7 +127,7 @@ module FourSlashInterface {
                                 return ((errorMinChar >= startPos) && (errorLimChar >= endPos)) ? true : false;
                             },
                             markerName, undefined, false);
-            }
+        }
 
         public caretAtMarker(markerName?: string) {
             FourSlash.currentTestState.verifyCaretAtMarker(markerName);

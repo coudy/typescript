@@ -102,7 +102,7 @@ module FourSlash {
             this.activeFile = fileToOpen;
         }
 
-        public verifyErrorExistsBetweenMarkers(condition: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: string, endMarker?: string, expectErrors? = true) {
+        public verifyErrorExistsBetweenMarkers(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: string, endMarker?: string, expectErrors? = true) {
             var startPos = this.getMarkerByName(startMarker).position;
             var endPos: number;
 
@@ -117,7 +117,7 @@ module FourSlash {
             var exists = false;
             errors.forEach(function (error: TypeScript.ErrorEntry) {
                 if (error.unitIndex != fileIndex) return;
-                if (condition(error.minChar, error.limChar, startPos, endPos)) exists = true;
+                if (predicate(error.minChar, error.limChar, startPos, endPos)) exists = true;
             });
 
             if (exists != expectErrors) {
@@ -161,12 +161,26 @@ module FourSlash {
             }
         }
 
+        public verifyMemberListIsEmpty(negative? = false) {
+            var members = this.getMemberListAtCaret().entries;
+            if (!((members.length === 0) ^ negative)) {
+
+                var errorMsg = "\n" + "Member List contains: [" + members[0].name;
+                for (var i = 1; i < members.length; i++) {
+                    errorMsg += ", " + members[i].name;
+                }
+                errorMsg += "]\n";
+                IO.printLine(errorMsg);
+                throw new Error("Member list is not empty at Caret");
+            }
+        }
+
 
         public verifyCompletionListIsEmpty(negative? = false) {
             var completions = this.getCompletionListAtCaret().entries;
             if (!((completions.length === 0) ^ negative)) {
                 
-                var errorMsg = ("\n" + "Completion List contains: [" + completions[0].name);                
+                var errorMsg = "\n" + "Completion List contains: [" + completions[0].name;
                 for (var i = 1; i < completions.length; i++) {
                     errorMsg += ", " + completions[i].name;
                 }

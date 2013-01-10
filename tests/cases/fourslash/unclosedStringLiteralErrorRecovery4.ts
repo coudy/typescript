@@ -2,7 +2,7 @@
 
 ////function alpha() {
 ////    var x = "x
-/////**/var y = 1;
+/////**/var y = "y";
 ////}
 
 goTo.marker();
