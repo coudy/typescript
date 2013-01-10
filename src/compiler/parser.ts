@@ -2682,12 +2682,16 @@ module TypeScript {
                 case TokenID.New:
                     minChar = this.scanner.pos;
                     this.currentToken = this.scanner.scan();
-                    ast = new CallExpression(NodeType.New, this.parseTerm(errorRecoverySet, false,
-                                                                  TypeContext.AllSimpleTypes, inCast),
-                                           null);
-                    ast.minChar = minChar;
-                    limChar = this.scanner.lastTokenLimChar();
-                    inNew = true;
+                    var target = this.parseTerm(errorRecoverySet, false, TypeContext.AllSimpleTypes, inCast);
+
+                    if (target.nodeType == NodeType.Error) {
+                        this.reportParseError("Cannot invoke 'new' on this expression");
+                    } else {
+                        ast = new CallExpression(NodeType.New, target, null);
+                        ast.minChar = minChar;
+                        limChar = this.scanner.lastTokenLimChar();
+                        inNew = true;
+                    }
                     break;
                 case TokenID.Function:
                     minChar = this.scanner.pos;

@@ -3,7 +3,7 @@ var x = new Date();
 var y = new Date();
 var t1 = new 53();
 var t2 = new ''();
-new Array();
+new string();
 (new Date()).toString();
 var t3 = new Array();
 var t4 = new Array();
@@ -22,7 +22,7 @@ var S = (function () {
     function S() { }
     Object.defineProperty(S.prototype, "xs", {
         get: function () {
-            return new ();
+            return ;
         },
         enumerable: true,
         configurable: true

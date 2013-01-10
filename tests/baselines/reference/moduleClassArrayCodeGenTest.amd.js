@@ -5,4 +5,4 @@ var M;
         return A;
     })();    
 })(M || (M = {}));
-var t = new ();
+var t = ;
