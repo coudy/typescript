@@ -6,4 +6,4 @@
 
 goTo.marker();
 edit.insert(".b");
-verify.errorDoesNotExistAfterMarker("1");
+verify.not.errorExistsAfterMarker("1");

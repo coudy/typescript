@@ -8,5 +8,5 @@
 ////    beta(;
 ////    /**/
 ////}
-verify.errorDoesNotExistAfterMarker();
+verify.not.errorExistsAfterMarker();
 

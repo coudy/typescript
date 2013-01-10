@@ -6,4 +6,4 @@ goTo.marker("1");
 edit.backspace(3);
 edit.insert("Pizza");
 verify.currentLineContentIs("class Pizza { public Bar() { } }");
-verify.errorDoesNotExistAfterMarker("2");
+verify.not.errorExistsAfterMarker("2");

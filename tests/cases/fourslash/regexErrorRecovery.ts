@@ -7,4 +7,4 @@ goTo.marker();
 verify.quickInfoIs("RegExp");
 edit.insert("(");
 verify.quickInfoIs("RegExp");
-verify.errorDoesNotExistAfterMarker("1");
+verify.not.errorExistsAfterMarker("1");

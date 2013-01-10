@@ -40,8 +40,13 @@ module FourSlash {
         };
     }
 
+    interface Marker {
+        fileName: string;
+        position: number;
+    }
+
     interface MarkerMap {
-        [index: string]: { fileName: string; position: number; };
+        [index: string]: Marker;
     }
 
     // List of allowed metadata names
@@ -61,14 +66,14 @@ module FourSlash {
         // The file that's currently 'opened'
         public activeFile: FourSlashFile = null;
 
-        constructor (public testData: FourSlashData) {
+        constructor(public testData: FourSlashData) {
             // Initialize the language service with all the scripts
             this.langSvc = new Harness.TypeScriptLS();
 
             for (var i = 0; i < testData.files.length; i++) {
                 this.langSvc.addScript(testData.files[i].name, testData.files[i].content, false);
             }
-            
+
             this.realLangSvc = this.langSvc.getLanguageService().languageService;
 
             // Open the first file by default
@@ -89,7 +94,7 @@ module FourSlash {
             this.currentCaretPosition = marker.position;
         }
 
-        public moveCaretRight(count ?= 1) {
+        public moveCaretRight(count? = 1) {
             this.currentCaretPosition += count;
             this.currentCaretPosition = Math.min(this.currentCaretPosition, this.langSvc.getScriptSourceLength(this.getActiveFileIndex()));
         }
@@ -102,28 +107,68 @@ module FourSlash {
             this.activeFile = fileToOpen;
         }
 
-        public verifyErrorExistsBetweenMarkers(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: string, endMarker?: string, expectErrors? = true) {
-            var startPos = this.getMarkerByName(startMarker).position;
-            var endPos: number;
+        public verifyErrorExistsBetweenMarkers(startMarkerName: string, endMarkerName: string, negative: bool) {
+            var startMarker = this.getMarkerByName(startMarkerName);
+            var endMarker = this.getMarkerByName(endMarkerName);
+            var predicate = function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
+                return ((errorMinChar === startPos) && (errorLimChar === endPos)) ? true : false;
+            };
 
-            if (endMarker === undefined) {
-                endPos = this.getEOF();                
+            var exists = this.verifyErrorExistsHelper(predicate, startMarker, endMarker);
+            var errors = this.realLangSvc.getErrors(9999);
+
+            if (exists != negative) {
+                this.printErrorLog(negative, errors);
+                throw new Error("Failure between markers: " + startMarkerName + ", " + endMarkerName);
+            }
+        }
+
+        public verifyErrorExistsAfterMarker(markerName: string, negative: bool, after: bool) {
+
+            var startMarker: Marker;
+            var endMarker: Marker;
+            var predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool;
+
+            if (after) {
+                startMarker = this.getMarkerByName(markerName);
+                endMarker = { fileName: this.getMarkerByName(markerName).fileName, position: this.getEOF() };
+                predicate = function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
+                    return ((errorMinChar >= startPos) && (errorLimChar >= endPos)) ? true : false;
+                };
             } else {
-                endPos = this.getMarkerByName(endMarker).position;
+                startMarker = { fileName: this.getMarkerByName(markerName).fileName, position: this.getBOF() };
+                endMarker = this.getMarkerByName(markerName);
+                predicate = function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
+                    return ((errorMinChar <= startPos) && (errorLimChar <= endPos)) ? true : false;
+                };
             }
 
-            var fileIndex = this.getScriptIndex(this.findFile(this.getMarkerByName(startMarker).fileName));
+            var exists = this.verifyErrorExistsHelper(predicate, startMarker, endMarker);
+            var errors = this.realLangSvc.getErrors(9999);
+
+            if (exists != negative) {
+                this.printErrorLog(negative, errors);
+                throw new Error("Failure at marker: " + markerName);
+            }
+
+        }
+
+        private verifyErrorExistsHelper(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: Marker, endMarker: Marker) {
+
+            var fileIndex = this.getScriptIndex(this.findFile(startMarker.fileName));
             var errors = this.realLangSvc.getErrors(9999);
             var exists = false;
+
+            var startPos = startMarker.position;
+            var endPos = endMarker.position;
+
             errors.forEach(function (error: TypeScript.ErrorEntry) {
                 if (error.unitIndex != fileIndex) return;
                 if (predicate(error.minChar, error.limChar, startPos, endPos)) exists = true;
             });
 
-            if (exists != expectErrors) {
-                this.printErrorLog(expectErrors, errors);
-                throw new Error("Failure between markers: " + startMarker + ", " + endMarker);
-            }
+            return exists;
+
         }
 
         private printErrorLog(expectErrors: bool, errors: TypeScript.ErrorEntry[]) {
@@ -134,13 +179,13 @@ module FourSlash {
             }
             errors.forEach(function (error: TypeScript.ErrorEntry) {
                 IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message + "\n");
-            });            
+            });
         }
 
         public verifyNumberOfErrorsInCurrentFile(expected: number) {
             var fileIndex = this.getScriptIndex(this.activeFile);
             var errors = this.realLangSvc.getErrors(9999);
-            errors = errors.filter( (error: TypeScript.ErrorEntry) => error.unitIndex == fileIndex);
+            errors = errors.filter((error: TypeScript.ErrorEntry) => error.unitIndex == fileIndex);
             var actual = errors.length;
             if (actual != expected) {
                 var errorMsg = "Actual number of errors (" + actual + ") does not match expected number (" + expected + ")";
@@ -161,32 +206,45 @@ module FourSlash {
             }
         }
 
-        public verifyMemberListIsEmpty(negative? = false) {
+        public verifyMemberListIsEmpty(negative: bool) {
             var members = this.getMemberListAtCaret().entries;
-            if (!((members.length === 0) ^ negative)) {
+            if ((members.length === 0) && negative) {
+
+                IO.printLine(errorMsg);
+                throw new Error("Member list is empty at Caret");
+
+            } else if ((members.length !== 0) && !negative) {
 
                 var errorMsg = "\n" + "Member List contains: [" + members[0].name;
                 for (var i = 1; i < members.length; i++) {
                     errorMsg += ", " + members[i].name;
                 }
                 errorMsg += "]\n";
+
                 IO.printLine(errorMsg);
                 throw new Error("Member list is not empty at Caret");
+
             }
         }
 
-
-        public verifyCompletionListIsEmpty(negative? = false) {
+        public verifyCompletionListIsEmpty(negative: bool) {
             var completions = this.getCompletionListAtCaret().entries;
-            if (!((completions.length === 0) ^ negative)) {
-                
+            if ((completions.length === 0) && negative) {
+
+                IO.printLine(errorMsg);
+                throw new Error("Completion list is empty at Caret");
+
+            } else if ((completions.length !== 0) && !negative) {
+
                 var errorMsg = "\n" + "Completion List contains: [" + completions[0].name;
                 for (var i = 1; i < completions.length; i++) {
                     errorMsg += ", " + completions[i].name;
                 }
                 errorMsg += "]\n";
+
                 IO.printLine(errorMsg);
                 throw new Error("Completion list is not empty at Caret");
+
             }
         }
 
@@ -512,6 +570,10 @@ module FourSlash {
                 '\tExpected: "' + text + '"\n' +
                 '\t  Actual: "' + actual + '"');
             }
+        }
+
+        private getBOF(): number {
+            return 0;
         }
 
         private getEOF(): number {
