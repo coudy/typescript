@@ -6,7 +6,6 @@ var C1 = (function () {
         b();
         C1.b();
     }
-    C1.s = undefined;
     C1.b = function b() {
         v = 1;
         this.p = 0;

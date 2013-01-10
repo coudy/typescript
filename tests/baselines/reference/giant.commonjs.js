@@ -17,7 +17,6 @@ var C = (function () {
     };
     C.prototype.rsF = function (param) {
     };
-    C.tV = undefined;
     C.tF = function tF() {
     };
     C.tsF = function tsF(param) {
@@ -49,7 +48,6 @@ var M;
         };
         C.prototype.rsF = function (param) {
         };
-        C.tV = undefined;
         C.tF = function tF() {
         };
         C.tsF = function tsF(param) {
@@ -110,7 +108,6 @@ var M;
         };
         eC.prototype.rsF = function (param) {
         };
-        eC.tV = undefined;
         eC.tF = function tF() {
         };
         eC.tsF = function tsF(param) {

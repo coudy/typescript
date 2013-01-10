@@ -21,7 +21,7 @@ var Bar = (function (_super) {
 var Baz = (function (_super) {
     __extends(Baz, _super);
     function Baz() {
-        _super.prototype();
+        _super.call(this);
     }
     return Baz;
 })(Object);

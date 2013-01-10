@@ -32,8 +32,6 @@ var m0;
     }
     var c1 = (function () {
         function c1() { }
-        c1.s1 = undefined;
-        c1.s2 = undefined;
         return c1;
     })();    
     var m2 = a;
@@ -59,8 +57,6 @@ var m1;
             this.n4 = n4;
             this.f = c.a.b;
         }
-        c1.s1 = undefined;
-        c1.s2 = undefined;
         c1.prototype.d = function () {
             return "Hello";
         };

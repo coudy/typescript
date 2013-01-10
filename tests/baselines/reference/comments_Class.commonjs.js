@@ -28,7 +28,6 @@ var i4_c = c4;
 /// Class with statics
 var c5 = (function () {
     function c5() { }
-    c5.s1 = 0;
     return c5;
 })();
 var i5 = new c5();
@@ -38,7 +37,6 @@ var c6 = (function () {
     /// constructor comment
     function c6() {
     }
-    c6.s1 = 0;
     return c6;
 })();
 var i6 = new c6();

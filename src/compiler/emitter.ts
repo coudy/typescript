@@ -104,6 +104,7 @@ module TypeScript {
         public allSourceMappers: SourceMapper[] = [];
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
+
         private varListCountStack: number[] = [0]; 
 
         constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions) {
@@ -302,12 +303,23 @@ module TypeScript {
                     if (target.nodeType == NodeType.FuncDecl && !target.isParenthesized) {
                         this.writeToOutput("(");
                     }
-                    this.emitJavascript(target, TokenID.OpenParen, false);
+                    if (callNode.target.nodeType == NodeType.Super && this.emitState.container == EmitContainer.Constructor) {
+                        this.writeToOutput("_super.call");
+                    }
+                    else {
+                        this.emitJavascript(target, TokenID.OpenParen, false);
+                    }
                     if (target.nodeType == NodeType.FuncDecl && !target.isParenthesized) {
                         this.writeToOutput(")");
                     }
                     this.recordSourceMappingStart(args);
                     this.writeToOutput("(");
+                    if (callNode.target.nodeType == NodeType.Super && this.emitState.container == EmitContainer.Constructor) {
+                        this.writeToOutput("this");
+                        if (args && args.members.length) {
+                            this.writeToOutput(", ");
+                        }
+                    }
                     this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
                     this.writeToOutput(")");
                     this.recordSourceMappingEnd(args);
@@ -321,24 +333,6 @@ module TypeScript {
                     this.indenter.increaseIndent();
                     this.indenter.increaseIndent();
                 }
-            }
-        }
-
-        public defaultValue(type: Type): string {
-            if (type == this.checker.anyType) {
-                return "undefined";
-            }
-            else if (type == this.checker.numberType) {
-                return "0";
-            }
-            else if (type == this.checker.stringType) {
-                return '""';
-            }
-            else if (type == this.checker.booleanType) {
-                return "false";
-            }
-            else {
-                return "null";
             }
         }
 
@@ -992,11 +986,6 @@ module TypeScript {
                     this.emitJavascript(varDecl.init, TokenID.Comma, false);
                     this.varListCountStack.pop();
                 }
-                else if (sym && sym.isMember() &&
-                         (this.emitState.container == EmitContainer.Constructor)) {
-                    this.writeToOutputTrimmable(" = ");
-                    this.writeToOutput(this.defaultValue(varDecl.type));
-                }
                 this.onEmitVar();
                 if ((tokenId != TokenID.OpenParen)) {
                     if (this.varListCount() < 0) {
@@ -1231,7 +1220,7 @@ module TypeScript {
             this.outfile.Close();
         }
 
-        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresInherit?: bool) {
+        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
             if (ast == null) {
                 return;
             }
@@ -1252,7 +1241,7 @@ module TypeScript {
                         // If the list has Strict mode flags, emit prologue after first statement
                         // otherwise emit before first statement
                         if (i == 1 || !hasFlag(list.flags, ASTFlags.StrictMode)) {
-                            this.emitPrologue(requiresInherit);
+                            this.emitPrologue(requiresExtendsBlock);
                             emitPrologue = false;
                         }
                     }
@@ -1487,13 +1476,11 @@ module TypeScript {
                 //    this.writeToOutput(" = " + modName + "." + className);
                 //}
 
-                var _class: Type = classDecl.type;
-                var instanceType = _class.instanceType;
-                var baseClass = instanceType ? instanceType.baseClass() : null;
+                var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
                 var baseNameDecl: AST = null;
                 var baseName: AST = null;
 
-                if (baseClass) {
+                if (hasBaseClass) {
                     this.writeLineToOutput(" = (function (_super) {");
                 } else {
                     this.writeLineToOutput(" = (function () {");
@@ -1502,19 +1489,11 @@ module TypeScript {
                 this.recordSourceMappingNameStart(className);
                 this.indenter.increaseIndent();
 
-                if (baseClass) {
+                if (hasBaseClass) {
                     baseNameDecl = classDecl.extendsList.members[0];
                     baseName = baseNameDecl.nodeType == NodeType.Call ? (<CallExpression>baseNameDecl).target : baseNameDecl;
                     this.emitIndent();
                     this.writeLineToOutput("__extends(" + className + ", _super);");
-                    // REVIEW: mixins
-                    var elen = instanceType.extendsList.length;
-                    if (elen > 1) {
-                        for (var i = 1; i < elen; i++) {
-                            var base = instanceType.extendsList[i];
-                            this.emitAddBaseMethods(className, base, classDecl);
-                        }
-                    }
                 }
 
                 this.emitIndent();
@@ -1535,7 +1514,7 @@ module TypeScript {
                     this.indenter.increaseIndent();
                     this.writeToOutput("function " + classDecl.name.actualText + "() {");
                     this.recordSourceMappingNameStart("constructor");
-                    if (baseClass) {
+                    if (hasBaseClass) {
                         this.writeLineToOutput("");
                         this.emitIndent();
                         this.writeLineToOutput("_super.apply(this, arguments);");
@@ -1604,18 +1583,18 @@ module TypeScript {
                     else if (memberDecl.nodeType == NodeType.VarDecl) {
                         var varDecl = <VarDecl>memberDecl;
                         if (hasFlag(varDecl.varFlags, VarFlags.Static)) {
-                            this.emitIndent();
-                            this.recordSourceMappingStart(varDecl);
-                            this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
+
                             if (varDecl.init) {
+                                // EMITREVIEW
+                                this.emitIndent();
+                                this.recordSourceMappingStart(varDecl);
+                                this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
                                 this.emitJavascript(varDecl.init, TokenID.Equals, false);
+                                // EMITREVIEW
+
                                 this.writeLineToOutput(";");
+                                this.recordSourceMappingEnd(varDecl);
                             }
-                            else {
-                                // REVIEW: We should not be initializing uninitialized member declarations, here and elsewhere
-                                this.writeLineToOutput(this.defaultValue(varDecl.type) + ";");
-                            }
-                            this.recordSourceMappingEnd(varDecl);
                         }
                     }
                     else {
@@ -1635,7 +1614,7 @@ module TypeScript {
                 this.recordSourceMappingEnd(classDecl.endingToken);
                 this.recordSourceMappingStart(classDecl);
                 this.writeToOutput(")(");
-                if (baseClass)
+                if (hasBaseClass)
                     this.emitJavascript(baseName, TokenID.Tilde, false);
                 this.writeToOutput(");");
                 this.recordSourceMappingEnd(classDecl);

@@ -28,7 +28,7 @@ var ELocVar = (function (_super) {
 var D = (function (_super) {
     __extends(D, _super);
     function D(z) {
-        _super.prototype(this.z);
+        _super.call(this, this.z);
         this.z = z;
     }
     return D;
@@ -44,7 +44,7 @@ var E = (function (_super) {
 var F = (function (_super) {
     __extends(F, _super);
     function F(z) {
-        _super.prototype("hello", this.z);
+        _super.call(this, "hello", this.z);
         this.z = z;
     }
     return F;

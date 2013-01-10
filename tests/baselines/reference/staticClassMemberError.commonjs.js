@@ -1,6 +1,5 @@
 var C = (function () {
     function C() { }
-    C.s = undefined;
     C.prototype.a = function () {
         s = 1;
     };
@@ -8,6 +7,5 @@ var C = (function () {
 })();
 var Foo = (function () {
     function Foo() { }
-    Foo.bar = undefined;
     return Foo;
 })();

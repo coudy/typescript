@@ -38,7 +38,6 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.s1 = 0;
     c1.s2 = /// static sum with property
     function s2(/** number to add*/ b) {
         return c1.s1 + b;
@@ -81,7 +80,6 @@ var c1 = (function () {
         enumerable: true,
         configurable: true
     });
-    c1.nc_s1 = 0;
     c1.nc_s2 = function nc_s2(b) {
         return c1.nc_s1 + b;
     };
