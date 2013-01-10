@@ -42,7 +42,7 @@ module TypeScript {
             return (this.isDottedModuleName.length == 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
         }
 
-        constructor (public checker: TypeChecker, public emitOptions: EmitOptions) {
+        constructor (public checker: TypeChecker, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
         }
 
         public setDeclarationFile(file: ITextWriter) {
@@ -50,7 +50,12 @@ module TypeScript {
         }
 
         public Close() {
-            this.declFile.Close();
+            try {
+                // Closing files could result in exceptions, report them if they occur
+                this.declFile.Close();
+            } catch (ex) {
+                this.errorReporter.emitterError(null, ex.message);
+            }
         }
 
         public emitDeclarations(script: TypeScript.Script): void {
@@ -649,14 +654,24 @@ module TypeScript {
                             // Create new file
                             var declareFileName = this.emitOptions.mapOutputFileName(stripQuotes(moduleDecl.name.sym.name), TypeScriptCompiler.mapToDTSFileName);
                             var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.emitComments && moduleDecl.containsUnicodeCharInComment);
-                            this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));
+                            try {
+                                // Creating files can cause exceptions, report them.   
+                                this.declFile = new DeclFileWriter(this.emitOptions.ioHost.createFile(declareFileName, useUTF8InOutputfile));
+                            } catch (ex) {
+                                this.errorReporter.emitterError(null, ex.message);
+                            }
                         }
                         this.pushDeclarationContainer(moduleDecl);
                     } else {
                         if (!this.emitOptions.outputMany) {
                             CompilerDiagnostics.assert(this.singleDeclFile != this.declFile, "singleDeclFile cannot be null as we are going to revert back to it");
                             CompilerDiagnostics.assert(this.indenter.indentAmt == 0, "Indent has to be 0 when outputing new file");
-                            this.declFile.Close();
+                            try {
+                                // Closing files could result in exceptions, report them if they occur
+                                this.declFile.Close();
+                            } catch (ex) {
+                                this.errorReporter.emitterError(null, ex.message);
+                            }
                             this.declFile = this.singleDeclFile;
                         }
                         this.popDeclarationContainer(moduleDecl);

@@ -538,8 +538,8 @@ module TypeScript {
 
             if (!declarationEmitter) {
                 var declareFileName = this.emitSettings.mapOutputFileName(script.locationInfo.filename, TypeScriptCompiler.mapToDTSFileName);
-                var declareFile = this.emitSettings.ioHost.createFile(declareFileName, this.useUTF8ForFile(script));
-                declarationEmitter = new DeclarationEmitter(this.typeChecker, this.emitSettings);
+                var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
+                declarationEmitter = new DeclarationEmitter(this.typeChecker, this.emitSettings, this.errorReporter);
                 declarationEmitter.setDeclarationFile(declareFile);
             }
 
@@ -603,13 +603,13 @@ module TypeScript {
             var fname = script.locationInfo.filename;
             if (!emitter) {
                 var outFname = this.emitSettings.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
-                var outFile = this.emitSettings.ioHost.createFile(outFname, this.useUTF8ForFile(script));
-                emitter = new Emitter(this.typeChecker, outFname, outFile, this.emitSettings);
+                var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
+                emitter = new Emitter(this.typeChecker, outFname, outFile, this.emitSettings, this.errorReporter);
                 if (this.settings.mapSourceFiles) {
-                    emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.emitSettings.ioHost.createFile(outFname + SourceMapper.MapFileExtension)));
+                    emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter));
                 }
             } else if (this.settings.mapSourceFiles) {
-                emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut));
+                emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter));
             }
 
             this.typeChecker.locationInfo = script.locationInfo;
@@ -653,7 +653,7 @@ module TypeScript {
                 throw Error("Cannot parse output option");
             }
 
-            var emitter: Emitter = emitter = new Emitter(this.typeChecker, "stdout", outputFile, this.emitSettings);;
+            var emitter: Emitter = emitter = new Emitter(this.typeChecker, "stdout", outputFile, this.emitSettings, this.errorReporter);;
             for (var i = 0, len = this.scripts.members.length; i < len; i++) {
                 var script = <Script>this.scripts.members[i];
                 this.typeChecker.locationInfo = script.locationInfo;
@@ -675,17 +675,25 @@ module TypeScript {
                         return TypeScriptCompiler.mapToFileNameExtension(".txt", fileName, wholeFileNameReplaced);
                     };
                     var outFname = this.emitSettings.mapOutputFileName(fname, mapToTxtFileName);
-                    outFile = this.emitSettings.ioHost.createFile(outFname, this.useUTF8ForFile(script));
+                    outFile = this.createFile(outFname, this.useUTF8ForFile(script));
                     context = new PrintContext(outFile, this.parser);
                 }
                 getAstWalkerFactory().walk(script, prePrintAST, postPrintAST, null, context);
                 if (this.emitSettings.outputMany) {
-                    outFile.Close();
+                    try {
+                        outFile.Close();
+                    } catch (e) {
+                        this.errorReporter.emitterError(null, e.message);
+                    }
                 }
             }
 
-            if (this.emitSettings.outputMany) {
-                outFile.Close();
+            if (!this.emitSettings.outputMany) {
+                try {
+                    outFile.Close();
+                } catch (e) {
+                    this.errorReporter.emitterError(null, e.message);
+                }
             }
         }
 
@@ -701,6 +709,15 @@ module TypeScript {
                 }
             }
             return false;
+        }
+
+        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+            try {
+                // Creating files can cause exceptions, report them.   
+                return this.emitSettings.ioHost.createFile(fileName, useUTF8);
+            } catch (ex) {
+                this.errorReporter.emitterError(null, ex.message);
+            }
         }
     }
 

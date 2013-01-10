@@ -199,21 +199,21 @@ class BatchCompiler {
             resolvePath: this.ioHost.resolvePath
         };
 
-        if (!this.compilationSettings.parseOnly) {
-            compiler.typeCheck();
-            try {
+        try {
+            if (!this.compilationSettings.parseOnly) {
+                compiler.typeCheck();
                 compiler.emit(emitterIOHost);
-            } catch (err) {
-                compiler.errorReporter.hasErrors = true;
-                // Catch emitter exceptions
-                if (err.message != "EmitError") {
-                    throw err;
-                }
+                compiler.emitDeclarations();
             }
-            compiler.emitDeclarations();
-        }
-        else { 
-            compiler.emitAST(emitterIOHost);
+            else {
+                compiler.emitAST(emitterIOHost);
+            }
+        } catch (err) {
+            compiler.errorReporter.hasErrors = true;
+            // Catch emitter exceptions
+            if (err.message != "EmitError") {
+                throw err;
+            }
         }
 
         return compiler.errorReporter.hasErrors;

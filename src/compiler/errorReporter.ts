@@ -75,7 +75,7 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            if (this.parser.errorRecovery && this.parser.errorCallback) {
+            if (ast && this.parser.errorRecovery && this.parser.errorCallback) {
                 var len = (ast.limChar - ast.minChar);
                 this.parser.errorCallback(ast.minChar, len, message, this.checker.locationInfo.unitIndex);
             }
