@@ -187,7 +187,6 @@ function runTests(tests: RunnerBase[]) {
 
     for (var i = 0; i < tests.length; i++) {
         tests[i].runTests();
-        Harness.Compiler.recreate();
     }
 
     run();
