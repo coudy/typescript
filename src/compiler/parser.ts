@@ -1483,16 +1483,12 @@ module TypeScript {
         private parseBaseList(extendsList: ASTList,
                               implementsList: ASTList,
                               errorRecoverySet: ErrorRecoverySet,
-                              interfaceOnly: bool,
                               isClass: bool): void {
             var keyword = true;
             var currentList = extendsList;
             for (; ;) {
                 if (keyword) {
-                    if (this.currentToken.tokenId == TokenID.Implements) {
-                        if (interfaceOnly) {
-                            this.reportParseError("interfaces can not implement other types");
-                        }
+                    if (this.currentToken.tokenId === TokenID.Implements) {
                         currentList = implementsList;
                     }
                     else if (this.currentToken.tokenId == TokenID.Extends && !this.requiresExtendsBlock) {
@@ -1531,7 +1527,7 @@ module TypeScript {
                     currentList.append(baseName);
                 }
 
-                if (!interfaceOnly && currentList == extendsList && extendsList.members.length > 1) {
+                if (isClass && currentList == extendsList && extendsList.members.length > 1) {
                     this.reportParseError("A class may only extend one other class");
                 }
 
@@ -1592,25 +1588,24 @@ module TypeScript {
                 }
             }
 
-            var baseClass: ASTList = null;
-            var interfacesImplemented: ASTList = null;
+            var extendsList: ASTList = null;
+            var implementsList: ASTList = null;
             var requiresSignature = false;
 
             if ((this.currentToken.tokenId == TokenID.Extends) ||
                 (this.currentToken.tokenId == TokenID.Implements)) {
-                baseClass = new ASTList();
-                interfacesImplemented = new ASTList();
-                this.parseBaseList(baseClass, interfacesImplemented, errorRecoverySet, false, true);
+                extendsList = new ASTList();
+                implementsList = new ASTList();
+                this.parseBaseList(extendsList, implementsList, errorRecoverySet, /*isClass:*/ true);
             }
 
             // REVIEW: Note that we don't set this as the current class decl
-            var classDecl = new ClassDeclaration(name, new ASTList(), baseClass, interfacesImplemented);
+            var classDecl = new ClassDeclaration(name, new ASTList(), extendsList, implementsList);
 
             this.currentClassDefinition = classDecl;
 
             // parse the classes members
             this.parseClassElements(classDecl, errorRecoverySet, modifiers);
-
 
             if (this.ambientModule || this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Exported)) {
                 classDecl.varFlags |= VarFlags.Exported;
@@ -2065,11 +2060,18 @@ module TypeScript {
                     name.flags |= ASTFlags.Error;
                 }
             }
-            var interfaces: ASTList = null;
-            if (this.currentToken.tokenId == TokenID.Extends) {
-                interfaces = new ASTList();
-                interfaces.minChar = this.scanner.startPos;
-                this.parseBaseList(interfaces, null, errorRecoverySet, true, false);
+
+            var extendsList: ASTList = null;
+            var implementsList: ASTList = null;
+            if (this.currentToken.tokenId === TokenID.Extends || this.currentToken.tokenId === TokenID.Implements) {
+                if (this.currentToken.tokenId === TokenID.Implements) {
+                    this.reportParseError("Expected 'extends'");
+                }
+
+                extendsList = new ASTList();
+                implementsList = new ASTList();
+                extendsList.minChar = this.scanner.startPos;
+                this.parseBaseList(extendsList, implementsList, errorRecoverySet, /*isClass:*/ false);
             }
 
             var membersMinChar = this.scanner.startPos;
@@ -2086,7 +2088,7 @@ module TypeScript {
             // have an 'ObjectType' and not a list of members.  We may want to consider making that
             // change.  Note: it would mean breaking aparat TypeDecl into InterfaceDeclaration and 
             // ClassDeclaration.
-            var interfaceDecl = new InterfaceDeclaration(name, members, interfaces, null);
+            var interfaceDecl = new InterfaceDeclaration(name, members, extendsList, null);
             if (hasFlag(modifiers, Modifiers.Private)) {
                 interfaceDecl.varFlags |= VarFlags.Private;
             }
