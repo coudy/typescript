@@ -1015,7 +1015,7 @@ module TypeScript {
 
         constructor (public name: Identifier, public bod: ASTList, public isConstructor: bool,
                      public arguments: ASTList, public vars: ASTList, public scopes: ASTList, public statics: ASTList,
-            nodeType: number) {
+                     nodeType: number) {
 
             super(nodeType);
         }
