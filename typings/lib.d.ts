@@ -296,7 +296,7 @@ interface String {
     indexOf(searchString: string, position?: number): number;
 
     /**
-      * Returns the position of the first occurrence of a substring. 
+      * Returns the last occurrence of a substring in the string.
       * @param searchString The substring to search for.
       * @param position The index at which to begin searching. If omitted, the search begins at the end of the string.
       */
