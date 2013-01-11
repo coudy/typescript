@@ -77,6 +77,8 @@ class BatchCompiler {
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public resolvedEnvironment: TypeScript.CompilationEnvironment = null;
     public hasResolveErrors: bool = false;
+    public compilerVersion = "0.8.2.0";
+    public printedVersion = false;
 
     constructor (public ioHost: IIO) { 
         this.compilationSettings = new TypeScript.CompilationSettings();
@@ -456,7 +458,8 @@ class BatchCompiler {
 
         opts.flag('help', {
             usage: 'Print this message',
-            set: (type) => {
+            set: () => {
+                this.printVersion();
                 opts.printUsage();
                 printedUsage = true;
             }
@@ -469,6 +472,13 @@ class BatchCompiler {
                 this.compilationSettings.useCaseSensitiveFileResolution = true;
             }
         });
+
+        opts.flag('version', {
+            usage: 'Print the compiler\'s version: ' + this.compilerVersion,
+            set: () => {
+                this.printVersion();
+            }
+        }, 'v');
 
         opts.parse(this.ioHost.arguments);
         
@@ -487,7 +497,8 @@ class BatchCompiler {
 
         // If no source files provided to compiler - print usage information
         if (this.compilationEnvironment.code.length == (this.compilationSettings.useDefaultLib ? 1 : 0) && this.compilationEnvironment.residentCode.length == 0) {
-            if (!printedUsage) {
+            if (!printedUsage && !this.printedVersion) {
+                this.printVersion();
                 opts.printUsage();
                 this.ioHost.quit(1);
             }
@@ -514,7 +525,6 @@ class BatchCompiler {
             }
         }
 
-
         if (this.compilationSettings.watch) {
             // Watch will cause the program to stick around as long as the files exist
             this.watchFiles(sourceFiles, referenceFiles);
@@ -522,6 +532,13 @@ class BatchCompiler {
         else {  
             // Exit with the appropriate error code
             this.ioHost.quit(hasErrors ? 1 : 0);
+        }
+    }
+
+    public printVersion() {
+        if (!this.printedVersion) {
+            this.ioHost.printLine("Version " + this.compilerVersion);
+            this.printedVersion = true;
         }
     }
 
