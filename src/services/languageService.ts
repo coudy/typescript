@@ -1054,6 +1054,18 @@ module Services {
                 result.actual = convertCallExprToActualSignatureInfo(callExpr, pos);
                 result.activeFormal = getSignatureIndex(callExpr, callExpr.target.type.construct);
             }
+            else if (callExpr.target.nodeType === TypeScript.NodeType.Super && callExpr.target.type.symbol && callExpr.target.type.symbol.declAST) {
+                var classType = callExpr.target.type.symbol.declAST.type;
+                if (classType && classType.construct !== null) {
+                    result.formal = convertSignatureGroupToSignatureInfo(symbol, /*isNew:*/true, classType.construct);
+                    result.actual = convertCallExprToActualSignatureInfo(callExpr, pos);
+                    result.activeFormal = getSignatureIndex(callExpr, classType.construct);
+                }
+                else {
+                    this.logger.log("No signature group found for the target class type constructor");
+                    return null;
+                }
+            }
             else {
                 this.logger.log("No signature group found for the target of the call expression");
                 return null;
