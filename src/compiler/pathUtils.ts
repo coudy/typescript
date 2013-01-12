@@ -64,8 +64,10 @@ module TypeScript {
     }
 
     function isFileOfExtension(fname: string, ext: string) {
-        var extLength = ext.length;
-        return fname.length > extLength && fname.substring(fname.length - extLength, fname.length) == ext;
+        var invariantFname = fname.toLocaleUpperCase();
+        var invariantExt = ext.toLocaleUpperCase();
+        var extLength = invariantExt.length;
+        return invariantFname.length > extLength && invariantFname.substring(invariantFname.length - extLength, invariantFname.length) == invariantExt;
     }
 
     export function isJSFile(fname: string) {
