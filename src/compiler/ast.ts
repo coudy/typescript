@@ -1176,7 +1176,7 @@ module TypeScript {
             return "Script";
         }
 
-        public emitRequired() {
+        public emitRequired(emitOptions: EmitOptions) {
             if (this.cachedEmitRequired != undefined) {
                 return this.cachedEmitRequired;
             }
@@ -1208,17 +1208,22 @@ module TypeScript {
                         return this.setCachedEmitRequired(true);
                     }
                 }
+
+                if ( emitOptions.emitComments &&
+                    ((this.bod.preComments && this.bod.preComments.length > 0) || (this.bod.postComments && this.bod.postComments.length > 0))) {
+                    return this.setCachedEmitRequired(true);
+                }
             }
             return this.setCachedEmitRequired(false);
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
-            if (this.emitRequired()) {
-                emitter.emitParensAndCommentsInPlace(this, true);
+            if (this.emitRequired(emitter.emitOptions)) {
+                emitter.emitParensAndCommentsInPlace(this.bod, true);
                 emitter.recordSourceMappingStart(this);
                 emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresExtendsBlock);
                 emitter.recordSourceMappingEnd(this);
-                emitter.emitParensAndCommentsInPlace(this, false);
+                emitter.emitParensAndCommentsInPlace(this.bod, false);
             }
         }
 
