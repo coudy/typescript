@@ -395,7 +395,8 @@ module TypeScript {
             return type.arrayCache.arrayType;
         }
 
-        public getParameterList(args: ASTList, container: Symbol): SignatureData {
+        public getParameterList(funcDecl: FuncDecl, container: Symbol): SignatureData {
+            var args = funcDecl.arguments;
             var parameterTable = null;
             var parameterBuilder = null;
             var len = args.members.length;
@@ -412,6 +413,7 @@ module TypeScript {
                     var parameterSymbol = new ParameterSymbol(parameter.id.text, parameter.minChar,
                                                             this.locationInfo.unitIndex, paramDef);
                     parameterSymbol.declAST = parameter;
+                    parameterSymbol.funcDecl = funcDecl;
                     parameter.id.sym = parameterSymbol;
                     parameter.sym = parameterSymbol;
                     paramDef.symbol = parameterSymbol;
@@ -455,7 +457,7 @@ module TypeScript {
 
             signature.hasVariableArgList = funcDecl.variableArgList;
 
-            var sigData = this.getParameterList(funcDecl.arguments, container);
+            var sigData = this.getParameterList(funcDecl, container);
 
             signature.parameters = sigData.parameters;
             signature.nonOptionalParameterCount = sigData.nonOptionalParameterCount;

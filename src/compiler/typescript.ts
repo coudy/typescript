@@ -427,7 +427,7 @@ module TypeScript {
             var commonComponentsLength = -1;
             for (var i = 0, len = this.scripts.members.length; i < len; i++) {
                 var script = <Script>this.scripts.members[i];
-                if (script.emitRequired()) {
+                if (script.emitRequired(this.emitSettings)) {
                     var fileName = script.locationInfo.filename;
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength == -1) {
@@ -596,7 +596,7 @@ module TypeScript {
         }
 
         public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter) {
-            if (!script.emitRequired()) {
+            if (!script.emitRequired(this.emitSettings)) {
                 return null;
             }
 
