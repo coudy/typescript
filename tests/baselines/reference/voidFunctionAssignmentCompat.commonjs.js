@@ -21,20 +21,20 @@ execVoid(function () {
 });
 var fra = function () {
     return function () {
-    }
+    };
 };
 var frv = function () {
     return function () {
         return 0;
-    }
+    };
 };
 var fra3 = (function () {
     return function (v) {
         return v;
-    }
+    };
 })();
 var frv3 = (function () {
     return function () {
         return 0;
-    }
+    };
 })();

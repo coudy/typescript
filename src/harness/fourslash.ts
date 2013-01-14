@@ -102,23 +102,39 @@ module FourSlash {
             this.activeFile = fileToOpen;
         }
 
-        public verifyErrorExistsBetweenMarkers(startMarker: string, endMarker: string) {
+        public verifyErrorExistsBetweenMarkers(condition: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: string, endMarker?: string, expectErrors? = true) {
             var startPos = this.getMarkerByName(startMarker).position;
-            var endPos = this.getMarkerByName(endMarker).position;
+            var endPos: number;
+
+            if (endMarker === undefined) {
+                endPos = this.getEOF();                
+            } else {
+                endPos = this.getMarkerByName(endMarker).position;
+            }
+
             var fileIndex = this.getScriptIndex(this.findFile(this.getMarkerByName(startMarker).fileName));
             var errors = this.realLangSvc.getErrors(9999);
             var exists = false;
             errors.forEach(function (error: TypeScript.ErrorEntry) {
                 if (error.unitIndex != fileIndex) return;
-                if ((error.minChar === startPos) && (error.limChar === endPos)) exists = true;
+                if (condition(error.minChar, error.limChar, startPos, endPos)) exists = true;
             });
-            if (!exists) {
-                IO.printLine("Expected error not found.  Error list is:");
-                errors.forEach(function (error: TypeScript.ErrorEntry) {
-                    IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message);
-                });
-                throw new Error("Error does not exist between markers: " + startMarker + ", " + endMarker);
+
+            if (exists != expectErrors) {
+                this.printErrorLog(expectErrors, errors);
+                throw new Error("Failure between markers: " + startMarker + ", " + endMarker);
             }
+        }
+
+        private printErrorLog(expectErrors: bool, errors: TypeScript.ErrorEntry[]) {
+            if (expectErrors) {
+                IO.printLine("Expected error not found.  Error list is:");
+            } else {
+                IO.printLine("Unexpected error(s) found.  Error list is:");
+            }
+            errors.forEach(function (error: TypeScript.ErrorEntry) {
+                IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message + "\n");
+            });            
         }
 
         public verifyNumberOfErrorsInCurrentFile(expected: number) {
@@ -319,6 +335,32 @@ module FourSlash {
             IO.printLine(JSON2.stringify(completions));
         }
 
+        public deleteCharBehindMarker(count ?= 1) {
+
+            var opts = new Services.FormatCodeOptions();
+            var offset = this.currentCaretPosition;
+            var ch = "";
+
+            for (var i = 0; i < count; i++) {
+
+                offset--;
+                // Make the edit
+                this.langSvc.editScript(this.activeFile.name, offset, offset + 1, ch);
+                this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
+                
+
+                // Handle post-keystroke formatting
+                var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
+                offset += this.applyEdits(this.activeFile.name, edits);
+            }
+
+            // Move the caret to wherever we ended up
+            this.currentCaretPosition = offset;
+
+            this.fixCaretPosition();
+
+        }
+
         // Enters lines of text at the current caret position
         public type(text: string) {
             var opts = new Services.FormatCodeOptions();
@@ -437,6 +479,10 @@ module FourSlash {
                 '\tExpected: "' + text + '"\n' +
                 '\t  Actual: "' + actual + '"');
             }
+        }
+
+        private getEOF(): number {
+            return this.langSvc.getScriptSourceLength(this.getActiveFileIndex())
         }
 
         // Get the text of the entire line the caret is currently at

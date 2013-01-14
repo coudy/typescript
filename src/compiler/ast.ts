@@ -1015,7 +1015,7 @@ module TypeScript {
 
         constructor (public name: Identifier, public bod: ASTList, public isConstructor: bool,
                      public arguments: ASTList, public vars: ASTList, public scopes: ASTList, public statics: ASTList,
-            nodeType: number) {
+                     nodeType: number) {
 
             super(nodeType);
         }
@@ -1143,7 +1143,7 @@ module TypeScript {
         public locationInfo: LocationInfo = null;
         public referencedFiles: IFileReference[] = [];
         public requiresGlobal = false;
-        public requiresInherits = false;
+        public requiresExtendsBlock = false;
         public isResident = false;
         public isDeclareFile = false;
         public hasBeenTypeChecked = false;
@@ -1216,7 +1216,7 @@ module TypeScript {
             if (this.emitRequired()) {
                 emitter.emitParensAndCommentsInPlace(this, true);
                 emitter.recordSourceMappingStart(this);
-                emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresInherits);
+                emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresExtendsBlock);
                 emitter.recordSourceMappingEnd(this);
                 emitter.emitParensAndCommentsInPlace(this, false);
             }
@@ -1738,6 +1738,10 @@ module TypeScript {
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
                 emitter.emitJavascript(this.returnExpression, TokenID.Semicolon, false);
+
+                if (this.returnExpression.nodeType === NodeType.FuncDecl) {
+                    emitter.writeToOutput(";");
+                }
             }
             else {
                 emitter.writeToOutput("return;");

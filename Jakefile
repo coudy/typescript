@@ -252,9 +252,9 @@ task("tests", [run, serviceFile].concat(libraryTargets), function() {
 });
 
 desc("Runs the tests using the built run.js file. Syntax is jake :runtests[host, testFile]. Both parameters are optional.");
-task("runtests", ["tests", builtTestDirectory], function(host, test) {
-	host = host || process.env.TYPESCRIPT_HOST || "Node";
-	test = test || "";
+task("runtests", ["tests", builtTestDirectory], function() {
+	host = process.env.host || process.env.TYPESCRIPT_HOST || "Node";
+	test = process.env.test || "";
 	var cmd = host + " " + run + " " + test;
 	console.log(cmd);
 	var ex = jake.createExec([cmd]);

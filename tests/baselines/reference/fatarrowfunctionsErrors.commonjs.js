@@ -17,8 +17,21 @@ foo(function (x) {
 });
 var y = x;
 ;
-function (number) {
+(function (number) {
     return x * x;
-}false ? (function () {
+});
+false ? (function () {
     return null;
 }) : null;
+var x1 = function () {
+};
+var x2 = function (a) {
+};
+var x3 = function (a) {
+};
+var x4 = function () {
+    var a = [];
+    for (var _i = 0; _i < (arguments.length - 0); _i++) {
+        a[_i] = arguments[_i + 0];
+    }
+};

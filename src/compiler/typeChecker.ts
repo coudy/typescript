@@ -367,7 +367,7 @@ module TypeScript {
 
         public cleanStartedPTO() {
             for (var i = 0; i < this.provisionalStartedTypecheckObjects.length; i++) {
-                if (this.provisionalStartedTypecheckObjects[i].typeCheckStatus == this.typingContextStack.getContextID()) {
+                if (this.provisionalStartedTypecheckObjects[i].typeCheckStatus >= this.typingContextStack.getContextID()) {
                     this.provisionalStartedTypecheckObjects[i].typeCheckStatus = TypeCheckStatus.NotStarted;
                 }
             }
@@ -1082,7 +1082,7 @@ module TypeScript {
                                     var propDecl = props[j];
                                     var propSym: Symbol = null;
                                     var addMember = true;
-                                    var id: AST = null;
+                                    var id: Identifier = null;
                                     if (propDecl.nodeType == NodeType.FuncDecl) {
                                         var funcDecl = <FuncDecl>propDecl;
                                         id = funcDecl.name;
@@ -1100,7 +1100,13 @@ module TypeScript {
                                     else {
                                         id = (<VarDecl>propDecl).id;
                                         propSym = this.resolveVarDecl(<VarDecl>propDecl, scope);
+
+                                        // Don't add the member if it was missing a name.  This 
+                                        // generally just leads to cascading errors that make things
+                                        // more confusing for the user.
+                                        addMember = !id.isMissing();
                                     }
+
                                     if (addMember) {
                                         if (id && hasFlag(id.flags, ASTFlags.OptionalName)) {
                                             propSym.flags |= SymbolFlags.Optional;
@@ -1137,6 +1143,21 @@ module TypeScript {
                 }
             }
             // else wait for type inference
+        }
+
+        public resolveBaseTypeLink(typeLink: TypeLink, scope: SymbolScope) {
+            this.resolvingBases = true;
+            this.resolveTypeLink(scope, typeLink, true);
+            this.resolvingBases = false;
+            var extendsType: Type = null;
+            if (typeLink.type.isClass()) {
+                extendsType = typeLink.type.instanceType;
+            }
+            else {
+                extendsType = typeLink.type;
+            }
+
+            return extendsType;
         }
 
         public findMostApplicableSignature(signatures: ApplicableSignature[], args: ASTList): { sig: Signature; ambiguous: bool; } {
@@ -1193,7 +1214,7 @@ module TypeScript {
                         setTypeAtIndex: (index: number, type: Type) => { }, // no contextual typing here, so no need to do anything
                         getTypeAtIndex: (index: number) => { return index ? Q.signature.returnType.type : best.signature.returnType.type; } // we only want the "second" type - the "first" is skipped
                     }
-                    var bct = this.findBestCommonType(best.signature.returnType.type, null, collection, false);
+                    var bct = this.findBestCommonType(best.signature.returnType.type, null, collection, true);
                     ambiguous = !bct;
                 }
                 else {

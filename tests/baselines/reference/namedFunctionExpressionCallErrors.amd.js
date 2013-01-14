@@ -4,4 +4,5 @@ foo();
 recurser();
 (function bar() {
     foo();
-})bar();
+});
+bar();

@@ -1928,8 +1928,9 @@ module TypeScript {
             if (bases) {
                 var basesLen = bases.members.length;
                 for (var i = 0; i < basesLen; i++) {
-                    if (bases.members[i].type == this.checker.anyType) {
-                        // This type is coming from external module so it has to be exported.
+                    if (!bases.members[i].type || bases.members[i].type == this.checker.anyType) {
+                        // This type is coming from external module so it has to be exported, or we're recovering from an
+                        // error condition
                         continue;
                     }
 
@@ -2580,6 +2581,8 @@ module TypeScript {
                 }
             }
 
+            var onlyHasThrow = false;
+
             if (signature.returnType.type == null) {
                 if (hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
                     if (this.checker.styleSettings.implicitAny) {
@@ -2601,10 +2604,11 @@ module TypeScript {
                     !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression) &&
                     !hasFlag(funcDecl.fncFlags, FncFlags.IsFatArrowFunction)) {
                         // relax the restriction if the method only contains a single "throw" statement
-                    var onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType == NodeType.Throw)
+                    onlyHasThrow = (funcDecl.bod.members.length > 0) && (funcDecl.bod.members[0].nodeType == NodeType.Throw)
 
                     if (!onlyHasThrow) {
-                        this.checker.errorReporter.simpleError(funcDecl, "Function declared a non-void return type, but has no return expression");
+                        this.checker.errorReporter.simpleError(funcDecl.returnTypeAnnotation || funcDecl,
+                             "Function declared a non-void return type, but has no return expression");
                     }
                 }
 
@@ -2615,7 +2619,7 @@ module TypeScript {
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
             if (funcDecl.accessorSymbol) {
                 var accessorType = funcDecl.accessorSymbol.getType();
-                if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
+                if (!onlyHasThrow && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
                     this.checker.errorReporter.simpleError(funcDecl, "Getters must return a value");
                 }
                 if (accessorType) {
@@ -2655,6 +2659,19 @@ module TypeScript {
                 }
 
                 for (var i = 0; i < len; i++) {
+                    if (bases[i] == this.checker.anyType) {
+                        // This may be the type from imported module and hence the type was not really resolved to the correct one.
+                        // Try resolving it again
+                        baseLinks[i].type = null;
+                        // There are no contextual errors when trying to verify the base class
+                        var oldErrors = this.checker.errorReporter.getCapturedErrors();
+                        CompilerDiagnostics.assert(oldErrors.length == 0, "There shouldnt be any contextual errors when typechecking base type names");
+                        this.checker.errorReporter.pushToErrorSink = true;
+                        bases[i] = this.checker.resolveBaseTypeLink(baseLinks[i], type.containedScope);
+                        this.checker.errorReporter.pushToErrorSink = false;
+                        this.checker.errorReporter.freeCapturedErrors();
+                    }
+
                     var base = bases[i];
                     var baseRef = baseLinks[i].ast;
 
@@ -2666,9 +2683,6 @@ module TypeScript {
                     }
 
                     if (base.isClassInstance()) {
-                        if (this.currentScript) {
-                            this.currentScript.requiresInherits = true;
-                        }
                         if (!(type.isClassInstance())) {
                             this.checker.errorReporter.simpleError(baseRef, "Interface base type must be interface");
                         }

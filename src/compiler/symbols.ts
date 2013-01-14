@@ -294,6 +294,10 @@ module TypeScript {
 
             return [];
         }
+
+        public isStatic() {
+            return hasFlag(this.flags, SymbolFlags.Static);
+        }
     }
 
     export class ValueLocation {

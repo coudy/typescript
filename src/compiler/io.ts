@@ -57,6 +57,14 @@ module IOUtils {
         createDirectoryStructure(ioHost, dirName);
         return ioHost.createFile(path, useUTF8);
     }
+
+    export function throwIOError(message: string, error: Error) {
+        var errorMessage = message;
+        if (error && error.message) {
+            errorMessage += (" " + error.message);
+        }
+        throw new Error(errorMessage);
+    }
 }
 
 // Declare dependencies needed for all supported hosts
@@ -112,7 +120,7 @@ var IO = (function() {
                     return <string>str;
                 }
                 catch (err) {
-                    throw new Error("Error reading file \"" + path + "\": " + err.message);
+                    IOUtils.throwIOError("Error reading file \"" + path + "\".", err);
                 }
             },
 
@@ -161,8 +169,12 @@ var IO = (function() {
             },
 
             deleteFile: function(path: string): void {
-                if (fso.FileExists(path)) {
-                    fso.DeleteFile(path, true); // true: delete read-only files
+                try {
+                    if (fso.FileExists(path)) {
+                        fso.DeleteFile(path, true); // true: delete read-only files
+                    }
+                } catch (e) {
+                    IOUtils.throwIOError("Couldn't delete file '" + path + "'.", e);
                 }
             },
 
@@ -174,15 +186,22 @@ var IO = (function() {
                     return {
                         Write: function (str) { streamObj.WriteText(str, 0); },
                         WriteLine: function (str) { streamObj.WriteText(str, 1); },
-                        Close: function () {
-                            streamObj.SaveToFile(path, 2);
-                            streamObj.Close();
-                            releaseStreamObject(streamObj);
+                        Close: function() {
+                            try {
+                                streamObj.SaveToFile(path, 2);
+                            } catch (saveError) {
+                                IOUtils.throwIOError("Couldn't write to file '" + path + "'.", saveError);
+                            }
+                            finally {
+                                if (streamObj.State != 0 /*adStateClosed*/) {
+                                    streamObj.Close();
+                                }
+                                releaseStreamObject(streamObj);
+                            }
                         }
                     };
-                } catch (ex) {
-                    WScript.StdErr.WriteLine("Couldn't write to file '" + path + "'");
-                    throw ex;
+                } catch (creationError) {
+                    IOUtils.throwIOError("Couldn't write to file '" + path + "'.", creationError);
                 }
             },
 
@@ -191,8 +210,12 @@ var IO = (function() {
             },
 
             createDirectory: function(path) {
-                if (!this.directoryExists(path)) {
-                    fso.CreateFolder(path);
+                try {
+                    if (!this.directoryExists(path)) {
+                        fso.CreateFolder(path);
+                    }
+                } catch (e) {
+                    IOUtils.throwIOError("Couldn't create directory '" + path + "'.", e);
                 }
             },
 
@@ -240,7 +263,11 @@ var IO = (function() {
             stdout: WScript.StdOut,
             watchFile: null,
             run: function(source, filename) {
-                eval(source);
+                try {
+                    eval(source);
+                } catch (e) {
+                    IOUtils.throwIOError("Error while executing file '" + filename + "'.", e);
+                }
             },
             getExecutingFilePath: function () {
                 return WScript.ScriptFullName;
@@ -264,37 +291,41 @@ var IO = (function() {
         var _module = require('module');
 
         return {
-            readFile: function (file) {
-                var buffer = _fs.readFileSync(file);
-                switch (buffer[0]) {
-                    case 0xFE:
-                        if (buffer[1] == 0xFF) {
-                            // utf16-be. Reading the buffer as big endian is not supported, so convert it to 
-                            // Little Endian first
-                            var i = 0;
-                            while ((i + 1) < buffer.length) {
-                                var temp = buffer[i]
-                                buffer[i] = buffer[i + 1];
-                                buffer[i + 1] = temp;
-                                i += 2;
+            readFile: function(file) {
+                try {
+                    var buffer = _fs.readFileSync(file);
+                    switch (buffer[0]) {
+                        case 0xFE:
+                            if (buffer[1] == 0xFF) {
+                                // utf16-be. Reading the buffer as big endian is not supported, so convert it to 
+                                // Little Endian first
+                                var i = 0;
+                                while ((i + 1) < buffer.length) {
+                                    var temp = buffer[i]
+                                    buffer[i] = buffer[i + 1];
+                                    buffer[i + 1] = temp;
+                                    i += 2;
+                                }
+                                return buffer.toString("ucs2", 2);
                             }
-                            return buffer.toString("ucs2", 2);
-                        }
-                        break;
-                    case 0xFF:
-                        if (buffer[1] == 0xFE) {
-                            // utf16-le 
-                            return buffer.toString("ucs2", 2);
-                        }
-                        break;
-                    case 0xEF:
-                        if (buffer[1] == 0xBB) {
-                            // utf-8
-                            return buffer.toString("utf8", 3);
-                        }
+                            break;
+                        case 0xFF:
+                            if (buffer[1] == 0xFE) {
+                                // utf16-le 
+                                return buffer.toString("ucs2", 2);
+                            }
+                            break;
+                        case 0xEF:
+                            if (buffer[1] == 0xBB) {
+                                // utf-8
+                                return buffer.toString("utf8", 3);
+                            }
+                    }
+                    // Default behaviour
+                    return buffer.toString();
+                } catch (e) {
+                    IOUtils.throwIOError("Error reading file \"" + file + "\".", e);
                 }
-                // Default behaviour
-                return buffer.toString();
             },
 
             writeFile: <(path: string, contents: string) => void >_fs.writeFileSync,
@@ -302,7 +333,7 @@ var IO = (function() {
                 try {
                     _fs.unlinkSync(path);
                 } catch (e) {
-
+                    IOUtils.throwIOError("Couldn't delete file '" + path + "'.", e);
                 }
             },
             fileExists: function(path): bool {
@@ -312,7 +343,7 @@ var IO = (function() {
                 function mkdirRecursiveSync(path) {
                     var stats = _fs.statSync(path);
                     if (stats.isFile()) {
-                        throw "\"" + path + "\" exists but isn't a directory.";
+                        IOUtils.throwIOError("\"" + path + "\" exists but isn't a directory.", null);
                     } else if (stats.isDirectory()) {
                         return;
                     } else {
@@ -320,9 +351,14 @@ var IO = (function() {
                         _fs.mkdirSync(path, 0775);
                     }
                 }
+
                 mkdirRecursiveSync(_path.dirname(path));
 
-                var fd = _fs.openSync(path, 'w');
+                try {
+                    var fd = _fs.openSync(path, 'w');
+                } catch (e) {
+                    IOUtils.throwIOError("Couldn't write to file '" + path + "'.", e);
+                }
                 return {
                     Write: function(str) { _fs.writeSync(fd, str); },
                     WriteLine: function(str) { _fs.writeSync(fd, str + '\r\n'); },
@@ -351,9 +387,12 @@ var IO = (function() {
                 return filesInFolder(path);
             },
             createDirectory: function(path: string): void {
-                if (!this.directoryExists(path)) {
-                    _fs.mkdirSync(path);
-                }
+                try {
+                    if (!this.directoryExists(path)) {
+                        _fs.mkdirSync(path);
+                    }
+                } catch (e) {
+                    IOUtils.throwIOError("Couldn't create directory '" + path + "'.", e);                }
             },
 
             directoryExists: function(path: string): bool {

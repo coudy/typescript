@@ -8,10 +8,12 @@ describe('getReferencesAtPosition', function() {
     var fileName1 = 'tests/cases/unittests/services/testCode/getReferencesAtPositionTest.ts';
     var fileName2 = 'tests/cases/unittests/services/testCode/getReferencesAtPositionTest2.ts';
     var fileName3 = 'tests/cases/unittests/services/testCode/getReferencesAtPositionTest3.ts';
+    var fileName4 = 'tests/cases/unittests/services/testCode/getReferencesAtPositionTest4.ts';
 
     typescriptLS.addFile(fileName1);
     typescriptLS.addFile(fileName2);
     typescriptLS.addFile(fileName3);
+    typescriptLS.addFile(fileName4);
 
     var ls = typescriptLS.getLanguageService();
 
@@ -153,6 +155,32 @@ describe('getReferencesAtPosition', function() {
         it("find references to a field declared in a chain of base class and interfaces", function() {
             var result = ls.languageService.getReferencesAtPosition(fileName3, lineToOffset(68, 11, fileName3));
             assert.equal(6, result.length);
+        });
+    });
+
+    describe("get references for statics with same names as members", function() {
+        it("find references to a member method with the same name as a static", function() {
+            /* public foo(): void */
+            var result = ls.languageService.getReferencesAtPosition(fileName4, lineToOffset(7, 21, fileName4));
+            assert.equal(3, result.length);
+        });
+
+        it("find references to a static method with the same name as a member", function() {
+            /* public static foo(): void  */
+            var result = ls.languageService.getReferencesAtPosition(fileName4, lineToOffset(9, 28, fileName4));
+            assert.equal(2, result.length);
+        });
+
+        it("find references to a member property with the same name as a static", function() {
+            /* bar: Foo */
+            var result = ls.languageService.getReferencesAtPosition(fileName4, lineToOffset(4, 14, fileName4));
+            assert.equal(3, result.length);
+        });
+
+        it("find references to a static property with the same name as a member", function() {
+            /* static bar: Foo */
+            var result = ls.languageService.getReferencesAtPosition(fileName4, lineToOffset(5, 21, fileName4));
+            assert.equal(2, result.length);
         });
     });
 });

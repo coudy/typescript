@@ -12,8 +12,8 @@ function foo() {
         return function () {
             return function () {
                 return _super.prototype;
-            }
-        }
+            };
+        };
     };
 }
 var User = (function () {
@@ -41,7 +41,7 @@ function inner2() {
         (function () {
             return function () {
                 return _super.prototype;
-            }
+            };
         })();
     }
     RegisteredUser.prototype.sayHello = function () {
@@ -54,7 +54,7 @@ function inner2() {
         (function () {
             return function () {
                 return _super.prototype;
-            }
+            };
         })();
     };
     RegisteredUser.staticFunction = function staticFunction() {
@@ -66,8 +66,8 @@ function inner2() {
             return function () {
                 return function () {
                     return _super.prototype;
-                }
-            }
+                };
+            };
         };
     };
     return RegisteredUser;

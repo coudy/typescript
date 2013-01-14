@@ -54,7 +54,7 @@ class ConsoleLogger extends Harness.Logger {
     }
 
     public start() {
-        IO.printLine("Running tests.");
+        IO.printLine("Running tests" + (iterations > 1 ? " "  + iterations + " times" : "") + (reverse ? " in reverse." : "."));
     }
 
     public end() {
@@ -181,18 +181,26 @@ class JSONLogger extends Harness.Logger {
 
 function runTests(tests: RunnerBase[]) {
 
-    for (var i = 0; i < tests.length; i++) {
-        tests[i].runTests();
+    if (reverse) {
+        tests = tests.reverse();
+    }
+
+    for (var i = iterations; i > 0; i--) {
+        for (var j = 0; j < tests.length; j++) {
+            tests[j].runTests();
+        }
     }
 
     run();
 }
 
 var runners: RunnerBase[] = [];
+var reverse: bool = false;
+var iterations: number = 1;
 
 var opts = new OptionsParser(IO);
 
-opts.option('compiler', {
+opts.flag('compiler', {
     set: function () {
         runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
@@ -200,32 +208,32 @@ opts.option('compiler', {
     }
 });
 
-opts.option('project', {
+opts.flag('project', {
     set: function () {
         runners.push(new ProjectRunner());
     }
 });
 
-opts.option('fourslash', {
+opts.flag('fourslash', {
     set: function () {
         runners.push(new FourslashRunner());
     }
 });
 
-opts.option('ls', {
+opts.flag('ls', {
     set: function () {
         runners.push(new UnitTestRunner('ls'));
         runners.push(new FourslashRunner());
     }
 });
 
-opts.option('services', {
+opts.flag('services', {
     set: function () {
         runners.push(new UnitTestRunner('services'));
     }
 });
 
-opts.option('harness', {
+opts.flag('harness', {
     set: function () => {
         runners.push(new UnitTestRunner('harness'));
     }
@@ -242,6 +250,22 @@ opts.option('root', {
         Harness.userSpecifiedroot = str;
     }
 });
+
+opts.flag('reverse', {
+    experimental: true,
+    set: function () {
+        reverse = true;
+    }
+});
+
+opts.option('iterations', {
+    experimental: true,
+    set: function (str) {
+        var val = parseInt(str);
+        iterations = val < 1 ? 1 : val;
+    }
+});
+
 opts.parse(IO.arguments)
 
 if (runners.length === 0) {

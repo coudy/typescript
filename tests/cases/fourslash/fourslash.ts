@@ -98,9 +98,24 @@ module FourSlashInterface {
         public signatureHelpPresent() {
             FourSlash.currentTestState.verifySignatureHelpPresent(!this.negative);
         }
+
+        public errorExistsBetweenMarkers(startMarker: string, endMarker: string) {
+            FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(
+                function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
+                    return ((errorMinChar === startPos) && (errorLimChar === endPos)) ? true : false;
+                }, startMarker, endMarker, !this.negative);
+        }
     }
 
     export class verify extends verifyNegatable {
+        public errorDoesNotExistAfterMarker(markerName?= "") {
+            FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(
+                            function (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) {
+                                return ((errorMinChar >= startPos) && (errorLimChar >= endPos)) ? true : false;
+                            },
+                            markerName, undefined, false);
+            }
+
         public caretAtMarker(markerName?: string) {
             FourSlash.currentTestState.verifyCaretAtMarker(markerName);
         }
@@ -149,10 +164,6 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyQuickInfoType(expected);
         }
 
-        public errorExistsBetweenMarkers(startMarker: string, endMarker: string) {
-            FourSlash.currentTestState.verifyErrorExistsBetweenMarkers(startMarker, endMarker);
-        }
-
         public numberOfErrorsInCurrentFile(expected: number) {
             FourSlash.currentTestState.verifyNumberOfErrorsInCurrentFile(expected);
         }
@@ -163,6 +174,10 @@ module FourSlashInterface {
     }
     
     export class edit {
+        public backspace(count?: number) {
+            FourSlash.currentTestState.deleteCharBehindMarker(count);
+        }
+
         public insert(text: string) {
             this.insertLines(text);
         }

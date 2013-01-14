@@ -249,18 +249,7 @@ module TypeScript {
                 outerFnc.innerStaticFuncs[outerFnc.innerStaticFuncs.length] = funcDecl;
             }
             else {
-
-                if (!funcDecl.isConstructor &&
-                    container &&
-                    container.declAST &&
-                    container.declAST.nodeType == NodeType.FuncDecl &&
-                    (<FuncDecl>container.declAST).isConstructor &&
-                    !funcDecl.isMethod()) {
-                    funcScope = context.scopeChain.thisType.constructorScope;//locals;
-                }
-                else {
-                    funcScope = context.scopeChain.scope;
-                }
+                funcScope = context.scopeChain.scope;
             }
 
             // REVIEW: We don't search for another sym for accessors to prevent us from

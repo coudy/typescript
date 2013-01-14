@@ -31,4 +31,3 @@ define(["require", "exports", "m1"], function(require, exports, __m3__) {
 
     var b = new m3.A();
 })
-////[0.d.ts]

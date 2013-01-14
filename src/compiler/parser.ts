@@ -84,6 +84,7 @@ module TypeScript {
         private parsingDeclareFile = false;
         private amdDependencies: string[] = [];
         public inferPropertiesFromThisAssignment = false;
+        public requiresExtendsBlock = false;
 
         private resetStmtStack() {
             this.statementInfoStack = new IStatementInfo[];
@@ -916,6 +917,27 @@ module TypeScript {
             return this.parseTypeReferenceTail(errorRecoverySet, minChar, interfaceDecl);
         }
 
+        private parseFunctionBlock(errorRecoverySet: ErrorRecoverySet,
+                                   allowedElements: AllowedElements,
+                                   parentModifiers: Modifiers,
+                                   bod: ASTList,
+                                   bodMinChar: number): void {
+            this.state = ParseState.StartStatementList;
+            this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.StmtStart);
+            var savedInFunction = this.inFunction;
+            this.inFunction = true;
+            this.parseStatementList(
+                errorRecoverySet | ErrorRecoverySet.RCurly | ErrorRecoverySet.StmtStart,
+                bod, /*sourceElements:*/ true, /*noLeadingCase:*/ false, allowedElements, parentModifiers);
+            bod.minChar = bodMinChar;
+            bod.limChar = this.scanner.pos;
+            this.inFunction = savedInFunction;
+            var ec = new EndCode();
+            ec.minChar = bod.limChar;
+            ec.limChar = ec.minChar;
+            bod.append(ec);
+        }
+
         private parseFunctionStatements(errorRecoverySet: ErrorRecoverySet,
                                         name: Identifier,
                                         isConstructor: bool,
@@ -934,8 +956,31 @@ module TypeScript {
             var bod: ASTList = null;
             var wasShorthand = false;
             var isAnonLambda = false;
+            var limChar: number;
 
-            if (!requiresSignature) {
+            if (requiresSignature) {
+                // If we require a signature, but they provided a block, then give an error, but
+                // still consume the block.
+                limChar = this.scanner.pos;
+                if (this.currentToken.tokenId === TokenID.OpenBrace) {
+                    this.reportParseError("Function declarations are not permitted within interfaces, ambient modules or classes")
+                    bod = new ASTList();
+                    var bodMinChar = this.scanner.startPos;
+
+                    this.parseFunctionBlock(errorRecoverySet, allowedElements, parentModifiers, bod, bodMinChar);
+                    this.checkCurrentToken(TokenID.CloseBrace, errorRecoverySet);
+
+                    // If there's also a semicolon, then just skip over it.  We don't want to report an 
+                    // additional error here.
+                    if (this.currentToken.tokenId === TokenID.Semicolon) {
+                        this.currentToken = this.scanner.scan();
+                    }
+                }
+                else {
+                    this.checkCurrentToken(TokenID.Semicolon, errorRecoverySet, "Expected ';'");
+                }
+            }
+            else {
                 bod = new ASTList();
                 var bodMinChar = this.scanner.startPos;
                 if (this.currentToken.tokenId == TokenID.EqualsGreaterThan) {
@@ -945,6 +990,7 @@ module TypeScript {
                     wasShorthand = true;
                     this.currentToken = this.scanner.scan();
                 }
+
                 if (wasShorthand && this.currentToken.tokenId != TokenID.OpenBrace) {
                     var retExpr = this.parseExpr(errorRecoverySet | ErrorRecoverySet.SColon,
                                             OperatorPrecedence.Assignment, true,
@@ -957,22 +1003,11 @@ module TypeScript {
                     bod.append(retStmt);
                 }
                 else {
-                    this.state = ParseState.StartStatementList;
-                    this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.StmtStart);
-                    var savedInFunction = this.inFunction;
                     isAnonLambda = wasShorthand;
-                    this.inFunction = true;
-                    this.parseStatementList(
-                        errorRecoverySet | ErrorRecoverySet.RCurly | ErrorRecoverySet.StmtStart,
-                        bod, /*sourceElements:*/ true, /*noLeadingCase:*/ false, allowedElements, parentModifiers);
-                    bod.minChar = bodMinChar;
-                    bod.limChar = this.scanner.pos;
-                    this.inFunction = savedInFunction;
-                    var ec = new EndCode();
-                    ec.minChar = bod.limChar;
-                    ec.limChar = ec.minChar;
-                    bod.append(ec);
+                    this.parseFunctionBlock(errorRecoverySet, allowedElements, parentModifiers, bod, bodMinChar);
                 }
+
+                limChar = this.scanner.pos;
             }
 
             var funcDecl = new FuncDecl(name, bod, isConstructor, args, this.topVarList(),
@@ -981,11 +1016,8 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
             var staticFuncDecl = false;
-            var limChar = this.scanner.pos;
-            if (requiresSignature) {
-                this.checkCurrentToken(TokenID.Semicolon, errorRecoverySet, this.currentToken.tokenId == TokenID.OpenBrace ? "Function declarations are not permitted within interfaces, ambient modules or classes" : "Expected ';'");
-            }
-            else {
+
+            if (!requiresSignature) {
                 if (!wasShorthand || isAnonLambda) {
                     funcDecl.endingToken = new ASTSpan();
                     funcDecl.endingToken.minChar = this.scanner.startPos;
@@ -1279,16 +1311,17 @@ module TypeScript {
             return sawEllipsis;
         }
 
-        private parseFncDecl(  errorRecoverySet: ErrorRecoverySet,
-                                isDecl: bool, requiresSignature: bool,
-                                isMethod: bool,
-                                methodName: Identifier,
-                                indexer: bool,
-                                isStatic: bool,
-                                markedAsAmbient: bool,
-                                modifiers: Modifiers,
-                                lambdaArgContext: ILambdaArgumentContext,
-                                expectClosingRParen: bool): AST {
+        private parseFncDecl(errorRecoverySet: ErrorRecoverySet,
+                             isDecl: bool,
+                             requiresSignature: bool,
+                             isMethod: bool,
+                             methodName: Identifier,
+                             indexer: bool,
+                             isStatic: bool,
+                             markedAsAmbient: bool,
+                             modifiers: Modifiers,
+                             lambdaArgContext: ILambdaArgumentContext,
+                             expectClosingRParen: bool): AST {
 
             var leftCurlyCount = this.scanner.leftCurlyCount;
             var rightCurlyCount = this.scanner.rightCurlyCount;
@@ -1301,6 +1334,7 @@ module TypeScript {
             var minChar = this.scanner.pos;
             var prevNestingLevel = this.nestingLevel;
             var preComments = this.parseComments();
+            var isLambda = !!lambdaArgContext;
             this.nestingLevel = 0;
             if ((!this.style_funcInLoop) && this.inLoop()) {
                 this.reportParseStyleError("function declaration in loop");
@@ -1338,7 +1372,7 @@ module TypeScript {
             var isSetter = hasFlag(modifiers, Modifiers.Setter);
             if ((this.currentToken.tokenId == TokenID.OpenParen) || (indexer && (this.currentToken.tokenId == TokenID.OpenBracket)) || (lambdaArgContext && (lambdaArgContext.preProcessedLambdaArgs || this.currentToken.tokenId == TokenID.DotDotDot))) {
                 // arg list
-                variableArgList = this.parseFormalParameterList(errorRecoverySet, args, false, requiresSignature, indexer, isGetter, isSetter, !!lambdaArgContext, lambdaArgContext ? lambdaArgContext.preProcessedLambdaArgs : null, expectClosingRParen);
+                variableArgList = this.parseFormalParameterList(errorRecoverySet, args, false, requiresSignature, indexer, isGetter, isSetter, isLambda, lambdaArgContext ? lambdaArgContext.preProcessedLambdaArgs : null, expectClosingRParen);
             }
             this.state = ParseState.FncDeclArgs;
             var returnType: AST = null;
@@ -1355,6 +1389,10 @@ module TypeScript {
             }
             this.state = ParseState.FncDeclReturnType;
 
+            if (isLambda && this.currentToken.tokenId != TokenID.EqualsGreaterThan) {
+                this.reportParseError("Expected '=>'");
+            }
+
             // REVIEW:
             // Currently, it's imperative that ambient functions *not* be marked as overloads.  At some point, we may
             // want to unify the two concepts internally
@@ -1366,9 +1404,11 @@ module TypeScript {
             var svInFncDecl = this.inFncDecl;
             this.inFncDecl = true;
             var funcDecl: FuncDecl =
-                this.parseFunctionStatements(errorRecoverySet | ErrorRecoverySet.RCurly,
-                                        name, false, isMethod, args, AllowedElements.None,
-                                        minChar, requiresSignature, Modifiers.None);
+                this.parseFunctionStatements(
+                errorRecoverySet | ErrorRecoverySet.RCurly,
+                name, /*isConstructor:*/ false, isMethod, args, AllowedElements.None,
+                minChar, requiresSignature, Modifiers.None);
+
             this.inFncDecl = svInFncDecl;
             funcDecl.variableArgList = variableArgList;
             funcDecl.isOverload = isOverload;
@@ -1466,17 +1506,16 @@ module TypeScript {
         private parseBaseList(extendsList: ASTList,
                               implementsList: ASTList,
                               errorRecoverySet: ErrorRecoverySet,
-                              interfaceOnly: bool,
                               isClass: bool): void {
             var keyword = true;
             var currentList = extendsList;
             for (; ;) {
                 if (keyword) {
-                    if (this.currentToken.tokenId == TokenID.Implements) {
-                        if (interfaceOnly) {
-                            this.reportParseError("interfaces can not implement other types");
-                        }
+                    if (this.currentToken.tokenId === TokenID.Implements) {
                         currentList = implementsList;
+                    }
+                    else if (this.currentToken.tokenId == TokenID.Extends && !this.requiresExtendsBlock) {
+                        this.requiresExtendsBlock = isClass;
                     }
                     this.currentToken = this.scanner.scan();
                     keyword = false;
@@ -1511,7 +1550,7 @@ module TypeScript {
                     currentList.append(baseName);
                 }
 
-                if (!interfaceOnly && currentList == extendsList && extendsList.members.length > 1) {
+                if (isClass && currentList == extendsList && extendsList.members.length > 1) {
                     this.reportParseError("A class may only extend one other class");
                 }
 
@@ -1519,8 +1558,14 @@ module TypeScript {
                     this.currentToken = this.scanner.scan();
                     continue;
                 }
+
                 else if ((this.currentToken.tokenId == TokenID.Extends) ||
                          (this.currentToken.tokenId == TokenID.Implements)) {
+
+                    if (this.currentToken.tokenId == TokenID.Extends && !this.requiresExtendsBlock) {
+                        this.requiresExtendsBlock = isClass;
+                    }
+
                     currentList = extendsList;
                     keyword = true;
                     continue;
@@ -1566,25 +1611,24 @@ module TypeScript {
                 }
             }
 
-            var baseClass: ASTList = null;
-            var interfacesImplemented: ASTList = null;
+            var extendsList: ASTList = null;
+            var implementsList: ASTList = null;
             var requiresSignature = false;
 
             if ((this.currentToken.tokenId == TokenID.Extends) ||
                 (this.currentToken.tokenId == TokenID.Implements)) {
-                baseClass = new ASTList();
-                interfacesImplemented = new ASTList();
-                this.parseBaseList(baseClass, interfacesImplemented, errorRecoverySet, false, true);
+                extendsList = new ASTList();
+                implementsList = new ASTList();
+                this.parseBaseList(extendsList, implementsList, errorRecoverySet, /*isClass:*/ true);
             }
 
             // REVIEW: Note that we don't set this as the current class decl
-            var classDecl = new ClassDeclaration(name, new ASTList(), baseClass, interfacesImplemented);
+            var classDecl = new ClassDeclaration(name, new ASTList(), extendsList, implementsList);
 
             this.currentClassDefinition = classDecl;
 
             // parse the classes members
             this.parseClassElements(classDecl, errorRecoverySet, modifiers);
-
 
             if (this.ambientModule || this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Exported)) {
                 classDecl.varFlags |= VarFlags.Exported;
@@ -2039,11 +2083,18 @@ module TypeScript {
                     name.flags |= ASTFlags.Error;
                 }
             }
-            var interfaces: ASTList = null;
-            if (this.currentToken.tokenId == TokenID.Extends) {
-                interfaces = new ASTList();
-                interfaces.minChar = this.scanner.startPos;
-                this.parseBaseList(interfaces, null, errorRecoverySet, true, false);
+
+            var extendsList: ASTList = null;
+            var implementsList: ASTList = null;
+            if (this.currentToken.tokenId === TokenID.Extends || this.currentToken.tokenId === TokenID.Implements) {
+                if (this.currentToken.tokenId === TokenID.Implements) {
+                    this.reportParseError("Expected 'extends'");
+                }
+
+                extendsList = new ASTList();
+                implementsList = new ASTList();
+                extendsList.minChar = this.scanner.startPos;
+                this.parseBaseList(extendsList, implementsList, errorRecoverySet, /*isClass:*/ false);
             }
 
             var membersMinChar = this.scanner.startPos;
@@ -2060,7 +2111,7 @@ module TypeScript {
             // have an 'ObjectType' and not a list of members.  We may want to consider making that
             // change.  Note: it would mean breaking aparat TypeDecl into InterfaceDeclaration and 
             // ClassDeclaration.
-            var interfaceDecl = new InterfaceDeclaration(name, members, interfaces, null);
+            var interfaceDecl = new InterfaceDeclaration(name, members, extendsList, null);
             if (hasFlag(modifiers, Modifiers.Private)) {
                 interfaceDecl.varFlags |= VarFlags.Private;
             }
@@ -2695,12 +2746,16 @@ module TypeScript {
                 case TokenID.New:
                     minChar = this.scanner.pos;
                     this.currentToken = this.scanner.scan();
-                    ast = new CallExpression(NodeType.New, this.parseTerm(errorRecoverySet, false,
-                                                                  TypeContext.AllSimpleTypes, inCast),
-                                           null);
-                    ast.minChar = minChar;
-                    limChar = this.scanner.lastTokenLimChar();
-                    inNew = true;
+                    var target = this.parseTerm(errorRecoverySet, false, TypeContext.AllSimpleTypes, inCast);
+
+                    if (target.nodeType == NodeType.Error) {
+                        this.reportParseError("Cannot invoke 'new' on this expression");
+                    } else {
+                        ast = new CallExpression(NodeType.New, target, null);
+                        ast.minChar = minChar;
+                        limChar = this.scanner.lastTokenLimChar();
+                        inNew = true;
+                    }
                     break;
                 case TokenID.Function:
                     minChar = this.scanner.pos;
@@ -4238,6 +4293,7 @@ module TypeScript {
             this.ambientModule = false;
             this.topLevel = true;
             this.hasTopLevelImportOrExport = false;
+            this.requiresExtendsBlock = false;
             this.fname = filename;
             this.currentUnitIndex = unitIndex;
             this.amdDependencies = [];
@@ -4258,12 +4314,24 @@ module TypeScript {
             this.state = ParseState.StartScript;
             this.parsingDeclareFile = isDSTRFile(filename) || isDTSFile(filename);
 
-            this.parseStatementList(ErrorRecoverySet.EOF | ErrorRecoverySet.Func,
-                            bod, true, false, allowedElements, Modifiers.None);
-            if (this.currentToken.tokenId != TokenID.EndOfFile) {
-                var badToken: TokenInfo = tokenTable[this.currentToken.tokenId];
+            while (true) {
+                this.parseStatementList(
+                    ErrorRecoverySet.EOF | ErrorRecoverySet.Func,
+                    bod, /*sourceElements:*/ true, /*noLeadingCase:*/ false,
+                    allowedElements, Modifiers.None);
+
+                if (this.currentToken.tokenId === TokenID.EndOfFile) {
+                    break;
+                }
+
+                // Still have remaining tokens in the file.  Report error for this unexpected token,
+                // skip it, and continue trying to parse statements until we're done. 
+                var badToken = tokenTable[this.currentToken.tokenId];
                 this.reportParseError("Unexpected statement block terminator '" + badToken.text + "'");
+
+                this.currentToken = this.scanner.scan();
             }
+
             this.state = ParseState.EndScript;
 
             bod.limChar = this.scanner.pos;
@@ -4308,6 +4376,7 @@ module TypeScript {
             script.topLevelMod = topLevelMod;
             script.containsUnicodeChar = this.scanner.seenUnicodeChar;
             script.containsUnicodeCharInComment = this.scanner.seenUnicodeCharInComment;
+            script.requiresExtendsBlock = this.requiresExtendsBlock;
             return script;
         }
     }

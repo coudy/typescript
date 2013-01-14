@@ -5,7 +5,7 @@
 
 module Services {
 
-    export class BraceMathingManager {
+    export class BraceMatchingManager {
 
         constructor(private scriptSyntaxAST: Services.ScriptSyntaxAST) {
         }
