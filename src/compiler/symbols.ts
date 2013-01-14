@@ -544,6 +544,7 @@ module TypeScript {
         public name: string;
         public location: number;
         private paramDocComment: string = null;
+        public funcDecl: AST = null;
         
         constructor (name: string, location: number, unitIndex: number,
                           public parameter: ValueLocation) {
@@ -593,8 +594,8 @@ module TypeScript {
         public getParameterDocComments() {
             if (!this.paramDocComment) {
                 var parameterComments: string[] = [];
-                if (this.container && this.container.declAST) {
-                    var fncDocComments = this.container.declAST.getDocComments();
+                if (this.funcDecl) {
+                    var fncDocComments = this.funcDecl.getDocComments();
                     var paramComment = Comment.getParameterDocCommentText(this.name, fncDocComments);
                     if (paramComment != "") {
                         parameterComments.push(paramComment);

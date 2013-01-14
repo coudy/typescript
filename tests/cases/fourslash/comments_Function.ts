@@ -16,6 +16,12 @@
 ////var lambddaN/*12*/oVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
 /////*13*/lambdaFoo(/*14*/10, /*15*/20);
 ////lambddaNoVarComment(/*16*/10, /*17*/20);
+/////**
+////* Does something
+////* @param a a string
+////*/
+////declare function fn(a: string);
+////fn(/*19*/"hello");
 
 goTo.marker('1');
 verify.currentSignatureHelpDocCommentIs("This comment should appear for foo");
@@ -79,3 +85,7 @@ verify.currentParameterHelpArgumentDocCommentIs("param b");
 goTo.marker('18');
 verify.completionListContains('a', 'number', 'param a');
 verify.completionListContains('b', 'number', 'param b');
+
+goTo.marker('19');
+verify.currentSignatureHelpDocCommentIs(" Does something");
+verify.currentParameterHelpArgumentDocCommentIs("a string");

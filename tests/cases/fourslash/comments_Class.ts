@@ -37,6 +37,15 @@
 ////var i/*22*/6 = new c6(/*23*/);
 ////var i6/*24*/_c = c/*25*/6;
 /////*26*/
+////class a {
+////    /** 
+////    constructor for a
+////    @param a this is my a
+////    */
+////    constructor(a: string) {
+////    }
+////}
+////new a(/*27*/"Hello");
 
 goTo.marker('1');
 verify.quickInfoIs("new() => c2\nThis is class c2 without constuctor");
@@ -129,3 +138,7 @@ verify.completionListContains("i5_c", "{ s1: number; new(): c5; }", "");
 verify.completionListContains("c6", "{ s1: number; new(): c6; }", "class with statics and constructor");
 verify.completionListContains("i6", "c6", "");
 verify.completionListContains("i6_c", "{ s1: number; new(): c6; }", "");
+
+goTo.marker('27');
+verify.currentSignatureHelpDocCommentIs("constructor for a");
+verify.currentParameterHelpArgumentDocCommentIs("this is my a");
