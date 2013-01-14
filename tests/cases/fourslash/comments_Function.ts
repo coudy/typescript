@@ -87,5 +87,5 @@ verify.completionListContains('a', 'number', 'param a');
 verify.completionListContains('b', 'number', 'param b');
 
 goTo.marker('19');
-verify.currentSignatureHelpDocCommentIs(" Does something");
+verify.currentSignatureHelpDocCommentIs("Does something");
 verify.currentParameterHelpArgumentDocCommentIs("a string");

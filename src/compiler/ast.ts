@@ -2468,14 +2468,23 @@ module TypeScript {
             return this.docCommentText;
         }
 
-        static consumeLeadingSpace(line: string, startIndex: number) {
-            for (; startIndex < line.length; startIndex++) {
+        static consumeLeadingSpace(line: string, startIndex: number, maxSpacesToRemove?: number) {
+            var endIndex = line.length;
+            if (maxSpacesToRemove != undefined) {
+                endIndex = min(startIndex + maxSpacesToRemove, endIndex);
+            }
+
+            for (; startIndex < endIndex; startIndex++) {
                 var charCode = line.charCodeAt(startIndex);
                 if (charCode != LexCodeSpace && charCode != LexCodeTAB) {
                     return startIndex;
                 }
             }
             
+            if (endIndex != line.length) {
+                return endIndex;
+            }
+
             return -1;
         }
 
@@ -2491,23 +2500,32 @@ module TypeScript {
             return index == length;
         }
 
-        static cleanDocCommentLine(line: string, jsDocStyleComment: bool) {
+        static cleanDocCommentLine(line: string, jsDocStyleComment: bool, jsDocLineSpaceToRemove?: number) {
             var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
             if (nonSpaceIndex != -1) {
+                var jsDocSpacesRemoved = nonSpaceIndex;
                 if (jsDocStyleComment && line.charAt(nonSpaceIndex) == '*') { // remove leading * in case of jsDocComment
-                    nonSpaceIndex++;
+                    var startIndex = nonSpaceIndex + 1;
+                    nonSpaceIndex = Comment.consumeLeadingSpace(line, startIndex, jsDocLineSpaceToRemove);
+
+                    if (nonSpaceIndex != -1) {
+                        jsDocSpacesRemoved = nonSpaceIndex - startIndex;
+                    } else {
+                        return null;
+                    }
                 }
 
                 return {
                     minChar: nonSpaceIndex,
-                    limChar: line.charAt(line.length - 1) == "\r" ? line.length - 1 : line.length
+                    limChar: line.charAt(line.length - 1) == "\r" ? line.length - 1 : line.length,
+                    jsDocSpacesRemoved: jsDocSpacesRemoved
                 };
             }
 
             return null;
         }
 
-        static cleanJSDocComment(content: string) {
+        static cleanJSDocComment(content: string, spacesToRemove?: number) {
             var docCommentLines: string[] = [];
             content = content.replace("/**", ""); // remove /**
             if (content.length >= 2 && content.charAt(content.length - 1) == "/" && content.charAt(content.length - 2) == "*") {
@@ -2517,7 +2535,7 @@ module TypeScript {
             var inParamTag = false;
             for (var l = 0; l < lines.length; l++) {
                 var line = lines[l];
-                var cleanLinePos = Comment.cleanDocCommentLine(line, true);
+                var cleanLinePos = Comment.cleanDocCommentLine(line, true, spacesToRemove);
                 if (!cleanLinePos) {
                     // Whole line empty, read next line
                     continue;
@@ -2557,6 +2575,9 @@ module TypeScript {
                 // Add line to comment text if it is not only white space line
                 var newCleanPos = Comment.cleanDocCommentLine(docCommentText, false);
                 if (newCleanPos) {
+                    if (spacesToRemove == undefined) {
+                        spacesToRemove = cleanLinePos.jsDocSpacesRemoved;
+                    }
                     docCommentLines.push(docCommentText);
                 }
             }
@@ -2669,8 +2690,21 @@ module TypeScript {
                     var endOfParam = commentContents.indexOf("@", j);
                     var paramHelpString = commentContents.substring(j, endOfParam < 0 ? commentContents.length : endOfParam);
 
+                    // Find alignement spaces to remove
+                    var paramSpacesToRemove: number = undefined;
+                    var paramLineIndex = commentContents.substring(0, j).lastIndexOf("\n") + 1;
+                    if (paramLineIndex != 0) {
+                        if (paramLineIndex < j && commentContents.charAt(paramLineIndex + 1) == "\r") {
+                            paramLineIndex++;
+                        }
+                    }
+                    var startSpaceRemovalIndex = Comment.consumeLeadingSpace(commentContents, paramLineIndex);
+                    if (startSpaceRemovalIndex != j && commentContents.charAt(startSpaceRemovalIndex) == "*") {
+                        paramSpacesToRemove = j - startSpaceRemovalIndex - 1;
+                    }
+
                     // Clean jsDocComment and return
-                    return Comment.cleanJSDocComment(paramHelpString);
+                    return Comment.cleanJSDocComment(paramHelpString, paramSpacesToRemove);
                 }
             }
 
