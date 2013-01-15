@@ -735,7 +735,13 @@ module TypeScript {
             if (pre) {
                 if (this.emitOptions.outputMany) {
                     for (var i = 0; i < script.referencedFiles.length; i++) {
-                        var declareFileName = getDeclareFilePath(script.referencedFiles[i].path);
+                        var referencePath = script.referencedFiles[i].path;
+                        var declareFileName: string;
+                        if (isRooted(referencePath)) {
+                            declareFileName = this.emitOptions.mapOutputFileName(referencePath, TypeScriptCompiler.mapToDTSFileName)
+                        } else {
+                            declareFileName = getDeclareFilePath(script.referencedFiles[i].path);
+                        }
                         this.declFile.WriteLine('/// <reference path="' + declareFileName + '" />');
                     }
                 }
