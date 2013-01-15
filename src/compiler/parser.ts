@@ -1735,7 +1735,8 @@ module TypeScript {
                     this.reportParseError("Base class initializers must be the first statement in a class definition");
                 }
                 else if (!wasGetOrSetId && ((modifiers & Modifiers.Getter) || (modifiers & Modifiers.Setter)) &&
-                         (this.currentToken.tokenId == TokenID.OpenParen) || (this.currentToken.tokenId == TokenID.Equals)) {
+                         ((this.currentToken.tokenId == TokenID.OpenParen) || (this.currentToken.tokenId == TokenID.Equals) ||
+                          (this.currentToken.tokenId == TokenID.Colon) || (this.currentToken.tokenId == TokenID.Semicolon))) {
                              // catch a 'get' or 'set' used as an identifier
                     wasGetOrSetId = true;
                     scanNext = false;

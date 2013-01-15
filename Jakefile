@@ -251,8 +251,15 @@ task("tests", [run, serviceFile].concat(libraryTargets), function() {
 	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);
 });
 
+var localBaseline = "tests/baselines/local/";
+var refBaseline = "tests/baselines/reference/";
 desc("Runs the tests using the built run.js file. Syntax is jake :runtests[host, testFile]. Both parameters are optional.");
 task("runtests", ["tests", builtTestDirectory], function() {
+	// Clean the local baselines directory
+	if (fs.exists(localBaseline)) {
+		jake.rmRf(localBaseline);
+	}
+	jake.mkdirP(localBaseline);
 	host = process.env.host || process.env.TYPESCRIPT_HOST || "Node";
 	test = process.env.test || "";
 	var cmd = host + " " + run + " " + test;
@@ -273,10 +280,7 @@ task("runtests", ["tests", builtTestDirectory], function() {
 
 // Makes the test results the new baseline
 desc("Makes the most recent test results the new baseline, overwriting the old baseline");
-var localBaseline = "tests/baselines/local/";
-var refBaseline = "tests/baselines/reference/";
 task("baseline-accept", function() {
 	jake.rmRf(refBaseline);
 	fs.renameSync(localBaseline, refBaseline);
-	jake.mkdirP(localBaseline);
 });
