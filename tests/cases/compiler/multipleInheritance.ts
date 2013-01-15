@@ -27,11 +27,11 @@ class ND extends N {    // change to type not a subtype
 }
 
 class Good {
-    public f:() { return number; }
+    public f:() => number = function() { return 0; }
     public g() { return 0; }
 }
 
 class Baad extends Good {
-    public f() { 0; }
+    public f(): number { return 0; }
     public g(n:number) { return 0; }
 }

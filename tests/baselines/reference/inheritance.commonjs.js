@@ -40,7 +40,11 @@ var ND = (function (_super) {
     return ND;
 })(N);
 var Good = (function () {
-    function Good() { }
+    function Good() {
+        this.f = function () {
+            return 0;
+        };
+    }
     Good.prototype.g = function () {
         return 0;
     };
