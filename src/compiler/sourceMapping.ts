@@ -89,7 +89,7 @@ module TypeScript {
 
                 // Join namelist
                 if (sourceMapper.names.length > 0) {
-                    namesList = namesList.concat(sourceMapper.names);
+                    namesList.push.apply(namesList, sourceMapper.names);
                 }
 
                 var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
@@ -155,14 +155,13 @@ module TypeScript {
 
             // Write the actual map file
             if (mappingsString != "") {
-                var result: any = {};
-                result.version = 3;
-                result.file = sourceMapper.jsFileName;
-                result.sources = tsFiles;
-                result.names = namesList;
-                result.mappings = mappingsString;
-
-                sourceMapOut.Write(JSON2.stringify(result));
+                sourceMapOut.Write(JSON2.stringify({
+                    version: 3,
+                    file: sourceMapper.jsFileName,
+                    sources: tsFiles,
+                    names: namesList,
+                    mappings: mappingsString
+                }));
             }
 
             // Done, close the file
