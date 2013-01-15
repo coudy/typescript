@@ -39,7 +39,7 @@ class CommandLineHost implements TypeScript.IResolverHost {
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
-        var nRCode = preEnv.residentCode.length;
+        var path = "";
 
         var postResolutionError = 
             (errorFile: string, errorMessage: string) => {
@@ -56,24 +56,6 @@ class CommandLineHost implements TypeScript.IResolverHost {
                 }
             }
         };
-
-        var residentResolutionDispatcher: TypeScript.IResolutionDispatcher = {
-            postResolutionError: postResolutionError,
-            postResolution: (path: string, code: TypeScript.ISourceText) => {
-                var pathId = this.getPathIdentifier(path);
-                if (!this.resolvedPaths[pathId]) {
-                    resolvedEnv.residentCode.push(<TypeScript.SourceUnit>code);
-                    this.resolvedPaths[pathId] = true;
-                }
-            }
-        };
-        var path = "";
-
-        for (var i = 0; i < nRCode; i++) {
-            path = TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.residentCode[i].path));
-            this.pathMap[preEnv.residentCode[i].path] = path;
-            resolver.resolveCode(path, "", false, residentResolutionDispatcher);
-        }
 
         for (var i = 0; i < nCode; i++) {
             path = TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.code[i].path));
@@ -105,19 +87,6 @@ class BatchCompiler {
         // Reset resolve error status
         this.hasResolveErrors = false;
 
-        for (var i = 0; i < this.compilationEnvironment.residentCode.length; i++) {
-            if (!commandLineHost.isResolved(this.compilationEnvironment.residentCode[i].path)) {
-                var path = this.compilationEnvironment.residentCode[i].path;
-                this.hasResolveErrors = true;
-                if (!TypeScript.isSTRFile(path) && !TypeScript.isDSTRFile(path) && !TypeScript.isTSFile(path) && !TypeScript.isDTSFile(path)) {
-                    this.ioHost.stderr.WriteLine("Unknown extension for file: \"" + path + "\". Only .ts and .d.ts extensions are allowed.");
-                }
-                else {
-                    this.ioHost.stderr.WriteLine("Error reading file \"" + path + "\": File not found");
-                }
-
-            }
-        }
         for (var i = 0; i < this.compilationEnvironment.code.length; i++) {
             if (!commandLineHost.isResolved(this.compilationEnvironment.code[i].path)) {
                 this.hasResolveErrors = true;
@@ -192,12 +161,6 @@ class BatchCompiler {
                 this.ioHost.stderr.WriteLine(err.message);
             }
 
-        }
-
-        for (var iResCode = 0 ; iResCode < this.resolvedEnvironment.residentCode.length; iResCode++) {
-            if (!this.compilationSettings.parseOnly) {
-                consumeUnit(this.resolvedEnvironment.residentCode[iResCode], true);
-            }
         }
 
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
@@ -498,7 +461,7 @@ class BatchCompiler {
         }
 
         // If no source files provided to compiler - print usage information
-        if (this.compilationEnvironment.code.length == (this.compilationSettings.useDefaultLib ? 1 : 0) && this.compilationEnvironment.residentCode.length == 0) {
+        if (this.compilationEnvironment.code.length == (this.compilationSettings.useDefaultLib ? 1 : 0)) {
             if (!printedUsage && !this.printedVersion) {
                 this.printVersion();
                 opts.printUsage();
@@ -508,11 +471,9 @@ class BatchCompiler {
         }
 
         var sourceFiles: TypeScript.SourceUnit[] = [];
-        var referenceFiles: TypeScript.SourceUnit[] = [];
         if (this.compilationSettings.watch) {
             // Capture the state before calling resolve
             sourceFiles = this.compilationEnvironment.code.slice(0);
-            referenceFiles = this.compilationEnvironment.residentCode.slice(0);
         }
 
         // Resolve file dependencies, if requested
@@ -529,7 +490,7 @@ class BatchCompiler {
 
         if (this.compilationSettings.watch) {
             // Watch will cause the program to stick around as long as the files exist
-            this.watchFiles(sourceFiles, referenceFiles);
+            this.watchFiles(sourceFiles);
         }
         else {  
             // Exit with the appropriate error code
@@ -544,7 +505,7 @@ class BatchCompiler {
         }
     }
 
-    public watchFiles(soruceFiles: TypeScript.SourceUnit[], referenceFiles: TypeScript.SourceUnit[]) {
+    public watchFiles(soruceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
             this.ioHost.printLine("Error: Current host does not support -w[atch] option");
             return;
@@ -576,7 +537,6 @@ class BatchCompiler {
         var onWatchedFileChange = () => {
             // Reset the state
             this.compilationEnvironment.code = soruceFiles;
-            this.compilationEnvironment.residentCode = referenceFiles;
 
             // Resolve file dependencies, if requested
             this.resolvedEnvironment = this.compilationSettings.resolve ? this.resolve() : this.compilationEnvironment;
@@ -585,7 +545,6 @@ class BatchCompiler {
             var oldFiles = resolvedFiles;
             var newFiles: string[] = [];
             this.resolvedEnvironment.code.forEach((sf) => newFiles.push(sf.path));
-            this.resolvedEnvironment.residentCode.forEach((rf) => newFiles.push(rf.path));
             newFiles = newFiles.sort();
 
             var i = 0, j = 0;
@@ -646,11 +605,6 @@ class BatchCompiler {
             resolvedFiles.push(sf.path);
             addWatcher(sf.path);
         });
-        this.resolvedEnvironment.residentCode.forEach((rf) => {
-            resolvedFiles.push(rf.path);
-            addWatcher(rf.path);
-        });
-        resolvedFiles.sort();
     }
 }
 
