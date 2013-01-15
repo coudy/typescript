@@ -605,6 +605,7 @@ class BatchCompiler {
             resolvedFiles.push(sf.path);
             addWatcher(sf.path);
         });
+        resolvedFiles.sort();
     }
 }
 
