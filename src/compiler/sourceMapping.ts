@@ -14,6 +14,7 @@
 //
 
 ///<reference path='typescript.ts' />
+///<reference path='..\harness\external\json2.ts' />
 
 module TypeScript {
     export class SourceMapPosition {
@@ -88,7 +89,7 @@ module TypeScript {
 
                 // Join namelist
                 if (sourceMapper.names.length > 0) {
-                    namesList.push(sourceMapper.names.join('","'));
+                    namesList.push.apply(namesList, sourceMapper.names);
                 }
 
                 var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
@@ -154,15 +155,13 @@ module TypeScript {
 
             // Write the actual map file
             if (mappingsString != "") {
-                sourceMapOut.Write('{');
-                sourceMapOut.Write('"version":3,');
-                sourceMapOut.Write('"file":"' + sourceMapper.jsFileName + '",');
-                sourceMapOut.Write('"sources":["' + tsFiles.join('","') + '"],');
-                sourceMapOut.Write('"names":["' + namesList.join('","') + '"],');
-                sourceMapOut.Write('"mappings":"' + mappingsString);
-                sourceMapOut.Write('"');
-                //sourceMapOut.Write('"sourceRoot":""'); // not needed since we arent generating it in the folder
-                sourceMapOut.Write('}');
+                sourceMapOut.Write(JSON2.stringify({
+                    version: 3,
+                    file: sourceMapper.jsFileName,
+                    sources: tsFiles,
+                    names: namesList,
+                    mappings: mappingsString
+                }));
             }
 
             // Done, close the file
