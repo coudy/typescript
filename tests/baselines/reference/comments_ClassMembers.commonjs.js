@@ -1,53 +1,53 @@
 // @target: ES5
 // @declaration: true
 // @comments: true
-/// This is comment for c1
+/** This is comment for c1*/
 var c1 = (function () {
-    /// Constructor method
+    /** Constructor method*/
     function c1() {
     }
-    c1.prototype.p2 = /// sum with property
+    c1.prototype.p2 = /** sum with property*/
     function (/** number to add*/ b) {
         return this.p1 + b;
     };
     Object.defineProperty(c1.prototype, "p3", {
-        get: /// getter property
+        get: /** getter property*/
         function () {
             return this.p2(this.p1);
         },
-        set: /// setter property
+        set: /** setter property*/
         function (/** this is value*/ value) {
             this.p1 = this.p2(value);
         },
         enumerable: true,
         configurable: true
     });
-    c1.prototype.pp2 = /// sum with property
+    c1.prototype.pp2 = /** sum with property*/
     function (/** number to add*/ b) {
         return this.p1 + b;
     };
     Object.defineProperty(c1.prototype, "pp3", {
-        get: /// getter property
+        get: /** getter property*/
         function () {
             return this.pp2(this.pp1);
         },
-        set: /// setter property
+        set: /** setter property*/
         function (/** this is value*/ value) {
             this.pp1 = this.pp2(value);
         },
         enumerable: true,
         configurable: true
     });
-    c1.s2 = /// static sum with property
+    c1.s2 = /** static sum with property*/
     function s2(/** number to add*/ b) {
         return c1.s1 + b;
     };
     Object.defineProperty(c1, "s3", {
-        get: /// static getter property
+        get: /** static getter property*/
         function () {
             return c1.s2(c1.s1);
         },
-        set: /// setter property
+        set: /** setter property*/
         function (/** this is value*/ value) {
             c1.s1 = c1.s2(value);
         },
@@ -120,7 +120,7 @@ var i1_c = c1;
 var cProperties = (function () {
     function cProperties() { }
     Object.defineProperty(cProperties.prototype, "p1", {
-        get: /// getter only property
+        get: /** getter only property*/
         function () {
             return this.val;
         },
@@ -135,7 +135,7 @@ var cProperties = (function () {
         configurable: true
     });
     Object.defineProperty(cProperties.prototype, "p2", {
-        set: ///setter only property
+        set: /**setter only property*/
         function (value) {
             this.val = value;
         },
@@ -155,30 +155,30 @@ var cProperties_i = new cProperties();
 cProperties_i.p2 = cProperties_i.p1;
 cProperties_i.nc_p2 = cProperties_i.nc_p1;
 ////[0.d.ts]
-/// This is comment for c1
+/** This is comment for c1*/
 class c1 {
-    /// p1 is property of c1
+    /** p1 is property of c1*/
     public p1: number;
-    /// sum with property
+    /** sum with property*/
     public p2(/** number to add*/ b: number): number;
-    /// getter property
-    /// setter property
+    /** getter property*/
+    /** setter property*/
     public p3 : number;
-    /// pp1 is property of c1
+    /** pp1 is property of c1*/
     private pp1;
-    /// sum with property
+    /** sum with property*/
     private pp2(/** number to add*/ b);
-    /// getter property
-    /// setter property
+    /** getter property*/
+    /** setter property*/
     private pp3;
-    /// Constructor method
+    /** Constructor method*/
     constructor();
-    /// s1 is static property of c1
+    /** s1 is static property of c1*/
     static s1: number;
-    /// static sum with property
+    /** static sum with property*/
     static s2(/** number to add*/ b: number): number;
-    /// static getter property
-    /// setter property
+    /** static getter property*/
+    /** setter property*/
     static s3 : number;
     public nc_p1: number;
     public nc_p2(b: number): number;
@@ -218,10 +218,10 @@ var i1_c: {
 };
 class cProperties {
     private val;
-    /// getter only property
+    /** getter only property*/
     public p1 : number;
     public nc_p1 : number;
-    ///setter only property
+    /**setter only property*/
     public p2 : number;
     public nc_p2 : number;
 }

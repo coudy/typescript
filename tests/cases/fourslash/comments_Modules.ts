@@ -1,56 +1,56 @@
 /// <reference path='fourslash.ts' />
 
-/////// Module comment
+/////** Module comment*/
 ////module m/*1*/1 {
-////    /// b's comment
+////    /** b's comment*/
 ////    export var b: number;
-////    /// foo's comment
+////    /** foo's comment*/
 ////    function foo() {
 ////        return /*2*/b;
 ////    }
-////    /// m2 comments
+////    /** m2 comments*/
 ////    export module m2 {
-////        /// class comment;
+////        /** class comment;*/
 ////        export class c {
 ////        };
-////        /// i
+////        /** i*/
 ////        export var i = new c();
 ////    }
-////    /// exported function
+////    /** exported function*/
 ////    export function fooExport() {
 ////        return foo(/*3*/);
 ////    }
 ////}
 /////*4*/m1./*5*/fooExport(/*6*/);
 ////var my/*7*/var = new m1.m2./*8*/c();
-/////// module comment of m2.m3
+/////** module comment of m2.m3*/
 ////module m2.m3 {
-////    /// Exported class comment
+////    /** Exported class comment*/
 ////    export class c {
 ////    }
 ////}
 ////new /*9*/m2./*10*/m3./*11*/c();
-/////// module comment of m3.m4.m5
+/////** module comment of m3.m4.m5*/
 ////module m3.m4.m5 {
-////    /// Exported class comment
+////    /** Exported class comment*/
 ////    export class c {
 ////    }
 ////}
 ////new /*12*/m3./*13*/m4./*14*/m5./*15*/c();
-/////// module comment of m4.m5.m6
+/////** module comment of m4.m5.m6*/
 ////module m4.m5.m6 {
 ////    export module m7 {
-////        /// Exported class comment
+////        /** Exported class comment*/
 ////        export class c {
 ////        }
 ////    }
 ////}
 ////new /*16*/m4./*17*/m5./*18*/m6./*19*/m7./*20*/c();
-/////// module comment of m5.m6.m7
+/////** module comment of m5.m6.m7*/
 ////module m5.m6.m7 {
-////    /// module m8 comment
+////    /** module m8 comment*/
 ////    export module m8 {
-////        /// Exported class comment
+////        /** Exported class comment*/
 ////        export class c {
 ////        }
 ////    }
@@ -58,16 +58,16 @@
 ////new /*21*/m5./*22*/m6./*23*/m7./*24*/m8./*25*/c();
 ////module m6.m7 {
 ////    export module m8 {
-////        /// Exported class comment
+////        /** Exported class comment*/
 ////        export class c {
 ////        }
 ////    }
 ////}
 ////new /*26*/m6./*27*/m7./*28*/m8./*29*/c();
 ////module m7.m8 {
-////    /// module m9 comment
+////    /** module m9 comment*/
 ////    export module m9 {
-////        /// Exported class comment
+////        /** Exported class comment*/
 ////        export class c {
 ////        }
 ////    }

@@ -2,50 +2,50 @@
 // @declaration: true
 // @comments: true
 
-/// This is comment for c1
+/** This is comment for c1*/
 class c1 {
-    /// p1 is property of c1
+    /** p1 is property of c1*/
     public p1: number;
-    /// sum with property
+    /** sum with property*/
     public p2(/** number to add*/b: number) {
         return this.p1 + b;
     }
-    /// getter property
+    /** getter property*/
     public get p3() {
         return this.p2(this.p1);
     }
-    /// setter property
+    /** setter property*/
     public set p3(/** this is value*/value: number) {
         this.p1 = this.p2(value);
     }
-    /// pp1 is property of c1
+    /** pp1 is property of c1*/
     private pp1: number;
-    /// sum with property
+    /** sum with property*/
     private pp2(/** number to add*/b: number) {
         return this.p1 + b;
     }
-    /// getter property
+    /** getter property*/
     private get pp3() {
         return this.pp2(this.pp1);
     }
-    /// setter property
+    /** setter property*/
     private set pp3( /** this is value*/value: number) {
         this.pp1 = this.pp2(value);
     }
-    /// Constructor method
+    /** Constructor method*/
     constructor() {
     }
-    /// s1 is static property of c1
+    /** s1 is static property of c1*/
     static s1: number;
-    /// static sum with property
+    /** static sum with property*/
     static s2(/** number to add*/b: number) {
         return c1.s1 + b;
     }
-    /// static getter property
+    /** static getter property*/
     static get s3() {
         return c1.s2(c1.s1);
     }
-    /// setter property
+    /** setter property*/
     static set s3( /** this is value*/value: number) {
         c1.s1 = c1.s2(value);
     }
@@ -104,14 +104,14 @@ c1.nc_s3 = i1_s_ncprop;
 var i1_c = c1;
 class cProperties {
     private val: number;
-    /// getter only property
+    /** getter only property*/
     public get p1() {
         return this.val;
     }
     public get nc_p1() {
         return this.val;
     }
-    ///setter only property
+    /**setter only property*/
     public set p2(value: number) {
         this.val = value;
     }

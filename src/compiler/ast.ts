@@ -190,10 +190,8 @@ module TypeScript {
                     if (this.preComments[i].isDocComment()) {
                         var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
                         if (prevDocComment == null || // If the help comments were not yet set then this is the comment
-                            (((this.preComments[i].isBlockComment && prevDocComment.isBlockComment) ||
-                             (!this.preComments[i].isBlockComment && !prevDocComment.isBlockComment)) && // The comments are of same type
                              (this.preComments[i].limLine == prevDocComment.minLine ||
-                              this.preComments[i].limLine + 1 == prevDocComment.minLine))) { // On same line or next line
+                              this.preComments[i].limLine + 1 == prevDocComment.minLine)) { // On same line or next line
                             docComments.push(this.preComments[i]);
                             continue;
                         }
@@ -1220,9 +1218,7 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             if (this.emitRequired(emitter.emitOptions)) {
                 emitter.emitParensAndCommentsInPlace(this.bod, true);
-                emitter.recordSourceMappingStart(this);
                 emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresExtendsBlock);
-                emitter.recordSourceMappingEnd(this);
                 emitter.emitParensAndCommentsInPlace(this.bod, false);
             }
         }
@@ -2451,31 +2447,36 @@ module TypeScript {
         public isDocComment() {
             if (this.isBlockComment) {
                 return this.content.charAt(2) == "*";
-            } else {
-                return this.content.charAt(2) == "/";
             }
+
+            return false;
         }
 
         public getDocCommentText() {
             if (this.docCommentText == null) {
-                if (this.isBlockComment) {
-                    this.docCommentText = Comment.cleanJSDocComment(this.content);
-                } else {
-                    this.docCommentText = Comment.cleanVSDocComment(this.content);
-                }
+                this.docCommentText = Comment.cleanJSDocComment(this.content);
             }
 
             return this.docCommentText;
         }
 
-        static consumeLeadingSpace(line: string, startIndex: number) {
-            for (; startIndex < line.length; startIndex++) {
+        static consumeLeadingSpace(line: string, startIndex: number, maxSpacesToRemove?: number) {
+            var endIndex = line.length;
+            if (maxSpacesToRemove != undefined) {
+                endIndex = min(startIndex + maxSpacesToRemove, endIndex);
+            }
+
+            for (; startIndex < endIndex; startIndex++) {
                 var charCode = line.charCodeAt(startIndex);
                 if (charCode != LexCodeSpace && charCode != LexCodeTAB) {
                     return startIndex;
                 }
             }
             
+            if (endIndex != line.length) {
+                return endIndex;
+            }
+
             return -1;
         }
 
@@ -2491,23 +2492,32 @@ module TypeScript {
             return index == length;
         }
 
-        static cleanDocCommentLine(line: string, jsDocStyleComment: bool) {
+        static cleanDocCommentLine(line: string, jsDocStyleComment: bool, jsDocLineSpaceToRemove?: number) {
             var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
             if (nonSpaceIndex != -1) {
+                var jsDocSpacesRemoved = nonSpaceIndex;
                 if (jsDocStyleComment && line.charAt(nonSpaceIndex) == '*') { // remove leading * in case of jsDocComment
-                    nonSpaceIndex++;
+                    var startIndex = nonSpaceIndex + 1;
+                    nonSpaceIndex = Comment.consumeLeadingSpace(line, startIndex, jsDocLineSpaceToRemove);
+
+                    if (nonSpaceIndex != -1) {
+                        jsDocSpacesRemoved = nonSpaceIndex - startIndex;
+                    } else {
+                        return null;
+                    }
                 }
 
                 return {
                     minChar: nonSpaceIndex,
-                    limChar: line.charAt(line.length - 1) == "\r" ? line.length - 1 : line.length
+                    limChar: line.charAt(line.length - 1) == "\r" ? line.length - 1 : line.length,
+                    jsDocSpacesRemoved: jsDocSpacesRemoved
                 };
             }
 
             return null;
         }
 
-        static cleanJSDocComment(content: string) {
+        static cleanJSDocComment(content: string, spacesToRemove?: number) {
             var docCommentLines: string[] = [];
             content = content.replace("/**", ""); // remove /**
             if (content.length >= 2 && content.charAt(content.length - 1) == "/" && content.charAt(content.length - 2) == "*") {
@@ -2517,7 +2527,7 @@ module TypeScript {
             var inParamTag = false;
             for (var l = 0; l < lines.length; l++) {
                 var line = lines[l];
-                var cleanLinePos = Comment.cleanDocCommentLine(line, true);
+                var cleanLinePos = Comment.cleanDocCommentLine(line, true, spacesToRemove);
                 if (!cleanLinePos) {
                     // Whole line empty, read next line
                     continue;
@@ -2557,21 +2567,14 @@ module TypeScript {
                 // Add line to comment text if it is not only white space line
                 var newCleanPos = Comment.cleanDocCommentLine(docCommentText, false);
                 if (newCleanPos) {
+                    if (spacesToRemove == undefined) {
+                        spacesToRemove = cleanLinePos.jsDocSpacesRemoved;
+                    }
                     docCommentLines.push(docCommentText);
                 }
             }
             
             return docCommentLines.join("\n");
-        }
-
-        static cleanVSDocComment(content: string) {
-            content = content.replace("///", ""); // remove ///
-            var cleanLinePos = Comment.cleanDocCommentLine(content, false);
-            if (cleanLinePos) {
-                return content.substring(cleanLinePos.minChar, cleanLinePos.limChar);
-            }
-            
-            return "";
         }
 
         static getDocCommentText(comments: Comment[]) {
@@ -2669,8 +2672,21 @@ module TypeScript {
                     var endOfParam = commentContents.indexOf("@", j);
                     var paramHelpString = commentContents.substring(j, endOfParam < 0 ? commentContents.length : endOfParam);
 
+                    // Find alignement spaces to remove
+                    var paramSpacesToRemove: number = undefined;
+                    var paramLineIndex = commentContents.substring(0, j).lastIndexOf("\n") + 1;
+                    if (paramLineIndex != 0) {
+                        if (paramLineIndex < j && commentContents.charAt(paramLineIndex + 1) == "\r") {
+                            paramLineIndex++;
+                        }
+                    }
+                    var startSpaceRemovalIndex = Comment.consumeLeadingSpace(commentContents, paramLineIndex);
+                    if (startSpaceRemovalIndex != j && commentContents.charAt(startSpaceRemovalIndex) == "*") {
+                        paramSpacesToRemove = j - startSpaceRemovalIndex - 1;
+                    }
+
                     // Clean jsDocComment and return
-                    return Comment.cleanJSDocComment(paramHelpString);
+                    return Comment.cleanJSDocComment(paramHelpString, paramSpacesToRemove);
                 }
             }
 

@@ -2,15 +2,15 @@
 // @declaration: true
 // @comments: true
 
-/// this is multi declare module
+/** this is multi declare module*/
 module multiM {
-    /// class b
+    /** class b*/
     export class b {
     }
 }
-/// thi is multi module 2
+/** thi is multi module 2*/
 module multiM {
-    /// class c comment
+    /** class c comment*/
     export class c {
     }
 }

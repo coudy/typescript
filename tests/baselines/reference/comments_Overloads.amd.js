@@ -3,7 +3,7 @@ function f1(aOrb) {
 }
 f1("hello");
 f1(10);
-/// this is f2 var comment
+/** this is f2 var comment*/
 function f2(aOrb) {
     return 10;
 }
@@ -36,7 +36,7 @@ var c = (function () {
     c.prototype.prop4 = function (aorb) {
         return 10;
     };
-    c.prototype.prop5 = /// Prop5 implementaion
+    c.prototype.prop5 = /** Prop5 implementaion*/
     function (aorb) {
         return 10;
     };
@@ -63,7 +63,7 @@ var c4 = (function () {
     return c4;
 })();
 var c5 = (function () {
-    /// c5 implementation
+    /** c5 implementation*/
     function c5(aorb) {
     }
     return c5;
@@ -80,55 +80,55 @@ var c4_i_2 = new c4("hello");
 var c5_i_1 = new c5(10);
 var c5_i_2 = new c5("hello");
 ////[0.d.ts]
-/// this is signature 1
+/** this is signature 1*/
 function f1(/**param a*/ a: number): number;
 function f1(b: string): number;
 function f2(a: number): number;
-/// this is signature 2
+/** this is signature 2*/
 function f2(b: string): number;
 function f3(a: number): number;
 function f3(b: string): number;
-/// this is signature 4 - with number parameter
+/** this is signature 4 - with number parameter*/
 function f4(/**param a*/ a: number): number;
-/// this is signature 4 - with string parameter
+/** this is signature 4 - with string parameter*/
 function f4(b: string): number;
 interface i1 {
-    ///this signature 1
+    /**this signature 1*/
     (/**param a*/ a: number): number;
-    ///this is signature 2
+    /**this is signature 2*/
     (b: string): number;
-    /// foo 1
+    /** foo 1*/
     foo(a: number): number;
-    /// foo 2
+    /** foo 2*/
     foo(b: string): number;
     foo2(a: number): number;
-    /// foo2 2
+    /** foo2 2*/
     foo2(b: string): number;
     foo3(a: number): number;
     foo3(b: string): number;
-    /// foo4 1
+    /** foo4 1*/
     foo4(a: number): number;
     foo4(b: string): number;
-    /// new 1
+    /** new 1*/
     new(a: string);
     new(b: number);
 }
 var i1_i: i1;
 interface i2 {
     new(a: string);
-    /// new 2
+    /** new 2*/
     new(b: number);
     (a: number): number;
-    ///this is signature 2
+    /**this is signature 2*/
     (b: string): number;
 }
 var i2_i: i2;
 interface i3 {
-    /// new 1
+    /** new 1*/
     new(a: string);
-    /// new 2
+    /** new 2*/
     new(b: number);
-    ///this is signature 1
+    /**this is signature 1*/
     (a: number): number;
     (b: string): number;
 }
@@ -142,19 +142,19 @@ interface i4 {
 class c {
     public prop1(a: number): number;
     public prop1(b: string): number;
-    /// prop2 1
+    /** prop2 1*/
     public prop2(a: number): number;
     public prop2(b: string): number;
     public prop3(a: number): number;
-    /// prop3 2
+    /** prop3 2*/
     public prop3(b: string): number;
-    /// prop4 1
+    /** prop4 1*/
     public prop4(a: number): number;
-    /// prop4 2
+    /** prop4 2*/
     public prop4(b: string): number;
-    /// prop5 1
+    /** prop5 1*/
     public prop5(a: number): number;
-    /// prop5 2
+    /** prop5 2*/
     public prop5(b: string): number;
 }
 class c1 {
@@ -162,25 +162,25 @@ class c1 {
     constructor(b: string);
 }
 class c2 {
-    /// c2 1
+    /** c2 1*/
     constructor(a: number);
     constructor(b: string);
 }
 class c3 {
     constructor(a: number);
-    /// c3 2
+    /** c3 2*/
     constructor(b: string);
 }
 class c4 {
-    /// c4 1
+    /** c4 1*/
     constructor(a: number);
-    /// c4 2
+    /** c4 2*/
     constructor(b: string);
 }
 class c5 {
-    /// c5 1
+    /** c5 1*/
     constructor(a: number);
-    /// c5 2
+    /** c5 2*/
     constructor(b: string);
 }
 var c_i: c;

@@ -1,17 +1,17 @@
 /// <reference path='fourslash.ts' />
 
-/////// This comment should appear for foo
+/////** This comment should appear for foo*/
 ////function f/*6*/oo() {
 ////}
 ////f/*7*/oo/*4*/(/*1*/);
-/////// This is comment for function signature
+/////** This is comment for function signature*/
 ////function fo/*8*/oWithParameters(/** this is comment about a*/a: string,
-////    /// this is comment for b
+////    /** this is comment for b*/
 ////    b: number) {
 ////    var d = /*10*/a;
 ////}
 ////fooWithParam/*9*/eters/*5*/(/*2*/"a",/*3*/10);
-/////// lamdaFoo var comment
+/////** lamdaFoo var comment*/
 ////var lamb/*11*/daFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => /*18*/a + b;
 ////var lambddaN/*12*/oVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
 /////*13*/lambdaFoo(/*14*/10, /*15*/20);
@@ -87,5 +87,5 @@ verify.completionListContains('a', 'number', 'param a');
 verify.completionListContains('b', 'number', 'param b');
 
 goTo.marker('19');
-verify.currentSignatureHelpDocCommentIs(" Does something");
+verify.currentSignatureHelpDocCommentIs("Does something");
 verify.currentParameterHelpArgumentDocCommentIs("a string");

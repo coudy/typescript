@@ -1,26 +1,26 @@
 ////[comments_ExternalModules_0.js]
-/// Module comment
+/** Module comment*/
 (function (m1) {
-    /// b's comment
+    /** b's comment*/
     m1.b;
-    /// foo's comment
+    /** foo's comment*/
     function foo() {
         return m1.b;
     }
-    /// m2 comments
+    /** m2 comments*/
     (function (m2) {
-        /// class comment;
+        /** class comment;*/
         var c = (function () {
             function c() { }
             return c;
         })();
         m2.c = c;        
         ;
-        /// i
+        /** i*/
         m2.i = new c();
     })(m1.m2 || (m1.m2 = {}));
     var m2 = m1.m2;
-    /// exported function
+    /** exported function*/
     function fooExport() {
         return foo();
     }
@@ -30,27 +30,27 @@ var m1 = exports.m1;
 m1.fooExport();
 var myvar = new m1.m2.c();
 ////[comments_ExternalModules_1.js]
-///This is on import declaration
+/**This is on import declaration*/
 var extMod = require("./comments_ExternalModules_0")
 extMod.m1.fooExport();
 exports.newVar = new extMod.m1.m2.c();
 ////[comments_ExternalModules_0.d.ts]
-/// Module comment
+/** Module comment*/
 export module m1 {
-    /// b's comment
+    /** b's comment*/
     var b: number;
-    /// m2 comments
+    /** m2 comments*/
     module m2 {
-        /// class comment;
+        /** class comment;*/
         class c {
         }
-        /// i
+        /** i*/
         var i: c;
     }
-    /// exported function
+    /** exported function*/
     function fooExport(): number;
 }
 ////[comments_ExternalModules_1.d.ts]
-///This is on import declaration
+/**This is on import declaration*/
 import extMod = module ("comments_ExternalModules_0");
 export var newVar: extMod.m1.m2.c;
