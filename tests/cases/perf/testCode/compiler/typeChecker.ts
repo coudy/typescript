@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -126,7 +138,7 @@ module TypeScript {
             // shared global state is resident
             this.setCollectionMode(TypeCheckCollectionMode.Resident);
 
-            this.wildElm = new TypeSymbol("_element", 0, -1, new Type());
+            this.wildElm = new TypeSymbol("_element", -1, 0, -1, new Type());
             this.importedGlobalsTypeTable.addPublicMember(this.wildElm.name, this.wildElm);
 
             this.mod = new ModuleType(dualGlobalScopedEnclosedTypes, dualGlobalScopedAmbientEnclosedTypes);
@@ -134,7 +146,7 @@ module TypeScript {
             this.mod.ambientMembers = dualGlobalScopedAmbientMembers;
             this.mod.containedScope = this.globalScope;
 
-            this.gloMod = new TypeSymbol(globalId, 0, -1, this.mod);
+            this.gloMod = new TypeSymbol(globalId, -1, 0, -1, this.mod);
             this.mod.members.addPublicMember(this.gloMod.name, this.gloMod);
 
             this.defineGlobalValue("undefined", this.undefinedType);
@@ -144,7 +156,7 @@ module TypeScript {
         public enterPrimitive(flags: number, name: string) {
             var primitive = new Type();
             primitive.primitiveTypeClass = flags;
-            var symbol = new TypeSymbol(name, 0, -1, primitive);
+            var symbol = new TypeSymbol(name, -1, name.length, -1, primitive);
             symbol.typeCheckStatus = TypeCheckStatus.Finished;
             primitive.symbol = symbol;
             this.importedGlobals.enter(null, null, symbol, this.errorReporter, true, true, true);
@@ -164,6 +176,16 @@ module TypeScript {
             this.globalTypes = new StringHashTable();
             this.ambientGlobals = new StringHashTable();
             this.ambientGlobalTypes = new StringHashTable();
+
+            // add global types to the global scope
+            this.globalTypes.add(this.voidType.symbol.name, this.voidType.symbol);
+            this.globalTypes.add(this.booleanType.symbol.name, this.booleanType.symbol);
+            this.globalTypes.add(this.doubleType.symbol.name, this.doubleType.symbol);
+            this.globalTypes.add("number", this.doubleType.symbol);
+            this.globalTypes.add(this.stringType.symbol.name, this.stringType.symbol);
+            this.globalTypes.add(this.anyType.symbol.name, this.anyType.symbol);
+            this.globalTypes.add(this.nullType.symbol.name, this.nullType.symbol);
+            this.globalTypes.add(this.undefinedType.symbol.name, this.undefinedType.symbol);
 
             this.dualGlobalValues.secondaryTable = this.globals;
             this.dualGlobalTypes.secondaryTable = this.globalTypes;
@@ -245,7 +267,7 @@ module TypeScript {
         public currentCompareA: Symbol = null;
         public currentCompareB: Symbol = null;
 
-        public currentModDecl: ModuleDecl = null;
+        public currentModDecl: ModuleDeclaration = null;
 
         public inBind = false;
         public inWith = false;
@@ -263,6 +285,8 @@ module TypeScript {
         public identicalCache: any[] = <any>{};
 
         public provisionalStartedTypecheckObjects: PhasedTypecheckObject[] = [];
+
+        public mustCaptureGlobalThis = false;
 
         constructor (public persistentState: PersistentGlobalTypeState) {
             this.voidType = this.persistentState.voidType;
@@ -326,7 +350,7 @@ module TypeScript {
         }
 
         // Unset the current contextual type without disturbing the stack, effectively "killing" the contextual typing process
-        public killTargetType() { this.currentContextualTypeContext = null; this.errorReporter.pushToErrorSink = false; }
+        public killCurrentContextualType() { this.currentContextualTypeContext = null; this.errorReporter.pushToErrorSink = false; }
         public hasTargetType() { return this.currentContextualTypeContext && this.currentContextualTypeContext.contextualType; }
         public getTargetTypeContext() { return this.currentContextualTypeContext; }
 
@@ -355,7 +379,9 @@ module TypeScript {
 
         public cleanStartedPTO() {
             for (var i = 0; i < this.provisionalStartedTypecheckObjects.length; i++) {
-                this.provisionalStartedTypecheckObjects[i].typeCheckStatus = TypeCheckStatus.NotStarted;
+                if (this.provisionalStartedTypecheckObjects[i].typeCheckStatus >= this.typingContextStack.getContextID()) {
+                    this.provisionalStartedTypecheckObjects[i].typeCheckStatus = TypeCheckStatus.NotStarted;
+                }
             }
             this.provisionalStartedTypecheckObjects = [];
         }
@@ -381,7 +407,8 @@ module TypeScript {
             return type.arrayCache.arrayType;
         }
 
-        public getParameterList(args: ASTList, container: Symbol): SignatureData {
+        public getParameterList(funcDecl: FuncDecl, container: Symbol): SignatureData {
+            var args = funcDecl.arguments;
             var parameterTable = null;
             var parameterBuilder = null;
             var len = args.members.length;
@@ -398,6 +425,7 @@ module TypeScript {
                     var parameterSymbol = new ParameterSymbol(parameter.id.text, parameter.minChar,
                                                             this.locationInfo.unitIndex, paramDef);
                     parameterSymbol.declAST = parameter;
+                    parameterSymbol.funcDecl = funcDecl;
                     parameter.id.sym = parameterSymbol;
                     parameter.sym = parameterSymbol;
                     paramDef.symbol = parameterSymbol;
@@ -441,7 +469,7 @@ module TypeScript {
 
             signature.hasVariableArgList = funcDecl.variableArgList;
 
-            var sigData = this.getParameterList(funcDecl.args, container);
+            var sigData = this.getParameterList(funcDecl, container);
 
             signature.parameters = sigData.parameters;
             signature.nonOptionalParameterCount = sigData.nonOptionalParameterCount;
@@ -497,15 +525,6 @@ module TypeScript {
 
             var instanceType = groupType.instanceType;
 
-            if (instanceType && !isStatic) {
-                if (instanceType.call == null) {
-                    instanceType.call = groupType.call;
-                }
-                else if (groupType.call) {
-                    instanceType.call.signatures.concat(groupType.call.signatures);
-                }
-            }
-
             // Ensure that the function's symbol is properly configured
             // (If there were overloads, we'll already have a symbol, otherwise we need to create one)
             var funcName: string = null;
@@ -530,7 +549,8 @@ module TypeScript {
             if (groupType.symbol == null) {
                 groupType.symbol =
                     new TypeSymbol(funcName ? funcName : this.anon,
-                                    funcDecl.minChar, this.locationInfo.unitIndex,
+                                    funcDecl.minChar, funcDecl.limChar - funcDecl.minChar,
+                                    this.locationInfo.unitIndex,
                                     groupType);
                 if (!useOverloadGroupSym) {
                     groupType.symbol.declAST = funcDecl;
@@ -762,7 +782,7 @@ module TypeScript {
             return resultScope;
         }
 
-        public lookupMemberType(containingType: Type, name: string): Type {
+        public lookupMemberTypeSymbol(containingType: Type, name: string): Symbol {
             var symbol: Symbol = null;
             if (containingType.containedScope) {
                 symbol = containingType.containedScope.find(name, false, true);
@@ -787,7 +807,7 @@ module TypeScript {
                 }
             }
             if (symbol && symbol.isType()) {
-                return symbol.getType();
+                return symbol;
             }
             else {
                 return null;
@@ -838,7 +858,7 @@ module TypeScript {
                     // Still, normalizing here alows any language services to be free of assumptions
                     var path = getRootFilePath(switchToForwardSlashes(currentFileName));
 
-                    while (symbol == null && path != "" && path != "/") {
+                    while (symbol == null && path != "") {
                         idText = normalizePath(path + strippedIdText + ".ts");
                         symbol = search(idText);
 
@@ -861,8 +881,12 @@ module TypeScript {
                         }
 
                         if (symbol == null) {
-                            path = normalizePath(path + "..");
-                            path = path && path != '/' ? path + '/' : path;
+							if(path === '/') {
+								path = '';
+							} else {
+								path = normalizePath(path + "..");
+								path = path && path != '/' ? path + '/' : path;
+							}
                         }
                     }
                 }
@@ -885,7 +909,7 @@ module TypeScript {
                     var identifier = <Identifier>lhs;
                     var symbol = scope.find(identifier.text, false, true);
                     if (symbol == null) {
-                        this.errorReporter.unresolvedSymbol(identifier, identifier.text);
+                        this.errorReporter.unresolvedSymbol(identifier, identifier.actualText);
                     }
                     else if (symbol.isType()) {
 
@@ -905,14 +929,14 @@ module TypeScript {
                             // no going back                        
                             if (symType && typeSymbol.aliasLink && typeSymbol.onlyReferencedAsTypeRef) {
 
-                                var modDecl = <ModuleDecl>symType.symbol.declAST;
+                                var modDecl = <ModuleDeclaration>symType.symbol.declAST;
                                 if (modDecl && hasFlag(modDecl.modFlags, ModuleFlags.IsDynamic)) {
                                     typeSymbol.onlyReferencedAsTypeRef = !this.resolvingBases;
                                 }
                             }
                         }
                         if (!symbol.visible(scope, this)) {
-                            this.errorReporter.simpleError(lhs, "The symbol '" + identifier.text + "' is not visible at this point");
+                            this.errorReporter.simpleError(lhs, "The symbol '" + identifier.actualText + "' is not visible at this point");
                         }
                         lhsType = symbol.getType();
 
@@ -932,14 +956,15 @@ module TypeScript {
 
                 if (lhsType != this.anyType) {
                     var rhsIdentifier = <Identifier>rhs;
-                    resultType = this.lookupMemberType(lhsType, rhsIdentifier.text);
-                    if (resultType == null) {
+                    var resultSymbol = this.lookupMemberTypeSymbol(lhsType, rhsIdentifier.text);
+                    if (resultSymbol == null) {
                         resultType = this.anyType;
                         this.errorReporter.simpleError(dotNode, "Expected type");
                     }
                     else {
-                        if (!resultType.symbol.visible(scope, this)) {
-                            this.errorReporter.simpleError(lhs, "The symbol '" + (<Identifier>rhs).text + "' is not visible at this point");
+                        resultType = resultSymbol.getType();
+                        if (!resultSymbol.visible(scope, this)) {
+                            this.errorReporter.simpleError(lhs, "The symbol '" + (<Identifier>rhs).actualText + "' is not visible at this point");
                         }
                     }
                     rhsIdentifier.sym = resultType.symbol;
@@ -976,7 +1001,7 @@ module TypeScript {
             if (len && funcDecl.variableArgList) {
                 if (!signature.parameters[len - 1].parameter.typeLink.type.elementType) {
                     this.errorReporter.simpleErrorFromSym(signature.parameters[len - 1].parameter.symbol, "... parameter must have array type");
-                    signature.parameters[len - 1].parameter.typeLink.type.elementType = this.makeArrayType(signature.parameters[len - 1].parameter.typeLink.type);
+                    signature.parameters[len - 1].parameter.typeLink.type = this.makeArrayType(signature.parameters[len - 1].parameter.typeLink.type);
                 }
             }
             this.resolveTypeLink(scope, signature.returnType,
@@ -1012,11 +1037,11 @@ module TypeScript {
                                 var symbol = scope.find(identifier.text, false, true);
                                 if (symbol == null) {
                                     typeLink.type = this.anyType;
-                                    this.errorReporter.unresolvedSymbol(identifier, identifier.text);
+                                    this.errorReporter.unresolvedSymbol(identifier, identifier.actualText);
                                 }
                                 else if (symbol.isType()) {
                                     if (!symbol.visible(scope, this)) {
-                                        this.errorReporter.simpleError(ast, "The symbol '" + identifier.text + "' is not visible at this point");
+                                        this.errorReporter.simpleError(ast, "The symbol '" + identifier.actualText + "' is not visible at this point");
                                     }
                                     identifier.sym = symbol;
                                     typeLink.type = symbol.getType();
@@ -1045,11 +1070,12 @@ module TypeScript {
                                     typeLink.type = this.anyType;
                                 }
                                 break;
-                            case NodeType.Interface:
-                                var interfaceDecl = <TypeDecl>ast;
+                            case NodeType.InterfaceDeclaration:
+                                var interfaceDecl = <InterfaceDeclaration>ast;
                                 var interfaceType = new Type();
                                 var interfaceSymbol = new TypeSymbol((<Identifier>interfaceDecl.name).text,
                                                                    ast.minChar,
+                                                                   ast.limChar - ast.minChar,
                                                                    this.locationInfo.unitIndex,
                                                                    interfaceType);
                                 interfaceType.symbol = interfaceSymbol;
@@ -1070,7 +1096,7 @@ module TypeScript {
                                     var propDecl = props[j];
                                     var propSym: Symbol = null;
                                     var addMember = true;
-                                    var id: AST = null;
+                                    var id: Identifier = null;
                                     if (propDecl.nodeType == NodeType.FuncDecl) {
                                         var funcDecl = <FuncDecl>propDecl;
                                         id = funcDecl.name;
@@ -1088,7 +1114,13 @@ module TypeScript {
                                     else {
                                         id = (<VarDecl>propDecl).id;
                                         propSym = this.resolveVarDecl(<VarDecl>propDecl, scope);
+
+                                        // Don't add the member if it was missing a name.  This 
+                                        // generally just leads to cascading errors that make things
+                                        // more confusing for the user.
+                                        addMember = !id.isMissing();
                                     }
+
                                     if (addMember) {
                                         if (id && hasFlag(id.flags, ASTFlags.OptionalName)) {
                                             propSym.flags |= SymbolFlags.Optional;
@@ -1125,6 +1157,21 @@ module TypeScript {
                 }
             }
             // else wait for type inference
+        }
+
+        public resolveBaseTypeLink(typeLink: TypeLink, scope: SymbolScope) {
+            this.resolvingBases = true;
+            this.resolveTypeLink(scope, typeLink, true);
+            this.resolvingBases = false;
+            var extendsType: Type = null;
+            if (typeLink.type.isClass()) {
+                extendsType = typeLink.type.instanceType;
+            }
+            else {
+                extendsType = typeLink.type;
+            }
+
+            return extendsType;
         }
 
         public findMostApplicableSignature(signatures: ApplicableSignature[], args: ASTList): { sig: Signature; ambiguous: bool; } {
@@ -1181,7 +1228,7 @@ module TypeScript {
                         setTypeAtIndex: (index: number, type: Type) => { }, // no contextual typing here, so no need to do anything
                         getTypeAtIndex: (index: number) => { return index ? Q.signature.returnType.type : best.signature.returnType.type; } // we only want the "second" type - the "first" is skipped
                     }
-                    var bct = this.findBestCommonType(best.signature.returnType.type, null, collection);
+                    var bct = this.findBestCommonType(best.signature.returnType.type, null, collection, true);
                     ambiguous = !bct;
                 }
                 else {
@@ -1248,14 +1295,14 @@ module TypeScript {
                             }
 
                             // clean the type
-                            if (hadProvisionalErrors) {
-                                cxt = this.currentContextualTypeContext;
-                                this.typeCheckWithContextualType(null, true, true, args.members[j]);
-                                if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType)) {
-                                    miss = true;
-                                }
-                                this.cleanStartedPTO();
-                            }
+                            //if (hadProvisionalErrors) {
+                            //    cxt = this.currentContextualTypeContext;
+                            //    this.typeCheckWithContextualType(null, true, true, args.members[j]);
+                            //    if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType)) {
+                            //        miss = true;
+                            //    }
+                            //    this.cleanStartedPTO();
+                            //}
 
                             this.resetProvisionalErrors();
                             if (miss) {
@@ -1281,16 +1328,16 @@ module TypeScript {
                         }
 
                         // clean the type
-                        if (hadProvisionalErrors) {
-                            this.typeCheckWithContextualType(null, true, true, args.members[j]);
+                        //if (hadProvisionalErrors) {
+                        //    this.typeCheckWithContextualType(null, true, true, args.members[j]);
 
-                            // is the "cleaned" type even assignable?
-                            if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType)) {
-                                miss = true;
-                            }
+                        //    // is the "cleaned" type even assignable?
+                        //    if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType)) {
+                        //        miss = true;
+                        //    }
 
-                            this.cleanStartedPTO();
-                        }
+                        //    this.cleanStartedPTO();
+                        //}
 
                         this.resetProvisionalErrors();
                         if (miss) {
@@ -1315,14 +1362,14 @@ module TypeScript {
                         }
 
                         // clean the type
-                        if (hadProvisionalErrors) {
-                            this.typeCheckWithContextualType(null, true, true, args.members[j]);
-                            if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType)) {
-                                miss = true;
-                            }
+                        //if (hadProvisionalErrors) {
+                        //    this.typeCheckWithContextualType(null, true, true, args.members[j]);
+                        //    if (!this.sourceIsAssignableToTarget(args.members[j].type, memberType)) {
+                        //        miss = true;
+                        //    }
 
-                            this.cleanStartedPTO();
-                        }
+                        //    this.cleanStartedPTO();
+                        //}
 
                         this.resetProvisionalErrors();
                         if (miss) {
@@ -1468,14 +1515,14 @@ module TypeScript {
             return t == this.undefinedType || t == this.nullType;
         }
 
-        public findBestCommonType(initialType: Type, targetType: Type, collection: ITypeCollection, comparisonInfo?: TypeComparisonInfo) {
+        public findBestCommonType(initialType: Type, targetType: Type, collection: ITypeCollection, acceptVoid:bool, comparisonInfo?: TypeComparisonInfo) {
             var i = 0;
             var len = collection.getLength();
             var nlastChecked = 0;
             var bestCommonType = initialType;
 
             if (targetType) {
-                bestCommonType = bestCommonType ? bestCommonType.mergeOrdered(targetType, this) : targetType;
+                bestCommonType = bestCommonType ? bestCommonType.mergeOrdered(targetType, this, acceptVoid) : targetType;
             }
 
             // it's important that we set the convergence type here, and not in the loop,
@@ -1491,7 +1538,7 @@ module TypeScript {
                         continue;
                     }
 
-                    if (convergenceType && (bestCommonType = convergenceType.mergeOrdered(collection.getTypeAtIndex(i), this, comparisonInfo))) {
+                    if (convergenceType && (bestCommonType = convergenceType.mergeOrdered(collection.getTypeAtIndex(i), this, acceptVoid, comparisonInfo))) {
                         convergenceType = bestCommonType;
                     }
 
@@ -1514,7 +1561,7 @@ module TypeScript {
                 }
             }
 
-            return bestCommonType;
+            return acceptVoid ? bestCommonType : (bestCommonType == this.voidType ? null : bestCommonType);
         }
 
         // Type Identity
@@ -1528,6 +1575,10 @@ module TypeScript {
             }
 
             if (!t1 || !t2) {
+                return false;
+            }
+
+            if (t1.isClass() || t1.isClassInstance()) {
                 return false;
             }
 
@@ -1734,7 +1785,8 @@ module TypeScript {
 
             var comboId = (source.typeID << 16) | target.typeID;
 
-            if (comparisonCache[comboId]) {
+            // In the case of a 'false', we want to short-circuit a recursive typecheck
+            if (comparisonCache[comboId] != undefined) {
                 return true;
             }
 
@@ -1848,9 +1900,11 @@ module TypeScript {
                     nProp = source.memberScope.find(mPropKeys[iMProp], false, false);
 
                     // methods do not have the "arguments" field
-                    if (mProp.kind() == SymbolKind.Variable && (<VariableSymbol>mProp).variable.typeLink.ast &&
-                        (<VariableSymbol>mProp).variable.typeLink.ast.nodeType == NodeType.Name &&
-                        (<Identifier>(<VariableSymbol>mProp).variable.typeLink.ast).text == "IArguments") {
+                    if (mProp.name == "arguments" &&
+                        this.typeFlow.iargumentsInterfaceType &&
+                        (this.typeFlow.iargumentsInterfaceType.symbol.flags & SymbolFlags.CompilerGenerated) &&
+                        mProp.kind() == SymbolKind.Variable &&
+                        (<VariableSymbol>mProp).variable.typeLink.type == this.typeFlow.iargumentsInterfaceType) {
                         continue;
                     }
 

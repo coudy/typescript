@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -8,7 +20,7 @@ module TypeScript {
     export class AssignScopeContext {
         constructor (public scopeChain: ScopeChain,
                      public typeFlow: TypeFlow,
-                     public modDeclChain: ModuleDecl[]) {
+                     public modDeclChain: ModuleDeclaration[]) {
         }
     }
 
@@ -38,7 +50,9 @@ module TypeScript {
         }
     }
 
-    export function instanceFilterStop(s: Symbol) => s.isInstanceProperty();
+    export function instanceFilterStop(s: Symbol) {
+        return s.isInstanceProperty();
+    }
 
     export class ScopeSearchFilter {
 
@@ -65,7 +79,7 @@ module TypeScript {
     export var instanceFilter = new ScopeSearchFilter(instanceCompare, instanceFilterStop);
 
     export function preAssignModuleScopes(ast: AST, context: AssignScopeContext) {
-        var moduleDecl = <ModuleDecl>ast;
+        var moduleDecl = <ModuleDeclaration>ast;
         var memberScope: SymbolTableScope = null;
         var aggScope: SymbolAggregateScope = null;
 
@@ -95,7 +109,7 @@ module TypeScript {
     }
 
     export function preAssignClassScopes(ast: AST, context: AssignScopeContext) {
-        var classDecl = <TypeDecl>ast;
+        var classDecl = <InterfaceDeclaration>ast;
         var memberScope: SymbolTableScope = null;
         var aggScope: SymbolAggregateScope = null;
 
@@ -132,7 +146,7 @@ module TypeScript {
     }
 
     export function preAssignInterfaceScopes(ast: AST, context: AssignScopeContext) {
-        var interfaceDecl = <TypeDecl>ast;
+        var interfaceDecl = <InterfaceDeclaration>ast;
         var memberScope: SymbolTableScope = null;
         var aggScope: SymbolAggregateScope = null;
 
@@ -233,7 +247,7 @@ module TypeScript {
 
             var funcScope = null;
             var outerFnc: FuncDecl = context.scopeChain.fnc;
-            var nameText = funcDecl.name ? funcDecl.name.text : null;
+            var nameText = funcDecl.name ? funcDecl.name.actualText : null;
             var fgSym: TypeSymbol = null;
 
             if (isStatic) {
@@ -247,18 +261,7 @@ module TypeScript {
                 outerFnc.innerStaticFuncs[outerFnc.innerStaticFuncs.length] = funcDecl;
             }
             else {
-
-                if (!funcDecl.isConstructor &&
-                    container &&
-                    container.declAST &&
-                    container.declAST.nodeType == NodeType.FuncDecl &&
-                    (<FuncDecl>container.declAST).isConstructor &&
-                    !funcDecl.isMethod()) {
-                    funcScope = context.scopeChain.thisType.constructorScope;//locals;
-                }
-                else {
-                    funcScope = context.scopeChain.scope;
-                }
+                funcScope = context.scopeChain.scope;
             }
 
             // REVIEW: We don't search for another sym for accessors to prevent us from
@@ -371,6 +374,14 @@ module TypeScript {
             var thisType = (funcDecl.isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) ? context.scopeChain.thisType : null;
             pushAssignScope(locals, context, thisType, null, funcDecl);
         }
+
+        if (funcDecl.name && hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression)) {
+            // If the function is an expression, the name will not be visible in the enclosing scope.
+            // Add the function symbol under its name to the local scope to allow for recursive calls.
+            if (funcDecl.name.sym) {
+                funcTable.add(funcDecl.name.actualText, funcDecl.name.sym);
+            }
+        }
     }
 
     export function preAssignCatchScopes(ast: AST, context: AssignScopeContext) {
@@ -393,13 +404,13 @@ module TypeScript {
                 var list = <ASTList>ast;
                 list.enclosingScope = context.scopeChain.scope;
             }
-            else if (ast.nodeType == NodeType.Module) {
+            else if (ast.nodeType == NodeType.ModuleDeclaration) {
                 preAssignModuleScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.Class) {
+            else if (ast.nodeType == NodeType.ClassDeclaration) {
                 preAssignClassScopes(ast, context);
             }
-            else if (ast.nodeType == NodeType.Interface) {
+            else if (ast.nodeType == NodeType.InterfaceDeclaration) {
                 preAssignInterfaceScopes(ast, context);
             }
             else if (ast.nodeType == NodeType.With) {
@@ -423,8 +434,8 @@ module TypeScript {
         var context:AssignScopeContext = walker.state;
         var go = true;
         if (ast) {
-            if (ast.nodeType == NodeType.Module) {
-                var prevModDecl = <ModuleDecl>ast;
+            if (ast.nodeType == NodeType.ModuleDeclaration) {
+                var prevModDecl = <ModuleDeclaration>ast;
 
                 popAssignScope(context);
 
@@ -433,10 +444,10 @@ module TypeScript {
                     context.typeFlow.checker.currentModDecl = context.modDeclChain[context.modDeclChain.length - 1];
                 }
             }
-            else if (ast.nodeType == NodeType.Class) {
+            else if (ast.nodeType == NodeType.ClassDeclaration) {
                 popAssignScope(context);
             }
-            else if (ast.nodeType == NodeType.Interface) {
+            else if (ast.nodeType == NodeType.InterfaceDeclaration) {
                 popAssignScope(context);
             }
             else if (ast.nodeType == NodeType.With) {

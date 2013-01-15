@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -60,43 +72,55 @@ module TypeScript {
         }
 
         public toStringHelper(shortform: bool, brackets: bool, scope: SymbolScope) {
-            var builder: string;
+            return this.toStringHelperEx(shortform, brackets, scope).toString();
+        }
+
+        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix? : string = "") : MemberName {
+            var builder = new MemberNameArray();
             if (brackets) {
-                builder = "[";
+                builder.prefix =  prefix + "[";
             }
             else {
-                builder = "(";
+                builder.prefix = prefix + "(";
             }
-            var len = this.parameters.length;
+
+            var paramLen = this.parameters.length;
+            var len = this.hasVariableArgList ? paramLen - 1 : paramLen;
             for (var i = 0; i < len; i++) {
-                builder += this.parameters[i].name + (this.parameters[i].isOptional() ? "?" : "") + ": ";
-                builder += this.parameters[i].getType().getScopedTypeName(scope);
-                if (i < len - 1) {
-                    builder += ",";
+                builder.add(MemberName.create(this.parameters[i].name + (this.parameters[i].isOptional() ? "?" : "") + ": "));
+                builder.add(this.parameters[i].getType().getScopedTypeNameEx(scope));
+                if (i < paramLen - 1) {
+                    builder.add(MemberName.create(", "));
                 }
             }
+
+            if (this.hasVariableArgList) {
+                builder.add(MemberName.create("..." + this.parameters[i].name + ": "));
+                builder.add(this.parameters[i].getType().getScopedTypeNameEx(scope));
+            }
+
             if (shortform) {
                 if (brackets) {
-                    builder += "] => "
+                    builder.add(MemberName.create("] => "));
                 }
                 else {
-                    builder += ") => "
+                    builder.add(MemberName.create(") => "));
                 }
             }
             else {
                 if (brackets) {
-                    builder += "]: ";
+                    builder.add(MemberName.create("]: "));
                 }
                 else {
-                    builder += "): ";
+                    builder.add(MemberName.create("): "));
                 }
             }
 
             if (this.returnType.type) {
-                builder += this.returnType.type.getScopedTypeName(scope);
+                 builder.add(this.returnType.type.getScopedTypeNameEx(scope));
             }
             else {
-                builder += "any";
+                builder.add(MemberName.create("any"));
             }
             return builder;
         }
@@ -126,8 +150,8 @@ module TypeScript {
         }
 
         public toString() { return this.signatures.toString(); }
-        public toStrings(prefix: string, shortform: bool, scope: SymbolScope): string[]{
-            var result: string[] = [];
+        public toStrings(prefix: string, shortform: bool, scope: SymbolScope) {
+            var result : MemberName[] = [];  
             var len = this.signatures.length;
             if (len > 1) {
                 shortform = false;
@@ -138,12 +162,13 @@ module TypeScript {
                     continue;
                 }
                 if (this.flags & SignatureFlags.IsIndexer) {
-                    result[i] = this.signatures[i].toStringHelper(shortform, true, scope);
+                    result.push(this.signatures[i].toStringHelperEx(shortform, true, scope));
                 }
                 else {
-                    result[i] = prefix + this.signatures[i].toStringHelper(shortform, false, scope);
+                    result.push(this.signatures[i].toStringHelperEx(shortform, false, scope, prefix));
                 }
             }
+            
             return result;
         }
 
@@ -174,7 +199,7 @@ module TypeScript {
                         if (this.signatures[i].declAST && this.signatures[j].declAST &&
                             (!hasFlag(this.signatures[i].declAST.fncFlags, FncFlags.Definition) && !hasFlag(this.signatures[j].declAST.fncFlags, FncFlags.Definition)) &&
                             checker.signaturesAreIdentical(this.signatures[i], this.signatures[j])) {
-                            checker.errorReporter.simpleError(this.signatures[i].declAST, (this.signatures[i].declAST && this.signatures[i].declAST.name) ? "Signature for '" + this.signatures[i].declAST.name.text + "' is duplicated" :"Signature is duplicated");
+                            checker.errorReporter.simpleError(this.signatures[i].declAST, (this.signatures[i].declAST && this.signatures[i].declAST.name) ? "Signature for '" + this.signatures[i].declAST.name.actualText + "' is duplicated" :"Signature is duplicated");
                         }
                     }
                     

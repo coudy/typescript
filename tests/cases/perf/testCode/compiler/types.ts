@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -220,8 +232,7 @@ module TypeScript {
                     this.typeFlags |= TypeFlags.BuildingName;
                     var builder = "";
                     var allMemberNames = new MemberNameArray();
-                    var curlies = isElementType;
-                    var signatureCount = 0;
+                    var curlies = isElementType || this.index != null;
                     var memCount = 0;
                     var delim = "; ";
                     if (this.members) {
@@ -230,59 +241,40 @@ module TypeScript {
                             if (!hasFlag(sym.flags, SymbolFlags.BuiltIn)) {
                                 // Remove the delimiter character from the generated type name, since
                                 // our "allMemberNames" array takes care of storing delimiters
-                                var typeName = sym.getTypeName(scope);
-                                if (typeName.length >= delim.length && typeName.substring(typeName.length - delim.length) == delim) {
-                                    typeName = typeName.substring(0, typeName.length - delim.length);
+                                var typeNameMember = sym.getTypeNameEx(scope);
+                                if (typeNameMember.isArray() && (<MemberNameArray>typeNameMember).delim == delim) {
+                                    allMemberNames.addAll((<MemberNameArray>typeNameMember).entries);
+                                } else {
+                                    allMemberNames.add(typeNameMember);
                                 }
-                                allMemberNames.add(MemberName.create(typeName));
                                 memCount++;
-                                if (sym.kind() == SymbolKind.Type) {
-                                    var memberType = (<TypeSymbol>sym).type;
-                                    if (memberType.callCount() > 1) {
-                                        curlies = true;
-                                    }
-                                }
-                                else {
-                                    curlies = true;
-                                }
+                                curlies = true;
                             }
                         }, null);
                     }
 
-                    var signatures: string[];
+                    var signatureCount = this.callCount();
                     var j: number;
                     var len = 0;
-                    var shortform = (memCount == 0) && (this.callCount() == 1) && topLevel;
-                    if (!shortform) {
-                        allMemberNames.delim = delim;
-                    }
+                    var shortform = !curlies && signatureCount == 1 && topLevel;
                     if (this.call) {
-                        signatures = this.call.toStrings(prefix, shortform, scope);
-                        for (j = 0, len = signatures.length; j < len; j++) {
-                            allMemberNames.add(MemberName.create(signatures[j]));
-                            signatureCount++;
-                        }
+                        allMemberNames.addAll(this.call.toStrings(prefix, shortform, scope));
                     }
 
                     if (this.construct) {
-                        signatures = this.construct.toStrings("new", shortform, scope);
-                        for (j = 0, len = signatures.length; j < len; j++) {
-                            allMemberNames.add(MemberName.create(signatures[j]));
-                            signatureCount++;
-                        }
+                        allMemberNames.addAll(this.construct.toStrings("new", shortform, scope));
                     }
 
                     if (this.index) {
-                        signatures = this.index.toStrings("", shortform, scope);
-                        for (j = 0, len = signatures.length; j < len; j++) {
-                            allMemberNames.add(MemberName.create(signatures[j]));
-                            signatureCount++;
-                        }
+                        allMemberNames.addAll(this.index.toStrings("", shortform, scope));
                     }
 
                     if ((curlies) || ((signatureCount > 1) && topLevel)) {
                         allMemberNames.prefix = "{ ";
                         allMemberNames.suffix = "}";
+                        allMemberNames.delim = delim;
+                    } else if (allMemberNames.entries.length > 1) {
+                        allMemberNames.delim = delim;
                     }
 
                     this.typeFlags &= (~TypeFlags.BuildingName);
@@ -432,7 +424,7 @@ module TypeScript {
             return false;
         }
 
-        public mergeOrdered(b: Type, checker: TypeChecker, comparisonInfo?: TypeComparisonInfo): Type {
+        public mergeOrdered(b: Type, checker: TypeChecker, acceptVoid: bool, comparisonInfo?: TypeComparisonInfo): Type {
             if ((this == checker.anyType) || (b == checker.anyType)) {
                 return checker.anyType;
             }
@@ -445,10 +437,10 @@ module TypeScript {
             else if ((this == checker.nullType) && (b != checker.nullType)) {
                 return b;
             }
-            else if ((b == checker.voidType) && this != checker.voidType) {
+            else if (acceptVoid && (b == checker.voidType) && this != checker.voidType) {
                 return this;
             }
-            else if ((this == checker.voidType) && (b != checker.voidType)) {
+            else if (acceptVoid && (this == checker.voidType) && (b != checker.voidType)) {
                 return b;
             }
             else if ((b == checker.undefinedType) && this != checker.undefinedType) {
@@ -462,7 +454,7 @@ module TypeScript {
                     return this;
                 }
                 else {
-                    var mergedET = this.elementType.mergeOrdered(b.elementType, checker, comparisonInfo);
+                    var mergedET = this.elementType.mergeOrdered(b.elementType, checker, acceptVoid, comparisonInfo);
                     if (mergedET == null) {
                         return checker.makeArrayType(checker.anyType);
                     }
@@ -488,6 +480,30 @@ module TypeScript {
         public getAllAmbientEnclosedTypes(): ScopedMembers { return null; }
         public getPublicEnclosedTypes(): ScopedMembers { return null; }
         public getpublicAmbientEnclosedTypes(): ScopedMembers { return null; }
+
+        public getDocComments(): Comment[]{
+            if (this.elementType || !this.symbol) {
+                return [];
+            }
+
+            if (this.isClassInstance() || this.isClass()) {
+                if (this.symbol.declAST.nodeType == NodeType.FuncDecl) {
+                    // Its a constructor - use the class declaration instead
+                    return (<FuncDecl>this.symbol.declAST).classDecl.getDocComments();
+                } else {
+                    // Its a class without constructor
+                    return this.symbol.getDocComments();
+                }
+            }
+
+            if (this.symbol.name && this.symbol.name != "_anonymous" &&
+                (((this.call == null) && (this.construct == null) && (this.index == null))
+                  || this.members)) {
+                return this.symbol.getDocComments();
+            }
+
+            return [];
+        }
     }
 
     export interface ITypeCollection {
@@ -509,7 +525,37 @@ module TypeScript {
         public getAllAmbientEnclosedTypes() { return this.ambientEnclosedTypes; }
         public getPublicEnclosedTypes(): ScopedMembers { return null; }
         public getpublicAmbientEnclosedTypes(): ScopedMembers { return null; }
-        public importedModules: ImportDecl[] = [];
+        public importedModules: ImportDeclaration[] = [];
+
+        // Finds the dynamic module name of moduleType in the members
+        // ignoreSymbols define list of symbols already visited - to avoid recursion
+        static findDynamicModuleNameInHashTable(moduleType: Type, members: IHashTable) {
+            var moduleName: { name: string; symbol: Symbol; } = null;
+            members.map((key, s, c) => {
+                if (moduleName == null && !isQuoted(key)) {
+                    var symbol = <Symbol>s;
+                    var type = symbol.getType();
+                    if (type == moduleType) {
+                        // If this is the module type we were looking for
+                        moduleName = { name: key, symbol: symbol };
+                    }
+                }
+            }, null);
+
+            return moduleName;
+        }
+
+        // Finds the Dynamic module name of the moduleType in this moduleType
+        // onlyPublic tells if we are looking for module name in public members only
+        public findDynamicModuleName(moduleType: Type): { name: string; symbol: Symbol; } {
+            var moduleName: { name: string; symbol: Symbol; } = null;
+            // Not cached, so seach and add to the cache
+            moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.members.allMembers);
+            if (moduleName == null) {
+                moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.ambientMembers.allMembers);
+            }
+            return moduleName;
+        }
     }
 
     export class TypeLink {

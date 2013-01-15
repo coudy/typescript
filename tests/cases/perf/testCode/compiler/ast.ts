@@ -1,29 +1,52 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export class AST {
+    export class ASTSpan {
+        public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
+        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
+    }
+
+    export class AST extends ASTSpan {
         public type: Type = null;
         public flags = ASTFlags.Writeable;
-
-        public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
-        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
 
         // REVIEW: for diagnostic purposes
         public passCreated: number = CompilerDiagnostics.analysisPass;
 
         public preComments: Comment[] = null;
         public postComments: Comment[] = null;
+        private docComments: Comment[] = null;
 
         public isParenthesized = false;
 
-        constructor (public nodeType: NodeType) { }
+        constructor (public nodeType: NodeType) {
+            super();
+        }
+
+        public isExpression() { return false; }
 
         public isStatementOrExpression() { return false; }
+
         public isCompoundStatement() { return false; }
+
         public isLeaf() { return this.isStatementOrExpression() && (!this.isCompoundStatement()); }
+        
+        public isDeclaration() { return false; }
 
         public typeCheck(typeFlow: TypeFlow) {
             switch (this.nodeType) {
@@ -53,45 +76,55 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
-            emitter.recordSourceMappingStart(this);
             switch (this.nodeType) {
                 case NodeType.This:
+                    emitter.recordSourceMappingStart(this);
                     if (emitter.thisFnc && (hasFlag(emitter.thisFnc.fncFlags, FncFlags.IsFatArrowFunction))) {
                         emitter.writeToOutput("_this");
                     }
                     else {
                         emitter.writeToOutput("this");
                     }
+                    emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.Null:
+                    emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("null");
+                    emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.False:
+                    emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("false");
+                    emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.True:
+                    emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("true");
+                    emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.Super:
+                    emitter.recordSourceMappingStart(this);
                     emitter.emitSuperReference();
-                case NodeType.EndCode:
+                    emitter.recordSourceMappingEnd(this);
                     break;
+                case NodeType.EndCode:
                 case NodeType.Error:
                 case NodeType.EmptyExpr:
                     break;
-
                 case NodeType.Empty:
-                    emitter.writeToOutput("; ");
+                    emitter.recordSourceMappingStart(this);
+                    emitter.recordSourceMappingEnd(this);
                     break;
                 case NodeType.Void:
+                    emitter.recordSourceMappingStart(this);
                     emitter.writeToOutput("void ");
+                    emitter.recordSourceMappingEnd(this);
                     break;
                 default:
                     throw new Error("please implement in derived class");
             }
-            emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
 
@@ -132,6 +165,58 @@ module TypeScript {
 
         public treeViewLabel() {
             return (<any>NodeType)._map[this.nodeType];
+        }
+
+        public static getResolvedIdentifierName(name: string): string {
+            if (!name) return "";
+
+            var resolved = "";
+            var start = 0;
+            var i = 0;
+            while(i <= name.length - 6) {
+                // Look for escape sequence \uxxxx
+                if (name.charAt(i) == '\\' && name.charAt(i+1) == 'u') {
+                    var charCode = parseInt(name.substr(i + 2, 4), 16);
+                    resolved += name.substr(start, i - start);
+                    resolved += String.fromCharCode(charCode);
+                    i += 6;
+                    start = i;
+                    continue;
+                } 
+                i++;
+            }
+            // Append remaining string
+            resolved += name.substring(start);
+            return resolved;
+        }
+
+        public getDocComments() : Comment[] {
+            if (!this.isDeclaration() || !this.preComments || this.preComments.length == 0) {
+                return [];
+            }
+
+            if (!this.docComments) {
+                var preCommentsLength = this.preComments.length;
+                var docComments: Comment[] = [];
+                for (var i = preCommentsLength - 1; i >= 0; i--) {
+                    if (this.preComments[i].isDocComment()) {
+                        var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
+                        if (prevDocComment == null || // If the help comments were not yet set then this is the comment
+                            (((this.preComments[i].isBlockComment && prevDocComment.isBlockComment) ||
+                             (!this.preComments[i].isBlockComment && !prevDocComment.isBlockComment)) && // The comments are of same type
+                             (this.preComments[i].limLine == prevDocComment.minLine ||
+                              this.preComments[i].limLine + 1 == prevDocComment.minLine))) { // On same line or next line
+                            docComments.push(this.preComments[i]);
+                            continue;
+                        }
+                    }
+                    break;
+                }
+
+                this.docComments = docComments.reverse();
+            }
+
+            return this.docComments;
         }
     }
 
@@ -184,8 +269,10 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
-            emitter.emitJavascriptList(this, null, TokenID.SColon, startLine, false, false, writeDeclFile);
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.recordSourceMappingStart(this);
+            emitter.emitJavascriptList(this, null, TokenID.Semicolon, startLine, false, false);
+            emitter.recordSourceMappingEnd(this);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -204,21 +291,45 @@ module TypeScript {
     export class Identifier extends AST {
         public sym: Symbol = null;
         public cloId = -1;
+        public text: string;
 
-        constructor (public text: string) {
+        // 'actualText' is the text that the user has entered for the identifier. the text might 
+        // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
+        // the resolved value of any escape sequences in the actual text; so in the previous 
+        // example, actualText = '\u0041', text = 'A'.
+        //
+        // For purposes of finding a symbol, use text, as this will allow you to match all 
+        // variations of the variable text. For full-fidelity translation of the user input, such
+        // as emitting, use the actualText field.
+        // 
+        // Note: 
+        //    To change text, and to avoid running into a situation where 'actualText' does not 
+        //    match 'text', always use setText.
+        constructor (public actualText: string, public hasEscapeSequence?: bool) {
             super(NodeType.Name);
+            this.setText(actualText, hasEscapeSequence);
+        }
+
+        public setText(actualText: string, hasEscapeSequence?: bool) {
+            this.actualText = actualText;
+            if (hasEscapeSequence) {
+                this.text = AST.getResolvedIdentifierName(actualText);
+            }
+            else {
+                this.text = actualText;
+            }
         }
 
         public isMissing() { return false; }
         public isLeaf() { return true; }
 
         public treeViewLabel() {
-            return "id: " + this.text;
+            return "id: " + this.actualText;
         }
 
         public printLabel() {
-            if (this.text) {
-                return "id: " + this.text;
+            if (this.actualText) {
+                return "id: " + this.actualText;
             }
             else {
                 return "name node";
@@ -229,19 +340,25 @@ module TypeScript {
             return typeFlow.typeCheckName(this);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitJavascriptName(this, true);
         }
 
+        public static fromToken(token: Token): Identifier {
+            return new Identifier(token.getText(), (<IdentifierToken>token).hasEscapeSequence);
+        }
     }
 
     export class MissingIdentifier extends Identifier {
         constructor () {
             super("__missing");
         }
-        public isMissing() { return true; }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public isMissing() {
+            return true;
+        }
+
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             // Emit nothing for a missing ID
         }
     }
@@ -251,35 +368,42 @@ module TypeScript {
             super(NodeType.Label);
         }
 
-        public printLabel() { return this.id.text + ":"; }
+        public printLabel() { return this.id.actualText + ":"; }
 
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.voidType;
             return this;
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeLineToOutput(this.id.text + ":");
+            emitter.recordSourceMappingStart(this.id);
+            emitter.writeToOutput(this.id.actualText);
+            emitter.recordSourceMappingEnd(this.id);
+            emitter.writeLineToOutput(":");
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
-
     }
 
-    export class UnaryExpression extends AST {
-
-        public targetType: Type = null; // Target type for an object literal (null if no target type)
-        public castTerm: AST = null;
-        public nty: NodeType;
-
-        constructor (nty: number, public operand: AST) {
-            super(nty);
-            this.nty = nty;
+    export class Expression extends AST {
+        constructor (nodeType: NodeType) {
+            super(nodeType);
         }
 
+        public isExpression() { return true; }
+
         public isStatementOrExpression() { return true; }
+    }
+
+    export class UnaryExpression extends Expression {
+        public targetType: Type = null; // Target type for an object literal (null if no target type)
+        public castTerm: AST = null;
+
+        constructor (nodeType: NodeType, public operand: AST) {
+            super(nodeType);
+        }
 
         public addToControlFlow(context: ControlFlowContext): void {
             super.addToControlFlow(context);
@@ -290,7 +414,7 @@ module TypeScript {
         }
 
         public typeCheck(typeFlow: TypeFlow) {
-            switch (this.nty) {
+            switch (this.nodeType) {
                 case NodeType.Not:
                     return typeFlow.typeCheckBitNot(this);
 
@@ -355,20 +479,20 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            switch (this.nty) {
+            switch (this.nodeType) {
                 case NodeType.IncPost:
-                    emitter.emitJavascript(this.operand, TokenID.Inc, false);
+                    emitter.emitJavascript(this.operand, TokenID.PlusPlus, false);
                     emitter.writeToOutput("++");
                     break;
                 case NodeType.LogNot:
                     emitter.writeToOutput("!");
-                    emitter.emitJavascript(this.operand, TokenID.Bang, false);
+                    emitter.emitJavascript(this.operand, TokenID.Exclamation, false);
                     break;
                 case NodeType.DecPost:
-                    emitter.emitJavascript(this.operand, TokenID.Dec, false);
+                    emitter.emitJavascript(this.operand, TokenID.MinusMinus, false);
                     emitter.writeToOutput("--");
                     break;
                 case NodeType.ObjectLit:
@@ -386,22 +510,22 @@ module TypeScript {
                     if (this.operand.nodeType == NodeType.Neg) {
                         this.operand.isParenthesized = true;
                     }
-                    emitter.emitJavascript(this.operand, TokenID.Sub, false);
+                    emitter.emitJavascript(this.operand, TokenID.Minus, false);
                     break;
                 case NodeType.Pos:
                     emitter.writeToOutput("+");
                     if (this.operand.nodeType == NodeType.Pos) {
                         this.operand.isParenthesized = true;
                     }
-                    emitter.emitJavascript(this.operand, TokenID.Add, false);
+                    emitter.emitJavascript(this.operand, TokenID.Plus, false);
                     break;
                 case NodeType.IncPre:
                     emitter.writeToOutput("++");
-                    emitter.emitJavascript(this.operand, TokenID.Inc, false);
+                    emitter.emitJavascript(this.operand, TokenID.PlusPlus, false);
                     break;
                 case NodeType.DecPre:
                     emitter.writeToOutput("--");
-                    emitter.emitJavascript(this.operand, TokenID.Dec, false);
+                    emitter.emitJavascript(this.operand, TokenID.MinusMinus, false);
                     break;
                 case NodeType.Throw:
                     emitter.writeToOutput("throw ");
@@ -429,23 +553,20 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
-
     }
 
-    export class CallExpression extends AST {
-
-        public nty: NodeType;
-
-        constructor (nty: number, public target: AST, public args: ASTList) {
-            super(nty);
-            this.nty = nty;
+    export class CallExpression extends Expression {
+        constructor (nodeType: NodeType,
+                     public target: AST,
+                     public arguments: ASTList) {
+            super(nodeType);
             this.minChar = this.target.minChar;
         }
 
         public signature: Signature = null;
-        public isStatementOrExpression() { return true; }
+
         public typeCheck(typeFlow: TypeFlow) {
-            if (this.nty == NodeType.New) {
+            if (this.nodeType == NodeType.New) {
                 return typeFlow.typeCheckNew(this);
             }
             else {
@@ -453,15 +574,15 @@ module TypeScript {
             }
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
 
-            if (this.nty == NodeType.New) {
-                emitter.emitNew(this.target, this.args);
+            if (this.nodeType == NodeType.New) {
+                emitter.emitNew(this.target, this.arguments);
             }
             else {
-                emitter.emitCall(this, this.target, this.args);
+                emitter.emitCall(this, this.target, this.arguments);
             }
 
             emitter.recordSourceMappingEnd(this);
@@ -469,18 +590,13 @@ module TypeScript {
         }
     }
 
-    export class BinaryExpression extends AST {
-        public nty: NodeType;
-
-        constructor (nty: number, public operand1: AST, public operand2: AST) {
-            super(nty);
-            this.nty = nty;
+    export class BinaryExpression extends Expression {
+        constructor (nodeType: NodeType, public operand1: AST, public operand2: AST) {
+            super(nodeType);
         }
 
-        public isStatementOrExpression() { return true; }
-
         public typeCheck(typeFlow: TypeFlow) {
-            switch (this.nty) {
+            switch (this.nodeType) {
                 case NodeType.Dot:
                     return typeFlow.typeCheckDotOperator(this);
                 case NodeType.Asg:
@@ -499,11 +615,11 @@ module TypeScript {
                 case NodeType.Eq:
                     var text: string;
                     if (typeFlow.checker.styleSettings.eqeqeq) {
-                        text = nodeTypeTable[this.nty];
+                        text = nodeTypeTable[this.nodeType];
                         typeFlow.checker.errorReporter.styleError(this, "use of " + text);
                     }
                     else if (typeFlow.checker.styleSettings.eqnull) {
-                        text = nodeTypeTable[this.nty];
+                        text = nodeTypeTable[this.nodeType];
                         if ((this.operand2 !== null) && (this.operand2.nodeType == NodeType.Null)) {
                             typeFlow.checker.errorReporter.styleError(this, "use of " + text + " to compare with null");
                         }
@@ -557,7 +673,7 @@ module TypeScript {
             return this;
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             var binTokenId = nodeTypeToTokTable[this.nodeType];
 
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -579,7 +695,7 @@ module TypeScript {
                 emitter.emitJavascript(this.operand2, binTokenId, false);
             }
             else {
-                switch (this.nty) {
+                switch (this.nodeType) {
                     case NodeType.Dot:
                         if (!emitter.tryEmitConstant(this)) {
                             emitter.emitJavascript(this.operand1, TokenID.Dot, false);
@@ -627,53 +743,49 @@ module TypeScript {
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
-
     }
 
-    export class TrinaryExpression extends AST {
-        public nty: NodeType;
-
-        constructor (nty: number, public operand1: AST, public operand2: AST,
-                            public operand3: AST) {
-            super(nty);
-            this.nty = nty;
+    export class ConditionalExpression extends Expression {
+        constructor (public operand1: AST,
+                     public operand2: AST,
+                     public operand3: AST) {
+            super(NodeType.ConditionalExpression);
         }
 
-        public isStatementOrExpression() { return true; }
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckQMark(this);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.emitJavascript(this.operand1, TokenID.QMark, false);
+            emitter.emitJavascript(this.operand1, TokenID.Question, false);
             emitter.writeToOutput(" ? ");
-            emitter.emitJavascript(this.operand2, TokenID.QMark, false);
+            emitter.emitJavascript(this.operand2, TokenID.Question, false);
             emitter.writeToOutput(" : ");
-            emitter.emitJavascript(this.operand3, TokenID.QMark, false);
+            emitter.emitJavascript(this.operand3, TokenID.Question, false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
     }
 
-    export class NumberLiteral extends AST {
-
-        constructor (public value: number) {
+    export class NumberLiteral extends Expression {
+        constructor (public value: number, public hasEmptyFraction?: bool) {
             super(NodeType.NumberLit);
         }
 
-        public isStatementOrExpression() { return true; }
         public isNegativeZero = false;
+
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.doubleType;
             return this;
         }
+
         public treeViewLabel() {
-            return "num: " + this.value;
+            return "num: " + this.printLabel();
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.isNegativeZero) {
@@ -681,6 +793,10 @@ module TypeScript {
             }
 
             emitter.writeToOutput(this.value.toString());
+
+            if (this.hasEmptyFraction)
+                emitter.writeToOutput(".0");
+
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -689,25 +805,26 @@ module TypeScript {
             if (Math.floor(this.value) != this.value) {
                 return this.value.toFixed(2).toString();
             }
+            else if (this.hasEmptyFraction) {
+                return this.value.toString() + ".0";
+            }
             else {
                 return this.value.toString();
             }
         }
     }
 
-    export class RegexLiteral extends AST {
-
+    export class RegexLiteral extends Expression {
         constructor (public regex) {
             super(NodeType.Regex);
         }
-
-        public isStatementOrExpression() { return true; }
+        
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.regexType;
             return this;
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput(this.regex.toString());
@@ -716,14 +833,12 @@ module TypeScript {
         }
     }
 
-    export class StringLiteral extends AST {
-
+    export class StringLiteral extends Expression {
         constructor (public text: string) {
             super(NodeType.QString);
         }
 
-        public isStatementOrExpression() { return true; }
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.emitStringLiteral(this.text);
@@ -745,21 +860,24 @@ module TypeScript {
         }
     }
 
-    export class ImportDecl extends AST {
+    export class ModuleElement extends AST {
+        constructor (nodeType: NodeType) {
+            super(nodeType);
+        }
+    }
+
+    export class ImportDeclaration extends ModuleElement {
         public isStatementOrExpression() { return true; }
         public varFlags = VarFlags.None;
         public isDynamicImport = false;
+        public isDeclaration() { return true; }
 
         constructor (public id: Identifier, public alias: AST) {
-            super(NodeType.Import);
+            super(NodeType.ImportDeclaration);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             var mod = <ModuleType>this.alias.type;
-            if (writeDeclFile) {
-                emitter.emitImportDecl(this);
-            }
-
             // REVIEW: Only modules may be aliased for now, though there's no real
             // restriction on what the type symbol may be
             if (!this.isDynamicImport || (this.id.sym && !(<TypeSymbol>this.id.sym).onlyReferencedAsTypeRef)) {
@@ -768,10 +886,10 @@ module TypeScript {
 
                 emitter.recordSourceMappingStart(this);
                 emitter.emitParensAndCommentsInPlace(this, true);
-                emitter.writeToOutput("var " + this.id.text + " = ");
-                emitter.modAliasId = this.id.text;
+                emitter.writeToOutput("var " + this.id.actualText + " = ");
+                emitter.modAliasId = this.id.actualText;
                 emitter.firstModAlias = this.firstAliasedModToString();
-                emitter.emitJavascript(this.alias, TokenID.Tilde, false, writeDeclFile);
+                emitter.emitJavascript(this.alias, TokenID.Tilde, false);
                 // the dynamic import case will insert the semi-colon automatically
                 if (!this.isDynamicImport) {
                     emitter.writeToOutput(";");
@@ -788,9 +906,9 @@ module TypeScript {
             return typeFlow.typeCheckImportDecl(this);
         }
 
-        public getAliasName(aliasAST?: AST = this.alias) {
+        public getAliasName(aliasAST?: AST = this.alias) : string {
             if (aliasAST.nodeType == NodeType.Name) {
-                return (<Identifier>aliasAST).text;
+                return (<Identifier>aliasAST).actualText;
             } else {
                 var dotExpr = <BinaryExpression>aliasAST;
                 return this.getAliasName(dotExpr.operand1) + "." + this.getAliasName(dotExpr.operand2);
@@ -799,12 +917,12 @@ module TypeScript {
 
         public firstAliasedModToString() {
             if (this.alias.nodeType == NodeType.Name) {
-                return (<Identifier>this.alias).text;
+                return (<Identifier>this.alias).actualText;
             }
             else {
                 var dotExpr = <BinaryExpression>this.alias;
                 var firstMod = <Identifier>dotExpr.operand1;
-                return firstMod.text;
+                return firstMod.actualText;
             }
         }
     }
@@ -814,6 +932,7 @@ module TypeScript {
         public typeExpr: AST = null;
         public varFlags = VarFlags.None;
         public sym: Symbol = null;
+        public isDeclaration() { return true; }
 
         constructor (public id: Identifier, nodeType: NodeType, public nestingLevel: number) {
             super(nodeType);
@@ -835,7 +954,6 @@ module TypeScript {
     }
 
     export class VarDecl extends BoundDecl {
-
         constructor (id: Identifier, nest: number) {
             super(id, NodeType.VarDecl, nest);
         }
@@ -844,12 +962,12 @@ module TypeScript {
         public isExported() { return hasFlag(this.varFlags, VarFlags.Exported); }
         public isStatic() { return hasFlag(this.varFlags, VarFlags.Static); }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
-            emitter.emitJavascriptVarDecl(this, tokenId, writeDeclFile);
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.emitJavascriptVarDecl(this, tokenId);
         }
 
         public treeViewLabel() {
-            return "var " + this.id.text;
+            return "var " + this.id.actualText;
         }
     }
 
@@ -863,18 +981,15 @@ module TypeScript {
         public isOptionalArg() { return this.isOptional || this.init; }
 
         public treeViewLabel() {
-            return "arg: " + this.id.text;
+            return "arg: " + this.id.actualText;
         }
 
         public parameterPropertySym: FieldSymbol = null;
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeToOutput(this.id.text);
-            if (writeDeclFile) {
-                emitter.emitArgDecl(this);
-            }
+            emitter.writeToOutput(this.id.actualText);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -896,7 +1011,7 @@ module TypeScript {
         public enclosingFnc: FuncDecl = null;
         public freeVariables: Symbol[] = [];
         public unitIndex = -1;
-        public classDecl: Record = null;
+        public classDecl: NamedDeclaration = null;
         public boundToProperty: VarDecl = null;
         public isOverload = false;
         public innerStaticFuncs: FuncDecl[] = [];
@@ -907,10 +1022,12 @@ module TypeScript {
         public rightCurlyCount = 0;
         public returnStatementsWithExpressions: ReturnStatement[] = [];
         public scopeType: Type = null; // Type of the FuncDecl, before target typing
+        public endingToken: ASTSpan = null;
+        public isDeclaration() { return true; }
 
         constructor (public name: Identifier, public bod: ASTList, public isConstructor: bool,
-                    public args: ASTList, public vars: ASTList, public scopes: ASTList, public statics: ASTList,
-            nodeType: number) {
+                     public arguments: ASTList, public vars: ASTList, public scopes: ASTList, public statics: ASTList,
+                     nodeType: number) {
 
             super(nodeType);
         }
@@ -930,6 +1047,9 @@ module TypeScript {
 
         public hasSelfReference() { return hasFlag(this.fncFlags, FncFlags.HasSelfReference); }
         public setHasSelfReference() { this.fncFlags |= FncFlags.HasSelfReference; }
+
+        public hasSuperReferenceInFatArrowFunction() { return hasFlag(this.fncFlags, FncFlags.HasSuperReferenceInFatArrowFunction); }
+        public setHasSuperReferenceInFatArrowFunction() { this.fncFlags |= FncFlags.HasSuperReferenceInFatArrowFunction; }
 
         public addCloRef(id: Identifier, sym: Symbol): number {
             if (this.envids == null) {
@@ -978,13 +1098,13 @@ module TypeScript {
             return typeFlow.typeCheckFunction(this);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
-            emitter.emitJavascriptFunction(this, writeDeclFile);
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.emitJavascriptFunction(this);
         }
 
         public getNameText() {
             if (this.name) {
-                return this.name.text;
+                return this.name.actualText;
             }
             else {
                 return this.hint;
@@ -1009,14 +1129,12 @@ module TypeScript {
         public isPublic() { return hasFlag(this.fncFlags, FncFlags.Public); }
         public isStatic() { return hasFlag(this.fncFlags, FncFlags.Static); }
 
-
-
         public treeViewLabel() {
             if (this.name == null) {
                 return "funcExpr";
             }
             else {
-                return "func: " + this.name.text
+                return "func: " + this.name.actualText
             }
         }
 
@@ -1025,8 +1143,6 @@ module TypeScript {
         }
 
         public isSignature() { return (this.fncFlags & FncFlags.Signature) != FncFlags.None; }
-
-        public hasStaticDeclarations() { return (!this.isConstructor && (this.statics.members.length > 0 || this.innerStaticFuncs.length > 0)); }
     }
 
     export class LocationInfo {
@@ -1037,16 +1153,26 @@ module TypeScript {
 
     export class Script extends FuncDecl {
         public locationInfo: LocationInfo = null;
+        public referencedFiles: IFileReference[] = [];
         public requiresGlobal = false;
-        public requiresInherits = false;
+        public requiresExtendsBlock = false;
         public isResident = false;
         public isDeclareFile = false;
         public hasBeenTypeChecked = false;
-        public topLevelMod: ModuleDecl = null;
+        public topLevelMod: ModuleDeclaration = null;
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
         public vars: ASTList;
         public scopes: ASTList;
+        // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
+        public containsUnicodeChar = false;
+        public containsUnicodeCharInComment = false;
+        public cachedEmitRequired: bool;
+
+        private setCachedEmitRequired(value: bool) {
+            this.cachedEmitRequired = value;
+            return this.cachedEmitRequired;
+        }
 
         constructor (vars: ASTList, scopes: ASTList) {
             super(new Identifier("script"), null, false, null, vars, scopes, null, NodeType.Script);
@@ -1062,86 +1188,116 @@ module TypeScript {
             return "Script";
         }
 
-        public emitRequired() {
+        public emitRequired(emitOptions: EmitOptions) {
+            if (this.cachedEmitRequired != undefined) {
+                return this.cachedEmitRequired;
+            }
+
             if (!this.isDeclareFile && !this.isResident && this.bod) {
                 for (var i = 0, len = this.bod.members.length; i < len; i++) {
                     var stmt = this.bod.members[i];
-                    if (stmt.nodeType == NodeType.Module) {
-                        if (!hasFlag((<ModuleDecl>stmt).modFlags, ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
-                            return true;
+                    if (stmt.nodeType == NodeType.ModuleDeclaration) {
+                        if (!hasFlag((<ModuleDeclaration>stmt).modFlags, ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
+                            return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType == NodeType.Class) {
-                        if (!hasFlag((<TypeDecl>stmt).varFlags, VarFlags.Ambient)) {
-                            return true;
+                    else if (stmt.nodeType == NodeType.ClassDeclaration) {
+                        if (!hasFlag((<ClassDeclaration>stmt).varFlags, VarFlags.Ambient)) {
+                            return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType == NodeType.VarDecl) {
                         if (!hasFlag((<VarDecl>stmt).varFlags, VarFlags.Ambient)) {
-                            return true;
+                            return this.setCachedEmitRequired(true);
                         }
                     }
                     else if (stmt.nodeType == NodeType.FuncDecl) {
                         if (!(<FuncDecl>stmt).isSignature()) {
-                            return true;
+                            return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType != NodeType.Interface && stmt.nodeType != NodeType.Empty) {
-                        return true;
+                    else if (stmt.nodeType != NodeType.InterfaceDeclaration && stmt.nodeType != NodeType.Empty) {
+                        return this.setCachedEmitRequired(true);
                     }
+                }
+
+                if ( emitOptions.emitComments &&
+                    ((this.bod.preComments && this.bod.preComments.length > 0) || (this.bod.postComments && this.bod.postComments.length > 0))) {
+                    return this.setCachedEmitRequired(true);
+                }
+            }
+            return this.setCachedEmitRequired(false);
+        }
+
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            if (this.emitRequired(emitter.emitOptions)) {
+                emitter.emitParensAndCommentsInPlace(this.bod, true);
+                emitter.recordSourceMappingStart(this);
+                emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresExtendsBlock);
+                emitter.recordSourceMappingEnd(this);
+                emitter.emitParensAndCommentsInPlace(this.bod, false);
+            }
+        }
+
+        private externallyVisibleImportedSymbols: Symbol[] = [];
+
+        public AddExternallyVisibleImportedSymbol(symbol: Symbol, checker: TypeChecker) {
+            if (this.isExternallyVisibleSymbol(symbol)) {
+                return;
+            }
+
+            // Before adding check if the external symbol is also marked for visibility
+            if (!symbol.getType().symbol.isExternallyVisible(checker)) {
+                // Report error
+                var quotes = "";
+                var moduleName = symbol.getType().symbol.prettyName;
+                if (!isQuoted(moduleName)) {
+                    quotes = "'";
+                }
+                checker.errorReporter.simpleError(symbol.declAST, "Externally visible import statement uses non exported module " + quotes + moduleName + quotes);
+            }
+            this.externallyVisibleImportedSymbols.push(symbol);
+        }
+
+        public isExternallyVisibleSymbol(symbol: Symbol) {
+            for (var i = 0 ; i < this.externallyVisibleImportedSymbols.length; i++) {
+                if (this.externallyVisibleImportedSymbols[i] == symbol) {
+                    return true;
                 }
             }
             return false;
         }
-
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
-            if (this.emitRequired()) {
-                emitter.emitParensAndCommentsInPlace(this, true);
-                emitter.recordSourceMappingStart(this);
-                emitter.emitPrologue(this.requiresInherits);
-                var oldDeclContainingAST: AST = writeDeclFile ? emitter.setDeclContainingAST(this) : null;
-                emitter.emitJavascriptList(this.bod, null, TokenID.SColon, true, false, false, writeDeclFile);
-                if (writeDeclFile) {
-                    emitter.setDeclContainingAST(oldDeclContainingAST);
-                }
-                emitter.recordSourceMappingEnd(this);
-                emitter.emitParensAndCommentsInPlace(this, false);
-            }
-        }
-
     }
 
-    export class Record extends AST {
-        public nty: NodeType;
-        constructor (nty: number, public name: AST, public members: AST) {
-            super(nty);
-            this.nty = nty;
-        }
-    }
-
-    export class ModuleDecl extends Record {
-
-        public modFlags = ModuleFlags.ShouldEmitModuleDecl;
-        public mod: ModuleType;
-        public alias: AST = null;
+    export class NamedDeclaration extends ModuleElement {
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
+        public isDeclaration() { return true; }
+
+        constructor (nodeType: NodeType,
+                     public name: Identifier,
+                     public members: ASTList) {
+            super(nodeType);
+        }
+    }
+
+    export class ModuleDeclaration extends NamedDeclaration {
+        public modFlags = ModuleFlags.ShouldEmitModuleDecl;
+        public mod: ModuleType;
         public prettyName: string;
         public amdDependencies: string[] = [];
-        public members: ASTList;
         public vars: ASTList;
-        public name: Identifier;
         public scopes: ASTList;
+        // Remember if the module contains Unicode chars, that is needed for dynamic module as we will generate a file for each.
+        public containsUnicodeChar = false;
+        public containsUnicodeCharInComment = false;
 
-        constructor (name: Identifier, members: ASTList, vars: ASTList, scopes: ASTList) {
-            super(NodeType.Module, name, members);
+        constructor (name: Identifier, members: ASTList, vars: ASTList, scopes: ASTList, public endingToken: ASTSpan) {
+            super(NodeType.ModuleDeclaration, name, members);
 
-            this.members = members;
             this.vars = vars;
-            this.name = name;
             this.scopes = scopes;
-
-            this.prettyName = this.name.text;
+            this.prettyName = this.name.actualText;
         }
 
         public isExported() { return hasFlag(this.modFlags, ModuleFlags.Exported); }
@@ -1156,118 +1312,87 @@ module TypeScript {
             return typeFlow.typeCheckModule(this);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             if (!hasFlag(this.modFlags, ModuleFlags.ShouldEmitModuleDecl)) {
                 emitter.emitParensAndCommentsInPlace(this, true);
-                emitter.emitJavascriptModule(this, writeDeclFile);
+                emitter.recordSourceMappingStart(this);
+                emitter.emitJavascriptModule(this);
+                emitter.recordSourceMappingEnd(this);
                 emitter.emitParensAndCommentsInPlace(this, false);
-            } else if (writeDeclFile) {
-                emitter.emitModuleSignature(this);
             }
         }
     }
 
-    export class NamedType extends Record {
-        public name: Identifier;
-        public members: AST;
+    export class TypeDeclaration extends NamedDeclaration {
+        public varFlags = VarFlags.None;
 
-        constructor (nty: NodeType, name: Identifier, public extendsList: ASTList, public implementsList: ASTList, members: AST) {
-            super(nty, name, members);
-            this.name = name;
-            this.members = members;
+        constructor (nodeType: NodeType,
+                     name: Identifier,
+                     public extendsList: ASTList,
+                     public implementsList: ASTList,
+                     members: ASTList) {
+            super(nodeType, name, members);
+        }
+
+        public isExported() { 
+            return hasFlag(this.varFlags, VarFlags.Exported);
+        }
+
+        public isAmbient() {
+            return hasFlag(this.varFlags, VarFlags.Ambient);
         }
     }
 
-    export class ClassDecl extends NamedType {
-        public varFlags = VarFlags.None;
-        public leftCurlyCount = 0;
-        public rightCurlyCount = 0;
+    export class ClassDeclaration extends TypeDeclaration {
         public knownMemberNames: any = {};
         public constructorDecl: FuncDecl = null;
         public constructorNestingLevel = 0;
-        public allMemberDefinitions: ASTList = new ASTList();
-        public name: Identifier;
-        public baseClass: ASTList;
-        public implementsList: ASTList;
-        public definitionMembers: ASTList;
+        public endingToken: ASTSpan = null;
 
-        constructor (name: Identifier, definitionMembers: ASTList, baseClass: ASTList,
-            implementsList: ASTList) {
-
-            super(NodeType.Class, name, baseClass, implementsList, definitionMembers);
-
-            this.name = name;
-            this.baseClass = baseClass;
-            this.implementsList = implementsList;
-            this.definitionMembers = definitionMembers;
+        constructor (name: Identifier,
+                     members: ASTList,
+                     extendsList: ASTList,
+                     implementsList: ASTList) {
+            super(NodeType.ClassDeclaration, name, extendsList, implementsList, members);
         }
-
-        public isExported() { return hasFlag(this.varFlags, VarFlags.Exported); }
-        public isAmbient() { return hasFlag(this.varFlags, VarFlags.Ambient); }
 
         public typeCheck(typeFlow: TypeFlow) {
             return typeFlow.typeCheckClass(this);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
-            emitter.emitJavascriptClass(this, writeDeclFile);
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
+            emitter.emitJavascriptClass(this);
         }
     }
 
-    export class TypeDecl extends NamedType {
-        public varFlags = VarFlags.None;
-        public isOverload = false;
-        public leftCurlyCount = 0;
-        public rightCurlyCount = 0;
-        public nty: NodeType;
-        public name: Identifier;
-        public extendsList: ASTList;
-        public implementsList: ASTList;
-        public members: AST;
-
-        constructor (nty: NodeType, name: Identifier, members: AST, public args: ASTList, extendsList: ASTList,
-            implementsList: ASTList) {
-            super(nty, name, extendsList, implementsList, members);
-
-            this.nty = nty;
-            this.name = name;
-            this.extendsList = extendsList;
-            this.implementsList = implementsList;
-            this.members = members;
+    export class InterfaceDeclaration extends TypeDeclaration {
+        constructor (name: Identifier,
+                     members: ASTList,
+                     extendsList: ASTList,
+                     implementsList: ASTList) {
+            super(NodeType.InterfaceDeclaration, name, extendsList, implementsList, members);
         }
-
-        public isExported() { return hasFlag(this.varFlags, VarFlags.Exported); }
-        public isAmbient() { return hasFlag(this.varFlags, VarFlags.Ambient); }
 
         public typeCheck(typeFlow: TypeFlow) {
-            if (this.nty == NodeType.Interface) {
-                return typeFlow.typeCheckInterface(this);
-            }
-            else {
-                throw new Error("please implement type check for node type" + this.nty);
-            }
+            return typeFlow.typeCheckInterface(this);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
-            if (this.nty == NodeType.Interface) {
-                if (writeDeclFile) {
-                    emitter.emitInterfaceDeclaration(this);
-                }
-            }
-            else {
-                throw new Error("please implement emit for node type" + this.nty);
-            }
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
         }
     }
 
-    export class Statement extends AST {
-
-        constructor (nty: number) {
-            super(nty);
+    export class Statement extends ModuleElement {
+        constructor (nodeType: NodeType) {
+            super(nodeType);
             this.flags |= ASTFlags.IsStatement;
         }
+
         public isLoop() { return false; }
+
+        public isStatementOrExpression() { return true; }
+
         public isCompoundStatement() { return this.isLoop(); }
+
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.voidType;
             return this;
@@ -1275,21 +1400,20 @@ module TypeScript {
     }
 
     export class LabeledStatement extends Statement {
-
         constructor (public labels: ASTList, public stmt: AST) {
             super(NodeType.LabeledStatement);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.labels) {
                 var labelsLen = this.labels.members.length;
                 for (var i = 0; i < labelsLen; i++) {
-                    this.labels.members[i].emit(emitter, tokenId, startLine, writeDeclFile);
+                    this.labels.members[i].emit(emitter, tokenId, startLine);
                 }
             }
-            this.stmt.emit(emitter, tokenId, true, writeDeclFile);
+            this.stmt.emit(emitter, tokenId, true);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -1309,24 +1433,26 @@ module TypeScript {
     }
 
     export class Block extends Statement {
-
-        constructor (public stmts: ASTList, public visible: bool) {
+        constructor (public statements: ASTList,
+                     public isStatementBlock: bool) {
             super(NodeType.Block);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.visible) {
+            if (this.isStatementBlock) {
                 emitter.writeLineToOutput(" {");
-                emitter.increaseIndent();
+                emitter.indenter.increaseIndent();
+            } else {
+                emitter.setInVarBlock(this.statements.members.length);
             }
             var temp = emitter.setInObjectLiteral(false);
-            if (this.stmts) {
-                emitter.emitJavascriptList(this.stmts, null, TokenID.SColon, true, false, false);
+            if (this.statements) {
+                emitter.emitJavascriptList(this.statements, null, TokenID.Semicolon, true, false, false);
             }
-            if (this.visible) {
-                emitter.decreaseIndent();
+            if (this.isStatementBlock) {
+                emitter.indenter.decreaseIndent();
                 emitter.emitIndent();
                 emitter.writeToOutput("}");
             }
@@ -1338,8 +1464,8 @@ module TypeScript {
         public addToControlFlow(context: ControlFlowContext) {
             var afterIfNeeded = new BasicBlock();
             context.pushStatement(this, context.current, afterIfNeeded);
-            if (this.stmts) {
-                context.walk(this.stmts, this);
+            if (this.statements) {
+                context.walk(this.statements, this);
             }
             context.walker.options.goChildren = false;
             context.popStatement();
@@ -1351,11 +1477,12 @@ module TypeScript {
 
         public typeCheck(typeFlow: TypeFlow) {
             if (!typeFlow.checker.styleSettings.emptyBlocks) {
-                if ((this.stmts === null) || (this.stmts.members.length == 0)) {
+                if ((this.statements === null) || (this.statements.members.length == 0)) {
                     typeFlow.checker.errorReporter.styleError(this, "empty block");
                 }
             }
-            typeFlow.typeCheck(this.stmts);
+
+            typeFlow.typeCheck(this.statements);
             return this;
         }
     }
@@ -1364,11 +1491,9 @@ module TypeScript {
         public target: string = null;
         public hasExplicitTarget() { return (this.target); }
         public resolvedTarget: Statement = null;
-        public nty;
 
-        constructor (nty: number) {
-            super(nty);
-            this.nty = nty;
+        constructor (nodeType: NodeType) {
+            super(nodeType);
         }
 
         public setResolvedTarget(parser: Parser, stmt: Statement): bool {
@@ -1376,7 +1501,7 @@ module TypeScript {
                 this.resolvedTarget = stmt;
                 return true;
             }
-            if (this.nty === NodeType.Continue) {
+            if (this.nodeType === NodeType.Continue) {
                 parser.reportParseError("continue statement applies only to loops");
                 return false;
             }
@@ -1394,13 +1519,13 @@ module TypeScript {
 
         public addToControlFlow(context: ControlFlowContext): void {
             super.addToControlFlow(context);
-            context.unconditionalBranch(this.resolvedTarget, (this.nty == NodeType.Continue));
+            context.unconditionalBranch(this.resolvedTarget, (this.nodeType == NodeType.Continue));
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.nty == NodeType.Break) {
+            if (this.nodeType == NodeType.Break) {
                 emitter.writeToOutput("break");
             }
             else {
@@ -1409,14 +1534,13 @@ module TypeScript {
             if (this.hasExplicitTarget()) {
                 emitter.writeToOutput(" " + this.target);
             }
-            emitter.writeToOutput(";");
             emitter.recordSourceMappingEnd(this);
+            emitter.writeToOutput(";");
             emitter.emitParensAndCommentsInPlace(this, false);
         }
     }
 
     export class WhileStatement extends Statement {
-        public isStatementOrExpression() { return true; }
         public body: AST = null;
 
         constructor (public cond: AST) {
@@ -1425,14 +1549,14 @@ module TypeScript {
 
         public isLoop() { return true; }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("while(");
-            emitter.emitJavascript(this.cond, TokenID.WHILE, false);
+            emitter.emitJavascript(this.cond, TokenID.While, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, false, false);
+            emitter.emitJavascriptStatements(this.body, false);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
@@ -1472,7 +1596,6 @@ module TypeScript {
     }
 
     export class DoWhileStatement extends Statement {
-        public isStatementOrExpression() { return true; }
         public body: AST = null;
         public whileAST: AST = null;
         public cond: AST = null;
@@ -1482,20 +1605,21 @@ module TypeScript {
             super(NodeType.DoWhile);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("do");
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingStart(this.whileAST);
             emitter.writeToOutput("while");
             emitter.recordSourceMappingEnd(this.whileAST);
             emitter.writeToOutput('(');
-            emitter.emitJavascript(this.cond, TokenID.RParen, false);
+            emitter.emitJavascript(this.cond, TokenID.CloseParen, false);
             emitter.writeToOutput(")");
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
+            emitter.writeToOutput(";");
             emitter.emitParensAndCommentsInPlace(this, false);
         }
 
@@ -1531,9 +1655,9 @@ module TypeScript {
     }
 
     export class IfStatement extends Statement {
-        public isStatementOrExpression() { return true; }
         public thenBod: AST;
         public elseBod: AST = null;
+        public statement: ASTSpan = new ASTSpan();
 
         constructor (public cond: AST) {
             super(NodeType.If);
@@ -1541,17 +1665,25 @@ module TypeScript {
 
         public isCompoundStatement() { return true; }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
+            emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("if(");
-            emitter.emitJavascript(this.cond, TokenID.IF, false);
+            emitter.emitJavascript(this.cond, TokenID.If, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.thenBod, true, false);
+            emitter.recordSourceMappingEnd(this.statement);
+            emitter.emitJavascriptStatements(this.thenBod, true);
             if (this.elseBod) {
-                emitter.writeToOutput(" else");
-                emitter.emitJavascriptStatements(this.elseBod, true, true);
+                if (this.elseBod.nodeType === NodeType.If) {
+                    emitter.writeToOutput(" else ");
+                    this.elseBod.emit(emitter, tokenId, /*startLine:*/ false);
+                }
+                else {
+                    emitter.writeToOutput(" else");
+                    emitter.emitJavascriptStatements(this.elseBod, true);
+                }
             }
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
@@ -1616,13 +1748,17 @@ module TypeScript {
             super(NodeType.Return);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
-                emitter.emitJavascript(this.returnExpression, TokenID.SColon, false);
+                emitter.emitJavascript(this.returnExpression, TokenID.Semicolon, false);
+
+                if (this.returnExpression.nodeType === NodeType.FuncDecl) {
+                    emitter.writeToOutput(";");
+                }
             }
             else {
                 emitter.writeToOutput("return;");
@@ -1655,8 +1791,9 @@ module TypeScript {
                 (<BoundDecl>this.lval).varFlags |= VarFlags.AutoInit;
             }
         }
+        public statement: ASTSpan = new ASTSpan();
         public body: AST;
-        public isStatementOrExpression() { return true; }
+
         public isLoop() { return true; }
 
         public isFiltered() {
@@ -1675,8 +1812,8 @@ module TypeScript {
                 if (singleItem !== null) {
                     if (singleItem.nodeType == NodeType.Block) {
                         var block = <Block>singleItem;
-                        if ((block.stmts !== null) && (block.stmts.members.length == 1)) {
-                            singleItem = block.stmts.members[0];
+                        if ((block.statements !== null) && (block.statements.members.length == 1)) {
+                            singleItem = block.statements.members[0];
                         }
                     }
                     if (singleItem.nodeType == NodeType.If) {
@@ -1687,15 +1824,15 @@ module TypeScript {
                                 var binex = <BinaryExpression>target;
                                 if ((binex.operand1.nodeType == NodeType.Name) &&
                                     (this.obj.nodeType == NodeType.Name) &&
-                                    ((<Identifier>binex.operand1).text == (<Identifier>this.obj).text)) {
+                                    ((<Identifier>binex.operand1).actualText == (<Identifier>this.obj).actualText)) {
                                     var prop = <Identifier>binex.operand2;
-                                    if (prop.text == "hasOwnProperty") {
-                                        var args = (<CallExpression>cond).args;
+                                    if (prop.actualText == "hasOwnProperty") {
+                                        var args = (<CallExpression>cond).arguments;
                                         if ((args !== null) && (args.members.length == 1)) {
                                             var arg = args.members[0];
                                             if ((arg.nodeType == NodeType.Name) &&
                                                  (this.lval.nodeType == NodeType.Name)) {
-                                                if (((<Identifier>this.lval).text) == (<Identifier>arg).text) {
+                                                if (((<Identifier>this.lval).actualText) == (<Identifier>arg).actualText) {
                                                     return true;
                                                 }
                                             }
@@ -1710,16 +1847,18 @@ module TypeScript {
             return false;
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
+            emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("for(");
-            emitter.emitJavascript(this.lval, TokenID.FOR, false);
+            emitter.emitJavascript(this.lval, TokenID.For, false);
             emitter.writeToOutput(" in ");
-            emitter.emitJavascript(this.obj, TokenID.FOR, false);
+            emitter.emitJavascript(this.obj, TokenID.For, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.recordSourceMappingEnd(this.statement);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
@@ -1773,28 +1912,28 @@ module TypeScript {
             super(NodeType.For);
         }
 
-        public isStatementOrExpression() { return true; }
         public isLoop() { return true; }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.writeToOutput("for(");
             if (this.init) {
                 if (this.init.nodeType != NodeType.List) {
-                    emitter.emitJavascript(this.init, TokenID.FOR, false);
+                    emitter.emitJavascript(this.init, TokenID.For, false);
                 }
                 else {
-                    emitter.emitForVarList(<ASTList>this.init);
+                    emitter.setInVarBlock((<ASTList>this.init).members.length); 
+                    emitter.emitJavascriptList(this.init, null, TokenID.For, false, false, false);
                 }
             }
             emitter.writeToOutput("; ");
-            emitter.emitJavascript(this.cond, TokenID.FOR, false);
+            emitter.emitJavascript(this.cond, TokenID.For, false);
             emitter.writeToOutput("; ");
-            emitter.emitJavascript(this.incr, TokenID.FOR, false);
+            emitter.emitJavascript(this.incr, TokenID.For, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.setInObjectLiteral(temp);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
@@ -1864,24 +2003,25 @@ module TypeScript {
 
     export class WithStatement extends Statement {
         public body: AST;
-        public isStatementOrExpression() { return true; }
+
         public isCompoundStatement() { return true; }
+
         public withSym: WithSymbol = null;
 
         constructor (public expr: AST) {
             super(NodeType.With);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("with (");
             if (this.expr) {
-                emitter.emitJavascript(this.expr, TokenID.WITH, false);
+                emitter.emitJavascript(this.expr, TokenID.With, false);
             }
 
             emitter.writeToOutput(")");
-            emitter.emitJavascriptStatements(this.body, true, false);
+            emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -1894,29 +2034,31 @@ module TypeScript {
     export class SwitchStatement extends Statement {
         public caseList: ASTList;
         public defaultCase: CaseStatement = null;
+        public statement: ASTSpan = new ASTSpan();
 
         constructor (public val: AST) {
             super(NodeType.Switch);
         }
 
-        public isStatementOrExpression() { return true; }
         public isCompoundStatement() { return true; }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
+            emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("switch(");
-            emitter.emitJavascript(this.val, TokenID.ID, false);
-            emitter.writeLineToOutput(") {");
-            emitter.increaseIndent();
+            emitter.emitJavascript(this.val, TokenID.Identifier, false);
+            emitter.writeToOutput(")"); 
+            emitter.recordSourceMappingEnd(this.statement);
+            emitter.writeLineToOutput(" {");
+            emitter.indenter.increaseIndent();
             var casesLen = this.caseList.members.length;
             for (var i = 0; i < casesLen; i++) {
                 var caseExpr = this.caseList.members[i];
-                emitter.emitJavascript(caseExpr, TokenID.CASE, true);
-                emitter.writeLineToOutput("");
+                emitter.emitJavascript(caseExpr, TokenID.Case, true);
             }
-            emitter.decreaseIndent();
+            emitter.indenter.decreaseIndent();
             emitter.emitIndent();
             emitter.writeToOutput("}");
             emitter.setInObjectLiteral(temp);
@@ -1972,18 +2114,28 @@ module TypeScript {
             super(NodeType.Case);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             if (this.expr) {
                 emitter.writeToOutput("case ");
-                emitter.emitJavascript(this.expr, TokenID.ID, false);
+                emitter.emitJavascript(this.expr, TokenID.Identifier, false);
             }
             else {
                 emitter.writeToOutput("default");
             }
             emitter.writeToOutput(":");
-            emitter.emitJavascriptStatements(this.body, false, false);
+            if (this.body.members.length == 1 && this.body.members[0].nodeType == NodeType.Block) {
+                // The case statement was written with curly braces, so emit it with the appropriate formatting
+                emitter.emitJavascriptStatements(this.body, false);
+            }
+            else {
+                // No curly braces. Format in the expected way
+                emitter.writeLineToOutput("");
+                emitter.indenter.increaseIndent();
+                emitter.emitBareJavascriptStatements(this.body);
+                emitter.indenter.decreaseIndent();
+            }
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -2021,12 +2173,11 @@ module TypeScript {
     }
 
     export class TypeReference extends AST {
-
         constructor (public term: AST, public arrayCount: number) {
             super(NodeType.TypeRef);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             throw new Error("should not emit a type ref");
         }
 
@@ -2035,6 +2186,10 @@ module TypeScript {
             typeFlow.inTypeRefTypeCheck = true;
             var typeLink = getTypeLink(this, typeFlow.checker, true);
             typeFlow.checker.resolveTypeLink(typeFlow.scope, typeLink, false);
+
+            if (this.term) {
+                typeFlow.typeCheck(this.term);
+            }
 
             typeFlow.checkForVoidConstructor(typeLink.type, this);
 
@@ -2051,24 +2206,22 @@ module TypeScript {
     }
 
     export class TryFinally extends Statement {
-
-        constructor (public tryNode: AST, public finallyNode: AST) {
+        constructor (public tryNode: AST, public finallyNode: Finally) {
             super(NodeType.TryFinally);
         }
 
-        public isStatementOrExpression() { return true; }
         public isCompoundStatement() { return true; }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.recordSourceMappingStart(this);
-            emitter.emitJavascript(this.tryNode, TokenID.TRY, false);
-            emitter.emitJavascript(this.finallyNode, TokenID.FINALLY, false);
+            emitter.emitJavascript(this.tryNode, TokenID.Try, false);
+            emitter.emitJavascript(this.finallyNode, TokenID.Finally, false);
             emitter.recordSourceMappingEnd(this);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
             this.tryNode = typeFlow.typeCheck(this.tryNode);
-            this.finallyNode = typeFlow.typeCheck(this.finallyNode);
+            this.finallyNode = <Finally>typeFlow.typeCheck(this.finallyNode);
             this.type = typeFlow.voidType;
             return this;
         }
@@ -2098,19 +2251,17 @@ module TypeScript {
     }
 
     export class TryCatch extends Statement {
-
-        constructor (public tryNode: AST, public catchNode: AST) {
+        constructor (public tryNode: Try, public catchNode: Catch) {
             super(NodeType.TryCatch);
         }
 
-        public isStatementOrExpression() { return true; }
         public isCompoundStatement() { return true; }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.emitJavascript(this.tryNode, TokenID.TRY, false);
-            emitter.emitJavascript(this.catchNode, TokenID.CATCH, false);
+            emitter.emitJavascript(this.tryNode, TokenID.Try, false);
+            emitter.emitJavascript(this.catchNode, TokenID.Catch, false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -2142,25 +2293,23 @@ module TypeScript {
         }
 
         public typeCheck(typeFlow: TypeFlow) {
-            this.tryNode = typeFlow.typeCheck(this.tryNode);
-            this.catchNode = typeFlow.typeCheck(this.catchNode);
+            this.tryNode = <Try>typeFlow.typeCheck(this.tryNode);
+            this.catchNode = <Catch>typeFlow.typeCheck(this.catchNode);
             this.type = typeFlow.voidType;
             return this;
         }
     }
 
     export class Try extends Statement {
-
         constructor (public body: AST) {
             super(NodeType.Try);
         }
 
-        public isStatementOrExpression() { return true; }
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("try ");
-            emitter.emitJavascript(this.body, TokenID.TRY, false);
+            emitter.emitJavascript(this.body, TokenID.Try, false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -2180,23 +2329,25 @@ module TypeScript {
     }
 
     export class Catch extends Statement {
-
         constructor (public param: VarDecl, public body: AST) {
             super(NodeType.Catch);
             if (this.param) {
                 this.param.varFlags |= VarFlags.AutoInit;
             }
         }
-
+        public statement: ASTSpan = new ASTSpan();
         public containedScope: SymbolScope = null;
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeToOutput(" catch (");
-            emitter.emitJavascript(this.param, TokenID.LParen, false);
+            emitter.writeToOutput(" ");
+            emitter.recordSourceMappingStart(this.statement);
+            emitter.writeToOutput("catch (");
+            emitter.emitJavascript(this.param, TokenID.OpenParen, false);
             emitter.writeToOutput(")");
-            emitter.emitJavascript(this.body, TokenID.CATCH, false);
+            emitter.recordSourceMappingEnd(this.statement);
+            emitter.emitJavascript(this.body, TokenID.Catch, false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -2254,18 +2405,16 @@ module TypeScript {
         }
     }
 
-
     export class Finally extends Statement {
-
         constructor (public body: AST) {
             super(NodeType.Finally);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("finally");
-            emitter.emitJavascript(this.body, TokenID.FINALLY, false);
+            emitter.emitJavascript(this.body, TokenID.Finally, false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
@@ -2287,6 +2436,9 @@ module TypeScript {
     export class Comment extends AST {
 
         public text: string[] = null;
+        public minLine: number;
+        public limLine: number;
+        private docCommentText: string = null;
 
         constructor (public content: string, public isBlockComment: bool, public endsLine) {
             super(NodeType.Comment);
@@ -2307,6 +2459,247 @@ module TypeScript {
 
             return this.text;
         }
+
+        public isDocComment() {
+            if (this.isBlockComment) {
+                return this.content.charAt(2) == "*";
+            } else {
+                return this.content.charAt(2) == "/";
+            }
+        }
+
+        public getDocCommentText() {
+            if (this.docCommentText == null) {
+                if (this.isBlockComment) {
+                    this.docCommentText = Comment.cleanJSDocComment(this.content);
+                } else {
+                    this.docCommentText = Comment.cleanVSDocComment(this.content);
+                }
+            }
+
+            return this.docCommentText;
+        }
+
+        static consumeLeadingSpace(line: string, startIndex: number) {
+            for (; startIndex < line.length; startIndex++) {
+                var charCode = line.charCodeAt(startIndex);
+                if (charCode != LexCodeSpace && charCode != LexCodeTAB) {
+                    return startIndex;
+                }
+            }
+            
+            return -1;
+        }
+
+        static isSpaceChar(line: string, index: number) {
+            var length = line.length;
+            if (index < length) {
+                var charCode = line.charCodeAt(index);
+                // If the character is space
+                return charCode == LexCodeSpace || charCode == LexCodeTAB;
+            }
+
+            // If the index is end of the line it is space
+            return index == length;
+        }
+
+        static cleanDocCommentLine(line: string, jsDocStyleComment: bool) {
+            var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
+            if (nonSpaceIndex != -1) {
+                if (jsDocStyleComment && line.charAt(nonSpaceIndex) == '*') { // remove leading * in case of jsDocComment
+                    nonSpaceIndex++;
+                }
+
+                return {
+                    minChar: nonSpaceIndex,
+                    limChar: line.charAt(line.length - 1) == "\r" ? line.length - 1 : line.length
+                };
+            }
+
+            return null;
+        }
+
+        static cleanJSDocComment(content: string) {
+            var docCommentLines: string[] = [];
+            content = content.replace("/**", ""); // remove /**
+            if (content.length >= 2 && content.charAt(content.length - 1) == "/" && content.charAt(content.length - 2) == "*") {
+                content = content.substring(0, content.length - 2); // remove last */
+            }
+            var lines = content.split("\n");
+            var inParamTag = false;
+            for (var l = 0; l < lines.length; l++) {
+                var line = lines[l];
+                var cleanLinePos = Comment.cleanDocCommentLine(line, true);
+                if (!cleanLinePos) {
+                    // Whole line empty, read next line
+                    continue;
+                }
+
+                var docCommentText = "";
+                var prevPos = cleanLinePos.minChar;
+                for (var i = line.indexOf("@", cleanLinePos.minChar); 0 <= i && i < cleanLinePos.limChar; i = line.indexOf("@", i + 1)) {
+                    // We have encoutered @. 
+                    // If we were omitting param comment, we dont have to do anything
+                    // other wise the content of the text till @ tag goes as doc comment
+                    var wasInParamtag = inParamTag;
+
+                    // Parse contents next to @
+                    if (line.indexOf("param", i + 1) == i + 1 && Comment.isSpaceChar(line, i + 6)) {
+                        // It is param tag. 
+
+                        // If we were not in param tag earlier, push the contents from prev pos of the tag this tag start as docComment
+                        if (!wasInParamtag) {
+                            docCommentText += line.substring(prevPos, i);
+                        }
+
+                        // New start of contents 
+                        prevPos = i;
+                        inParamTag = true;
+                    } else if (wasInParamtag) {
+                        // Non param tag start
+                        prevPos = i;
+                        inParamTag = false;
+                    }
+                }
+
+                if (!inParamTag) {
+                    docCommentText += line.substring(prevPos, cleanLinePos.limChar);
+                }
+
+                // Add line to comment text if it is not only white space line
+                var newCleanPos = Comment.cleanDocCommentLine(docCommentText, false);
+                if (newCleanPos) {
+                    docCommentLines.push(docCommentText);
+                }
+            }
+            
+            return docCommentLines.join("\n");
+        }
+
+        static cleanVSDocComment(content: string) {
+            content = content.replace("///", ""); // remove ///
+            var cleanLinePos = Comment.cleanDocCommentLine(content, false);
+            if (cleanLinePos) {
+                return content.substring(cleanLinePos.minChar, cleanLinePos.limChar);
+            }
+            
+            return "";
+        }
+
+        static getDocCommentText(comments: Comment[]) {
+            var docCommentText: string[] = [];
+            for (var c = 0 ; c < comments.length; c++) {
+                var commentText = comments[c].getDocCommentText();
+                if (commentText != "") {
+                    docCommentText.push(commentText);
+                }
+            }
+            return docCommentText.join("\n");
+        }
+
+        static getParameterDocCommentText(param: string, fncDocComments: Comment[]) {
+            if (fncDocComments.length == 0 || !fncDocComments[0].isBlockComment) {
+                // there were no fnc doc comments and the comment is not block comment then it cannot have 
+                // @param comment that can be parsed
+                return "";
+            }
+            
+            for (var i = 0; i < fncDocComments.length; i++) {
+                var commentContents = fncDocComments[i].content;
+                for (var j = commentContents.indexOf("@param", 0); 0 <= j; j = commentContents.indexOf("@param", j)) {
+                    j += 6;
+                    if (!Comment.isSpaceChar(commentContents, j)) {
+                        // This is not param tag but a tag line @paramxxxxx
+                        continue;
+                    }
+
+                    // This is param tag. Check if it is what we are looking for
+                    j = Comment.consumeLeadingSpace(commentContents, j);
+                    if (j == -1) {
+                        break;
+                    }
+                    
+                    // Ignore the type expression
+                    if (commentContents.charCodeAt(j) == LexCodeLC) {
+                        j++;
+                        // Consume the type
+                        var charCode = 0;
+                        for (var curlies = 1; j < commentContents.length; j++) {
+                            charCode = commentContents.charCodeAt(j);
+                            // { character means we need to find another } to match the found one
+                            if (charCode == LexCodeLC) {
+                                curlies++;
+                                continue;
+                            }
+
+                            // } char
+                            if (charCode == LexCodeRC) {
+                                curlies--;
+                                if (curlies == 0) {
+                                    // We do not have any more } to match the type expression is ignored completely
+                                    break;
+                                } else {
+                                    // there are more { to be matched with }
+                                    continue;
+                                }
+                            }
+
+                            // Found start of another tag
+                            if (charCode == LexCodeAtSign) {
+                                break;
+                            }
+                        }
+
+                        // End of the comment
+                        if (j == commentContents.length) {
+                            break;
+                        }
+
+                        // End of the tag, go onto looking for next tag
+                        if (charCode == LexCodeAtSign) {
+                            continue;
+                        }
+
+                        j = Comment.consumeLeadingSpace(commentContents, j + 1);
+                        if (j == -1) {
+                            break;
+                        }
+                    }
+
+                    // Parameter name
+                    if (param != commentContents.substr(j, param.length) || !Comment.isSpaceChar(commentContents, j + param.length)) {
+                        // this is not the parameter we are looking for
+                        continue;
+                    }
+
+                    // Found the parameter we were looking for
+                    j = Comment.consumeLeadingSpace(commentContents, j + param.length);
+                    if (j == -1) {
+                        return "";
+                    }
+                    
+                    var endOfParam = commentContents.indexOf("@", j);
+                    var paramHelpString = commentContents.substring(j, endOfParam < 0 ? commentContents.length : endOfParam);
+
+                    // Clean jsDocComment and return
+                    return Comment.cleanJSDocComment(paramHelpString);
+                }
+            }
+
+            return "";
+        }
+
+        static getDocCommentTextOfSignatures(signatures: Signature[]) {
+            var comments: string[] = [];
+            for (var i = 0; i < signatures.length; i++) {
+                var signatureDocComment = TypeScript.Comment.getDocCommentText(signatures[i].declAST.getDocComments());
+                if (signatureDocComment != "") {
+                    comments.push(signatureDocComment);
+                }
+            }
+
+            return comments.join("\n");
+        }
     }
 
     export class DebuggerStatement extends Statement {
@@ -2314,7 +2707,7 @@ module TypeScript {
             super(NodeType.Debugger);
         }
 
-        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool, writeDeclFile: bool) {
+        public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
             emitter.writeLineToOutput("debugger;");
