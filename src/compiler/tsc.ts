@@ -289,16 +289,6 @@ class BatchCompiler {
             }
         });
 
-        opts.option('reference', {
-            usage: 'Add a reference to the compilation',
-            type: 'file',
-            experimental: true,
-            set: (str) => {
-                code = new TypeScript.SourceUnit(str, null);
-                this.compilationEnvironment.residentCode.push(code);
-            }
-        }, 'r');
-
         if (this.ioHost.watchFile) {
             opts.flag('watch', {
                 usage: 'Watch output files',
