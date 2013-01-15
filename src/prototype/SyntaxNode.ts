@@ -1,8 +1,9 @@
+///<reference path='SyntaxRewriter.generated.ts' />
 ///<reference path='Errors.ts' />
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxToken.ts' />
-///<reference path='SyntaxTokenReplacer.ts' />
 ///<reference path='SyntaxVisitor.generated.ts' />
+///<reference path='SyntaxTokenReplacer.ts' />
 
 class SyntaxNode implements ISyntaxNodeOrToken {
     private _data: number;

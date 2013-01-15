@@ -47,13 +47,13 @@ module Syntax {
         hasZeroWidthToken: () => false,
         hasRegularExpressionToken: () => false,
 
-        findTokenInternal: (position: number, fullStart: number): { token: ISyntaxElement; fullStart: number; } {
+        findTokenInternal: (position: number, fullStart: number): { token: ISyntaxElement; fullStart: number; } => {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
         },
 
-        insertChildrenInto: (array: ISyntaxElement[], index: number): void {
+        insertChildrenInto: (array: ISyntaxElement[], index: number): void => {
         }
     }
 

@@ -8671,8 +8671,7 @@ var Syntax;
             return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken, false);
         };
         return NormalModeFactory;
-    })();
-    Syntax.NormalModeFactory = NormalModeFactory;    
+    })();    
     var StrictModeFactory = (function () {
         function StrictModeFactory() { }
         StrictModeFactory.prototype.sourceUnit = function (moduleElements, endOfFileToken) {
@@ -8937,8 +8936,7 @@ var Syntax;
             return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken, true);
         };
         return StrictModeFactory;
-    })();
-    Syntax.StrictModeFactory = StrictModeFactory;    
+    })();    
     Syntax.normalModeFactory = new NormalModeFactory();
     Syntax.strictModeFactory = new StrictModeFactory();
 })(Syntax || (Syntax = {}));

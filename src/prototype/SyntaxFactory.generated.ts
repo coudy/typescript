@@ -91,7 +91,7 @@ module Syntax {
         debuggerStatement(debuggerKeyword: ISyntaxToken, semicolonToken: ISyntaxToken): DebuggerStatementSyntax;
     }
 
-    export class NormalModeFactory implements IFactory {
+    class NormalModeFactory implements IFactory {
         sourceUnit(moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken): SourceUnitSyntax {
             return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ false);
         }
@@ -355,7 +355,7 @@ module Syntax {
         }
     }
 
-    export class StrictModeFactory implements IFactory {
+    class StrictModeFactory implements IFactory {
         sourceUnit(moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken): SourceUnitSyntax {
             return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ true);
         }

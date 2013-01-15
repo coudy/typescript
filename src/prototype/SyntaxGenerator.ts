@@ -2084,10 +2084,12 @@ function isNodeOrToken(child: IMemberDefinition) {
 }
 
 function generateRewriter(): string {
-    var result = "";
+    var result = "///<reference path='SyntaxVisitor.generated.ts' />\r\n";
+    result = "";
+    result += "///<reference path='ISyntaxNodeOrToken.ts' />\r\n";
 
     result +=
-"class SyntaxRewriter implements ISyntaxVisitor {\r\n" +
+"\r\nclass SyntaxRewriter implements ISyntaxVisitor {\r\n" +
 "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
 "        return token;\r\n" +
 "    }\r\n" +

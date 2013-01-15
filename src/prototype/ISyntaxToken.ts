@@ -1,58 +1,6 @@
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxTriviaList.ts' />
-
-interface ISyntaxNodeOrToken extends ISyntaxElement {
-    firstToken(): ISyntaxToken;
-    lastToken(): ISyntaxToken;
-    hasSkippedText(): bool;
-    isTypeScriptSpecific(): bool;
-    hasZeroWidthToken(): bool;
-    hasRegularExpressionToken(): bool;
-
-    leadingTrivia(): ISyntaxTriviaList;
-    trailingTrivia(): ISyntaxTriviaList;
-
-    withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
-    withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
-
-    accept(visitor: ISyntaxVisitor): any;
-}
-
-interface ISyntaxNode extends ISyntaxNodeOrToken {
-}
-
-interface IModuleReferenceSyntax extends ISyntaxNode {
-}
-
-interface IModuleElementSyntax extends ISyntaxNode {
-}
-
-interface IStatementSyntax extends IModuleElementSyntax {
-}
-
-interface ITypeMemberSyntax extends ISyntaxNode {
-}
-
-interface IClassElementSyntax extends ISyntaxNode {
-}
-
-interface IMemberDeclarationSyntax extends IClassElementSyntax {
-}
-
-interface ISwitchClauseSyntax extends ISyntaxNode {
-}
-
-interface IExpressionSyntax extends ISyntaxNodeOrToken {
-}
-
-interface IUnaryExpressionSyntax extends IExpressionSyntax {
-}
-
-interface ITypeSyntax extends IUnaryExpressionSyntax {
-}
-
-interface INameSyntax extends ITypeSyntax {
-}
+///<reference path='SyntaxVisitor.generated.ts' />
 
 interface ISyntaxToken extends ISyntaxElement, INameSyntax {
     // Same as kind(), just exposed through a property for perf.

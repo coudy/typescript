@@ -27,7 +27,7 @@ module Indentation {
         //                __
         //              __
         //          ____
-        //      ___
+        //      ____
         var firstTokenInLine = syntaxInformationMap.firstTokenInLineContainingToken(token);
         var leadingTextInReverse: string[] = [];
 
