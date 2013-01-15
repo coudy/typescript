@@ -1,26 +1,30 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
 module TypeScript {
     export class Binder {
-        constructor (public checker: TypeChecker) { }
+        constructor(public checker: TypeChecker) { }
+        
         public resolveBaseTypeLinks(typeLinks: TypeLink[], scope: SymbolScope) {
             var extendsList: Type[] = null;
             if (typeLinks) {
                 extendsList = new Type[];
                 for (var i = 0, len = typeLinks.length; i < len; i++) {
-                    var typeLink = typeLinks[i];
-                    this.checker.resolvingBases = true;
-                    this.checker.resolveTypeLink(scope, typeLink, true);
-                    this.checker.resolvingBases = false;
-                    if (typeLink.type.isClass()) {
-                        extendsList[i] = typeLink.type.instanceType;
-                    }
-                    else {
-                        extendsList[i] = typeLink.type;
-                    }
+                    extendsList[i] = this.checker.resolveBaseTypeLink(typeLinks[i], scope);
                 }
             }
             return extendsList;
@@ -34,15 +38,16 @@ module TypeScript {
             for (; i < len; i++) {
                 var baseIsClass = type.extendsList[i].isClassInstance();
                 if (type.extendsList[i] != this.checker.anyType) {
+                    var baseRef = type.extendsTypeLinks[i].ast;
                     if (derivedIsClass) {
                         if (!baseIsClass) {
-                            this.checker.errorReporter.simpleErrorFromSym(type.symbol,
-                                                                     "A export class may only extend other classes, " + type.extendsList[i].symbol.fullName() + " is an interface.");
+                            this.checker.errorReporter.simpleError(baseRef,
+                                                                     "A class may only extend other classes, " + type.extendsList[i].symbol.fullName() + " is not a class.");
                         }
                     }
                     else {
                         if (baseIsClass) {
-                            this.checker.errorReporter.simpleErrorFromSym(type.symbol,
+                            this.checker.errorReporter.simpleError(baseRef,
                                                                      "An interface may only extend other interfaces, " + type.extendsList[i].symbol.fullName() + " is a class.");
                         }
                     }
@@ -54,9 +59,10 @@ module TypeScript {
             if (type.implementsList) {
                 for (i = 0, len = type.implementsList.length; i < len; i++) {
                     var iface = type.implementsList[i];
+                    var baseRef = type.implementsTypeLinks[i].ast;
                     if (iface.isClassInstance()) {
                         if (derivedIsClass) {
-                            this.checker.errorReporter.simpleErrorFromSym(type.symbol,
+                            this.checker.errorReporter.simpleError(baseRef,
                                                                      "A class may only implement an interface; " + iface.symbol.fullName() + " is a class.");
                         }
                     }
@@ -107,7 +113,7 @@ module TypeScript {
                 agg.addParentScope(memberScope);
                 agg.addParentScope(scope);
                 if (type.isModuleType()) {
-                    this.checker.currentModDecl = <ModuleDecl>type.symbol.declAST;
+                    this.checker.currentModDecl = <ModuleDeclaration>type.symbol.declAST;
                     this.checker.inBind = true;
                 }
                 if (members) {

@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -27,8 +39,8 @@ module TypeScript {
         public objectLiteralScopeGetter: () => SymbolScope = null;
         public scopeStartAST: AST = null;
         public skipNextFuncDeclForClass = false;
-        public deepestModuleDecl: ModuleDecl = null;
-        public enclosingClassDecl: NamedType = null;
+        public deepestModuleDecl: ModuleDeclaration = null;
+        public enclosingClassDecl: TypeDeclaration = null;
         public enclosingObjectLit: UnaryExpression = null;
         public publicsOnly = true;
         public useFullAst = false;
@@ -97,7 +109,7 @@ module TypeScript {
         context: TypeCollectionContext,
         thisType: Type,
         classType: Type,
-        moduleDecl: ModuleDecl) {
+        moduleDecl: ModuleDeclaration) {
         var builder = new SymbolScopeBuilder(valueMembers, ambientValueMembers, enclosedTypes, ambientEnclosedTypes, null, container);
         var chain: ScopeChain = new ScopeChain(container, context.scopeChain, builder);
         chain.thisType = thisType;
@@ -131,12 +143,12 @@ module TypeScript {
                     context.scopeStartAST = script;
                     break;
 
-                case NodeType.Class:
+                case NodeType.ClassDeclaration:
                     context.scopeGetter = function () {
                         return (ast.type === null || ast.type.instanceType.containedScope === null) ? null : ast.type.instanceType.containedScope;
                     };
                     context.scopeStartAST = ast;
-                    context.enclosingClassDecl = <NamedType>ast;
+                    context.enclosingClassDecl = <TypeDeclaration>ast;
                     break;
 
                 case NodeType.ObjectLit:
@@ -153,15 +165,15 @@ module TypeScript {
                     }
                     break;
 
-                case NodeType.Module:
-                    context.deepestModuleDecl = <ModuleDecl>ast;
+                case NodeType.ModuleDeclaration:
+                    context.deepestModuleDecl = <ModuleDeclaration>ast;
                     context.scopeGetter = function () {
                         return ast.type === null ? null : ast.type.containedScope;
                     };
                     context.scopeStartAST = ast;
                     break;
 
-                case NodeType.Interface:
+                case NodeType.InterfaceDeclaration:
                     context.scopeGetter = function () {
                         return (ast.type === null) ? null : ast.type.containedScope;
                     };

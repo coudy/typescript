@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -198,36 +210,55 @@ module TypeScript {
             var i2 = 2; // lineMap[0] is always undefined, lineMap[1] is always 0.
             var len1 = lineMap1.length;
             var len2 = lineMap2.length;
-            while (i1 < len1 || i2 < len2) {
-                if (i1 < len1) {
-                    if (lineMap1[i1] <= editRange.minChar) {
-                        // Nothing to do for this entry, since it's before the range of the change
+            while (i1 < len1) {
+                if (lineMap1[i1] <= editRange.minChar) {
+                    // Nothing to do for this entry, since it's before the range of the change
+                    i1++;
+                } else if (lineMap1[i1] >= editRange.limChar) {
+                    // Apply delta to this entry, since it's outside the range of the change
+                    lineMap1[i1] += editRange.delta;
+                    i1++;
+                }
+                else {
+                    if (i2 < len2) {
+                        // Add a new entry to lineMap1 corresponding to lineMap2 in new range
+                        lineMap1.splice(i1, 0, lineMap2[i2] + editRange.minChar);
                         i1++;
-                    } else if (lineMap1[i1] >= editRange.limChar) {
-                        // Apply delta to this entry, since it's outside the range of the change
-                        lineMap1[i1] += editRange.delta;
-                        i1++;
+                        len1++;
+                        i2++;
                     }
-                    else {
-                        if (i2 < len2) {
-                            // Add a new entry to lineMap1 corresponding to lineMap2 in new range
+                    else { /* i2 >= len 2 */
+                        // Remove this entry, since there is no corresponding entry in the new map
+                        lineMap1.splice(i1, 1);
+                        len1--;
+                    }
+                }
+            }
+            // Merge the remaining entries in lineMap2 while maintaing the constraint that a lineMap is sorted
+            if (i2 < len2) {
+                // i1 >= len1 && i2 < len2 
+                if (lineMap1[len1 - 1] >= (lineMap2[i2] + editRange.minChar)) {
+                    // lineMap2 needs to be merged within lineMap1
+                    i1 = 2;
+                    while (i1 < len1 && i2 < len2) {
+                        if (lineMap1[i1] < (lineMap2[i2] + editRange.minChar)) {
+                            i1++;
+                        }
+                        else {
                             lineMap1.splice(i1, 0, lineMap2[i2] + editRange.minChar);
                             i1++;
                             len1++;
                             i2++;
                         }
-                        else { /* i2 >= len 2 */
-                            // Remove this entry, since there is no corresponding entry in the new map
-                            lineMap1.splice(i1, 1);
-                            len1--;
-                        }
                     }
                 }
-                else { /* i1 >= len1 && i2 < len2 */
+
+                // Append all the remaining entries in lineMap2 to the end of lineMap1
+                for (; i2 < len2; i2++) {
                     lineMap1.push(lineMap2[i2] + editRange.minChar);
-                    i2++;
                 }
             }
+
             if (this.logger.information()) {
                 this.logger.log("lineMap1 (after merge):");
                 this.astLogger.logLinemap(lineMap1);

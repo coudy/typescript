@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -76,7 +88,6 @@ module TypeScript {
         public propagateConstants = false;
         public minWhitespace = false;
         public parseOnly = false;
-        public outputMany = true;
         public errorRecovery = false;
         public emitComments = false;
         public watch = false;
@@ -94,8 +105,9 @@ module TypeScript {
 
         public codeGenTarget = CodeGenTarget.ES3;
         public moduleGenTarget = ModuleGenTarget.Synchronous;
-        public outputFileName: string = "";
-        public errorFileName: string = "";
+        // --out option passed. 
+        // Default is the "" which leads to multiple files generated next to the.ts files
+        public outputOption: string = "";
         public mapSourceFiles = false;
         public generateDeclarationFiles = false;
 
@@ -103,11 +115,6 @@ module TypeScript {
 
         public setStyleOptions(str: string) {
             this.styleSettings.parseOptions(str);
-        }
-        
-        public outputOne(outFile: string) {
-            this.outputFileName = outFile;
-            this.outputMany = false;
         }
     }
 
@@ -142,8 +149,8 @@ module TypeScript {
 
     // used in the parser, but kept here in case we want to reintegrate it with preprocessing
     export function getAdditionalDependencyPath(comment: string): string {
-        var referencesRegEx = /^(\/\/\/\s*<amd-dependency\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*\/>/gim;
-        var match = referencesRegEx.exec(comment);
+        var amdDependencyRegEx = /^(\/\/\/\s*<amd-dependency\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*\/>/gim;
+        var match = amdDependencyRegEx.exec(comment);
 
         if (match) {
             var path: string = match[3];
@@ -152,6 +159,17 @@ module TypeScript {
         else {
             return null;
         }
+    }
+
+    export function getImplicitImport(comment: string): bool {
+        var implicitImportRegEx = /^(\/\/\/\s*<implicit-import\s*)*\/>/gim;
+        var match = implicitImportRegEx.exec(comment);
+
+        if (match) {
+            return true;
+        }
+        
+        return false;
     }
 
     export function getStyleSettings(comment: string, styleSettings: StyleSettings) {
@@ -189,7 +207,12 @@ module TypeScript {
         }
     }
 
-    export function preProcessFile(sourceText: ISourceText, options=new CompilationSettings()): IPreProcessedFileInfo {
+    export function getReferencedFiles(sourceText: ISourceText): IFileReference[] {
+        var preProcessInfo = preProcessFile(sourceText, null, false);
+        return preProcessInfo.referencedFiles;
+    }
+
+    export function preProcessFile(sourceText: ISourceText, options=new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
         var scanner = new Scanner();
         scanner.resetComments();
         scanner.setSourceText(sourceText, LexMode.File);
@@ -207,25 +230,25 @@ module TypeScript {
         // only search out dynamic mods
         // if you find a dynamic mod, ignore every other mod inside, until you balance rcurlies
 
-        while (tok.tokenId != TokenID.EOF) {
+        while (tok.tokenId != TokenID.EndOfFile) {
 
-            if (tok.tokenId == TokenID.IMPORT) {
+            if (readImportFiles && tok.tokenId == TokenID.Import) {
 
                 tok = scanner.scan();
 
-                if (tok.tokenId == TokenID.ID || convertTokToID(tok, false)) {
+                if (tok.tokenId == TokenID.Identifier || convertTokToID(tok, false)) {
                     tok = scanner.scan();
 
-                    if (tok.tokenId == TokenID.Asg) {
+                    if (tok.tokenId == TokenID.Equals) {
                         tok = scanner.scan();
 
-                        if (tok.tokenId == TokenID.MODULE) {
+                        if (tok.tokenId == TokenID.Module) {
                             tok = scanner.scan();
-                            if (tok.tokenId == TokenID.LParen) {
+                            if (tok.tokenId == TokenID.OpenParen) {
                                 tok = scanner.scan();
 
                                 // import foo = module("foo")
-                                if (tok.tokenId == TokenID.QString) {
+                                if (tok.tokenId == TokenID.StringLiteral) {
                                     var ref = { minChar: scanner.startPos, limChar: scanner.pos, path: stripQuotes(switchToForwardSlashes(tok.getText())), isResident: false };
                                     importedFiles.push(ref);
                                 }
@@ -235,11 +258,11 @@ module TypeScript {
                 }
             }
 
-            if (tok.tokenId == TokenID.LCurly) {
+            if (tok.tokenId == TokenID.OpenBrace) {
                 leftCurlies.push(tok);
             }
 
-            if (tok.tokenId == TokenID.RCurly) {
+            if (tok.tokenId == TokenID.CloseBrace) {
                 leftCurlies.pop();
             }
 
@@ -262,13 +285,15 @@ module TypeScript {
                     referencedFiles.push(referencedCode);
                 }
 
-                getStyleSettings(comment.getText(), settings.styleSettings);
+                if (settings) {
+                    getStyleSettings(comment.getText(), settings.styleSettings);
 
-                // is it a lib file?
-                var isNoLibRegex = /^(\/\/\/\s*<reference\s+no-default-lib=)('|")(.+?)\2\s*\/>/gim;
-                var isNoLibMatch: any = isNoLibRegex.exec(comment.getText());
-                if (isNoLibMatch) {
-                    isLibFile = (isNoLibMatch[3] == "true");
+                    // is it a lib file?
+                    var isNoLibRegex = /^(\/\/\/\s*<reference\s+no-default-lib=)('|")(.+?)\2\s*\/>/gim;
+                    var isNoLibMatch: any = isNoLibRegex.exec(comment.getText());
+                    if (isNoLibMatch) {
+                        isLibFile = (isNoLibMatch[3] == "true");
+                    }
                 }
             }
         }
