@@ -1,15 +1,15 @@
 /// <reference path='fourslash.ts' />
 
 // @Filename: file_0.ts
-/////// this is multi declare module
+/////** this is multi declare module*/
 ////module mult/*3*/iM {
-////    /// class b
+////    /** class b*/
 ////    export class b {
 ////    }
 ////}
-/////// thi is multi module 2
+/////** thi is multi module 2*/
 ////module mu/*2*/ltiM {
-////    /// class c comment
+////    /** class c comment*/
 ////    export class c {
 ////    }
 ////}
@@ -18,9 +18,9 @@
 ////new mu/*5*/ltiM.c();
 
 // @Filename: file_1.ts
-/////// this is multi module 3 comment
+/////** this is multi module 3 comment*/
 ////module mu/*6*/ltiM {
-////    /// class d comment
+////    /** class d comment*/
 ////    export class d {
 ////    }
 ////}

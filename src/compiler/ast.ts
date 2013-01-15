@@ -190,10 +190,8 @@ module TypeScript {
                     if (this.preComments[i].isDocComment()) {
                         var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
                         if (prevDocComment == null || // If the help comments were not yet set then this is the comment
-                            (((this.preComments[i].isBlockComment && prevDocComment.isBlockComment) ||
-                             (!this.preComments[i].isBlockComment && !prevDocComment.isBlockComment)) && // The comments are of same type
                              (this.preComments[i].limLine == prevDocComment.minLine ||
-                              this.preComments[i].limLine + 1 == prevDocComment.minLine))) { // On same line or next line
+                              this.preComments[i].limLine + 1 == prevDocComment.minLine)) { // On same line or next line
                             docComments.push(this.preComments[i]);
                             continue;
                         }
@@ -2451,18 +2449,14 @@ module TypeScript {
         public isDocComment() {
             if (this.isBlockComment) {
                 return this.content.charAt(2) == "*";
-            } else {
-                return this.content.charAt(2) == "/";
             }
+
+            return false;
         }
 
         public getDocCommentText() {
             if (this.docCommentText == null) {
-                if (this.isBlockComment) {
-                    this.docCommentText = Comment.cleanJSDocComment(this.content);
-                } else {
-                    this.docCommentText = Comment.cleanVSDocComment(this.content);
-                }
+                this.docCommentText = Comment.cleanJSDocComment(this.content);
             }
 
             return this.docCommentText;
@@ -2583,16 +2577,6 @@ module TypeScript {
             }
             
             return docCommentLines.join("\n");
-        }
-
-        static cleanVSDocComment(content: string) {
-            content = content.replace("///", ""); // remove ///
-            var cleanLinePos = Comment.cleanDocCommentLine(content, false);
-            if (cleanLinePos) {
-                return content.substring(cleanLinePos.minChar, cleanLinePos.limChar);
-            }
-            
-            return "";
         }
 
         static getDocCommentText(comments: Comment[]) {

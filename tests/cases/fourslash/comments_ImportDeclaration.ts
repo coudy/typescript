@@ -1,24 +1,24 @@
 /// <reference path='fourslash.ts' />
 
-/////// ExtMod - contains m1
+/////** ExtMod - contains m1*/
 ////declare module /*1*/"extMod" {
-////    /// ModuleComment
+////    /** ModuleComment*/
 ////    module m/*2*/1 {
-////        /// b's comment
+////        /** b's comment*/
 ////        export var b: number;
-////        /// m2 comments
+////        /** m2 comments*/
 ////        export module m2 {
-////            /// class comment;
+////            /** class comment;*/
 ////            export class c {
 ////            };
-////            /// i
+////            /** i*/
 ////            export var i: c;;
 ////        }
-////        /// exported function
+////        /** exported function*/
 ////        export function fooExport(): number;
 ////    }
 ////}
-/////// Import declaration
+/////** Import declaration*/
 ////import e/*3*/xtMod = module("e/*4*/xtMod");
 /////*5*/extMod./*6*/m1./*7*/fooExport(/*8*/);
 ////var new/*9*/Var = new extMod.m1.m2./*10*/c();

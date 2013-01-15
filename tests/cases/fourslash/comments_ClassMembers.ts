@@ -1,49 +1,49 @@
 /// <reference path='fourslash.ts' />
 
-/////// This is comment for c1
+/////** This is comment for c1*/
 ////class c/*1*/1 {
-////    /// p1 is property of c1
+////    /** p1 is property of c1*/
 ////    public p/*2*/1: number;
-////    /// sum with property
+////    /** sum with property*/
 ////    public p/*3*/2(/** number to add*/b: number) {
 ////        return this./*4*/p1 + /*5*/b;
 ////    }
-////    /// getter property
+////    /** getter property*/
 ////    public get p/*6*/3() {
 ////        return this./*7*/p2(/*8*/this./*9*/p1);
 ////    }
-////    /// setter property
+////    /** setter property*/
 ////    public set p/*10*/3(/** this is value*/value: number) {
 ////        this./*11*/p1 = this./*12*/p2(/*13*/value);
 ////    }
-////    /// pp1 is property of c1
+////    /** pp1 is property of c1*/
 ////    private p/*14*/p1: number;
-////    /// sum with property
+////    /** sum with property*/
 ////    private p/*15*/p2(/** number to add*/b: number) {
 ////        return this./*16*/p1 + /*17*/b;
 ////    }
-////    /// getter property
+////    /** getter property*/
 ////    private get p/*18*/p3() {
 ////        return this./*19*/pp2(/*20*/this./*21*/pp1);
 ////    }
-////    /// setter property
+////    /** setter property*/
 ////    private set p/*22*/p3( /** this is value*/value: number) {
 ////        this./*23*/pp1 = this./*24*/pp2(/*25*/value);
 ////    }
-////    /// Constructor method
+////    /** Constructor method*/
 ////    constru/*26*/ctor() {
 ////    }
-////    /// s1 is static property of c1
+////    /** s1 is static property of c1*/
 ////    static s/*27*/1: number;
-////    /// static sum with property
+////    /** static sum with property*/
 ////    static s/*28*/2(/** number to add*/b: number) {
 ////        return /*29*/c1./*30*/s1 + /*31*/b;
 ////    }
-////    /// static getter property
+////    /** static getter property*/
 ////    static get s/*32*/3() {
 ////        return /*33*/c1./*34*/s2(/*35*/c1./*36*/s1);
 ////    }
-////    /// setter property
+////    /** setter property*/
 ////    static set s/*37*/3( /** this is value*/value: number) {
 ////        /*38*/c1./*39*/s1 = /*40*/c1./*41*/s2(/*42*/value);
 ////    }
@@ -103,14 +103,14 @@
 /////*109*/
 ////class cProperties {
 ////    private val: number;
-////    /// getter only property
+////    /** getter only property*/
 ////    public get p1() {
 ////        return this.val;
 ////    }
 ////    public get nc_p1() {
 ////        return this.val;
 ////    }
-////    ///setter only property
+////    /**setter only property*/
 ////    public set p2(value: number) {
 ////        this.val = value;
 ////    }

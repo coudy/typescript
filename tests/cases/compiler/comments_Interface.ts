@@ -1,29 +1,29 @@
 // @target: ES5
 // @declaration: true
 // @comments: true
-/// this is interface 1
+/** this is interface 1*/
 interface i1 {
 }
 var i1_i: i1;
 interface nc_i1 {
 }
 var nc_i1_i: nc_i1;
-/// this is interface 2 with memebers
+/** this is interface 2 with memebers*/
 interface i2 {
-    /// this is x
+    /** this is x*/
     x: number;
-    /// this is foo
+    /** this is foo*/
     foo: (/**param help*/b: number) => string;
-    /// this is indexer
+    /** this is indexer*/
     [/**string param*/i: string]: number;
-    ///new method
+    /**new method*/
     new (/** param*/i: i1);
     nc_x: number;
     nc_foo: (b: number) => string;
     [i: number]: number;
-    /// this is call signature
+    /** this is call signature*/
     (/**paramhelp a*/a: number,/**paramhelp b*/ b: number) : number;
-    /// this is fnfoo
+    /** this is fnfoo*/
     fnfoo(/**param help*/b: number): string;
     nc_fnfoo(b: number): string;
 }
@@ -43,11 +43,11 @@ var i2_i_fnfoo_r = i2_i.fnfoo(10);
 var i2_i_nc_fnfoo = i2_i.nc_fnfoo;
 var i2_i_nc_fnfoo_r = i2_i.nc_fnfoo(10);
 interface i3 {
-    /// Comment i3 x
+    /** Comment i3 x*/
     x: number;
-    /// Function i3 f
+    /** Function i3 f*/
     f(/**number parameter*/a: number): string;
-    /// i3 l
+    /** i3 l*/
     l: (/**comment i3 l b*/b: number) => string;
     nc_x: number;
     nc_f(a: number): string;
@@ -57,7 +57,7 @@ var i3_i: i3;
 i3_i = {
     f: /**own f*/ (/**i3_i a*/a: number) => "Hello" + a,
     l: this.f,
-    /// own x
+    /** own x*/
     x: this.f(10),
     nc_x: this.l(this.x),
     nc_f: this.f,

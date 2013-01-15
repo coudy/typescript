@@ -131,11 +131,7 @@ function jsDocParamTest(/** this is inline comment for a */ a, /** this is inlin
     return a + b + c + d;
 }
 ////[0.d.ts]
-/// This is simple /// comments
 function simple(): void;
-/// multiLine /// Comments
-/// This is example of multiline /// comments
-/// Another multiLine
 function multiLine(): void;
 /** this is eg of single line jsdoc style comment */
 function jsDocSingleLine(): void;
@@ -153,13 +149,8 @@ function jsDocMultiLineMerge(): void;
 function jsDocMixedComments1(): void;
 /** jsdoc comment */ /*** another jsDocComment*/
 function jsDocMixedComments2(): void;
-/// Triple slash comment
 function jsDocMixedComments3(): void;
-/// Triple slash comment
-/// Triple slash comment 2
 function jsDocMixedComments4(): void;
-/// Triple slash comment
-/// Triple slash comment 2
 function jsDocMixedComments5(): void;
 /** jsdoc comment */
 function jsDocMixedComments6(): void;

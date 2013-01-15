@@ -200,10 +200,10 @@
 ////jsDocCommentAlignmentTest3(/*47*/"hello",/*48*/1, /*49*/2);
 
 goTo.marker('1');
-verify.currentSignatureHelpDocCommentIs("This is simple /// comments");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('2');
-verify.currentSignatureHelpDocCommentIs("multiLine /// Comments\nThis is example of multiline /// comments\nAnother multiLine");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('3');
 verify.currentSignatureHelpDocCommentIs("this is eg of single line jsdoc style comment ");
@@ -221,13 +221,13 @@ goTo.marker('7');
 verify.currentSignatureHelpDocCommentIs("jsdoc comment \nanother jsDocComment");
 
 goTo.marker('8');
-verify.currentSignatureHelpDocCommentIs("Triple slash comment");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('9');
-verify.currentSignatureHelpDocCommentIs("Triple slash comment\nTriple slash comment 2");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('10');
-verify.currentSignatureHelpDocCommentIs("Triple slash comment\nTriple slash comment 2");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('11');
 verify.currentSignatureHelpDocCommentIs("jsdoc comment ");
