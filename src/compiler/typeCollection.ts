@@ -493,7 +493,7 @@ module TypeScript {
             var field = new ValueLocation();
             var isPrivate = hasFlag(argDecl.varFlags, VarFlags.Private);
             var fieldSymbol =
-                new FieldSymbol(argDecl.id.text, argDecl.minChar,
+                new FieldSymbol(argDecl.id.text, argDecl.id.minChar,
                                 context.checker.locationInfo.unitIndex,
                                 !hasFlag(argDecl.varFlags, VarFlags.Readonly),
                                 field);
@@ -546,7 +546,7 @@ module TypeScript {
 
             var field = new ValueLocation();
             var fieldSymbol =
-                new FieldSymbol(varDecl.id.text, varDecl.minChar,
+                new FieldSymbol(varDecl.id.text, varDecl.id.minChar,
                                 context.checker.locationInfo.unitIndex,
                                 (varDecl.varFlags & VarFlags.Readonly) == VarFlags.None,
                                 field);

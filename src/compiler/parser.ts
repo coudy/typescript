@@ -2738,7 +2738,7 @@ module TypeScript {
                     this.currentToken = this.scanner.scan();
                     var target = this.parseTerm(errorRecoverySet, false, TypeContext.AllSimpleTypes, inCast);
 
-                    if (target.nodeType == NodeType.Error) {
+                    if (target.nodeType == NodeType.Error || (target.nodeType == NodeType.Index && (<BinaryExpression>target).operand1.nodeType == NodeType.TypeRef)) {
                         this.reportParseError("Cannot invoke 'new' on this expression");
                     } else {
                         ast = new CallExpression(NodeType.New, target, null);
@@ -4287,6 +4287,7 @@ module TypeScript {
             this.fname = filename;
             this.currentUnitIndex = unitIndex;
             this.amdDependencies = [];
+            this.inFncDecl = false;
 
             this.scanner.resetComments();
             this.scanner.setErrorHandler((message) =>this.reportParseError(message));
