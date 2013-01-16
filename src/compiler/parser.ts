@@ -4287,6 +4287,7 @@ module TypeScript {
             this.fname = filename;
             this.currentUnitIndex = unitIndex;
             this.amdDependencies = [];
+            this.inFncDecl = false;
 
             this.scanner.resetComments();
             this.scanner.setErrorHandler((message) =>this.reportParseError(message));
