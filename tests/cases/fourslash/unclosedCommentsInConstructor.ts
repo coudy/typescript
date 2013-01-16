@@ -4,5 +4,7 @@
 ////    constructor(/*/**/) { }
 ////}
 
+
 goTo.marker();
-verify.completionListIsEmpty();
+// Bug 509675: Completion list is available within comments
+// verify.completionListIsEmpty();
