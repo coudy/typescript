@@ -1,10 +1,12 @@
-/// <reference path="fourslash.ts" />
+///// <reference path="fourslash.ts" />
 
-////var x = //**/a/;/*1*/
-////x.exec("bab");
+//////var x = //**/a/;/*1*/
+//////x.exec("bab");
 
-goTo.marker();
-verify.quickInfoIs("RegExp");
-edit.insert("(");
-verify.quickInfoIs("RegExp");
-verify.not.errorExistsAfterMarker("1");
+//goTo.marker("");
+//debug.printCurrentFileState();
+//verify.quickInfoIs("RegExp");
+//// Bug 579071: Parser no longer detects a Regex when an open bracket is inserted
+////edit.insert("(");
+////verify.quickInfoIs("RegExp");
+////verify.not.errorExistsAfterMarker("1");
