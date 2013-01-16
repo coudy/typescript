@@ -32,7 +32,7 @@ interface ISyntaxToken extends ISyntaxElement, INameSyntax {
     trailingTrivia(): ISyntaxTriviaList;
 
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
-    withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
+    withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken;
 
     clone(): ISyntaxToken;
 }

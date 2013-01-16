@@ -10,7 +10,7 @@ interface ISyntaxNodeOrToken extends ISyntaxElement {
     trailingTrivia(): ISyntaxTriviaList;
 
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
-    withTrailingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
+    withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
 
     accept(visitor: ISyntaxVisitor): any;
 }
