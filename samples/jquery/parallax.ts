@@ -6,13 +6,15 @@ module Parallax {
         private perspective: number;
         private surface: ParallaxSurface[];
 
+        /**
+        *   Creates a Container for a Parallax
+        *   
+        *   @param {HTMLElement} scrollableContent The container that will be parallaxed
+        *   @param {perspective} perspective The ratio of how much back content should be scroleld relative to forward content. For example, if this value is 0.5, and there are 2 surfaces, 
+        *                                    the front-most surface would be scrolled normally, and the surface behind it would be scrolled half as much.
+        */
         constructor(scrollableContent: HTMLElement,
-                    perspective: number) {
-            /// <param name="scrollableContent">The container that will be parallaxed.</param>
-            /// <param name="perspective">The ratio of how much back content should be 
-            /// scrolled relative to forward content.  For example, if this value is 
-            /// 0.5, and there are 2 surfaces, the front-most surface would be scrolled 
-            /// normally, and the surface behind it would be scrolled half as much.</param>
+            perspective: number) {
             this.perspective = perspective;
             this.surface = [];
             this.content = scrollableContent;
@@ -22,7 +24,7 @@ module Parallax {
             });
         }
 
-        private onContainerScroll(e: JQueryEventObject) : void {
+        private onContainerScroll(e: JQueryEventObject): void {
             var currentScrollPos = $(this.content).scrollTop();
             var currentParallax = 1;
             for (var i = 0; i < this.surface.length; i++) {
@@ -31,6 +33,7 @@ module Parallax {
                 surface.currentY = offset;
                 currentParallax *= this.perspective;
             }
+
         }
 
         addSurface(surface: ParallaxSurface): void {
@@ -46,7 +49,7 @@ module Parallax {
         }
 
         get currentY(): number {
-            return - $(this.content).css('margin-top');
+            return -$(this.content).css('margin-top');
         }
 
         set currentY(value: number) {

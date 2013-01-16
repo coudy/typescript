@@ -61,8 +61,8 @@ interface JQueryXHR extends XMLHttpRequest {
     overrideMimeType();
 }
 
-/*
-    Interface for the JQuery callback
+/**
+*   Interface for the JQuery callback
 */
 interface JQueryCallback {
     add(...callbacks: any[]): any;
@@ -77,8 +77,8 @@ interface JQueryCallback {
     removed(...callbacks: any[]): any;
 }
 
-/*
-    Interface for the JQuery promise, part of callbacks
+/**
+*   Interface for the JQuery promise, part of callbacks
 */
 interface JQueryPromise {
     always(...alwaysCallbacks: any[]): JQueryDeferred;
@@ -88,8 +88,8 @@ interface JQueryPromise {
     then(doneCallbacks: any, failCallbacks: any, progressCallbacks?: any): JQueryDeferred;
 }
 
-/*
-    Interface for the JQuery deferred, part of callbacks
+/**
+*   Interface for the JQuery deferred, part of callbacks
 */
 interface JQueryDeferred extends JQueryPromise {
     notify(...args: any[]): JQueryDeferred;
@@ -105,8 +105,8 @@ interface JQueryDeferred extends JQueryPromise {
     then(doneCallbacks: any, failCallbacks: any, progressCallbacks?: any): JQueryDeferred;
 }
 
-/*
-    Interface of the JQuery extension of the W3C event object
+/**
+*   Interface of the JQuery extension of the W3C event object
 */
 interface JQueryEventObject extends Event {
     data: any;
@@ -126,8 +126,8 @@ interface JQueryEventObject extends Event {
     metaKey: any;
 }
 
-/*
-    Collection of properties of the current browser
+/**
+*   Collection of properties of the current browser
 */
 interface JQueryBrowserInfo {
     safari:bool;
@@ -159,8 +159,8 @@ interface JQuerySupport {
     tbody?: bool;
 }
 
-/*
-    Static members of jQuery (those on $ and jQuery themselves)
+/**
+*   Static members of jQuery (those on $ and jQuery themselves)
 */
 interface JQueryStatic {
 
@@ -304,8 +304,8 @@ interface JQueryStatic {
     unique(arr: any[]): any[];
 }
 
-/*
-    The jQuery instance members
+/**
+*   The jQuery instance members
 */
 interface JQuery {
     /****
