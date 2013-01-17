@@ -12955,10 +12955,7 @@ var QualifiedNameSyntax = (function (_super) {
         (this._right).collectTextElements(elements);
     };
     QualifiedNameSyntax.prototype.isTypeScriptSpecific = function () {
-        if(this._left.isTypeScriptSpecific()) {
-            return true;
-        }
-        return false;
+        return true;
     };
     QualifiedNameSyntax.prototype.computeData = function () {
         var fullWidth = 0;
@@ -25485,19 +25482,28 @@ var Collections;
 var SyntaxInformationMap = (function (_super) {
     __extends(SyntaxInformationMap, _super);
     function SyntaxInformationMap() {
-        _super.apply(this, arguments);
-
+        _super.call(this);
         this.tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
         this._previousToken = null;
         this._previousTokenInformation = null;
         this._currentPosition = 0;
+        this._elementToParent = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
+        this._nodeStack = [];
+        this._nodeStack.push(null);
     }
     SyntaxInformationMap.create = function create(node) {
         var map = new SyntaxInformationMap();
-        node.accept(map);
+        map.visitNode(node);
         return map;
     }
+    SyntaxInformationMap.prototype.visitNode = function (node) {
+        this._elementToParent.add(node, ArrayUtilities.last(this._nodeStack));
+        this._nodeStack.push(node);
+        _super.prototype.visitNode.call(this, node);
+        this._nodeStack.pop();
+    };
     SyntaxInformationMap.prototype.visitToken = function (token) {
+        this._elementToParent.add(token, ArrayUtilities.last(this._nodeStack));
         var tokenInformation = {
             fullStart: this._currentPosition,
             previousToken: this._previousToken,
@@ -25510,6 +25516,9 @@ var SyntaxInformationMap = (function (_super) {
         this._currentPosition += token.fullWidth();
         this._previousTokenInformation = tokenInformation;
         this.tokenToInformation.add(token, tokenInformation);
+    };
+    SyntaxInformationMap.prototype.parent = function (nodeOrToken) {
+        return this._elementToParent.get(nodeOrToken);
     };
     SyntaxInformationMap.prototype.fullStart = function (token) {
         return this.tokenInformation(token).fullStart;
@@ -26464,16 +26473,29 @@ var Emitter;
             }
             return _super.prototype.visitInvocationExpression.call(this, node);
         };
-        EmitterImpl.prototype.visitMemberAccessExpression = function (node) {
-            var result = _super.prototype.visitMemberAccessExpression.call(this, node);
-            if(!Syntax.isSuperMemberAccessExpression(result)) {
-                return result;
-            }
-            return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")), result.identifierName()).withLeadingTrivia(result.leadingTrivia());
-        };
         EmitterImpl.prototype.visitVariableStatement = function (node) {
             var result = _super.prototype.visitVariableStatement.call(this, node);
             return result.withExportKeyword(null).withDeclareKeyword(null).withLeadingTrivia(result.leadingTrivia());
+        };
+        EmitterImpl.prototype.visitMemberAccessExpression = function (node) {
+            var result = _super.prototype.visitMemberAccessExpression.call(this, node);
+            if(Syntax.isSuperMemberAccessExpression(result)) {
+                return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")), result.identifierName()).withLeadingTrivia(result.leadingTrivia());
+            }
+            return result;
+        };
+        EmitterImpl.prototype.visitToken = function (token) {
+            if(token.kind() !== 11 /* IdentifierNameToken */ ) {
+                return token;
+            }
+            var parent = this.syntaxInformationMap.parent(token);
+            if(parent.kind() === 120 /* QualifiedName */ ) {
+                return token;
+            }
+            if(parent.kind() === 207 /* MemberAccessExpression */  && (parent).identifierName() === token) {
+                return token;
+            }
+            return token;
         };
         return EmitterImpl;
     })(SyntaxRewriter);    

@@ -1087,23 +1087,54 @@ module Emitter {
             return super.visitInvocationExpression(node);
         }
 
-        private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpressionSyntax {
-            var result: MemberAccessExpressionSyntax = super.visitMemberAccessExpression(node);
-            if (!Syntax.isSuperMemberAccessExpression(result)) {
-                return result;
-            }
-
-            return MemberAccessExpressionSyntax.create1(
-                MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")),
-                result.identifierName()).withLeadingTrivia(result.leadingTrivia());
-        }
-
         private visitVariableStatement(node: VariableStatementSyntax): VariableStatementSyntax {
             var result: VariableStatementSyntax = super.visitVariableStatement(node);
 
             return result.withExportKeyword(null)
                          .withDeclareKeyword(null)
                          .withLeadingTrivia(result.leadingTrivia());
+        }
+
+        private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpressionSyntax {
+            var result: MemberAccessExpressionSyntax = super.visitMemberAccessExpression(node);
+
+            if (Syntax.isSuperMemberAccessExpression(result)) {
+                return MemberAccessExpressionSyntax.create1(
+                    MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")),
+                    result.identifierName()).withLeadingTrivia(result.leadingTrivia());
+            }
+
+            return result;
+        }
+
+        private visitToken(token: ISyntaxToken): INameSyntax {
+            // Check if a name token needs to become fully qualified.
+
+            // Only want to qualify a token if it's actually a name.
+            if (token.kind() !== SyntaxKind.IdentifierNameToken) {
+                return token;
+            }
+
+            var parent = this.syntaxInformationMap.parent(token);
+            
+            // We never qualify in a qualified name.  A qualified name only shows up in type 
+            // contexts, and will be removed anyways.
+            if (parent.kind() === SyntaxKind.QualifiedName) {
+                return token;
+            }
+
+            // We never qualify the right hand side of a dot.
+            if (parent.kind() === SyntaxKind.MemberAccessExpression && (<MemberAccessExpressionSyntax>parent).identifierName() === token) {
+                return token;
+            }
+
+            // TODO(cyrusn): Implement this when we have type check support.
+
+            // Ok.  We're a name token that isn't on the right side of a dot.  We may need to be 
+            // qualified.   Get the symbol that this token binds to.  If it is a module/class and
+            // has a full name that is larger than this token, then return the full name as a 
+            // member access expression. 
+            return token;
         }
     }
 

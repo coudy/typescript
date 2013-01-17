@@ -16,14 +16,32 @@ class SyntaxInformationMap extends SyntaxWalker {
     private _previousToken = null;
     private _previousTokenInformation: ITokenInformation = null;
     private _currentPosition = 0;
+    private _elementToParent = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
+
+    private _nodeStack: SyntaxNode[] = [];
+
+    constructor() {
+        super();
+        this._nodeStack.push(null);
+    }
 
     public static create(node: SyntaxNode): SyntaxInformationMap {
         var map = new SyntaxInformationMap();
-        node.accept(map);
+        map.visitNode(node);
         return map;
     }
 
+    private visitNode(node: SyntaxNode): void {
+        this._elementToParent.add(node, ArrayUtilities.last(this._nodeStack));
+        
+        this._nodeStack.push(node);
+        super.visitNode(node);
+        this._nodeStack.pop();
+    }
+
     private visitToken(token: ISyntaxToken): void {
+        this._elementToParent.add(token, ArrayUtilities.last(this._nodeStack));
+
         var tokenInformation: ITokenInformation = {
             fullStart: this._currentPosition,
             previousToken: this._previousToken,
@@ -39,6 +57,10 @@ class SyntaxInformationMap extends SyntaxWalker {
         this._previousTokenInformation = tokenInformation;
 
         this.tokenToInformation.add(token, tokenInformation);
+    }
+
+    public parent(nodeOrToken: ISyntaxNodeOrToken): SyntaxNode {
+        return this._elementToParent.get(nodeOrToken);
     }
 
     public fullStart(token: ISyntaxToken): number {

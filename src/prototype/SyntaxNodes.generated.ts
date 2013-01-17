@@ -3929,8 +3929,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._left.isTypeScriptSpecific()) { return true; }
-        return false;
+        return true;
     }
 
     private computeData(): number {

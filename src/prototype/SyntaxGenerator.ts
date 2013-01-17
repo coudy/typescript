@@ -272,7 +272,10 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'left', type: 'INameSyntax' },
             <any>{ name: 'dotToken', isToken: true },
             <any>{ name: 'right', isToken: true, tokenKinds: ['IdentifierNameToken'] }
-        ]
+        ],
+        // Qualified names only show up in Types, which are TypeScript specific. Note that a dotted
+        // expression (like A.B.Foo()) is a MemberAccessExpression, not a QualifiedName.
+        isTypeScriptSpecific: true
     },
     <any>{
         name: 'ConstructorTypeSyntax',

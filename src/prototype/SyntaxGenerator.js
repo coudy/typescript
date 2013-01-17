@@ -1906,7 +1906,8 @@ var definitions = [
                     'IdentifierNameToken'
                 ]
             }
-        ]
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ConstructorTypeSyntax',
