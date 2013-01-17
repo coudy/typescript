@@ -42,7 +42,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierName);
             }
 
             return this._textOrWidth;
@@ -131,7 +131,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierName);
             }
 
             return this._textOrWidth;
@@ -220,7 +220,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierName);
             }
 
             return this._textOrWidth;
@@ -312,7 +312,7 @@ module Syntax {
         public text(): string {
             if (typeof this._textOrWidth === 'number') {
                 this._textOrWidth = this._sourceText.substr(
-                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);
+                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierName);
             }
 
             return this._textOrWidth;

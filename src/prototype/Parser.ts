@@ -1376,7 +1376,7 @@ module Parser {
         private isIdentifier(token: ISyntaxToken): bool {
             var tokenKind = token.tokenKind;
 
-            if (tokenKind === SyntaxKind.IdentifierNameToken) {
+            if (tokenKind === SyntaxKind.IdentifierName) {
                 return true;
             }
 
@@ -1406,7 +1406,7 @@ module Parser {
                 return token;
             }
 
-            return this.createMissingToken(SyntaxKind.IdentifierNameToken, token);
+            return this.createMissingToken(SyntaxKind.IdentifierName, token);
         }
 
         // This method should be called when the grammar calls for an *Identifier* and not an
@@ -1418,7 +1418,7 @@ module Parser {
                 return token;
             }
 
-            return this.createMissingToken(SyntaxKind.IdentifierNameToken, token);
+            return this.createMissingToken(SyntaxKind.IdentifierName, token);
         }
 
         private canEatAutomaticSemicolon(allowWithoutNewLine: bool): bool {
@@ -2898,7 +2898,7 @@ module Parser {
                 // Because of automatic semicolon insertion, we need to report error if this 
                 // throw could be terminated with a semicolon.  Note: we can't call 'parseExpression'
                 // directly as that might consume an expression on the following line.  
-                var token = this.createMissingToken(SyntaxKind.IdentifierNameToken, null);
+                var token = this.createMissingToken(SyntaxKind.IdentifierName, null);
                 expression = token;
             }
             else {
@@ -3484,7 +3484,7 @@ module Parser {
             if (this.previousToken() !== null) {
                 var previousTokenKind = this.previousToken().tokenKind;
                 switch (previousTokenKind) {
-                    case SyntaxKind.IdentifierNameToken:
+                    case SyntaxKind.IdentifierName:
                         // Regular expressions can't follow identifiers.
                         return null;
 
@@ -3928,7 +3928,7 @@ module Parser {
         }
 
         private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
-            // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierNameToken is 
+            // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierName is 
             // allowed here, even reserved words like keywords.
             if (ParserImpl.isIdentifierName(token)) {
                 // Except: if we're in error recovery, then we don't want to consider keywords. 

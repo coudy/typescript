@@ -12,6 +12,9 @@ module Syntax {
         var result: any = {};
 
         result.kind = (<any>SyntaxKind)._map[token.kind()];
+        if (result.kind === "IdentifierName") {
+            result.kind = "IdentifierNameToken";
+        }
 
         result.width = token.width();
         if (token.fullWidth() !== token.width()) {
@@ -70,7 +73,7 @@ module Syntax {
     }
 
     export function value(token: ISyntaxToken): any {
-        if (token.tokenKind === SyntaxKind.IdentifierNameToken) {
+        if (token.tokenKind === SyntaxKind.IdentifierName) {
             var text = token.text();
             for (var i = 0; i < text.length; i++) {
                 // TODO: handle unicode and escapes.
@@ -275,6 +278,6 @@ module Syntax {
     export function identifier(text: string, info: ITokenInfo = null): ISyntaxToken {
         info = info || {};
         info.text = text;
-        return token(SyntaxKind.IdentifierNameToken, info);
+        return token(SyntaxKind.IdentifierName, info);
     }
 }

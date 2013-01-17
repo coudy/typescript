@@ -20,7 +20,7 @@ enum SyntaxKind {
     EndOfFileToken,
 
     // Tokens
-    IdentifierNameToken,
+    IdentifierName,
 
     // LiteralTokens
     RegularExpressionLiteral,
@@ -301,7 +301,7 @@ enum SyntaxKind {
     FirstKeyword = FirstStandardKeyword,
     LastKeyword = LastTypeScriptKeyword,
 
-    FirstToken = IdentifierNameToken,
+    FirstToken = IdentifierName,
     LastToken = EndOfFileToken,
 
     FirstPunctuation = OpenBraceToken,

@@ -551,7 +551,7 @@ class Scanner implements ISlidingWindowSource {
                     kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
                 }
                 else {
-                    kind = SyntaxKind.IdentifierNameToken;
+                    kind = SyntaxKind.IdentifierName;
                 }
 
                 this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
@@ -570,7 +570,7 @@ class Scanner implements ISlidingWindowSource {
         }
         while (this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
 
-        return SyntaxKind.IdentifierNameToken;
+        return SyntaxKind.IdentifierName;
     }
 
     private scanNumericLiteral(): SyntaxKind {

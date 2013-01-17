@@ -492,8 +492,8 @@ var SyntaxKind;
     SyntaxKind.ErrorToken = 9;
     SyntaxKind._map[10] = "EndOfFileToken";
     SyntaxKind.EndOfFileToken = 10;
-    SyntaxKind._map[11] = "IdentifierNameToken";
-    SyntaxKind.IdentifierNameToken = 11;
+    SyntaxKind._map[11] = "IdentifierName";
+    SyntaxKind.IdentifierName = 11;
     SyntaxKind._map[12] = "RegularExpressionLiteral";
     SyntaxKind.RegularExpressionLiteral = 12;
     SyntaxKind._map[13] = "NumericLiteral";
@@ -956,7 +956,7 @@ var SyntaxKind;
     SyntaxKind.LastTypeScriptKeyword = SyntaxKind.StringKeyword;
     SyntaxKind.FirstKeyword = SyntaxKind.FirstStandardKeyword;
     SyntaxKind.LastKeyword = SyntaxKind.LastTypeScriptKeyword;
-    SyntaxKind.FirstToken = SyntaxKind.IdentifierNameToken;
+    SyntaxKind.FirstToken = SyntaxKind.IdentifierName;
     SyntaxKind.LastToken = SyntaxKind.EndOfFileToken;
     SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
     SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
@@ -1356,7 +1356,7 @@ var SyntaxFacts;
     }
     SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
     function isIdentifierName(kind) {
-        return kind === 11 /* IdentifierNameToken */  || isAnyKeyword(kind);
+        return kind === 11 /* IdentifierName */  || isAnyKeyword(kind);
     }
     SyntaxFacts.isIdentifierName = isIdentifierName;
 })(SyntaxFacts || (SyntaxFacts = {}));
@@ -1443,7 +1443,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -1486,7 +1486,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -1535,7 +1535,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -1723,7 +1723,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -1851,7 +1851,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -1903,7 +1903,7 @@ var definitions = [
                 name: 'right',
                 isToken: true,
                 tokenKinds: [
-                    'IdentifierNameToken'
+                    'IdentifierName'
                 ]
             }
         ],
@@ -2063,7 +2063,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -2105,7 +2105,7 @@ var definitions = [
                 name: 'identifierName',
                 isToken: true,
                 tokenKinds: [
-                    'IdentifierNameToken'
+                    'IdentifierName'
                 ]
             }
         ]
@@ -2326,7 +2326,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -2378,7 +2378,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -2596,7 +2596,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -2641,7 +2641,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -2857,7 +2857,7 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -2882,7 +2882,7 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3077,7 +3077,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3158,7 +3158,7 @@ var definitions = [
                 name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken", 
+                    "IdentifierName", 
                     "StringLiteral", 
                     "NumericLiteral"
                 ]
@@ -3191,7 +3191,7 @@ var definitions = [
                 name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3220,7 +3220,7 @@ var definitions = [
                 name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3231,7 +3231,7 @@ var definitions = [
                 name: 'parameterName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3260,7 +3260,7 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3329,7 +3329,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3367,7 +3367,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierNameToken"
+                    "IdentifierName"
                 ]
             }, 
             {
@@ -3553,7 +3553,7 @@ function generateIfKindCheck(child, tokenKinds, indent) {
             result += " && ";
         }
         var tokenKind = tokenKinds[j];
-        if(tokenKind === "IdentifierNameToken") {
+        if(tokenKind === "IdentifierName") {
             result += "!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)";
         } else {
             result += child.name + ".tokenKind !== SyntaxKind." + tokenKind;
@@ -3591,10 +3591,10 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
     }
     var result = "";
     var identifierName = ArrayUtilities.where(tokenKinds, function (v) {
-        return v.indexOf("IdentifierNameToken") >= 0;
+        return v.indexOf("IdentifierName") >= 0;
     });
     var notIdentifierName = ArrayUtilities.where(tokenKinds, function (v) {
-        return v.indexOf("IdentifierNameToken") < 0;
+        return v.indexOf("IdentifierName") < 0;
     });
     if(identifierName.length > 0) {
         result += indent + "        if (!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)) {\r\n";
@@ -3741,7 +3741,7 @@ function isKeywordOrPunctuation(kind) {
     if(StringUtilities.endsWith(kind, "Keyword")) {
         return true;
     }
-    if(StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierNameToken" && kind !== "EndOfFileToken") {
+    if(StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierName" && kind !== "EndOfFileToken") {
         return true;
     }
     return false;
@@ -4509,7 +4509,7 @@ function generateToken(isFixedWidth, leading, trailing) {
         result += "        public text(): string {\r\n";
         result += "            if (typeof this._textOrWidth === 'number') {\r\n";
         result += "                this._textOrWidth = this._sourceText.substr(\r\n";
-        result += "                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierNameToken);\r\n";
+        result += "                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierName);\r\n";
         result += "            }\r\n";
         result += "\r\n";
         result += "            return this._textOrWidth;\r\n";
@@ -4633,7 +4633,7 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
             var index = i === 0 ? "startIndex" : ("startIndex + " + i);
             result += "array[" + index + "] === CharacterCodes." + keywordText.substr(i, 1);
         }
-        result += ") ? SyntaxKind." + (SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierNameToken;\r\n";
+        result += ") ? SyntaxKind." + (SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierName;\r\n";
     } else {
         var index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
         result += indent + "switch(array[" + index + "]) {\r\n";
@@ -4650,7 +4650,7 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
             }
         }
         result += indent + "default:\r\n";
-        result += indent + "    return SyntaxKind.IdentifierNameToken;\r\n";
+        result += indent + "    return SyntaxKind.IdentifierName;\r\n";
         result += indent + "}\r\n\r\n";
     }
     return result;
@@ -4685,7 +4685,7 @@ function generateScannerUtilities() {
         }
     }
     result += "        default:\r\n";
-    result += "            return SyntaxKind.IdentifierNameToken;\r\n";
+    result += "            return SyntaxKind.IdentifierName;\r\n";
     result += "        }\r\n";
     result += "    }\r\n";
     result += "}";

@@ -110,7 +110,7 @@ module Emitter {
         private static splitModuleName(name: INameSyntax): ISyntaxToken[] {
             var result: ISyntaxToken[] = [];
             while (true) {
-                if (name.kind() === SyntaxKind.IdentifierNameToken) {
+                if (name.kind() === SyntaxKind.IdentifierName) {
                     result.unshift(<ISyntaxToken>name);
                     return result;
                 }
@@ -1128,7 +1128,7 @@ module Emitter {
         }
 
         private visitToken(token: ISyntaxToken): INameSyntax {
-            if (token.kind() === SyntaxKind.IdentifierNameToken) {
+            if (token.kind() === SyntaxKind.IdentifierName) {
                 return this.visitIdentifierName(token);
             }
 

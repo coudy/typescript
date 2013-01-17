@@ -315,8 +315,8 @@ var SyntaxKind;
     SyntaxKind.ErrorToken = 9;
     SyntaxKind._map[10] = "EndOfFileToken";
     SyntaxKind.EndOfFileToken = 10;
-    SyntaxKind._map[11] = "IdentifierNameToken";
-    SyntaxKind.IdentifierNameToken = 11;
+    SyntaxKind._map[11] = "IdentifierName";
+    SyntaxKind.IdentifierName = 11;
     SyntaxKind._map[12] = "RegularExpressionLiteral";
     SyntaxKind.RegularExpressionLiteral = 12;
     SyntaxKind._map[13] = "NumericLiteral";
@@ -779,7 +779,7 @@ var SyntaxKind;
     SyntaxKind.LastTypeScriptKeyword = SyntaxKind.StringKeyword;
     SyntaxKind.FirstKeyword = SyntaxKind.FirstStandardKeyword;
     SyntaxKind.LastKeyword = SyntaxKind.LastTypeScriptKeyword;
-    SyntaxKind.FirstToken = SyntaxKind.IdentifierNameToken;
+    SyntaxKind.FirstToken = SyntaxKind.IdentifierName;
     SyntaxKind.LastToken = SyntaxKind.EndOfFileToken;
     SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
     SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
@@ -1407,7 +1407,7 @@ var SyntaxFacts;
     }
     SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
     function isIdentifierName(kind) {
-        return kind === 11 /* IdentifierNameToken */  || isAnyKeyword(kind);
+        return kind === 11 /* IdentifierName */  || isAnyKeyword(kind);
     }
     SyntaxFacts.isIdentifierName = isIdentifierName;
 })(SyntaxFacts || (SyntaxFacts = {}));
@@ -2997,7 +2997,7 @@ var ScannerUtilities = (function () {
             case 2: {
                 switch(array[startIndex]) {
                     case 100 /* d */ : {
-                        return (array[startIndex + 1] === 111 /* o */ ) ? 22 /* DoKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 111 /* o */ ) ? 22 /* DoKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 105 /* i */ : {
@@ -3011,14 +3011,14 @@ var ScannerUtilities = (function () {
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3027,39 +3027,39 @@ var ScannerUtilities = (function () {
             case 3: {
                 switch(array[startIndex]) {
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 114 /* r */ ) ? 26 /* ForKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 114 /* r */ ) ? 26 /* ForKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 110 /* n */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 119 /* w */ ) ? 31 /* NewKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 119 /* w */ ) ? 31 /* NewKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 116 /* t */ : {
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 121 /* y */ ) ? 38 /* TryKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 121 /* y */ ) ? 38 /* TryKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 118 /* v */ : {
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 114 /* r */ ) ? 40 /* VarKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 114 /* r */ ) ? 40 /* VarKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 108 /* l */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 53 /* LetKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 53 /* LetKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 97 /* a */ : {
-                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 121 /* y */ ) ? 60 /* AnyKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 121 /* y */ ) ? 60 /* AnyKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 103 /* g */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 64 /* GetKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 64 /* GetKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 115 /* s */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 67 /* SetKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 67 /* SetKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3068,61 +3068,61 @@ var ScannerUtilities = (function () {
             case 4: {
                 switch(array[startIndex]) {
                     case 99 /* c */ : {
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 16 /* CaseKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 16 /* CaseKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 101 /* e */ : {
                         switch(array[startIndex + 1]) {
                             case 108 /* l */ : {
-                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 23 /* ElseKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 23 /* ElseKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             case 110 /* n */ : {
-                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 109 /* m */ ) ? 46 /* EnumKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 109 /* m */ ) ? 46 /* EnumKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     case 110 /* n */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 108 /* l */ ) ? 32 /* NullKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 108 /* l */ ) ? 32 /* NullKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 116 /* t */ : {
                         switch(array[startIndex + 1]) {
                             case 104 /* h */ : {
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 115 /* s */ ) ? 35 /* ThisKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 115 /* s */ ) ? 35 /* ThisKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             case 114 /* r */ : {
-                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 101 /* e */ ) ? 37 /* TrueKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 101 /* e */ ) ? 37 /* TrueKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     case 118 /* v */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 100 /* d */ ) ? 41 /* VoidKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 100 /* d */ ) ? 41 /* VoidKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 119 /* w */ : {
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 104 /* h */ ) ? 43 /* WithKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 104 /* h */ ) ? 43 /* WithKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 98 /* b */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */ ) ? 61 /* BoolKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */ ) ? 61 /* BoolKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3131,52 +3131,52 @@ var ScannerUtilities = (function () {
             case 5: {
                 switch(array[startIndex]) {
                     case 98 /* b */ : {
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 107 /* k */ ) ? 15 /* BreakKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 107 /* k */ ) ? 15 /* BreakKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 99 /* c */ : {
                         switch(array[startIndex + 1]) {
                             case 97 /* a */ : {
-                                return (array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 104 /* h */ ) ? 17 /* CatchKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 104 /* h */ ) ? 17 /* CatchKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             case 108 /* l */ : {
-                                return (array[startIndex + 2] === 97 /* a */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 115 /* s */ ) ? 44 /* ClassKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 97 /* a */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 115 /* s */ ) ? 44 /* ClassKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             case 111 /* o */ : {
-                                return (array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */ ) ? 45 /* ConstKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */ ) ? 45 /* ConstKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 101 /* e */ ) ? 24 /* FalseKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 101 /* e */ ) ? 24 /* FalseKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 116 /* t */ : {
-                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 114 /* r */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 119 /* w */ ) ? 36 /* ThrowKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 114 /* r */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 119 /* w */ ) ? 36 /* ThrowKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 119 /* w */ : {
-                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */ ) ? 42 /* WhileKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */ ) ? 42 /* WhileKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 115 /* s */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */ ) ? 50 /* SuperKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */ ) ? 50 /* SuperKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 121 /* y */ : {
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 100 /* d */ ) ? 59 /* YieldKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 100 /* d */ ) ? 59 /* YieldKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3185,69 +3185,69 @@ var ScannerUtilities = (function () {
             case 6: {
                 switch(array[startIndex]) {
                     case 100 /* d */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 101 /* e */ ) ? 21 /* DeleteKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 101 /* e */ ) ? 21 /* DeleteKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 114 /* r */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 110 /* n */ ) ? 33 /* ReturnKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 110 /* n */ ) ? 33 /* ReturnKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 115 /* s */ : {
                         switch(array[startIndex + 1]) {
                             case 119 /* w */ : {
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 99 /* c */  && array[startIndex + 5] === 104 /* h */ ) ? 34 /* SwitchKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 99 /* c */  && array[startIndex + 5] === 104 /* h */ ) ? 34 /* SwitchKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             case 116 /* t */ : {
                                 switch(array[startIndex + 2]) {
                                     case 97 /* a */ : {
-                                        return (array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 58 /* StaticKeyword */  : 11 /* IdentifierNameToken */ ;
+                                        return (array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 58 /* StaticKeyword */  : 11 /* IdentifierName */ ;
 
                                     }
                                     case 114 /* r */ : {
-                                        return (array[startIndex + 3] === 105 /* i */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 103 /* g */ ) ? 68 /* StringKeyword */  : 11 /* IdentifierNameToken */ ;
+                                        return (array[startIndex + 3] === 105 /* i */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 103 /* g */ ) ? 68 /* StringKeyword */  : 11 /* IdentifierName */ ;
 
                                     }
                                     default: {
-                                        return 11 /* IdentifierNameToken */ ;
+                                        return 11 /* IdentifierName */ ;
 
                                     }
                                 }
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     case 116 /* t */ : {
-                        return (array[startIndex + 1] === 121 /* y */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 111 /* o */  && array[startIndex + 5] === 102 /* f */ ) ? 39 /* TypeOfKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 121 /* y */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 111 /* o */  && array[startIndex + 5] === 102 /* f */ ) ? 39 /* TypeOfKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 101 /* e */ : {
-                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 47 /* ExportKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 47 /* ExportKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 105 /* i */ : {
-                        return (array[startIndex + 1] === 109 /* m */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 49 /* ImportKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 109 /* m */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 49 /* ImportKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 112 /* p */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 57 /* PublicKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 57 /* PublicKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 109 /* m */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 100 /* d */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 101 /* e */ ) ? 65 /* ModuleKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 100 /* d */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 101 /* e */ ) ? 65 /* ModuleKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 110 /* n */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 109 /* m */  && array[startIndex + 3] === 98 /* b */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 114 /* r */ ) ? 66 /* NumberKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 109 /* m */  && array[startIndex + 3] === 98 /* b */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 114 /* r */ ) ? 66 /* NumberKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3260,54 +3260,54 @@ var ScannerUtilities = (function () {
                             case 101 /* e */ : {
                                 switch(array[startIndex + 2]) {
                                     case 102 /* f */ : {
-                                        return (array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 117 /* u */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 116 /* t */ ) ? 20 /* DefaultKeyword */  : 11 /* IdentifierNameToken */ ;
+                                        return (array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 117 /* u */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 116 /* t */ ) ? 20 /* DefaultKeyword */  : 11 /* IdentifierName */ ;
 
                                     }
                                     case 99 /* c */ : {
-                                        return (array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 101 /* e */ ) ? 63 /* DeclareKeyword */  : 11 /* IdentifierNameToken */ ;
+                                        return (array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 101 /* e */ ) ? 63 /* DeclareKeyword */  : 11 /* IdentifierName */ ;
 
                                     }
                                     default: {
-                                        return 11 /* IdentifierNameToken */ ;
+                                        return 11 /* IdentifierName */ ;
 
                                     }
                                 }
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 121 /* y */ ) ? 25 /* FinallyKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 121 /* y */ ) ? 25 /* FinallyKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 101 /* e */ : {
-                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 100 /* d */  && array[startIndex + 6] === 115 /* s */ ) ? 48 /* ExtendsKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 100 /* d */  && array[startIndex + 6] === 115 /* s */ ) ? 48 /* ExtendsKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 112 /* p */ : {
                         switch(array[startIndex + 1]) {
                             case 97 /* a */ : {
-                                return (array[startIndex + 2] === 99 /* c */  && array[startIndex + 3] === 107 /* k */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */ ) ? 54 /* PackageKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 99 /* c */  && array[startIndex + 3] === 107 /* k */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */ ) ? 54 /* PackageKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             case 114 /* r */ : {
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 118 /* v */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 116 /* t */  && array[startIndex + 6] === 101 /* e */ ) ? 55 /* PrivateKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 118 /* v */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 116 /* t */  && array[startIndex + 6] === 101 /* e */ ) ? 55 /* PrivateKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3316,19 +3316,19 @@ var ScannerUtilities = (function () {
             case 8: {
                 switch(array[startIndex]) {
                     case 99 /* c */ : {
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 101 /* e */ ) ? 18 /* ContinueKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 101 /* e */ ) ? 18 /* ContinueKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 100 /* d */ : {
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 103 /* g */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 114 /* r */ ) ? 19 /* DebuggerKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 103 /* g */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 114 /* r */ ) ? 19 /* DebuggerKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 102 /* f */ : {
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 105 /* i */  && array[startIndex + 6] === 111 /* o */  && array[startIndex + 7] === 110 /* n */ ) ? 27 /* FunctionKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 105 /* i */  && array[startIndex + 6] === 111 /* o */  && array[startIndex + 7] === 110 /* n */ ) ? 27 /* FunctionKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3337,15 +3337,15 @@ var ScannerUtilities = (function () {
             case 9: {
                 switch(array[startIndex]) {
                     case 105 /* i */ : {
-                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 102 /* f */  && array[startIndex + 6] === 97 /* a */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 101 /* e */ ) ? 52 /* InterfaceKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 102 /* f */  && array[startIndex + 6] === 97 /* a */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 101 /* e */ ) ? 52 /* InterfaceKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     case 112 /* p */ : {
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 99 /* c */  && array[startIndex + 6] === 116 /* t */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 100 /* d */ ) ? 56 /* ProtectedKeyword */  : 11 /* IdentifierNameToken */ ;
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 99 /* c */  && array[startIndex + 6] === 116 /* t */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 100 /* d */ ) ? 56 /* ProtectedKeyword */  : 11 /* IdentifierName */ ;
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
@@ -3356,33 +3356,33 @@ var ScannerUtilities = (function () {
                     case 105 /* i */ : {
                         switch(array[startIndex + 1]) {
                             case 110 /* n */ : {
-                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 99 /* c */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 111 /* o */  && array[startIndex + 9] === 102 /* f */ ) ? 30 /* InstanceOfKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 99 /* c */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 111 /* o */  && array[startIndex + 9] === 102 /* f */ ) ? 30 /* InstanceOfKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             case 109 /* m */ : {
-                                return (array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 109 /* m */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 110 /* n */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 115 /* s */ ) ? 51 /* ImplementsKeyword */  : 11 /* IdentifierNameToken */ ;
+                                return (array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 109 /* m */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 110 /* n */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 115 /* s */ ) ? 51 /* ImplementsKeyword */  : 11 /* IdentifierName */ ;
 
                             }
                             default: {
-                                return 11 /* IdentifierNameToken */ ;
+                                return 11 /* IdentifierName */ ;
 
                             }
                         }
 
                     }
                     default: {
-                        return 11 /* IdentifierNameToken */ ;
+                        return 11 /* IdentifierName */ ;
 
                     }
                 }
 
             }
             case 11: {
-                return (array[startIndex] === 99 /* c */  && array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 111 /* o */  && array[startIndex + 10] === 114 /* r */ ) ? 62 /* ConstructorKeyword */  : 11 /* IdentifierNameToken */ ;
+                return (array[startIndex] === 99 /* c */  && array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 111 /* o */  && array[startIndex + 10] === 114 /* r */ ) ? 62 /* ConstructorKeyword */  : 11 /* IdentifierName */ ;
 
             }
             default: {
-                return 11 /* IdentifierNameToken */ ;
+                return 11 /* IdentifierName */ ;
 
             }
         }
@@ -3653,7 +3653,7 @@ var Syntax;
         };
         VariableWidthTokenWithNoTrivia.prototype.text = function () {
             if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierNameToken */ );
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
             }
             return this._textOrWidth;
         };
@@ -3791,7 +3791,7 @@ var Syntax;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.text = function () {
             if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierNameToken */ );
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
             }
             return this._textOrWidth;
         };
@@ -3929,7 +3929,7 @@ var Syntax;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.text = function () {
             if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierNameToken */ );
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
             }
             return this._textOrWidth;
         };
@@ -4068,7 +4068,7 @@ var Syntax;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.text = function () {
             if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierNameToken */ );
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
             }
             return this._textOrWidth;
         };
@@ -7539,7 +7539,7 @@ var Scanner = (function () {
                         var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
                         kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
                     } else {
-                        kind = 11 /* IdentifierNameToken */ ;
+                        kind = 11 /* IdentifierName */ ;
                     }
                     this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
                     return kind;
@@ -7552,7 +7552,7 @@ var Scanner = (function () {
         do {
             this.scanCharOrUnicodeEscape(diagnostics);
         }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()))
-        return 11 /* IdentifierNameToken */ ;
+        return 11 /* IdentifierName */ ;
     };
     Scanner.prototype.scanNumericLiteral = function () {
         if(this.isHexNumericLiteral()) {
@@ -8064,6 +8064,9 @@ var Syntax;
         var result = {
         };
         result.kind = (SyntaxKind)._map[token.kind()];
+        if(result.kind === "IdentifierName") {
+            result.kind = "IdentifierNameToken";
+        }
         result.width = token.width();
         if(token.fullWidth() !== token.width()) {
             result.fullWidth = token.fullWidth();
@@ -8108,7 +8111,7 @@ var Syntax;
     }
     Syntax.tokenToJSON = tokenToJSON;
     function value(token) {
-        if(token.tokenKind === 11 /* IdentifierNameToken */ ) {
+        if(token.tokenKind === 11 /* IdentifierName */ ) {
             var text = token.text();
             for(var i = 0; i < text.length; i++) {
                 if(!Scanner.isIdentifierPartCharacter[text.charCodeAt(i)]) {
@@ -8401,7 +8404,7 @@ var Syntax;
         info = info || {
         };
         info.text = text;
-        return token(11 /* IdentifierNameToken */ , info);
+        return token(11 /* IdentifierName */ , info);
     }
     Syntax.identifier = identifier;
 })(Syntax || (Syntax = {}));
@@ -25968,7 +25971,7 @@ var Emitter;
         EmitterImpl.splitModuleName = function splitModuleName(name) {
             var result = [];
             while(true) {
-                if(name.kind() === 11 /* IdentifierNameToken */ ) {
+                if(name.kind() === 11 /* IdentifierName */ ) {
                     result.unshift(name);
                     return result;
                 } else {
@@ -26498,7 +26501,7 @@ var Emitter;
             return result;
         };
         EmitterImpl.prototype.visitToken = function (token) {
-            if(token.kind() === 11 /* IdentifierNameToken */ ) {
+            if(token.kind() === 11 /* IdentifierName */ ) {
                 return this.visitIdentifierName(token);
             }
             if(token.kind() === 35 /* ThisKeyword */ ) {
@@ -27220,7 +27223,7 @@ var Parser;
         }
         ParserImpl.prototype.isIdentifier = function (token) {
             var tokenKind = token.tokenKind;
-            if(tokenKind === 11 /* IdentifierNameToken */ ) {
+            if(tokenKind === 11 /* IdentifierName */ ) {
                 return true;
             }
             if(tokenKind >= 51 /* FirstFutureReservedStrictKeyword */ ) {
@@ -27237,7 +27240,7 @@ var Parser;
                 this.moveToNextToken();
                 return token;
             }
-            return this.createMissingToken(11 /* IdentifierNameToken */ , token);
+            return this.createMissingToken(11 /* IdentifierName */ , token);
         };
         ParserImpl.prototype.eatIdentifierToken = function () {
             var token = this.currentToken();
@@ -27245,7 +27248,7 @@ var Parser;
                 this.moveToNextToken();
                 return token;
             }
-            return this.createMissingToken(11 /* IdentifierNameToken */ , token);
+            return this.createMissingToken(11 /* IdentifierName */ , token);
         };
         ParserImpl.prototype.canEatAutomaticSemicolon = function (allowWithoutNewLine) {
             var token = this.currentToken();
@@ -28266,7 +28269,7 @@ var Parser;
             var throwKeyword = this.eatKeyword(36 /* ThrowKeyword */ );
             var expression = null;
             if(this.canEatExplicitOrAutomaticSemicolon(false)) {
-                var token = this.createMissingToken(11 /* IdentifierNameToken */ , null);
+                var token = this.createMissingToken(11 /* IdentifierName */ , null);
                 expression = token;
             } else {
                 expression = this.parseExpression(true);
@@ -28700,7 +28703,7 @@ var Parser;
             if(this.previousToken() !== null) {
                 var previousTokenKind = this.previousToken().tokenKind;
                 switch(previousTokenKind) {
-                    case 11 /* IdentifierNameToken */ : {
+                    case 11 /* IdentifierName */ : {
                         return null;
 
                     }
