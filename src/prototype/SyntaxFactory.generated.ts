@@ -42,7 +42,7 @@ module Syntax {
         binaryExpression(kind: SyntaxKind, left: IExpressionSyntax, operatorToken: ISyntaxToken, right: IExpressionSyntax): BinaryExpressionSyntax;
         conditionalExpression(condition: IExpressionSyntax, questionToken: ISyntaxToken, whenTrue: IExpressionSyntax, colonToken: ISyntaxToken, whenFalse: IExpressionSyntax): ConditionalExpressionSyntax;
         typeMember(): TypeMemberSyntax;
-        constructSignature(newKeyword: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax;
+        constructSignature(newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax;
         functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax;
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax;
         propertySignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax;
@@ -217,8 +217,8 @@ module Syntax {
         typeMember(): TypeMemberSyntax {
             return new TypeMemberSyntax(/*parsedInStrictMode:*/ false);
         }
-        constructSignature(newKeyword: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
-            return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        constructSignature(newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
+            return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
         }
         functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
             return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
@@ -496,8 +496,8 @@ module Syntax {
         typeMember(): TypeMemberSyntax {
             return new TypeMemberSyntax(/*parsedInStrictMode:*/ true);
         }
-        constructSignature(newKeyword: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
-            return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);
+        constructSignature(newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
+            return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);
         }
         functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
             return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);

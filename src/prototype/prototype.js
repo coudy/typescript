@@ -157,7 +157,7 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitNodeOrToken(node.condition()), this.visitToken(node.questionToken()), this.visitNodeOrToken(node.whenTrue()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.whenFalse()));
     };
     SyntaxRewriter.prototype.visitConstructSignature = function (node) {
-        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
+        return node.update(this.visitToken(node.newKeyword()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
     };
     SyntaxRewriter.prototype.visitFunctionSignature = function (node) {
         return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
@@ -8561,8 +8561,8 @@ var Syntax;
         NormalModeFactory.prototype.typeMember = function () {
             return new TypeMemberSyntax(false);
         };
-        NormalModeFactory.prototype.constructSignature = function (newKeyword, parameterList, typeAnnotation) {
-            return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation, false);
+        NormalModeFactory.prototype.constructSignature = function (newKeyword, typeParameterList, parameterList, typeAnnotation) {
+            return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, false);
         };
         NormalModeFactory.prototype.functionSignature = function (identifier, questionToken, parameterList, typeAnnotation) {
             return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation, false);
@@ -8841,8 +8841,8 @@ var Syntax;
         StrictModeFactory.prototype.typeMember = function () {
             return new TypeMemberSyntax(true);
         };
-        StrictModeFactory.prototype.constructSignature = function (newKeyword, parameterList, typeAnnotation) {
-            return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation, true);
+        StrictModeFactory.prototype.constructSignature = function (newKeyword, typeParameterList, parameterList, typeAnnotation) {
+            return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, true);
         };
         StrictModeFactory.prototype.functionSignature = function (identifier, questionToken, parameterList, typeAnnotation) {
             return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation, true);
@@ -15959,17 +15959,18 @@ var TypeMemberSyntax = (function (_super) {
 })(SyntaxNode);
 var ConstructSignatureSyntax = (function (_super) {
     __extends(ConstructSignatureSyntax, _super);
-    function ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation, parsedInStrictMode) {
+    function ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._newKeyword = newKeyword;
+        this._typeParameterList = typeParameterList;
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
     }
     ConstructSignatureSyntax.create = function create(newKeyword, parameterList) {
-        return new ConstructSignatureSyntax(newKeyword, parameterList, null, false);
+        return new ConstructSignatureSyntax(newKeyword, null, parameterList, null, false);
     }
     ConstructSignatureSyntax.create1 = function create1() {
-        return new ConstructSignatureSyntax(Syntax.token(31 /* NewKeyword */ ), ParameterListSyntax.create1(), null, false);
+        return new ConstructSignatureSyntax(Syntax.token(31 /* NewKeyword */ ), null, ParameterListSyntax.create1(), null, false);
     }
     ConstructSignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitConstructSignature(this);
@@ -15981,6 +15982,9 @@ var ConstructSignatureSyntax = (function (_super) {
         var token = null;
         if(this._newKeyword.width() > 0) {
             return this._newKeyword;
+        }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
+            return token;
         }
         if((token = this._parameterList.firstToken()) !== null) {
             return token;
@@ -15998,6 +16002,9 @@ var ConstructSignatureSyntax = (function (_super) {
         if((token = this._parameterList.lastToken()) !== null) {
             return token;
         }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
+            return token;
+        }
         if(this._newKeyword.width() > 0) {
             return this._newKeyword;
         }
@@ -16008,10 +16015,16 @@ var ConstructSignatureSyntax = (function (_super) {
             array.splice(index, 0, this._typeAnnotation);
         }
         array.splice(index, 0, this._parameterList);
+        if(this._typeParameterList !== null) {
+            array.splice(index, 0, this._typeParameterList);
+        }
         array.splice(index, 0, this._newKeyword);
     };
     ConstructSignatureSyntax.prototype.newKeyword = function () {
         return this._newKeyword;
+    };
+    ConstructSignatureSyntax.prototype.typeParameterList = function () {
+        return this._typeParameterList;
     };
     ConstructSignatureSyntax.prototype.parameterList = function () {
         return this._parameterList;
@@ -16019,11 +16032,11 @@ var ConstructSignatureSyntax = (function (_super) {
     ConstructSignatureSyntax.prototype.typeAnnotation = function () {
         return this._typeAnnotation;
     };
-    ConstructSignatureSyntax.prototype.update = function (newKeyword, parameterList, typeAnnotation) {
-        if(this._newKeyword === newKeyword && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+    ConstructSignatureSyntax.prototype.update = function (newKeyword, typeParameterList, parameterList, typeAnnotation) {
+        if(this._newKeyword === newKeyword && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
             return this;
         }
-        return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation, false);
+        return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, false);
     };
     ConstructSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -16032,16 +16045,22 @@ var ConstructSignatureSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     ConstructSignatureSyntax.prototype.withNewKeyword = function (newKeyword) {
-        return this.update(newKeyword, this._parameterList, this._typeAnnotation);
+        return this.update(newKeyword, this._typeParameterList, this._parameterList, this._typeAnnotation);
+    };
+    ConstructSignatureSyntax.prototype.withTypeParameterList = function (typeParameterList) {
+        return this.update(this._newKeyword, typeParameterList, this._parameterList, this._typeAnnotation);
     };
     ConstructSignatureSyntax.prototype.withParameterList = function (parameterList) {
-        return this.update(this._newKeyword, parameterList, this._typeAnnotation);
+        return this.update(this._newKeyword, this._typeParameterList, parameterList, this._typeAnnotation);
     };
     ConstructSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
-        return this.update(this._newKeyword, this._parameterList, typeAnnotation);
+        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, typeAnnotation);
     };
     ConstructSignatureSyntax.prototype.collectTextElements = function (elements) {
         (this._newKeyword).collectTextElements(elements);
+        if(this._typeParameterList !== null) {
+            (this._typeParameterList).collectTextElements(elements);
+        }
         (this._parameterList).collectTextElements(elements);
         if(this._typeAnnotation !== null) {
             (this._typeAnnotation).collectTextElements(elements);
@@ -16060,6 +16079,13 @@ var ConstructSignatureSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
@@ -16086,6 +16112,14 @@ var ConstructSignatureSyntax = (function (_super) {
         }
         position -= childWidth;
         fullStart += childWidth;
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if(position < childWidth) {
+                return (this._typeParameterList).findTokenInternal(position, fullStart);
+            }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
             return (this._parameterList).findTokenInternal(position, fullStart);
@@ -16114,6 +16148,9 @@ var ConstructSignatureSyntax = (function (_super) {
         }
         var other = node;
         if(!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) {
+            return false;
+        }
+        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
             return false;
         }
         if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
@@ -25966,6 +26003,7 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitConstructSignature = function (node) {
         this.visitToken(node.newKeyword());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     };
@@ -28756,7 +28794,7 @@ var Parser;
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
-            return this.factory.constructSignature(newKeyword, parameterList, typeAnnotation);
+            return this.factory.constructSignature(newKeyword, null, parameterList, typeAnnotation);
         };
         ParserImpl.prototype.parseIndexSignature = function () {
             var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );

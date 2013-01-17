@@ -290,6 +290,7 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitConstructSignature(node: ConstructSignatureSyntax): void {
         this.visitToken(node.newKeyword());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     }

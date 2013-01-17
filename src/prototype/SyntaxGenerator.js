@@ -916,42 +916,48 @@ var SyntaxKind;
     SyntaxKind.VariableDeclaration = 221;
     SyntaxKind._map[222] = "VariableDeclarator";
     SyntaxKind.VariableDeclarator = 222;
-    SyntaxKind._map[223] = "ParameterList";
-    SyntaxKind.ParameterList = 223;
-    SyntaxKind._map[224] = "ArgumentList";
-    SyntaxKind.ArgumentList = 224;
+    SyntaxKind._map[223] = "ArgumentList";
+    SyntaxKind.ArgumentList = 223;
+    SyntaxKind._map[224] = "ParameterList";
+    SyntaxKind.ParameterList = 224;
     SyntaxKind._map[225] = "TypeArgumentList";
     SyntaxKind.TypeArgumentList = 225;
-    SyntaxKind._map[226] = "ImplementsClause";
-    SyntaxKind.ImplementsClause = 226;
-    SyntaxKind._map[227] = "ExtendsClause";
-    SyntaxKind.ExtendsClause = 227;
-    SyntaxKind._map[228] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 228;
-    SyntaxKind._map[229] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 229;
-    SyntaxKind._map[230] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 230;
-    SyntaxKind._map[231] = "ElseClause";
-    SyntaxKind.ElseClause = 231;
-    SyntaxKind._map[232] = "CatchClause";
-    SyntaxKind.CatchClause = 232;
-    SyntaxKind._map[233] = "FinallyClause";
-    SyntaxKind.FinallyClause = 233;
-    SyntaxKind._map[234] = "Parameter";
-    SyntaxKind.Parameter = 234;
-    SyntaxKind._map[235] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 235;
-    SyntaxKind._map[236] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 236;
-    SyntaxKind._map[237] = "ExternalModuleReference";
-    SyntaxKind.ExternalModuleReference = 237;
-    SyntaxKind._map[238] = "ModuleNameModuleReference";
-    SyntaxKind.ModuleNameModuleReference = 238;
-    SyntaxKind._map[239] = "GetAccessorPropertyAssignment";
-    SyntaxKind.GetAccessorPropertyAssignment = 239;
-    SyntaxKind._map[240] = "SetAccessorPropertyAssignment";
-    SyntaxKind.SetAccessorPropertyAssignment = 240;
+    SyntaxKind._map[226] = "TypeParameterList";
+    SyntaxKind.TypeParameterList = 226;
+    SyntaxKind._map[227] = "ImplementsClause";
+    SyntaxKind.ImplementsClause = 227;
+    SyntaxKind._map[228] = "ExtendsClause";
+    SyntaxKind.ExtendsClause = 228;
+    SyntaxKind._map[229] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 229;
+    SyntaxKind._map[230] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 230;
+    SyntaxKind._map[231] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 231;
+    SyntaxKind._map[232] = "ElseClause";
+    SyntaxKind.ElseClause = 232;
+    SyntaxKind._map[233] = "CatchClause";
+    SyntaxKind.CatchClause = 233;
+    SyntaxKind._map[234] = "FinallyClause";
+    SyntaxKind.FinallyClause = 234;
+    SyntaxKind._map[235] = "TypeParameter";
+    SyntaxKind.TypeParameter = 235;
+    SyntaxKind._map[236] = "Constraint";
+    SyntaxKind.Constraint = 236;
+    SyntaxKind._map[237] = "Parameter";
+    SyntaxKind.Parameter = 237;
+    SyntaxKind._map[238] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 238;
+    SyntaxKind._map[239] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 239;
+    SyntaxKind._map[240] = "ExternalModuleReference";
+    SyntaxKind.ExternalModuleReference = 240;
+    SyntaxKind._map[241] = "ModuleNameModuleReference";
+    SyntaxKind.ModuleNameModuleReference = 241;
+    SyntaxKind._map[242] = "GetAccessorPropertyAssignment";
+    SyntaxKind.GetAccessorPropertyAssignment = 242;
+    SyntaxKind._map[243] = "SetAccessorPropertyAssignment";
+    SyntaxKind.SetAccessorPropertyAssignment = 243;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -2350,6 +2356,11 @@ var definitions = [
             {
                 name: 'newKeyword',
                 isToken: true
+            }, 
+            {
+                name: 'typeParameterList',
+                type: 'TypeParameterListSyntax',
+                isOptional: true
             }, 
             {
                 name: 'parameterList',

@@ -6944,27 +6944,30 @@ class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
 class ConstructSignatureSyntax extends TypeMemberSyntax {
     private _newKeyword: ISyntaxToken;
+    private _typeParameterList: TypeParameterListSyntax;
     private _parameterList: ParameterListSyntax;
     private _typeAnnotation: TypeAnnotationSyntax;
 
     constructor(newKeyword: ISyntaxToken,
+                typeParameterList: TypeParameterListSyntax,
                 parameterList: ParameterListSyntax,
                 typeAnnotation: TypeAnnotationSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
         this._newKeyword = newKeyword;
+        this._typeParameterList = typeParameterList;
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
     }
 
     public static create(newKeyword: ISyntaxToken,
                          parameterList: ParameterListSyntax): ConstructSignatureSyntax {
-        return new ConstructSignatureSyntax(newKeyword, parameterList, null, /*parsedInStrictMode:*/ false);
+        return new ConstructSignatureSyntax(newKeyword, null, parameterList, null, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(): ConstructSignatureSyntax {
-        return new ConstructSignatureSyntax(Syntax.token(SyntaxKind.NewKeyword), ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
+        return new ConstructSignatureSyntax(Syntax.token(SyntaxKind.NewKeyword), null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -6978,6 +6981,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
         if ((token = this._parameterList.firstToken()) !== null) { return token; }
         if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
         return null;
@@ -6987,6 +6991,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         var token = null;
         if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
         if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
         return null;
     }
@@ -6994,11 +6999,16 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
         if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
         array.splice(index, 0, this._parameterList);
+        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
         array.splice(index, 0, this._newKeyword);
     }
 
     public newKeyword(): ISyntaxToken {
         return this._newKeyword;
+    }
+
+    public typeParameterList(): TypeParameterListSyntax {
+        return this._typeParameterList;
     }
 
     public parameterList(): ParameterListSyntax {
@@ -7010,13 +7020,14 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     }
 
     public update(newKeyword: ISyntaxToken,
+                  typeParameterList: TypeParameterListSyntax,
                   parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
-        if (this._newKeyword === newKeyword && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+        if (this._newKeyword === newKeyword && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
             return this;
         }
 
-        return new ConstructSignatureSyntax(newKeyword, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructSignatureSyntax {
@@ -7028,19 +7039,24 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ConstructSignatureSyntax {
-        return this.update(newKeyword, this._parameterList, this._typeAnnotation);
+        return this.update(newKeyword, this._typeParameterList, this._parameterList, this._typeAnnotation);
+    }
+
+    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): ConstructSignatureSyntax {
+        return this.update(this._newKeyword, typeParameterList, this._parameterList, this._typeAnnotation);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): ConstructSignatureSyntax {
-        return this.update(this._newKeyword, parameterList, this._typeAnnotation);
+        return this.update(this._newKeyword, this._typeParameterList, parameterList, this._typeAnnotation);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
-        return this.update(this._newKeyword, this._parameterList, typeAnnotation);
+        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, typeAnnotation);
     }
 
     private collectTextElements(elements: string[]): void {
         (<any>this._newKeyword).collectTextElements(elements);
+        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
         (<any>this._parameterList).collectTextElements(elements);
         if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
@@ -7060,6 +7076,14 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
 
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
@@ -7090,6 +7114,13 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         position -= childWidth;
         fullStart += childWidth;
 
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
         childWidth = this._parameterList.fullWidth();
         if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
@@ -7111,6 +7142,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         if (this.kind() !== node.kind()) { return false; }
         var other = <ConstructSignatureSyntax>node;
         if (!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
         return true;

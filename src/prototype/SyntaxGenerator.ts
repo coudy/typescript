@@ -467,6 +467,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'TypeMemberSyntax',
         children: [
             <any>{ name: 'newKeyword', isToken: true },
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
         ],

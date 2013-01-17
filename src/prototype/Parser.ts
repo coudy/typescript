@@ -2297,7 +2297,7 @@ module Parser {
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return this.factory.constructSignature(newKeyword, parameterList, typeAnnotation);
+            return this.factory.constructSignature(newKeyword, null, parameterList, typeAnnotation);
         }
 
         private parseIndexSignature(): IndexSignatureSyntax {
