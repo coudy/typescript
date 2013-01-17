@@ -12,9 +12,6 @@ module Syntax {
         var result: any = {};
 
         result.kind = (<any>SyntaxKind)._map[token.kind()];
-        if (result.kind === "IdentifierName") {
-            result.kind = "IdentifierNameToken";
-        }
 
         result.width = token.width();
         if (token.fullWidth() !== token.width()) {

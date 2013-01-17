@@ -8064,9 +8064,6 @@ var Syntax;
         var result = {
         };
         result.kind = (SyntaxKind)._map[token.kind()];
-        if(result.kind === "IdentifierName") {
-            result.kind = "IdentifierNameToken";
-        }
         result.width = token.width();
         if(token.fullWidth() !== token.width()) {
             result.fullWidth = token.fullWidth();
