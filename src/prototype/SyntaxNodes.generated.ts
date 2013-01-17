@@ -698,6 +698,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
     private _declareKeyword: ISyntaxToken;
     private _classKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
+    private _typeParameterList: TypeParameterListSyntax;
     private _extendsClause: ExtendsClauseSyntax;
     private _implementsClause: ImplementsClauseSyntax;
     private _openBraceToken: ISyntaxToken;
@@ -708,6 +709,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
                 declareKeyword: ISyntaxToken,
                 classKeyword: ISyntaxToken,
                 identifier: ISyntaxToken,
+                typeParameterList: TypeParameterListSyntax,
                 extendsClause: ExtendsClauseSyntax,
                 implementsClause: ImplementsClauseSyntax,
                 openBraceToken: ISyntaxToken,
@@ -720,6 +722,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         this._declareKeyword = declareKeyword;
         this._classKeyword = classKeyword;
         this._identifier = identifier;
+        this._typeParameterList = typeParameterList;
         this._extendsClause = extendsClause;
         this._implementsClause = implementsClause;
         this._openBraceToken = openBraceToken;
@@ -731,11 +734,11 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
                          identifier: ISyntaxToken,
                          openBraceToken: ISyntaxToken,
                          closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken): ClassDeclarationSyntax {
-        return new ClassDeclarationSyntax(null, null, Syntax.token(SyntaxKind.ClassKeyword), identifier, null, null, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
+        return new ClassDeclarationSyntax(null, null, Syntax.token(SyntaxKind.ClassKeyword), identifier, null, null, null, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -756,6 +759,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
         if (this._classKeyword.width() > 0) { return this._classKeyword; }
         if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
         if (this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) { return token; }
         if (this._implementsClause !== null && (token = this._implementsClause.firstToken()) !== null) { return token; }
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
@@ -771,6 +775,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
         if (this._implementsClause !== null && (token = this._implementsClause.lastToken()) !== null) { return token; }
         if (this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) { return token; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
         if (this._identifier.width() > 0) { return this._identifier; }
         if (this._classKeyword.width() > 0) { return this._classKeyword; }
         if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
@@ -784,6 +789,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         array.splice(index, 0, this._openBraceToken);
         if (this._implementsClause !== null) { array.splice(index, 0, this._implementsClause); }
         if (this._extendsClause !== null) { array.splice(index, 0, this._extendsClause); }
+        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
         array.splice(index, 0, this._identifier);
         array.splice(index, 0, this._classKeyword);
         if (this._declareKeyword !== null) { array.splice(index, 0, this._declareKeyword); }
@@ -804,6 +810,10 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
 
     public identifier(): ISyntaxToken {
         return this._identifier;
+    }
+
+    public typeParameterList(): TypeParameterListSyntax {
+        return this._typeParameterList;
     }
 
     public extendsClause(): ExtendsClauseSyntax {
@@ -830,16 +840,17 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
                   declareKeyword: ISyntaxToken,
                   classKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
+                  typeParameterList: TypeParameterListSyntax,
                   extendsClause: ExtendsClauseSyntax,
                   implementsClause: ImplementsClauseSyntax,
                   openBraceToken: ISyntaxToken,
                   classElements: ISyntaxList,
                   closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._classKeyword === classKeyword && this._identifier === identifier && this._extendsClause === extendsClause && this._implementsClause === implementsClause && this._openBraceToken === openBraceToken && this._classElements === classElements && this._closeBraceToken === closeBraceToken) {
+        if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._classKeyword === classKeyword && this._identifier === identifier && this._typeParameterList === typeParameterList && this._extendsClause === extendsClause && this._implementsClause === implementsClause && this._openBraceToken === openBraceToken && this._classElements === classElements && this._closeBraceToken === closeBraceToken) {
             return this;
         }
 
-        return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassDeclarationSyntax {
@@ -851,35 +862,39 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     }
 
     public withDeclareKeyword(declareKeyword: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     }
 
     public withClassKeyword(classKeyword: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    }
+
+    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): ClassDeclarationSyntax {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     }
 
     public withExtendsClause(extendsClause: ExtendsClauseSyntax): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     }
 
     public withImplementsClause(implementsClause: ImplementsClauseSyntax): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, openBraceToken, this._classElements, this._closeBraceToken);
     }
 
     public withClassElements(classElements: ISyntaxList): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
     }
 
     public withClassElement(classElement: IClassElementSyntax): ClassDeclarationSyntax {
@@ -887,7 +902,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
     }
 
     private collectTextElements(elements: string[]): void {
@@ -895,6 +910,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
         (<any>this._classKeyword).collectTextElements(elements);
         (<any>this._identifier).collectTextElements(elements);
+        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
         if (this._extendsClause !== null) { (<any>this._extendsClause).collectTextElements(elements); }
         if (this._implementsClause !== null) { (<any>this._implementsClause).collectTextElements(elements); }
         (<any>this._openBraceToken).collectTextElements(elements);
@@ -936,6 +952,14 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
 
         if (this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
@@ -1003,6 +1027,13 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         position -= childWidth;
         fullStart += childWidth;
 
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
         if (this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             if (position < childWidth) { return (<any>this._extendsClause).findTokenInternal(position, fullStart); }
@@ -1044,6 +1075,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         if (!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._classKeyword, other._classKeyword)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._implementsClause, other._implementsClause)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
@@ -1057,12 +1089,14 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     private _exportKeyword: ISyntaxToken;
     private _interfaceKeyword: ISyntaxToken;
     private _identifier: ISyntaxToken;
+    private _typeParameterList: TypeParameterListSyntax;
     private _extendsClause: ExtendsClauseSyntax;
     private _body: ObjectTypeSyntax;
 
     constructor(exportKeyword: ISyntaxToken,
                 interfaceKeyword: ISyntaxToken,
                 identifier: ISyntaxToken,
+                typeParameterList: TypeParameterListSyntax,
                 extendsClause: ExtendsClauseSyntax,
                 body: ObjectTypeSyntax,
                 parsedInStrictMode: bool) {
@@ -1071,6 +1105,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         this._exportKeyword = exportKeyword;
         this._interfaceKeyword = interfaceKeyword;
         this._identifier = identifier;
+        this._typeParameterList = typeParameterList;
         this._extendsClause = extendsClause;
         this._body = body;
     }
@@ -1078,11 +1113,11 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     public static create(interfaceKeyword: ISyntaxToken,
                          identifier: ISyntaxToken,
                          body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, body, /*parsedInStrictMode:*/ false);
+        return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, null, body, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
-        return new InterfaceDeclarationSyntax(null, Syntax.token(SyntaxKind.InterfaceKeyword), identifier, null, ObjectTypeSyntax.create1(), /*parsedInStrictMode:*/ false);
+        return new InterfaceDeclarationSyntax(null, Syntax.token(SyntaxKind.InterfaceKeyword), identifier, null, null, ObjectTypeSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1102,6 +1137,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
         if (this._interfaceKeyword.width() > 0) { return this._interfaceKeyword; }
         if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
         if (this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) { return token; }
         if ((token = this._body.firstToken()) !== null) { return token; }
         return null;
@@ -1111,6 +1147,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         var token = null;
         if ((token = this._body.lastToken()) !== null) { return token; }
         if (this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) { return token; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
         if (this._identifier.width() > 0) { return this._identifier; }
         if (this._interfaceKeyword.width() > 0) { return this._interfaceKeyword; }
         if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
@@ -1120,6 +1157,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
         array.splice(index, 0, this._body);
         if (this._extendsClause !== null) { array.splice(index, 0, this._extendsClause); }
+        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
         array.splice(index, 0, this._identifier);
         array.splice(index, 0, this._interfaceKeyword);
         if (this._exportKeyword !== null) { array.splice(index, 0, this._exportKeyword); }
@@ -1137,6 +1175,10 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return this._identifier;
     }
 
+    public typeParameterList(): TypeParameterListSyntax {
+        return this._typeParameterList;
+    }
+
     public extendsClause(): ExtendsClauseSyntax {
         return this._extendsClause;
     }
@@ -1148,13 +1190,14 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     public update(exportKeyword: ISyntaxToken,
                   interfaceKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
+                  typeParameterList: TypeParameterListSyntax,
                   extendsClause: ExtendsClauseSyntax,
                   body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        if (this._exportKeyword === exportKeyword && this._interfaceKeyword === interfaceKeyword && this._identifier === identifier && this._extendsClause === extendsClause && this._body === body) {
+        if (this._exportKeyword === exportKeyword && this._interfaceKeyword === interfaceKeyword && this._identifier === identifier && this._typeParameterList === typeParameterList && this._extendsClause === extendsClause && this._body === body) {
             return this;
         }
 
-        return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body, /*parsedInStrictMode:*/ false);
+        return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): InterfaceDeclarationSyntax {
@@ -1166,29 +1209,34 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, this._body);
+        return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._body);
     }
 
     public withInterfaceKeyword(interfaceKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, interfaceKeyword, this._identifier, this._extendsClause, this._body);
+        return this.update(this._exportKeyword, interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._body);
     }
 
     public withIdentifier(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, this._interfaceKeyword, identifier, this._extendsClause, this._body);
+        return this.update(this._exportKeyword, this._interfaceKeyword, identifier, this._typeParameterList, this._extendsClause, this._body);
+    }
+
+    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): InterfaceDeclarationSyntax {
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, typeParameterList, this._extendsClause, this._body);
     }
 
     public withExtendsClause(extendsClause: ExtendsClauseSyntax): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, extendsClause, this._body);
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, extendsClause, this._body);
     }
 
     public withBody(body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, body);
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, body);
     }
 
     private collectTextElements(elements: string[]): void {
         if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
         (<any>this._interfaceKeyword).collectTextElements(elements);
         (<any>this._identifier).collectTextElements(elements);
+        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
         if (this._extendsClause !== null) { (<any>this._extendsClause).collectTextElements(elements); }
         (<any>this._body).collectTextElements(elements);
     }
@@ -1220,6 +1268,14 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
 
         if (this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
@@ -1262,6 +1318,13 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         position -= childWidth;
         fullStart += childWidth;
 
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
         if (this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             if (position < childWidth) { return (<any>this._extendsClause).findTokenInternal(position, fullStart); }
@@ -1285,6 +1348,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         if (!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._interfaceKeyword, other._interfaceKeyword)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._body, other._body)) { return false; }
         return true;
@@ -4314,11 +4378,13 @@ class TypeArgumentListSyntax extends SyntaxNode {
 
 class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private _newKeyword: ISyntaxToken;
+    private _typeParameterList: TypeParameterListSyntax;
     private _parameterList: ParameterListSyntax;
     private _equalsGreaterThanToken: ISyntaxToken;
     private _type: ITypeSyntax;
 
     constructor(newKeyword: ISyntaxToken,
+                typeParameterList: TypeParameterListSyntax,
                 parameterList: ParameterListSyntax,
                 equalsGreaterThanToken: ISyntaxToken,
                 type: ITypeSyntax,
@@ -4326,13 +4392,21 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         super(parsedInStrictMode);
 
         this._newKeyword = newKeyword;
+        this._typeParameterList = typeParameterList;
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
     }
 
+    public static create(newKeyword: ISyntaxToken,
+                         parameterList: ParameterListSyntax,
+                         equalsGreaterThanToken: ISyntaxToken,
+                         type: ITypeSyntax): ConstructorTypeSyntax {
+        return new ConstructorTypeSyntax(newKeyword, null, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+    }
+
     public static create1(type: ITypeSyntax): ConstructorTypeSyntax {
-        return new ConstructorTypeSyntax(Syntax.token(SyntaxKind.NewKeyword), ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
+        return new ConstructorTypeSyntax(Syntax.token(SyntaxKind.NewKeyword), null, ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4358,6 +4432,7 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
         if ((token = this._parameterList.firstToken()) !== null) { return token; }
         if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
         if ((token = this._type.firstToken()) !== null) { return token; }
@@ -4369,6 +4444,7 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         if ((token = this._type.lastToken()) !== null) { return token; }
         if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
         if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
         return null;
     }
@@ -4377,11 +4453,16 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         array.splice(index, 0, this._type);
         array.splice(index, 0, this._equalsGreaterThanToken);
         array.splice(index, 0, this._parameterList);
+        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
         array.splice(index, 0, this._newKeyword);
     }
 
     public newKeyword(): ISyntaxToken {
         return this._newKeyword;
+    }
+
+    public typeParameterList(): TypeParameterListSyntax {
+        return this._typeParameterList;
     }
 
     public parameterList(): ParameterListSyntax {
@@ -4397,14 +4478,15 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public update(newKeyword: ISyntaxToken,
+                  typeParameterList: TypeParameterListSyntax,
                   parameterList: ParameterListSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
                   type: ITypeSyntax): ConstructorTypeSyntax {
-        if (this._newKeyword === newKeyword && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
+        if (this._newKeyword === newKeyword && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
             return this;
         }
 
-        return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+        return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructorTypeSyntax {
@@ -4416,23 +4498,28 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ConstructorTypeSyntax {
-        return this.update(newKeyword, this._parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(newKeyword, this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
+    }
+
+    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): ConstructorTypeSyntax {
+        return this.update(this._newKeyword, typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): ConstructorTypeSyntax {
-        return this.update(this._newKeyword, parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(this._newKeyword, this._typeParameterList, parameterList, this._equalsGreaterThanToken, this._type);
     }
 
     public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): ConstructorTypeSyntax {
-        return this.update(this._newKeyword, this._parameterList, equalsGreaterThanToken, this._type);
+        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, equalsGreaterThanToken, this._type);
     }
 
     public withType(type: ITypeSyntax): ConstructorTypeSyntax {
-        return this.update(this._newKeyword, this._parameterList, this._equalsGreaterThanToken, type);
+        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
     }
 
     private collectTextElements(elements: string[]): void {
         (<any>this._newKeyword).collectTextElements(elements);
+        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
         (<any>this._parameterList).collectTextElements(elements);
         (<any>this._equalsGreaterThanToken).collectTextElements(elements);
         (<any>this._type).collectTextElements(elements);
@@ -4453,6 +4540,14 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
 
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
@@ -4486,6 +4581,13 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         position -= childWidth;
         fullStart += childWidth;
 
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
         childWidth = this._parameterList.fullWidth();
         if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
@@ -4510,6 +4612,7 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         if (this.kind() !== node.kind()) { return false; }
         var other = <ConstructorTypeSyntax>node;
         if (!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
@@ -4518,23 +4621,32 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 }
 
 class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
+    private _typeParameterList: TypeParameterListSyntax;
     private _parameterList: ParameterListSyntax;
     private _equalsGreaterThanToken: ISyntaxToken;
     private _type: ITypeSyntax;
 
-    constructor(parameterList: ParameterListSyntax,
+    constructor(typeParameterList: TypeParameterListSyntax,
+                parameterList: ParameterListSyntax,
                 equalsGreaterThanToken: ISyntaxToken,
                 type: ITypeSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
+        this._typeParameterList = typeParameterList;
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
     }
 
+    public static create(parameterList: ParameterListSyntax,
+                         equalsGreaterThanToken: ISyntaxToken,
+                         type: ITypeSyntax): FunctionTypeSyntax {
+        return new FunctionTypeSyntax(null, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+    }
+
     public static create1(type: ITypeSyntax): FunctionTypeSyntax {
-        return new FunctionTypeSyntax(ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
+        return new FunctionTypeSyntax(null, ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4559,6 +4671,7 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     public firstToken(): ISyntaxToken {
         var token = null;
+        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
         if ((token = this._parameterList.firstToken()) !== null) { return token; }
         if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
         if ((token = this._type.firstToken()) !== null) { return token; }
@@ -4570,6 +4683,7 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         if ((token = this._type.lastToken()) !== null) { return token; }
         if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
         if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -4577,6 +4691,11 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         array.splice(index, 0, this._type);
         array.splice(index, 0, this._equalsGreaterThanToken);
         array.splice(index, 0, this._parameterList);
+        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
+    }
+
+    public typeParameterList(): TypeParameterListSyntax {
+        return this._typeParameterList;
     }
 
     public parameterList(): ParameterListSyntax {
@@ -4591,14 +4710,15 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this._type;
     }
 
-    public update(parameterList: ParameterListSyntax,
+    public update(typeParameterList: TypeParameterListSyntax,
+                  parameterList: ParameterListSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
                   type: ITypeSyntax): FunctionTypeSyntax {
-        if (this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
+        if (this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
             return this;
         }
 
-        return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+        return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionTypeSyntax {
@@ -4609,19 +4729,24 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return <FunctionTypeSyntax>super.withTrailingTrivia(trivia);
     }
 
+    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): FunctionTypeSyntax {
+        return this.update(typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
+    }
+
     public withParameterList(parameterList: ParameterListSyntax): FunctionTypeSyntax {
-        return this.update(parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(this._typeParameterList, parameterList, this._equalsGreaterThanToken, this._type);
     }
 
     public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): FunctionTypeSyntax {
-        return this.update(this._parameterList, equalsGreaterThanToken, this._type);
+        return this.update(this._typeParameterList, this._parameterList, equalsGreaterThanToken, this._type);
     }
 
     public withType(type: ITypeSyntax): FunctionTypeSyntax {
-        return this.update(this._parameterList, this._equalsGreaterThanToken, type);
+        return this.update(this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
     }
 
     private collectTextElements(elements: string[]): void {
+        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
         (<any>this._parameterList).collectTextElements(elements);
         (<any>this._equalsGreaterThanToken).collectTextElements(elements);
         (<any>this._type).collectTextElements(elements);
@@ -4637,6 +4762,14 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
         var hasRegularExpressionToken = false;
+
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
 
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
@@ -4665,6 +4798,13 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
         childWidth = this._parameterList.fullWidth();
         if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
@@ -4688,6 +4828,7 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         if (node === null) { return false; }
         if (this.kind() !== node.kind()) { return false; }
         var other = <FunctionTypeSyntax>node;
+        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) { return false; }
         if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
@@ -5658,11 +5799,11 @@ class ParameterSyntax extends SyntaxNode {
 class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _dotToken: ISyntaxToken;
-    private _identifierName: ISyntaxToken;
+    private _identifierName: ISimpleNameSyntax;
 
     constructor(expression: IExpressionSyntax,
                 dotToken: ISyntaxToken,
-                identifierName: ISyntaxToken,
+                identifierName: ISimpleNameSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
@@ -5672,7 +5813,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     }
 
     public static create1(expression: IExpressionSyntax,
-                          identifierName: ISyntaxToken): MemberAccessExpressionSyntax {
+                          identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
         return new MemberAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.DotToken), identifierName, /*parsedInStrictMode:*/ false);
     }
 
@@ -5696,13 +5837,13 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         var token = null;
         if ((token = this._expression.firstToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
-        if (this._identifierName.width() > 0) { return this._identifierName; }
+        if ((token = this._identifierName.firstToken()) !== null) { return token; }
         return null;
     }
 
     public lastToken(): ISyntaxToken {
         var token = null;
-        if (this._identifierName.width() > 0) { return this._identifierName; }
+        if ((token = this._identifierName.lastToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
         if ((token = this._expression.lastToken()) !== null) { return token; }
         return null;
@@ -5722,13 +5863,13 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this._dotToken;
     }
 
-    public identifierName(): ISyntaxToken {
+    public identifierName(): ISimpleNameSyntax {
         return this._identifierName;
     }
 
     public update(expression: IExpressionSyntax,
                   dotToken: ISyntaxToken,
-                  identifierName: ISyntaxToken): MemberAccessExpressionSyntax {
+                  identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
         if (this._expression === expression && this._dotToken === dotToken && this._identifierName === identifierName) {
             return this;
         }
@@ -5752,7 +5893,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this._expression, dotToken, this._identifierName);
     }
 
-    public withIdentifierName(identifierName: ISyntaxToken): MemberAccessExpressionSyntax {
+    public withIdentifierName(identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
         return this.update(this._expression, this._dotToken, identifierName);
     }
 
@@ -5764,6 +5905,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this._identifierName.isTypeScriptSpecific()) { return true; }
         return false;
     }
 
@@ -5788,7 +5930,8 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         childWidth = this._identifierName.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifierName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        hasZeroWidthToken = hasZeroWidthToken || this._identifierName.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._identifierName.hasRegularExpressionToken();
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -5811,7 +5954,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         fullStart += childWidth;
 
         childWidth = this._identifierName.fullWidth();
-        if (position < childWidth) { return { token: this._identifierName, fullStart: fullStart }; }
+        if (position < childWidth) { return (<any>this._identifierName).findTokenInternal(position, fullStart); }
         position -= childWidth;
         fullStart += childWidth;
 
@@ -5825,7 +5968,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         var other = <MemberAccessExpressionSyntax>node;
         if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifierName, other._identifierName)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._identifierName, other._identifierName)) { return false; }
         return true;
     }
 }

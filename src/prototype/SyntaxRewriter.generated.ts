@@ -93,6 +93,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()),
             this.visitToken(node.classKeyword()),
             this.visitToken(node.identifier()),
+            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
             node.extendsClause() === null ? null : <ExtendsClauseSyntax>this.visitNode(node.extendsClause()),
             node.implementsClause() === null ? null : <ImplementsClauseSyntax>this.visitNode(node.implementsClause()),
             this.visitToken(node.openBraceToken()),
@@ -105,6 +106,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()),
             this.visitToken(node.interfaceKeyword()),
             this.visitToken(node.identifier()),
+            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
             node.extendsClause() === null ? null : <ExtendsClauseSyntax>this.visitNode(node.extendsClause()),
             <ObjectTypeSyntax>this.visitNode(node.body()));
     }
@@ -232,6 +234,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
     public visitConstructorType(node: ConstructorTypeSyntax): any {
         return node.update(
             this.visitToken(node.newKeyword()),
+            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
             <ParameterListSyntax>this.visitNode(node.parameterList()),
             this.visitToken(node.equalsGreaterThanToken()),
             <ITypeSyntax>this.visitNodeOrToken(node.type()));
@@ -239,6 +242,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
 
     public visitFunctionType(node: FunctionTypeSyntax): any {
         return node.update(
+            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
             <ParameterListSyntax>this.visitNode(node.parameterList()),
             this.visitToken(node.equalsGreaterThanToken()),
             <ITypeSyntax>this.visitNodeOrToken(node.type()));
@@ -285,7 +289,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
         return node.update(
             <IExpressionSyntax>this.visitNodeOrToken(node.expression()),
             this.visitToken(node.dotToken()),
-            this.visitToken(node.identifierName()));
+            <ISimpleNameSyntax>this.visitNodeOrToken(node.identifierName()));
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): any {

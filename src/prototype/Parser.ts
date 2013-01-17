@@ -1880,7 +1880,7 @@ module Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
             return this.factory.classDeclaration(
-                exportKeyword, declareKeyword, classKeyword, identifier, extendsClause,
+                exportKeyword, declareKeyword, classKeyword, identifier, null, extendsClause,
                 implementsClause, openBraceToken, classElements, closeBraceToken);
         }
 
@@ -2236,7 +2236,8 @@ module Parser {
             }
 
             var objectType = this.parseObjectType();
-            return this.factory.interfaceDeclaration(exportKeyword, interfaceKeyword, identifier, extendsClause, objectType);
+            return this.factory.interfaceDeclaration(
+                exportKeyword, interfaceKeyword, identifier, null, extendsClause, objectType);
         }
 
         private parseObjectType(): ObjectTypeSyntax {
@@ -4089,7 +4090,7 @@ module Parser {
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var returnType = this.parseType(/*requireCompleteArraySuffix:*/ false);
 
-            return this.factory.functionType(parameterList, equalsGreaterThanToken, returnType);
+            return this.factory.functionType(null, parameterList, equalsGreaterThanToken, returnType);
         }
 
         private parseConstructorType(): ConstructorTypeSyntax {
@@ -4100,7 +4101,7 @@ module Parser {
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var type = this.parseType(/*requreCompleteArraySuffix:*/ false);
 
-            return this.factory.constructorType(newKeyword, parameterList, equalsGreaterThanToken, type);
+            return this.factory.constructorType(newKeyword, null, parameterList, equalsGreaterThanToken, type);
         }
 
         private isTypeLiteral(allowFunctionType: bool, allowConstructorType: bool): bool {

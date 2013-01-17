@@ -1162,10 +1162,15 @@ module Emitter {
         private visitIdentifierName(token: ISyntaxToken): INameSyntax {
             // Check if a name token needs to become fully qualified.
             var parent = this.syntaxInformationMap.parent(token);
-            
+
             // We never qualify in a qualified name.  A qualified name only shows up in type 
             // contexts, and will be removed anyways.
             if (parent.kind() === SyntaxKind.QualifiedName) {
+                return token;
+            }
+
+            // Same issue for a generic name.
+            if (parent.kind() === SyntaxKind.GenericName) {
                 return token;
             }
 

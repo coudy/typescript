@@ -1375,11 +1375,11 @@ var SyntaxFacts;
 })(SyntaxFacts || (SyntaxFacts = {}));
 var argumentChecks = false;
 var interfaces = {
-    IMemberDeclarationSyntax: "IClassElementSyntax",
-    IStatementSyntax: "IModuleElementSyntax",
-    INameSyntax: "ITypeSyntax",
-    ITypeSyntax: "IUnaryExpressionSyntax",
-    IUnaryExpressionSyntax: "IExpressionSyntax"
+    IMemberDeclarationSyntax: 'IClassElementSyntax',
+    IStatementSyntax: 'IModuleElementSyntax',
+    INameSyntax: 'ITypeSyntax',
+    ITypeSyntax: 'IUnaryExpressionSyntax',
+    IUnaryExpressionSyntax: 'IExpressionSyntax'
 };
 var definitions = [
     {
@@ -1456,7 +1456,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -1499,8 +1499,13 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
+            }, 
+            {
+                name: 'typeParameterList',
+                type: 'TypeParameterListSyntax',
+                isOptional: true
             }, 
             {
                 name: 'extendsClause',
@@ -1519,7 +1524,7 @@ var definitions = [
             {
                 name: 'classElements',
                 isList: true,
-                elementType: "IClassElementSyntax"
+                elementType: 'IClassElementSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -1548,8 +1553,13 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
+            }, 
+            {
+                name: 'typeParameterList',
+                type: 'TypeParameterListSyntax',
+                isOptional: true
             }, 
             {
                 name: 'extendsClause',
@@ -1575,7 +1585,7 @@ var definitions = [
                 name: 'typeNames',
                 isSeparatedList: true,
                 requiresAtLeastOneItem: true,
-                elementType: "INameSyntax"
+                elementType: 'INameSyntax'
             }
         ],
         isTypeScriptSpecific: true
@@ -1592,7 +1602,7 @@ var definitions = [
                 name: 'typeNames',
                 isSeparatedList: true,
                 requiresAtLeastOneItem: true,
-                elementType: "INameSyntax"
+                elementType: 'INameSyntax'
             }
         ],
         isTypeScriptSpecific: true
@@ -1724,7 +1734,7 @@ var definitions = [
                 name: 'variableDeclarators',
                 isSeparatedList: true,
                 requiresAtLeastOneItem: true,
-                elementType: "VariableDeclaratorSyntax"
+                elementType: 'VariableDeclaratorSyntax'
             }
         ]
     }, 
@@ -1736,7 +1746,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -1781,12 +1791,12 @@ var definitions = [
                 name: 'operatorToken',
                 isToken: true,
                 tokenKinds: [
-                    "PlusPlusToken", 
-                    "MinusMinusToken", 
-                    "PlusToken", 
-                    "MinusToken", 
-                    "TildeToken", 
-                    "ExclamationToken"
+                    'PlusPlusToken', 
+                    'MinusMinusToken', 
+                    'PlusToken', 
+                    'MinusToken', 
+                    'TildeToken', 
+                    'ExclamationToken'
                 ]
             }, 
             {
@@ -1864,7 +1874,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -1951,7 +1961,7 @@ var definitions = [
             {
                 name: 'typeArguments',
                 isSeparatedList: true,
-                elementType: "ITypeSyntax"
+                elementType: 'ITypeSyntax'
             }, 
             {
                 name: 'greaterThanToken',
@@ -1970,6 +1980,11 @@ var definitions = [
             {
                 name: 'newKeyword',
                 isToken: true
+            }, 
+            {
+                name: 'typeParameterList',
+                type: 'TypeParameterListSyntax',
+                isOptional: true
             }, 
             {
                 name: 'parameterList',
@@ -1993,6 +2008,11 @@ var definitions = [
             'ITypeSyntax'
         ],
         children: [
+            {
+                name: 'typeParameterList',
+                type: 'TypeParameterListSyntax',
+                isOptional: true
+            }, 
             {
                 name: 'parameterList',
                 type: 'ParameterListSyntax'
@@ -2022,7 +2042,7 @@ var definitions = [
             {
                 name: 'typeMembers',
                 isSeparatedList: true,
-                elementType: "TypeMemberSyntax"
+                elementType: 'TypeMemberSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -2105,8 +2125,8 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "PublicKeyword", 
-                    "PrivateKeyword"
+                    'PublicKeyword', 
+                    'PrivateKeyword'
                 ],
                 isTypeScriptSpecific: true
             }, 
@@ -2114,7 +2134,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -2154,10 +2174,7 @@ var definitions = [
             }, 
             {
                 name: 'identifierName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
+                type: 'ISimpleNameSyntax'
             }
         ]
     }, 
@@ -2180,8 +2197,8 @@ var definitions = [
                 name: 'operatorToken',
                 isToken: true,
                 tokenKinds: [
-                    "PlusPlusToken", 
-                    "MinusMinusToken"
+                    'PlusPlusToken', 
+                    'MinusMinusToken'
                 ]
             }
         ]
@@ -2266,42 +2283,42 @@ var definitions = [
                 name: 'operatorToken',
                 isToken: true,
                 tokenKinds: [
-                    "AsteriskToken", 
-                    "SlashToken", 
-                    "PercentToken", 
-                    "PlusToken", 
-                    "MinusToken", 
-                    "LessThanLessThanToken", 
-                    "GreaterThanGreaterThanToken", 
-                    "GreaterThanGreaterThanGreaterThanToken", 
-                    "LessThanToken", 
-                    "GreaterThanToken", 
-                    "LessThanEqualsToken", 
-                    "GreaterThanEqualsToken", 
-                    "InstanceOfKeyword", 
-                    "InKeyword", 
-                    "EqualsEqualsToken", 
-                    "ExclamationEqualsToken", 
-                    "EqualsEqualsEqualsToken", 
-                    "ExclamationEqualsEqualsToken", 
-                    "AmpersandToken", 
-                    "CaretToken", 
-                    "BarToken", 
-                    "AmpersandAmpersandToken", 
-                    "BarBarToken", 
-                    "BarEqualsToken", 
-                    "AmpersandEqualsToken", 
-                    "CaretEqualsToken", 
-                    "LessThanLessThanEqualsToken", 
-                    "GreaterThanGreaterThanEqualsToken", 
-                    "GreaterThanGreaterThanGreaterThanEqualsToken", 
-                    "PlusEqualsToken", 
-                    "MinusEqualsToken", 
-                    "AsteriskEqualsToken", 
-                    "SlashEqualsToken", 
-                    "PercentEqualsToken", 
-                    "EqualsToken", 
-                    "CommaToken"
+                    'AsteriskToken', 
+                    'SlashToken', 
+                    'PercentToken', 
+                    'PlusToken', 
+                    'MinusToken', 
+                    'LessThanLessThanToken', 
+                    'GreaterThanGreaterThanToken', 
+                    'GreaterThanGreaterThanGreaterThanToken', 
+                    'LessThanToken', 
+                    'GreaterThanToken', 
+                    'LessThanEqualsToken', 
+                    'GreaterThanEqualsToken', 
+                    'InstanceOfKeyword', 
+                    'InKeyword', 
+                    'EqualsEqualsToken', 
+                    'ExclamationEqualsToken', 
+                    'EqualsEqualsEqualsToken', 
+                    'ExclamationEqualsEqualsToken', 
+                    'AmpersandToken', 
+                    'CaretToken', 
+                    'BarToken', 
+                    'AmpersandAmpersandToken', 
+                    'BarBarToken', 
+                    'BarEqualsToken', 
+                    'AmpersandEqualsToken', 
+                    'CaretEqualsToken', 
+                    'LessThanLessThanEqualsToken', 
+                    'GreaterThanGreaterThanEqualsToken', 
+                    'GreaterThanGreaterThanGreaterThanEqualsToken', 
+                    'PlusEqualsToken', 
+                    'MinusEqualsToken', 
+                    'AsteriskEqualsToken', 
+                    'SlashEqualsToken', 
+                    'PercentEqualsToken', 
+                    'EqualsToken', 
+                    'CommaToken'
                 ]
             }, 
             {
@@ -2382,7 +2399,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -2434,7 +2451,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -2461,7 +2478,7 @@ var definitions = [
             {
                 name: 'parameters',
                 isSeparatedList: true,
-                elementType: "ParameterSyntax"
+                elementType: 'ParameterSyntax'
             }, 
             {
                 name: 'closeParenToken',
@@ -2502,7 +2519,7 @@ var definitions = [
             {
                 name: 'typeArguments',
                 isSeparatedList: true,
-                elementType: "TypeParameterSyntax"
+                elementType: 'TypeParameterSyntax'
             }, 
             {
                 name: 'greaterThanToken',
@@ -2650,8 +2667,8 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "PublicKeyword", 
-                    "PrivateKeyword"
+                    'PublicKeyword', 
+                    'PrivateKeyword'
                 ]
             }, 
             {
@@ -2695,8 +2712,8 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "PublicKeyword", 
-                    "PrivateKeyword"
+                    'PublicKeyword', 
+                    'PrivateKeyword'
                 ]
             }, 
             {
@@ -2712,7 +2729,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -2740,8 +2757,8 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "PublicKeyword", 
-                    "PrivateKeyword"
+                    'PublicKeyword', 
+                    'PrivateKeyword'
                 ]
             }, 
             {
@@ -2757,7 +2774,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -2783,8 +2800,8 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "PublicKeyword", 
-                    "PrivateKeyword"
+                    'PublicKeyword', 
+                    'PrivateKeyword'
                 ]
             }, 
             {
@@ -2898,7 +2915,7 @@ var definitions = [
             {
                 name: 'switchClauses',
                 isList: true,
-                elementType: "SwitchClauseSyntax"
+                elementType: 'SwitchClauseSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -2973,7 +2990,7 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -2998,7 +3015,7 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -3048,7 +3065,7 @@ var definitions = [
                 name: 'firstSemicolonToken',
                 isToken: true,
                 tokenKinds: [
-                    "SemicolonToken"
+                    'SemicolonToken'
                 ]
             }, 
             {
@@ -3060,7 +3077,7 @@ var definitions = [
                 name: 'secondSemicolonToken',
                 isToken: true,
                 tokenKinds: [
-                    "SemicolonToken"
+                    'SemicolonToken'
                 ]
             }, 
             {
@@ -3193,7 +3210,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -3203,7 +3220,7 @@ var definitions = [
             {
                 name: 'variableDeclarators',
                 isSeparatedList: true,
-                elementType: "VariableDeclaratorSyntax"
+                elementType: 'VariableDeclaratorSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -3252,7 +3269,7 @@ var definitions = [
             {
                 name: 'propertyAssignments',
                 isSeparatedList: true,
-                elementType: "PropertyAssignmentSyntax"
+                elementType: 'PropertyAssignmentSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -3274,9 +3291,9 @@ var definitions = [
                 name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName", 
-                    "StringLiteral", 
-                    "NumericLiteral"
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
                 ]
             }, 
             {
@@ -3307,7 +3324,7 @@ var definitions = [
                 name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -3336,7 +3353,7 @@ var definitions = [
                 name: 'propertyName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -3347,7 +3364,7 @@ var definitions = [
                 name: 'parameterName',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -3376,7 +3393,7 @@ var definitions = [
                 isToken: true,
                 isOptional: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -3445,7 +3462,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {
@@ -3483,7 +3500,7 @@ var definitions = [
                 name: 'identifier',
                 isToken: true,
                 tokenKinds: [
-                    "IdentifierName"
+                    'IdentifierName'
                 ]
             }, 
             {

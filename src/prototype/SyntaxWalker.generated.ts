@@ -83,6 +83,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitOptionalToken(node.declareKeyword());
         this.visitToken(node.classKeyword());
         this.visitToken(node.identifier());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitOptionalNode(node.extendsClause());
         this.visitOptionalNode(node.implementsClause());
         this.visitToken(node.openBraceToken());
@@ -94,6 +95,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitOptionalToken(node.exportKeyword());
         this.visitToken(node.interfaceKeyword());
         this.visitToken(node.identifier());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitOptionalNode(node.extendsClause());
         this.visitNode(node.body());
     }
@@ -202,12 +204,14 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitConstructorType(node: ConstructorTypeSyntax): void {
         this.visitToken(node.newKeyword());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
         this.visitNodeOrToken(node.type());
     }
 
     public visitFunctionType(node: FunctionTypeSyntax): void {
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
         this.visitNodeOrToken(node.type());
@@ -248,7 +252,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): void {
         this.visitNodeOrToken(node.expression());
         this.visitToken(node.dotToken());
-        this.visitToken(node.identifierName());
+        this.visitNodeOrToken(node.identifierName());
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): void {

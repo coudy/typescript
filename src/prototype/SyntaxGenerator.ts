@@ -31,11 +31,11 @@ interface IMemberDefinition {
 }
 
 var interfaces = {
-    IMemberDeclarationSyntax: "IClassElementSyntax",
-    IStatementSyntax: "IModuleElementSyntax",
-    INameSyntax: "ITypeSyntax",
-    ITypeSyntax: "IUnaryExpressionSyntax",
-    IUnaryExpressionSyntax: "IExpressionSyntax"
+    IMemberDeclarationSyntax: 'IClassElementSyntax',
+    IStatementSyntax: 'IModuleElementSyntax',
+    INameSyntax: 'ITypeSyntax',
+    ITypeSyntax: 'IUnaryExpressionSyntax',
+    IUnaryExpressionSyntax: 'IExpressionSyntax'
 };
 
 var definitions:ITypeDefinition[] = [
@@ -80,7 +80,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['IModuleElementSyntax'],
         children: [
             <any>{ name: 'importKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'equalsToken', isToken: true },
             <any>{ name: 'moduleReference', type: 'ModuleReferenceSyntax' },
             <any>{ name: 'semicolonToken', isToken: true }
@@ -95,11 +95,12 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'exportKeyword', isToken: true, isOptional: true  },
             <any>{ name: 'declareKeyword', isToken: true, isOptional: true  },
             <any>{ name: 'classKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
             <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax', isOptional: true },
             <any>{ name: 'implementsClause', type: 'ImplementsClauseSyntax', isOptional: true },
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'classElements', isList: true, elementType: "IClassElementSyntax" },
+            <any>{ name: 'classElements', isList: true, elementType: 'IClassElementSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
@@ -111,7 +112,8 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'exportKeyword', isToken: true, isOptional: true  },
             <any>{ name: 'interfaceKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
             <any>{ name: 'extendsClause', type: 'ExtendsClauseSyntax', isOptional: true },
             <any>{ name: 'body', type: 'ObjectTypeSyntax' }
         ],
@@ -122,7 +124,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'extendsKeyword', isToken: true },
-            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: "INameSyntax" }
+            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'INameSyntax' }
         ],
         isTypeScriptSpecific: true
     },
@@ -131,7 +133,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'implementsKeyword', isToken: true },
-            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: "INameSyntax" }
+            <any>{ name: 'typeNames', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'INameSyntax' }
         ],
         isTypeScriptSpecific: true
     },
@@ -180,14 +182,14 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'varKeyword', isToken: true },
-            <any>{ name: 'variableDeclarators', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: "VariableDeclaratorSyntax" }
+            <any>{ name: 'variableDeclarators', isSeparatedList: true, requiresAtLeastOneItem: true, elementType: 'VariableDeclaratorSyntax' }
         ]
     },
     <any>{
         name: 'VariableDeclaratorSyntax',
         baseType: 'SyntaxNode',
         children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true },
             <any>{ name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true }
         ]
@@ -206,7 +208,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'kind', type: 'SyntaxKind' },
-            <any>{ name: 'operatorToken', isToken: true, tokenKinds: ["PlusPlusToken", "MinusMinusToken", "PlusToken", "MinusToken", "TildeToken", "ExclamationToken"] },
+            <any>{ name: 'operatorToken', isToken: true, tokenKinds: ['PlusPlusToken', 'MinusMinusToken', 'PlusToken', 'MinusToken', 'TildeToken', 'ExclamationToken'] },
             <any>{ name: 'operand', type: 'IUnaryExpressionSyntax' }
         ]
     },
@@ -248,7 +250,7 @@ var definitions:ITypeDefinition[] = [
         name: 'SimpleArrowFunctionExpressionSyntax',
         baseType: 'ArrowFunctionExpressionSyntax',
         children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'equalsGreaterThanToken', isToken: true },
             <any>{ name: 'body', type: 'ISyntaxNodeOrToken' }
         ],
@@ -292,7 +294,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
                 <any>{ name: 'lessThanToken', isToken: true },
-                <any>{ name: 'typeArguments', isSeparatedList: true, elementType: "ITypeSyntax" },
+                <any>{ name: 'typeArguments', isSeparatedList: true, elementType: 'ITypeSyntax' },
                 <any>{ name: 'greaterThanToken', isToken: true }
         ],
         isTypeScriptSpecific: true
@@ -303,6 +305,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['ITypeSyntax'],
         children: [
             <any>{ name: 'newKeyword', isToken: true },
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'equalsGreaterThanToken', isToken: true },
             <any>{ name: 'type', type: 'ITypeSyntax' }
@@ -314,6 +317,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['ITypeSyntax'],
         children: [
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'equalsGreaterThanToken', isToken: true },
             <any>{ name: 'type', type: 'ITypeSyntax' }
@@ -326,7 +330,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['ITypeSyntax'],
         children: [
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'typeMembers', isSeparatedList: true, elementType: "TypeMemberSyntax" },
+            <any>{ name: 'typeMembers', isSeparatedList: true, elementType: 'TypeMemberSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
@@ -366,8 +370,8 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'dotDotDotToken', isToken: true, isOptional: true, isTypeScriptSpecific: true },
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ["PublicKeyword", "PrivateKeyword"], isTypeScriptSpecific: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'], isTypeScriptSpecific: true },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true, isTypeScriptSpecific: true },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true },
             <any>{ name: 'equalsValueClause', type: 'EqualsValueClauseSyntax', isOptional: true, isTypeScriptSpecific: true }
@@ -380,7 +384,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'dotToken', isToken: true },
-            <any>{ name: 'identifierName', isToken: true, tokenKinds: ['IdentifierName'] }
+            <any>{ name: 'identifierName', type: 'ISimpleNameSyntax' }
         ]
     },
     <any>{
@@ -390,7 +394,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'kind', type: 'SyntaxKind' },
             <any>{ name: 'operand', type: 'IExpressionSyntax' },
-            <any>{ name: 'operatorToken', isToken: true, tokenKinds:["PlusPlusToken", "MinusMinusToken"] }
+            <any>{ name: 'operatorToken', isToken: true, tokenKinds:['PlusPlusToken', 'MinusMinusToken'] }
         ]
     },
     <any>{
@@ -430,15 +434,15 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'kind', type: 'SyntaxKind' },
             <any>{ name: 'left', type: 'IExpressionSyntax' },
             <any>{ name: 'operatorToken', isToken: true,
-                   tokenKinds:["AsteriskToken",  "SlashToken",  "PercentToken", "PlusToken", "MinusToken",  "LessThanLessThanToken",
-                               "GreaterThanGreaterThanToken", "GreaterThanGreaterThanGreaterThanToken", "LessThanToken",
-                               "GreaterThanToken", "LessThanEqualsToken", "GreaterThanEqualsToken", "InstanceOfKeyword",
-                               "InKeyword", "EqualsEqualsToken", "ExclamationEqualsToken", "EqualsEqualsEqualsToken",
-                               "ExclamationEqualsEqualsToken", "AmpersandToken", "CaretToken", "BarToken", "AmpersandAmpersandToken",
-                               "BarBarToken", "BarEqualsToken", "AmpersandEqualsToken", "CaretEqualsToken", "LessThanLessThanEqualsToken",
-                               "GreaterThanGreaterThanEqualsToken", "GreaterThanGreaterThanGreaterThanEqualsToken", "PlusEqualsToken",
-                               "MinusEqualsToken", "AsteriskEqualsToken", "SlashEqualsToken", "PercentEqualsToken", "EqualsToken",
-                               "CommaToken"] },
+                   tokenKinds:['AsteriskToken',  'SlashToken',  'PercentToken', 'PlusToken', 'MinusToken',  'LessThanLessThanToken',
+                               'GreaterThanGreaterThanToken', 'GreaterThanGreaterThanGreaterThanToken', 'LessThanToken',
+                               'GreaterThanToken', 'LessThanEqualsToken', 'GreaterThanEqualsToken', 'InstanceOfKeyword',
+                               'InKeyword', 'EqualsEqualsToken', 'ExclamationEqualsToken', 'EqualsEqualsEqualsToken',
+                               'ExclamationEqualsEqualsToken', 'AmpersandToken', 'CaretToken', 'BarToken', 'AmpersandAmpersandToken',
+                               'BarBarToken', 'BarEqualsToken', 'AmpersandEqualsToken', 'CaretEqualsToken', 'LessThanLessThanEqualsToken',
+                               'GreaterThanGreaterThanEqualsToken', 'GreaterThanGreaterThanGreaterThanEqualsToken', 'PlusEqualsToken',
+                               'MinusEqualsToken', 'AsteriskEqualsToken', 'SlashEqualsToken', 'PercentEqualsToken', 'EqualsToken',
+                               'CommaToken'] },
             <any>{ name: 'right', type: 'IExpressionSyntax' }
         ]
     },
@@ -477,7 +481,7 @@ var definitions:ITypeDefinition[] = [
         name: 'FunctionSignatureSyntax',
         baseType: 'TypeMemberSyntax',
         children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true, itTypeScriptSpecific: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
@@ -498,7 +502,7 @@ var definitions:ITypeDefinition[] = [
         name: 'PropertySignatureSyntax',
         baseType: 'TypeMemberSyntax',
         children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
         ],
@@ -509,7 +513,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'parameters', isSeparatedList: true, elementType: "ParameterSyntax" },
+            <any>{ name: 'parameters', isSeparatedList: true, elementType: 'ParameterSyntax' },
             <any>{ name: 'closeParenToken', isToken: true }
         ]
     },
@@ -527,7 +531,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'lessThanToken', isToken: true },
-            <any>{ name: 'typeArguments', isSeparatedList: true, elementType: "TypeParameterSyntax" },
+            <any>{ name: 'typeArguments', isSeparatedList: true, elementType: 'TypeParameterSyntax' },
             <any>{ name: 'greaterThanToken', isToken: true }
         ],
         isTypeScriptSpecific: true
@@ -597,7 +601,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IMemberDeclarationSyntax'],
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ["PublicKeyword", "PrivateKeyword"] },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
             <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'functionSignature', type: 'FunctionSignatureSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax', isOptional: true },
@@ -617,10 +621,10 @@ var definitions:ITypeDefinition[] = [
         name: 'GetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ["PublicKeyword", "PrivateKeyword"] },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
             <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'getKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
             <any>{ name: 'block', type: 'BlockSyntax' }
@@ -631,10 +635,10 @@ var definitions:ITypeDefinition[] = [
         name: 'SetMemberAccessorDeclarationSyntax',
         baseType: 'MemberAccessorDeclarationSyntax',
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ["PublicKeyword", "PrivateKeyword"] },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
             <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'setKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax' }
         ],
@@ -645,7 +649,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IMemberDeclarationSyntax'],
         children: [
-            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ["PublicKeyword", "PrivateKeyword"] },
+            <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
             <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
             <any>{ name: 'variableDeclarator', type: 'VariableDeclaratorSyntax' },
             <any>{ name: 'semicolonToken', isToken: true }
@@ -692,7 +696,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'switchClauses', isList: true, elementType: "SwitchClauseSyntax" },
+            <any>{ name: 'switchClauses', isList: true, elementType: 'SwitchClauseSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
         ]
     },
@@ -728,7 +732,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['IStatementSyntax'],
         children: [
             <any>{ name: 'breakKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, isOptional: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, isOptional: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'semicolonToken', isToken: true }
         ]
     },
@@ -738,7 +742,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['IStatementSyntax'],
         children: [
             <any>{ name: 'continueKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, isOptional: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, isOptional: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'semicolonToken', isToken: true }
         ]
     },
@@ -763,9 +767,9 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'variableDeclaration', type: 'VariableDeclarationSyntax', isOptional: true },
             <any>{ name: 'initializer', type: 'IExpressionSyntax', isOptional: true },
-            <any>{ name: 'firstSemicolonToken', isToken: true, tokenKinds: ["SemicolonToken"] },
+            <any>{ name: 'firstSemicolonToken', isToken: true, tokenKinds: ['SemicolonToken'] },
             <any>{ name: 'condition', type: 'IExpressionSyntax', isOptional: true },
-            <any>{ name: 'secondSemicolonToken', isToken: true, tokenKinds: ["SemicolonToken"] },
+            <any>{ name: 'secondSemicolonToken', isToken: true, tokenKinds: ['SemicolonToken'] },
             <any>{ name: 'incrementor', type: 'IExpressionSyntax', isOptional: true },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'statement', type: 'IStatementSyntax' }
@@ -815,9 +819,9 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'exportKeyword', isToken: true, isOptional: true },
             <any>{ name: 'enumKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'variableDeclarators', isSeparatedList: true, elementType: "VariableDeclaratorSyntax" },
+            <any>{ name: 'variableDeclarators', isSeparatedList: true, elementType: 'VariableDeclaratorSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
@@ -840,7 +844,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'propertyAssignments', isSeparatedList: true, elementType: "PropertyAssignmentSyntax" },
+            <any>{ name: 'propertyAssignments', isSeparatedList: true, elementType: 'PropertyAssignmentSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
         ]
     },
@@ -854,7 +858,7 @@ var definitions:ITypeDefinition[] = [
         name: 'SimplePropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
         children: [
-            <any>{ name: 'propertyName', isToken: true, tokenKinds: ["IdentifierName", "StringLiteral", "NumericLiteral"] },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
             <any>{ name: 'colonToken', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' }
         ]
@@ -870,7 +874,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'AccessorPropertyAssignmentSyntax',
         children: [
             <any>{ name: 'getKeyword', isToken: true },
-            <any>{ name: 'propertyName', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'block', type: 'BlockSyntax' }]
@@ -880,9 +884,9 @@ var definitions:ITypeDefinition[] = [
         baseType: 'AccessorPropertyAssignmentSyntax',
         children: [
             <any>{ name: 'setKeyword', isToken: true },
-            <any>{ name: 'propertyName', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'parameterName', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'parameterName', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'block', type: 'BlockSyntax' }]
     },
@@ -892,7 +896,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['IUnaryExpressionSyntax'],
         children: [
             <any>{ name: 'functionKeyword', isToken: true },
-            <any>{ name: 'identifier', isToken: true, isOptional: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, isOptional: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax' }]
     },
@@ -919,7 +923,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'catchKeyword', isToken: true },
             <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'block', type: 'BlockSyntax' }]
     },
@@ -935,7 +939,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IStatementSyntax'],
         children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ["IdentifierName"] },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'colonToken', isToken: true },
             <any>{ name: 'statement', type: 'IStatementSyntax' }]
     },

@@ -58,10 +58,10 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.importKeyword()), this.visitToken(node.identifier()), this.visitToken(node.equalsToken()), this.visitNode(node.moduleReference()), this.visitToken(node.semicolonToken()));
     };
     SyntaxRewriter.prototype.visitClassDeclaration = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.classKeyword()), this.visitToken(node.identifier()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), node.implementsClause() === null ? null : this.visitNode(node.implementsClause()), this.visitToken(node.openBraceToken()), this.visitList(node.classElements()), this.visitToken(node.closeBraceToken()));
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.classKeyword()), this.visitToken(node.identifier()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), node.implementsClause() === null ? null : this.visitNode(node.implementsClause()), this.visitToken(node.openBraceToken()), this.visitList(node.classElements()), this.visitToken(node.closeBraceToken()));
     };
     SyntaxRewriter.prototype.visitInterfaceDeclaration = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.interfaceKeyword()), this.visitToken(node.identifier()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), this.visitNode(node.body()));
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.interfaceKeyword()), this.visitToken(node.identifier()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), this.visitNode(node.body()));
     };
     SyntaxRewriter.prototype.visitExtendsClause = function (node) {
         return node.update(this.visitToken(node.extendsKeyword()), this.visitSeparatedList(node.typeNames()));
@@ -115,10 +115,10 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.lessThanToken()), this.visitSeparatedList(node.typeArguments()), this.visitToken(node.greaterThanToken()));
     };
     SyntaxRewriter.prototype.visitConstructorType = function (node) {
-        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
+        return node.update(this.visitToken(node.newKeyword()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
     };
     SyntaxRewriter.prototype.visitFunctionType = function (node) {
-        return node.update(this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
+        return node.update(node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
     };
     SyntaxRewriter.prototype.visitObjectType = function (node) {
         return node.update(this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.typeMembers()), this.visitToken(node.closeBraceToken()));
@@ -136,7 +136,7 @@ var SyntaxRewriter = (function () {
         return node.update(node.dotDotDotToken() === null ? null : this.visitToken(node.dotDotDotToken()), node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), node.equalsValueClause() === null ? null : this.visitNode(node.equalsValueClause()));
     };
     SyntaxRewriter.prototype.visitMemberAccessExpression = function (node) {
-        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.dotToken()), this.visitToken(node.identifierName()));
+        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.dotToken()), this.visitNodeOrToken(node.identifierName()));
     };
     SyntaxRewriter.prototype.visitPostfixUnaryExpression = function (node) {
         return node.update(node.kind(), this.visitNodeOrToken(node.operand()), this.visitToken(node.operatorToken()));
@@ -8456,11 +8456,11 @@ var Syntax;
         NormalModeFactory.prototype.importDeclaration = function (importKeyword, identifier, equalsToken, moduleReference, semicolonToken) {
             return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, false);
         };
-        NormalModeFactory.prototype.classDeclaration = function (exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
-            return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, false);
+        NormalModeFactory.prototype.classDeclaration = function (exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
+            return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, false);
         };
-        NormalModeFactory.prototype.interfaceDeclaration = function (exportKeyword, interfaceKeyword, identifier, extendsClause, body) {
-            return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body, false);
+        NormalModeFactory.prototype.interfaceDeclaration = function (exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body) {
+            return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, false);
         };
         NormalModeFactory.prototype.extendsClause = function (extendsKeyword, typeNames) {
             return new ExtendsClauseSyntax(extendsKeyword, typeNames, false);
@@ -8516,11 +8516,11 @@ var Syntax;
         NormalModeFactory.prototype.typeArgumentList = function (lessThanToken, typeArguments, greaterThanToken) {
             return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, false);
         };
-        NormalModeFactory.prototype.constructorType = function (newKeyword, parameterList, equalsGreaterThanToken, type) {
-            return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type, false);
+        NormalModeFactory.prototype.constructorType = function (newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type) {
+            return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, false);
         };
-        NormalModeFactory.prototype.functionType = function (parameterList, equalsGreaterThanToken, type) {
-            return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type, false);
+        NormalModeFactory.prototype.functionType = function (typeParameterList, parameterList, equalsGreaterThanToken, type) {
+            return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, false);
         };
         NormalModeFactory.prototype.objectType = function (openBraceToken, typeMembers, closeBraceToken) {
             return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken, false);
@@ -8736,11 +8736,11 @@ var Syntax;
         StrictModeFactory.prototype.importDeclaration = function (importKeyword, identifier, equalsToken, moduleReference, semicolonToken) {
             return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, true);
         };
-        StrictModeFactory.prototype.classDeclaration = function (exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
-            return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, true);
+        StrictModeFactory.prototype.classDeclaration = function (exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
+            return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, true);
         };
-        StrictModeFactory.prototype.interfaceDeclaration = function (exportKeyword, interfaceKeyword, identifier, extendsClause, body) {
-            return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body, true);
+        StrictModeFactory.prototype.interfaceDeclaration = function (exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body) {
+            return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, true);
         };
         StrictModeFactory.prototype.extendsClause = function (extendsKeyword, typeNames) {
             return new ExtendsClauseSyntax(extendsKeyword, typeNames, true);
@@ -8796,11 +8796,11 @@ var Syntax;
         StrictModeFactory.prototype.typeArgumentList = function (lessThanToken, typeArguments, greaterThanToken) {
             return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, true);
         };
-        StrictModeFactory.prototype.constructorType = function (newKeyword, parameterList, equalsGreaterThanToken, type) {
-            return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type, true);
+        StrictModeFactory.prototype.constructorType = function (newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type) {
+            return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, true);
         };
-        StrictModeFactory.prototype.functionType = function (parameterList, equalsGreaterThanToken, type) {
-            return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type, true);
+        StrictModeFactory.prototype.functionType = function (typeParameterList, parameterList, equalsGreaterThanToken, type) {
+            return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, true);
         };
         StrictModeFactory.prototype.objectType = function (openBraceToken, typeMembers, closeBraceToken) {
             return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken, true);
@@ -9796,12 +9796,13 @@ var ImportDeclarationSyntax = (function (_super) {
 })(SyntaxNode);
 var ClassDeclarationSyntax = (function (_super) {
     __extends(ClassDeclarationSyntax, _super);
-    function ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, parsedInStrictMode) {
+    function ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._exportKeyword = exportKeyword;
         this._declareKeyword = declareKeyword;
         this._classKeyword = classKeyword;
         this._identifier = identifier;
+        this._typeParameterList = typeParameterList;
         this._extendsClause = extendsClause;
         this._implementsClause = implementsClause;
         this._openBraceToken = openBraceToken;
@@ -9809,10 +9810,10 @@ var ClassDeclarationSyntax = (function (_super) {
         this._closeBraceToken = closeBraceToken;
     }
     ClassDeclarationSyntax.create = function create(classKeyword, identifier, openBraceToken, closeBraceToken) {
-        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, false);
+        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, false);
     }
     ClassDeclarationSyntax.create1 = function create1(identifier) {
-        return new ClassDeclarationSyntax(null, null, Syntax.token(44 /* ClassKeyword */ ), identifier, null, null, Syntax.token(70 /* OpenBraceToken */ ), Syntax.emptyList, Syntax.token(71 /* CloseBraceToken */ ), false);
+        return new ClassDeclarationSyntax(null, null, Syntax.token(44 /* ClassKeyword */ ), identifier, null, null, null, Syntax.token(70 /* OpenBraceToken */ ), Syntax.emptyList, Syntax.token(71 /* CloseBraceToken */ ), false);
     }
     ClassDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitClassDeclaration(this);
@@ -9836,6 +9837,9 @@ var ClassDeclarationSyntax = (function (_super) {
         }
         if(this._identifier.width() > 0) {
             return this._identifier;
+        }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
+            return token;
         }
         if(this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) {
             return token;
@@ -9871,6 +9875,9 @@ var ClassDeclarationSyntax = (function (_super) {
         if(this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) {
             return token;
         }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
+            return token;
+        }
         if(this._identifier.width() > 0) {
             return this._identifier;
         }
@@ -9895,6 +9902,9 @@ var ClassDeclarationSyntax = (function (_super) {
         if(this._extendsClause !== null) {
             array.splice(index, 0, this._extendsClause);
         }
+        if(this._typeParameterList !== null) {
+            array.splice(index, 0, this._typeParameterList);
+        }
         array.splice(index, 0, this._identifier);
         array.splice(index, 0, this._classKeyword);
         if(this._declareKeyword !== null) {
@@ -9916,6 +9926,9 @@ var ClassDeclarationSyntax = (function (_super) {
     ClassDeclarationSyntax.prototype.identifier = function () {
         return this._identifier;
     };
+    ClassDeclarationSyntax.prototype.typeParameterList = function () {
+        return this._typeParameterList;
+    };
     ClassDeclarationSyntax.prototype.extendsClause = function () {
         return this._extendsClause;
     };
@@ -9931,11 +9944,11 @@ var ClassDeclarationSyntax = (function (_super) {
     ClassDeclarationSyntax.prototype.closeBraceToken = function () {
         return this._closeBraceToken;
     };
-    ClassDeclarationSyntax.prototype.update = function (exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
-        if(this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._classKeyword === classKeyword && this._identifier === identifier && this._extendsClause === extendsClause && this._implementsClause === implementsClause && this._openBraceToken === openBraceToken && this._classElements === classElements && this._closeBraceToken === closeBraceToken) {
+    ClassDeclarationSyntax.prototype.update = function (exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken) {
+        if(this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._classKeyword === classKeyword && this._identifier === identifier && this._typeParameterList === typeParameterList && this._extendsClause === extendsClause && this._implementsClause === implementsClause && this._openBraceToken === openBraceToken && this._classElements === classElements && this._closeBraceToken === closeBraceToken) {
             return this;
         }
-        return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, false);
+        return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, false);
     };
     ClassDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -9944,28 +9957,31 @@ var ClassDeclarationSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     ClassDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
-        return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withDeclareKeyword = function (declareKeyword) {
-        return this.update(this._exportKeyword, declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withClassKeyword = function (classKeyword) {
-        return this.update(this._exportKeyword, this._declareKeyword, classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withIdentifier = function (identifier) {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+    };
+    ClassDeclarationSyntax.prototype.withTypeParameterList = function (typeParameterList) {
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withExtendsClause = function (extendsClause) {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withImplementsClause = function (implementsClause) {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, openBraceToken, this._classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withClassElements = function (classElements) {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.withClassElement = function (classElement) {
         return this.withClassElements(Syntax.list([
@@ -9973,7 +9989,7 @@ var ClassDeclarationSyntax = (function (_super) {
         ]));
     };
     ClassDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
+        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
     };
     ClassDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
@@ -9984,6 +10000,9 @@ var ClassDeclarationSyntax = (function (_super) {
         }
         (this._classKeyword).collectTextElements(elements);
         (this._identifier).collectTextElements(elements);
+        if(this._typeParameterList !== null) {
+            (this._typeParameterList).collectTextElements(elements);
+        }
         if(this._extendsClause !== null) {
             (this._extendsClause).collectTextElements(elements);
         }
@@ -10023,6 +10042,13 @@ var ClassDeclarationSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
         if(this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             fullWidth += childWidth;
@@ -10095,6 +10121,14 @@ var ClassDeclarationSyntax = (function (_super) {
         }
         position -= childWidth;
         fullStart += childWidth;
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if(position < childWidth) {
+                return (this._typeParameterList).findTokenInternal(position, fullStart);
+            }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
         if(this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             if(position < childWidth) {
@@ -10160,6 +10194,9 @@ var ClassDeclarationSyntax = (function (_super) {
         if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
             return false;
         }
+        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
+            return false;
+        }
         if(!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) {
             return false;
         }
@@ -10181,19 +10218,20 @@ var ClassDeclarationSyntax = (function (_super) {
 })(SyntaxNode);
 var InterfaceDeclarationSyntax = (function (_super) {
     __extends(InterfaceDeclarationSyntax, _super);
-    function InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body, parsedInStrictMode) {
+    function InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._exportKeyword = exportKeyword;
         this._interfaceKeyword = interfaceKeyword;
         this._identifier = identifier;
+        this._typeParameterList = typeParameterList;
         this._extendsClause = extendsClause;
         this._body = body;
     }
     InterfaceDeclarationSyntax.create = function create(interfaceKeyword, identifier, body) {
-        return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, body, false);
+        return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, null, body, false);
     }
     InterfaceDeclarationSyntax.create1 = function create1(identifier) {
-        return new InterfaceDeclarationSyntax(null, Syntax.token(52 /* InterfaceKeyword */ ), identifier, null, ObjectTypeSyntax.create1(), false);
+        return new InterfaceDeclarationSyntax(null, Syntax.token(52 /* InterfaceKeyword */ ), identifier, null, null, ObjectTypeSyntax.create1(), false);
     }
     InterfaceDeclarationSyntax.prototype.accept = function (visitor) {
         return visitor.visitInterfaceDeclaration(this);
@@ -10215,6 +10253,9 @@ var InterfaceDeclarationSyntax = (function (_super) {
         if(this._identifier.width() > 0) {
             return this._identifier;
         }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
+            return token;
+        }
         if(this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) {
             return token;
         }
@@ -10229,6 +10270,9 @@ var InterfaceDeclarationSyntax = (function (_super) {
             return token;
         }
         if(this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) {
+            return token;
+        }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
             return token;
         }
         if(this._identifier.width() > 0) {
@@ -10247,6 +10291,9 @@ var InterfaceDeclarationSyntax = (function (_super) {
         if(this._extendsClause !== null) {
             array.splice(index, 0, this._extendsClause);
         }
+        if(this._typeParameterList !== null) {
+            array.splice(index, 0, this._typeParameterList);
+        }
         array.splice(index, 0, this._identifier);
         array.splice(index, 0, this._interfaceKeyword);
         if(this._exportKeyword !== null) {
@@ -10262,17 +10309,20 @@ var InterfaceDeclarationSyntax = (function (_super) {
     InterfaceDeclarationSyntax.prototype.identifier = function () {
         return this._identifier;
     };
+    InterfaceDeclarationSyntax.prototype.typeParameterList = function () {
+        return this._typeParameterList;
+    };
     InterfaceDeclarationSyntax.prototype.extendsClause = function () {
         return this._extendsClause;
     };
     InterfaceDeclarationSyntax.prototype.body = function () {
         return this._body;
     };
-    InterfaceDeclarationSyntax.prototype.update = function (exportKeyword, interfaceKeyword, identifier, extendsClause, body) {
-        if(this._exportKeyword === exportKeyword && this._interfaceKeyword === interfaceKeyword && this._identifier === identifier && this._extendsClause === extendsClause && this._body === body) {
+    InterfaceDeclarationSyntax.prototype.update = function (exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body) {
+        if(this._exportKeyword === exportKeyword && this._interfaceKeyword === interfaceKeyword && this._identifier === identifier && this._typeParameterList === typeParameterList && this._extendsClause === extendsClause && this._body === body) {
             return this;
         }
-        return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, extendsClause, body, false);
+        return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, false);
     };
     InterfaceDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -10281,19 +10331,22 @@ var InterfaceDeclarationSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     InterfaceDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
-        return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, this._body);
+        return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._body);
     };
     InterfaceDeclarationSyntax.prototype.withInterfaceKeyword = function (interfaceKeyword) {
-        return this.update(this._exportKeyword, interfaceKeyword, this._identifier, this._extendsClause, this._body);
+        return this.update(this._exportKeyword, interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._body);
     };
     InterfaceDeclarationSyntax.prototype.withIdentifier = function (identifier) {
-        return this.update(this._exportKeyword, this._interfaceKeyword, identifier, this._extendsClause, this._body);
+        return this.update(this._exportKeyword, this._interfaceKeyword, identifier, this._typeParameterList, this._extendsClause, this._body);
+    };
+    InterfaceDeclarationSyntax.prototype.withTypeParameterList = function (typeParameterList) {
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, typeParameterList, this._extendsClause, this._body);
     };
     InterfaceDeclarationSyntax.prototype.withExtendsClause = function (extendsClause) {
-        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, extendsClause, this._body);
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, extendsClause, this._body);
     };
     InterfaceDeclarationSyntax.prototype.withBody = function (body) {
-        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._extendsClause, body);
+        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, body);
     };
     InterfaceDeclarationSyntax.prototype.collectTextElements = function (elements) {
         if(this._exportKeyword !== null) {
@@ -10301,6 +10354,9 @@ var InterfaceDeclarationSyntax = (function (_super) {
         }
         (this._interfaceKeyword).collectTextElements(elements);
         (this._identifier).collectTextElements(elements);
+        if(this._typeParameterList !== null) {
+            (this._typeParameterList).collectTextElements(elements);
+        }
         if(this._extendsClause !== null) {
             (this._extendsClause).collectTextElements(elements);
         }
@@ -10329,6 +10385,13 @@ var InterfaceDeclarationSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
         if(this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             fullWidth += childWidth;
@@ -10375,6 +10438,14 @@ var InterfaceDeclarationSyntax = (function (_super) {
         }
         position -= childWidth;
         fullStart += childWidth;
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if(position < childWidth) {
+                return (this._typeParameterList).findTokenInternal(position, fullStart);
+            }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
         if(this._extendsClause !== null) {
             childWidth = this._extendsClause.fullWidth();
             if(position < childWidth) {
@@ -10409,6 +10480,9 @@ var InterfaceDeclarationSyntax = (function (_super) {
             return false;
         }
         if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
+            return false;
+        }
+        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
             return false;
         }
         if(!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) {
@@ -13393,15 +13467,19 @@ var TypeArgumentListSyntax = (function (_super) {
 })(SyntaxNode);
 var ConstructorTypeSyntax = (function (_super) {
     __extends(ConstructorTypeSyntax, _super);
-    function ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type, parsedInStrictMode) {
+    function ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._newKeyword = newKeyword;
+        this._typeParameterList = typeParameterList;
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
     }
+    ConstructorTypeSyntax.create = function create(newKeyword, parameterList, equalsGreaterThanToken, type) {
+        return new ConstructorTypeSyntax(newKeyword, null, parameterList, equalsGreaterThanToken, type, false);
+    }
     ConstructorTypeSyntax.create1 = function create1(type) {
-        return new ConstructorTypeSyntax(Syntax.token(31 /* NewKeyword */ ), ParameterListSyntax.create1(), Syntax.token(85 /* EqualsGreaterThanToken */ ), type, false);
+        return new ConstructorTypeSyntax(Syntax.token(31 /* NewKeyword */ ), null, ParameterListSyntax.create1(), Syntax.token(85 /* EqualsGreaterThanToken */ ), type, false);
     }
     ConstructorTypeSyntax.prototype.accept = function (visitor) {
         return visitor.visitConstructorType(this);
@@ -13422,6 +13500,9 @@ var ConstructorTypeSyntax = (function (_super) {
         var token = null;
         if(this._newKeyword.width() > 0) {
             return this._newKeyword;
+        }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
+            return token;
         }
         if((token = this._parameterList.firstToken()) !== null) {
             return token;
@@ -13445,6 +13526,9 @@ var ConstructorTypeSyntax = (function (_super) {
         if((token = this._parameterList.lastToken()) !== null) {
             return token;
         }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
+            return token;
+        }
         if(this._newKeyword.width() > 0) {
             return this._newKeyword;
         }
@@ -13454,10 +13538,16 @@ var ConstructorTypeSyntax = (function (_super) {
         array.splice(index, 0, this._type);
         array.splice(index, 0, this._equalsGreaterThanToken);
         array.splice(index, 0, this._parameterList);
+        if(this._typeParameterList !== null) {
+            array.splice(index, 0, this._typeParameterList);
+        }
         array.splice(index, 0, this._newKeyword);
     };
     ConstructorTypeSyntax.prototype.newKeyword = function () {
         return this._newKeyword;
+    };
+    ConstructorTypeSyntax.prototype.typeParameterList = function () {
+        return this._typeParameterList;
     };
     ConstructorTypeSyntax.prototype.parameterList = function () {
         return this._parameterList;
@@ -13468,11 +13558,11 @@ var ConstructorTypeSyntax = (function (_super) {
     ConstructorTypeSyntax.prototype.type = function () {
         return this._type;
     };
-    ConstructorTypeSyntax.prototype.update = function (newKeyword, parameterList, equalsGreaterThanToken, type) {
-        if(this._newKeyword === newKeyword && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
+    ConstructorTypeSyntax.prototype.update = function (newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type) {
+        if(this._newKeyword === newKeyword && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
             return this;
         }
-        return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type, false);
+        return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, false);
     };
     ConstructorTypeSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -13481,19 +13571,25 @@ var ConstructorTypeSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     ConstructorTypeSyntax.prototype.withNewKeyword = function (newKeyword) {
-        return this.update(newKeyword, this._parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(newKeyword, this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
+    };
+    ConstructorTypeSyntax.prototype.withTypeParameterList = function (typeParameterList) {
+        return this.update(this._newKeyword, typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
     };
     ConstructorTypeSyntax.prototype.withParameterList = function (parameterList) {
-        return this.update(this._newKeyword, parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(this._newKeyword, this._typeParameterList, parameterList, this._equalsGreaterThanToken, this._type);
     };
     ConstructorTypeSyntax.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
-        return this.update(this._newKeyword, this._parameterList, equalsGreaterThanToken, this._type);
+        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, equalsGreaterThanToken, this._type);
     };
     ConstructorTypeSyntax.prototype.withType = function (type) {
-        return this.update(this._newKeyword, this._parameterList, this._equalsGreaterThanToken, type);
+        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
     };
     ConstructorTypeSyntax.prototype.collectTextElements = function (elements) {
         (this._newKeyword).collectTextElements(elements);
+        if(this._typeParameterList !== null) {
+            (this._typeParameterList).collectTextElements(elements);
+        }
         (this._parameterList).collectTextElements(elements);
         (this._equalsGreaterThanToken).collectTextElements(elements);
         (this._type).collectTextElements(elements);
@@ -13511,6 +13607,13 @@ var ConstructorTypeSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
@@ -13539,6 +13642,14 @@ var ConstructorTypeSyntax = (function (_super) {
         }
         position -= childWidth;
         fullStart += childWidth;
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if(position < childWidth) {
+                return (this._typeParameterList).findTokenInternal(position, fullStart);
+            }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
             return (this._parameterList).findTokenInternal(position, fullStart);
@@ -13576,6 +13687,9 @@ var ConstructorTypeSyntax = (function (_super) {
         if(!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) {
             return false;
         }
+        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
+            return false;
+        }
         if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
             return false;
         }
@@ -13591,14 +13705,18 @@ var ConstructorTypeSyntax = (function (_super) {
 })(SyntaxNode);
 var FunctionTypeSyntax = (function (_super) {
     __extends(FunctionTypeSyntax, _super);
-    function FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type, parsedInStrictMode) {
+    function FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
+        this._typeParameterList = typeParameterList;
         this._parameterList = parameterList;
         this._equalsGreaterThanToken = equalsGreaterThanToken;
         this._type = type;
     }
+    FunctionTypeSyntax.create = function create(parameterList, equalsGreaterThanToken, type) {
+        return new FunctionTypeSyntax(null, parameterList, equalsGreaterThanToken, type, false);
+    }
     FunctionTypeSyntax.create1 = function create1(type) {
-        return new FunctionTypeSyntax(ParameterListSyntax.create1(), Syntax.token(85 /* EqualsGreaterThanToken */ ), type, false);
+        return new FunctionTypeSyntax(null, ParameterListSyntax.create1(), Syntax.token(85 /* EqualsGreaterThanToken */ ), type, false);
     }
     FunctionTypeSyntax.prototype.accept = function (visitor) {
         return visitor.visitFunctionType(this);
@@ -13617,6 +13735,9 @@ var FunctionTypeSyntax = (function (_super) {
     };
     FunctionTypeSyntax.prototype.firstToken = function () {
         var token = null;
+        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
+            return token;
+        }
         if((token = this._parameterList.firstToken()) !== null) {
             return token;
         }
@@ -13639,12 +13760,21 @@ var FunctionTypeSyntax = (function (_super) {
         if((token = this._parameterList.lastToken()) !== null) {
             return token;
         }
+        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
+            return token;
+        }
         return null;
     };
     FunctionTypeSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._type);
         array.splice(index, 0, this._equalsGreaterThanToken);
         array.splice(index, 0, this._parameterList);
+        if(this._typeParameterList !== null) {
+            array.splice(index, 0, this._typeParameterList);
+        }
+    };
+    FunctionTypeSyntax.prototype.typeParameterList = function () {
+        return this._typeParameterList;
     };
     FunctionTypeSyntax.prototype.parameterList = function () {
         return this._parameterList;
@@ -13655,11 +13785,11 @@ var FunctionTypeSyntax = (function (_super) {
     FunctionTypeSyntax.prototype.type = function () {
         return this._type;
     };
-    FunctionTypeSyntax.prototype.update = function (parameterList, equalsGreaterThanToken, type) {
-        if(this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
+    FunctionTypeSyntax.prototype.update = function (typeParameterList, parameterList, equalsGreaterThanToken, type) {
+        if(this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
             return this;
         }
-        return new FunctionTypeSyntax(parameterList, equalsGreaterThanToken, type, false);
+        return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, false);
     };
     FunctionTypeSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -13667,16 +13797,22 @@ var FunctionTypeSyntax = (function (_super) {
     FunctionTypeSyntax.prototype.withTrailingTrivia = function (trivia) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
+    FunctionTypeSyntax.prototype.withTypeParameterList = function (typeParameterList) {
+        return this.update(typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
+    };
     FunctionTypeSyntax.prototype.withParameterList = function (parameterList) {
-        return this.update(parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(this._typeParameterList, parameterList, this._equalsGreaterThanToken, this._type);
     };
     FunctionTypeSyntax.prototype.withEqualsGreaterThanToken = function (equalsGreaterThanToken) {
-        return this.update(this._parameterList, equalsGreaterThanToken, this._type);
+        return this.update(this._typeParameterList, this._parameterList, equalsGreaterThanToken, this._type);
     };
     FunctionTypeSyntax.prototype.withType = function (type) {
-        return this.update(this._parameterList, this._equalsGreaterThanToken, type);
+        return this.update(this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
     };
     FunctionTypeSyntax.prototype.collectTextElements = function (elements) {
+        if(this._typeParameterList !== null) {
+            (this._typeParameterList).collectTextElements(elements);
+        }
         (this._parameterList).collectTextElements(elements);
         (this._equalsGreaterThanToken).collectTextElements(elements);
         (this._type).collectTextElements(elements);
@@ -13690,6 +13826,13 @@ var FunctionTypeSyntax = (function (_super) {
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
         var hasRegularExpressionToken = false;
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
@@ -13709,6 +13852,14 @@ var FunctionTypeSyntax = (function (_super) {
     FunctionTypeSyntax.prototype.findTokenInternal = function (position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
+        if(this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if(position < childWidth) {
+                return (this._typeParameterList).findTokenInternal(position, fullStart);
+            }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
         childWidth = this._parameterList.fullWidth();
         if(position < childWidth) {
             return (this._parameterList).findTokenInternal(position, fullStart);
@@ -13743,6 +13894,9 @@ var FunctionTypeSyntax = (function (_super) {
             return false;
         }
         var other = node;
+        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
+            return false;
+        }
         if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
             return false;
         }
@@ -14748,15 +14902,15 @@ var MemberAccessExpressionSyntax = (function (_super) {
         if(this._dotToken.width() > 0) {
             return this._dotToken;
         }
-        if(this._identifierName.width() > 0) {
-            return this._identifierName;
+        if((token = this._identifierName.firstToken()) !== null) {
+            return token;
         }
         return null;
     };
     MemberAccessExpressionSyntax.prototype.lastToken = function () {
         var token = null;
-        if(this._identifierName.width() > 0) {
-            return this._identifierName;
+        if((token = this._identifierName.lastToken()) !== null) {
+            return token;
         }
         if(this._dotToken.width() > 0) {
             return this._dotToken;
@@ -14810,6 +14964,9 @@ var MemberAccessExpressionSyntax = (function (_super) {
         if(this._expression.isTypeScriptSpecific()) {
             return true;
         }
+        if(this._identifierName.isTypeScriptSpecific()) {
+            return true;
+        }
         return false;
     };
     MemberAccessExpressionSyntax.prototype.computeData = function () {
@@ -14830,7 +14987,8 @@ var MemberAccessExpressionSyntax = (function (_super) {
         childWidth = this._identifierName.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._identifierName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        hasZeroWidthToken = hasZeroWidthToken || this._identifierName.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._identifierName.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     MemberAccessExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
@@ -14853,10 +15011,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         childWidth = this._identifierName.fullWidth();
         if(position < childWidth) {
-            return {
-                token: this._identifierName,
-                fullStart: fullStart
-            };
+            return (this._identifierName).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
         fullStart += childWidth;
@@ -14879,7 +15034,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         if(!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) {
             return false;
         }
-        if(!Syntax.tokenStructuralEquals(this._identifierName, other._identifierName)) {
+        if(!Syntax.nodeOrTokenStructuralEquals(this._identifierName, other._identifierName)) {
             return false;
         }
         return true;
@@ -25829,6 +25984,7 @@ var SyntaxWalker = (function () {
         this.visitOptionalToken(node.declareKeyword());
         this.visitToken(node.classKeyword());
         this.visitToken(node.identifier());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitOptionalNode(node.extendsClause());
         this.visitOptionalNode(node.implementsClause());
         this.visitToken(node.openBraceToken());
@@ -25839,6 +25995,7 @@ var SyntaxWalker = (function () {
         this.visitOptionalToken(node.exportKeyword());
         this.visitToken(node.interfaceKeyword());
         this.visitToken(node.identifier());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitOptionalNode(node.extendsClause());
         this.visitNode(node.body());
     };
@@ -25929,11 +26086,13 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitConstructorType = function (node) {
         this.visitToken(node.newKeyword());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
         this.visitNodeOrToken(node.type());
     };
     SyntaxWalker.prototype.visitFunctionType = function (node) {
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitToken(node.equalsGreaterThanToken());
         this.visitNodeOrToken(node.type());
@@ -25968,7 +26127,7 @@ var SyntaxWalker = (function () {
     SyntaxWalker.prototype.visitMemberAccessExpression = function (node) {
         this.visitNodeOrToken(node.expression());
         this.visitToken(node.dotToken());
-        this.visitToken(node.identifierName());
+        this.visitNodeOrToken(node.identifierName());
     };
     SyntaxWalker.prototype.visitPostfixUnaryExpression = function (node) {
         this.visitNodeOrToken(node.operand());
@@ -27438,6 +27597,9 @@ var Emitter;
             if(parent.kind() === 121 /* QualifiedName */ ) {
                 return token;
             }
+            if(parent.kind() === 122 /* GenericName */ ) {
+                return token;
+            }
             if(parent.kind() === 209 /* MemberAccessExpression */  && (parent).identifierName() === token) {
                 return token;
             }
@@ -28519,7 +28681,7 @@ var Parser;
                 classElements = this.parseSyntaxList(2 /* ClassDeclaration_ClassElements */ );
             }
             var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
-            return this.factory.classDeclaration(exportKeyword, declareKeyword, classKeyword, identifier, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
+            return this.factory.classDeclaration(exportKeyword, declareKeyword, classKeyword, identifier, null, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
         };
         ParserImpl.prototype.isConstructorDeclaration = function () {
             return this.currentToken().tokenKind === 63 /* ConstructorKeyword */ ;
@@ -28747,7 +28909,7 @@ var Parser;
                 extendsClause = this.parseExtendsClause();
             }
             var objectType = this.parseObjectType();
-            return this.factory.interfaceDeclaration(exportKeyword, interfaceKeyword, identifier, extendsClause, objectType);
+            return this.factory.interfaceDeclaration(exportKeyword, interfaceKeyword, identifier, null, extendsClause, objectType);
         };
         ParserImpl.prototype.parseObjectType = function () {
             var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
@@ -29979,14 +30141,14 @@ var Parser;
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(85 /* EqualsGreaterThanToken */ );
             var returnType = this.parseType(false);
-            return this.factory.functionType(parameterList, equalsGreaterThanToken, returnType);
+            return this.factory.functionType(null, parameterList, equalsGreaterThanToken, returnType);
         };
         ParserImpl.prototype.parseConstructorType = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(85 /* EqualsGreaterThanToken */ );
             var type = this.parseType(false);
-            return this.factory.constructorType(newKeyword, parameterList, equalsGreaterThanToken, type);
+            return this.factory.constructorType(newKeyword, null, parameterList, equalsGreaterThanToken, type);
         };
         ParserImpl.prototype.isTypeLiteral = function (allowFunctionType, allowConstructorType) {
             if(this.isObjectType()) {
