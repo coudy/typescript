@@ -143,7 +143,7 @@ class BatchCompiler {
                     }
                 }
 
-                if (code.content) {
+                if (code.content != null) {
                     if (this.compilationSettings.parseOnly) {
                         compiler.parseUnit(code.content, code.path);
                     }

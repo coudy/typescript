@@ -74,7 +74,7 @@ module TypeScript {
 
         public resolveCode(referencePath: string, parentPath: string, performSearch: bool, resolutionDispatcher: TypeScript.IResolutionDispatcher): void {
             
-            var resolvedFile = {content: "", path: referencePath };
+            var resolvedFile: IResolvedFile = { content: null, path: referencePath };
             
             var ioHost = this.environment.ioHost;
             
@@ -174,7 +174,7 @@ module TypeScript {
                     }
                 }
 
-                if (resolvedFile && resolvedFile.content) {
+                if (resolvedFile && resolvedFile.content != null) {
                     // preprocess the file, to gather dependencies
                     var rootDir = ioHost.dirName(resolvedFile.path);
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
