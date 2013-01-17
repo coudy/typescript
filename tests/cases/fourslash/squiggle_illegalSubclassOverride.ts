@@ -11,4 +11,3 @@
 //Bug 509554: Incorrect warning length
 //verify.errorExistsBetweenMarkers("1", "2");
 //verify.numberOfErrorsInCurrentFile(1);
-

@@ -4280,14 +4280,33 @@ module TypeScript {
         }
 
         public parse(sourceText: ISourceText, filename: string, unitIndex: number, allowedElements = AllowedElements.Global): Script {
-            this.ambientModule = false;
-            this.topLevel = true;
-            this.hasTopLevelImportOrExport = false;
-            this.requiresExtendsBlock = false;
+            // Reset all parser state here.  This allows us to be resilient to reentrancy if an 
+            // exception is thrown.
             this.fname = filename;
             this.currentUnitIndex = unitIndex;
-            this.amdDependencies = [];
+
+            this.currentToken = null;
+            this.needTerminator = false;
+            this.inFunction = false;
+            this.inInterfaceDecl = false;
             this.inFncDecl = false;
+            this.state = ParseState.StartStatementList;
+            this.ambientModule = false;
+            this.ambientClass = false;
+            this.topLevel = true;
+            this.allowImportDeclaration = true;
+            this.prevIDTok = null;
+            this.statementInfoStack = new IStatementInfo[];
+            this.hasTopLevelImportOrExport = false;
+            this.strictMode = false;
+            this.nestingLevel = 0;
+            this.prevExpr = null;
+            this.currentClassDefinition = null;
+            this.parsingClassConstructorDefinition = false;
+            this.parsingDeclareFile = false;
+            this.amdDependencies = [];
+            this.inferPropertiesFromThisAssignment = false;
+            this.requiresExtendsBlock = false;
 
             this.scanner.resetComments();
             this.scanner.setErrorHandler((message) =>this.reportParseError(message));
