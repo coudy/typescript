@@ -196,6 +196,11 @@ module Emitter {
             // Recurse downwards and get the rewritten children.
             var moduleElements = this.convertModuleElements(node.moduleElements());
 
+            if (this.mustCaptureThisInModule(node)) {
+                // TODO: determine the right column for the 'this capture' statment.
+                moduleElements.unshift(this.generateThisCaptureStatement(0));
+            }
+
             // Handle the case where the child is an export.
             var parentModule = this.rightmostName(node.moduleName());
             for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
@@ -481,6 +486,11 @@ module Emitter {
                 var statements = <IStatementSyntax[]>ArrayUtilities.select(defaultValueAssignmentStatements,
                     s => this.changeIndentation(s, /*indentFirstToken:*/ true, statementColumn));
 
+                // Capture _this if necessary
+                if (this.mustCaptureThisInFunction(node)) {
+                    statements.push(this.generateThisCaptureStatement(statementColumn));
+                }
+
                 statements.push.apply(statements, rewritten.block().statements().toArray());
 
                 rewritten = rewritten.withBlock(rewritten.block().withStatements(
@@ -544,6 +554,7 @@ module Emitter {
 
         private createDefaultConstructorDeclaration(classDeclaration: ClassDeclarationSyntax): FunctionDeclarationSyntax {
             var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
+            var statementIndentationColumn = classIndentationColumn + this.options.indentSpaces;
 
             var statements: IStatementSyntax[] = [];
             if (classDeclaration.extendsClause() !== null) {
@@ -556,8 +567,12 @@ module Emitter {
                                     Syntax.token(SyntaxKind.ThisKeyword),
                                     Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space),
                                     Syntax.identifierName("arguments")])))
-                    ).withLeadingTrivia(this.indentationTrivia(classIndentationColumn + this.options.indentSpaces))
+                    ).withLeadingTrivia(this.indentationTrivia(statementIndentationColumn))
                      .withTrailingTrivia(this.newLine));
+            }
+
+            if (this.mustCaptureThisInClass(classDeclaration)) {
+                statements.push(this.generateThisCaptureStatement(statementIndentationColumn));
             }
 
             statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, /*static:*/ false));
@@ -623,6 +638,11 @@ module Emitter {
                 s => Syntax.isSuperInvocationExpressionStatement(s)), s => s.accept(this));
 
             normalStatements.unshift.apply(normalStatements, superStatements);
+
+            // TODO: use typecheck to determine if 'this' needs to be captured.
+            if (this.mustCaptureThisInConstructor(constructorDeclaration)) {
+                normalStatements.unshift(this.generateThisCaptureStatement(this.options.indentSpaces + constructorIndentationColumn));
+            }
 
             var defaultValueAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
                 EmitterImpl.parameterListDefaultParameters(constructorDeclaration.parameterList()),
@@ -1147,6 +1167,40 @@ module Emitter {
             // has a full name that is larger than this token, then return the full name as a 
             // member access expression. 
             return token;
+        }
+
+        private generateThisCaptureStatement(indentationColumn: number): VariableStatementSyntax {
+            // var _this = this;
+            return VariableStatementSyntax.create1(this.factory.variableDeclaration(
+                Syntax.token(SyntaxKind.VarKeyword).withTrailingTrivia(this.space),
+                Syntax.separatedList([
+                    this.factory.variableDeclarator(
+                        Syntax.identifier("_this").withTrailingTrivia(this.space),
+                        null,
+                        this.factory.equalsValueClause(
+                            Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
+                            Syntax.token(SyntaxKind.ThisKeyword)))
+                ]))).withLeadingTrivia(this.indentationTrivia(indentationColumn)).withTrailingTrivia(this.newLine);
+        }
+
+        private mustCaptureThisInConstructor(constructorDeclaration: ConstructorDeclarationSyntax): bool {
+            // TODO: use typecheck to answer this question properly.
+            return false;
+        }
+
+        private mustCaptureThisInClass(classDeclaratoin: ClassDeclarationSyntax): bool {
+            // TODO: use typecheck to answer this question properly.
+            return false;
+        }
+
+        private mustCaptureThisInModule(moduleDeclaration: ModuleDeclarationSyntax): bool {
+            // TODO: use typecheck to answer this question properly.
+            return false;
+        }
+
+        private mustCaptureThisInFunction(functionDeclaration: FunctionDeclarationSyntax): bool {
+            // TODO: use typecheck to answer this question properly.
+            return false;
         }
     }
 

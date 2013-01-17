@@ -26031,6 +26031,9 @@ var Emitter;
         EmitterImpl.prototype.visitModuleDeclaration = function (node) {
             var _this = this;
             var moduleElements = this.convertModuleElements(node.moduleElements());
+            if(this.mustCaptureThisInModule(node)) {
+                moduleElements.unshift(this.generateThisCaptureStatement(0));
+            }
             var parentModule = this.rightmostName(node.moduleName());
             for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
                 this.handleExportedModuleElement(parentModule, node.moduleElements().itemAt(i), moduleElements);
@@ -26143,6 +26146,9 @@ var Emitter;
                 var statements = ArrayUtilities.select(defaultValueAssignmentStatements, function (s) {
                     return _this.changeIndentation(s, true, statementColumn);
                 });
+                if(this.mustCaptureThisInFunction(node)) {
+                    statements.push(this.generateThisCaptureStatement(statementColumn));
+                }
                 statements.push.apply(statements, rewritten.block().statements().toArray());
                 rewritten = rewritten.withBlock(rewritten.block().withStatements(Syntax.list(statements)));
             }
@@ -26175,13 +26181,17 @@ var Emitter;
         };
         EmitterImpl.prototype.createDefaultConstructorDeclaration = function (classDeclaration) {
             var classIndentationColumn = this.columnForStartOfToken(classDeclaration.firstToken());
+            var statementIndentationColumn = classIndentationColumn + this.options.indentSpaces;
             var statements = [];
             if(classDeclaration.extendsClause() !== null) {
                 statements.push(ExpressionStatementSyntax.create1(this.factory.invocationExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("apply")), ArgumentListSyntax.create1().withArguments(Syntax.separatedList([
                     Syntax.token(35 /* ThisKeyword */ ), 
                     Syntax.token(78 /* CommaToken */ ).withTrailingTrivia(this.space), 
                     Syntax.identifierName("arguments")
-                ])))).withLeadingTrivia(this.indentationTrivia(classIndentationColumn + this.options.indentSpaces)).withTrailingTrivia(this.newLine));
+                ])))).withLeadingTrivia(this.indentationTrivia(statementIndentationColumn)).withTrailingTrivia(this.newLine));
+            }
+            if(this.mustCaptureThisInClass(classDeclaration)) {
+                statements.push(this.generateThisCaptureStatement(statementIndentationColumn));
             }
             statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, false));
             var indentationTrivia = this.indentationTrivia(classIndentationColumn);
@@ -26225,6 +26235,9 @@ var Emitter;
                 return s.accept(_this);
             });
             normalStatements.unshift.apply(normalStatements, superStatements);
+            if(this.mustCaptureThisInConstructor(constructorDeclaration)) {
+                normalStatements.unshift(this.generateThisCaptureStatement(this.options.indentSpaces + constructorIndentationColumn));
+            }
             var defaultValueAssignments = ArrayUtilities.select(EmitterImpl.parameterListDefaultParameters(constructorDeclaration.parameterList()), function (p) {
                 return _this.generateDefaultValueAssignmentStatement(p);
             });
@@ -26505,6 +26518,23 @@ var Emitter;
                 return token;
             }
             return token;
+        };
+        EmitterImpl.prototype.generateThisCaptureStatement = function (indentationColumn) {
+            return VariableStatementSyntax.create1(this.factory.variableDeclaration(Syntax.token(40 /* VarKeyword */ ).withTrailingTrivia(this.space), Syntax.separatedList([
+                this.factory.variableDeclarator(Syntax.identifier("_this").withTrailingTrivia(this.space), null, this.factory.equalsValueClause(Syntax.token(106 /* EqualsToken */ ).withTrailingTrivia(this.space), Syntax.token(35 /* ThisKeyword */ )))
+            ]))).withLeadingTrivia(this.indentationTrivia(indentationColumn)).withTrailingTrivia(this.newLine);
+        };
+        EmitterImpl.prototype.mustCaptureThisInConstructor = function (constructorDeclaration) {
+            return false;
+        };
+        EmitterImpl.prototype.mustCaptureThisInClass = function (classDeclaratoin) {
+            return false;
+        };
+        EmitterImpl.prototype.mustCaptureThisInModule = function (moduleDeclaration) {
+            return false;
+        };
+        EmitterImpl.prototype.mustCaptureThisInFunction = function (functionDeclaration) {
+            return false;
         };
         return EmitterImpl;
     })(SyntaxRewriter);    
