@@ -384,7 +384,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'dotToken', isToken: true },
-            <any>{ name: 'identifierName', type: 'ISimpleNameSyntax' }
+            <any>{ name: 'name', type: 'ISimpleNameSyntax' }
         ]
     },
     <any>{

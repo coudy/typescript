@@ -5799,22 +5799,22 @@ class ParameterSyntax extends SyntaxNode {
 class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _dotToken: ISyntaxToken;
-    private _identifierName: ISimpleNameSyntax;
+    private _name: ISimpleNameSyntax;
 
     constructor(expression: IExpressionSyntax,
                 dotToken: ISyntaxToken,
-                identifierName: ISimpleNameSyntax,
+                name: ISimpleNameSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
         this._expression = expression;
         this._dotToken = dotToken;
-        this._identifierName = identifierName;
+        this._name = name;
     }
 
     public static create1(expression: IExpressionSyntax,
-                          identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
-        return new MemberAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.DotToken), identifierName, /*parsedInStrictMode:*/ false);
+                          name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+        return new MemberAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.DotToken), name, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -5837,20 +5837,20 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         var token = null;
         if ((token = this._expression.firstToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
-        if ((token = this._identifierName.firstToken()) !== null) { return token; }
+        if ((token = this._name.firstToken()) !== null) { return token; }
         return null;
     }
 
     public lastToken(): ISyntaxToken {
         var token = null;
-        if ((token = this._identifierName.lastToken()) !== null) { return token; }
+        if ((token = this._name.lastToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
         if ((token = this._expression.lastToken()) !== null) { return token; }
         return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._identifierName);
+        array.splice(index, 0, this._name);
         array.splice(index, 0, this._dotToken);
         array.splice(index, 0, this._expression);
     }
@@ -5863,18 +5863,18 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this._dotToken;
     }
 
-    public identifierName(): ISimpleNameSyntax {
-        return this._identifierName;
+    public name(): ISimpleNameSyntax {
+        return this._name;
     }
 
     public update(expression: IExpressionSyntax,
                   dotToken: ISyntaxToken,
-                  identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
-        if (this._expression === expression && this._dotToken === dotToken && this._identifierName === identifierName) {
+                  name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+        if (this._expression === expression && this._dotToken === dotToken && this._name === name) {
             return this;
         }
 
-        return new MemberAccessExpressionSyntax(expression, dotToken, identifierName, /*parsedInStrictMode:*/ false);
+        return new MemberAccessExpressionSyntax(expression, dotToken, name, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberAccessExpressionSyntax {
@@ -5886,26 +5886,26 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     }
 
     public withExpression(expression: IExpressionSyntax): MemberAccessExpressionSyntax {
-        return this.update(expression, this._dotToken, this._identifierName);
+        return this.update(expression, this._dotToken, this._name);
     }
 
     public withDotToken(dotToken: ISyntaxToken): MemberAccessExpressionSyntax {
-        return this.update(this._expression, dotToken, this._identifierName);
+        return this.update(this._expression, dotToken, this._name);
     }
 
-    public withIdentifierName(identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
-        return this.update(this._expression, this._dotToken, identifierName);
+    public withName(name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+        return this.update(this._expression, this._dotToken, name);
     }
 
     private collectTextElements(elements: string[]): void {
         (<any>this._expression).collectTextElements(elements);
         (<any>this._dotToken).collectTextElements(elements);
-        (<any>this._identifierName).collectTextElements(elements);
+        (<any>this._name).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._identifierName.isTypeScriptSpecific()) { return true; }
+        if (this._name.isTypeScriptSpecific()) { return true; }
         return false;
     }
 
@@ -5927,11 +5927,11 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         hasSkippedText = hasSkippedText || this._dotToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        childWidth = this._identifierName.fullWidth();
+        childWidth = this._name.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifierName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._identifierName.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._identifierName.hasRegularExpressionToken();
+        hasSkippedText = hasSkippedText || this._name.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._name.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._name.hasRegularExpressionToken();
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -5953,8 +5953,8 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         position -= childWidth;
         fullStart += childWidth;
 
-        childWidth = this._identifierName.fullWidth();
-        if (position < childWidth) { return (<any>this._identifierName).findTokenInternal(position, fullStart); }
+        childWidth = this._name.fullWidth();
+        if (position < childWidth) { return (<any>this._name).findTokenInternal(position, fullStart); }
         position -= childWidth;
         fullStart += childWidth;
 
@@ -5968,7 +5968,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         var other = <MemberAccessExpressionSyntax>node;
         if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._identifierName, other._identifierName)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._name, other._name)) { return false; }
         return true;
     }
 }

@@ -136,7 +136,7 @@ var SyntaxRewriter = (function () {
         return node.update(node.dotDotDotToken() === null ? null : this.visitToken(node.dotDotDotToken()), node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), node.equalsValueClause() === null ? null : this.visitNode(node.equalsValueClause()));
     };
     SyntaxRewriter.prototype.visitMemberAccessExpression = function (node) {
-        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.dotToken()), this.visitNodeOrToken(node.identifierName()));
+        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.dotToken()), this.visitNodeOrToken(node.name()));
     };
     SyntaxRewriter.prototype.visitPostfixUnaryExpression = function (node) {
         return node.update(node.kind(), this.visitNodeOrToken(node.operand()), this.visitToken(node.operatorToken()));
@@ -8537,8 +8537,8 @@ var Syntax;
         NormalModeFactory.prototype.parameter = function (dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause) {
             return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, false);
         };
-        NormalModeFactory.prototype.memberAccessExpression = function (expression, dotToken, identifierName) {
-            return new MemberAccessExpressionSyntax(expression, dotToken, identifierName, false);
+        NormalModeFactory.prototype.memberAccessExpression = function (expression, dotToken, name) {
+            return new MemberAccessExpressionSyntax(expression, dotToken, name, false);
         };
         NormalModeFactory.prototype.postfixUnaryExpression = function (kind, operand, operatorToken) {
             return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken, false);
@@ -8817,8 +8817,8 @@ var Syntax;
         StrictModeFactory.prototype.parameter = function (dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause) {
             return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, true);
         };
-        StrictModeFactory.prototype.memberAccessExpression = function (expression, dotToken, identifierName) {
-            return new MemberAccessExpressionSyntax(expression, dotToken, identifierName, true);
+        StrictModeFactory.prototype.memberAccessExpression = function (expression, dotToken, name) {
+            return new MemberAccessExpressionSyntax(expression, dotToken, name, true);
         };
         StrictModeFactory.prototype.postfixUnaryExpression = function (kind, operand, operatorToken) {
             return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken, true);
@@ -14873,14 +14873,14 @@ var ParameterSyntax = (function (_super) {
 })(SyntaxNode);
 var MemberAccessExpressionSyntax = (function (_super) {
     __extends(MemberAccessExpressionSyntax, _super);
-    function MemberAccessExpressionSyntax(expression, dotToken, identifierName, parsedInStrictMode) {
+    function MemberAccessExpressionSyntax(expression, dotToken, name, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._expression = expression;
         this._dotToken = dotToken;
-        this._identifierName = identifierName;
+        this._name = name;
     }
-    MemberAccessExpressionSyntax.create1 = function create1(expression, identifierName) {
-        return new MemberAccessExpressionSyntax(expression, Syntax.token(76 /* DotToken */ ), identifierName, false);
+    MemberAccessExpressionSyntax.create1 = function create1(expression, name) {
+        return new MemberAccessExpressionSyntax(expression, Syntax.token(76 /* DotToken */ ), name, false);
     }
     MemberAccessExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitMemberAccessExpression(this);
@@ -14902,14 +14902,14 @@ var MemberAccessExpressionSyntax = (function (_super) {
         if(this._dotToken.width() > 0) {
             return this._dotToken;
         }
-        if((token = this._identifierName.firstToken()) !== null) {
+        if((token = this._name.firstToken()) !== null) {
             return token;
         }
         return null;
     };
     MemberAccessExpressionSyntax.prototype.lastToken = function () {
         var token = null;
-        if((token = this._identifierName.lastToken()) !== null) {
+        if((token = this._name.lastToken()) !== null) {
             return token;
         }
         if(this._dotToken.width() > 0) {
@@ -14921,7 +14921,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         return null;
     };
     MemberAccessExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
-        array.splice(index, 0, this._identifierName);
+        array.splice(index, 0, this._name);
         array.splice(index, 0, this._dotToken);
         array.splice(index, 0, this._expression);
     };
@@ -14931,14 +14931,14 @@ var MemberAccessExpressionSyntax = (function (_super) {
     MemberAccessExpressionSyntax.prototype.dotToken = function () {
         return this._dotToken;
     };
-    MemberAccessExpressionSyntax.prototype.identifierName = function () {
-        return this._identifierName;
+    MemberAccessExpressionSyntax.prototype.name = function () {
+        return this._name;
     };
-    MemberAccessExpressionSyntax.prototype.update = function (expression, dotToken, identifierName) {
-        if(this._expression === expression && this._dotToken === dotToken && this._identifierName === identifierName) {
+    MemberAccessExpressionSyntax.prototype.update = function (expression, dotToken, name) {
+        if(this._expression === expression && this._dotToken === dotToken && this._name === name) {
             return this;
         }
-        return new MemberAccessExpressionSyntax(expression, dotToken, identifierName, false);
+        return new MemberAccessExpressionSyntax(expression, dotToken, name, false);
     };
     MemberAccessExpressionSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -14947,24 +14947,24 @@ var MemberAccessExpressionSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     MemberAccessExpressionSyntax.prototype.withExpression = function (expression) {
-        return this.update(expression, this._dotToken, this._identifierName);
+        return this.update(expression, this._dotToken, this._name);
     };
     MemberAccessExpressionSyntax.prototype.withDotToken = function (dotToken) {
-        return this.update(this._expression, dotToken, this._identifierName);
+        return this.update(this._expression, dotToken, this._name);
     };
-    MemberAccessExpressionSyntax.prototype.withIdentifierName = function (identifierName) {
-        return this.update(this._expression, this._dotToken, identifierName);
+    MemberAccessExpressionSyntax.prototype.withName = function (name) {
+        return this.update(this._expression, this._dotToken, name);
     };
     MemberAccessExpressionSyntax.prototype.collectTextElements = function (elements) {
         (this._expression).collectTextElements(elements);
         (this._dotToken).collectTextElements(elements);
-        (this._identifierName).collectTextElements(elements);
+        (this._name).collectTextElements(elements);
     };
     MemberAccessExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         if(this._expression.isTypeScriptSpecific()) {
             return true;
         }
-        if(this._identifierName.isTypeScriptSpecific()) {
+        if(this._name.isTypeScriptSpecific()) {
             return true;
         }
         return false;
@@ -14984,11 +14984,11 @@ var MemberAccessExpressionSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._dotToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifierName.fullWidth();
+        childWidth = this._name.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifierName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._identifierName.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._identifierName.hasRegularExpressionToken();
+        hasSkippedText = hasSkippedText || this._name.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._name.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._name.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     MemberAccessExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
@@ -15009,9 +15009,9 @@ var MemberAccessExpressionSyntax = (function (_super) {
         }
         position -= childWidth;
         fullStart += childWidth;
-        childWidth = this._identifierName.fullWidth();
+        childWidth = this._name.fullWidth();
         if(position < childWidth) {
-            return (this._identifierName).findTokenInternal(position, fullStart);
+            return (this._name).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
         fullStart += childWidth;
@@ -15034,7 +15034,7 @@ var MemberAccessExpressionSyntax = (function (_super) {
         if(!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) {
             return false;
         }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._identifierName, other._identifierName)) {
+        if(!Syntax.nodeOrTokenStructuralEquals(this._name, other._name)) {
             return false;
         }
         return true;
@@ -26127,7 +26127,7 @@ var SyntaxWalker = (function () {
     SyntaxWalker.prototype.visitMemberAccessExpression = function (node) {
         this.visitNodeOrToken(node.expression());
         this.visitToken(node.dotToken());
-        this.visitNodeOrToken(node.identifierName());
+        this.visitNodeOrToken(node.name());
     };
     SyntaxWalker.prototype.visitPostfixUnaryExpression = function (node) {
         this.visitNodeOrToken(node.operand());
@@ -27576,7 +27576,7 @@ var Emitter;
         EmitterImpl.prototype.visitMemberAccessExpression = function (node) {
             var result = _super.prototype.visitMemberAccessExpression.call(this, node);
             if(Syntax.isSuperMemberAccessExpression(result)) {
-                return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")), result.identifierName()).withLeadingTrivia(result.leadingTrivia());
+                return MemberAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")), result.name()).withLeadingTrivia(result.leadingTrivia());
             }
             return result;
         };
@@ -27600,7 +27600,7 @@ var Emitter;
             if(parent.kind() === 122 /* GenericName */ ) {
                 return token;
             }
-            if(parent.kind() === 209 /* MemberAccessExpression */  && (parent).identifierName() === token) {
+            if(parent.kind() === 209 /* MemberAccessExpression */  && (parent).name() === token) {
                 return token;
             }
             return token;
@@ -33293,19 +33293,19 @@ var Program = (function () {
         }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
         });
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, true);
         });
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, true);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, true);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -33313,19 +33313,19 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, false);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, true);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, true);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");

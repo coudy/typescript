@@ -252,7 +252,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): void {
         this.visitNodeOrToken(node.expression());
         this.visitToken(node.dotToken());
-        this.visitNodeOrToken(node.identifierName());
+        this.visitNodeOrToken(node.name());
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): void {

@@ -2173,7 +2173,7 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'identifierName',
+                name: 'name',
                 type: 'ISimpleNameSyntax'
             }
         ]

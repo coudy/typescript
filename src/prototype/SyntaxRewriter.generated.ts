@@ -289,7 +289,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
         return node.update(
             <IExpressionSyntax>this.visitNodeOrToken(node.expression()),
             this.visitToken(node.dotToken()),
-            <ISimpleNameSyntax>this.visitNodeOrToken(node.identifierName()));
+            <ISimpleNameSyntax>this.visitNodeOrToken(node.name()));
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): any {

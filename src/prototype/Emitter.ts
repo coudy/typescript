@@ -1135,7 +1135,7 @@ module Emitter {
             if (Syntax.isSuperMemberAccessExpression(result)) {
                 return MemberAccessExpressionSyntax.create1(
                     MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("prototype")),
-                    result.identifierName()).withLeadingTrivia(result.leadingTrivia());
+                    result.name()).withLeadingTrivia(result.leadingTrivia());
             }
 
             return result;
@@ -1175,7 +1175,7 @@ module Emitter {
             }
 
             // We never qualify the right hand side of a dot.
-            if (parent.kind() === SyntaxKind.MemberAccessExpression && (<MemberAccessExpressionSyntax>parent).identifierName() === token) {
+            if (parent.kind() === SyntaxKind.MemberAccessExpression && (<MemberAccessExpressionSyntax>parent).name() === token) {
                 return token;
             }
 

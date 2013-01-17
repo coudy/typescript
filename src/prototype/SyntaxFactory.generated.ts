@@ -34,7 +34,7 @@ module Syntax {
         typeAnnotation(colonToken: ISyntaxToken, type: ITypeSyntax): TypeAnnotationSyntax;
         block(openBraceToken: ISyntaxToken, statements: ISyntaxList, closeBraceToken: ISyntaxToken): BlockSyntax;
         parameter(dotDotDotToken: ISyntaxToken, publicOrPrivateKeyword: ISyntaxToken, identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax;
-        memberAccessExpression(expression: IExpressionSyntax, dotToken: ISyntaxToken, identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax;
+        memberAccessExpression(expression: IExpressionSyntax, dotToken: ISyntaxToken, name: ISimpleNameSyntax): MemberAccessExpressionSyntax;
         postfixUnaryExpression(kind: SyntaxKind, operand: IExpressionSyntax, operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax;
         elementAccessExpression(expression: IExpressionSyntax, openBracketToken: ISyntaxToken, argumentExpression: IExpressionSyntax, closeBracketToken: ISyntaxToken): ElementAccessExpressionSyntax;
         invocationExpression(expression: IExpressionSyntax, argumentList: ArgumentListSyntax): InvocationExpressionSyntax;
@@ -193,8 +193,8 @@ module Syntax {
         parameter(dotDotDotToken: ISyntaxToken, publicOrPrivateKeyword: ISyntaxToken, identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax {
             return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ false);
         }
-        memberAccessExpression(expression: IExpressionSyntax, dotToken: ISyntaxToken, identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
-            return new MemberAccessExpressionSyntax(expression, dotToken, identifierName, /*parsedInStrictMode:*/ false);
+        memberAccessExpression(expression: IExpressionSyntax, dotToken: ISyntaxToken, name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+            return new MemberAccessExpressionSyntax(expression, dotToken, name, /*parsedInStrictMode:*/ false);
         }
         postfixUnaryExpression(kind: SyntaxKind, operand: IExpressionSyntax, operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
             return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken, /*parsedInStrictMode:*/ false);
@@ -472,8 +472,8 @@ module Syntax {
         parameter(dotDotDotToken: ISyntaxToken, publicOrPrivateKeyword: ISyntaxToken, identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax, equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax {
             return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ true);
         }
-        memberAccessExpression(expression: IExpressionSyntax, dotToken: ISyntaxToken, identifierName: ISimpleNameSyntax): MemberAccessExpressionSyntax {
-            return new MemberAccessExpressionSyntax(expression, dotToken, identifierName, /*parsedInStrictMode:*/ true);
+        memberAccessExpression(expression: IExpressionSyntax, dotToken: ISyntaxToken, name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+            return new MemberAccessExpressionSyntax(expression, dotToken, name, /*parsedInStrictMode:*/ true);
         }
         postfixUnaryExpression(kind: SyntaxKind, operand: IExpressionSyntax, operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
             return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken, /*parsedInStrictMode:*/ true);
