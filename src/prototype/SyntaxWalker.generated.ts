@@ -186,7 +186,18 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitQualifiedName(node: QualifiedNameSyntax): void {
         this.visitNodeOrToken(node.left());
         this.visitToken(node.dotToken());
-        this.visitToken(node.right());
+        this.visitNodeOrToken(node.right());
+    }
+
+    public visitGenericName(node: GenericNameSyntax): void {
+        this.visitToken(node.identifier());
+        this.visitNode(node.typeArgumentList());
+    }
+
+    public visitTypeArgumentList(node: TypeArgumentListSyntax): void {
+        this.visitToken(node.lessThanToken());
+        this.visitSeparatedList(node.typeArguments());
+        this.visitToken(node.greaterThanToken());
     }
 
     public visitConstructorType(node: ConstructorTypeSyntax): void {

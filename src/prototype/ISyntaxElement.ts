@@ -53,3 +53,6 @@ interface ITypeSyntax extends IUnaryExpressionSyntax {
 
 interface INameSyntax extends ITypeSyntax {
 }
+
+interface ISimpleNameSyntax extends INameSyntax {
+}

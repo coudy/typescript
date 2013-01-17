@@ -149,6 +149,7 @@ enum SyntaxKind {
 
     // Names
     QualifiedName,
+    GenericName,
 
     // Types
     ObjectType,
@@ -267,6 +268,7 @@ enum SyntaxKind {
     // Lists
     ParameterList,
     ArgumentList,
+    TypeArgumentList,
 
     // Clauses
     ImplementsClause,

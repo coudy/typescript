@@ -116,7 +116,15 @@ module Emitter {
                 }
                 else if (name.kind() === SyntaxKind.QualifiedName) {
                     var qualifiedName = <QualifiedNameSyntax>name;
-                    result.unshift(qualifiedName.right());
+                    var right = qualifiedName.right();
+
+                    if (right.kind() === SyntaxKind.GenericName) {
+                        result.unshift((<GenericNameSyntax>right).identifier());
+                    }
+                    else {
+                        result.unshift(<ISyntaxToken>right);
+                    }
+
                     name = qualifiedName.left();
                 }
                 else {
@@ -134,9 +142,15 @@ module Emitter {
         }
 
         private rightmostName(name: INameSyntax): ISyntaxToken {
-            return name.kind() === SyntaxKind.QualifiedName
-                ? (<QualifiedNameSyntax>name).right()
-                : <ISyntaxToken>name;
+            if (name.kind() === SyntaxKind.QualifiedName) {
+                name = (<QualifiedNameSyntax>name).right();
+            }
+
+            if (name.kind() === SyntaxKind.GenericName) {
+                return (<GenericNameSyntax>name).identifier();
+            }
+
+            return <ISyntaxToken>name;
         }
 
         private exportModuleElement(moduleIdentifier: ISyntaxToken,

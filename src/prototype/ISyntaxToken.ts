@@ -2,7 +2,7 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 ///<reference path='SyntaxVisitor.generated.ts' />
 
-interface ISyntaxToken extends ISyntaxElement, INameSyntax {
+interface ISyntaxToken extends ISyntaxElement, ISimpleNameSyntax {
     // Same as kind(), just exposed through a property for perf.
     tokenKind: SyntaxKind;
 

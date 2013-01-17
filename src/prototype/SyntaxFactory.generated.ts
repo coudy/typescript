@@ -24,7 +24,9 @@ module Syntax {
         arrowFunctionExpression(): ArrowFunctionExpressionSyntax;
         simpleArrowFunctionExpression(identifier: ISyntaxToken, equalsGreaterThanToken: ISyntaxToken, body: ISyntaxNodeOrToken): SimpleArrowFunctionExpressionSyntax;
         parenthesizedArrowFunctionExpression(callSignature: CallSignatureSyntax, equalsGreaterThanToken: ISyntaxToken, body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax;
-        qualifiedName(left: INameSyntax, dotToken: ISyntaxToken, right: ISyntaxToken): QualifiedNameSyntax;
+        qualifiedName(left: INameSyntax, dotToken: ISyntaxToken, right: ISimpleNameSyntax): QualifiedNameSyntax;
+        genericName(identifier: ISyntaxToken, typeArgumentList: TypeArgumentListSyntax): GenericNameSyntax;
+        typeArgumentList(lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList, greaterThanToken: ISyntaxToken): TypeArgumentListSyntax;
         constructorType(newKeyword: ISyntaxToken, parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax): ConstructorTypeSyntax;
         functionType(parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax): FunctionTypeSyntax;
         objectType(openBraceToken: ISyntaxToken, typeMembers: ISeparatedSyntaxList, closeBraceToken: ISyntaxToken): ObjectTypeSyntax;
@@ -158,8 +160,14 @@ module Syntax {
         parenthesizedArrowFunctionExpression(callSignature: CallSignatureSyntax, equalsGreaterThanToken: ISyntaxToken, body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
             return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ false);
         }
-        qualifiedName(left: INameSyntax, dotToken: ISyntaxToken, right: ISyntaxToken): QualifiedNameSyntax {
+        qualifiedName(left: INameSyntax, dotToken: ISyntaxToken, right: ISimpleNameSyntax): QualifiedNameSyntax {
             return new QualifiedNameSyntax(left, dotToken, right, /*parsedInStrictMode:*/ false);
+        }
+        genericName(identifier: ISyntaxToken, typeArgumentList: TypeArgumentListSyntax): GenericNameSyntax {
+            return new GenericNameSyntax(identifier, typeArgumentList, /*parsedInStrictMode:*/ false);
+        }
+        typeArgumentList(lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList, greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
+            return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ false);
         }
         constructorType(newKeyword: ISyntaxToken, parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax): ConstructorTypeSyntax {
             return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
@@ -422,8 +430,14 @@ module Syntax {
         parenthesizedArrowFunctionExpression(callSignature: CallSignatureSyntax, equalsGreaterThanToken: ISyntaxToken, body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
             return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ true);
         }
-        qualifiedName(left: INameSyntax, dotToken: ISyntaxToken, right: ISyntaxToken): QualifiedNameSyntax {
+        qualifiedName(left: INameSyntax, dotToken: ISyntaxToken, right: ISimpleNameSyntax): QualifiedNameSyntax {
             return new QualifiedNameSyntax(left, dotToken, right, /*parsedInStrictMode:*/ true);
+        }
+        genericName(identifier: ISyntaxToken, typeArgumentList: TypeArgumentListSyntax): GenericNameSyntax {
+            return new GenericNameSyntax(identifier, typeArgumentList, /*parsedInStrictMode:*/ true);
+        }
+        typeArgumentList(lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList, greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
+            return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ true);
         }
         constructorType(newKeyword: ISyntaxToken, parameterList: ParameterListSyntax, equalsGreaterThanToken: ISyntaxToken, type: ITypeSyntax): ConstructorTypeSyntax {
             return new ConstructorTypeSyntax(newKeyword, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ true);

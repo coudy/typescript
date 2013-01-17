@@ -3816,11 +3816,11 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     private _left: INameSyntax;
     private _dotToken: ISyntaxToken;
-    private _right: ISyntaxToken;
+    private _right: ISimpleNameSyntax;
 
     constructor(left: INameSyntax,
                 dotToken: ISyntaxToken,
-                right: ISyntaxToken,
+                right: ISimpleNameSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
@@ -3830,7 +3830,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     }
 
     public static create1(left: INameSyntax,
-                          right: ISyntaxToken): QualifiedNameSyntax {
+                          right: ISimpleNameSyntax): QualifiedNameSyntax {
         return new QualifiedNameSyntax(left, Syntax.token(SyntaxKind.DotToken), right, /*parsedInStrictMode:*/ false);
     }
 
@@ -3862,13 +3862,13 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         var token = null;
         if ((token = this._left.firstToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
-        if (this._right.width() > 0) { return this._right; }
+        if ((token = this._right.firstToken()) !== null) { return token; }
         return null;
     }
 
     public lastToken(): ISyntaxToken {
         var token = null;
-        if (this._right.width() > 0) { return this._right; }
+        if ((token = this._right.lastToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
         if ((token = this._left.lastToken()) !== null) { return token; }
         return null;
@@ -3888,13 +3888,13 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return this._dotToken;
     }
 
-    public right(): ISyntaxToken {
+    public right(): ISimpleNameSyntax {
         return this._right;
     }
 
     public update(left: INameSyntax,
                   dotToken: ISyntaxToken,
-                  right: ISyntaxToken): QualifiedNameSyntax {
+                  right: ISimpleNameSyntax): QualifiedNameSyntax {
         if (this._left === left && this._dotToken === dotToken && this._right === right) {
             return this;
         }
@@ -3918,7 +3918,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return this.update(this._left, dotToken, this._right);
     }
 
-    public withRight(right: ISyntaxToken): QualifiedNameSyntax {
+    public withRight(right: ISimpleNameSyntax): QualifiedNameSyntax {
         return this.update(this._left, this._dotToken, right);
     }
 
@@ -3953,7 +3953,8 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         childWidth = this._right.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._right.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+        hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -3976,7 +3977,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         fullStart += childWidth;
 
         childWidth = this._right.fullWidth();
-        if (position < childWidth) { return { token: this._right, fullStart: fullStart }; }
+        if (position < childWidth) { return (<any>this._right).findTokenInternal(position, fullStart); }
         position -= childWidth;
         fullStart += childWidth;
 
@@ -3990,7 +3991,323 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         var other = <QualifiedNameSyntax>node;
         if (!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._right, other._right)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._right, other._right)) { return false; }
+        return true;
+    }
+}
+
+class GenericNameSyntax extends SyntaxNode implements ISimpleNameSyntax {
+    private _identifier: ISyntaxToken;
+    private _typeArgumentList: TypeArgumentListSyntax;
+
+    constructor(identifier: ISyntaxToken,
+                typeArgumentList: TypeArgumentListSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode);
+
+        this._identifier = identifier;
+        this._typeArgumentList = typeArgumentList;
+    }
+
+    public static create1(identifier: ISyntaxToken): GenericNameSyntax {
+        return new GenericNameSyntax(identifier, TypeArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitGenericName(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.GenericName;
+    }
+
+    private isSimpleName(): bool {
+        return true;
+    }
+
+    public firstToken(): ISyntaxToken {
+        var token = null;
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if ((token = this._typeArgumentList.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._typeArgumentList.lastToken()) !== null) { return token; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        return null;
+    }
+
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+        array.splice(index, 0, this._typeArgumentList);
+        array.splice(index, 0, this._identifier);
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public typeArgumentList(): TypeArgumentListSyntax {
+        return this._typeArgumentList;
+    }
+
+    public update(identifier: ISyntaxToken,
+                  typeArgumentList: TypeArgumentListSyntax): GenericNameSyntax {
+        if (this._identifier === identifier && this._typeArgumentList === typeArgumentList) {
+            return this;
+        }
+
+        return new GenericNameSyntax(identifier, typeArgumentList, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): GenericNameSyntax {
+        return <GenericNameSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): GenericNameSyntax {
+        return <GenericNameSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): GenericNameSyntax {
+        return this.update(identifier, this._typeArgumentList);
+    }
+
+    public withTypeArgumentList(typeArgumentList: TypeArgumentListSyntax): GenericNameSyntax {
+        return this.update(this._identifier, typeArgumentList);
+    }
+
+    private collectTextElements(elements: string[]): void {
+        (<any>this._identifier).collectTextElements(elements);
+        (<any>this._typeArgumentList).collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return true;
+    }
+
+    private computeData(): number {
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+        var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
+
+        childWidth = this._identifier.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        childWidth = this._typeArgumentList.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
+
+        return (fullWidth << Constants.NodeFullWidthShift)
+             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+    }
+
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        childWidth = this._typeArgumentList.fullWidth();
+        if (position < childWidth) { return (<any>this._typeArgumentList).findTokenInternal(position, fullStart); }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        throw Errors.invalidOperation();
+    }
+
+    private structuralEquals(node: SyntaxNode): bool {
+        if (this === node) { return true; }
+        if (node === null) { return false; }
+        if (this.kind() !== node.kind()) { return false; }
+        var other = <GenericNameSyntax>node;
+        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) { return false; }
+        return true;
+    }
+}
+
+class TypeArgumentListSyntax extends SyntaxNode {
+    private _lessThanToken: ISyntaxToken;
+    private _typeArguments: ISeparatedSyntaxList;
+    private _greaterThanToken: ISyntaxToken;
+
+    constructor(lessThanToken: ISyntaxToken,
+                typeArguments: ISeparatedSyntaxList,
+                greaterThanToken: ISyntaxToken,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode);
+
+        this._lessThanToken = lessThanToken;
+        this._typeArguments = typeArguments;
+        this._greaterThanToken = greaterThanToken;
+    }
+
+    public static create(lessThanToken: ISyntaxToken,
+                         greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
+        return new TypeArgumentListSyntax(lessThanToken, Syntax.emptySeparatedList, greaterThanToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): TypeArgumentListSyntax {
+        return new TypeArgumentListSyntax(Syntax.token(SyntaxKind.LessThanToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.GreaterThanToken), /*parsedInStrictMode:*/ false);
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitTypeArgumentList(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.TypeArgumentList;
+    }
+
+    public firstToken(): ISyntaxToken {
+        var token = null;
+        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
+        if ((token = this._typeArguments.firstToken()) !== null) { return token; }
+        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
+        if ((token = this._typeArguments.lastToken()) !== null) { return token; }
+        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
+        return null;
+    }
+
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+        array.splice(index, 0, this._greaterThanToken);
+        this._typeArguments.insertChildrenInto(array, index);
+        array.splice(index, 0, this._lessThanToken);
+    }
+
+    public lessThanToken(): ISyntaxToken {
+        return this._lessThanToken;
+    }
+
+    public typeArguments(): ISeparatedSyntaxList {
+        return this._typeArguments;
+    }
+
+    public greaterThanToken(): ISyntaxToken {
+        return this._greaterThanToken;
+    }
+
+    public update(lessThanToken: ISyntaxToken,
+                  typeArguments: ISeparatedSyntaxList,
+                  greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
+        if (this._lessThanToken === lessThanToken && this._typeArguments === typeArguments && this._greaterThanToken === greaterThanToken) {
+            return this;
+        }
+
+        return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeArgumentListSyntax {
+        return <TypeArgumentListSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeArgumentListSyntax {
+        return <TypeArgumentListSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withLessThanToken(lessThanToken: ISyntaxToken): TypeArgumentListSyntax {
+        return this.update(lessThanToken, this._typeArguments, this._greaterThanToken);
+    }
+
+    public withTypeArguments(typeArguments: ISeparatedSyntaxList): TypeArgumentListSyntax {
+        return this.update(this._lessThanToken, typeArguments, this._greaterThanToken);
+    }
+
+    public withTypeArgument(typeArgument: ITypeSyntax): TypeArgumentListSyntax {
+        return this.withTypeArguments(Syntax.separatedList([typeArgument]));
+    }
+
+    public withGreaterThanToken(greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
+        return this.update(this._lessThanToken, this._typeArguments, greaterThanToken);
+    }
+
+    private collectTextElements(elements: string[]): void {
+        (<any>this._lessThanToken).collectTextElements(elements);
+        (<any>this._typeArguments).collectTextElements(elements);
+        (<any>this._greaterThanToken).collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return true;
+    }
+
+    private computeData(): number {
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+        var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
+
+        childWidth = this._lessThanToken.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        childWidth = this._typeArguments.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._typeArguments.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._typeArguments.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArguments.hasRegularExpressionToken();
+
+        childWidth = this._greaterThanToken.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        return (fullWidth << Constants.NodeFullWidthShift)
+             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+    }
+
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._lessThanToken.fullWidth();
+        if (position < childWidth) { return { token: this._lessThanToken, fullStart: fullStart }; }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        childWidth = this._typeArguments.fullWidth();
+        if (position < childWidth) { return (<any>this._typeArguments).findTokenInternal(position, fullStart); }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        childWidth = this._greaterThanToken.fullWidth();
+        if (position < childWidth) { return { token: this._greaterThanToken, fullStart: fullStart }; }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        throw Errors.invalidOperation();
+    }
+
+    private structuralEquals(node: SyntaxNode): bool {
+        if (this === node) { return true; }
+        if (node === null) { return false; }
+        if (this.kind() !== node.kind()) { return false; }
+        var other = <TypeArgumentListSyntax>node;
+        if (!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) { return false; }
+        if (!Syntax.separatedListStructuralEquals(this._typeArguments, other._typeArguments)) { return false; }
+        if (!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) { return false; }
         return true;
     }
 }

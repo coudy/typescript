@@ -213,7 +213,20 @@ class SyntaxRewriter implements ISyntaxVisitor {
         return node.update(
             <INameSyntax>this.visitNodeOrToken(node.left()),
             this.visitToken(node.dotToken()),
-            this.visitToken(node.right()));
+            <ISimpleNameSyntax>this.visitNodeOrToken(node.right()));
+    }
+
+    public visitGenericName(node: GenericNameSyntax): any {
+        return node.update(
+            this.visitToken(node.identifier()),
+            <TypeArgumentListSyntax>this.visitNode(node.typeArgumentList()));
+    }
+
+    public visitTypeArgumentList(node: TypeArgumentListSyntax): any {
+        return node.update(
+            this.visitToken(node.lessThanToken()),
+            this.visitSeparatedList(node.typeArguments()),
+            this.visitToken(node.greaterThanToken()));
     }
 
     public visitConstructorType(node: ConstructorTypeSyntax): any {

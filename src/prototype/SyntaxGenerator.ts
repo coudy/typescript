@@ -271,7 +271,29 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'left', type: 'INameSyntax' },
             <any>{ name: 'dotToken', isToken: true },
-            <any>{ name: 'right', isToken: true, tokenKinds: ['IdentifierName'] }
+            <any>{ name: 'right', type: 'ISimpleNameSyntax' }
+        ],
+        // Qualified names only show up in Types, which are TypeScript specific. Note that a dotted
+        // expression (like A.B.Foo()) is a MemberAccessExpression, not a QualifiedName.
+        isTypeScriptSpecific: true
+    },
+    <any>{
+        name: 'GenericNameSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ISimpleNameSyntax'],
+        children: [
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'typeArgumentList', type: 'TypeArgumentListSyntax' }
+        ],
+        isTypeScriptSpecific: true
+    },
+    <any>{
+        name: 'TypeArgumentListSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+                <any>{ name: 'lessThanToken', isToken: true },
+                <any>{ name: 'typeArguments', isSeparatedList: true, elementType: "ITypeSyntax" },
+                <any>{ name: 'greaterThanToken', isToken: true }
         ],
         // Qualified names only show up in Types, which are TypeScript specific. Note that a dotted
         // expression (like A.B.Foo()) is a MemberAccessExpression, not a QualifiedName.
