@@ -202,7 +202,7 @@ class ScannerUtilities {
             }
 
         case 7:
-            // default, finally, extends, package, private, declare
+            // default, finally, extends, package, private, boolean, declare
             switch(array[startIndex]) {
             case CharacterCodes.d:
                 // default, declare
@@ -243,6 +243,9 @@ class ScannerUtilities {
                     return SyntaxKind.IdentifierName;
                 }
 
+            case CharacterCodes.b:
+                // boolean
+                return (array[startIndex + 1] === CharacterCodes.o && array[startIndex + 2] === CharacterCodes.o && array[startIndex + 3] === CharacterCodes.l && array[startIndex + 4] === CharacterCodes.e && array[startIndex + 5] === CharacterCodes.a && array[startIndex + 6] === CharacterCodes.n) ? SyntaxKind.BooleanKeyword : SyntaxKind.IdentifierName;
             default:
                 return SyntaxKind.IdentifierName;
             }

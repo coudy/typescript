@@ -4141,6 +4141,7 @@ module Parser {
             switch (this.currentToken().tokenKind) {
                 case SyntaxKind.AnyKeyword:
                 case SyntaxKind.NumberKeyword:
+                case SyntaxKind.BooleanKeyword:
                 case SyntaxKind.BoolKeyword:
                 case SyntaxKind.StringKeyword:
                 case SyntaxKind.VoidKeyword:

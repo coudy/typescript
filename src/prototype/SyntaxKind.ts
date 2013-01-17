@@ -82,6 +82,7 @@ enum SyntaxKind {
 
     // TypeScript keywords.
     AnyKeyword,
+    BooleanKeyword,
     BoolKeyword,
     ConstructorKeyword,
     DeclareKeyword,
