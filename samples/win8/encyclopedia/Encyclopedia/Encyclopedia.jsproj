@@ -64,14 +64,14 @@
     <Content Include="images\ep-splashscreen.png" />
     <Content Include="images\ep-storelogo.png" />
     <Content Include="images\ep-widetile.png" />
-    <None Include="js\groupDetailPage.ts" />
-    <None Include="js\default.ts" />
-    <None Include="js\navigator.ts" />
-    <None Include="js\data.ts" />
-    <None Include="js\itemDetailPage.ts" />
-    <None Include="js\groupedItemsPage.ts" />
-    <None Include="js\topic.ts" />
-    <None Include="js\win.ts" />
+    <TypeScriptCompile Include="js\groupDetailPage.ts" />
+    <TypeScriptCompile Include="js\default.ts" />
+    <TypeScriptCompile Include="js\navigator.ts" />
+    <TypeScriptCompile Include="js\data.ts" />
+    <TypeScriptCompile Include="js\itemDetailPage.ts" />
+    <TypeScriptCompile Include="js\groupedItemsPage.ts" />
+    <TypeScriptCompile Include="js\topic.ts" />
+    <TypeScriptCompile Include="js\win.ts" />
     <Content Include="js\groupDetailPage.js">
       <DependentUpon>groupDetailPage.ts</DependentUpon>
     </Content>
@@ -98,20 +98,16 @@
     <SDKReference Include="Microsoft.WinJS.1.0, Version=1.0" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
-  <ItemGroup>
-    <AvailableItemName Include="TypeScriptCompile" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="$(ProjectDir)\**\*.ts" />
-  </ItemGroup>
-  <PropertyGroup>
-    <TypeScriptSourceMap Condition="'$(Configuration)'=='Debug'"> --sourcemap</TypeScriptSourceMap>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.VisualStudio.$(WMSJSProject).targets" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptIncludeComments>true</TypeScriptIncludeComments>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
   </PropertyGroup>
-  <Target Name="BeforeBuild">
-    <Message Text="Compiling TypeScript files"/>
-    <Message Text="Executing tsc$(TypeScriptSourceMap) -target ES5 @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')"/>
-    <Exec Command="tsc$(TypeScriptSourceMap) -target ES5 @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')" />
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptIncludeComments>false</TypeScriptIncludeComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" />
 </Project>

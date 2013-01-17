@@ -207,7 +207,7 @@ module Harness {
         }
 
         var content = IO.readFile(Harness.userSpecifiedroot + path);
-        if (content.length < 1) {
+        if (content == null) {
             throw new Error("failed to read file at: '" + Harness.userSpecifiedroot + path + "'");
         }
 

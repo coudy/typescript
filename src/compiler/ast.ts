@@ -1192,6 +1192,11 @@ module TypeScript {
             }
 
             if (!this.isDeclareFile && !this.isResident && this.bod) {
+                if (this.bod.members.length == 0) {
+                    // allow empty files that are not declare files 
+                    return this.setCachedEmitRequired(true);
+                }
+
                 for (var i = 0, len = this.bod.members.length; i < len; i++) {
                     var stmt = this.bod.members[i];
                     if (stmt.nodeType == NodeType.ModuleDeclaration) {
@@ -1311,9 +1316,7 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             if (!hasFlag(this.modFlags, ModuleFlags.ShouldEmitModuleDecl)) {
                 emitter.emitParensAndCommentsInPlace(this, true);
-                emitter.recordSourceMappingStart(this);
                 emitter.emitJavascriptModule(this);
-                emitter.recordSourceMappingEnd(this);
                 emitter.emitParensAndCommentsInPlace(this, false);
             }
         }
