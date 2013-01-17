@@ -819,6 +819,7 @@ module TypeScript {
                     var prevScope = this.scope;
                     this.scope = instanceScope;
                     var container = sym.container;
+                    var svCurrentModDecl = this.checker.currentModDecl;
                     if (this.checker.units &&
                         (sym.unitIndex >= 0) &&
                         (sym.unitIndex < this.checker.units.length)) {
@@ -837,6 +838,9 @@ module TypeScript {
                             }
                             if (type.isClass()) {
                                 this.thisType = type.instanceType;
+                            }
+                            if (type.isModuleType()) {
+                                this.checker.currentModDecl = <ModuleDeclaration>container.declAST;
                                 break;
                             }
                         }
@@ -844,6 +848,7 @@ module TypeScript {
                     }
 
                     this.typeCheckBoundDecl(varDecl);
+                    this.checker.currentModDecl = svCurrentModDecl;
                     this.scope = prevScope;
                 }
             }
