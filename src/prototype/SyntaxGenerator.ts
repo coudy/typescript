@@ -295,8 +295,6 @@ var definitions:ITypeDefinition[] = [
                 <any>{ name: 'typeArguments', isSeparatedList: true, elementType: "ITypeSyntax" },
                 <any>{ name: 'greaterThanToken', isToken: true }
         ],
-        // Qualified names only show up in Types, which are TypeScript specific. Note that a dotted
-        // expression (like A.B.Foo()) is a MemberAccessExpression, not a QualifiedName.
         isTypeScriptSpecific: true
     },
     <any>{
@@ -518,9 +516,38 @@ var definitions:ITypeDefinition[] = [
         name: 'CallSignatureSyntax',
         baseType: 'TypeMemberSyntax',
         children: [
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true, isTypeScriptSpecific: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true }
         ]
+    },
+    <any>{
+        name: 'TypeParameterListSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            <any>{ name: 'lessThanToken', isToken: true },
+            <any>{ name: 'typeArguments', isSeparatedList: true, elementType: "TypeParameterSyntax" },
+            <any>{ name: 'greaterThanToken', isToken: true }
+        ],
+        isTypeScriptSpecific: true
+    },
+    <any>{
+        name: 'TypeParameterSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'constraint', type: 'ConstraintSyntax', isOptional: true }
+        ],
+        isTypeScriptSpecific: true
+    },
+    <any>{
+        name: 'ConstraintSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            <any>{ name: 'extendsKeyword', isToken: true },
+            <any>{ name: 'type', type: 'ITypeSyntax' }
+        ],
+        isTypeScriptSpecific: true
     },
     <any>{
         name: 'ElseClauseSyntax',

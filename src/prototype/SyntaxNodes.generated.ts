@@ -7881,24 +7881,27 @@ class ParameterListSyntax extends SyntaxNode {
 }
 
 class CallSignatureSyntax extends TypeMemberSyntax {
+    private _typeParameterList: TypeParameterListSyntax;
     private _parameterList: ParameterListSyntax;
     private _typeAnnotation: TypeAnnotationSyntax;
 
-    constructor(parameterList: ParameterListSyntax,
+    constructor(typeParameterList: TypeParameterListSyntax,
+                parameterList: ParameterListSyntax,
                 typeAnnotation: TypeAnnotationSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
+        this._typeParameterList = typeParameterList;
         this._parameterList = parameterList;
         this._typeAnnotation = typeAnnotation;
     }
 
     public static create(parameterList: ParameterListSyntax): CallSignatureSyntax {
-        return new CallSignatureSyntax(parameterList, null, /*parsedInStrictMode:*/ false);
+        return new CallSignatureSyntax(null, parameterList, null, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(): CallSignatureSyntax {
-        return new CallSignatureSyntax(ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
+        return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7911,6 +7914,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
     public firstToken(): ISyntaxToken {
         var token = null;
+        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
         if ((token = this._parameterList.firstToken()) !== null) { return token; }
         if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
         return null;
@@ -7920,12 +7924,18 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         var token = null;
         if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
         if ((token = this._parameterList.lastToken()) !== null) { return token; }
+        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
         return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
         if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
         array.splice(index, 0, this._parameterList);
+        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
+    }
+
+    public typeParameterList(): TypeParameterListSyntax {
+        return this._typeParameterList;
     }
 
     public parameterList(): ParameterListSyntax {
@@ -7936,13 +7946,14 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return this._typeAnnotation;
     }
 
-    public update(parameterList: ParameterListSyntax,
+    public update(typeParameterList: TypeParameterListSyntax,
+                  parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-        if (this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+        if (this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
             return this;
         }
 
-        return new CallSignatureSyntax(parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
@@ -7953,20 +7964,26 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return <CallSignatureSyntax>super.withTrailingTrivia(trivia);
     }
 
+    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): CallSignatureSyntax {
+        return this.update(typeParameterList, this._parameterList, this._typeAnnotation);
+    }
+
     public withParameterList(parameterList: ParameterListSyntax): CallSignatureSyntax {
-        return this.update(parameterList, this._typeAnnotation);
+        return this.update(this._typeParameterList, parameterList, this._typeAnnotation);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-        return this.update(this._parameterList, typeAnnotation);
+        return this.update(this._typeParameterList, this._parameterList, typeAnnotation);
     }
 
     private collectTextElements(elements: string[]): void {
+        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
         (<any>this._parameterList).collectTextElements(elements);
         if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
+        if (this._typeParameterList !== null) { return true; }
         if (this._parameterList.isTypeScriptSpecific()) { return true; }
         if (this._typeAnnotation !== null) { return true; }
         return false;
@@ -7978,6 +7995,14 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
         var hasRegularExpressionToken = false;
+
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
+        }
 
         childWidth = this._parameterList.fullWidth();
         fullWidth += childWidth;
@@ -8003,6 +8028,13 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
+        if (this._typeParameterList !== null) {
+            childWidth = this._typeParameterList.fullWidth();
+            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
         childWidth = this._parameterList.fullWidth();
         if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
         position -= childWidth;
@@ -8023,8 +8055,467 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         if (node === null) { return false; }
         if (this.kind() !== node.kind()) { return false; }
         var other = <CallSignatureSyntax>node;
+        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
         if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
+        return true;
+    }
+}
+
+class TypeParameterListSyntax extends SyntaxNode {
+    private _lessThanToken: ISyntaxToken;
+    private _typeArguments: ISeparatedSyntaxList;
+    private _greaterThanToken: ISyntaxToken;
+
+    constructor(lessThanToken: ISyntaxToken,
+                typeArguments: ISeparatedSyntaxList,
+                greaterThanToken: ISyntaxToken,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode);
+
+        this._lessThanToken = lessThanToken;
+        this._typeArguments = typeArguments;
+        this._greaterThanToken = greaterThanToken;
+    }
+
+    public static create(lessThanToken: ISyntaxToken,
+                         greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
+        return new TypeParameterListSyntax(lessThanToken, Syntax.emptySeparatedList, greaterThanToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): TypeParameterListSyntax {
+        return new TypeParameterListSyntax(Syntax.token(SyntaxKind.LessThanToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.GreaterThanToken), /*parsedInStrictMode:*/ false);
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitTypeParameterList(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.TypeParameterList;
+    }
+
+    public firstToken(): ISyntaxToken {
+        var token = null;
+        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
+        if ((token = this._typeArguments.firstToken()) !== null) { return token; }
+        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
+        if ((token = this._typeArguments.lastToken()) !== null) { return token; }
+        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
+        return null;
+    }
+
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+        array.splice(index, 0, this._greaterThanToken);
+        this._typeArguments.insertChildrenInto(array, index);
+        array.splice(index, 0, this._lessThanToken);
+    }
+
+    public lessThanToken(): ISyntaxToken {
+        return this._lessThanToken;
+    }
+
+    public typeArguments(): ISeparatedSyntaxList {
+        return this._typeArguments;
+    }
+
+    public greaterThanToken(): ISyntaxToken {
+        return this._greaterThanToken;
+    }
+
+    public update(lessThanToken: ISyntaxToken,
+                  typeArguments: ISeparatedSyntaxList,
+                  greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
+        if (this._lessThanToken === lessThanToken && this._typeArguments === typeArguments && this._greaterThanToken === greaterThanToken) {
+            return this;
+        }
+
+        return new TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeParameterListSyntax {
+        return <TypeParameterListSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeParameterListSyntax {
+        return <TypeParameterListSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withLessThanToken(lessThanToken: ISyntaxToken): TypeParameterListSyntax {
+        return this.update(lessThanToken, this._typeArguments, this._greaterThanToken);
+    }
+
+    public withTypeArguments(typeArguments: ISeparatedSyntaxList): TypeParameterListSyntax {
+        return this.update(this._lessThanToken, typeArguments, this._greaterThanToken);
+    }
+
+    public withTypeArgument(typeArgument: TypeParameterSyntax): TypeParameterListSyntax {
+        return this.withTypeArguments(Syntax.separatedList([typeArgument]));
+    }
+
+    public withGreaterThanToken(greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
+        return this.update(this._lessThanToken, this._typeArguments, greaterThanToken);
+    }
+
+    private collectTextElements(elements: string[]): void {
+        (<any>this._lessThanToken).collectTextElements(elements);
+        (<any>this._typeArguments).collectTextElements(elements);
+        (<any>this._greaterThanToken).collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return true;
+    }
+
+    private computeData(): number {
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+        var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
+
+        childWidth = this._lessThanToken.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        childWidth = this._typeArguments.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._typeArguments.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._typeArguments.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArguments.hasRegularExpressionToken();
+
+        childWidth = this._greaterThanToken.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        return (fullWidth << Constants.NodeFullWidthShift)
+             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+    }
+
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._lessThanToken.fullWidth();
+        if (position < childWidth) { return { token: this._lessThanToken, fullStart: fullStart }; }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        childWidth = this._typeArguments.fullWidth();
+        if (position < childWidth) { return (<any>this._typeArguments).findTokenInternal(position, fullStart); }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        childWidth = this._greaterThanToken.fullWidth();
+        if (position < childWidth) { return { token: this._greaterThanToken, fullStart: fullStart }; }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        throw Errors.invalidOperation();
+    }
+
+    private structuralEquals(node: SyntaxNode): bool {
+        if (this === node) { return true; }
+        if (node === null) { return false; }
+        if (this.kind() !== node.kind()) { return false; }
+        var other = <TypeParameterListSyntax>node;
+        if (!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) { return false; }
+        if (!Syntax.separatedListStructuralEquals(this._typeArguments, other._typeArguments)) { return false; }
+        if (!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) { return false; }
+        return true;
+    }
+}
+
+class TypeParameterSyntax extends SyntaxNode {
+    private _identifier: ISyntaxToken;
+    private _constraint: ConstraintSyntax;
+
+    constructor(identifier: ISyntaxToken,
+                constraint: ConstraintSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode);
+
+        this._identifier = identifier;
+        this._constraint = constraint;
+    }
+
+    public static create(identifier: ISyntaxToken): TypeParameterSyntax {
+        return new TypeParameterSyntax(identifier, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): TypeParameterSyntax {
+        return new TypeParameterSyntax(identifier, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitTypeParameter(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.TypeParameter;
+    }
+
+    public firstToken(): ISyntaxToken {
+        var token = null;
+        if (this._identifier.width() > 0) { return this._identifier; }
+        if (this._constraint !== null && (token = this._constraint.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if (this._constraint !== null && (token = this._constraint.lastToken()) !== null) { return token; }
+        if (this._identifier.width() > 0) { return this._identifier; }
+        return null;
+    }
+
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+        if (this._constraint !== null) { array.splice(index, 0, this._constraint); }
+        array.splice(index, 0, this._identifier);
+    }
+
+    public identifier(): ISyntaxToken {
+        return this._identifier;
+    }
+
+    public constraint(): ConstraintSyntax {
+        return this._constraint;
+    }
+
+    public update(identifier: ISyntaxToken,
+                  constraint: ConstraintSyntax): TypeParameterSyntax {
+        if (this._identifier === identifier && this._constraint === constraint) {
+            return this;
+        }
+
+        return new TypeParameterSyntax(identifier, constraint, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeParameterSyntax {
+        return <TypeParameterSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeParameterSyntax {
+        return <TypeParameterSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): TypeParameterSyntax {
+        return this.update(identifier, this._constraint);
+    }
+
+    public withConstraint(constraint: ConstraintSyntax): TypeParameterSyntax {
+        return this.update(this._identifier, constraint);
+    }
+
+    private collectTextElements(elements: string[]): void {
+        (<any>this._identifier).collectTextElements(elements);
+        if (this._constraint !== null) { (<any>this._constraint).collectTextElements(elements); }
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return true;
+    }
+
+    private computeData(): number {
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+        var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
+
+        childWidth = this._identifier.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        if (this._constraint !== null) {
+            childWidth = this._constraint.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._constraint.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._constraint.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._constraint.hasRegularExpressionToken();
+        }
+
+        return (fullWidth << Constants.NodeFullWidthShift)
+             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+    }
+
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._identifier.fullWidth();
+        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        if (this._constraint !== null) {
+            childWidth = this._constraint.fullWidth();
+            if (position < childWidth) { return (<any>this._constraint).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
+        throw Errors.invalidOperation();
+    }
+
+    private structuralEquals(node: SyntaxNode): bool {
+        if (this === node) { return true; }
+        if (node === null) { return false; }
+        if (this.kind() !== node.kind()) { return false; }
+        var other = <TypeParameterSyntax>node;
+        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._constraint, other._constraint)) { return false; }
+        return true;
+    }
+}
+
+class ConstraintSyntax extends SyntaxNode {
+    private _extendsKeyword: ISyntaxToken;
+    private _type: ITypeSyntax;
+
+    constructor(extendsKeyword: ISyntaxToken,
+                type: ITypeSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode);
+
+        this._extendsKeyword = extendsKeyword;
+        this._type = type;
+    }
+
+    public static create1(type: ITypeSyntax): ConstraintSyntax {
+        return new ConstraintSyntax(Syntax.token(SyntaxKind.ExtendsKeyword), type, /*parsedInStrictMode:*/ false);
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitConstraint(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.Constraint;
+    }
+
+    public firstToken(): ISyntaxToken {
+        var token = null;
+        if (this._extendsKeyword.width() > 0) { return this._extendsKeyword; }
+        if ((token = this._type.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._type.lastToken()) !== null) { return token; }
+        if (this._extendsKeyword.width() > 0) { return this._extendsKeyword; }
+        return null;
+    }
+
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+        array.splice(index, 0, this._type);
+        array.splice(index, 0, this._extendsKeyword);
+    }
+
+    public extendsKeyword(): ISyntaxToken {
+        return this._extendsKeyword;
+    }
+
+    public type(): ITypeSyntax {
+        return this._type;
+    }
+
+    public update(extendsKeyword: ISyntaxToken,
+                  type: ITypeSyntax): ConstraintSyntax {
+        if (this._extendsKeyword === extendsKeyword && this._type === type) {
+            return this;
+        }
+
+        return new ConstraintSyntax(extendsKeyword, type, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstraintSyntax {
+        return <ConstraintSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ConstraintSyntax {
+        return <ConstraintSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withExtendsKeyword(extendsKeyword: ISyntaxToken): ConstraintSyntax {
+        return this.update(extendsKeyword, this._type);
+    }
+
+    public withType(type: ITypeSyntax): ConstraintSyntax {
+        return this.update(this._extendsKeyword, type);
+    }
+
+    private collectTextElements(elements: string[]): void {
+        (<any>this._extendsKeyword).collectTextElements(elements);
+        (<any>this._type).collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return true;
+    }
+
+    private computeData(): number {
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+        var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
+
+        childWidth = this._extendsKeyword.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._extendsKeyword.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
+
+        childWidth = this._type.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
+
+        return (fullWidth << Constants.NodeFullWidthShift)
+             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+    }
+
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._extendsKeyword.fullWidth();
+        if (position < childWidth) { return { token: this._extendsKeyword, fullStart: fullStart }; }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        childWidth = this._type.fullWidth();
+        if (position < childWidth) { return (<any>this._type).findTokenInternal(position, fullStart); }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        throw Errors.invalidOperation();
+    }
+
+    private structuralEquals(node: SyntaxNode): bool {
+        if (this === node) { return true; }
+        if (node === null) { return false; }
+        if (this.kind() !== node.kind()) { return false; }
+        var other = <ConstraintSyntax>node;
+        if (!Syntax.tokenStructuralEquals(this._extendsKeyword, other._extendsKeyword)) { return false; }
+        if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
         return true;
     }
 }

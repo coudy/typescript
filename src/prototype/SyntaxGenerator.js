@@ -2463,6 +2463,12 @@ var definitions = [
         baseType: 'TypeMemberSyntax',
         children: [
             {
+                name: 'typeParameterList',
+                type: 'TypeParameterListSyntax',
+                isOptional: true,
+                isTypeScriptSpecific: true
+            }, 
+            {
                 name: 'parameterList',
                 type: 'ParameterListSyntax'
             }, 
@@ -2473,6 +2479,60 @@ var definitions = [
                 isTypeScriptSpecific: true
             }
         ]
+    }, 
+    {
+        name: 'TypeParameterListSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            {
+                name: 'lessThanToken',
+                isToken: true
+            }, 
+            {
+                name: 'typeArguments',
+                isSeparatedList: true,
+                elementType: "TypeParameterSyntax"
+            }, 
+            {
+                name: 'greaterThanToken',
+                isToken: true
+            }
+        ],
+        isTypeScriptSpecific: true
+    }, 
+    {
+        name: 'TypeParameterSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            {
+                name: 'identifier',
+                isToken: true,
+                tokenKinds: [
+                    'IdentifierName'
+                ]
+            }, 
+            {
+                name: 'constraint',
+                type: 'ConstraintSyntax',
+                isOptional: true
+            }
+        ],
+        isTypeScriptSpecific: true
+    }, 
+    {
+        name: 'ConstraintSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            {
+                name: 'extendsKeyword',
+                isToken: true
+            }, 
+            {
+                name: 'type',
+                type: 'ITypeSyntax'
+            }
+        ],
+        isTypeScriptSpecific: true
     }, 
     {
         name: 'ElseClauseSyntax',

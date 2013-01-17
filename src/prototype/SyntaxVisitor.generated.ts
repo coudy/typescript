@@ -45,6 +45,9 @@ interface ISyntaxVisitor {
     visitPropertySignature(node: PropertySignatureSyntax): any;
     visitParameterList(node: ParameterListSyntax): any;
     visitCallSignature(node: CallSignatureSyntax): any;
+    visitTypeParameterList(node: TypeParameterListSyntax): any;
+    visitTypeParameter(node: TypeParameterSyntax): any;
+    visitConstraint(node: ConstraintSyntax): any;
     visitElseClause(node: ElseClauseSyntax): any;
     visitIfStatement(node: IfStatementSyntax): any;
     visitExpressionStatement(node: ExpressionStatementSyntax): any;
@@ -262,6 +265,18 @@ class SyntaxVisitor implements ISyntaxVisitor {
     }
 
     private visitCallSignature(node: CallSignatureSyntax): any {
+        return this.defaultVisit(node);
+    }
+
+    private visitTypeParameterList(node: TypeParameterListSyntax): any {
+        return this.defaultVisit(node);
+    }
+
+    private visitTypeParameter(node: TypeParameterSyntax): any {
+        return this.defaultVisit(node);
+    }
+
+    private visitConstraint(node: ConstraintSyntax): any {
         return this.defaultVisit(node);
     }
 

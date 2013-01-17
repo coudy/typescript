@@ -372,8 +372,28 @@ class SyntaxRewriter implements ISyntaxVisitor {
 
     public visitCallSignature(node: CallSignatureSyntax): any {
         return node.update(
+            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
             <ParameterListSyntax>this.visitNode(node.parameterList()),
             node.typeAnnotation() === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation()));
+    }
+
+    public visitTypeParameterList(node: TypeParameterListSyntax): any {
+        return node.update(
+            this.visitToken(node.lessThanToken()),
+            this.visitSeparatedList(node.typeArguments()),
+            this.visitToken(node.greaterThanToken()));
+    }
+
+    public visitTypeParameter(node: TypeParameterSyntax): any {
+        return node.update(
+            this.visitToken(node.identifier()),
+            node.constraint() === null ? null : <ConstraintSyntax>this.visitNode(node.constraint()));
+    }
+
+    public visitConstraint(node: ConstraintSyntax): any {
+        return node.update(
+            this.visitToken(node.extendsKeyword()),
+            <ITypeSyntax>this.visitNodeOrToken(node.type()));
     }
 
     public visitElseClause(node: ElseClauseSyntax): any {

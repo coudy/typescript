@@ -321,8 +321,25 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitCallSignature(node: CallSignatureSyntax): void {
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
+    }
+
+    public visitTypeParameterList(node: TypeParameterListSyntax): void {
+        this.visitToken(node.lessThanToken());
+        this.visitSeparatedList(node.typeArguments());
+        this.visitToken(node.greaterThanToken());
+    }
+
+    public visitTypeParameter(node: TypeParameterSyntax): void {
+        this.visitToken(node.identifier());
+        this.visitOptionalNode(node.constraint());
+    }
+
+    public visitConstraint(node: ConstraintSyntax): void {
+        this.visitToken(node.extendsKeyword());
+        this.visitNodeOrToken(node.type());
     }
 
     public visitElseClause(node: ElseClauseSyntax): void {

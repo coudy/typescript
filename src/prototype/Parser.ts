@@ -3997,7 +3997,7 @@ module Parser {
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return this.factory.callSignature(parameterList, typeAnnotation);
+            return this.factory.callSignature(null, parameterList, typeAnnotation);
         }
 
         private parseParameterList(): ParameterListSyntax {

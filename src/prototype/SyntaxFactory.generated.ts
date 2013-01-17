@@ -47,7 +47,10 @@ module Syntax {
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax;
         propertySignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax;
         parameterList(openParenToken: ISyntaxToken, parameters: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ParameterListSyntax;
-        callSignature(parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax;
+        callSignature(typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax;
+        typeParameterList(lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList, greaterThanToken: ISyntaxToken): TypeParameterListSyntax;
+        typeParameter(identifier: ISyntaxToken, constraint: ConstraintSyntax): TypeParameterSyntax;
+        constraint(extendsKeyword: ISyntaxToken, type: ITypeSyntax): ConstraintSyntax;
         elseClause(elseKeyword: ISyntaxToken, statement: IStatementSyntax): ElseClauseSyntax;
         ifStatement(ifKeyword: ISyntaxToken, openParenToken: ISyntaxToken, condition: IExpressionSyntax, closeParenToken: ISyntaxToken, statement: IStatementSyntax, elseClause: ElseClauseSyntax): IfStatementSyntax;
         expressionStatement(expression: IExpressionSyntax, semicolonToken: ISyntaxToken): ExpressionStatementSyntax;
@@ -229,8 +232,17 @@ module Syntax {
         parameterList(openParenToken: ISyntaxToken, parameters: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ParameterListSyntax {
             return new ParameterListSyntax(openParenToken, parameters, closeParenToken, /*parsedInStrictMode:*/ false);
         }
-        callSignature(parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-            return new CallSignatureSyntax(parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        callSignature(typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
+            return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        }
+        typeParameterList(lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList, greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
+            return new TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ false);
+        }
+        typeParameter(identifier: ISyntaxToken, constraint: ConstraintSyntax): TypeParameterSyntax {
+            return new TypeParameterSyntax(identifier, constraint, /*parsedInStrictMode:*/ false);
+        }
+        constraint(extendsKeyword: ISyntaxToken, type: ITypeSyntax): ConstraintSyntax {
+            return new ConstraintSyntax(extendsKeyword, type, /*parsedInStrictMode:*/ false);
         }
         elseClause(elseKeyword: ISyntaxToken, statement: IStatementSyntax): ElseClauseSyntax {
             return new ElseClauseSyntax(elseKeyword, statement, /*parsedInStrictMode:*/ false);
@@ -499,8 +511,17 @@ module Syntax {
         parameterList(openParenToken: ISyntaxToken, parameters: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ParameterListSyntax {
             return new ParameterListSyntax(openParenToken, parameters, closeParenToken, /*parsedInStrictMode:*/ true);
         }
-        callSignature(parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-            return new CallSignatureSyntax(parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);
+        callSignature(typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
+            return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);
+        }
+        typeParameterList(lessThanToken: ISyntaxToken, typeArguments: ISeparatedSyntaxList, greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
+            return new TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ true);
+        }
+        typeParameter(identifier: ISyntaxToken, constraint: ConstraintSyntax): TypeParameterSyntax {
+            return new TypeParameterSyntax(identifier, constraint, /*parsedInStrictMode:*/ true);
+        }
+        constraint(extendsKeyword: ISyntaxToken, type: ITypeSyntax): ConstraintSyntax {
+            return new ConstraintSyntax(extendsKeyword, type, /*parsedInStrictMode:*/ true);
         }
         elseClause(elseKeyword: ISyntaxToken, statement: IStatementSyntax): ElseClauseSyntax {
             return new ElseClauseSyntax(elseKeyword, statement, /*parsedInStrictMode:*/ true);

@@ -266,9 +266,10 @@ enum SyntaxKind {
     VariableDeclarator,
 
     // Lists
-    ParameterList,
     ArgumentList,
+    ParameterList,
     TypeArgumentList,
+    TypeParameterList,
 
     // Clauses
     ImplementsClause,
@@ -279,6 +280,10 @@ enum SyntaxKind {
     ElseClause,
     CatchClause,
     FinallyClause,
+
+    // Generics
+    TypeParameter,
+    Constraint,
 
     // Misc.
     Parameter,
