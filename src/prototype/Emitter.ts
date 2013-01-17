@@ -1108,13 +1108,25 @@ module Emitter {
         }
 
         private visitToken(token: ISyntaxToken): INameSyntax {
-            // Check if a name token needs to become fully qualified.
-
-            // Only want to qualify a token if it's actually a name.
-            if (token.kind() !== SyntaxKind.IdentifierNameToken) {
-                return token;
+            if (token.kind() === SyntaxKind.IdentifierNameToken) {
+                return this.visitIdentifierName(token);
             }
 
+            if (token.kind() === SyntaxKind.ThisKeyword) {
+                return this.visitThisKeyword(token);
+            }
+
+            return token;
+        }
+
+        private visitThisKeyword(token: ISyntaxToken): ISyntaxToken {
+            // TODO: use typecheck information to tell if we're accessing 'this' in a lambda and 
+            // should use "_this" instead.
+            return token;
+        }
+
+        private visitIdentifierName(token: ISyntaxToken): INameSyntax {
+            // Check if a name token needs to become fully qualified.
             var parent = this.syntaxInformationMap.parent(token);
             
             // We never qualify in a qualified name.  A qualified name only shows up in type 

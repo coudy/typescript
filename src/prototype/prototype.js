@@ -26485,9 +26485,18 @@ var Emitter;
             return result;
         };
         EmitterImpl.prototype.visitToken = function (token) {
-            if(token.kind() !== 11 /* IdentifierNameToken */ ) {
-                return token;
+            if(token.kind() === 11 /* IdentifierNameToken */ ) {
+                return this.visitIdentifierName(token);
             }
+            if(token.kind() === 35 /* ThisKeyword */ ) {
+                return this.visitThisKeyword(token);
+            }
+            return token;
+        };
+        EmitterImpl.prototype.visitThisKeyword = function (token) {
+            return token;
+        };
+        EmitterImpl.prototype.visitIdentifierName = function (token) {
             var parent = this.syntaxInformationMap.parent(token);
             if(parent.kind() === 120 /* QualifiedName */ ) {
                 return token;
