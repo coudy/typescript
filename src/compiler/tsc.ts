@@ -71,7 +71,7 @@ class BatchCompiler {
     public compilationEnvironment: TypeScript.CompilationEnvironment;
     public resolvedEnvironment: TypeScript.CompilationEnvironment = null;
     public hasResolveErrors: bool = false;
-    public compilerVersion = "0.8.2.0";
+    public compilerVersion = "0.8.3.0";
     public printedVersion = false;
 
     constructor (public ioHost: IIO) { 
