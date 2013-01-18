@@ -33,6 +33,10 @@ class TextChangeRange {
         return this._newLength;
     }
 
+    public newSpan(): TextSpan {
+        return new TextSpan(this.span().start(), this.newLength());
+    }
+
     public static collapse(changes: TextChangeRange[]): TextChangeRange {
         var diff = 0;
         var start = Constants.Max31BitInteger;

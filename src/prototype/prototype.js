@@ -27552,6 +27552,9 @@ var TextChangeRange = (function () {
     TextChangeRange.prototype.newLength = function () {
         return this._newLength;
     };
+    TextChangeRange.prototype.newSpan = function () {
+        return new TextSpan(this.span().start(), this.newLength());
+    };
     TextChangeRange.collapse = function collapse(changes) {
         var diff = 0;
         var start = 1073741823 /* Max31BitInteger */ ;
@@ -27883,6 +27886,7 @@ var Parser;
             this._changeDelta = 0;
             this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
             this._changeRange = IncrementalParserSource.extendToAffectedRange(TextChangeRange.collapse(changeRanges), oldSourceUnit);
+            Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
             this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
         }
         IncrementalParserSource.extendToAffectedRange = function extendToAffectedRange(changeRange, sourceUnit) {
@@ -27893,6 +27897,8 @@ var Parser;
             for(var i = 0; start > 0 && i <= maxLookahead; i++) {
                 var tokenAndFullStart = sourceUnit.findToken(start);
                 var token = tokenAndFullStart.token;
+                Debug.assert(token.tokenKind !== 0 /* None */ );
+                Debug.assert(token.fullWidth() > 0);
                 var position = tokenAndFullStart.fullStart;
                 start = MathPrototype.max(0, position - 1);
             }
@@ -27915,6 +27921,7 @@ var Parser;
             rewindPoint.changeDelta = this._changeDelta;
             rewindPoint.changeRange = this._changeRange;
             rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
+            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
             return rewindPoint;
         };
         IncrementalParserSource.prototype.rewind = function (rewindPoint) {
@@ -27929,6 +27936,9 @@ var Parser;
         };
         IncrementalParserSource.prototype.canReadFromOldSourceUnit = function () {
             if(this._normalParserSource.isPinned()) {
+                return false;
+            }
+            if(this._changeRange !== null && this._changeRange.newSpan().intersectsWithPosition(this.absolutePosition())) {
                 return false;
             }
             this.syncCursorToNewTextIfBehind();
@@ -27968,17 +27978,19 @@ var Parser;
                     this._changeDelta += currentElement.fullWidth();
                 }
             }
+            Debug.assert(this._oldSourceUnitCursor.isFinished() || this._changeDelta >= 0);
         };
-        IncrementalParserSource.prototype.intersectsWithChangeRangeSpan = function (start, length) {
+        IncrementalParserSource.prototype.intersectsWithChangeRangeSpanInOriginalText = function (start, length) {
             return this._changeRange !== null && this._changeRange.span().intersectsWith(start, length);
         };
         IncrementalParserSource.prototype.tryGetNodeFromOldSourceUnit = function () {
+            Debug.assert(this.canReadFromOldSourceUnit());
             while(true) {
                 var node = this._oldSourceUnitCursor.currentNode();
                 if(node === null) {
                     return null;
                 }
-                if(!this.intersectsWithChangeRangeSpan(this.absolutePosition(), node.fullWidth())) {
+                if(!this.intersectsWithChangeRangeSpanInOriginalText(this.absolutePosition(), node.fullWidth())) {
                     if(!node.hasSkippedText() && !node.hasZeroWidthToken() && !node.hasRegularExpressionToken()) {
                         return node;
                     }
@@ -27988,7 +28000,7 @@ var Parser;
         };
         IncrementalParserSource.prototype.canReuseTokenFromOldSourceUnit = function (position, token) {
             if(token !== null) {
-                if(!this.intersectsWithChangeRangeSpan(position, token.fullWidth())) {
+                if(!this.intersectsWithChangeRangeSpanInOriginalText(position, token.fullWidth())) {
                     if(!token.hasSkippedText() && token.width() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind)) {
                         return true;
                     }
@@ -27997,6 +28009,7 @@ var Parser;
             return false;
         };
         IncrementalParserSource.prototype.tryGetTokenFromOldSourceUnit = function () {
+            Debug.assert(this.canReadFromOldSourceUnit());
             var token = this._oldSourceUnitCursor.currentToken();
             return this.canReuseTokenFromOldSourceUnit(this.absolutePosition(), token) ? token : null;
         };
@@ -28010,6 +28023,7 @@ var Parser;
             return this._normalParserSource.peekToken(n);
         };
         IncrementalParserSource.prototype.tryPeekTokenFromOldSourceUnit = function (n) {
+            Debug.assert(this.canReadFromOldSourceUnit());
             var currentPosition = this.absolutePosition();
             for(var i = 0; i < n; i++) {
                 var interimToken = this._oldSourceUnitCursor.peekToken(i);
@@ -28022,29 +28036,40 @@ var Parser;
             return this.canReuseTokenFromOldSourceUnit(currentPosition, token) ? token : null;
         };
         IncrementalParserSource.prototype.moveToNextNode = function () {
+            Debug.assert(this._changeDelta === 0);
             var currentElement = this._oldSourceUnitCursor.currentElement();
             var currentNode = this._oldSourceUnitCursor.currentNode();
+            Debug.assert(currentElement === currentNode);
             this._oldSourceUnitCursor.moveToNextSibling();
             var absolutePosition = this.absolutePosition() + currentNode.fullWidth();
             var previousToken = currentNode.lastToken();
             this._normalParserSource.resetToPosition(absolutePosition, previousToken);
+            Debug.assert(previousToken !== null);
+            Debug.assert(previousToken.width() > 0);
             if(this._changeRange !== null) {
+                Debug.assert(this.absolutePosition() < this._changeRange.span().start());
             }
         };
         IncrementalParserSource.prototype.moveToNextToken = function () {
             var currentToken = this.currentToken();
             if(this._oldSourceUnitCursor.currentToken() === currentToken) {
+                Debug.assert(this._changeDelta === 0);
                 this._oldSourceUnitCursor.moveToNextSibling();
+                Debug.assert(!this._normalParserSource.isPinned());
                 var absolutePosition = this.absolutePosition() + currentToken.fullWidth();
                 var previousToken = currentToken;
                 this._normalParserSource.resetToPosition(absolutePosition, previousToken);
+                Debug.assert(previousToken !== null);
+                Debug.assert(previousToken.width() > 0);
                 if(this._changeRange !== null) {
+                    Debug.assert(this.absolutePosition() < this._changeRange.span().start());
                 }
             } else {
                 this._changeDelta -= currentToken.fullWidth();
                 this._normalParserSource.moveToNextToken();
                 if(this._changeRange !== null) {
-                    if(this.absolutePosition() > this._changeRange.span().end()) {
+                    var changeRangeSpanInNewText = this._changeRange.newSpan();
+                    if(this.absolutePosition() >= changeRangeSpanInNewText.end()) {
                         this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
                         this._changeRange = null;
                     }
@@ -33227,7 +33252,7 @@ var IncrementalParserTests = (function () {
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 34);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
     IncrementalParserTests.testIncremental2 = function testIncremental2() {
         var source = "class C {\r\n";
@@ -33240,7 +33265,7 @@ var IncrementalParserTests = (function () {
         var index = source.indexOf("+ 1");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
     IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
         var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
@@ -33284,7 +33309,7 @@ var IncrementalParserTests = (function () {
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
     }
     IncrementalParserTests.testTypeMember1 = function testTypeMember1() {
         var source = "interface I { a: number; b: string; (c): d; new (e): f; g(): h }";
@@ -33298,7 +33323,7 @@ var IncrementalParserTests = (function () {
         var index = source.indexOf("<<");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 53);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
     }
     IncrementalParserTests.testStrictMode1 = function testStrictMode1() {
         var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
@@ -33317,14 +33342,14 @@ var IncrementalParserTests = (function () {
         var index = source.indexOf('f');
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 17);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
     }
     IncrementalParserTests.testStrictMode4 = function testStrictMode4() {
         var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
         var index = source.indexOf('f');
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 12);
     }
     IncrementalParserTests.testIncremental5 = function testIncremental5() {
         var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
@@ -33345,7 +33370,49 @@ var IncrementalParserTests = (function () {
         var index = source.indexOf('f');
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 49);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 59);
+    }
+    IncrementalParserTests.testGenerics1 = function testGenerics1() {
+        var source = "var v = <T>(a);";
+        var index = source.indexOf(';');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, " => 1");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+    }
+    IncrementalParserTests.testGenerics2 = function testGenerics2() {
+        var source = "var v = <T>(a) => 1;";
+        var index = source.indexOf(' =>');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, " => 1".length);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+    }
+    IncrementalParserTests.testGenerics3 = function testGenerics3() {
+        var source = "var v = 1 >> = 2";
+        var index = source.indexOf('>> =');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index + 2, 1);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+    }
+    IncrementalParserTests.testGenerics4 = function testGenerics4() {
+        var source = "var v = 1 >>= 2";
+        var index = source.indexOf('>>=');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index + 2, " ");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+    }
+    IncrementalParserTests.testGenerics5 = function testGenerics5() {
+        var source = "var v = T>>(2)";
+        var index = source.indexOf('T');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "Foo<Bar<");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+    }
+    IncrementalParserTests.testGenerics6 = function testGenerics6() {
+        var source = "var v = Foo<Bar<T>>(2)";
+        var index = source.indexOf('Foo<Bar<');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, "Foo<Bar<".length);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
     }
     return IncrementalParserTests;
 })();

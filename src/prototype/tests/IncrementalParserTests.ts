@@ -91,7 +91,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 34);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
 
     public static testIncremental2() {
@@ -108,7 +108,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     }
 
     public static testIncrementalRegex1() {
@@ -174,7 +174,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
     }
 
     public static testTypeMember1() {
@@ -198,7 +198,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 53);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
     }
 
     public static testStrictMode1() {
@@ -240,7 +240,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 17);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
     }
 
     public static testStrictMode4() {
@@ -254,7 +254,7 @@ class IncrementalParserTests {
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
 
         // Note the decreased reuse of nodes compared to testStrictMode3
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 12);
     }
 
     public static testIncremental5() {
@@ -288,6 +288,78 @@ class IncrementalParserTests {
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
 
         // Note the decreased reuse of nodes compared to testStrictMode3
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 49);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 59);
+    }
+
+    public static testGenerics1() {
+        var source = "var v = <T>(a);";
+
+        var index = source.indexOf(';');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, " => 1");
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+    }
+
+    public static testGenerics2() {
+        var source = "var v = <T>(a) => 1;";
+
+        var index = source.indexOf(' =>');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, " => 1".length);
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+    }
+
+    public static testGenerics3() {
+        var source = "var v = 1 >> = 2";
+
+        var index = source.indexOf('>> =');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index + 2, 1);
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+    }
+
+    public static testGenerics4() {
+        var source = "var v = 1 >>= 2";
+
+        var index = source.indexOf('>>=');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index + 2, " ");
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+    }
+
+    public static testGenerics5() {
+        var source = "var v = T>>(2)";
+
+        var index = source.indexOf('T');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "Foo<Bar<");
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+    }
+
+    public static testGenerics6() {
+        var source = "var v = Foo<Bar<T>>(2)";
+
+        var index = source.indexOf('Foo<Bar<');
+
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, "Foo<Bar<".length);
+
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
     }
 }

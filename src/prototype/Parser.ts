@@ -783,7 +783,7 @@ module Parser {
 
             // The old tree's length, plus whatever length change was caused by the edit better 
             // equal the new text's length!
-            // Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
+            Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
 
             // Set up a scanner so that we can scan tokens out of the new text.
             this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
@@ -825,8 +825,8 @@ module Parser {
             {
                 var tokenAndFullStart = sourceUnit.findToken(start);
                 var token = tokenAndFullStart.token;
-                // Debug.assert(token.tokenKind !== SyntaxKind.None);
-                // Debug.assert(token.fullWidth() > 0);
+                Debug.assert(token.tokenKind !== SyntaxKind.None);
+                Debug.assert(token.fullWidth() > 0);
 
                 var position = tokenAndFullStart.fullStart;
 
@@ -860,7 +860,7 @@ module Parser {
             rewindPoint.changeRange = this._changeRange;
             rewindPoint.oldSourceUnitCursorIndex = oldSourceUnitCursorIndex;
 
-            // Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
+            Debug.assert(rewindPoint.pinCount === this._oldSourceUnitCursor.pinCount());
 
             return rewindPoint;
         }
@@ -883,8 +883,15 @@ module Parser {
         private canReadFromOldSourceUnit() {
             // If we're currently pinned, then do not want to touch the cursor.  If we end up 
             // reading from the old source unit, we'll try to then set the position of the normal
-            // parser source.  Doing is unsupported while the underlying source is pinned.
+            // parser source to an absolute position (in moveToNextToken).  Doing is unsupported
+            // while the underlying source is pinned.
             if (this._normalParserSource.isPinned()) {
+                return false;
+            }
+
+            // If our current absolute position is in the middle of the changed range in the new text
+            // then we definitely can't read from the old source unit right now.
+            if (this._changeRange !== null && this._changeRange.newSpan().intersectsWithPosition(this.absolutePosition())) {
                 return false;
             }
 
@@ -974,15 +981,15 @@ module Parser {
             //   b) (ideally) caught up to the new text position.
             //   c) ahead of the new text position.
             // In case 'b' we can try to reuse a node from teh old tree.
-            // Debug.assert(this._oldSourceUnitCursor.isFinished() || this._changeDelta >= 0);
+            Debug.assert(this._oldSourceUnitCursor.isFinished() || this._changeDelta >= 0);
         }
 
-        private intersectsWithChangeRangeSpan(start: number, length: number) {
+        private intersectsWithChangeRangeSpanInOriginalText(start: number, length: number) {
             return this._changeRange !== null && this._changeRange.span().intersectsWith(start, length);
         }
 
         private tryGetNodeFromOldSourceUnit(): SyntaxNode {
-            // Debug.assert(this.canReadFromOldSourceUnit());
+            Debug.assert(this.canReadFromOldSourceUnit());
 
             // Keep moving the cursor down to the first node that is safe to return.  A node is 
             // safe to return if:
@@ -1000,7 +1007,7 @@ module Parser {
                     return null;
                 }
 
-                if (!this.intersectsWithChangeRangeSpan(this.absolutePosition(), node.fullWidth())) {
+                if (!this.intersectsWithChangeRangeSpanInOriginalText(this.absolutePosition(), node.fullWidth())) {
                     // Didn't intersect with the change range.
                     if (!node.hasSkippedText() &&
                         !node.hasZeroWidthToken() &&
@@ -1031,7 +1038,7 @@ module Parser {
             // parser reacts to them.
 
             if (token !== null) {
-                if (!this.intersectsWithChangeRangeSpan(position, token.fullWidth())) {
+                if (!this.intersectsWithChangeRangeSpanInOriginalText(position, token.fullWidth())) {
                     // Didn't intersect with the change range.
                     if (!token.hasSkippedText() &&
                         token.width() > 0 &&
@@ -1048,7 +1055,7 @@ module Parser {
         }
 
         private tryGetTokenFromOldSourceUnit(): ISyntaxToken {
-            // Debug.assert(this.canReadFromOldSourceUnit());
+            Debug.assert(this.canReadFromOldSourceUnit());
 
             // get the current token that the cursor is pointing at.
             var token = this._oldSourceUnitCursor.currentToken();
@@ -1070,7 +1077,7 @@ module Parser {
         }
 
         private tryPeekTokenFromOldSourceUnit(n: number): ISyntaxToken {
-            // Debug.assert(this.canReadFromOldSourceUnit());
+            Debug.assert(this.canReadFromOldSourceUnit());
 
             // In order to peek the 'nth' token we need all the tokens up to that point.  That way
             // we know we know position that the nth token is at.  The position is necessary so 
@@ -1093,14 +1100,14 @@ module Parser {
         private moveToNextNode(): void {
             // A node could have only come from the old source unit cursor.  Update it and our 
             // current state.
-            // Debug.assert(this._changeDelta === 0);
+            Debug.assert(this._changeDelta === 0);
 
             // Get the current node we were pointing at, and move to the next element.
             var currentElement = this._oldSourceUnitCursor.currentElement();
             var currentNode = this._oldSourceUnitCursor.currentNode();
 
             // We better still be pointing at the node.
-            // Debug.assert(currentElement === currentNode);
+            Debug.assert(currentElement === currentNode);
             this._oldSourceUnitCursor.moveToNextSibling();
 
             // Update the underlying source with where it should now be currently pointing, and 
@@ -1109,13 +1116,13 @@ module Parser {
             var previousToken = currentNode.lastToken();
             this._normalParserSource.resetToPosition(absolutePosition, previousToken);
 
-            // Debug.assert(previousToken !== null);
-            // Debug.assert(previousToken.width() > 0);
+            Debug.assert(previousToken !== null);
+            Debug.assert(previousToken.width() > 0);
 
             if (this._changeRange !== null) {
                 // If we still have a change range, then this node must have ended before the 
                 // change range starts.  Thus, we don't need to call 'skipPastChanges'.
-                // Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+                Debug.assert(this.absolutePosition() < this._changeRange.span().start());
             }
         }
 
@@ -1126,12 +1133,12 @@ module Parser {
 
             if (this._oldSourceUnitCursor.currentToken() === currentToken) {
                 // The token came from the old source unit.  So our tree and text must be in sync.
-                // Debug.assert(this._changeDelta === 0);
+                Debug.assert(this._changeDelta === 0);
 
                 // Move the cursor past this token.
                 this._oldSourceUnitCursor.moveToNextSibling();
 
-                // Debug.assert(!this._normalParserSource.isPinned());
+                Debug.assert(!this._normalParserSource.isPinned());
                 
                 // Update the underlying source with where it should now be currently pointing, and 
                 // what the previous token is before that position.  We don't need to do this when
@@ -1141,13 +1148,13 @@ module Parser {
                 var previousToken = currentToken;
                 this._normalParserSource.resetToPosition(absolutePosition, previousToken);
 
-                // Debug.assert(previousToken !== null);
-                // Debug.assert(previousToken.width() > 0);
+                Debug.assert(previousToken !== null);
+                Debug.assert(previousToken.width() > 0);
 
                 if (this._changeRange !== null) {
                     // If we still have a change range, then this token must have ended before the 
                     // change range starts.  Thus, we don't need to call 'skipPastChanges'.
-                    // Debug.assert(this.absolutePosition() < this._changeRange.span().start());
+                    Debug.assert(this.absolutePosition() < this._changeRange.span().start());
                 }
             }
             else {
@@ -1162,7 +1169,8 @@ module Parser {
                 // compensate for the length change between the old and new text.
                 if (this._changeRange !== null) {
                     // var changeEndInNewText = this._changeRange.span().start() + this._changeRange.newLength();
-                    if (this.absolutePosition() > this._changeRange.span().end()) {
+                    var changeRangeSpanInNewText = this._changeRange.newSpan();
+                    if (this.absolutePosition() >= changeRangeSpanInNewText.end()) {
                         this._changeDelta += this._changeRange.newLength() - this._changeRange.span().length();
                         this._changeRange = null;
                     }
