@@ -4510,20 +4510,17 @@ module Parser {
         private tryParseExpectedListItem(currentListType: ListParsingState,
                                          inErrorRecovery: bool,
                                          items: ISyntaxElement[],
-                                         processItems: (parser: ParserImpl, items: any[]) => void ): any[] {
+                                         processItems: (parser: ParserImpl, items: any[]) => void ): void {
             if (this.isExpectedListItem(currentListType, inErrorRecovery)) {
                 var item = this.parseExpectedListItem(currentListType);
                 // Debug.assert(item !== null);
 
-                items = items || [];
                 items.push(item);
 
                 if (processItems !== null) {
                     processItems(this, items);
                 }
             }
-
-            return items;
         }
 
         private listIsTerminated(currentListType: ListParsingState, itemCount: number): bool {
@@ -4531,17 +4528,35 @@ module Parser {
                    this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
         }
 
+        private syntaxArrayPool: any[][] = [];
+        private getSyntaxArray(): any[] {
+            if (this.syntaxArrayPool.length > 0) {
+                return this.syntaxArrayPool.pop();
+            }
+
+            return [];
+        }
+
+        private returnSyntaxArray(array: any[]) {
+            // Can't return if it has more then 1 element.  In that case, the list will have been
+            // copied into the SyntaxList.
+            if (array.length <= 1) {
+                array.length = 0;
+                this.syntaxArrayPool.push(array);
+            }
+        }
+
         private parseSyntaxListWorker(currentListType: ListParsingState,
                                       processItems: (parser: ParserImpl, items: any[]) => void ): ISyntaxList {
-            var items: SyntaxNode[] = null;
+            var items: SyntaxNode[] = this.getSyntaxArray();
 
             while (true) {
                 // Try to parse an item of the list.  If we fail then decide if we need to abort or 
                 // continue parsing.
-                var oldItemsCount = items === null ? 0 : items.length;
-                items = this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItems);
+                var oldItemsCount = items.length;
+                this.tryParseExpectedListItem(currentListType, /*inErrorRecovery:*/ false, items, processItems);
 
-                var newItemsCount = items === null ? 0 : items.length;
+                var newItemsCount = items.length;
                 if (newItemsCount === oldItemsCount) {
                     // We weren't able to parse out a list element.
 
@@ -4563,11 +4578,14 @@ module Parser {
                 // and didn't want to abort. Continue parsing elements.
             }
 
-            return Syntax.list(items);
+            var result = Syntax.list(items);
+            this.returnSyntaxArray(items);
+
+            return result;
         }
 
         private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
-            var items: ISyntaxNodeOrToken[] = null;
+            var items: ISyntaxNodeOrToken[] = this.getSyntaxArray();
 
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var separatorKind = this.separatorKind(currentListType);
@@ -4577,11 +4595,11 @@ module Parser {
             while (true) {
                 // Try to parse an item of the list.  If we fail then decide if we need to abort or 
                 // continue parsing.
-                var oldItemsCount = items === null ? 0 : items.length;
+                var oldItemsCount = items.length;
                 // Debug.assert(oldItemsCount % 2 === 0);
-                items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
+                this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
                 
-                var newItemsCount = items === null ? 0 : items.length;
+                var newItemsCount = items.length;
                 if (newItemsCount === oldItemsCount) {
                     // We weren't able to parse out a list element.
                     // Debug.assert(items === null || items.length % 2 === 0);
@@ -4676,7 +4694,7 @@ module Parser {
 
             // If this list requires at least one argument, then report an error if we haven't 
             // gotten any.
-            if (requiresAtLeastOneItem && items === null) {
+            if (requiresAtLeastOneItem && items.length === 0) {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
             }
             else {
@@ -4686,7 +4704,7 @@ module Parser {
                 // have a trailing separator.
                 if (listWasTerminated &&
                     !allowTrailingSeparator &&
-                    items !== null &&
+                    items.length > 0 &&
                     items.length % 2 === 0 &&
                     items[items.length - 1] === this.previousToken()) {
 
@@ -4694,8 +4712,11 @@ module Parser {
                         this.previousTokenStart(), this.previousToken().width(), DiagnosticCode.Trailing_separator_not_allowed, null));
                 }
             }
+            
+            var result = Syntax.separatedList(items);
+            this.returnSyntaxArray(items);
 
-            return Syntax.separatedList(items);
+            return result;
         }
 
         private allowsTrailingSeparator(currentListType: ListParsingState): bool {

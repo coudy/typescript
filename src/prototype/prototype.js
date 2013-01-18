@@ -28093,6 +28093,7 @@ var Parser;
             this.diagnostics = [];
             this.factory = Syntax.normalModeFactory;
             this.mergeTokensStorage = [];
+            this.syntaxArrayPool = [];
             this.source = source;
             this.options = options;
         }
@@ -30317,23 +30318,33 @@ var Parser;
         ParserImpl.prototype.tryParseExpectedListItem = function (currentListType, inErrorRecovery, items, processItems) {
             if(this.isExpectedListItem(currentListType, inErrorRecovery)) {
                 var item = this.parseExpectedListItem(currentListType);
-                items = items || [];
                 items.push(item);
                 if(processItems !== null) {
                     processItems(this, items);
                 }
             }
-            return items;
         };
         ParserImpl.prototype.listIsTerminated = function (currentListType, itemCount) {
             return this.isExpectedListTerminator(currentListType, itemCount) || this.currentToken().tokenKind === 10 /* EndOfFileToken */ ;
         };
+        ParserImpl.prototype.getSyntaxArray = function () {
+            if(this.syntaxArrayPool.length > 0) {
+                return this.syntaxArrayPool.pop();
+            }
+            return [];
+        };
+        ParserImpl.prototype.returnSyntaxArray = function (array) {
+            if(array.length <= 1) {
+                array.length = 0;
+                this.syntaxArrayPool.push(array);
+            }
+        };
         ParserImpl.prototype.parseSyntaxListWorker = function (currentListType, processItems) {
-            var items = null;
+            var items = this.getSyntaxArray();
             while(true) {
-                var oldItemsCount = items === null ? 0 : items.length;
-                items = this.tryParseExpectedListItem(currentListType, false, items, processItems);
-                var newItemsCount = items === null ? 0 : items.length;
+                var oldItemsCount = items.length;
+                this.tryParseExpectedListItem(currentListType, false, items, processItems);
+                var newItemsCount = items.length;
                 if(newItemsCount === oldItemsCount) {
                     if(this.listIsTerminated(currentListType, newItemsCount)) {
                         break;
@@ -30344,18 +30355,20 @@ var Parser;
                     }
                 }
             }
-            return Syntax.list(items);
+            var result = Syntax.list(items);
+            this.returnSyntaxArray(items);
+            return result;
         };
         ParserImpl.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
-            var items = null;
+            var items = this.getSyntaxArray();
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var separatorKind = this.separatorKind(currentListType);
             var inErrorRecovery = false;
             var listWasTerminated = false;
             while(true) {
-                var oldItemsCount = items === null ? 0 : items.length;
-                items = this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
-                var newItemsCount = items === null ? 0 : items.length;
+                var oldItemsCount = items.length;
+                this.tryParseExpectedListItem(currentListType, inErrorRecovery, items, null);
+                var newItemsCount = items.length;
                 if(newItemsCount === oldItemsCount) {
                     if(this.listIsTerminated(currentListType, newItemsCount)) {
                         listWasTerminated = true;
@@ -30387,14 +30400,16 @@ var Parser;
             }
             var allowTrailingSeparator = this.allowsTrailingSeparator(currentListType);
             var requiresAtLeastOneItem = this.requiresAtLeastOneItem(currentListType);
-            if(requiresAtLeastOneItem && items === null) {
+            if(requiresAtLeastOneItem && items.length === 0) {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
             } else {
-                if(listWasTerminated && !allowTrailingSeparator && items !== null && items.length % 2 === 0 && items[items.length - 1] === this.previousToken()) {
+                if(listWasTerminated && !allowTrailingSeparator && items.length > 0 && items.length % 2 === 0 && items[items.length - 1] === this.previousToken()) {
                     this.addDiagnostic(new SyntaxDiagnostic(this.previousTokenStart(), this.previousToken().width(), 9 /* Trailing_separator_not_allowed */ , null));
                 }
             }
-            return Syntax.separatedList(items);
+            var result = Syntax.separatedList(items);
+            this.returnSyntaxArray(items);
+            return result;
         };
         ParserImpl.prototype.allowsTrailingSeparator = function (currentListType) {
             switch(currentListType) {
