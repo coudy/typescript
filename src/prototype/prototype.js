@@ -7479,7 +7479,7 @@ var Scanner = (function () {
 
             }
             case 62 /* greaterThan */ : {
-                return this.scanGreaterThanToken();
+                return this.advanceAndSetTokenKind(81 /* GreaterThanToken */ );
 
             }
             case 44 /* comma */ : {
@@ -7640,16 +7640,6 @@ var Scanner = (function () {
     Scanner.prototype.advanceAndSetTokenKind = function (kind) {
         this.slidingWindow.moveToNextItem();
         return kind;
-    };
-    Scanner.prototype.scanGreaterThanToken = function () {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if(character === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 83 /* GreaterThanEqualsToken */ ;
-        } else {
-            return 81 /* GreaterThanToken */ ;
-        }
     };
     Scanner.prototype.scanLessThanToken = function () {
         this.slidingWindow.moveToNextItem();
@@ -29544,38 +29534,67 @@ var Parser;
             var token0 = this.currentToken();
             var token0Kind = token0.tokenKind;
             if(token0Kind === 81 /* GreaterThanToken */  && !token0.hasTrailingTrivia()) {
-                var token1 = this.peekToken(1);
-                if(!token1.hasLeadingTrivia()) {
-                    if(token1.tokenKind === 83 /* GreaterThanEqualsToken */ ) {
-                        return {
-                            tokenCount: 2,
-                            syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
-                        };
-                    }
-                    if(token1.tokenKind === 81 /* GreaterThanToken */ ) {
-                        if(!token1.hasTrailingTrivia()) {
-                            var token2 = this.peekToken(2);
-                            if(!token2.hasLeadingTrivia()) {
-                                if(token2.tokenKind === 81 /* GreaterThanToken */ ) {
-                                    return {
-                                        tokenCount: 3,
-                                        syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
-                                    };
-                                }
-                                if(token2.tokenKind === 83 /* GreaterThanEqualsToken */ ) {
-                                    return {
-                                        tokenCount: 3,
-                                        syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
-                                    };
-                                }
-                            }
-                        }
-                        return {
-                            tokenCount: 2,
-                            syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
-                        };
+                return this.tryMergeNextTokenWithGreaterThanToken(this.peekToken(1));
+            }
+            return null;
+        };
+        ParserImpl.prototype.tryMergeNextTokenWithGreaterThanToken = function (token1) {
+            if(token1.hasLeadingTrivia()) {
+                return null;
+            }
+            if(token1.tokenKind === 107 /* EqualsToken */ ) {
+                return {
+                    tokenCount: 2,
+                    syntaxKind: 83 /* GreaterThanEqualsToken */ 
+                };
+            }
+            if(token1.tokenKind === 81 /* GreaterThanToken */ ) {
+                if(!token1.hasTrailingTrivia()) {
+                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanToken(this.peekToken(2));
+                    if(result !== null) {
+                        return result;
                     }
                 }
+                return {
+                    tokenCount: 2,
+                    syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
+                };
+            }
+            return null;
+        };
+        ParserImpl.prototype.tryMergeNextTokenWithGreaterThanGreaterThanToken = function (token2) {
+            if(token2.hasLeadingTrivia()) {
+                return null;
+            }
+            if(token2.tokenKind === 107 /* EqualsToken */ ) {
+                return {
+                    tokenCount: 3,
+                    syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
+                };
+            }
+            if(token2.tokenKind === 81 /* GreaterThanToken */ ) {
+                if(!token2.hasTrailingTrivia()) {
+                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken(this.peekToken(3));
+                    if(result !== null) {
+                        return result;
+                    }
+                }
+                return {
+                    tokenCount: 3,
+                    syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
+                };
+            }
+            return null;
+        };
+        ParserImpl.prototype.tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken = function (token3) {
+            if(token3.hasLeadingTrivia()) {
+                return null;
+            }
+            if(token3.tokenKind === 107 /* EqualsToken */ ) {
+                return {
+                    tokenCount: 4,
+                    syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
+                };
             }
             return null;
         };

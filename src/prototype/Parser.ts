@@ -724,7 +724,7 @@ module Parser {
     // long as they do not intersect with the text change.  Then, the text that is actually changed
     // will be scanned using a normal scanner.  Then, once the new text is scanned, the source will
     // attempt to sync back up with nodes or tokens that started where the new tokens end. Once it
-    // can do that, then all subsequent data will come from teh original text.
+    // can do that, then all subsequent data will come from the original tree.
     //
     // This allows for an enormous amount of tree reuse in common scenarios.  Situations that 
     // prevent this level of reuse include substantially destructive operations like introducing
@@ -3293,7 +3293,7 @@ module Parser {
                         break;
                     }
 
-                    // check for >> or >>= or >>> or >>>=.
+                    // check for >= or >> or >>= or >>> or >>>=.
                     //
                     // These are not created by the scanner since we want the individual > tokens for
                     // generics.
@@ -3363,7 +3363,7 @@ module Parser {
         }
 
         private tryMergeBinaryExpressionTokens(): { tokenCount: number; syntaxKind: SyntaxKind; } {
-            // check for >> or >>= or >>> or >>>=.
+            // check for >= or >> or >>= or >>> or >>>=.
 
             var token0 = this.currentToken();
             var token0Kind = token0.tokenKind;
@@ -3372,40 +3372,83 @@ module Parser {
             if (token0Kind === SyntaxKind.GreaterThanToken && !token0.hasTrailingTrivia()) {
                 // We've got a '>'.  We can potentially merge it if the next token has absolutely nothing
                 // before it
-                var token1 = this.peekToken(1);
-                if (!token1.hasLeadingTrivia()) {
-                    if (token1.tokenKind === SyntaxKind.GreaterThanEqualsToken) {
-                        // We've got '>>='.  Nothing else can be merged.
-                        return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
-                    }
-
-                    if (token1.tokenKind === SyntaxKind.GreaterThanToken) {
-                        // We've got '>>'  we may return it as is, or we could merge it with a following '>' or '>='
-                        // token if there's nothing between the two.
-                        if (!token1.hasTrailingTrivia()) {
-                            var token2 = this.peekToken(2);
-
-                            if (!token2.hasLeadingTrivia()) {
-                                if (token2.tokenKind === SyntaxKind.GreaterThanToken) {
-                                    // We've got '>>>'.
-                                    return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
-                                }
-
-                                if (token2.tokenKind === SyntaxKind.GreaterThanEqualsToken) {
-                                    // We've got '>>>='.
-                                    return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
-                                }
-                            }
-                        }
-
-                        // We've got '>>' only.
-                        return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
-                    }
-                }
+                return this.tryMergeNextTokenWithGreaterThanToken(this.peekToken(1));
             }
 
             return null;
         }
+
+        private tryMergeNextTokenWithGreaterThanToken(token1: ISyntaxToken): { tokenCount: number; syntaxKind: SyntaxKind; } {
+            if (token1.hasLeadingTrivia()) {
+                // can't merge if the next token has leading trivia.
+                return null;
+            }
+
+            if (token1.tokenKind === SyntaxKind.EqualsToken) {
+                // We've got '>='.  Nothing else can be merged.
+                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanEqualsToken };
+            }
+
+            if (token1.tokenKind === SyntaxKind.GreaterThanToken) {
+                // We've got '>>'  we may return it as is, or we could merge it with a following '>' or '='
+                // token if there's nothing between the two.
+                if (!token1.hasTrailingTrivia()) {
+                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanToken(this.peekToken(2));
+                    if (result !== null) {
+                        return result;
+                    }
+                }
+
+                // We've got '>>' only.
+                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
+            }
+
+            return null;
+        }
+
+        private tryMergeNextTokenWithGreaterThanGreaterThanToken(token2: ISyntaxToken): { tokenCount: number; syntaxKind: SyntaxKind; } {
+            if (token2.hasLeadingTrivia()) {
+                // can't merge if the next token has leading trivia.
+                return null;
+            }
+
+            if (token2.tokenKind === SyntaxKind.EqualsToken) {
+                // We've got '>>='.  Nothing else can be merged.
+                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
+            }
+
+            if (token2.tokenKind === SyntaxKind.GreaterThanToken) {
+                // We've got '>>>'  we may return it as is, or we could merge it with a following '='
+                // token if there's nothing between the two.
+
+                if (!token2.hasTrailingTrivia()) {
+                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken(this.peekToken(3));
+                    if (result !== null) {
+                        return result;
+                    }
+                }
+
+                // We've got '>>>' only.
+                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
+            }
+
+            return null;
+        }
+
+        private tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken(token3: ISyntaxToken): { tokenCount: number; syntaxKind: SyntaxKind; } {
+            if (token3.hasLeadingTrivia()) {
+                // can't merge if the next token has leading trivia.
+                return null;
+            }
+
+            if (token3.tokenKind === SyntaxKind.EqualsToken) {
+                // We've got '>>>='.  Nothing else can be merged.
+                return { tokenCount: 4, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
+            }
+
+            return null;
+        }
+
 
         private isRightAssociative(expressionKind: SyntaxKind): bool {
             switch (expressionKind) {

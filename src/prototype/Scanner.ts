@@ -446,11 +446,11 @@ class Scanner implements ISlidingWindowSource {
             case CharacterCodes.lessThan:
                 return this.scanLessThanToken();
 
-            case CharacterCodes.greaterThan:
-                return this.scanGreaterThanToken();
-
             // These are the set of fixed, single character length punctuation tokens.
             // The token kind does not depend on what follows.
+            case CharacterCodes.greaterThan:
+                return this.advanceAndSetTokenKind(SyntaxKind.GreaterThanToken);
+
             case CharacterCodes.comma:
                 return this.advanceAndSetTokenKind(SyntaxKind.CommaToken);
 
@@ -645,18 +645,6 @@ class Scanner implements ISlidingWindowSource {
     private advanceAndSetTokenKind(kind: SyntaxKind): SyntaxKind {
         this.slidingWindow.moveToNextItem();
         return kind;
-    }
-
-    private scanGreaterThanToken(): SyntaxKind {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if (character === CharacterCodes.equals) {
-            this.slidingWindow.moveToNextItem();
-            return SyntaxKind.GreaterThanEqualsToken;
-        }
-        else {
-            return SyntaxKind.GreaterThanToken;
-        }
     }
 
     private scanLessThanToken(): SyntaxKind {
