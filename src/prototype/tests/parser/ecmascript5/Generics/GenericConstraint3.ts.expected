@@ -1,33 +1,12 @@
 {
-    "_diagnostics": [
-        {
-            "_position": 24,
-            "_width": 2,
-            "_diagnosticCode": "_0_expected",
-            "_arguments": [
-                ","
-            ]
-        },
-        {
-            "_position": 31,
-            "_width": 0,
-            "_diagnosticCode": "_0_expected",
-            "_arguments": [
-                ">"
-            ]
-        }
-    ],
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 31,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "_moduleElements": [
             {
                 "kind": "ClassDeclaration",
                 "fullWidth": 31,
-                "hasSkippedText": true,
-                "hasZeroWidthToken": true,
                 "_classKeyword": {
                     "kind": "ClassKeyword",
                     "width": 5,
@@ -49,9 +28,7 @@
                 },
                 "_typeParameterList": {
                     "kind": "TypeParameterList",
-                    "fullWidth": 24,
-                    "hasSkippedText": true,
-                    "hasZeroWidthToken": true,
+                    "fullWidth": 20,
                     "_lessThanToken": {
                         "kind": "LessThanToken",
                         "width": 1,
@@ -60,9 +37,7 @@
                     "_typeParameters": [
                         {
                             "kind": "TypeParameter",
-                            "fullWidth": 23,
-                            "hasSkippedText": true,
-                            "hasZeroWidthToken": true,
+                            "fullWidth": 17,
                             "_identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
@@ -79,9 +54,7 @@
                             },
                             "_constraint": {
                                 "kind": "Constraint",
-                                "fullWidth": 21,
-                                "hasSkippedText": true,
-                                "hasZeroWidthToken": true,
+                                "fullWidth": 15,
                                 "_extendsKeyword": {
                                     "kind": "ExtendsKeyword",
                                     "width": 7,
@@ -97,9 +70,7 @@
                                 },
                                 "_type": {
                                     "kind": "GenericName",
-                                    "fullWidth": 13,
-                                    "hasSkippedText": true,
-                                    "hasZeroWidthToken": true,
+                                    "fullWidth": 7,
                                     "_identifier": {
                                         "kind": "IdentifierName",
                                         "width": 4,
@@ -108,9 +79,7 @@
                                     },
                                     "_typeArgumentList": {
                                         "kind": "TypeArgumentList",
-                                        "fullWidth": 9,
-                                        "hasSkippedText": true,
-                                        "hasZeroWidthToken": true,
+                                        "fullWidth": 3,
                                         "_lessThanToken": {
                                             "kind": "LessThanToken",
                                             "width": 1,
@@ -120,56 +89,14 @@
                                             {
                                                 "kind": "IdentifierName",
                                                 "width": 1,
-                                                "fullWidth": 4,
                                                 "text": "T",
-                                                "valueText": "T",
-                                                "hasTrailingTrivia": true,
-                                                "hasTrailingSkippedText": true,
-                                                "trailingTrivia": [
-                                                    {
-                                                        "kind": "SkippedTextTrivia",
-                                                        "text": ">>"
-                                                    },
-                                                    {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": " "
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "kind": "CommaToken",
-                                                "width": 0,
-                                                "text": ""
-                                            },
-                                            {
-                                                "kind": "ObjectType",
-                                                "fullWidth": 4,
-                                                "_openBraceToken": {
-                                                    "kind": "OpenBraceToken",
-                                                    "width": 1,
-                                                    "fullWidth": 3,
-                                                    "text": "{",
-                                                    "hasTrailingTrivia": true,
-                                                    "hasTrailingNewLine": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "NewLineTrivia",
-                                                            "text": "\r\n"
-                                                        }
-                                                    ]
-                                                },
-                                                "_typeMembers": [],
-                                                "_closeBraceToken": {
-                                                    "kind": "CloseBraceToken",
-                                                    "width": 1,
-                                                    "text": "}"
-                                                }
+                                                "valueText": "T"
                                             }
                                         ],
                                         "_greaterThanToken": {
                                             "kind": "GreaterThanToken",
-                                            "width": 0,
-                                            "text": ""
+                                            "width": 1,
+                                            "text": ">"
                                         }
                                     }
                                 }
@@ -178,20 +105,37 @@
                     ],
                     "_greaterThanToken": {
                         "kind": "GreaterThanToken",
-                        "width": 0,
-                        "text": ""
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ">",
+                        "hasTrailingTrivia": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            }
+                        ]
                     }
                 },
                 "_openBraceToken": {
                     "kind": "OpenBraceToken",
-                    "width": 0,
-                    "text": ""
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": "{",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
                 },
                 "_classElements": [],
                 "_closeBraceToken": {
                     "kind": "CloseBraceToken",
-                    "width": 0,
-                    "text": ""
+                    "width": 1,
+                    "text": "}"
                 }
             }
         ],

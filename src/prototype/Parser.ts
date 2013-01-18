@@ -1938,7 +1938,7 @@ module Parser {
 
             var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
             var identifier = this.eatIdentifierToken();
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
 
             var extendsClause: ExtendsClauseSyntax = null;
             if (this.isExtendsClause()) {
@@ -2308,7 +2308,7 @@ module Parser {
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var interfaceKeyword = this.eatKeyword(SyntaxKind.InterfaceKeyword);
             var identifier = this.eatIdentifierToken();
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
 
             var extendsClause: ExtendsClauseSyntax = null;
             if (this.isExtendsClause()) {
@@ -2350,7 +2350,7 @@ module Parser {
             }
 
             if (this.isCallSignature(/*tokenIndex:*/ 0)) {
-                return this.parseCallSignature();
+                return this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
             }
             else if (this.isConstructSignature()) {
                 return this.parseConstructSignature();
@@ -2375,7 +2375,7 @@ module Parser {
             // Debug.assert(this.isConstructSignature());
 
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
@@ -3279,21 +3279,24 @@ module Parser {
         private parseBinaryOrConditionalExpressions(precedence: number, allowIn: bool, leftOperand: IExpressionSyntax): IExpressionSyntax {
             while (true) {
                 // We either have a binary operator here, or we're finished.
-                var currentTokenKind = this.currentToken().tokenKind;
-                var currentTokenKeywordKind = this.currentToken().tokenKind;
-
-                if (currentTokenKeywordKind === SyntaxKind.InstanceOfKeyword || currentTokenKeywordKind === SyntaxKind.InKeyword) {
-                    currentTokenKind = currentTokenKeywordKind;
-                }
+                var token0 = this.currentToken();
+                var token0Kind = token0.tokenKind;
 
                 // Check for binary expressions.
-                if (SyntaxFacts.isBinaryExpressionOperatorToken(currentTokenKind)) {
+                if (SyntaxFacts.isBinaryExpressionOperatorToken(token0Kind)) {
                     // also, if it's the 'in' operator, only allow if our caller allows it.
-                    if (currentTokenKind === SyntaxKind.InKeyword && !allowIn) {
+                    if (token0Kind === SyntaxKind.InKeyword && !allowIn) {
                         break;
                     }
 
-                    var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
+                    // check for >> or >>= or >>> or >>>=.
+                    //
+                    // These are not created by the scanner since we want the individual > tokens for
+                    // generics.
+                    var mergedToken = this.tryMergeBinaryExpressionTokens();
+                    var tokenKind = mergedToken === null ? token0Kind : mergedToken.syntaxKind;
+
+                    var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(tokenKind);
                     var newPrecedence = ParserImpl.getPrecedence(binaryExpressionKind);
 
                     // All binary operators must have precedence > 0!
@@ -3309,9 +3312,23 @@ module Parser {
                         break;
                     }
 
-                    // Precedence is okay, so we'll "take" this operator.
-                    var operatorToken = this.eatAnyToken();
-                    leftOperand = this.factory.binaryExpression(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
+                    // Precedence is okay, so we'll "take" this operator.  If we have a merged token, 
+                    // then create a new synthesized token with all the operators combined.  In that 
+                    // case make sure it has the right trivia associated with it.
+                    var operatorToken = mergedToken === null
+                        ? token0
+                        : Syntax.token(mergedToken.syntaxKind)
+                                .withLeadingTrivia(token0.leadingTrivia())
+                                .withTrailingTrivia(this.peekToken(mergedToken.tokenCount - 1).trailingTrivia());
+
+                    // Now skip the operator token we're on, or the tokens we merged.
+                    var skipCount = mergedToken === null ? 1 : mergedToken.tokenCount;
+                    for (var i = 0; i < skipCount; i++) {
+                        this.eatAnyToken();
+                    }
+
+                    leftOperand = this.factory.binaryExpression(
+                        binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
                     continue;
                 }
 
@@ -3322,14 +3339,15 @@ module Parser {
                 // if we have: "x = f ? a : b", then we would want to consume the "?" as part of "f".
                 //
                 // Note: if we have "m = f ? x ? y : z : b, then we do want the second "?" to go with 'x'.
-                if (currentTokenKind === SyntaxKind.QuestionToken && precedence <= ExpressionPrecedence.ConditionalExpressionPrecedence) {
+                if (token0Kind === SyntaxKind.QuestionToken && precedence <= ExpressionPrecedence.ConditionalExpressionPrecedence) {
                     var questionToken = this.eatToken(SyntaxKind.QuestionToken);
 
                     var whenTrueExpression = this.parseAssignmentExpression(allowIn);
                     var colon = this.eatToken(SyntaxKind.ColonToken);
 
                     var whenFalseExpression = this.parseAssignmentExpression(allowIn);
-                    leftOperand = this.factory.conditionalExpression(leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
+                    leftOperand = this.factory.conditionalExpression(
+                        leftOperand, questionToken, whenTrueExpression, colon, whenFalseExpression);
                     continue;
                 }
 
@@ -3338,6 +3356,51 @@ module Parser {
             }
 
             return leftOperand;
+        }
+
+        private tryMergeBinaryExpressionTokens(): { tokenCount: number; syntaxKind: SyntaxKind; } {
+            // check for >> or >>= or >>> or >>>=.
+
+            var token0 = this.currentToken();
+            var token0Kind = token0.tokenKind;
+
+            // We only merge tokens if we're starting with a '>' and it absolutely nothing after it.
+            if (token0Kind === SyntaxKind.GreaterThanToken && !token0.hasTrailingTrivia()) {
+                // We've got a '>'.  We can potentially merge it if the next token has absolutely nothing
+                // before it
+                var token1 = this.peekToken(1);
+                if (!token1.hasLeadingTrivia()) {
+                    if (token1.tokenKind === SyntaxKind.GreaterThanEqualsToken) {
+                        // We've got '>>='.  Nothing else can be merged.
+                        return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
+                    }
+
+                    if (token1.tokenKind === SyntaxKind.GreaterThanToken) {
+                        // We've got '>>'  we may return it as is, or we could merge it with a following '>' or '>='
+                        // token if there's nothing between the two.
+                        if (!token1.hasTrailingTrivia()) {
+                            var token2 = this.peekToken(2);
+
+                            if (!token2.hasLeadingTrivia()) {
+                                if (token2.tokenKind === SyntaxKind.GreaterThanToken) {
+                                    // We've got '>>>'.
+                                    return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
+                                }
+
+                                if (token2.tokenKind === SyntaxKind.GreaterThanEqualsToken) {
+                                    // We've got '>>>='.
+                                    return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
+                                }
+                            }
+                        }
+
+                        // We've got '>>' only.
+                        return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
+                    }
+                }
+            }
+
+            return null;
         }
 
         private isRightAssociative(expressionKind: SyntaxKind): bool {
@@ -3667,7 +3730,7 @@ module Parser {
                 identifier = this.eatIdentifierToken();
             }
 
-            var callSignature = this.parseCallSignature();
+            var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
             var block = this.parseBlock();
 
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
@@ -3780,7 +3843,7 @@ module Parser {
         private parseParenthesizedArrowFunctionExpression(requireArrow: bool): ParenthesizedArrowFunctionExpressionSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
 
-            var callSignature = this.parseCallSignature();
+            var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ true);
 
             if (requireArrow && this.currentToken().tokenKind !== SyntaxKind.EqualsGreaterThanToken) {
                 return null;
@@ -4107,24 +4170,36 @@ module Parser {
             return this.factory.block(openBraceToken, statements, closeBraceToken);
         }
 
-        private parseCallSignature(): CallSignatureSyntax {
-            var typeParameterList = this.parseOptionalTypeParameterList();
+        private parseCallSignature(requireCompleteTypeParameterList: bool): CallSignatureSyntax {
+            var typeParameterList = this.parseOptionalTypeParameterList(requireCompleteTypeParameterList);
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
             return this.factory.callSignature(typeParameterList, parameterList, typeAnnotation);
         }
 
-        private parseOptionalTypeParameterList(): TypeParameterListSyntax {
+        private parseOptionalTypeParameterList(requireCompleteTypeParameterList: bool): TypeParameterListSyntax {
             if (this.currentToken().tokenKind !== SyntaxKind.LessThanToken) {
                 return null;
             }
 
-            var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-            var typeParameterList = this.parseSeparatedSyntaxList(ListParsingState.TypeParameterList_TypeParameters);
-            var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+            var rewindPoint = this.getRewindPoint();
+            try {
+                var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+                var typeParameterList = this.parseSeparatedSyntaxList(ListParsingState.TypeParameterList_TypeParameters);
+                var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
 
-            return this.factory.typeParameterList(lessThanToken, typeParameterList, greaterThanToken);
+                // return null if we were required to have a '>' token and we did not  have one.
+                if (requireCompleteTypeParameterList && greaterThanToken.fullWidth() === 0) {
+                    this.rewind(rewindPoint);
+                    return null;
+                }
+
+                return this.factory.typeParameterList(lessThanToken, typeParameterList, greaterThanToken);
+            }
+            finally {
+                this.releaseRewindPoint(rewindPoint);
+            }
         }
 
         private isTypeParameter(): bool {
@@ -4235,7 +4310,7 @@ module Parser {
         private parseFunctionType(): FunctionTypeSyntax {
             // Debug.assert(this.isFunctionType());
 
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var returnType = this.parseType(/*requireCompleteArraySuffix:*/ false);

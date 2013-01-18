@@ -7648,35 +7648,7 @@ var Scanner = (function () {
             this.slidingWindow.moveToNextItem();
             return 83 /* GreaterThanEqualsToken */ ;
         } else {
-            if(character === 62 /* greaterThan */ ) {
-                return this.scanGreaterThanGreaterThanToken();
-            } else {
-                return 81 /* GreaterThanToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanGreaterThanGreaterThanToken = function () {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if(character === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 113 /* GreaterThanGreaterThanEqualsToken */ ;
-        } else {
-            if(character === 62 /* greaterThan */ ) {
-                return this.scanGreaterThanGreaterThanGreaterThanToken();
-            } else {
-                return 96 /* GreaterThanGreaterThanToken */ ;
-            }
-        }
-    };
-    Scanner.prototype.scanGreaterThanGreaterThanGreaterThanToken = function () {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if(character === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ ;
-        } else {
-            return 97 /* GreaterThanGreaterThanGreaterThanToken */ ;
+            return 81 /* GreaterThanToken */ ;
         }
     };
     Scanner.prototype.scanLessThanToken = function () {
@@ -28731,7 +28703,7 @@ var Parser;
             var declareKeyword = this.tryEatKeyword(64 /* DeclareKeyword */ );
             var classKeyword = this.eatKeyword(44 /* ClassKeyword */ );
             var identifier = this.eatIdentifierToken();
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(false);
             var extendsClause = null;
             if(this.isExtendsClause()) {
                 extendsClause = this.parseExtendsClause();
@@ -28969,7 +28941,7 @@ var Parser;
             var exportKeyword = this.tryEatKeyword(47 /* ExportKeyword */ );
             var interfaceKeyword = this.eatKeyword(52 /* InterfaceKeyword */ );
             var identifier = this.eatIdentifierToken();
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(false);
             var extendsClause = null;
             if(this.isExtendsClause()) {
                 extendsClause = this.parseExtendsClause();
@@ -28997,7 +28969,7 @@ var Parser;
                 return this.eatNode();
             }
             if(this.isCallSignature(0)) {
-                return this.parseCallSignature();
+                return this.parseCallSignature(false);
             } else {
                 if(this.isConstructSignature()) {
                     return this.parseConstructSignature();
@@ -29020,7 +28992,7 @@ var Parser;
         };
         ParserImpl.prototype.parseConstructSignature = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(false);
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
             return this.factory.constructSignature(newKeyword, typeParameterList, parameterList, typeAnnotation);
@@ -29633,16 +29605,15 @@ var Parser;
         };
         ParserImpl.prototype.parseBinaryOrConditionalExpressions = function (precedence, allowIn, leftOperand) {
             while(true) {
-                var currentTokenKind = this.currentToken().tokenKind;
-                var currentTokenKeywordKind = this.currentToken().tokenKind;
-                if(currentTokenKeywordKind === 30 /* InstanceOfKeyword */  || currentTokenKeywordKind === 29 /* InKeyword */ ) {
-                    currentTokenKind = currentTokenKeywordKind;
-                }
-                if(SyntaxFacts.isBinaryExpressionOperatorToken(currentTokenKind)) {
-                    if(currentTokenKind === 29 /* InKeyword */  && !allowIn) {
+                var token0 = this.currentToken();
+                var token0Kind = token0.tokenKind;
+                if(SyntaxFacts.isBinaryExpressionOperatorToken(token0Kind)) {
+                    if(token0Kind === 29 /* InKeyword */  && !allowIn) {
                         break;
                     }
-                    var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(currentTokenKind);
+                    var mergedToken = this.tryMergeBinaryExpressionTokens();
+                    var tokenKind = mergedToken === null ? token0Kind : mergedToken.syntaxKind;
+                    var binaryExpressionKind = SyntaxFacts.getBinaryExpressionFromOperatorToken(tokenKind);
                     var newPrecedence = ParserImpl.getPrecedence(binaryExpressionKind);
                     if(newPrecedence < precedence) {
                         break;
@@ -29650,11 +29621,15 @@ var Parser;
                     if(newPrecedence === precedence && !this.isRightAssociative(binaryExpressionKind)) {
                         break;
                     }
-                    var operatorToken = this.eatAnyToken();
+                    var operatorToken = mergedToken === null ? token0 : Syntax.token(mergedToken.syntaxKind).withLeadingTrivia(token0.leadingTrivia()).withTrailingTrivia(this.peekToken(mergedToken.tokenCount - 1).trailingTrivia());
+                    var skipCount = mergedToken === null ? 1 : mergedToken.tokenCount;
+                    for(var i = 0; i < skipCount; i++) {
+                        this.eatAnyToken();
+                    }
                     leftOperand = this.factory.binaryExpression(binaryExpressionKind, leftOperand, operatorToken, this.parseSubExpression(newPrecedence, allowIn));
                     continue;
                 }
-                if(currentTokenKind === 105 /* QuestionToken */  && precedence <= 3 /* ConditionalExpressionPrecedence */ ) {
+                if(token0Kind === 105 /* QuestionToken */  && precedence <= 3 /* ConditionalExpressionPrecedence */ ) {
                     var questionToken = this.eatToken(105 /* QuestionToken */ );
                     var whenTrueExpression = this.parseAssignmentExpression(allowIn);
                     var colon = this.eatToken(106 /* ColonToken */ );
@@ -29665,6 +29640,45 @@ var Parser;
                 break;
             }
             return leftOperand;
+        };
+        ParserImpl.prototype.tryMergeBinaryExpressionTokens = function () {
+            var token0 = this.currentToken();
+            var token0Kind = token0.tokenKind;
+            if(token0Kind === 81 /* GreaterThanToken */  && !token0.hasTrailingTrivia()) {
+                var token1 = this.peekToken(1);
+                if(!token1.hasLeadingTrivia()) {
+                    if(token1.tokenKind === 83 /* GreaterThanEqualsToken */ ) {
+                        return {
+                            tokenCount: 2,
+                            syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
+                        };
+                    }
+                    if(token1.tokenKind === 81 /* GreaterThanToken */ ) {
+                        if(!token1.hasTrailingTrivia()) {
+                            var token2 = this.peekToken(2);
+                            if(!token2.hasLeadingTrivia()) {
+                                if(token2.tokenKind === 81 /* GreaterThanToken */ ) {
+                                    return {
+                                        tokenCount: 3,
+                                        syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
+                                    };
+                                }
+                                if(token2.tokenKind === 83 /* GreaterThanEqualsToken */ ) {
+                                    return {
+                                        tokenCount: 3,
+                                        syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
+                                    };
+                                }
+                            }
+                        }
+                        return {
+                            tokenCount: 2,
+                            syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
+                        };
+                    }
+                }
+            }
+            return null;
         };
         ParserImpl.prototype.isRightAssociative = function (expressionKind) {
             switch(expressionKind) {
@@ -29908,7 +29922,7 @@ var Parser;
             if(this.isIdentifier(this.currentToken())) {
                 identifier = this.eatIdentifierToken();
             }
-            var callSignature = this.parseCallSignature();
+            var callSignature = this.parseCallSignature(false);
             var block = this.parseBlock();
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         };
@@ -29971,7 +29985,7 @@ var Parser;
             }
         };
         ParserImpl.prototype.parseParenthesizedArrowFunctionExpression = function (requireArrow) {
-            var callSignature = this.parseCallSignature();
+            var callSignature = this.parseCallSignature(true);
             if(requireArrow && this.currentToken().tokenKind !== 85 /* EqualsGreaterThanToken */ ) {
                 return null;
             }
@@ -30157,20 +30171,29 @@ var Parser;
             var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
             return this.factory.block(openBraceToken, statements, closeBraceToken);
         };
-        ParserImpl.prototype.parseCallSignature = function () {
-            var typeParameterList = this.parseOptionalTypeParameterList();
+        ParserImpl.prototype.parseCallSignature = function (requireCompleteTypeParameterList) {
+            var typeParameterList = this.parseOptionalTypeParameterList(requireCompleteTypeParameterList);
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
             return this.factory.callSignature(typeParameterList, parameterList, typeAnnotation);
         };
-        ParserImpl.prototype.parseOptionalTypeParameterList = function () {
+        ParserImpl.prototype.parseOptionalTypeParameterList = function (requireCompleteTypeParameterList) {
             if(this.currentToken().tokenKind !== 80 /* LessThanToken */ ) {
                 return null;
             }
-            var lessThanToken = this.eatToken(80 /* LessThanToken */ );
-            var typeParameterList = this.parseSeparatedSyntaxList(131072 /* TypeParameterList_TypeParameters */ );
-            var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
-            return this.factory.typeParameterList(lessThanToken, typeParameterList, greaterThanToken);
+            var rewindPoint = this.getRewindPoint();
+            try  {
+                var lessThanToken = this.eatToken(80 /* LessThanToken */ );
+                var typeParameterList = this.parseSeparatedSyntaxList(131072 /* TypeParameterList_TypeParameters */ );
+                var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
+                if(requireCompleteTypeParameterList && greaterThanToken.fullWidth() === 0) {
+                    this.rewind(rewindPoint);
+                    return null;
+                }
+                return this.factory.typeParameterList(lessThanToken, typeParameterList, greaterThanToken);
+            }finally {
+                this.releaseRewindPoint(rewindPoint);
+            }
         };
         ParserImpl.prototype.isTypeParameter = function () {
             return this.isIdentifier(this.currentToken());
@@ -30250,7 +30273,7 @@ var Parser;
             }
         };
         ParserImpl.prototype.parseFunctionType = function () {
-            var typeParameterList = this.parseOptionalTypeParameterList();
+            var typeParameterList = this.parseOptionalTypeParameterList(false);
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(85 /* EqualsGreaterThanToken */ );
             var returnType = this.parseType(false);

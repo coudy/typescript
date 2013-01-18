@@ -648,47 +648,14 @@ class Scanner implements ISlidingWindowSource {
     }
 
     private scanGreaterThanToken(): SyntaxKind {
-        // NOTE(cyrusn): If we want to support generics, we will likely have to stop lexing
-        // the >> and >>> constructs here and instead construct those in the parser.
         this.slidingWindow.moveToNextItem();
         var character = this.currentCharCode();
         if (character === CharacterCodes.equals) {
             this.slidingWindow.moveToNextItem();
             return SyntaxKind.GreaterThanEqualsToken;
         }
-        else if (character === CharacterCodes.greaterThan) {
-            return this.scanGreaterThanGreaterThanToken();
-        } else {
+        else {
             return SyntaxKind.GreaterThanToken;
-        }
-    }
-
-    private scanGreaterThanGreaterThanToken(): SyntaxKind {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-
-        if (character === CharacterCodes.equals) {
-            this.slidingWindow.moveToNextItem();
-            return SyntaxKind.GreaterThanGreaterThanEqualsToken;
-        }
-        else if (character === CharacterCodes.greaterThan) {
-            return this.scanGreaterThanGreaterThanGreaterThanToken();
-        }
-        else {
-            return SyntaxKind.GreaterThanGreaterThanToken;
-        }
-    }
-
-    private scanGreaterThanGreaterThanGreaterThanToken(): SyntaxKind {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-
-        if (character === CharacterCodes.equals) {
-            this.slidingWindow.moveToNextItem();
-            return SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
-        }
-        else {
-            return SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
         }
     }
 
