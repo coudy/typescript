@@ -4203,11 +4203,12 @@ module Parser {
         private parseFunctionType(): FunctionTypeSyntax {
             // Debug.assert(this.isFunctionType());
 
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var returnType = this.parseType(/*requireCompleteArraySuffix:*/ false);
 
-            return this.factory.functionType(null, parameterList, equalsGreaterThanToken, returnType);
+            return this.factory.functionType(typeParameterList, parameterList, equalsGreaterThanToken, returnType);
         }
 
         private parseConstructorType(): ConstructorTypeSyntax {
@@ -4242,7 +4243,8 @@ module Parser {
         }
 
         private isFunctionType(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
+            var tokenKind = this.currentToken().tokenKind;
+            return tokenKind === SyntaxKind.OpenParenToken || tokenKind === SyntaxKind.LessThanToken;
         }
 
         private isConstructorType(): bool {

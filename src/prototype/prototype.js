@@ -30230,10 +30230,11 @@ var Parser;
             }
         };
         ParserImpl.prototype.parseFunctionType = function () {
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(85 /* EqualsGreaterThanToken */ );
             var returnType = this.parseType(false);
-            return this.factory.functionType(null, parameterList, equalsGreaterThanToken, returnType);
+            return this.factory.functionType(typeParameterList, parameterList, equalsGreaterThanToken, returnType);
         };
         ParserImpl.prototype.parseConstructorType = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
@@ -30258,7 +30259,8 @@ var Parser;
             return this.currentToken().tokenKind === 70 /* OpenBraceToken */ ;
         };
         ParserImpl.prototype.isFunctionType = function () {
-            return this.currentToken().tokenKind === 72 /* OpenParenToken */ ;
+            var tokenKind = this.currentToken().tokenKind;
+            return tokenKind === 72 /* OpenParenToken */  || tokenKind === 80 /* LessThanToken */ ;
         };
         ParserImpl.prototype.isConstructorType = function () {
             return this.currentToken().tokenKind === 31 /* NewKeyword */ ;
