@@ -29830,7 +29830,7 @@ var Parser;
 
                 }
                 case 80 /* LessThanToken */ : {
-                    return this.parseCastExpression();
+                    return this.parseCastOrArrowFunctionExpression();
 
                 }
                 case 118 /* SlashToken */ :
@@ -29912,13 +29912,6 @@ var Parser;
             var block = this.parseBlock();
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         };
-        ParserImpl.prototype.parseCastExpression = function () {
-            var lessThanToken = this.eatToken(80 /* LessThanToken */ );
-            var type = this.parseType(false);
-            var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
-            var expression = this.parseUnaryExpression();
-            return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
-        };
         ParserImpl.prototype.parseObjectCreationExpression = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
             var expression = this.parseTerm(false, true);
@@ -29927,6 +29920,26 @@ var Parser;
                 argumentList = this.parseArgumentList();
             }
             return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
+        };
+        ParserImpl.prototype.parseCastOrArrowFunctionExpression = function () {
+            var rewindPoint = this.getRewindPoint();
+            try  {
+                var arrowFunction = this.tryParseArrowFunctionExpression();
+                if(arrowFunction !== null) {
+                    return arrowFunction;
+                }
+                this.rewind(rewindPoint);
+                return this.parseCastExpression();
+            }finally {
+                this.releaseRewindPoint(rewindPoint);
+            }
+        };
+        ParserImpl.prototype.parseCastExpression = function () {
+            var lessThanToken = this.eatToken(80 /* LessThanToken */ );
+            var type = this.parseType(false);
+            var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
+            var expression = this.parseUnaryExpression();
+            return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
         };
         ParserImpl.prototype.parseParenthesizedOrArrowFunctionExpression = function () {
             var result = this.tryParseArrowFunctionExpression();
@@ -29939,6 +29952,7 @@ var Parser;
             return this.factory.parenthesizedExpression(openParenToken, expression, closeParenToken);
         };
         ParserImpl.prototype.tryParseArrowFunctionExpression = function () {
+            var tokenKind = this.currentToken().tokenKind;
             if(this.isDefinitelyArrowFunctionExpression()) {
                 return this.parseParenthesizedArrowFunctionExpression(false);
             }
@@ -29988,6 +30002,10 @@ var Parser;
             return this.currentToken().tokenKind === 70 /* OpenBraceToken */ ;
         };
         ParserImpl.prototype.isDefinitelyArrowFunctionExpression = function () {
+            var token0 = this.currentToken();
+            if(token0.tokenKind !== 72 /* OpenParenToken */ ) {
+                return false;
+            }
             var token1 = this.peekToken(1);
             if(token1.tokenKind === 73 /* CloseParenToken */ ) {
                 return true;
@@ -30016,6 +30034,10 @@ var Parser;
             return false;
         };
         ParserImpl.prototype.isPossiblyArrowFunctionExpression = function () {
+            var token0 = this.currentToken();
+            if(token0.tokenKind !== 72 /* OpenParenToken */ ) {
+                return true;
+            }
             var token1 = this.peekToken(1);
             if(!this.isIdentifier(token1)) {
                 return false;

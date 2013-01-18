@@ -3532,7 +3532,7 @@ module Parser {
                     return this.parseParenthesizedOrArrowFunctionExpression();
 
                 case SyntaxKind.LessThanToken:
-                    return this.parseCastExpression();
+                    return this.parseCastOrArrowFunctionExpression();
 
                 case SyntaxKind.SlashToken:
                 case SyntaxKind.SlashEqualsToken:
@@ -3673,17 +3673,6 @@ module Parser {
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         }
 
-        private parseCastExpression(): CastExpressionSyntax {
-            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
-
-            var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-            var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
-            var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
-            var expression = this.parseUnaryExpression();
-
-            return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
-        }
-
         private parseObjectCreationExpression(): ObjectCreationExpressionSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.NewKeyword);
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
@@ -3698,6 +3687,39 @@ module Parser {
             }
 
             return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
+        }
+
+        private parseCastOrArrowFunctionExpression(): IUnaryExpressionSyntax {
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
+
+            // We've got a '<'.  that could start a cast or an arrow function.  As it is highly
+            // ambiguous, we need to check for enough data to indicate that's it's an arrow 
+            // function.  Otherwise, we assume it's a cast.
+            var rewindPoint = this.getRewindPoint();
+            try {
+                var arrowFunction = this.tryParseArrowFunctionExpression();
+                if (arrowFunction !== null) {
+                    return arrowFunction;
+                }
+
+                // wasn't an arrow function.  Try again as a cast expression.
+                this.rewind(rewindPoint);
+                return this.parseCastExpression();
+            }
+            finally {
+                this.releaseRewindPoint(rewindPoint);
+            }
+        }
+        
+        private parseCastExpression(): CastExpressionSyntax {
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
+
+            var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+            var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
+            var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+            var expression = this.parseUnaryExpression();
+
+            return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
         }
 
         private parseParenthesizedOrArrowFunctionExpression(): IUnaryExpressionSyntax {
@@ -3717,7 +3739,8 @@ module Parser {
         }
 
         private tryParseArrowFunctionExpression(): ArrowFunctionExpressionSyntax {
-            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            var tokenKind = this.currentToken().tokenKind;
+            // Debug.assert(tokenKind === SyntaxKind.OpenParenToken || tokenKind === SyntaxKind.LessThanToken);
 
             // Because arrow functions and parenthesized expressions look similar, we have to check far
             // enough ahead to be sure we've actually got an arrow function. For example, both nodes can
@@ -3729,6 +3752,8 @@ module Parser {
             // arrow function.
 
             if (this.isDefinitelyArrowFunctionExpression()) {
+                // We have something like "()" or "(a) =>".  Definitely a lambda, so parse it
+                // unilaterally as such.
                 return this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ false);
             }
 
@@ -3802,7 +3827,12 @@ module Parser {
         }
 
         private isDefinitelyArrowFunctionExpression(): bool {
-            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            var token0 = this.currentToken();
+            if (token0.tokenKind !== SyntaxKind.OpenParenToken) {
+                // If it didn't start with an (, then it could be generic.  That's too complicated 
+                // and we can't say it's 'definitely' an arrow function.             
+                return false;
+            }
 
             var token1 = this.peekToken(1);
 
@@ -3877,7 +3907,12 @@ module Parser {
         }
 
         private isPossiblyArrowFunctionExpression(): bool {
-            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
+            var token0 = this.currentToken();
+            if (token0.tokenKind !== SyntaxKind.OpenParenToken) {
+                // If it didn't start with an (, then it could be generic.  That's too complicated 
+                // and we have to say it's possibly an arrow function.
+                return true;
+            }
 
             var token1 = this.peekToken(1);
 
