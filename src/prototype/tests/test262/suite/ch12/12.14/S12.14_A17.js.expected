@@ -126,38 +126,17 @@
                         "text": "Integer",
                         "valueText": "Integer"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 21,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": "(",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 5,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 5,
-                                    "text": "value",
-                                    "valueText": "value"
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 21,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
                                 "width": 1,
                                 "fullWidth": 2,
-                                "text": ",",
+                                "text": "(",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -166,15 +145,22 @@
                                     }
                                 ]
                             },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 10,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 9,
-                                    "fullWidth": 10,
-                                    "text": "exception",
-                                    "valueText": "exception",
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 5,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 5,
+                                        "text": "value",
+                                        "valueText": "value"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
                                     "hasTrailingTrivia": true,
                                     "trailingTrivia": [
                                         {
@@ -182,21 +168,39 @@
                                             "text": " "
                                         }
                                     ]
-                                }
-                            }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": ")",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
+                                },
                                 {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
+                                    "kind": "Parameter",
+                                    "fullWidth": 10,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 9,
+                                        "fullWidth": 10,
+                                        "text": "exception",
+                                        "valueText": "exception",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
                                 }
-                            ]
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
                         }
                     }
                 },
@@ -918,30 +922,34 @@
                         "text": "checkValue",
                         "valueText": "checkValue"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 7,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 5,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 5,
-                                    "text": "value",
-                                    "valueText": "value"
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 7,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 5,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 5,
+                                        "text": "value",
+                                        "valueText": "value"
+                                    }
                                 }
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
                             }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "text": ")"
                         }
                     }
                 },

@@ -471,9 +471,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'TypeMemberSyntax',
         children: [
             <any>{ name: 'newKeyword', isToken: true },
-            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
-            <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
+            <any>{ name: 'callSignature', type: 'CallSignatureSyntax' }
         ],
         isTypeScriptSpecific: true
     },
@@ -483,9 +481,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true, itTypeScriptSpecific: true },
-            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
-            <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
+            <any>{ name: 'callSignature', type: 'CallSignatureSyntax' }
         ]
     },
     <any>{

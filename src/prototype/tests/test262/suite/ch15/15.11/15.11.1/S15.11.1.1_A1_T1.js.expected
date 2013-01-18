@@ -65,39 +65,43 @@
                         "text": "otherScope",
                         "valueText": "otherScope"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 6,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 3,
-                                    "text": "msg",
-                                    "valueText": "msg"
-                                }
-                            }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": ")",
-                            "hasTrailingTrivia": true,
-                            "hasTrailingNewLine": true,
-                            "trailingTrivia": [
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 6,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [
                                 {
-                                    "kind": "NewLineTrivia",
-                                    "text": "\n"
+                                    "kind": "Parameter",
+                                    "fullWidth": 3,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 3,
+                                        "text": "msg",
+                                        "valueText": "msg"
+                                    }
                                 }
-                            ]
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true,
+                                "hasTrailingNewLine": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "NewLineTrivia",
+                                        "text": "\n"
+                                    }
+                                ]
+                            }
                         }
                     }
                 },

@@ -90,27 +90,31 @@
                         "text": "testcase",
                         "valueText": "testcase"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 3,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": ")",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 3,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
                         }
                     }
                 },
@@ -620,107 +624,111 @@
                                     "text": "callbackfn",
                                     "valueText": "callbackfn"
                                 },
-                                "_parameterList": {
-                                    "kind": "ParameterList",
+                                "_callSignature": {
+                                    "kind": "CallSignature",
                                     "fullWidth": 28,
-                                    "_openParenToken": {
-                                        "kind": "OpenParenToken",
-                                        "width": 1,
-                                        "text": "("
-                                    },
-                                    "_parameters": [
-                                        {
-                                            "kind": "Parameter",
-                                            "fullWidth": 7,
-                                            "_identifier": {
-                                                "kind": "IdentifierName",
-                                                "width": 7,
-                                                "text": "prevVal",
-                                                "valueText": "prevVal"
-                                            }
-                                        },
-                                        {
-                                            "kind": "CommaToken",
+                                    "_parameterList": {
+                                        "kind": "ParameterList",
+                                        "fullWidth": 28,
+                                        "_openParenToken": {
+                                            "kind": "OpenParenToken",
                                             "width": 1,
-                                            "fullWidth": 2,
-                                            "text": ",",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
+                                            "text": "("
                                         },
-                                        {
-                                            "kind": "Parameter",
-                                            "fullWidth": 6,
-                                            "_identifier": {
-                                                "kind": "IdentifierName",
-                                                "width": 6,
-                                                "text": "curVal",
-                                                "valueText": "curVal"
-                                            }
-                                        },
-                                        {
-                                            "kind": "CommaToken",
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": ",",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "kind": "Parameter",
-                                            "fullWidth": 3,
-                                            "_identifier": {
-                                                "kind": "IdentifierName",
-                                                "width": 3,
-                                                "text": "idx",
-                                                "valueText": "idx"
-                                            }
-                                        },
-                                        {
-                                            "kind": "CommaToken",
-                                            "width": 1,
-                                            "fullWidth": 2,
-                                            "text": ",",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "kind": "Parameter",
-                                            "fullWidth": 3,
-                                            "_identifier": {
-                                                "kind": "IdentifierName",
-                                                "width": 3,
-                                                "text": "obj",
-                                                "valueText": "obj"
-                                            }
-                                        }
-                                    ],
-                                    "_closeParenToken": {
-                                        "kind": "CloseParenToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ")",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
+                                        "_parameters": [
                                             {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
+                                                "kind": "Parameter",
+                                                "fullWidth": 7,
+                                                "_identifier": {
+                                                    "kind": "IdentifierName",
+                                                    "width": 7,
+                                                    "text": "prevVal",
+                                                    "valueText": "prevVal"
+                                                }
+                                            },
+                                            {
+                                                "kind": "CommaToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ",",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "kind": "Parameter",
+                                                "fullWidth": 6,
+                                                "_identifier": {
+                                                    "kind": "IdentifierName",
+                                                    "width": 6,
+                                                    "text": "curVal",
+                                                    "valueText": "curVal"
+                                                }
+                                            },
+                                            {
+                                                "kind": "CommaToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ",",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "kind": "Parameter",
+                                                "fullWidth": 3,
+                                                "_identifier": {
+                                                    "kind": "IdentifierName",
+                                                    "width": 3,
+                                                    "text": "idx",
+                                                    "valueText": "idx"
+                                                }
+                                            },
+                                            {
+                                                "kind": "CommaToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ",",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "kind": "Parameter",
+                                                "fullWidth": 3,
+                                                "_identifier": {
+                                                    "kind": "IdentifierName",
+                                                    "width": 3,
+                                                    "text": "obj",
+                                                    "valueText": "obj"
+                                                }
                                             }
-                                        ]
+                                        ],
+                                        "_closeParenToken": {
+                                            "kind": "CloseParenToken",
+                                            "width": 1,
+                                            "fullWidth": 2,
+                                            "text": ")",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        }
                                     }
                                 }
                             },

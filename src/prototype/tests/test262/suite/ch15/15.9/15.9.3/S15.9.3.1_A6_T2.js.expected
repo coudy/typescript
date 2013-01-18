@@ -65,168 +65,172 @@
                         "text": "DateValue",
                         "valueText": "DateValue"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 48,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 4,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 4,
-                                    "text": "year",
-                                    "valueText": "year"
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 48,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
                                 "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
+                                "text": "("
+                            },
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 4,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 4,
+                                        "text": "year",
+                                        "valueText": "year"
                                     }
-                                ]
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 5,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 5,
-                                    "text": "month",
-                                    "valueText": "month"
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 5,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 5,
+                                        "text": "month",
+                                        "valueText": "month"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 4,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 4,
+                                        "text": "date",
+                                        "valueText": "date"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 5,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 5,
+                                        "text": "hours",
+                                        "valueText": "hours"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 7,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 7,
+                                        "text": "minutes",
+                                        "valueText": "minutes"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 7,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 7,
+                                        "text": "seconds",
+                                        "valueText": "seconds"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 2,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 2,
+                                        "text": "ms",
+                                        "valueText": "ms"
+                                    }
                                 }
-                            },
-                            {
-                                "kind": "CommaToken",
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
                                 "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 4,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 4,
-                                    "text": "date",
-                                    "valueText": "date"
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 5,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 5,
-                                    "text": "hours",
-                                    "valueText": "hours"
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 7,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 7,
-                                    "text": "minutes",
-                                    "valueText": "minutes"
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 7,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 7,
-                                    "text": "seconds",
-                                    "valueText": "seconds"
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ",",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 2,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 2,
-                                    "text": "ms",
-                                    "valueText": "ms"
-                                }
+                                "text": ")"
                             }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "text": ")"
                         }
                     }
                 },

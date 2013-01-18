@@ -50,45 +50,86 @@
                             }
                         ]
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 37,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 16,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 4,
-                                    "text": "node",
-                                    "valueText": "node"
-                                },
-                                "_typeAnnotation": {
-                                    "kind": "TypeAnnotation",
-                                    "fullWidth": 12,
-                                    "_colonToken": {
-                                        "kind": "ColonToken",
-                                        "width": 1,
-                                        "text": ":"
-                                    },
-                                    "_type": {
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 37,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 16,
+                                    "_identifier": {
                                         "kind": "IdentifierName",
-                                        "width": 11,
-                                        "text": "HTMLElement",
-                                        "valueText": "HTMLElement"
+                                        "width": 4,
+                                        "text": "node",
+                                        "valueText": "node"
+                                    },
+                                    "_typeAnnotation": {
+                                        "kind": "TypeAnnotation",
+                                        "fullWidth": 12,
+                                        "_colonToken": {
+                                            "kind": "ColonToken",
+                                            "width": 1,
+                                            "text": ":"
+                                        },
+                                        "_type": {
+                                            "kind": "IdentifierName",
+                                            "width": 11,
+                                            "text": "HTMLElement",
+                                            "valueText": "HTMLElement"
+                                        }
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ",",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 16,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 9,
+                                        "text": "className",
+                                        "valueText": "className"
+                                    },
+                                    "_typeAnnotation": {
+                                        "kind": "TypeAnnotation",
+                                        "fullWidth": 7,
+                                        "_colonToken": {
+                                            "kind": "ColonToken",
+                                            "width": 1,
+                                            "text": ":"
+                                        },
+                                        "_type": {
+                                            "kind": "StringKeyword",
+                                            "width": 6,
+                                            "text": "string"
+                                        }
                                     }
                                 }
-                            },
-                            {
-                                "kind": "CommaToken",
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
                                 "width": 1,
                                 "fullWidth": 2,
-                                "text": ",",
+                                "text": ")",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -96,44 +137,7 @@
                                         "text": " "
                                     }
                                 ]
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 16,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 9,
-                                    "text": "className",
-                                    "valueText": "className"
-                                },
-                                "_typeAnnotation": {
-                                    "kind": "TypeAnnotation",
-                                    "fullWidth": 7,
-                                    "_colonToken": {
-                                        "kind": "ColonToken",
-                                        "width": 1,
-                                        "text": ":"
-                                    },
-                                    "_type": {
-                                        "kind": "StringKeyword",
-                                        "width": 6,
-                                        "text": "string"
-                                    }
-                                }
                             }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": ")",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
                         }
                     }
                 },

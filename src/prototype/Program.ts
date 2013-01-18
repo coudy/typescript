@@ -13,6 +13,8 @@ var specificFile =
     // "GreaterThanTokenAmbiguity20.ts";
     undefined;
 
+var generate = false;
+
 class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
@@ -28,19 +30,19 @@ class Program {
             
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ false));
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5",
-            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5",
-            filePath => this.runTrivia(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+            filePath => this.runTrivia(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+            filePath => this.runScanner(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
@@ -48,19 +50,19 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, /*justText:*/ false));
+            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
             
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5",
-            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false, /*justText:*/ true));
+            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ true));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ false));
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ false));
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ generate));
         
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");

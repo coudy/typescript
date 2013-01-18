@@ -157,10 +157,10 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitNodeOrToken(node.condition()), this.visitToken(node.questionToken()), this.visitNodeOrToken(node.whenTrue()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.whenFalse()));
     };
     SyntaxRewriter.prototype.visitConstructSignature = function (node) {
-        return node.update(this.visitToken(node.newKeyword()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
+        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.callSignature()));
     };
     SyntaxRewriter.prototype.visitFunctionSignature = function (node) {
-        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
+        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), this.visitNode(node.callSignature()));
     };
     SyntaxRewriter.prototype.visitIndexSignature = function (node) {
         return node.update(this.visitToken(node.openBracketToken()), this.visitNode(node.parameter()), this.visitToken(node.closeBracketToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
@@ -8533,11 +8533,11 @@ var Syntax;
         NormalModeFactory.prototype.typeMember = function () {
             return new TypeMemberSyntax(false);
         };
-        NormalModeFactory.prototype.constructSignature = function (newKeyword, typeParameterList, parameterList, typeAnnotation) {
-            return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, false);
+        NormalModeFactory.prototype.constructSignature = function (newKeyword, callSignature) {
+            return new ConstructSignatureSyntax(newKeyword, callSignature, false);
         };
-        NormalModeFactory.prototype.functionSignature = function (identifier, questionToken, typeParameterList, parameterList, typeAnnotation) {
-            return new FunctionSignatureSyntax(identifier, questionToken, typeParameterList, parameterList, typeAnnotation, false);
+        NormalModeFactory.prototype.functionSignature = function (identifier, questionToken, callSignature) {
+            return new FunctionSignatureSyntax(identifier, questionToken, callSignature, false);
         };
         NormalModeFactory.prototype.indexSignature = function (openBracketToken, parameter, closeBracketToken, typeAnnotation) {
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, false);
@@ -8813,11 +8813,11 @@ var Syntax;
         StrictModeFactory.prototype.typeMember = function () {
             return new TypeMemberSyntax(true);
         };
-        StrictModeFactory.prototype.constructSignature = function (newKeyword, typeParameterList, parameterList, typeAnnotation) {
-            return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, true);
+        StrictModeFactory.prototype.constructSignature = function (newKeyword, callSignature) {
+            return new ConstructSignatureSyntax(newKeyword, callSignature, true);
         };
-        StrictModeFactory.prototype.functionSignature = function (identifier, questionToken, typeParameterList, parameterList, typeAnnotation) {
-            return new FunctionSignatureSyntax(identifier, questionToken, typeParameterList, parameterList, typeAnnotation, true);
+        StrictModeFactory.prototype.functionSignature = function (identifier, questionToken, callSignature) {
+            return new FunctionSignatureSyntax(identifier, questionToken, callSignature, true);
         };
         StrictModeFactory.prototype.indexSignature = function (openBracketToken, parameter, closeBracketToken, typeAnnotation) {
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, true);
@@ -16070,9 +16070,6 @@ var TypeMemberSyntax = (function (_super) {
     TypeMemberSyntax.prototype.isTypeMember = function () {
         return true;
     };
-    TypeMemberSyntax.prototype.typeAnnotation = function () {
-        throw Errors.abstract();
-    };
     TypeMemberSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
     };
@@ -16086,18 +16083,13 @@ var TypeMemberSyntax = (function (_super) {
 })(SyntaxNode);
 var ConstructSignatureSyntax = (function (_super) {
     __extends(ConstructSignatureSyntax, _super);
-    function ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, parsedInStrictMode) {
+    function ConstructSignatureSyntax(newKeyword, callSignature, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._newKeyword = newKeyword;
-        this._typeParameterList = typeParameterList;
-        this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
-    }
-    ConstructSignatureSyntax.create = function create(newKeyword, parameterList) {
-        return new ConstructSignatureSyntax(newKeyword, null, parameterList, null, false);
+        this._callSignature = callSignature;
     }
     ConstructSignatureSyntax.create1 = function create1() {
-        return new ConstructSignatureSyntax(Syntax.token(31 /* NewKeyword */ ), null, ParameterListSyntax.create1(), null, false);
+        return new ConstructSignatureSyntax(Syntax.token(31 /* NewKeyword */ ), CallSignatureSyntax.create1(), false);
     }
     ConstructSignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitConstructSignature(this);
@@ -16110,26 +16102,14 @@ var ConstructSignatureSyntax = (function (_super) {
         if(this._newKeyword.width() > 0) {
             return this._newKeyword;
         }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
+        if((token = this._callSignature.firstToken()) !== null) {
             return token;
         }
         return null;
     };
     ConstructSignatureSyntax.prototype.lastToken = function () {
         var token = null;
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
+        if((token = this._callSignature.lastToken()) !== null) {
             return token;
         }
         if(this._newKeyword.width() > 0) {
@@ -16138,32 +16118,20 @@ var ConstructSignatureSyntax = (function (_super) {
         return null;
     };
     ConstructSignatureSyntax.prototype.insertChildrenInto = function (array, index) {
-        if(this._typeAnnotation !== null) {
-            array.splice(index, 0, this._typeAnnotation);
-        }
-        array.splice(index, 0, this._parameterList);
-        if(this._typeParameterList !== null) {
-            array.splice(index, 0, this._typeParameterList);
-        }
+        array.splice(index, 0, this._callSignature);
         array.splice(index, 0, this._newKeyword);
     };
     ConstructSignatureSyntax.prototype.newKeyword = function () {
         return this._newKeyword;
     };
-    ConstructSignatureSyntax.prototype.typeParameterList = function () {
-        return this._typeParameterList;
+    ConstructSignatureSyntax.prototype.callSignature = function () {
+        return this._callSignature;
     };
-    ConstructSignatureSyntax.prototype.parameterList = function () {
-        return this._parameterList;
-    };
-    ConstructSignatureSyntax.prototype.typeAnnotation = function () {
-        return this._typeAnnotation;
-    };
-    ConstructSignatureSyntax.prototype.update = function (newKeyword, typeParameterList, parameterList, typeAnnotation) {
-        if(this._newKeyword === newKeyword && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+    ConstructSignatureSyntax.prototype.update = function (newKeyword, callSignature) {
+        if(this._newKeyword === newKeyword && this._callSignature === callSignature) {
             return this;
         }
-        return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, false);
+        return new ConstructSignatureSyntax(newKeyword, callSignature, false);
     };
     ConstructSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -16172,26 +16140,14 @@ var ConstructSignatureSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     ConstructSignatureSyntax.prototype.withNewKeyword = function (newKeyword) {
-        return this.update(newKeyword, this._typeParameterList, this._parameterList, this._typeAnnotation);
+        return this.update(newKeyword, this._callSignature);
     };
-    ConstructSignatureSyntax.prototype.withTypeParameterList = function (typeParameterList) {
-        return this.update(this._newKeyword, typeParameterList, this._parameterList, this._typeAnnotation);
-    };
-    ConstructSignatureSyntax.prototype.withParameterList = function (parameterList) {
-        return this.update(this._newKeyword, this._typeParameterList, parameterList, this._typeAnnotation);
-    };
-    ConstructSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
-        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, typeAnnotation);
+    ConstructSignatureSyntax.prototype.withCallSignature = function (callSignature) {
+        return this.update(this._newKeyword, callSignature);
     };
     ConstructSignatureSyntax.prototype.collectTextElements = function (elements) {
         (this._newKeyword).collectTextElements(elements);
-        if(this._typeParameterList !== null) {
-            (this._typeParameterList).collectTextElements(elements);
-        }
-        (this._parameterList).collectTextElements(elements);
-        if(this._typeAnnotation !== null) {
-            (this._typeAnnotation).collectTextElements(elements);
-        }
+        (this._callSignature).collectTextElements(elements);
     };
     ConstructSignatureSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
@@ -16206,25 +16162,11 @@ var ConstructSignatureSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-        childWidth = this._parameterList.fullWidth();
+        childWidth = this._callSignature.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
+        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     ConstructSignatureSyntax.prototype.findTokenInternal = function (position, fullStart) {
@@ -16239,28 +16181,12 @@ var ConstructSignatureSyntax = (function (_super) {
         }
         position -= childWidth;
         fullStart += childWidth;
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            if(position < childWidth) {
-                return (this._typeParameterList).findTokenInternal(position, fullStart);
-            }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
-        childWidth = this._parameterList.fullWidth();
+        childWidth = this._callSignature.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position, fullStart);
+            return (this._callSignature).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
         fullStart += childWidth;
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position, fullStart);
-            }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
         throw Errors.invalidOperation();
     };
     ConstructSignatureSyntax.prototype.structuralEquals = function (node) {
@@ -16277,13 +16203,7 @@ var ConstructSignatureSyntax = (function (_super) {
         if(!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) {
             return false;
         }
-        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
+        if(!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) {
             return false;
         }
         return true;
@@ -16292,19 +16212,17 @@ var ConstructSignatureSyntax = (function (_super) {
 })(TypeMemberSyntax);
 var FunctionSignatureSyntax = (function (_super) {
     __extends(FunctionSignatureSyntax, _super);
-    function FunctionSignatureSyntax(identifier, questionToken, typeParameterList, parameterList, typeAnnotation, parsedInStrictMode) {
+    function FunctionSignatureSyntax(identifier, questionToken, callSignature, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._identifier = identifier;
         this._questionToken = questionToken;
-        this._typeParameterList = typeParameterList;
-        this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
+        this._callSignature = callSignature;
     }
-    FunctionSignatureSyntax.create = function create(identifier, parameterList) {
-        return new FunctionSignatureSyntax(identifier, null, null, parameterList, null, false);
+    FunctionSignatureSyntax.create = function create(identifier, callSignature) {
+        return new FunctionSignatureSyntax(identifier, null, callSignature, false);
     }
     FunctionSignatureSyntax.create1 = function create1(identifier) {
-        return new FunctionSignatureSyntax(identifier, null, null, ParameterListSyntax.create1(), null, false);
+        return new FunctionSignatureSyntax(identifier, null, CallSignatureSyntax.create1(), false);
     }
     FunctionSignatureSyntax.prototype.accept = function (visitor) {
         return visitor.visitFunctionSignature(this);
@@ -16320,26 +16238,14 @@ var FunctionSignatureSyntax = (function (_super) {
         if(this._questionToken !== null && this._questionToken.width() > 0) {
             return this._questionToken;
         }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
+        if((token = this._callSignature.firstToken()) !== null) {
             return token;
         }
         return null;
     };
     FunctionSignatureSyntax.prototype.lastToken = function () {
         var token = null;
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
+        if((token = this._callSignature.lastToken()) !== null) {
             return token;
         }
         if(this._questionToken !== null && this._questionToken.width() > 0) {
@@ -16351,13 +16257,7 @@ var FunctionSignatureSyntax = (function (_super) {
         return null;
     };
     FunctionSignatureSyntax.prototype.insertChildrenInto = function (array, index) {
-        if(this._typeAnnotation !== null) {
-            array.splice(index, 0, this._typeAnnotation);
-        }
-        array.splice(index, 0, this._parameterList);
-        if(this._typeParameterList !== null) {
-            array.splice(index, 0, this._typeParameterList);
-        }
+        array.splice(index, 0, this._callSignature);
         if(this._questionToken !== null) {
             array.splice(index, 0, this._questionToken);
         }
@@ -16369,20 +16269,14 @@ var FunctionSignatureSyntax = (function (_super) {
     FunctionSignatureSyntax.prototype.questionToken = function () {
         return this._questionToken;
     };
-    FunctionSignatureSyntax.prototype.typeParameterList = function () {
-        return this._typeParameterList;
+    FunctionSignatureSyntax.prototype.callSignature = function () {
+        return this._callSignature;
     };
-    FunctionSignatureSyntax.prototype.parameterList = function () {
-        return this._parameterList;
-    };
-    FunctionSignatureSyntax.prototype.typeAnnotation = function () {
-        return this._typeAnnotation;
-    };
-    FunctionSignatureSyntax.prototype.update = function (identifier, questionToken, typeParameterList, parameterList, typeAnnotation) {
-        if(this._identifier === identifier && this._questionToken === questionToken && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+    FunctionSignatureSyntax.prototype.update = function (identifier, questionToken, callSignature) {
+        if(this._identifier === identifier && this._questionToken === questionToken && this._callSignature === callSignature) {
             return this;
         }
-        return new FunctionSignatureSyntax(identifier, questionToken, typeParameterList, parameterList, typeAnnotation, false);
+        return new FunctionSignatureSyntax(identifier, questionToken, callSignature, false);
     };
     FunctionSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -16391,41 +16285,23 @@ var FunctionSignatureSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     FunctionSignatureSyntax.prototype.withIdentifier = function (identifier) {
-        return this.update(identifier, this._questionToken, this._typeParameterList, this._parameterList, this._typeAnnotation);
+        return this.update(identifier, this._questionToken, this._callSignature);
     };
     FunctionSignatureSyntax.prototype.withQuestionToken = function (questionToken) {
-        return this.update(this._identifier, questionToken, this._typeParameterList, this._parameterList, this._typeAnnotation);
+        return this.update(this._identifier, questionToken, this._callSignature);
     };
-    FunctionSignatureSyntax.prototype.withTypeParameterList = function (typeParameterList) {
-        return this.update(this._identifier, this._questionToken, typeParameterList, this._parameterList, this._typeAnnotation);
-    };
-    FunctionSignatureSyntax.prototype.withParameterList = function (parameterList) {
-        return this.update(this._identifier, this._questionToken, this._typeParameterList, parameterList, this._typeAnnotation);
-    };
-    FunctionSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
-        return this.update(this._identifier, this._questionToken, this._typeParameterList, this._parameterList, typeAnnotation);
+    FunctionSignatureSyntax.prototype.withCallSignature = function (callSignature) {
+        return this.update(this._identifier, this._questionToken, callSignature);
     };
     FunctionSignatureSyntax.prototype.collectTextElements = function (elements) {
         (this._identifier).collectTextElements(elements);
         if(this._questionToken !== null) {
             (this._questionToken).collectTextElements(elements);
         }
-        if(this._typeParameterList !== null) {
-            (this._typeParameterList).collectTextElements(elements);
-        }
-        (this._parameterList).collectTextElements(elements);
-        if(this._typeAnnotation !== null) {
-            (this._typeAnnotation).collectTextElements(elements);
-        }
+        (this._callSignature).collectTextElements(elements);
     };
     FunctionSignatureSyntax.prototype.isTypeScriptSpecific = function () {
-        if(this._typeParameterList !== null && this._typeParameterList.isTypeScriptSpecific()) {
-            return true;
-        }
-        if(this._parameterList.isTypeScriptSpecific()) {
-            return true;
-        }
-        if(this._typeAnnotation !== null && this._typeAnnotation.isTypeScriptSpecific()) {
+        if(this._callSignature.isTypeScriptSpecific()) {
             return true;
         }
         return false;
@@ -16446,25 +16322,11 @@ var FunctionSignatureSyntax = (function (_super) {
             hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
             hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         }
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-        childWidth = this._parameterList.fullWidth();
+        childWidth = this._callSignature.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
+        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
         return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     FunctionSignatureSyntax.prototype.findTokenInternal = function (position, fullStart) {
@@ -16490,28 +16352,12 @@ var FunctionSignatureSyntax = (function (_super) {
             position -= childWidth;
             fullStart += childWidth;
         }
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            if(position < childWidth) {
-                return (this._typeParameterList).findTokenInternal(position, fullStart);
-            }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
-        childWidth = this._parameterList.fullWidth();
+        childWidth = this._callSignature.fullWidth();
         if(position < childWidth) {
-            return (this._parameterList).findTokenInternal(position, fullStart);
+            return (this._callSignature).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
         fullStart += childWidth;
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            if(position < childWidth) {
-                return (this._typeAnnotation).findTokenInternal(position, fullStart);
-            }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
         throw Errors.invalidOperation();
     };
     FunctionSignatureSyntax.prototype.structuralEquals = function (node) {
@@ -16531,13 +16377,7 @@ var FunctionSignatureSyntax = (function (_super) {
         if(!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) {
             return false;
         }
-        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
+        if(!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) {
             return false;
         }
         return true;
@@ -26174,16 +26014,12 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitConstructSignature = function (node) {
         this.visitToken(node.newKeyword());
-        this.visitOptionalNode(node.typeParameterList());
-        this.visitNode(node.parameterList());
-        this.visitOptionalNode(node.typeAnnotation());
+        this.visitNode(node.callSignature());
     };
     SyntaxWalker.prototype.visitFunctionSignature = function (node) {
         this.visitToken(node.identifier());
         this.visitOptionalToken(node.questionToken());
-        this.visitOptionalNode(node.typeParameterList());
-        this.visitNode(node.parameterList());
-        this.visitOptionalNode(node.typeAnnotation());
+        this.visitNode(node.callSignature());
     };
     SyntaxWalker.prototype.visitIndexSignature = function (node) {
         this.visitToken(node.openBracketToken());
@@ -27207,7 +27043,7 @@ var Emitter;
             return this.changeIndentation(block, false, Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
         };
         EmitterImpl.functionSignatureDefaultParameters = function functionSignatureDefaultParameters(signature) {
-            return EmitterImpl.parameterListDefaultParameters(signature.parameterList());
+            return EmitterImpl.parameterListDefaultParameters(signature.callSignature().parameterList());
         }
         EmitterImpl.parameterListDefaultParameters = function parameterListDefaultParameters(parameterList) {
             return ArrayUtilities.where(parameterList.parameters().toItemArray(), function (p) {
@@ -27363,7 +27199,7 @@ var Emitter;
             for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
                 blockStatements.unshift(this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces));
             }
-            var callSignatureParameterList = functionDeclaration.functionSignature().parameterList().accept(this);
+            var callSignatureParameterList = functionDeclaration.functionSignature().callSignature().parameterList().accept(this);
             if(!callSignatureParameterList.hasTrailingTrivia()) {
                 callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(Syntax.spaceTriviaList);
             }
@@ -29033,10 +28869,8 @@ var Parser;
         };
         ParserImpl.prototype.parseConstructSignature = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
-            var typeParameterList = this.parseOptionalTypeParameterList(false);
-            var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
-            return this.factory.constructSignature(newKeyword, typeParameterList, parameterList, typeAnnotation);
+            var callSignature = this.parseCallSignature(false);
+            return this.factory.constructSignature(newKeyword, callSignature);
         };
         ParserImpl.prototype.parseIndexSignature = function () {
             var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
@@ -29048,10 +28882,8 @@ var Parser;
         ParserImpl.prototype.parseFunctionSignature = function () {
             var identifier = this.eatIdentifierToken();
             var questionToken = this.tryEatToken(105 /* QuestionToken */ );
-            var typeParameterList = this.parseOptionalTypeParameterList(false);
-            var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
-            return this.factory.functionSignature(identifier, questionToken, typeParameterList, parameterList, typeAnnotation);
+            var callSignature = this.parseCallSignature(false);
+            return this.factory.functionSignature(identifier, questionToken, callSignature);
         };
         ParserImpl.prototype.parsePropertySignature = function () {
             var identifier = this.eatIdentifierToken();
@@ -33395,7 +33227,7 @@ var IncrementalParserTests = (function () {
         var semicolonIndex = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 32);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 34);
     }
     IncrementalParserTests.testIncremental2 = function testIncremental2() {
         var source = "class C {\r\n";
@@ -33408,14 +33240,14 @@ var IncrementalParserTests = (function () {
         var index = source.indexOf("+ 1");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 29);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
     }
     IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
         var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
         var semicolonIndex = source.indexOf(";}");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
     }
     IncrementalParserTests.testIncrementalComment1 = function testIncrementalComment1() {
         var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
@@ -33441,7 +33273,7 @@ var IncrementalParserTests = (function () {
         var index = source.indexOf(";");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
     }
     IncrementalParserTests.testParameter1 = function testParameter1() {
         var source = "class C {\r\n";
@@ -33459,7 +33291,7 @@ var IncrementalParserTests = (function () {
         var index = source.indexOf(": string");
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 41);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
     }
     IncrementalParserTests.testVariableDeclarator1 = function testVariableDeclarator1() {
         var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
@@ -33519,6 +33351,7 @@ var IncrementalParserTests = (function () {
 })();
 var stringTable = Collections.createStringTable();
 var specificFile = undefined;
+var generate = false;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (useTypeScript, verify) {
@@ -33532,19 +33365,19 @@ var Program = (function () {
         }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
         });
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -33552,19 +33385,19 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, false);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, true);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, true);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");

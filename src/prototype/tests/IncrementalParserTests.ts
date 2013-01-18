@@ -91,7 +91,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 32);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 34);
     }
 
     public static testIncremental2() {
@@ -108,7 +108,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 29);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
     }
 
     public static testIncrementalRegex1() {
@@ -119,7 +119,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
     }
 
     public static testIncrementalComment1() {
@@ -158,7 +158,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
     }
 
     public static testParameter1() {
@@ -186,7 +186,7 @@ class IncrementalParserTests {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
 
-        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 41);
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
     }
 
     public static testVariableDeclarator1() {

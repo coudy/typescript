@@ -65,19 +65,23 @@
                         "text": "__func",
                         "valueText": "__func"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 2,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "text": ")"
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 2,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
+                            }
                         }
                     }
                 },
@@ -397,60 +401,64 @@
                         "text": "__gunc",
                         "valueText": "__gunc"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 7,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 1,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 1,
-                                    "text": "a",
-                                    "valueText": "a"
-                                }
-                            },
-                            {
-                                "kind": "CommaToken",
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 7,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
                                 "width": 1,
-                                "text": ","
+                                "text": "("
                             },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 1,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 1,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 1,
+                                        "text": "a",
+                                        "valueText": "a"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
                                     "width": 1,
-                                    "text": "b",
-                                    "valueText": "b"
+                                    "text": ","
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 1,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 1,
+                                        "text": "b",
+                                        "valueText": "b"
+                                    }
+                                },
+                                {
+                                    "kind": "CommaToken",
+                                    "width": 1,
+                                    "text": ","
+                                },
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 1,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 1,
+                                        "text": "c",
+                                        "valueText": "c"
+                                    }
                                 }
-                            },
-                            {
-                                "kind": "CommaToken",
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
                                 "width": 1,
-                                "text": ","
-                            },
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 1,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 1,
-                                    "text": "c",
-                                    "valueText": "c"
-                                }
+                                "text": ")"
                             }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "text": ")"
                         }
                     }
                 },

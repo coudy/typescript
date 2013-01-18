@@ -65,30 +65,34 @@
                         "text": "__func",
                         "valueText": "__func"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 5,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 3,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 3,
-                                    "text": "arg",
-                                    "valueText": "arg"
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 5,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 3,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 3,
+                                        "text": "arg",
+                                        "valueText": "arg"
+                                    }
                                 }
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
                             }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "text": ")"
                         }
                     }
                 },

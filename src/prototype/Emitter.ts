@@ -430,7 +430,7 @@ module Emitter {
         }
 
         private static functionSignatureDefaultParameters(signature: FunctionSignatureSyntax): ParameterSyntax[] {
-            return EmitterImpl.parameterListDefaultParameters(signature.parameterList());
+            return EmitterImpl.parameterListDefaultParameters(signature.callSignature().parameterList());
         }
 
         private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
@@ -709,7 +709,7 @@ module Emitter {
                     defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces));
             }
 
-            var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().parameterList().accept(this);
+            var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature().callSignature().parameterList().accept(this);
             if (!callSignatureParameterList.hasTrailingTrivia()) {
                 callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(Syntax.spaceTriviaList);
             }

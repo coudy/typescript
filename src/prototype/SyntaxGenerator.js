@@ -2375,18 +2375,8 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'typeParameterList',
-                type: 'TypeParameterListSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true
+                name: 'callSignature',
+                type: 'CallSignatureSyntax'
             }
         ],
         isTypeScriptSpecific: true
@@ -2409,18 +2399,8 @@ var definitions = [
                 itTypeScriptSpecific: true
             }, 
             {
-                name: 'typeParameterList',
-                type: 'TypeParameterListSyntax',
-                isOptional: true
-            }, 
-            {
-                name: 'parameterList',
-                type: 'ParameterListSyntax'
-            }, 
-            {
-                name: 'typeAnnotation',
-                type: 'TypeAnnotationSyntax',
-                isOptional: true
+                name: 'callSignature',
+                type: 'CallSignatureSyntax'
             }
         ]
     }, 

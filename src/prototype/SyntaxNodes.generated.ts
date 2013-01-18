@@ -7068,10 +7068,6 @@ class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
         return true;
     }
 
-    public typeAnnotation(): TypeAnnotationSyntax {
-        throw Errors.abstract();
-    }
-
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeMemberSyntax {
         return <TypeMemberSyntax>super.withLeadingTrivia(trivia);
     }
@@ -7087,30 +7083,19 @@ class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
 class ConstructSignatureSyntax extends TypeMemberSyntax {
     private _newKeyword: ISyntaxToken;
-    private _typeParameterList: TypeParameterListSyntax;
-    private _parameterList: ParameterListSyntax;
-    private _typeAnnotation: TypeAnnotationSyntax;
+    private _callSignature: CallSignatureSyntax;
 
     constructor(newKeyword: ISyntaxToken,
-                typeParameterList: TypeParameterListSyntax,
-                parameterList: ParameterListSyntax,
-                typeAnnotation: TypeAnnotationSyntax,
+                callSignature: CallSignatureSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
         this._newKeyword = newKeyword;
-        this._typeParameterList = typeParameterList;
-        this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
-    }
-
-    public static create(newKeyword: ISyntaxToken,
-                         parameterList: ParameterListSyntax): ConstructSignatureSyntax {
-        return new ConstructSignatureSyntax(newKeyword, null, parameterList, null, /*parsedInStrictMode:*/ false);
+        this._callSignature = callSignature;
     }
 
     public static create1(): ConstructSignatureSyntax {
-        return new ConstructSignatureSyntax(Syntax.token(SyntaxKind.NewKeyword), null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
+        return new ConstructSignatureSyntax(Syntax.token(SyntaxKind.NewKeyword), CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7124,25 +7109,19 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
+        if ((token = this._callSignature.firstToken()) !== null) { return token; }
         return null;
     }
 
     public lastToken(): ISyntaxToken {
         var token = null;
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
+        if ((token = this._callSignature.lastToken()) !== null) { return token; }
         if (this._newKeyword.width() > 0) { return this._newKeyword; }
         return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        array.splice(index, 0, this._parameterList);
-        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
+        array.splice(index, 0, this._callSignature);
         array.splice(index, 0, this._newKeyword);
     }
 
@@ -7150,27 +7129,17 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return this._newKeyword;
     }
 
-    public typeParameterList(): TypeParameterListSyntax {
-        return this._typeParameterList;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
+    public callSignature(): CallSignatureSyntax {
+        return this._callSignature;
     }
 
     public update(newKeyword: ISyntaxToken,
-                  typeParameterList: TypeParameterListSyntax,
-                  parameterList: ParameterListSyntax,
-                  typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
-        if (this._newKeyword === newKeyword && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+                  callSignature: CallSignatureSyntax): ConstructSignatureSyntax {
+        if (this._newKeyword === newKeyword && this._callSignature === callSignature) {
             return this;
         }
 
-        return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        return new ConstructSignatureSyntax(newKeyword, callSignature, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructSignatureSyntax {
@@ -7182,26 +7151,16 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ConstructSignatureSyntax {
-        return this.update(newKeyword, this._typeParameterList, this._parameterList, this._typeAnnotation);
+        return this.update(newKeyword, this._callSignature);
     }
 
-    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): ConstructSignatureSyntax {
-        return this.update(this._newKeyword, typeParameterList, this._parameterList, this._typeAnnotation);
-    }
-
-    public withParameterList(parameterList: ParameterListSyntax): ConstructSignatureSyntax {
-        return this.update(this._newKeyword, this._typeParameterList, parameterList, this._typeAnnotation);
-    }
-
-    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
-        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, typeAnnotation);
+    public withCallSignature(callSignature: CallSignatureSyntax): ConstructSignatureSyntax {
+        return this.update(this._newKeyword, callSignature);
     }
 
     private collectTextElements(elements: string[]): void {
         (<any>this._newKeyword).collectTextElements(elements);
-        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
-        (<any>this._parameterList).collectTextElements(elements);
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
+        (<any>this._callSignature).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7220,27 +7179,11 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-
-        childWidth = this._parameterList.fullWidth();
+        childWidth = this._callSignature.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
+        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -7257,24 +7200,10 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         position -= childWidth;
         fullStart += childWidth;
 
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
-
-        childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
+        childWidth = this._callSignature.fullWidth();
+        if (position < childWidth) { return (<any>this._callSignature).findTokenInternal(position, fullStart); }
         position -= childWidth;
         fullStart += childWidth;
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
 
         throw Errors.invalidOperation();
     }
@@ -7285,9 +7214,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         if (this.kind() !== node.kind()) { return false; }
         var other = <ConstructSignatureSyntax>node;
         if (!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) { return false; }
         return true;
     }
 }
@@ -7295,32 +7222,26 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 class FunctionSignatureSyntax extends TypeMemberSyntax {
     private _identifier: ISyntaxToken;
     private _questionToken: ISyntaxToken;
-    private _typeParameterList: TypeParameterListSyntax;
-    private _parameterList: ParameterListSyntax;
-    private _typeAnnotation: TypeAnnotationSyntax;
+    private _callSignature: CallSignatureSyntax;
 
     constructor(identifier: ISyntaxToken,
                 questionToken: ISyntaxToken,
-                typeParameterList: TypeParameterListSyntax,
-                parameterList: ParameterListSyntax,
-                typeAnnotation: TypeAnnotationSyntax,
+                callSignature: CallSignatureSyntax,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
         this._identifier = identifier;
         this._questionToken = questionToken;
-        this._typeParameterList = typeParameterList;
-        this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
+        this._callSignature = callSignature;
     }
 
     public static create(identifier: ISyntaxToken,
-                         parameterList: ParameterListSyntax): FunctionSignatureSyntax {
-        return new FunctionSignatureSyntax(identifier, null, null, parameterList, null, /*parsedInStrictMode:*/ false);
+                         callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
+        return new FunctionSignatureSyntax(identifier, null, callSignature, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken): FunctionSignatureSyntax {
-        return new FunctionSignatureSyntax(identifier, null, null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
+        return new FunctionSignatureSyntax(identifier, null, CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7335,26 +7256,20 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         var token = null;
         if (this._identifier.width() > 0) { return this._identifier; }
         if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
+        if ((token = this._callSignature.firstToken()) !== null) { return token; }
         return null;
     }
 
     public lastToken(): ISyntaxToken {
         var token = null;
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
+        if ((token = this._callSignature.lastToken()) !== null) { return token; }
         if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
         if (this._identifier.width() > 0) { return this._identifier; }
         return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        array.splice(index, 0, this._parameterList);
-        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
+        array.splice(index, 0, this._callSignature);
         if (this._questionToken !== null) { array.splice(index, 0, this._questionToken); }
         array.splice(index, 0, this._identifier);
     }
@@ -7367,28 +7282,18 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return this._questionToken;
     }
 
-    public typeParameterList(): TypeParameterListSyntax {
-        return this._typeParameterList;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
+    public callSignature(): CallSignatureSyntax {
+        return this._callSignature;
     }
 
     public update(identifier: ISyntaxToken,
                   questionToken: ISyntaxToken,
-                  typeParameterList: TypeParameterListSyntax,
-                  parameterList: ParameterListSyntax,
-                  typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
-        if (this._identifier === identifier && this._questionToken === questionToken && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+                  callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
+        if (this._identifier === identifier && this._questionToken === questionToken && this._callSignature === callSignature) {
             return this;
         }
 
-        return new FunctionSignatureSyntax(identifier, questionToken, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        return new FunctionSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionSignatureSyntax {
@@ -7400,37 +7305,25 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     }
 
     public withIdentifier(identifier: ISyntaxToken): FunctionSignatureSyntax {
-        return this.update(identifier, this._questionToken, this._typeParameterList, this._parameterList, this._typeAnnotation);
+        return this.update(identifier, this._questionToken, this._callSignature);
     }
 
     public withQuestionToken(questionToken: ISyntaxToken): FunctionSignatureSyntax {
-        return this.update(this._identifier, questionToken, this._typeParameterList, this._parameterList, this._typeAnnotation);
+        return this.update(this._identifier, questionToken, this._callSignature);
     }
 
-    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): FunctionSignatureSyntax {
-        return this.update(this._identifier, this._questionToken, typeParameterList, this._parameterList, this._typeAnnotation);
-    }
-
-    public withParameterList(parameterList: ParameterListSyntax): FunctionSignatureSyntax {
-        return this.update(this._identifier, this._questionToken, this._typeParameterList, parameterList, this._typeAnnotation);
-    }
-
-    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
-        return this.update(this._identifier, this._questionToken, this._typeParameterList, this._parameterList, typeAnnotation);
+    public withCallSignature(callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
+        return this.update(this._identifier, this._questionToken, callSignature);
     }
 
     private collectTextElements(elements: string[]): void {
         (<any>this._identifier).collectTextElements(elements);
         if (this._questionToken !== null) { (<any>this._questionToken).collectTextElements(elements); }
-        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
-        (<any>this._parameterList).collectTextElements(elements);
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
+        (<any>this._callSignature).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._typeParameterList !== null && this._typeParameterList.isTypeScriptSpecific()) { return true; }
-        if (this._parameterList.isTypeScriptSpecific()) { return true; }
-        if (this._typeAnnotation !== null && this._typeAnnotation.isTypeScriptSpecific()) { return true; }
+        if (this._callSignature.isTypeScriptSpecific()) { return true; }
         return false;
     }
 
@@ -7453,27 +7346,11 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
             hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
         }
 
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-
-        childWidth = this._parameterList.fullWidth();
+        childWidth = this._callSignature.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
+        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -7497,24 +7374,10 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
             fullStart += childWidth;
         }
 
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            if (position < childWidth) { return (<any>this._typeParameterList).findTokenInternal(position, fullStart); }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
-
-        childWidth = this._parameterList.fullWidth();
-        if (position < childWidth) { return (<any>this._parameterList).findTokenInternal(position, fullStart); }
+        childWidth = this._callSignature.fullWidth();
+        if (position < childWidth) { return (<any>this._callSignature).findTokenInternal(position, fullStart); }
         position -= childWidth;
         fullStart += childWidth;
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            if (position < childWidth) { return (<any>this._typeAnnotation).findTokenInternal(position, fullStart); }
-            position -= childWidth;
-            fullStart += childWidth;
-        }
 
         throw Errors.invalidOperation();
     }
@@ -7526,9 +7389,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         var other = <FunctionSignatureSyntax>node;
         if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) { return false; }
         return true;
     }
 }

@@ -40,41 +40,45 @@
                         "text": "foo",
                         "valueText": "foo"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
-                        "fullWidth": 2,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
+                    "_callSignature": {
+                        "kind": "CallSignature",
+                        "fullWidth": 7,
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 2,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
+                            }
                         },
-                        "_parameters": [],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "text": ")"
-                        }
-                    },
-                    "_typeAnnotation": {
-                        "kind": "TypeAnnotation",
-                        "fullWidth": 5,
-                        "_colonToken": {
-                            "kind": "ColonToken",
-                            "width": 1,
-                            "text": ":"
-                        },
-                        "_type": {
-                            "kind": "AnyKeyword",
-                            "width": 3,
-                            "fullWidth": 4,
-                            "text": "any",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
+                        "_typeAnnotation": {
+                            "kind": "TypeAnnotation",
+                            "fullWidth": 5,
+                            "_colonToken": {
+                                "kind": "ColonToken",
+                                "width": 1,
+                                "text": ":"
+                            },
+                            "_type": {
+                                "kind": "AnyKeyword",
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": "any",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
                         }
                     }
                 },

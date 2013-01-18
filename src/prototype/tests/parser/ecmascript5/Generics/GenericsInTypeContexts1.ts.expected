@@ -917,87 +917,91 @@
                         "text": "f1",
                         "valueText": "f1"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
+                    "_callSignature": {
+                        "kind": "CallSignature",
                         "fullWidth": 10,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [
-                            {
-                                "kind": "Parameter",
-                                "fullWidth": 7,
-                                "_identifier": {
-                                    "kind": "IdentifierName",
-                                    "width": 1,
-                                    "text": "a",
-                                    "valueText": "a"
-                                },
-                                "_typeAnnotation": {
-                                    "kind": "TypeAnnotation",
-                                    "fullWidth": 6,
-                                    "_colonToken": {
-                                        "kind": "ColonToken",
+                        "_parameterList": {
+                            "kind": "ParameterList",
+                            "fullWidth": 10,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 7,
+                                    "_identifier": {
+                                        "kind": "IdentifierName",
                                         "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ":",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
+                                        "text": "a",
+                                        "valueText": "a"
                                     },
-                                    "_type": {
-                                        "kind": "GenericName",
-                                        "fullWidth": 4,
-                                        "_identifier": {
-                                            "kind": "IdentifierName",
+                                    "_typeAnnotation": {
+                                        "kind": "TypeAnnotation",
+                                        "fullWidth": 6,
+                                        "_colonToken": {
+                                            "kind": "ColonToken",
                                             "width": 1,
-                                            "text": "E",
-                                            "valueText": "E"
-                                        },
-                                        "_typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 3,
-                                            "_lessThanToken": {
-                                                "kind": "LessThanToken",
-                                                "width": 1,
-                                                "text": "<"
-                                            },
-                                            "_typeArguments": [
+                                            "fullWidth": 2,
+                                            "text": ":",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
                                                 {
-                                                    "kind": "IdentifierName",
-                                                    "width": 1,
-                                                    "text": "T",
-                                                    "valueText": "T"
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
                                                 }
-                                            ],
-                                            "_greaterThanToken": {
-                                                "kind": "GreaterThanToken",
+                                            ]
+                                        },
+                                        "_type": {
+                                            "kind": "GenericName",
+                                            "fullWidth": 4,
+                                            "_identifier": {
+                                                "kind": "IdentifierName",
                                                 "width": 1,
-                                                "text": ">"
+                                                "text": "E",
+                                                "valueText": "E"
+                                            },
+                                            "_typeArgumentList": {
+                                                "kind": "TypeArgumentList",
+                                                "fullWidth": 3,
+                                                "_lessThanToken": {
+                                                    "kind": "LessThanToken",
+                                                    "width": 1,
+                                                    "text": "<"
+                                                },
+                                                "_typeArguments": [
+                                                    {
+                                                        "kind": "IdentifierName",
+                                                        "width": 1,
+                                                        "text": "T",
+                                                        "valueText": "T"
+                                                    }
+                                                ],
+                                                "_greaterThanToken": {
+                                                    "kind": "GreaterThanToken",
+                                                    "width": 1,
+                                                    "text": ">"
+                                                }
                                             }
                                         }
                                     }
                                 }
+                            ],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             }
-                        ],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "fullWidth": 2,
-                            "text": ")",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
                         }
                     }
                 },
@@ -1068,74 +1072,78 @@
                         "text": "f2",
                         "valueText": "f2"
                     },
-                    "_parameterList": {
-                        "kind": "ParameterList",
-                        "fullWidth": 2,
-                        "_openParenToken": {
-                            "kind": "OpenParenToken",
-                            "width": 1,
-                            "text": "("
-                        },
-                        "_parameters": [],
-                        "_closeParenToken": {
-                            "kind": "CloseParenToken",
-                            "width": 1,
-                            "text": ")"
-                        }
-                    },
-                    "_typeAnnotation": {
-                        "kind": "TypeAnnotation",
-                        "fullWidth": 7,
-                        "_colonToken": {
-                            "kind": "ColonToken",
-                            "width": 1,
+                    "_callSignature": {
+                        "kind": "CallSignature",
+                        "fullWidth": 9,
+                        "_parameterList": {
+                            "kind": "ParameterList",
                             "fullWidth": 2,
-                            "text": ":",
-                            "hasTrailingTrivia": true,
-                            "trailingTrivia": [
-                                {
-                                    "kind": "WhitespaceTrivia",
-                                    "text": " "
-                                }
-                            ]
-                        },
-                        "_type": {
-                            "kind": "GenericName",
-                            "fullWidth": 5,
-                            "_identifier": {
-                                "kind": "IdentifierName",
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
                                 "width": 1,
-                                "text": "F",
-                                "valueText": "F"
+                                "text": "("
                             },
-                            "_typeArgumentList": {
-                                "kind": "TypeArgumentList",
-                                "fullWidth": 4,
-                                "_lessThanToken": {
-                                    "kind": "LessThanToken",
-                                    "width": 1,
-                                    "text": "<"
-                                },
-                                "_typeArguments": [
+                            "_parameters": [],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
+                            }
+                        },
+                        "_typeAnnotation": {
+                            "kind": "TypeAnnotation",
+                            "fullWidth": 7,
+                            "_colonToken": {
+                                "kind": "ColonToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ":",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
                                     {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "T",
-                                        "valueText": "T"
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
                                     }
-                                ],
-                                "_greaterThanToken": {
-                                    "kind": "GreaterThanToken",
+                                ]
+                            },
+                            "_type": {
+                                "kind": "GenericName",
+                                "fullWidth": 5,
+                                "_identifier": {
+                                    "kind": "IdentifierName",
                                     "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ">",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
+                                    "text": "F",
+                                    "valueText": "F"
+                                },
+                                "_typeArgumentList": {
+                                    "kind": "TypeArgumentList",
+                                    "fullWidth": 4,
+                                    "_lessThanToken": {
+                                        "kind": "LessThanToken",
+                                        "width": 1,
+                                        "text": "<"
+                                    },
+                                    "_typeArguments": [
                                         {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
+                                            "kind": "IdentifierName",
+                                            "width": 1,
+                                            "text": "T",
+                                            "valueText": "T"
                                         }
-                                    ]
+                                    ],
+                                    "_greaterThanToken": {
+                                        "kind": "GreaterThanToken",
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": ">",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
                                 }
                             }
                         }

@@ -2375,11 +2375,9 @@ module Parser {
             // Debug.assert(this.isConstructSignature());
 
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
-            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
-            var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
-            return this.factory.constructSignature(newKeyword, typeParameterList, parameterList, typeAnnotation);
+            return this.factory.constructSignature(newKeyword, callSignature);
         }
 
         private parseIndexSignature(): IndexSignatureSyntax {
@@ -2396,12 +2394,9 @@ module Parser {
         private parseFunctionSignature(): FunctionSignatureSyntax {
             var identifier = this.eatIdentifierToken();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
+            var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
-            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
-            var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
-
-            return this.factory.functionSignature(identifier, questionToken, typeParameterList, parameterList, typeAnnotation);
+            return this.factory.functionSignature(identifier, questionToken, callSignature);
         }
 
         private parsePropertySignature(): PropertySignatureSyntax {

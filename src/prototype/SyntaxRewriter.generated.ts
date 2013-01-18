@@ -340,18 +340,14 @@ class SyntaxRewriter implements ISyntaxVisitor {
     public visitConstructSignature(node: ConstructSignatureSyntax): any {
         return node.update(
             this.visitToken(node.newKeyword()),
-            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
-            <ParameterListSyntax>this.visitNode(node.parameterList()),
-            node.typeAnnotation() === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation()));
+            <CallSignatureSyntax>this.visitNode(node.callSignature()));
     }
 
     public visitFunctionSignature(node: FunctionSignatureSyntax): any {
         return node.update(
             this.visitToken(node.identifier()),
             node.questionToken() === null ? null : this.visitToken(node.questionToken()),
-            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
-            <ParameterListSyntax>this.visitNode(node.parameterList()),
-            node.typeAnnotation() === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation()));
+            <CallSignatureSyntax>this.visitNode(node.callSignature()));
     }
 
     public visitIndexSignature(node: IndexSignatureSyntax): any {
