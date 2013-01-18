@@ -3408,27 +3408,27 @@ module Parser {
 
             Debug.assert(storage.length === 3);
 
-            if (storage[0] === SyntaxKind.GreaterThanToken && storage[1] === SyntaxKind.GreaterThanToken && storage[2] === SyntaxKind.EqualsToken) {
-                // >>>=
-                return { tokenCount: 4, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
-            }
-
-            if (storage[0] === SyntaxKind.GreaterThanToken && storage[1] === SyntaxKind.GreaterThanToken) {
-                // >>>
-                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
-            }
-
-            if (storage[0] === SyntaxKind.GreaterThanToken && storage[1] === SyntaxKind.EqualsToken) {
-                // >>=
-                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
-            }
-
             if (storage[0] === SyntaxKind.GreaterThanToken) {
-                // >>
-                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
+                if (storage[1] === SyntaxKind.GreaterThanToken) {
+                    if (storage[2] === SyntaxKind.EqualsToken) {
+                        // >>>=
+                        return { tokenCount: 4, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
+                    }
+                    else {
+                        // >>>
+                        return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
+                    }
+                }
+                else if (storage[1] === SyntaxKind.EqualsToken) {
+                    // >>=
+                    return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
+                }
+                else {
+                    // >>
+                    return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
+                }
             }
-
-            if (storage[0] === SyntaxKind.EqualsToken) {
+            else if (storage[0] === SyntaxKind.EqualsToken) {
                 // >=
                 return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanEqualsToken };
             }

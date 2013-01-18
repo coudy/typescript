@@ -29572,35 +29572,39 @@ var Parser;
                 }
             }
             Debug.assert(storage.length === 3);
-            if(storage[0] === 81 /* GreaterThanToken */  && storage[1] === 81 /* GreaterThanToken */  && storage[2] === 107 /* EqualsToken */ ) {
-                return {
-                    tokenCount: 4,
-                    syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
-                };
-            }
-            if(storage[0] === 81 /* GreaterThanToken */  && storage[1] === 81 /* GreaterThanToken */ ) {
-                return {
-                    tokenCount: 3,
-                    syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
-                };
-            }
-            if(storage[0] === 81 /* GreaterThanToken */  && storage[1] === 107 /* EqualsToken */ ) {
-                return {
-                    tokenCount: 3,
-                    syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
-                };
-            }
             if(storage[0] === 81 /* GreaterThanToken */ ) {
-                return {
-                    tokenCount: 2,
-                    syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
-                };
-            }
-            if(storage[0] === 107 /* EqualsToken */ ) {
-                return {
-                    tokenCount: 2,
-                    syntaxKind: 83 /* GreaterThanEqualsToken */ 
-                };
+                if(storage[1] === 81 /* GreaterThanToken */ ) {
+                    if(storage[2] === 107 /* EqualsToken */ ) {
+                        return {
+                            tokenCount: 4,
+                            syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
+                        };
+                    } else {
+                        return {
+                            tokenCount: 3,
+                            syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
+                        };
+                    }
+                } else {
+                    if(storage[1] === 107 /* EqualsToken */ ) {
+                        return {
+                            tokenCount: 3,
+                            syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
+                        };
+                    } else {
+                        return {
+                            tokenCount: 2,
+                            syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
+                        };
+                    }
+                }
+            } else {
+                if(storage[0] === 107 /* EqualsToken */ ) {
+                    return {
+                        tokenCount: 2,
+                        syntaxKind: 83 /* GreaterThanEqualsToken */ 
+                    };
+                }
             }
             return null;
         };
