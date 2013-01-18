@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -43,6 +55,8 @@ module TypeScript {
         RLit = 1 << 27, // THIS, TRUE, FALSE, NULL
         Func = 1 << 28, // FUNCTION
         EOF = 1 << 29, // EOF
+
+        // REVIEW: Name this something clearer.
         TypeScriptS = 1 << 30, // PROPERTY, PRIVATE, STATIC, INTERFACE, CLASS, MODULE, EXPORT, IMPORT
         ExprStart = SColon | AddOp | LCurly | PreOp | RegExp | LParen | LBrack | ID | Prefix | RLit | Func | Literal,
         StmtStart = ExprStart | SColon | Var | Stmt | While | TypeScriptS,
@@ -51,24 +65,13 @@ module TypeScript {
 
     export enum AllowedElements {
         None = 0,
-        Statements = 1,
-        FunctionDecls = 1 << 1,
-        ModuleDecls = 1 << 2,
-        ClassDecls = 1 << 3,
-        InterfaceDecls = 1 << 4,
-        TypedFuncDecls = 1 << 5,
-        TypedDecls = 1 << 6,
-        TypedFuncSignatures = 1 << 8,
-        TypedSignatures = 1 << 9,
-        AmbientDecls = 1 << 10,
+        ModuleDeclarations = 1 << 2,
+        ClassDeclarations = 1 << 3,
+        InterfaceDeclarations = 1 << 4,
+        AmbientDeclarations = 1 << 10,
         Properties = 1 << 11,
-        
-        Block = Statements | FunctionDecls | TypedFuncDecls | TypedDecls,
-        Global = Statements | FunctionDecls | ModuleDecls | ClassDecls | InterfaceDecls | AmbientDecls,
-        FunctionBody = Statements | FunctionDecls,
-        ModuleMembers = TypedFuncDecls | FunctionDecls | ModuleDecls | ClassDecls | InterfaceDecls | TypedDecls | Statements | AmbientDecls,
-        ClassMembers = TypedFuncDecls | FunctionDecls | Statements | TypedDecls | Properties,
-        InterfaceMembers = TypedFuncSignatures | TypedSignatures,
+
+        Global = ModuleDeclarations | ClassDeclarations | InterfaceDeclarations | AmbientDeclarations,
         QuickParse = Global | Properties,
     }
 
@@ -97,6 +100,10 @@ module TypeScript {
         PossibleOptionalParameter = 1 << 8,
         ClassBaseConstructorCall = 1 << 9,
         OptionalName = 1 << 10,
+        // REVIEW: This flag is to mark lambda nodes to note that the LParen of an expression has already been matched in the lambda header.
+        //         The flag is used to communicate this piece of information to the calling parseTerm, which intern will remove it.
+        //         Once we have a better way to associate information with nodes, this flag should not be used.
+        SkipNextRParen = 1 << 11, 
     }
 
     export enum DeclFlags {
@@ -125,6 +132,7 @@ module TypeScript {
         ShouldEmitModuleDecl = 1 << 9,
         IsWholeFile = 1 << 10,
         IsDynamic = 1 << 11,
+        MustCaptureThis = 1 << 12,
     }
 
     export enum SymbolFlags {
@@ -148,6 +156,7 @@ module TypeScript {
         Optional = 1 << 16,
         RecursivelyReferenced = 1 << 17,
         Bound = 1 << 18,
+        CompilerGenerated = 1 << 19,
     }
 
     export enum VarFlags {
@@ -169,6 +178,7 @@ module TypeScript {
         ClassConstructorProperty = 1 << 14,
         ClassSuperMustBeFirstCallInConstructor = 1 << 15,
         Constant = 1 << 16,
+        MustCaptureThis = 1 << 17,
     }
 
     export enum FncFlags {
@@ -193,6 +203,7 @@ module TypeScript {
         IsFunctionExpression = 1 << 17,
         ClassMethod = 1 << 18,
         ClassPropertyMethodExported = 1 << 19,
+        HasSuperReferenceInFatArrowFunction = 1 << 20,
     }
 
     export enum SignatureFlags {

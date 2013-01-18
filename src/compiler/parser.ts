@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 ///<reference path='io.ts' />
@@ -1758,7 +1770,8 @@ module TypeScript {
                     this.reportParseError("Base class initializers must be the first statement in a class definition");
                 }
                 else if (!wasGetOrSetId && ((modifiers & Modifiers.Getter) || (modifiers & Modifiers.Setter)) &&
-                         (this.currentToken.tokenId == TokenID.OpenParen) || (this.currentToken.tokenId == TokenID.Equals)) {
+                         ((this.currentToken.tokenId == TokenID.OpenParen) || (this.currentToken.tokenId == TokenID.Equals) ||
+                          (this.currentToken.tokenId == TokenID.Colon) || (this.currentToken.tokenId == TokenID.Semicolon))) {
                              // catch a 'get' or 'set' used as an identifier
                     wasGetOrSetId = true;
                     scanNext = false;
@@ -2748,7 +2761,7 @@ module TypeScript {
                     this.currentToken = this.scanner.scan();
                     var target = this.parseTerm(errorRecoverySet, false, TypeContext.AllSimpleTypes, inCast);
 
-                    if (target.nodeType == NodeType.Error) {
+                    if (target.nodeType == NodeType.Error || (target.nodeType == NodeType.Index && (<BinaryExpression>target).operand1.nodeType == NodeType.TypeRef)) {
                         this.reportParseError("Cannot invoke 'new' on this expression");
                     } else {
                         ast = new CallExpression(NodeType.New, target, null);
@@ -4290,13 +4303,33 @@ module TypeScript {
         }
 
         public parse(sourceText: ISourceText, filename: string, unitIndex: number, allowedElements = AllowedElements.Global): Script {
-            this.ambientModule = false;
-            this.topLevel = true;
-            this.hasTopLevelImportOrExport = false;
-            this.requiresExtendsBlock = false;
+            // Reset all parser state here.  This allows us to be resilient to reentrancy if an 
+            // exception is thrown.
             this.fname = filename;
             this.currentUnitIndex = unitIndex;
+
+            this.currentToken = null;
+            this.needTerminator = false;
+            this.inFunction = false;
+            this.inInterfaceDecl = false;
+            this.inFncDecl = false;
+            this.state = ParseState.StartStatementList;
+            this.ambientModule = false;
+            this.ambientClass = false;
+            this.topLevel = true;
+            this.allowImportDeclaration = true;
+            this.prevIDTok = null;
+            this.statementInfoStack = new IStatementInfo[];
+            this.hasTopLevelImportOrExport = false;
+            this.strictMode = false;
+            this.nestingLevel = 0;
+            this.prevExpr = null;
+            this.currentClassDefinition = null;
+            this.parsingClassConstructorDefinition = false;
+            this.parsingDeclareFile = false;
             this.amdDependencies = [];
+            this.inferPropertiesFromThisAssignment = false;
+            this.requiresExtendsBlock = false;
 
             this.scanner.resetComments();
             this.scanner.setErrorHandler((message) =>this.reportParseError(message));

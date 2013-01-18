@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -644,7 +656,6 @@ module TypeScript {
         public inArrayElementTypeCheck = false;
         public resolutionDataCache = new ResolutionDataCache();
         public nestingLevel = 0;
-        public inBoundPropTypeCheck = false;
         public inSuperCall = false;
 
         constructor (public logger: ILogger, public initScope: SymbolScope, public parser: Parser,
@@ -808,6 +819,7 @@ module TypeScript {
                     var prevScope = this.scope;
                     this.scope = instanceScope;
                     var container = sym.container;
+                    var svCurrentModDecl = this.checker.currentModDecl;
                     if (this.checker.units &&
                         (sym.unitIndex >= 0) &&
                         (sym.unitIndex < this.checker.units.length)) {
@@ -826,6 +838,9 @@ module TypeScript {
                             }
                             if (type.isClass()) {
                                 this.thisType = type.instanceType;
+                            }
+                            if (type.isModuleType()) {
+                                this.checker.currentModDecl = <ModuleDeclaration>container.declAST;
                                 break;
                             }
                         }
@@ -833,6 +848,7 @@ module TypeScript {
                     }
 
                     this.typeCheckBoundDecl(varDecl);
+                    this.checker.currentModDecl = svCurrentModDecl;
                     this.scope = prevScope;
                 }
             }
@@ -924,13 +940,22 @@ module TypeScript {
                             this.scope = varDecl.sym.container.getType().memberScope;
                         }
 
-                        if (varDecl.varFlags & VarFlags.Property) {
-                            this.inBoundPropTypeCheck = true;
+                        // Mark Lambda expressions with IsPropertyBound flag
+                        if (hasFlag(varDecl.varFlags, VarFlags.Property) && this.thisClassNode) {
+                            getAstWalkerFactory().walk(varDecl.init, (ast: AST, parent: AST, walker: IAstWalker) => {
+                                if (ast && ast.nodeType == NodeType.FuncDecl) {
+                                    if (hasFlag((<FuncDecl>ast).fncFlags, FncFlags.IsFatArrowFunction)) {
+                                        // Found a Lambda, mark it
+                                        (<FuncDecl>ast).fncFlags |= FncFlags.IsPropertyBound;
+                                    }
+                                    // Only mark the top level functions
+                                    walker.options.goChildren = false;
+                                }
+                                return ast;
+                            });
                         }
+
                         this.checker.typeCheckWithContextualType(varDecl.type, this.checker.inProvisionalTypecheckMode(), applyTargetType, varDecl.init);
-                        if (this.inBoundPropTypeCheck) {
-                            this.inBoundPropTypeCheck = false;
-                        }
 
                         this.scope = prevScope;
                         if (varDecl.type) {
@@ -1043,39 +1068,30 @@ module TypeScript {
         }
 
         public typeCheckThis(ast: AST): AST {
+           ast.type = this.anyType;
             var illegalThisRef = false;
             if (this.thisFnc == null) {
                 // 'this' in class bodies should bind to 'any'
                 if (this.thisType) {
                     if (this.thisClassNode && this.thisClassNode.nodeType == NodeType.ClassDeclaration) {
                         illegalThisRef = true;
-                        ast.type = this.anyType;
                     }
                     else {
                         ast.type = this.thisType;
                     }
                 }
-                else {
-                    if (this.checker.currentModDecl) {
-                        this.checker.errorReporter.simpleError(ast, "'this' may not be referenced within module bodies");
-                    }
-                    ast.type = this.anyType;
+                else if (this.checker.currentModDecl) {
+                    this.checker.errorReporter.simpleError(ast, "'this' may not be referenced within module bodies");
                 }
             }
             else {
-                if (this.thisClassNode && (this.inBoundPropTypeCheck || (this.inSuperCall && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor)))) {
+                if (this.thisClassNode && (hasFlag(this.thisFnc.fncFlags, FncFlags.IsPropertyBound) || (this.inSuperCall && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor)))) {
                     illegalThisRef = true;
                 }
                 if (this.thisFnc.isMethod() || this.thisFnc.isConstructor || this.thisFnc.isTargetTypedAsMethod) {
                     if (this.thisType && !(this.thisFnc.fncFlags & FncFlags.Static)) {
                         ast.type = this.thisType;
                     }
-                    else {
-                        ast.type = this.anyType;
-                    }
-                }
-                else {
-                    ast.type = this.anyType;
                 }
             }
 
@@ -1098,10 +1114,15 @@ module TypeScript {
                     var firstEncFnc = encFnc;
 
                     while (encFnc) {
+                        if (this.thisClassNode && hasFlag(encFnc.fncFlags, FncFlags.IsPropertyBound)) {
+                            illegalThisRef = true;
+                        }
+
                         if (!hasFlag(encFnc.fncFlags, FncFlags.IsFatArrowFunction) || encFnc.hasSelfReference()) {
                             encFnc.setHasSelfReference();
                             break;
                         }
+
                         encFnc = encFnc.enclosingFnc;
                     }
 
@@ -1121,7 +1142,7 @@ module TypeScript {
                         }
                     }
 
-                    if (encFnc && (encFnc.isMethod() || encFnc.isConstructor) && this.thisType) {
+                    if (encFnc && (encFnc.isMethod() || encFnc.isConstructor) && this.thisType && !hasFlag(encFnc.fncFlags, FncFlags.Static)) {
                         ast.type = this.thisType;
                     }
                 }
@@ -2842,8 +2863,6 @@ module TypeScript {
             }
 
             var prevScope = this.scope;
-            var prevInBoundPropTypeCheck = this.inBoundPropTypeCheck;
-            this.inBoundPropTypeCheck = false;
             var svClassNode = this.thisClassNode;
             this.thisClassNode = classDecl;
             var classType = classDecl.type;
@@ -2883,7 +2902,6 @@ module TypeScript {
                 }
             }
 
-            this.inBoundPropTypeCheck = prevInBoundPropTypeCheck;
             this.thisType = prevThisType;
             this.thisClassNode = svClassNode;
             this.scope = prevScope;
@@ -3007,12 +3025,10 @@ module TypeScript {
             var mod = moduleDecl.mod;
             var sym: TypeSymbol = null;
 
-            var prevInBoundPropTypeCheck = this.inBoundPropTypeCheck;
             var prevScope = this.scope;
             var prevThisType = this.thisType;
             var prevCurrentModDecl = this.checker.currentModDecl;
             this.checker.currentModDecl = moduleDecl;
-            this.inBoundPropTypeCheck = false;
 
             this.thisType = null;
             this.scope = mod.containedScope;
@@ -3022,7 +3038,6 @@ module TypeScript {
             this.checker.currentModDecl = prevCurrentModDecl;
             this.thisType = prevThisType;
             this.scope = prevScope;
-            this.inBoundPropTypeCheck = prevInBoundPropTypeCheck;
 
             moduleDecl.type = mod;
 

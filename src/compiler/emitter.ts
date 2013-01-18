@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -180,7 +192,6 @@ module TypeScript {
         }
 
         public emitCommentInPlace(comment: Comment) {
-            this.recordSourceMappingStart(comment);
             var text = comment.getText();
             var hadNewLine = false;
 
@@ -188,22 +199,30 @@ module TypeScript {
                 if (this.emitState.column == 0) {
                     this.emitIndent();
                 }
+                this.recordSourceMappingStart(comment);
                 this.writeToOutput(text[0]);
 
                 if (text.length > 1 || comment.endsLine) {
-                    this.writeLineToOutput("");
                     for (var i = 1; i < text.length; i++) {
+                        this.writeLineToOutput("");
                         this.emitIndent();
-                        this.writeLineToOutput(text[i]);
+                        this.writeToOutput(text[i]);
                     }
+                    this.recordSourceMappingEnd(comment);
+                    this.writeLineToOutput("");
                     hadNewLine = true;
+                } else {
+                    this.recordSourceMappingEnd(comment);
                 }
             }
             else {
                 if (this.emitState.column == 0) {
                     this.emitIndent();
                 }
-                this.writeLineToOutput(text[0]);
+                this.recordSourceMappingStart(comment);
+                this.writeToOutput(text[0]);
+                this.recordSourceMappingEnd(comment);
+                this.writeLineToOutput("");
                 hadNewLine = true;
             }
 
@@ -213,7 +232,6 @@ module TypeScript {
             else {
                 this.writeToOutput(" ");
             }
-            this.recordSourceMappingEnd(comment);
         }
 
         public emitParensAndCommentsInPlace(ast: AST, pre: bool) {
@@ -801,7 +819,7 @@ module TypeScript {
                             this.recordSourceMappingNameEnd();
                         }
                         this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeLineToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
+                        this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
                     }
                     else if (isExported || temp == EmitContainer.Prog) {
                         var dotMod = svModuleName != "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
@@ -810,7 +828,7 @@ module TypeScript {
                             this.recordSourceMappingNameEnd();
                         }
                         this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeLineToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
+                        this.writeToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
                     }
                     else if (!isExported && temp != EmitContainer.Prog) {
                         this.writeToOutput("}");
@@ -818,7 +836,7 @@ module TypeScript {
                             this.recordSourceMappingNameEnd();
                         }
                         this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeLineToOutput(")(" + this.moduleName + " || (" + this.moduleName + " = {}));");
+                        this.writeToOutput(")(" + this.moduleName + " || (" + this.moduleName + " = {}));");
                     }
                     else {
                         this.writeToOutput("}");
@@ -826,9 +844,10 @@ module TypeScript {
                             this.recordSourceMappingNameEnd();
                         }
                         this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeLineToOutput(")();");
+                        this.writeToOutput(")();");
                     }
                     this.recordSourceMappingEnd(moduleDecl);
+                    this.writeLineToOutput("");
                     if (temp != EmitContainer.Prog && isExported) {
                         this.emitIndent();
                         this.recordSourceMappingStart(moduleDecl);

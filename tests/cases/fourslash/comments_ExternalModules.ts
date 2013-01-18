@@ -1,23 +1,23 @@
 /// <reference path='fourslash.ts' />
 
 // @Filename: file_0.ts
-/////// Module comment
+/////** Module comment*/
 ////export module m/*1*/1 {
-////    /// b's comment
+////    /** b's comment*/
 ////    export var b: number;
-////    /// foo's comment
+////    /** foo's comment*/
 ////    function foo() {
 ////        return /*2*/b;
 ////    }
-////    /// m2 comments
+////    /** m2 comments*/
 ////    export module m2 {
-////        /// class comment;
+////        /** class comment;*/
 ////        export class c {
 ////        };
-////        /// i
+////        /** i*/
 ////        export var i = new c();
 ////    }
-////    /// exported function
+////    /** exported function*/
 ////    export function fooExport() {
 ////        return foo(/*3*/);
 ////    }
@@ -26,7 +26,7 @@
 ////var my/*7*/var = new m1.m2./*8*/c();
 
 // @Filename: file_1.ts
-///////This is on import declaration
+/////**This is on import declaration*/
 ////import ex/*9*/tMod = module("file_0");
 /////*10*/extMod./*11*/m1./*12*/fooExport(/*13*/);
 ////var new/*14*/Var = new extMod.m1.m2./*15*/c();

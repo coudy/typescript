@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -59,26 +71,75 @@ module TypeScript {
         return modName;
     }
 
+    export function getDeclareFilePath(fname: string) {
+        return isSTRFile(fname) ? changePathToDSTR(fname) : isTSFile(fname) ? changePathToDTS(fname) : changePathToDTS(fname);
+    }
+
+    function isFileOfExtension(fname: string, ext: string) {
+        var invariantFname = fname.toLocaleUpperCase();
+        var invariantExt = ext.toLocaleUpperCase();
+        var extLength = invariantExt.length;
+        return invariantFname.length > extLength && invariantFname.substring(invariantFname.length - extLength, invariantFname.length) == invariantExt;
+    }
+
+    export function isJSFile(fname: string) {
+        return isFileOfExtension(fname, ".js");
+    }
+
     export function isSTRFile(fname: string) {
-        return fname.length > 4 && fname.substring(fname.length - 4, fname.length) == ".str"
+        return isFileOfExtension(fname, ".str");
     }
 
     export function isTSFile(fname: string) {
-        return fname.length > 3 && fname.substring(fname.length - 3, fname.length) == ".ts"
+        return isFileOfExtension(fname, ".ts");
     }
 
     export function isDSTRFile(fname: string) {
-        return fname.length > 6 && fname.substring(fname.length - 6, fname.length) == ".d.str"
+        return isFileOfExtension(fname, ".d.str");
     }
 
     export function isDTSFile(fname: string) {
-        return fname.length > 5 && fname.substring(fname.length - 5, fname.length) == ".d.ts"
+        return isFileOfExtension(fname, ".d.ts");
     }
 
     export function getPrettyName(modPath: string, quote?=true, treatAsFileName?=false) { 
         var modName = treatAsFileName ? switchToForwardSlashes(modPath) : trimModName(stripQuotes(modPath));
-        var components = modName.split("/");
+        var components = this.getPathComponents(modName);
         return components.length ? (quote ? quoteStr(components[components.length - 1]) : components[components.length - 1]) : modPath;
+    }
+
+    export function getPathComponents(path: string) {
+        return path.split("/");
+    }
+
+    export function getRelativePathToFixedPath(fixedModFilePath: string, absoluteModPath: string) {
+        absoluteModPath = switchToForwardSlashes(absoluteModPath);
+
+        var modComponents = this.getPathComponents(absoluteModPath);
+        var fixedModComponents = this.getPathComponents(fixedModFilePath);
+
+        // Find the component that differs
+        var joinStartIndex = 0;
+        for (; joinStartIndex < modComponents.length && joinStartIndex < fixedModComponents.length ; joinStartIndex++) {
+            if (fixedModComponents[joinStartIndex] != modComponents[joinStartIndex]) {
+                break;
+            }
+        }
+
+        // Get the relative path
+        if (joinStartIndex != 0) {
+            var relativePath = "";
+            var relativePathComponents = modComponents.slice(joinStartIndex, modComponents.length);
+            for (; joinStartIndex < fixedModComponents.length; joinStartIndex++) {
+                if (fixedModComponents[joinStartIndex] != "") {
+                    relativePath = relativePath + "../";
+                }
+            }
+
+            return relativePath + relativePathComponents.join("/");
+        }
+
+        return absoluteModPath;
     }
 
     export function quoteBaseName(modPath: string) {
@@ -127,10 +188,14 @@ module TypeScript {
         }
     }
 
-    export function  filePath(fullPath: string) {
+    export function filePathComponents(fullPath: string) {
         fullPath = switchToForwardSlashes(fullPath);
-        var components = fullPath.split("/");
-        var path: string[] = components.slice(0, components.length - 1);
+        var components = getPathComponents(fullPath);
+        return components.slice(0, components.length - 1);
+    }
+
+    export function filePath(fullPath: string) {
+        var path = filePathComponents(fullPath);
         return path.join("/") + "/";
     }
 
@@ -150,7 +215,7 @@ module TypeScript {
     export function normalizePath(path: string): string {
         path = switchToForwardSlashes(path);
         var startedWithSep = path.charAt(0) === "/";
-        var parts = path.split("/");
+        var parts = this.getPathComponents(path);
         for (var i = 0; i < parts.length; i++) {
             if (parts[i] === "." || parts[i] === "") {
                 parts.splice(i, 1);

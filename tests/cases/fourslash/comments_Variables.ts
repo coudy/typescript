@@ -1,16 +1,16 @@
 /// <reference path='fourslash.ts' />
 
-/////// This is my variable
+/////** This is my variable*/
 ////var myV/*1*/ariable = 10;
 /////*2*/
-/////// d variable
+/////** d variable*/
 ////var d = 10;
 ////myVariable = d;
 /////*3*/
-/////// foos comment
+/////** foos comment*/
 ////function foo() {
 ////}
-/////// fooVar comment
+/////** fooVar comment*/
 ////var fooVar: () => void;
 /////*4*/
 ////foo(/*5*/);
@@ -19,19 +19,19 @@
 /////*7*/
 ////foo(/*8*/);
 ////fooVar(/*9*/);
-///////class comment
+/////**class comment*/
 ////class c {
-////    /// constructor comment
+////    /** constructor comment*/
 ////    constructor() {
 ////    }
 ////}
-///////instance comment
+/////**instance comment*/
 ////var i = new c();
 /////*10*/
-/////// interface comments
+/////** interface comments*/
 ////interface i1 {
 ////}
-///////interface instance comments
+/////**interface instance comments*/
 ////var i1_i: i1;
 /////*11*/
 

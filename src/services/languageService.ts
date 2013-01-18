@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescriptServices.ts' />
 
@@ -1053,6 +1065,18 @@ module Services {
                 result.formal = convertSignatureGroupToSignatureInfo(symbol, /*isNew:*/true, callExpr.target.type.construct);
                 result.actual = convertCallExprToActualSignatureInfo(callExpr, pos);
                 result.activeFormal = getSignatureIndex(callExpr, callExpr.target.type.construct);
+            }
+            else if (callExpr.target.nodeType === TypeScript.NodeType.Super && callExpr.target.type.symbol && callExpr.target.type.symbol.declAST) {
+                var classType = callExpr.target.type.symbol.declAST.type;
+                if (classType && classType.construct !== null) {
+                    result.formal = convertSignatureGroupToSignatureInfo(symbol, /*isNew:*/true, classType.construct);
+                    result.actual = convertCallExprToActualSignatureInfo(callExpr, pos);
+                    result.activeFormal = getSignatureIndex(callExpr, classType.construct);
+                }
+                else {
+                    this.logger.log("No signature group found for the target class type constructor");
+                    return null;
+                }
             }
             else {
                 this.logger.log("No signature group found for the target of the call expression");

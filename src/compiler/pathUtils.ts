@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -64,8 +76,10 @@ module TypeScript {
     }
 
     function isFileOfExtension(fname: string, ext: string) {
-        var extLength = ext.length;
-        return fname.length > extLength && fname.substring(fname.length - extLength, fname.length) == ext;
+        var invariantFname = fname.toLocaleUpperCase();
+        var invariantExt = ext.toLocaleUpperCase();
+        var extLength = invariantExt.length;
+        return invariantFname.length > extLength && invariantFname.substring(invariantFname.length - extLength, invariantFname.length) == invariantExt;
     }
 
     export function isJSFile(fname: string) {

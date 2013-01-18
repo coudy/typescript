@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -41,8 +53,8 @@ module TypeScript {
                 this.setError(ast);
             }
             else {
-                this.lineCol.line = -1;
-                this.lineCol.col = -1;
+                this.lineCol.line = 0;
+                this.lineCol.col = 0;
             }
             this.emitPrefix();
         }
@@ -75,8 +87,8 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            var len = (ast.limChar - ast.minChar);
-            if (this.parser.errorRecovery && this.parser.errorCallback) {
+            if (ast && this.parser.errorRecovery && this.parser.errorCallback) {
+                var len = (ast.limChar - ast.minChar);
                 this.parser.errorCallback(ast.minChar, len, message, this.checker.locationInfo.unitIndex);
             }
             else {
@@ -93,7 +105,7 @@ module TypeScript {
 
             this.hasErrors = true;
             if (this.parser.errorRecovery && this.parser.errorCallback) {
-                this.parser.errorCallback(symbol.location, 1, message, this.checker.locationInfo.unitIndex);
+                this.parser.errorCallback(symbol.location, symbol.length, message, this.checker.locationInfo.unitIndex);
             }
             else {
                 this.writePrefixFromSym(symbol);

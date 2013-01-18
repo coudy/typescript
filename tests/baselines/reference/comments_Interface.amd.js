@@ -21,7 +21,7 @@ i3_i = {
         return "Hello" + a;
     },
     l: this.f,
-    x: /// own x
+    x: /** own x*/
     this.f(10),
     nc_x: this.l(this.x),
     nc_f: this.f,
@@ -32,29 +32,29 @@ i3_i.l(10);
 i3_i.nc_f(10);
 i3_i.nc_l(10);
 ////[0.d.ts]
-/// this is interface 1
+/** this is interface 1*/
 interface i1 {
 }
 var i1_i: i1;
 interface nc_i1 {
 }
 var nc_i1_i: nc_i1;
-/// this is interface 2 with memebers
+/** this is interface 2 with memebers*/
 interface i2 {
-    /// this is x
+    /** this is x*/
     x: number;
-    /// this is foo
+    /** this is foo*/
     foo: (b: number) => string;
-    /// this is indexer
+    /** this is indexer*/
     [/**string param*/ i: string]: number;
-    ///new method
+    /**new method*/
     new(/** param*/ i: i1);
     nc_x: number;
     nc_foo: (b: number) => string;
     [i: number]: number;
-    /// this is call signature
+    /** this is call signature*/
     (/**paramhelp a*/ a: number, /**paramhelp b*/ b: number): number;
-    /// this is fnfoo
+    /** this is fnfoo*/
     fnfoo(/**param help*/ b: number): string;
     nc_fnfoo(b: number): string;
 }
@@ -74,11 +74,11 @@ var i2_i_fnfoo_r: string;
 var i2_i_nc_fnfoo: (b: number) => string;
 var i2_i_nc_fnfoo_r: string;
 interface i3 {
-    /// Comment i3 x
+    /** Comment i3 x*/
     x: number;
-    /// Function i3 f
+    /** Function i3 f*/
     f(/**number parameter*/ a: number): string;
-    /// i3 l
+    /** i3 l*/
     l: (b: number) => string;
     nc_x: number;
     nc_f(a: number): string;

@@ -1453,6 +1453,16 @@ class ProjectRunner extends RunnerBase {
             // TODO: since the precompiled info about the referenced files is not passed the declare files 
             //       generated using this runner isnt emitting updated reference tag.
 
+            tests.push({
+                scenario: "Visibility of type used across modules"
+                    , projectRoot: 'tests/cases/projects/VisibilityOfCrosssModuleTypeUsage'
+                    , inputFiles: ['commands.ts']
+                    , collectedFiles: ['fs.ts', 'server.ts', 'commands.ts']
+                    , outputFiles: ['fs.js', 'server.js', 'commands.js']
+                    , verifyEmitFiles: true
+                    , skipRun: true
+            });
+
             var amdDriverTemplate = "var requirejs = require('../r.js');\n\n" +
         "requirejs.config({\n" +
         "    nodeRequire: require\n" +

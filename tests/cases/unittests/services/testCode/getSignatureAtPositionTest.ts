@@ -58,3 +58,28 @@ module ObjectLiteralTest {
     x.f(4, "");
 }
 
+module SuperCallTest {
+    class base {
+        constructor(s: string);
+        constructor(n: number);
+        constructor(a: any) { }
+    }
+    class A extends base {
+        constructor() {
+            super("");
+        }
+    }
+
+    class B extends base {
+    }
+    class B2 extends B {
+    }
+    class B3 extends B2 {
+        constructor() {
+            super("");
+        }
+    }
+
+}
+
+

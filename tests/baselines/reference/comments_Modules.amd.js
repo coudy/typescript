@@ -1,29 +1,29 @@
 // @target: ES5
 // @declaration: true
 // @comments: true
-/// Module comment
+/** Module comment*/
 var m1;
 (function (m1) {
-    /// b's comment
+    /** b's comment*/
     m1.b;
-    /// foo's comment
+    /** foo's comment*/
     function foo() {
         return m1.b;
     }
-    /// m2 comments
+    /** m2 comments*/
     (function (m2) {
-        /// class comment;
+        /** class comment;*/
         var c = (function () {
             function c() { }
             return c;
         })();
         m2.c = c;        
         ;
-        /// i
+        /** i*/
         m2.i = new c();
     })(m1.m2 || (m1.m2 = {}));
     var m2 = m1.m2;
-    /// exported function
+    /** exported function*/
     function fooExport() {
         return foo();
     }
@@ -33,9 +33,9 @@ m1.fooExport();
 var myvar = new m1.m2.c();
 var m2;
 (function (m2) {
-    /// module comment of m2.m3
+    /** module comment of m2.m3*/
     (function (m3) {
-        /// Exported class comment
+        /** Exported class comment*/
         var c = (function () {
             function c() { }
             return c;
@@ -48,9 +48,9 @@ new m2.m3.c();
 var m3;
 (function (m3) {
     (function (m4) {
-        /// module comment of m3.m4.m5
+        /** module comment of m3.m4.m5*/
         (function (m5) {
-            /// Exported class comment
+            /** Exported class comment*/
             var c = (function () {
                 function c() { }
                 return c;
@@ -65,10 +65,10 @@ new m3.m4.m5.c();
 var m4;
 (function (m4) {
     (function (m5) {
-        /// module comment of m4.m5.m6
+        /** module comment of m4.m5.m6*/
         (function (m6) {
             (function (m7) {
-                /// Exported class comment
+                /** Exported class comment*/
                 var c = (function () {
                     function c() { }
                     return c;
@@ -85,11 +85,11 @@ new m4.m5.m6.m7.c();
 var m5;
 (function (m5) {
     (function (m6) {
-        /// module comment of m5.m6.m7
+        /** module comment of m5.m6.m7*/
         (function (m7) {
-            /// module m8 comment
+            /** module m8 comment*/
             (function (m8) {
-                /// Exported class comment
+                /** Exported class comment*/
                 var c = (function () {
                     function c() { }
                     return c;
@@ -107,7 +107,7 @@ var m6;
 (function (m6) {
     (function (m7) {
         (function (m8) {
-            /// Exported class comment
+            /** Exported class comment*/
             var c = (function () {
                 function c() { }
                 return c;
@@ -122,9 +122,9 @@ new m6.m7.m8.c();
 var m7;
 (function (m7) {
     (function (m8) {
-        /// module m9 comment
+        /** module m9 comment*/
         (function (m9) {
-            /// Exported class comment
+            /** Exported class comment*/
             var c = (function () {
                 function c() { }
                 return c;
@@ -137,59 +137,59 @@ var m7;
 })(m7 || (m7 = {}));
 new m7.m8.m9.c();
 ////[0.d.ts]
-/// Module comment
+/** Module comment*/
 module m1 {
-    /// b's comment
+    /** b's comment*/
     var b: number;
-    /// m2 comments
+    /** m2 comments*/
     module m2 {
-        /// class comment;
+        /** class comment;*/
         class c {
         }
-        /// i
+        /** i*/
         var i: c;
     }
-    /// exported function
+    /** exported function*/
     function fooExport(): number;
 }
 var myvar: m1.m2.c;
-/// module comment of m2.m3
+/** module comment of m2.m3*/
 module m2.m3 {
-    /// Exported class comment
+    /** Exported class comment*/
     class c {
     }
 }
-/// module comment of m3.m4.m5
+/** module comment of m3.m4.m5*/
 module m3.m4.m5 {
-    /// Exported class comment
+    /** Exported class comment*/
     class c {
     }
 }
-/// module comment of m4.m5.m6
+/** module comment of m4.m5.m6*/
 module m4.m5.m6 {
     module m7 {
-        /// Exported class comment
+        /** Exported class comment*/
         class c {
         }
     }
 }
-/// module comment of m5.m6.m7
+/** module comment of m5.m6.m7*/
 module m5.m6.m7 {
-    /// module m8 comment
+    /** module m8 comment*/
     module m8 {
-        /// Exported class comment
+        /** Exported class comment*/
         class c {
         }
     }
 }
 module m6.m7.m8 {
-    /// Exported class comment
+    /** Exported class comment*/
     class c {
     }
 }
-/// module m9 comment
+/** module m9 comment*/
 module m7.m8.m9 {
-    /// Exported class comment
+    /** Exported class comment*/
     class c {
     }
 }

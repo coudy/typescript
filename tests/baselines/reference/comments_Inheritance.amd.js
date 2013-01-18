@@ -9,10 +9,10 @@ var c1 = (function () {
     };
     c1.prototype.i1_nc_f1 = function () {
     };
-    c1.prototype.f1 = /// c1_f1
+    c1.prototype.f1 = /** c1_f1*/
     function () {
     };
-    c1.prototype.nc_f1 = /// c1_nc_f1
+    c1.prototype.nc_f1 = /** c1_nc_f1*/
     function () {
     };
     return c1;
@@ -22,15 +22,15 @@ var c1_i = new c1();
 // assign to interface
 i1_i = c1_i;
 var c2 = (function () {
-    /// c2 constructor
+    /** c2 constructor*/
     function c2(a) {
         this.c2_p1 = a;
     }
-    c2.prototype.c2_f1 = /// c2 c2_f1
+    c2.prototype.c2_f1 = /** c2 c2_f1*/
     function () {
     };
     Object.defineProperty(c2.prototype, "c2_prop", {
-        get: /// c2 c2_prop
+        get: /** c2 c2_prop*/
         function () {
             return 10;
         },
@@ -46,11 +46,11 @@ var c2 = (function () {
         enumerable: true,
         configurable: true
     });
-    c2.prototype.f1 = /// c2 f1
+    c2.prototype.f1 = /** c2 f1*/
     function () {
     };
     Object.defineProperty(c2.prototype, "prop", {
-        get: /// c2 prop
+        get: /** c2 prop*/
         function () {
             return 10;
         },
@@ -73,11 +73,11 @@ var c3 = (function (_super) {
     function c3() {
         _super.call(this, 10);
     }
-    c3.prototype.f1 = /// c3 f1
+    c3.prototype.f1 = /** c3 f1*/
     function () {
     };
     Object.defineProperty(c3.prototype, "prop", {
-        get: /// c3 prop
+        get: /** c3 prop*/
         function () {
             return 10;
         },
@@ -113,13 +113,13 @@ var i3_i;
 // assign to interface
 i2_i = i3_i;
 ////[0.d.ts]
-/// i1 is interface with properties
+/** i1 is interface with properties*/
 interface i1 {
-    /// i1_p1
+    /** i1_p1*/
     i1_p1: number;
-    /// i1_f1
+    /** i1_f1*/
     i1_f1(): void;
-    /// i1_l1
+    /** i1_l1*/
     i1_l1: () => void;
     i1_nc_p1: number;
     i1_nc_f1(): void;
@@ -138,50 +138,50 @@ class c1 implements i1 {
     public i1_nc_p1: number;
     public i1_nc_f1(): void;
     public i1_nc_l1: () => void;
-    /// c1_p1
+    /** c1_p1*/
     public p1: number;
-    /// c1_f1
+    /** c1_f1*/
     public f1(): void;
-    /// c1_l1
+    /** c1_l1*/
     public l1: () => void;
-    /// c1_nc_p1
+    /** c1_nc_p1*/
     public nc_p1: number;
-    /// c1_nc_f1
+    /** c1_nc_f1*/
     public nc_f1(): void;
-    /// c1_nc_l1
+    /** c1_nc_l1*/
     public nc_l1: () => void;
 }
 var i1_i: i1;
 var c1_i: c1;
 class c2 {
-    /// c2 c2_p1
+    /** c2 c2_p1*/
     public c2_p1: number;
-    /// c2 c2_f1
+    /** c2 c2_f1*/
     public c2_f1(): void;
-    /// c2 c2_prop
+    /** c2 c2_prop*/
     public c2_prop : number;
     public c2_nc_p1: number;
     public c2_nc_f1(): void;
     public c2_nc_prop : number;
-    /// c2 p1
+    /** c2 p1*/
     public p1: number;
-    /// c2 f1
+    /** c2 f1*/
     public f1(): void;
-    /// c2 prop
+    /** c2 prop*/
     public prop : number;
     public nc_p1: number;
     public nc_f1(): void;
     public nc_prop : number;
-    /// c2 constructor
+    /** c2 constructor*/
     constructor(a: number);
 }
 class c3 extends c2 {
     constructor();
-    /// c3 p1
+    /** c3 p1*/
     public p1: number;
-    /// c3 f1
+    /** c3 f1*/
     public f1(): void;
-    /// c3 prop
+    /** c3 prop*/
     public prop : number;
     public nc_p1: number;
     public nc_f1(): void;
@@ -193,31 +193,31 @@ class c4 extends c2 {
 }
 var c4_i: c4;
 interface i2 {
-    /// i2_p1
+    /** i2_p1*/
     i2_p1: number;
-    /// i2_f1
+    /** i2_f1*/
     i2_f1(): void;
-    /// i2_l1
+    /** i2_l1*/
     i2_l1: () => void;
     i2_nc_p1: number;
     i2_nc_f1(): void;
     i2_nc_l1: () => void;
-    /// i2 p1
+    /** i2 p1*/
     p1: number;
-    /// i2 f1
+    /** i2 f1*/
     f1(): void;
-    /// i2 l1
+    /** i2 l1*/
     l1: () => void;
     nc_p1: number;
     nc_f1(): void;
     nc_l1: () => void;
 }
 interface i3 extends i2 {
-    /// i3 p1
+    /** i3 p1*/
     p1: number;
-    /// i3 f1
+    /** i3 f1*/
     f1(): void;
-    /// i3 l1
+    /** i3 l1*/
     l1: () => void;
     nc_p1: number;
     nc_f1(): void;

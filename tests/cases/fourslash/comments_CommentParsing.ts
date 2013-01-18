@@ -158,6 +158,12 @@
 ////    return foo + bar;
 ////}
 ////fooBar(/*37*/"foo",/*38*/"bar");
+/////** This is a comment */
+////var x;
+/////** 
+////  * This is a comment 
+////  */
+////var y;
 /////** this is jsdoc style function with param tag as well as inline parameter help
 ////*@param a it is first parameter
 ////*@param c it is third parameter
@@ -166,12 +172,38 @@
 ////    return /*39*/a + b + c + d;
 ////}
 /////*44*/jsDocParamTest(/*40*/30, /*41*/40, /*42*/50, /*43*/60);
+/////** This is function comment
+////  * And properly aligned comment 
+////  */
+////function jsDocCommentAlignmentTest1() {
+////}
+////jsDocCommentAlignmentTest1(/*45*/);
+/////** This is function comment
+////  *     And aligned with 4 space char margin
+////  */
+////function jsDocCommentAlignmentTest2() {
+////}
+////jsDocCommentAlignmentTest2(/*46*/);
+/////** This is function comment
+////  *     And aligned with 4 space char margin
+////  * @param {string} a this is info about a
+////  *                   spanning on two lines and aligned perfectly
+////  * @param b          this is info about b
+////  *                   spanning on two lines and aligned perfectly
+////  *                   spanning one more line alined perfectly
+////  *                       spanning another line with more margin
+////  * @param c          this is info about b
+////  *  not aligned text about parameter will eat only one space
+////  */
+////function jsDocCommentAlignmentTest3(a: string, b, c) {
+////}
+////jsDocCommentAlignmentTest3(/*47*/"hello",/*48*/1, /*49*/2);
 
 goTo.marker('1');
-verify.currentSignatureHelpDocCommentIs("This is simple /// comments");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('2');
-verify.currentSignatureHelpDocCommentIs("multiLine /// Comments\nThis is example of multiline /// comments\nAnother multiLine");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('3');
 verify.currentSignatureHelpDocCommentIs("this is eg of single line jsdoc style comment ");
@@ -180,22 +212,22 @@ goTo.marker('4');
 verify.currentSignatureHelpDocCommentIs("this is multiple line jsdoc stule comment\nNew line1\nNew Line2");
 
 goTo.marker('5');
-verify.currentSignatureHelpDocCommentIs("this is multiple line jsdoc stule comment\nNew line1\nNew Line2\nShoul mege this line as well\n and this too\nAnother this one too");
+verify.currentSignatureHelpDocCommentIs("this is multiple line jsdoc stule comment\nNew line1\nNew Line2\nShoul mege this line as well\nand this too\nAnother this one too");
 
 goTo.marker('6');
 verify.currentSignatureHelpDocCommentIs("jsdoc comment ");
 
 goTo.marker('7');
-verify.currentSignatureHelpDocCommentIs("jsdoc comment \n another jsDocComment");
+verify.currentSignatureHelpDocCommentIs("jsdoc comment \nanother jsDocComment");
 
 goTo.marker('8');
-verify.currentSignatureHelpDocCommentIs("Triple slash comment");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('9');
-verify.currentSignatureHelpDocCommentIs("Triple slash comment\nTriple slash comment 2");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('10');
-verify.currentSignatureHelpDocCommentIs("Triple slash comment\nTriple slash comment 2");
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('11');
 verify.currentSignatureHelpDocCommentIs("jsdoc comment ");
@@ -328,3 +360,23 @@ verify.currentParameterHelpArgumentDocCommentIs("");
 
 goTo.marker('44');
 verify.completionListContains("jsDocParamTest", "(a: number, b: number, c: number, d: number) => number", "this is jsdoc style function with param tag as well as inline parameter help");
+verify.completionListContains("x", "any", "This is a comment ");
+verify.completionListContains("y", "any", "This is a comment ");
+
+goTo.marker('45');
+verify.currentSignatureHelpDocCommentIs("This is function comment\nAnd properly aligned comment ");
+
+goTo.marker('46');
+verify.currentSignatureHelpDocCommentIs("This is function comment\n    And aligned with 4 space char margin");
+
+goTo.marker('47');
+verify.currentSignatureHelpDocCommentIs("This is function comment\n    And aligned with 4 space char margin");
+verify.currentParameterHelpArgumentDocCommentIs("this is info about a\nspanning on two lines and aligned perfectly");
+
+goTo.marker('48');
+verify.currentSignatureHelpDocCommentIs("This is function comment\n    And aligned with 4 space char margin");
+verify.currentParameterHelpArgumentDocCommentIs("this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin");
+
+goTo.marker('49');
+verify.currentSignatureHelpDocCommentIs("This is function comment\n    And aligned with 4 space char margin");
+verify.currentParameterHelpArgumentDocCommentIs("this is info about b\nnot aligned text about parameter will eat only one space");

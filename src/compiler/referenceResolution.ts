@@ -1,5 +1,17 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
 
@@ -62,7 +74,7 @@ module TypeScript {
 
         public resolveCode(referencePath: string, parentPath: string, performSearch: bool, resolutionDispatcher: TypeScript.IResolutionDispatcher): void {
             
-            var resolvedFile = {content: "", path: referencePath };
+            var resolvedFile: IResolvedFile = { content: null, path: referencePath };
             
             var ioHost = this.environment.ioHost;
             
@@ -162,7 +174,7 @@ module TypeScript {
                     }
                 }
 
-                if (resolvedFile && resolvedFile.content) {
+                if (resolvedFile && resolvedFile.content != null) {
                     // preprocess the file, to gather dependencies
                     var rootDir = ioHost.dirName(resolvedFile.path);
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);

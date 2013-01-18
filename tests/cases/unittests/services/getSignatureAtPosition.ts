@@ -395,6 +395,68 @@ describe('getSignatureAtPosition', function () {
 
             assert.equal(0, result.activeFormal);
         });
+
+        it("Calling off super constructor", function() {
+            var result = singatureAtPos(69, 19);
+            assert.notNull(result);
+
+            var formal = result.formal;
+            assert.notNull(formal);
+
+            assert.equal(false, formal.isNew);
+            assert.equal("base", formal.name);
+            assert.equal(2, formal.signatureGroup.length);
+
+            assert.equal(1, formal.signatureGroup[0].parameters.length);
+            assert.equal("s", formal.signatureGroup[0].parameters[0].name);
+            assert.equal("string", formal.signatureGroup[0].parameters[0].type);
+            assert.equal("base", formal.signatureGroup[0].returnType);
+
+            assert.equal(1, formal.signatureGroup[1].parameters.length);
+            assert.equal("n", formal.signatureGroup[1].parameters[0].name);
+            assert.equal("number", formal.signatureGroup[1].parameters[0].type);
+            assert.equal("base", formal.signatureGroup[1].returnType);
+
+            var actual = result.actual;
+            assert.notNull(actual);
+
+            assert.equal(mytypescriptLS.lineColToPosition(fileName, 69, 18), actual.openParenMinChar);
+            assert.equal(mytypescriptLS.lineColToPosition(fileName, 69, 22), actual.closeParenLimChar);
+
+            assert.equal(1, actual.parameters.length);
+            assert.equal(0, result.activeFormal);
+        });
+
+        it("Calling off super of super constructor", function() {
+            var result = singatureAtPos(79, 19);
+            assert.notNull(result);
+
+            var formal = result.formal;
+            assert.notNull(formal);
+
+            assert.equal(false, formal.isNew);
+            assert.equal("B2", formal.name);
+            assert.equal(2, formal.signatureGroup.length);
+
+            assert.equal(1, formal.signatureGroup[0].parameters.length);
+            assert.equal("s", formal.signatureGroup[0].parameters[0].name);
+            assert.equal("string", formal.signatureGroup[0].parameters[0].type);
+            assert.equal("B2", formal.signatureGroup[0].returnType);
+
+            assert.equal(1, formal.signatureGroup[1].parameters.length);
+            assert.equal("n", formal.signatureGroup[1].parameters[0].name);
+            assert.equal("number", formal.signatureGroup[1].parameters[0].type);
+            assert.equal("B2", formal.signatureGroup[1].returnType);
+
+            var actual = result.actual;
+            assert.notNull(actual);
+
+            assert.equal(mytypescriptLS.lineColToPosition(fileName, 79, 18), actual.openParenMinChar);
+            assert.equal(mytypescriptLS.lineColToPosition(fileName, 79, 22), actual.closeParenLimChar);
+
+            assert.equal(1, actual.parameters.length);
+            assert.equal(0, result.activeFormal);
+        });
     });
 
     describe('Get signatures at EOF', function () {

@@ -20,7 +20,7 @@ Note: Perform steps 3 - 6 with your working directory set to the folder containi
 
 <mongoinstalldir>\bin\mongod
 
-3. Restore the sample app data to MongoDB with the following command:
+3. Restore the sample app data to MongoDB in another command prompt with the following command:
 
 <mongoinstalldir>\bin\mongorestore dump
 

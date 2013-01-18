@@ -8,4 +8,4 @@
 ////    
 ////} 
 
-verify.errorDoesNotExistAfterMarker();
+verify.not.errorExistsAfterMarker();

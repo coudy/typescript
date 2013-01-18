@@ -1,5 +1,6 @@
-interface Drivable {
-    // Start the car's ignition so that it can drive.
+interface Drivable {   
+
+    // Starts the car's ignition so that it can drive.
     start(): void;
     // Attempt to drive a distance. Returns true or false based on whether or not the drive was successful.
     drive(distance: number): bool;
@@ -10,13 +11,26 @@ interface Drivable {
 class Car implements Drivable {
     private _isRunning: bool;
     private _distanceFromStart: number;
+
     constructor() {
         this._isRunning = false;
         this._distanceFromStart = 0;
     }
+
+    /**
+    *   Starts the car's ignition so that it can drive.
+    */
     public start() {
         this._isRunning = true;
     }
+
+    /**
+    *   Attempt to drive a distance. Returns true or false based on whether or not the drive was successful.
+    *
+    *   @param {number} distance The distance attempting to cover
+    *
+    *   @returns {bool} Whether or not the drive was successful
+    */
     public drive(distance: number): bool {
         if (this._isRunning) {
             this._distanceFromStart += distance;
@@ -24,6 +38,12 @@ class Car implements Drivable {
         }
         return false;
     }
+
+    /**
+    *   Gives the distance from starting position
+    *
+    *   @returns {number} Distance from starting position;
+    */
     public getPosition(): number {
         return this._distanceFromStart;
     }

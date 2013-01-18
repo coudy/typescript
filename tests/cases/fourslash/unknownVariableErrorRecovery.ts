@@ -5,5 +5,5 @@
 ////    foo[bar] = 0;
 ////}
 
-verify.errorDoesNotExistAfterMarker();
+verify.not.errorExistsAfterMarker();
 

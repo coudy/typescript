@@ -1,7 +1,20 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
-// See LICENSE.txt in the project root for complete license information.
+﻿//﻿
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 ///<reference path='typescript.ts' />
+///<reference path='..\harness\external\json2.ts' />
 
 module TypeScript {
     export class SourceMapPosition {
@@ -76,7 +89,7 @@ module TypeScript {
 
                 // Join namelist
                 if (sourceMapper.names.length > 0) {
-                    namesList.push(sourceMapper.names.join('","'));
+                    namesList.push.apply(namesList, sourceMapper.names);
                 }
 
                 var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
@@ -142,15 +155,13 @@ module TypeScript {
 
             // Write the actual map file
             if (mappingsString != "") {
-                sourceMapOut.Write('{');
-                sourceMapOut.Write('"version":3,');
-                sourceMapOut.Write('"file":"' + sourceMapper.jsFileName + '",');
-                sourceMapOut.Write('"sources":["' + tsFiles.join('","') + '"],');
-                sourceMapOut.Write('"names":["' + namesList.join('","') + '"],');
-                sourceMapOut.Write('"mappings":"' + mappingsString);
-                sourceMapOut.Write('"');
-                //sourceMapOut.Write('"sourceRoot":""'); // not needed since we arent generating it in the folder
-                sourceMapOut.Write('}');
+                sourceMapOut.Write(JSON2.stringify({
+                    version: 3,
+                    file: sourceMapper.jsFileName,
+                    sources: tsFiles,
+                    names: namesList,
+                    mappings: mappingsString
+                }));
             }
 
             // Done, close the file

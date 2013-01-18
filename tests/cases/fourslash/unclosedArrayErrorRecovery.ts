@@ -3,4 +3,4 @@
 ////var table: number[;
 /////**/table.push(1)
 
-verify.errorDoesNotExistAfterMarker();
+verify.not.errorExistsAfterMarker();
