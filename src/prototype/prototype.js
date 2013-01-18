@@ -29767,8 +29767,7 @@ var Parser;
                 }
             }
             var currentTokenKind = currentToken.tokenKind;
-            var currentTokenKeywordKind = currentToken.tokenKind;
-            switch(currentTokenKeywordKind) {
+            switch(currentTokenKind) {
                 case 35 /* ThisKeyword */ : {
                     return this.parseThisExpression();
 
@@ -29806,8 +29805,6 @@ var Parser;
                     return this.parseVoidExpression();
 
                 }
-            }
-            switch(currentTokenKind) {
                 case 13 /* NumericLiteral */ : {
                     return this.parseLiteralExpression();
 

@@ -3484,8 +3484,7 @@ module Parser {
             }
 
             var currentTokenKind = currentToken.tokenKind;
-            var currentTokenKeywordKind = currentToken.tokenKind;
-            switch (currentTokenKeywordKind) {
+            switch (currentTokenKind) {
                 case SyntaxKind.ThisKeyword:
                     return this.parseThisExpression();
 
@@ -3513,9 +3512,7 @@ module Parser {
 
                 case SyntaxKind.VoidKeyword:
                     return this.parseVoidExpression();
-            }
 
-            switch (currentTokenKind) {
                 case SyntaxKind.NumericLiteral:
                     return this.parseLiteralExpression();
 
