@@ -1939,6 +1939,7 @@ module Parser {
 
             var classKeyword = this.eatKeyword(SyntaxKind.ClassKeyword);
             var identifier = this.eatIdentifierToken();
+            var typeParameterList = this.parseOptionalTypeParameterList();
 
             var extendsClause: ExtendsClauseSyntax = null;
             if (this.isExtendsClause()) {
@@ -1959,7 +1960,7 @@ module Parser {
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
             return this.factory.classDeclaration(
-                exportKeyword, declareKeyword, classKeyword, identifier, null, extendsClause,
+                exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause,
                 implementsClause, openBraceToken, classElements, closeBraceToken);
         }
 
@@ -2308,6 +2309,7 @@ module Parser {
             var exportKeyword = this.tryEatKeyword(SyntaxKind.ExportKeyword);
             var interfaceKeyword = this.eatKeyword(SyntaxKind.InterfaceKeyword);
             var identifier = this.eatIdentifierToken();
+            var typeParameterList = this.parseOptionalTypeParameterList();
 
             var extendsClause: ExtendsClauseSyntax = null;
             if (this.isExtendsClause()) {
@@ -2316,7 +2318,7 @@ module Parser {
 
             var objectType = this.parseObjectType();
             return this.factory.interfaceDeclaration(
-                exportKeyword, interfaceKeyword, identifier, null, extendsClause, objectType);
+                exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, objectType);
         }
 
         private parseObjectType(): ObjectTypeSyntax {

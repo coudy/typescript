@@ -28731,6 +28731,7 @@ var Parser;
             var declareKeyword = this.tryEatKeyword(64 /* DeclareKeyword */ );
             var classKeyword = this.eatKeyword(44 /* ClassKeyword */ );
             var identifier = this.eatIdentifierToken();
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var extendsClause = null;
             if(this.isExtendsClause()) {
                 extendsClause = this.parseExtendsClause();
@@ -28745,7 +28746,7 @@ var Parser;
                 classElements = this.parseSyntaxList(2 /* ClassDeclaration_ClassElements */ );
             }
             var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
-            return this.factory.classDeclaration(exportKeyword, declareKeyword, classKeyword, identifier, null, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
+            return this.factory.classDeclaration(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken);
         };
         ParserImpl.prototype.isConstructorDeclaration = function () {
             return this.currentToken().tokenKind === 63 /* ConstructorKeyword */ ;
@@ -28968,12 +28969,13 @@ var Parser;
             var exportKeyword = this.tryEatKeyword(47 /* ExportKeyword */ );
             var interfaceKeyword = this.eatKeyword(52 /* InterfaceKeyword */ );
             var identifier = this.eatIdentifierToken();
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var extendsClause = null;
             if(this.isExtendsClause()) {
                 extendsClause = this.parseExtendsClause();
             }
             var objectType = this.parseObjectType();
-            return this.factory.interfaceDeclaration(exportKeyword, interfaceKeyword, identifier, null, extendsClause, objectType);
+            return this.factory.interfaceDeclaration(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, objectType);
         };
         ParserImpl.prototype.parseObjectType = function () {
             var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
