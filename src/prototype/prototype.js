@@ -28092,6 +28092,7 @@ var Parser;
             this.skippedTokens = [];
             this.diagnostics = [];
             this.factory = Syntax.normalModeFactory;
+            this.mergeTokensStorage = [];
             this.source = source;
             this.options = options;
         }
@@ -29553,68 +29554,52 @@ var Parser;
         };
         ParserImpl.prototype.tryMergeBinaryExpressionTokens = function () {
             var token0 = this.currentToken();
-            var token0Kind = token0.tokenKind;
-            if(token0Kind === 81 /* GreaterThanToken */  && !token0.hasTrailingTrivia()) {
-                return this.tryMergeNextTokenWithGreaterThanToken(this.peekToken(1));
-            }
-            return null;
-        };
-        ParserImpl.prototype.tryMergeNextTokenWithGreaterThanToken = function (token1) {
-            if(token1.hasLeadingTrivia()) {
+            if(token0.tokenKind !== 81 /* GreaterThanToken */  || token0.hasTrailingTrivia()) {
                 return null;
             }
-            if(token1.tokenKind === 107 /* EqualsToken */ ) {
-                return {
-                    tokenCount: 2,
-                    syntaxKind: 83 /* GreaterThanEqualsToken */ 
-                };
-            }
-            if(token1.tokenKind === 81 /* GreaterThanToken */ ) {
-                if(!token1.hasTrailingTrivia()) {
-                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanToken(this.peekToken(2));
-                    if(result !== null) {
-                        return result;
-                    }
+            var storage = this.mergeTokensStorage;
+            storage[0] = 0 /* None */ ;
+            storage[1] = 0 /* None */ ;
+            storage[2] = 0 /* None */ ;
+            Debug.assert(storage.length === 3);
+            for(var i = 0; i < storage.length; i++) {
+                var nextToken = this.peekToken(i + 1);
+                if(!nextToken.hasLeadingTrivia()) {
+                    storage[i] = nextToken.tokenKind;
                 }
-                return {
-                    tokenCount: 2,
-                    syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
-                };
-            }
-            return null;
-        };
-        ParserImpl.prototype.tryMergeNextTokenWithGreaterThanGreaterThanToken = function (token2) {
-            if(token2.hasLeadingTrivia()) {
-                return null;
-            }
-            if(token2.tokenKind === 107 /* EqualsToken */ ) {
-                return {
-                    tokenCount: 3,
-                    syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
-                };
-            }
-            if(token2.tokenKind === 81 /* GreaterThanToken */ ) {
-                if(!token2.hasTrailingTrivia()) {
-                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken(this.peekToken(3));
-                    if(result !== null) {
-                        return result;
-                    }
+                if(nextToken.hasTrailingTrivia()) {
+                    break;
                 }
+            }
+            Debug.assert(storage.length === 3);
+            if(storage[0] === 81 /* GreaterThanToken */  && storage[1] === 81 /* GreaterThanToken */  && storage[2] === 107 /* EqualsToken */ ) {
+                return {
+                    tokenCount: 4,
+                    syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
+                };
+            }
+            if(storage[0] === 81 /* GreaterThanToken */  && storage[1] === 81 /* GreaterThanToken */ ) {
                 return {
                     tokenCount: 3,
                     syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
                 };
             }
-            return null;
-        };
-        ParserImpl.prototype.tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken = function (token3) {
-            if(token3.hasLeadingTrivia()) {
-                return null;
-            }
-            if(token3.tokenKind === 107 /* EqualsToken */ ) {
+            if(storage[0] === 81 /* GreaterThanToken */  && storage[1] === 107 /* EqualsToken */ ) {
                 return {
-                    tokenCount: 4,
-                    syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
+                    tokenCount: 3,
+                    syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
+                };
+            }
+            if(storage[0] === 81 /* GreaterThanToken */ ) {
+                return {
+                    tokenCount: 2,
+                    syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
+                };
+            }
+            if(storage[0] === 107 /* EqualsToken */ ) {
+                return {
+                    tokenCount: 2,
+                    syntaxKind: 83 /* GreaterThanEqualsToken */ 
                 };
             }
             return null;

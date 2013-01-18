@@ -3375,93 +3375,67 @@ module Parser {
             return leftOperand;
         }
 
+        private mergeTokensStorage: SyntaxKind[] = [];
+
         private tryMergeBinaryExpressionTokens(): { tokenCount: number; syntaxKind: SyntaxKind; } {
-            // check for >= or >> or >>= or >>> or >>>=.
-
             var token0 = this.currentToken();
-            var token0Kind = token0.tokenKind;
 
-            // We only merge tokens if we're starting with a '>' and it absolutely nothing after it.
-            if (token0Kind === SyntaxKind.GreaterThanToken && !token0.hasTrailingTrivia()) {
-                // We've got a '>'.  We can potentially merge it if the next token has absolutely nothing
-                // before it
-                return this.tryMergeNextTokenWithGreaterThanToken(this.peekToken(1));
-            }
-
-            return null;
-        }
-
-        private tryMergeNextTokenWithGreaterThanToken(token1: ISyntaxToken): { tokenCount: number; syntaxKind: SyntaxKind; } {
-            if (token1.hasLeadingTrivia()) {
-                // can't merge if the next token has leading trivia.
+            // Only merge if we have a '>' token with no trailing trivia.
+            if (token0.tokenKind !== SyntaxKind.GreaterThanToken || token0.hasTrailingTrivia()) {
                 return null;
             }
 
-            if (token1.tokenKind === SyntaxKind.EqualsToken) {
-                // We've got '>='.  Nothing else can be merged.
-                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanEqualsToken };
-            }
+            var storage = this.mergeTokensStorage;
+            storage[0] = SyntaxKind.None;
+            storage[1] = SyntaxKind.None;
+            storage[2] = SyntaxKind.None;
 
-            if (token1.tokenKind === SyntaxKind.GreaterThanToken) {
-                // We've got '>>'  we may return it as is, or we could merge it with a following '>' or '='
-                // token if there's nothing between the two.
-                if (!token1.hasTrailingTrivia()) {
-                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanToken(this.peekToken(2));
-                    if (result !== null) {
-                        return result;
-                    }
+            Debug.assert(storage.length === 3);
+            
+            for (var i = 0; i < storage.length; i++) {
+                var nextToken = this.peekToken(i + 1);
+
+                // We can merge with the next token if it doesn't have any leading trivia.
+                if (!nextToken.hasLeadingTrivia()) {
+                    storage[i] = nextToken.tokenKind;
                 }
 
-                // We've got '>>' only.
-                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
-            }
-
-            return null;
-        }
-
-        private tryMergeNextTokenWithGreaterThanGreaterThanToken(token2: ISyntaxToken): { tokenCount: number; syntaxKind: SyntaxKind; } {
-            if (token2.hasLeadingTrivia()) {
-                // can't merge if the next token has leading trivia.
-                return null;
-            }
-
-            if (token2.tokenKind === SyntaxKind.EqualsToken) {
-                // We've got '>>='.  Nothing else can be merged.
-                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
-            }
-
-            if (token2.tokenKind === SyntaxKind.GreaterThanToken) {
-                // We've got '>>>'  we may return it as is, or we could merge it with a following '='
-                // token if there's nothing between the two.
-
-                if (!token2.hasTrailingTrivia()) {
-                    var result = this.tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken(this.peekToken(3));
-                    if (result !== null) {
-                        return result;
-                    }
+                // Stop merging additional tokens if this token has any trailing trivia.
+                if (nextToken.hasTrailingTrivia()) {
+                    break;
                 }
-
-                // We've got '>>>' only.
-                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
             }
 
-            return null;
-        }
+            Debug.assert(storage.length === 3);
 
-        private tryMergeNextTokenWithGreaterThanGreaterThanGreaterThanToken(token3: ISyntaxToken): { tokenCount: number; syntaxKind: SyntaxKind; } {
-            if (token3.hasLeadingTrivia()) {
-                // can't merge if the next token has leading trivia.
-                return null;
-            }
-
-            if (token3.tokenKind === SyntaxKind.EqualsToken) {
-                // We've got '>>>='.  Nothing else can be merged.
+            if (storage[0] === SyntaxKind.GreaterThanToken && storage[1] === SyntaxKind.GreaterThanToken && storage[2] === SyntaxKind.EqualsToken) {
+                // >>>=
                 return { tokenCount: 4, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
             }
 
+            if (storage[0] === SyntaxKind.GreaterThanToken && storage[1] === SyntaxKind.GreaterThanToken) {
+                // >>>
+                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
+            }
+
+            if (storage[0] === SyntaxKind.GreaterThanToken && storage[1] === SyntaxKind.EqualsToken) {
+                // >>=
+                return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
+            }
+
+            if (storage[0] === SyntaxKind.GreaterThanToken) {
+                // >>
+                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
+            }
+
+            if (storage[0] === SyntaxKind.EqualsToken) {
+                // >=
+                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanEqualsToken };
+            }
+
+            // Just use the normal logic as we're not merging the '>' with anything.
             return null;
         }
-
 
         private isRightAssociative(expressionKind: SyntaxKind): bool {
             switch (expressionKind) {
