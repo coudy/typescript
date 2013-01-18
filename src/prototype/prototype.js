@@ -29018,9 +29018,10 @@ var Parser;
         };
         ParserImpl.prototype.parseConstructSignature = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
-            return this.factory.constructSignature(newKeyword, null, parameterList, typeAnnotation);
+            return this.factory.constructSignature(newKeyword, typeParameterList, parameterList, typeAnnotation);
         };
         ParserImpl.prototype.parseIndexSignature = function () {
             var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );

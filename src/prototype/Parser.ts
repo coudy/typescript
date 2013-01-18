@@ -2374,10 +2374,11 @@ module Parser {
             // Debug.assert(this.isConstructSignature());
 
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return this.factory.constructSignature(newKeyword, null, parameterList, typeAnnotation);
+            return this.factory.constructSignature(newKeyword, typeParameterList, parameterList, typeAnnotation);
         }
 
         private parseIndexSignature(): IndexSignatureSyntax {
