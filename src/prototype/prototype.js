@@ -27660,6 +27660,7 @@ var Strings = (function () {
     Strings.type_name = "type name";
     Strings.property_or_accessor = "property or accessor";
     Strings.parameter = "parameter";
+    Strings.type = "type";
     return Strings;
 })();
 var SyntaxTree = (function () {
@@ -27763,8 +27764,9 @@ var Parser;
         ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 13;
         ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 14;
         ListParsingState.ParameterList_Parameters = 1 << 15;
+        ListParsingState.TypeArgumentList_Types = 1 << 16;
         ListParsingState.FirstListParsingState = ListParsingState.SourceUnit_ModuleElements;
-        ListParsingState.LastListParsingState = ListParsingState.ParameterList_Parameters;
+        ListParsingState.LastListParsingState = ListParsingState.TypeArgumentList_Types;
     })(ListParsingState || (ListParsingState = {}));
     var SkippedTokensAdder = (function (_super) {
         __extends(SkippedTokensAdder, _super);
@@ -28622,15 +28624,75 @@ var Parser;
         ParserImpl.prototype.isName = function () {
             return this.isIdentifier(this.currentToken());
         };
+        ParserImpl.prototype.tryParseTypeArgumentList = function (inExpression) {
+            if(this.currentToken().kind() !== 80 /* LessThanToken */ ) {
+                return null;
+            }
+            var rewindPoint = this.getRewindPoint();
+            try  {
+                var lessThanToken = this.eatToken(80 /* LessThanToken */ );
+                var typeArguments = this.parseSeparatedSyntaxList(65536 /* TypeArgumentList_Types */ );
+                var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
+                if(inExpression) {
+                    if(greaterThanToken.fullWidth() === 0 || !this.canFollowTypeArgumentListInExpression(this.currentToken().kind())) {
+                        this.rewind(rewindPoint);
+                        return null;
+                    }
+                }
+                return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
+            }finally {
+                this.releaseRewindPoint(rewindPoint);
+            }
+        };
+        ParserImpl.prototype.canFollowTypeArgumentListInExpression = function (kind) {
+            switch(kind) {
+                case 72 /* OpenParenToken */ :
+                case 76 /* DotToken */ :
+                case 73 /* CloseParenToken */ :
+                case 75 /* CloseBracketToken */ :
+                case 106 /* ColonToken */ :
+                case 78 /* SemicolonToken */ :
+                case 79 /* CommaToken */ :
+                case 105 /* QuestionToken */ :
+                case 84 /* EqualsEqualsToken */ :
+                case 87 /* EqualsEqualsEqualsToken */ :
+                case 86 /* ExclamationEqualsToken */ :
+                case 88 /* ExclamationEqualsEqualsToken */ :
+                case 103 /* AmpersandAmpersandToken */ :
+                case 104 /* BarBarToken */ :
+                case 100 /* CaretToken */ :
+                case 98 /* AmpersandToken */ :
+                case 99 /* BarToken */ :
+                case 71 /* CloseBraceToken */ :
+                case 10 /* EndOfFileToken */ : {
+                    return true;
+
+                }
+                default: {
+                    return false;
+
+                }
+            }
+        };
+        ParserImpl.prototype.parseSimpleName = function (inExpression) {
+            var identifier = this.eatIdentifierToken();
+            if(identifier.fullWidth() === 0) {
+                return identifier;
+            }
+            var typeArgumentList = this.tryParseTypeArgumentList(inExpression);
+            if(typeArgumentList === null) {
+                return identifier;
+            }
+            return this.factory.genericName(identifier, typeArgumentList);
+        };
         ParserImpl.prototype.parseName = function () {
             var isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
-            var identifier = this.eatIdentifierToken();
-            var current = identifier;
+            var current = this.parseSimpleName(false);
             while(isIdentifierName && this.currentToken().tokenKind === 76 /* DotToken */ ) {
                 var dotToken = this.eatToken(76 /* DotToken */ );
                 isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
-                identifier = this.eatIdentifierToken();
-                current = this.factory.qualifiedName(current, dotToken, identifier);
+                var simpleName = this.parseSimpleName(false);
+                current = this.factory.qualifiedName(current, dotToken, simpleName);
             }
             return current;
         };
@@ -30237,7 +30299,7 @@ var Parser;
         };
         ParserImpl.prototype.abortParsingListOrMoveToNextToken = function (currentListType, itemCount) {
             this.reportUnexpectedTokenDiagnostic(currentListType);
-            for(var state = 32768 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
+            for(var state = 65536 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
                 if((this.listParsingState & state) !== 0) {
                     if(this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, true)) {
                         return true;
@@ -30347,7 +30409,8 @@ var Parser;
                 case 4096 /* ArgumentList_AssignmentExpressions */ :
                 case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 32768 /* ParameterList_Parameters */ : {
+                case 32768 /* ParameterList_Parameters */ :
+                case 65536 /* TypeArgumentList_Types */ : {
                     return false;
 
                 }
@@ -30367,7 +30430,8 @@ var Parser;
             switch(currentListType) {
                 case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ : {
+                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 65536 /* TypeArgumentList_Types */ : {
                     return true;
 
                 }
@@ -30405,7 +30469,8 @@ var Parser;
                 case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                 case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
                 case 32768 /* ParameterList_Parameters */ :
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
+                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 65536 /* TypeArgumentList_Types */ : {
                     return false;
 
                 }
@@ -30430,7 +30495,8 @@ var Parser;
                 case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                 case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
                 case 32768 /* ParameterList_Parameters */ :
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
+                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 65536 /* TypeArgumentList_Types */ : {
                     return 79 /* CommaToken */ ;
 
                 }
@@ -30521,6 +30587,10 @@ var Parser;
                     return this.isExpectedParameterList_ParametersTerminator();
 
                 }
+                case 65536 /* TypeArgumentList_Types */ : {
+                    return this.isExpectedTypeArgumentList_TypesTerminator();
+
+                }
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                     return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
 
@@ -30548,6 +30618,16 @@ var Parser;
         };
         ParserImpl.prototype.isExpectedLiteralExpression_AssignmentExpressionsTerminator = function () {
             return this.currentToken().tokenKind === 75 /* CloseBracketToken */ ;
+        };
+        ParserImpl.prototype.isExpectedTypeArgumentList_TypesTerminator = function () {
+            var token = this.currentToken();
+            if(token.tokenKind === 81 /* GreaterThanToken */ ) {
+                return true;
+            }
+            if(this.canFollowTypeArgumentListInExpression(token.tokenKind)) {
+                return true;
+            }
+            return false;
         };
         ParserImpl.prototype.isExpectedParameterList_ParametersTerminator = function () {
             var token = this.currentToken();
@@ -30668,6 +30748,10 @@ var Parser;
                     return this.isParameter();
 
                 }
+                case 65536 /* TypeArgumentList_Types */ : {
+                    return this.isType(true, true);
+
+                }
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                     return this.isAssignmentOrOmittedExpression();
 
@@ -30740,6 +30824,10 @@ var Parser;
                     return this.parseParameter();
 
                 }
+                case 65536 /* TypeArgumentList_Types */ : {
+                    return this.parseType(false);
+
+                }
                 default: {
                     throw Errors.invalidOperation();
 
@@ -30796,6 +30884,10 @@ var Parser;
                 }
                 case 32768 /* ParameterList_Parameters */ : {
                     return Strings.parameter;
+
+                }
+                case 65536 /* TypeArgumentList_Types */ : {
+                    return Strings.type;
 
                 }
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
@@ -33293,19 +33385,19 @@ var Program = (function () {
         }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, false);
         });
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
-            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
-            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -33313,19 +33405,19 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, false);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, true, true);
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, false, true);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");

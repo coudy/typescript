@@ -153,9 +153,10 @@ module Parser {
         ObjectLiteralExpression_PropertyAssignments = 1 << 13,
         ArrayLiteralExpression_AssignmentExpressions = 1 << 14,
         ParameterList_Parameters = 1 << 15,
+        TypeArgumentList_Types = 1 << 16,
 
         FirstListParsingState = SourceUnit_ModuleElements,
-        LastListParsingState = ParameterList_Parameters,
+        LastListParsingState = TypeArgumentList_Types,
     }
 
     // Information we collect in the parser when we skip a token.
@@ -1787,19 +1788,96 @@ module Parser {
             return this.isIdentifier(this.currentToken());
         }
 
+        private tryParseTypeArgumentList(inExpression: bool): TypeArgumentListSyntax {
+            if (this.currentToken().kind() !== SyntaxKind.LessThanToken) {
+                return null;
+            }
+
+            var rewindPoint = this.getRewindPoint();
+            try {
+                // We've seen a '<'.  Try to parse it out as a type argument list.
+                var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+                var typeArguments = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+
+                if (inExpression) {
+                    // We're in a context where '<' could be the start of a type argument list, or part
+                    // of an arithmetic expression.  We'll presume it's the latter unless we see the '>'
+                    // and a following token that guarantees that it's supposed to be a type argument list.
+                    if (greaterThanToken.fullWidth() === 0 || !this.canFollowTypeArgumentListInExpression(this.currentToken().kind())) {
+                        this.rewind(rewindPoint);
+                        return null;
+                    }
+                }
+
+                return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
+            }
+            finally {
+                this.releaseRewindPoint(rewindPoint);
+            }
+        }
+
+        private canFollowTypeArgumentListInExpression(kind: SyntaxKind): bool {
+            switch (kind) {
+                case SyntaxKind.OpenParenToken:                 // foo<x>(   
+                case SyntaxKind.DotToken:                       // foo<x>.
+                    // These two cases are the only cases where this token can legally follow a
+                    // type argument list.  So we definitely want to treat this as a type arg list.
+
+                case SyntaxKind.CloseParenToken:                // foo<x>)
+                case SyntaxKind.CloseBracketToken:              // foo<x>]
+                case SyntaxKind.ColonToken:                     // foo<x>:
+                case SyntaxKind.SemicolonToken:                 // foo<x>;
+                case SyntaxKind.CommaToken:                     // foo<x>,
+                case SyntaxKind.QuestionToken:                  // foo<x>?
+                case SyntaxKind.EqualsEqualsToken:              // foo<x> ==
+                case SyntaxKind.EqualsEqualsEqualsToken:        // foo<x> ===
+                case SyntaxKind.ExclamationEqualsToken:         // foo<x> !=
+                case SyntaxKind.ExclamationEqualsEqualsToken:   // foo<x> !==
+                case SyntaxKind.AmpersandAmpersandToken:        // foo<x> &&
+                case SyntaxKind.BarBarToken:                    // foo<x> ||
+                case SyntaxKind.CaretToken:                     // foo<x> ^
+                case SyntaxKind.AmpersandToken:                 // foo<x> &
+                case SyntaxKind.BarToken:                       // foo<x> |
+                case SyntaxKind.CloseBraceToken:                // foo<x> }
+                case SyntaxKind.EndOfFileToken:                 // foo<x>
+                    // these cases can't legally follow a type arg list.  However, they're not legal 
+                    // expressions either.  The user is probably in the middle of a generic type. So
+                    // treat it as such.
+                    return true;
+
+                default:
+                    // Anything else treat as an expression.
+                    return false;
+            }
+        }
+
+        private parseSimpleName(inExpression: bool): ISimpleNameSyntax {
+            var identifier = this.eatIdentifierToken();
+            if (identifier.fullWidth() === 0) {
+                return identifier;
+            }
+
+            var typeArgumentList = this.tryParseTypeArgumentList(inExpression);
+            if (typeArgumentList === null) {
+                return identifier;
+            }
+
+            return this.factory.genericName(identifier, typeArgumentList);
+        }
+
         private parseName(): INameSyntax {
             var isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
-            var identifier = this.eatIdentifierToken();
 
-            var current: INameSyntax = identifier;
+            var current: INameSyntax = this.parseSimpleName(/*inExpression: */ false);
 
             while (isIdentifierName && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
                 isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
-                identifier = this.eatIdentifierToken();
+                var simpleName = this.parseSimpleName(/*inExpression: */ false);
 
-                current = this.factory.qualifiedName(current, dotToken, identifier);
+                current = this.factory.qualifiedName(current, dotToken, simpleName);
             }
 
             return current;
@@ -4458,6 +4536,7 @@ module Parser {
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 case ListParsingState.ParameterList_Parameters:
                     // TODO: It would be great to allow trailing separators for parameters.
+                case ListParsingState.TypeArgumentList_Types:
                     return false;
 
                 case ListParsingState.SourceUnit_ModuleElements:
@@ -4476,6 +4555,7 @@ module Parser {
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
+                case ListParsingState.TypeArgumentList_Types:
                     return true;
 
                 case ListParsingState.ObjectType_TypeMembers:
@@ -4510,6 +4590,7 @@ module Parser {
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 case ListParsingState.ParameterList_Parameters:
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.TypeArgumentList_Types:
                     return false;
 
                 case ListParsingState.SourceUnit_ModuleElements:
@@ -4533,6 +4614,7 @@ module Parser {
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 case ListParsingState.ParameterList_Parameters:
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
+                case ListParsingState.TypeArgumentList_Types:
                     return SyntaxKind.CommaToken;
 
                 case ListParsingState.ObjectType_TypeMembers:
@@ -4611,6 +4693,9 @@ module Parser {
                 case ListParsingState.ParameterList_Parameters:
                     return this.isExpectedParameterList_ParametersTerminator();
 
+                case ListParsingState.TypeArgumentList_Types:
+                    return this.isExpectedTypeArgumentList_TypesTerminator();
+
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
 
@@ -4641,6 +4726,22 @@ module Parser {
 
         private isExpectedLiteralExpression_AssignmentExpressionsTerminator(): bool {
             return this.currentToken().tokenKind === SyntaxKind.CloseBracketToken;
+        }
+
+        private isExpectedTypeArgumentList_TypesTerminator(): bool {
+            var token = this.currentToken();
+            if (token.tokenKind === SyntaxKind.GreaterThanToken) {
+                return true;
+            }
+
+            // If we're at a token that can follow the type argument list, then we'll also consider
+            // the list terminated.
+            if (this.canFollowTypeArgumentListInExpression(token.tokenKind)) {
+                return true;
+            }
+
+            // TODO: add more cases as necessary for error tolerance.
+            return false;
         }
 
         private isExpectedParameterList_ParametersTerminator(): bool {
@@ -4795,6 +4896,9 @@ module Parser {
                 case ListParsingState.ParameterList_Parameters:
                     return this.isParameter();
 
+                case ListParsingState.TypeArgumentList_Types:
+                    return this.isType(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true);
+
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.isAssignmentOrOmittedExpression();
 
@@ -4850,6 +4954,9 @@ module Parser {
                 case ListParsingState.ParameterList_Parameters:
                     return this.parseParameter();
 
+                case ListParsingState.TypeArgumentList_Types:
+                    return this.parseType(/*requireCompleteArraySuffix:*/ false);
+
                 default:
                     throw Errors.invalidOperation();
             }
@@ -4894,6 +5001,9 @@ module Parser {
 
                 case ListParsingState.ParameterList_Parameters:
                     return Strings.parameter;
+
+                case ListParsingState.TypeArgumentList_Types:
+                    return Strings.type;
 
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return Strings.expression;
