@@ -10,7 +10,7 @@
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
-    // "UsingConstructorAsIdentifier.ts";
+    // "GreaterThanTokenAmbiguity20.ts";
     undefined;
 
 class Program {
