@@ -1853,8 +1853,8 @@ module Parser {
             }
         }
 
-        private parseSimpleName(inExpression: bool): ISimpleNameSyntax {
-            var identifier = this.eatIdentifierToken();
+        private parseSimpleName(inExpression: bool, afterDot: bool): ISimpleNameSyntax {
+            var identifier = afterDot ? this.eatIdentifierNameToken() : this.eatIdentifierToken();
             if (identifier.fullWidth() === 0) {
                 return identifier;
             }
@@ -1868,15 +1868,14 @@ module Parser {
         }
 
         private parseName(): INameSyntax {
-            var isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
+            var shouldContinue = this.isIdentifier(this.currentToken());
+            var current: INameSyntax = this.parseSimpleName(/*inExpression: */ false, /*afterDot:*/ false);
 
-            var current: INameSyntax = this.parseSimpleName(/*inExpression: */ false);
-
-            while (isIdentifierName && this.currentToken().tokenKind === SyntaxKind.DotToken) {
+            while (shouldContinue && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
-                isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
-                var simpleName = this.parseSimpleName(/*inExpression: */ false);
+                shouldContinue = ParserImpl.isIdentifierName(this.currentToken());
+                var simpleName = this.parseSimpleName(/*inExpression: */ false, /*afterDot:*/ true);
 
                 current = this.factory.qualifiedName(current, dotToken, simpleName);
             }
@@ -3405,7 +3404,7 @@ module Parser {
 
                     case SyntaxKind.DotToken:
                         expression = this.factory.memberAccessExpression(
-                            expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
+                            expression, this.eatToken(SyntaxKind.DotToken), this.parseSimpleName(/*isExpression:*/ true, /*afterDot:*/ true));
                         break;
 
                     default:
@@ -3480,8 +3479,7 @@ module Parser {
                     return this.parseSimpleArrowFunctionExpression();
                 }
                 else {
-                    var identifier = this.eatIdentifierToken();
-                    return identifier;
+                    return this.parseSimpleName(/*inExpression:*/ true, /*afterDot:*/ false);
                 }
             }
 

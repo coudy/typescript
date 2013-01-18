@@ -28676,8 +28676,8 @@ var Parser;
                 }
             }
         };
-        ParserImpl.prototype.parseSimpleName = function (inExpression) {
-            var identifier = this.eatIdentifierToken();
+        ParserImpl.prototype.parseSimpleName = function (inExpression, afterDot) {
+            var identifier = afterDot ? this.eatIdentifierNameToken() : this.eatIdentifierToken();
             if(identifier.fullWidth() === 0) {
                 return identifier;
             }
@@ -28688,12 +28688,12 @@ var Parser;
             return this.factory.genericName(identifier, typeArgumentList);
         };
         ParserImpl.prototype.parseName = function () {
-            var isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
-            var current = this.parseSimpleName(false);
-            while(isIdentifierName && this.currentToken().tokenKind === 76 /* DotToken */ ) {
+            var shouldContinue = this.isIdentifier(this.currentToken());
+            var current = this.parseSimpleName(false, false);
+            while(shouldContinue && this.currentToken().tokenKind === 76 /* DotToken */ ) {
                 var dotToken = this.eatToken(76 /* DotToken */ );
-                isIdentifierName = ParserImpl.isIdentifierName(this.currentToken());
-                var simpleName = this.parseSimpleName(false);
+                shouldContinue = ParserImpl.isIdentifierName(this.currentToken());
+                var simpleName = this.parseSimpleName(false, true);
                 current = this.factory.qualifiedName(current, dotToken, simpleName);
             }
             return current;
@@ -29723,7 +29723,7 @@ var Parser;
 
                     }
                     case 76 /* DotToken */ : {
-                        expression = this.factory.memberAccessExpression(expression, this.eatToken(76 /* DotToken */ ), this.eatIdentifierNameToken());
+                        expression = this.factory.memberAccessExpression(expression, this.eatToken(76 /* DotToken */ ), this.parseSimpleName(true, true));
                         break;
 
                     }
@@ -29763,8 +29763,7 @@ var Parser;
                 if(this.isSimpleArrowFunctionExpression()) {
                     return this.parseSimpleArrowFunctionExpression();
                 } else {
-                    var identifier = this.eatIdentifierToken();
-                    return identifier;
+                    return this.parseSimpleName(true, false);
                 }
             }
             var currentTokenKind = currentToken.tokenKind;
