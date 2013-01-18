@@ -2409,6 +2409,11 @@ var definitions = [
                 itTypeScriptSpecific: true
             }, 
             {
+                name: 'typeParameterList',
+                type: 'TypeParameterListSyntax',
+                isOptional: true
+            }, 
+            {
                 name: 'parameterList',
                 type: 'ParameterListSyntax'
             }, 

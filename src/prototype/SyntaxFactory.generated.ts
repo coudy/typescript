@@ -43,7 +43,7 @@ module Syntax {
         conditionalExpression(condition: IExpressionSyntax, questionToken: ISyntaxToken, whenTrue: IExpressionSyntax, colonToken: ISyntaxToken, whenFalse: IExpressionSyntax): ConditionalExpressionSyntax;
         typeMember(): TypeMemberSyntax;
         constructSignature(newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax;
-        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax;
+        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax;
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax;
         propertySignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax;
         parameterList(openParenToken: ISyntaxToken, parameters: ISeparatedSyntaxList, closeParenToken: ISyntaxToken): ParameterListSyntax;
@@ -220,8 +220,8 @@ module Syntax {
         constructSignature(newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
             return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
         }
-        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
-            return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
+            return new FunctionSignatureSyntax(identifier, questionToken, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
         }
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ false);
@@ -499,8 +499,8 @@ module Syntax {
         constructSignature(newKeyword: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): ConstructSignatureSyntax {
             return new ConstructSignatureSyntax(newKeyword, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);
         }
-        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
-            return new FunctionSignatureSyntax(identifier, questionToken, parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);
+        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionSignatureSyntax {
+            return new FunctionSignatureSyntax(identifier, questionToken, typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ true);
         }
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ true);

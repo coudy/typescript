@@ -302,6 +302,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitFunctionSignature(node: FunctionSignatureSyntax): void {
         this.visitToken(node.identifier());
         this.visitOptionalToken(node.questionToken());
+        this.visitOptionalNode(node.typeParameterList());
         this.visitNode(node.parameterList());
         this.visitOptionalNode(node.typeAnnotation());
     }

@@ -483,6 +483,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true, itTypeScriptSpecific: true },
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true },
             <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true }
         ]

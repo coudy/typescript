@@ -349,6 +349,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
         return node.update(
             this.visitToken(node.identifier()),
             node.questionToken() === null ? null : this.visitToken(node.questionToken()),
+            node.typeParameterList() === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList()),
             <ParameterListSyntax>this.visitNode(node.parameterList()),
             node.typeAnnotation() === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation()));
     }

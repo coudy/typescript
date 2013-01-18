@@ -2397,10 +2397,11 @@ module Parser {
             var identifier = this.eatIdentifierToken();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
 
+            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return this.factory.functionSignature(identifier, questionToken, parameterList, typeAnnotation);
+            return this.factory.functionSignature(identifier, questionToken, typeParameterList, parameterList, typeAnnotation);
         }
 
         private parsePropertySignature(): PropertySignatureSyntax {
