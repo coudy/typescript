@@ -28990,13 +28990,13 @@ var Parser;
             if(this.currentNode() !== null && this.currentNode().isTypeMember()) {
                 return true;
             }
-            return this.isCallSignature() || this.isConstructSignature() || this.isIndexSignature() || this.isFunctionSignature(0) || this.isPropertySignature();
+            return this.isCallSignature(0) || this.isConstructSignature() || this.isIndexSignature() || this.isFunctionSignature(0) || this.isPropertySignature();
         };
         ParserImpl.prototype.parseTypeMember = function () {
             if(this.currentNode() !== null && this.currentNode().isTypeMember()) {
                 return this.eatNode();
             }
-            if(this.isCallSignature()) {
+            if(this.isCallSignature(0)) {
                 return this.parseCallSignature();
             } else {
                 if(this.isConstructSignature()) {
@@ -29045,8 +29045,8 @@ var Parser;
             var typeAnnotation = this.parseOptionalTypeAnnotation();
             return this.factory.propertySignature(identifier, questionToken, typeAnnotation);
         };
-        ParserImpl.prototype.isCallSignature = function () {
-            var tokenKind = this.currentToken().tokenKind;
+        ParserImpl.prototype.isCallSignature = function (tokenIndex) {
+            var tokenKind = this.peekToken(tokenIndex).tokenKind;
             return tokenKind === 72 /* OpenParenToken */  || tokenKind == 80 /* LessThanToken */ ;
         };
         ParserImpl.prototype.isConstructSignature = function () {
@@ -29057,10 +29057,10 @@ var Parser;
         };
         ParserImpl.prototype.isFunctionSignature = function (tokenIndex) {
             if(this.isIdentifier(this.peekToken(tokenIndex))) {
-                if(this.peekToken(tokenIndex + 1).tokenKind === 72 /* OpenParenToken */ ) {
+                if(this.isCallSignature(tokenIndex + 1)) {
                     return true;
                 }
-                if(this.peekToken(tokenIndex + 1).tokenKind === 105 /* QuestionToken */  && this.peekToken(tokenIndex + 2).tokenKind === 72 /* OpenParenToken */ ) {
+                if(this.peekToken(tokenIndex + 1).tokenKind === 105 /* QuestionToken */  && this.isCallSignature(tokenIndex + 2)) {
                     return true;
                 }
             }

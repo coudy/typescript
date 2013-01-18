@@ -2338,7 +2338,7 @@ module Parser {
                 return true;
             }
 
-            return this.isCallSignature() ||
+            return this.isCallSignature(/*tokenIndex:*/ 0) ||
                    this.isConstructSignature() ||
                    this.isIndexSignature() ||
                    this.isFunctionSignature(/*tokenIndex:*/ 0) ||
@@ -2350,7 +2350,7 @@ module Parser {
                 return <TypeMemberSyntax>this.eatNode();
             }
 
-            if (this.isCallSignature()) {
+            if (this.isCallSignature(/*tokenIndex:*/ 0)) {
                 return this.parseCallSignature();
             }
             else if (this.isConstructSignature()) {
@@ -2414,8 +2414,8 @@ module Parser {
             return this.factory.propertySignature(identifier, questionToken, typeAnnotation);
         }
 
-        private isCallSignature(): bool {
-            var tokenKind = this.currentToken().tokenKind;
+        private isCallSignature(tokenIndex: number): bool {
+            var tokenKind = this.peekToken(tokenIndex).tokenKind;
             return tokenKind === SyntaxKind.OpenParenToken || tokenKind == SyntaxKind.LessThanToken;
         }
 
@@ -2430,13 +2430,13 @@ module Parser {
         private isFunctionSignature(tokenIndex: number): bool {
             if (this.isIdentifier(this.peekToken(tokenIndex))) {
                 // id(
-                if (this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.OpenParenToken) {
+                if (this.isCallSignature(tokenIndex + 1)) {
                     return true;
                 }
 
                 // id?(
                 if (this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
-                    this.peekToken(tokenIndex + 2).tokenKind === SyntaxKind.OpenParenToken) {
+                    this.isCallSignature(tokenIndex + 2)) {
                     return true;
                 }
             }
