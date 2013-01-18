@@ -4,6 +4,8 @@ BUILT_LOCAL=$(BUILT)\local
 BUILT_LOCALTEST=$(BUILT)\localtest
 
 HOST=$(TYPESCRIPT_HOST)
+DEBUG_HOST=$(TYPESCRIPT_DEBUG_HOST)
+NODE_HOST=$(NODE_HOST)
 
 #compiler source location
 CSRC=$(BASE)src\compiler
@@ -20,7 +22,8 @@ TSRC=$(BASE)test
 # harness source location
 HSRC=$(BASE)src\harness
 
-# runners source location
+PSRC=$(BASE)src\prototype
+
 RSRC=$(BASE)tests\runners
 
 STRC_LOCAL=$(HOST) $(BUILT_LOCAL)\tsc.js -cflowu 
@@ -114,6 +117,12 @@ SERVICES_SOURCES= \
   $(COMPILER_SOURCES_BASE) \
   $(SERVICES_SOURCES_BASE)
 
+PROTOTYPE_SOURCES_PROGRAM= \
+  $(PSRC)\Program.ts
+
+PROTOTYPE_SOURCES_TSC= \
+  $(PSRC)\Tsc.ts
+
 prebuild-local:
 	if not exist $(BUILT) mkdir $(BUILT)
 	if not exist $(BUILT_LOCAL) mkdir $(BUILT_LOCAL)
@@ -147,6 +156,24 @@ $(BUILT_LOCALTEST)\typescriptServices.js: $(SERVICES_SOURCES)
 local: prebuild-local $(BUILT_LOCAL)\typescript.js $(BUILT_LOCAL)\tsc.js $(BUILT_LOCAL)\typescriptServices.js
 
 compiler: local
+
+prototype: $(PROTOTYPE_SOURCES_PROGRAM)
+	$(STRC_LKG) $(PROTOTYPE_SOURCES_PROGRAM) -const -out $(PSRC)\prototype.js
+
+syntaxgenerator: $(PSRC)\SyntaxGenerator.ts
+	$(STRC_LKG) $(PSRC)\SyntaxGenerator.ts -const -out $(PSRC)\SyntaxGenerator.js
+
+runsyntaxgenerator: syntaxgenerator
+	$(DEBUG_HOST) $(PSRC)\SyntaxGenerator.js 
+
+runprototype: prototype
+	$(DEBUG_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
+
+runprototype_node: prototype
+	$(NODE_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
+
+prototype_tsc: $(PROTOTYPE_SOURCES_TSC)
+	$(STRC_LKG) $(PROTOTYPE_SOURCES_TSC) -const -out $(PSRC)\tsc.js
 
 COMPILER_TESTS=--compiler
 PROJECT_TESTS=--project

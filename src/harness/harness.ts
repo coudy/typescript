@@ -316,7 +316,7 @@ module Harness {
             }
         }
 
-        public run(done: IDone) { };
+        public run(done: IDone) { }
 
         public runBlock(done: IDone) {
             return this.call(this.block, done);
@@ -588,11 +588,11 @@ module Harness {
         export class Benchmark {
             public iterations = 10;
             public description = "";
-            public bench(subBench?: () => void ) { };
-            public before() { };
-            public beforeEach() { };
-            public after() { };
-            public afterEach() { };
+            public bench(subBench?: () => void ) { }
+            public before() { }
+            public beforeEach() { }
+            public after() { }
+            public afterEach() { }
             public results: { [x: string]: Dataset; } = <{ [x: string]: Dataset; }>{};
 
             public addTimingFor(name: string, timing: number) {

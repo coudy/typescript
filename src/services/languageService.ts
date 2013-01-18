@@ -297,7 +297,7 @@ module Services {
             public kind: string,
             public name: string,
             public containerKind: string,
-            public containerName: string,
+            public containerName: string
             /*TODO*//*public overloads:DefinitionInfo[]*/) {
         }
     }
@@ -2441,6 +2441,5 @@ module Services {
                 }
             }
         }
-
     }
 }

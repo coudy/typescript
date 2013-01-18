@@ -1,0 +1,165 @@
+{
+    "_diagnostics": [
+        {
+            "_position": 312,
+            "_width": 1,
+            "_diagnosticCode": "Identifier_expected"
+        },
+        {
+            "_position": 318,
+            "_width": 0,
+            "_diagnosticCode": "_0_expected",
+            "_arguments": [
+                "while"
+            ]
+        }
+    ],
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 318,
+        "hasZeroWidthToken": true,
+        "_moduleElements": [
+            {
+                "kind": "DoStatement",
+                "fullWidth": 317,
+                "hasZeroWidthToken": true,
+                "_doKeyword": {
+                    "kind": "DoKeyword",
+                    "width": 2,
+                    "fullWidth": 312,
+                    "text": "do",
+                    "hasLeadingTrivia": true,
+                    "hasLeadingComment": true,
+                    "hasLeadingNewLine": true,
+                    "hasTrailingTrivia": true,
+                    "leadingTrivia": [
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// Copyright 2009 the Sputnik authors.  All rights reserved."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "SingleLineCommentTrivia",
+                            "text": "// This code is governed by the BSD license found in the LICENSE file."
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "MultiLineCommentTrivia",
+                            "text": "/**\n * The \"do\" token can not be used as identifier\n *\n * @path ch07/7.6/7.6.1/7.6.1.1/S7.6.1.1_A1.7.js\n * @description Checking if execution of \"do=1\" fails\n * @negative\n */"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        },
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\n"
+                        }
+                    ],
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "_statement": {
+                    "kind": "ExpressionStatement",
+                    "fullWidth": 5,
+                    "hasZeroWidthToken": true,
+                    "_expression": {
+                        "kind": "AssignmentExpression",
+                        "fullWidth": 3,
+                        "hasZeroWidthToken": true,
+                        "_left": {
+                            "kind": "IdentifierName",
+                            "width": 0,
+                            "text": ""
+                        },
+                        "_operatorToken": {
+                            "kind": "EqualsToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": "=",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "_right": {
+                            "kind": "NumericLiteral",
+                            "width": 1,
+                            "text": "1"
+                        }
+                    },
+                    "_semicolonToken": {
+                        "kind": "SemicolonToken",
+                        "width": 1,
+                        "fullWidth": 2,
+                        "text": ";",
+                        "hasTrailingTrivia": true,
+                        "hasTrailingNewLine": true,
+                        "trailingTrivia": [
+                            {
+                                "kind": "NewLineTrivia",
+                                "text": "\n"
+                            }
+                        ]
+                    }
+                },
+                "_whileKeyword": {
+                    "kind": "WhileKeyword",
+                    "width": 0,
+                    "text": ""
+                },
+                "_openParenToken": {
+                    "kind": "OpenParenToken",
+                    "width": 0,
+                    "text": ""
+                },
+                "_condition": {
+                    "kind": "IdentifierName",
+                    "width": 0,
+                    "text": ""
+                },
+                "_closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "width": 0,
+                    "text": ""
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "fullWidth": 1,
+            "text": "",
+            "hasLeadingTrivia": true,
+            "hasLeadingNewLine": true,
+            "leadingTrivia": [
+                {
+                    "kind": "NewLineTrivia",
+                    "text": "\n"
+                }
+            ]
+        }
+    }
+}
