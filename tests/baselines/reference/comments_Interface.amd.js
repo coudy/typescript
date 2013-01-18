@@ -57,6 +57,7 @@ interface i2 {
     /** this is fnfoo*/
     fnfoo(/**param help*/ b: number): string;
     nc_fnfoo(b: number): string;
+    nc_y: number;
 }
 var i2_i: i2;
 var i2_i_x: number;

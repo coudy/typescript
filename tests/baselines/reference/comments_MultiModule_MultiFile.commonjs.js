@@ -2,7 +2,7 @@
 /** this is multi declare module*/
 var multiM;
 (function (multiM) {
-    /** class b*/
+    /// class b comment
     var b = (function () {
         function b() { }
         return b;
@@ -18,6 +18,12 @@ var multiM;
         return c;
     })();
     multiM.c = c;    
+    // class e comment
+    var e = (function () {
+        function e() { }
+        return e;
+    })();
+    multiM.e = e;    
 })(multiM || (multiM = {}));
 new multiM.b();
 new multiM.c();
@@ -31,12 +37,17 @@ var multiM;
         return d;
     })();
     multiM.d = d;    
+    /// class f comment
+    var f = (function () {
+        function f() { }
+        return f;
+    })();
+    multiM.f = f;    
 })(multiM || (multiM = {}));
 new multiM.d();
 ////[comments_MultiModule_MultiFile_0.d.ts]
 /** this is multi declare module*/
 module multiM {
-    /** class b*/
     class b {
     }
 }
@@ -45,11 +56,15 @@ module multiM {
     /** class c comment*/
     class c {
     }
+    class e {
+    }
 }
 ////[comments_MultiModule_MultiFile_1.d.ts]
 /** this is multi module 3 comment*/
 module multiM {
     /** class d comment*/
     class d {
+    }
+    class f {
     }
 }

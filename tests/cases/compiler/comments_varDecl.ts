@@ -8,6 +8,9 @@ var myVariable = 10;
 /** This is another variable comment*/
 var anotherVariable = 30;
 
+// shouldn't appear
+var aVar = "";
+
 /** this is multiline comment
   * All these variables are of number type */
 var anotherAnotherVariable = 70;
@@ -26,6 +29,11 @@ var n = 30;
 
 /** var deckaration with comment on type as well*/
 var y = /** value comment */ 20;
+
+/// var deckaration with comment on type as well
+var yy =
+    /// value comment
+    20;
 
 /** comment2 */
 var z = /** lambda comment */ (x: number, y: number) => x + y;

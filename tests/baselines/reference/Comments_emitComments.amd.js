@@ -54,7 +54,7 @@ var m1;
         return b;
     })();
     m1.b = b;    
-})(m1 || (m1 = {}));
+    })(m1 || (m1 = {}));
 ////[0.d.ts]
 /** Variable comments*/
 var myVariable: number;
@@ -101,5 +101,7 @@ module m1 {
     class b {
         public x: number;
         constructor(x: number);
+    }
+    module m2 {
     }
 }

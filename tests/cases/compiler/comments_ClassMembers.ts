@@ -79,6 +79,99 @@ class c1 {
     static set nc_s3(value: number) {
         c1.nc_s1 = c1.nc_s2(value);
     }
+
+    // p1 is property of c1
+    public a_p1: number;
+    // sum with property
+    public a_p2(b: number) {
+        return this.a_p1 + b;
+    }
+    // getter property
+    public get a_p3() {
+        return this.a_p2(this.a_p1);
+    }
+    // setter property
+    public set a_p3(value: number) {
+        this.a_p1 = this.a_p2(value);
+    }
+    // pp1 is property of c1
+    private a_pp1: number;
+    // sum with property
+    private a_pp2(b: number) {
+        return this.a_p1 + b;
+    }
+    // getter property
+    private get a_pp3() {
+        return this.a_pp2(this.a_pp1);
+    }
+    // setter property
+    private set a_pp3(value: number) {
+        this.a_pp1 = this.a_pp2(value);
+    }
+    
+    // s1 is static property of c1
+    static a_s1: number;
+    // static sum with property
+    static a_s2(b: number) {
+        return c1.a_s1 + b;
+    }
+    // static getter property
+    static get a_s3() {
+        return c1.s2(c1.s1);
+    }
+    
+    // setter property
+    static set a_s3(value: number) {
+        c1.a_s1 = c1.a_s2(value);
+    }
+
+    /** p1 is property of c1 */
+    public b_p1: number;
+    /** sum with property */
+    public b_p2(b: number) {
+        return this.b_p1 + b;
+    }
+    /** getter property */
+    public get b_p3() {
+        return this.b_p2(this.b_p1);
+    }
+    /** setter property */
+    public set b_p3(value: number) {
+        this.b_p1 = this.b_p2(value);
+    }
+    /** pp1 is property of c1 */
+    private b_pp1: number;
+    /** sum with property */
+    private b_pp2(b: number) {
+        return this.b_p1 + b;
+    }
+    /** getter property */
+    private get b_pp3() {
+        return this.b_pp2(this.b_pp1);
+    }
+    /** setter property */
+    private set b_pp3(value: number) {
+        this.b_pp1 = this.b_pp2(value);
+    }
+    
+    /** s1 is static property of c1 */
+    static b_s1: number;
+    /** static sum with property */
+    static b_s2(b: number) {
+        return c1.b_s1 + b;
+    }
+    /** static getter property 
+    */
+    static get b_s3() {
+        return c1.s2(c1.s1);
+    }
+    
+    /** setter property 
+    */
+    static set b_s3(value: number) {
+        /** setter */
+        c1.b_s1 = c1.b_s2(value);
+    }
 }
 var i1 = new c1();
 var i1_p = i1.p1;

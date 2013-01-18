@@ -5,6 +5,8 @@
 var myVariable = 10;
 /** This is another variable comment*/
 var anotherVariable = 30;
+// shouldn't appear
+var aVar = "";
 /** this is multiline comment
 * All these variables are of number type */
 var anotherAnotherVariable = 70;
@@ -19,6 +21,9 @@ x = myVariable;
 var n = 30;
 /** var deckaration with comment on type as well*/
 var y = /** value comment */ 20;
+/// var deckaration with comment on type as well
+var yy = /// value comment
+20;
 /** comment2 */
 var z = /** lambda comment */ function (x, y) {
     return x + y;
@@ -32,6 +37,7 @@ n4 = z2;
 var myVariable: number;
 /** This is another variable comment*/
 var anotherVariable: number;
+var aVar: string;
 /** this is multiline comment
 * All these variables are of number type */
 var anotherAnotherVariable: number;
@@ -44,6 +50,7 @@ var x: number;
 var n: number;
 /** var deckaration with comment on type as well*/
 var y: number;
+var yy: number;
 /** comment2 */
 var z: (x: number, y: number) => number;
 var z2: (x: number) => string;

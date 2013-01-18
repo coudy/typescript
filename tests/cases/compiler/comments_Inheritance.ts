@@ -10,6 +10,7 @@ interface i1 {
     i1_f1(): void;
     /** i1_l1*/
     i1_l1: () => void;
+    // il_nc_p1
     i1_nc_p1: number;
     i1_nc_f1(): void;
     i1_nc_l1: () => void;
@@ -22,6 +23,7 @@ interface i1 {
 }
 class c1 implements i1 {
     public i1_p1: number;
+    // i1_f1
     public i1_f1() {
     }
     public i1_l1: () => void;
@@ -118,6 +120,7 @@ interface i2 {
     i2_f1(): void;
     /** i2_l1*/
     i2_l1: () => void;
+    // i2_nc_p1
     i2_nc_p1: number;
     i2_nc_f1(): void;
     i2_nc_l1: () => void;
@@ -132,9 +135,11 @@ interface i2 {
     nc_l1: () => void;
 }
 interface i3 extends i2 {
-    /** i3 p1*/
+    /** i3 p1 */
     p1: number;
-    /** i3 f1*/
+    /**
+    * i3 f1
+    */
     f1(): void;
     /** i3 l1*/
     l1: () => void;

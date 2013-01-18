@@ -21,6 +21,22 @@ module m1 {
     export function fooExport() {
         return foo();
     }
+
+    // shouldn't appear
+    export function foo2Export(/**hm*/ a: string) {
+    }
+
+    /** foo3Export
+     * comment
+     */
+    export function foo3Export() {
+    }
+
+    /** foo4Export
+     * comment
+     */
+    function foo4Export() {
+    }
 }
 m1.fooExport();
 var myvar = new m1.m2.c();
@@ -70,6 +86,14 @@ module m7.m8 {
     export module m9 {
         /** Exported class comment*/
         export class c {
+        }
+
+        /** class d */
+        class d {
+        }
+
+        // class e
+        export class e {
         }
     }
 }
