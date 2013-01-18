@@ -385,7 +385,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
     public visitTypeParameterList(node: TypeParameterListSyntax): any {
         return node.update(
             this.visitToken(node.lessThanToken()),
-            this.visitSeparatedList(node.typeArguments()),
+            this.visitSeparatedList(node.typeParameters()),
             this.visitToken(node.greaterThanToken()));
     }
 

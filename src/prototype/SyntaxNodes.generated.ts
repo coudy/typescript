@@ -8239,17 +8239,17 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
 class TypeParameterListSyntax extends SyntaxNode {
     private _lessThanToken: ISyntaxToken;
-    private _typeArguments: ISeparatedSyntaxList;
+    private _typeParameters: ISeparatedSyntaxList;
     private _greaterThanToken: ISyntaxToken;
 
     constructor(lessThanToken: ISyntaxToken,
-                typeArguments: ISeparatedSyntaxList,
+                typeParameters: ISeparatedSyntaxList,
                 greaterThanToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
         this._lessThanToken = lessThanToken;
-        this._typeArguments = typeArguments;
+        this._typeParameters = typeParameters;
         this._greaterThanToken = greaterThanToken;
     }
 
@@ -8273,7 +8273,7 @@ class TypeParameterListSyntax extends SyntaxNode {
     public firstToken(): ISyntaxToken {
         var token = null;
         if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
-        if ((token = this._typeArguments.firstToken()) !== null) { return token; }
+        if ((token = this._typeParameters.firstToken()) !== null) { return token; }
         if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
         return null;
     }
@@ -8281,14 +8281,14 @@ class TypeParameterListSyntax extends SyntaxNode {
     public lastToken(): ISyntaxToken {
         var token = null;
         if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
-        if ((token = this._typeArguments.lastToken()) !== null) { return token; }
+        if ((token = this._typeParameters.lastToken()) !== null) { return token; }
         if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
         return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
         array.splice(index, 0, this._greaterThanToken);
-        this._typeArguments.insertChildrenInto(array, index);
+        this._typeParameters.insertChildrenInto(array, index);
         array.splice(index, 0, this._lessThanToken);
     }
 
@@ -8296,8 +8296,8 @@ class TypeParameterListSyntax extends SyntaxNode {
         return this._lessThanToken;
     }
 
-    public typeArguments(): ISeparatedSyntaxList {
-        return this._typeArguments;
+    public typeParameters(): ISeparatedSyntaxList {
+        return this._typeParameters;
     }
 
     public greaterThanToken(): ISyntaxToken {
@@ -8305,13 +8305,13 @@ class TypeParameterListSyntax extends SyntaxNode {
     }
 
     public update(lessThanToken: ISyntaxToken,
-                  typeArguments: ISeparatedSyntaxList,
+                  typeParameters: ISeparatedSyntaxList,
                   greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
-        if (this._lessThanToken === lessThanToken && this._typeArguments === typeArguments && this._greaterThanToken === greaterThanToken) {
+        if (this._lessThanToken === lessThanToken && this._typeParameters === typeParameters && this._greaterThanToken === greaterThanToken) {
             return this;
         }
 
-        return new TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ false);
+        return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeParameterListSyntax {
@@ -8323,24 +8323,24 @@ class TypeParameterListSyntax extends SyntaxNode {
     }
 
     public withLessThanToken(lessThanToken: ISyntaxToken): TypeParameterListSyntax {
-        return this.update(lessThanToken, this._typeArguments, this._greaterThanToken);
+        return this.update(lessThanToken, this._typeParameters, this._greaterThanToken);
     }
 
-    public withTypeArguments(typeArguments: ISeparatedSyntaxList): TypeParameterListSyntax {
-        return this.update(this._lessThanToken, typeArguments, this._greaterThanToken);
+    public withTypeParameters(typeParameters: ISeparatedSyntaxList): TypeParameterListSyntax {
+        return this.update(this._lessThanToken, typeParameters, this._greaterThanToken);
     }
 
-    public withTypeArgument(typeArgument: TypeParameterSyntax): TypeParameterListSyntax {
-        return this.withTypeArguments(Syntax.separatedList([typeArgument]));
+    public withTypeParameter(typeParameter: TypeParameterSyntax): TypeParameterListSyntax {
+        return this.withTypeParameters(Syntax.separatedList([typeParameter]));
     }
 
     public withGreaterThanToken(greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
-        return this.update(this._lessThanToken, this._typeArguments, greaterThanToken);
+        return this.update(this._lessThanToken, this._typeParameters, greaterThanToken);
     }
 
     private collectTextElements(elements: string[]): void {
         (<any>this._lessThanToken).collectTextElements(elements);
-        (<any>this._typeArguments).collectTextElements(elements);
+        (<any>this._typeParameters).collectTextElements(elements);
         (<any>this._greaterThanToken).collectTextElements(elements);
     }
 
@@ -8360,11 +8360,11 @@ class TypeParameterListSyntax extends SyntaxNode {
         hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
-        childWidth = this._typeArguments.fullWidth();
+        childWidth = this._typeParameters.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeArguments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeArguments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArguments.hasRegularExpressionToken();
+        hasSkippedText = hasSkippedText || this._typeParameters.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._typeParameters.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameters.hasRegularExpressionToken();
 
         childWidth = this._greaterThanToken.fullWidth();
         fullWidth += childWidth;
@@ -8386,8 +8386,8 @@ class TypeParameterListSyntax extends SyntaxNode {
         position -= childWidth;
         fullStart += childWidth;
 
-        childWidth = this._typeArguments.fullWidth();
-        if (position < childWidth) { return (<any>this._typeArguments).findTokenInternal(position, fullStart); }
+        childWidth = this._typeParameters.fullWidth();
+        if (position < childWidth) { return (<any>this._typeParameters).findTokenInternal(position, fullStart); }
         position -= childWidth;
         fullStart += childWidth;
 
@@ -8405,7 +8405,7 @@ class TypeParameterListSyntax extends SyntaxNode {
         if (this.kind() !== node.kind()) { return false; }
         var other = <TypeParameterListSyntax>node;
         if (!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._typeArguments, other._typeArguments)) { return false; }
+        if (!Syntax.separatedListStructuralEquals(this._typeParameters, other._typeParameters)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) { return false; }
         return true;
     }

@@ -333,7 +333,7 @@ class SyntaxWalker implements ISyntaxVisitor {
 
     public visitTypeParameterList(node: TypeParameterListSyntax): void {
         this.visitToken(node.lessThanToken());
-        this.visitSeparatedList(node.typeArguments());
+        this.visitSeparatedList(node.typeParameters());
         this.visitToken(node.greaterThanToken());
     }
 

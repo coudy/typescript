@@ -2517,7 +2517,7 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'typeArguments',
+                name: 'typeParameters',
                 isSeparatedList: true,
                 elementType: 'TypeParameterSyntax'
             }, 

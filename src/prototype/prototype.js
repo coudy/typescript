@@ -175,7 +175,7 @@ var SyntaxRewriter = (function () {
         return node.update(node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
     };
     SyntaxRewriter.prototype.visitTypeParameterList = function (node) {
-        return node.update(this.visitToken(node.lessThanToken()), this.visitSeparatedList(node.typeArguments()), this.visitToken(node.greaterThanToken()));
+        return node.update(this.visitToken(node.lessThanToken()), this.visitSeparatedList(node.typeParameters()), this.visitToken(node.greaterThanToken()));
     };
     SyntaxRewriter.prototype.visitTypeParameter = function (node) {
         return node.update(this.visitToken(node.identifier()), node.constraint() === null ? null : this.visitNode(node.constraint()));
@@ -8579,8 +8579,8 @@ var Syntax;
         NormalModeFactory.prototype.callSignature = function (typeParameterList, parameterList, typeAnnotation) {
             return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, false);
         };
-        NormalModeFactory.prototype.typeParameterList = function (lessThanToken, typeArguments, greaterThanToken) {
-            return new TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, false);
+        NormalModeFactory.prototype.typeParameterList = function (lessThanToken, typeParameters, greaterThanToken) {
+            return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, false);
         };
         NormalModeFactory.prototype.typeParameter = function (identifier, constraint) {
             return new TypeParameterSyntax(identifier, constraint, false);
@@ -8859,8 +8859,8 @@ var Syntax;
         StrictModeFactory.prototype.callSignature = function (typeParameterList, parameterList, typeAnnotation) {
             return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, true);
         };
-        StrictModeFactory.prototype.typeParameterList = function (lessThanToken, typeArguments, greaterThanToken) {
-            return new TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, true);
+        StrictModeFactory.prototype.typeParameterList = function (lessThanToken, typeParameters, greaterThanToken) {
+            return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, true);
         };
         StrictModeFactory.prototype.typeParameter = function (identifier, constraint) {
             return new TypeParameterSyntax(identifier, constraint, true);
@@ -17268,10 +17268,10 @@ var CallSignatureSyntax = (function (_super) {
 })(TypeMemberSyntax);
 var TypeParameterListSyntax = (function (_super) {
     __extends(TypeParameterListSyntax, _super);
-    function TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, parsedInStrictMode) {
+    function TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this._lessThanToken = lessThanToken;
-        this._typeArguments = typeArguments;
+        this._typeParameters = typeParameters;
         this._greaterThanToken = greaterThanToken;
     }
     TypeParameterListSyntax.create = function create(lessThanToken, greaterThanToken) {
@@ -17291,7 +17291,7 @@ var TypeParameterListSyntax = (function (_super) {
         if(this._lessThanToken.width() > 0) {
             return this._lessThanToken;
         }
-        if((token = this._typeArguments.firstToken()) !== null) {
+        if((token = this._typeParameters.firstToken()) !== null) {
             return token;
         }
         if(this._greaterThanToken.width() > 0) {
@@ -17304,7 +17304,7 @@ var TypeParameterListSyntax = (function (_super) {
         if(this._greaterThanToken.width() > 0) {
             return this._greaterThanToken;
         }
-        if((token = this._typeArguments.lastToken()) !== null) {
+        if((token = this._typeParameters.lastToken()) !== null) {
             return token;
         }
         if(this._lessThanToken.width() > 0) {
@@ -17314,23 +17314,23 @@ var TypeParameterListSyntax = (function (_super) {
     };
     TypeParameterListSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._greaterThanToken);
-        this._typeArguments.insertChildrenInto(array, index);
+        this._typeParameters.insertChildrenInto(array, index);
         array.splice(index, 0, this._lessThanToken);
     };
     TypeParameterListSyntax.prototype.lessThanToken = function () {
         return this._lessThanToken;
     };
-    TypeParameterListSyntax.prototype.typeArguments = function () {
-        return this._typeArguments;
+    TypeParameterListSyntax.prototype.typeParameters = function () {
+        return this._typeParameters;
     };
     TypeParameterListSyntax.prototype.greaterThanToken = function () {
         return this._greaterThanToken;
     };
-    TypeParameterListSyntax.prototype.update = function (lessThanToken, typeArguments, greaterThanToken) {
-        if(this._lessThanToken === lessThanToken && this._typeArguments === typeArguments && this._greaterThanToken === greaterThanToken) {
+    TypeParameterListSyntax.prototype.update = function (lessThanToken, typeParameters, greaterThanToken) {
+        if(this._lessThanToken === lessThanToken && this._typeParameters === typeParameters && this._greaterThanToken === greaterThanToken) {
             return this;
         }
-        return new TypeParameterListSyntax(lessThanToken, typeArguments, greaterThanToken, false);
+        return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, false);
     };
     TypeParameterListSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -17339,22 +17339,22 @@ var TypeParameterListSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     TypeParameterListSyntax.prototype.withLessThanToken = function (lessThanToken) {
-        return this.update(lessThanToken, this._typeArguments, this._greaterThanToken);
+        return this.update(lessThanToken, this._typeParameters, this._greaterThanToken);
     };
-    TypeParameterListSyntax.prototype.withTypeArguments = function (typeArguments) {
-        return this.update(this._lessThanToken, typeArguments, this._greaterThanToken);
+    TypeParameterListSyntax.prototype.withTypeParameters = function (typeParameters) {
+        return this.update(this._lessThanToken, typeParameters, this._greaterThanToken);
     };
-    TypeParameterListSyntax.prototype.withTypeArgument = function (typeArgument) {
-        return this.withTypeArguments(Syntax.separatedList([
-            typeArgument
+    TypeParameterListSyntax.prototype.withTypeParameter = function (typeParameter) {
+        return this.withTypeParameters(Syntax.separatedList([
+            typeParameter
         ]));
     };
     TypeParameterListSyntax.prototype.withGreaterThanToken = function (greaterThanToken) {
-        return this.update(this._lessThanToken, this._typeArguments, greaterThanToken);
+        return this.update(this._lessThanToken, this._typeParameters, greaterThanToken);
     };
     TypeParameterListSyntax.prototype.collectTextElements = function (elements) {
         (this._lessThanToken).collectTextElements(elements);
-        (this._typeArguments).collectTextElements(elements);
+        (this._typeParameters).collectTextElements(elements);
         (this._greaterThanToken).collectTextElements(elements);
     };
     TypeParameterListSyntax.prototype.isTypeScriptSpecific = function () {
@@ -17370,11 +17370,11 @@ var TypeParameterListSyntax = (function (_super) {
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
         hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._typeArguments.fullWidth();
+        childWidth = this._typeParameters.fullWidth();
         fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeArguments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeArguments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArguments.hasRegularExpressionToken();
+        hasSkippedText = hasSkippedText || this._typeParameters.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._typeParameters.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameters.hasRegularExpressionToken();
         childWidth = this._greaterThanToken.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
@@ -17393,9 +17393,9 @@ var TypeParameterListSyntax = (function (_super) {
         }
         position -= childWidth;
         fullStart += childWidth;
-        childWidth = this._typeArguments.fullWidth();
+        childWidth = this._typeParameters.fullWidth();
         if(position < childWidth) {
-            return (this._typeArguments).findTokenInternal(position, fullStart);
+            return (this._typeParameters).findTokenInternal(position, fullStart);
         }
         position -= childWidth;
         fullStart += childWidth;
@@ -17424,7 +17424,7 @@ var TypeParameterListSyntax = (function (_super) {
         if(!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) {
             return false;
         }
-        if(!Syntax.separatedListStructuralEquals(this._typeArguments, other._typeArguments)) {
+        if(!Syntax.separatedListStructuralEquals(this._typeParameters, other._typeParameters)) {
             return false;
         }
         if(!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) {
@@ -26195,7 +26195,7 @@ var SyntaxWalker = (function () {
     };
     SyntaxWalker.prototype.visitTypeParameterList = function (node) {
         this.visitToken(node.lessThanToken());
-        this.visitSeparatedList(node.typeArguments());
+        this.visitSeparatedList(node.typeParameters());
         this.visitToken(node.greaterThanToken());
     };
     SyntaxWalker.prototype.visitTypeParameter = function (node) {

@@ -531,7 +531,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'lessThanToken', isToken: true },
-            <any>{ name: 'typeArguments', isSeparatedList: true, elementType: 'TypeParameterSyntax' },
+            <any>{ name: 'typeParameters', isSeparatedList: true, elementType: 'TypeParameterSyntax' },
             <any>{ name: 'greaterThanToken', isToken: true }
         ],
         isTypeScriptSpecific: true
