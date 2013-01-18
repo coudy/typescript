@@ -3381,56 +3381,50 @@ module Parser {
             var token0 = this.currentToken();
 
             // Only merge if we have a '>' token with no trailing trivia.
-            if (token0.tokenKind !== SyntaxKind.GreaterThanToken || token0.hasTrailingTrivia()) {
-                return null;
-            }
+            if (token0.tokenKind === SyntaxKind.GreaterThanToken && !token0.hasTrailingTrivia()) {
+                var storage = this.mergeTokensStorage;
+                storage[0] = SyntaxKind.None;
+                storage[1] = SyntaxKind.None;
+                storage[2] = SyntaxKind.None;
 
-            var storage = this.mergeTokensStorage;
-            storage[0] = SyntaxKind.None;
-            storage[1] = SyntaxKind.None;
-            storage[2] = SyntaxKind.None;
+                for (var i = 0; i < storage.length; i++) {
+                    var nextToken = this.peekToken(i + 1);
 
-            Debug.assert(storage.length === 3);
-            
-            for (var i = 0; i < storage.length; i++) {
-                var nextToken = this.peekToken(i + 1);
+                    // We can merge with the next token if it doesn't have any leading trivia.
+                    if (!nextToken.hasLeadingTrivia()) {
+                        storage[i] = nextToken.tokenKind;
+                    }
 
-                // We can merge with the next token if it doesn't have any leading trivia.
-                if (!nextToken.hasLeadingTrivia()) {
-                    storage[i] = nextToken.tokenKind;
+                    // Stop merging additional tokens if this token has any trailing trivia.
+                    if (nextToken.hasTrailingTrivia()) {
+                        break;
+                    }
                 }
 
-                // Stop merging additional tokens if this token has any trailing trivia.
-                if (nextToken.hasTrailingTrivia()) {
-                    break;
-                }
-            }
-
-            Debug.assert(storage.length === 3);
-
-            if (storage[0] === SyntaxKind.GreaterThanToken) {
-                if (storage[1] === SyntaxKind.GreaterThanToken) {
-                    if (storage[2] === SyntaxKind.EqualsToken) {
-                        // >>>=
-                        return { tokenCount: 4, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
+                if (storage[0] === SyntaxKind.GreaterThanToken) {
+                    if (storage[1] === SyntaxKind.GreaterThanToken) {
+                        if (storage[2] === SyntaxKind.EqualsToken) {
+                            // >>>=
+                            return { tokenCount: 4, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken };
+                        }
+                        else {
+                            // >>>
+                            return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
+                        }
+                    }
+                    else if (storage[1] === SyntaxKind.EqualsToken) {
+                        // >>=
+                        return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
                     }
                     else {
-                        // >>>
-                        return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanGreaterThanToken };
+                        // >>
+                        return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
                     }
                 }
-                else if (storage[1] === SyntaxKind.EqualsToken) {
-                    // >>=
-                    return { tokenCount: 3, syntaxKind: SyntaxKind.GreaterThanGreaterThanEqualsToken };
+                else if (storage[0] === SyntaxKind.EqualsToken) {
+                    // >=
+                    return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanEqualsToken };
                 }
-                else {
-                    // >>
-                    return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanGreaterThanToken };
-                }
-            }
-            else if (storage[0] === SyntaxKind.EqualsToken) {
-                // >=
-                return { tokenCount: 2, syntaxKind: SyntaxKind.GreaterThanEqualsToken };
             }
 
             // Just use the normal logic as we're not merging the '>' with anything.

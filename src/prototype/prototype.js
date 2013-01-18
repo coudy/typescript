@@ -29554,56 +29554,53 @@ var Parser;
         };
         ParserImpl.prototype.tryMergeBinaryExpressionTokens = function () {
             var token0 = this.currentToken();
-            if(token0.tokenKind !== 81 /* GreaterThanToken */  || token0.hasTrailingTrivia()) {
-                return null;
-            }
-            var storage = this.mergeTokensStorage;
-            storage[0] = 0 /* None */ ;
-            storage[1] = 0 /* None */ ;
-            storage[2] = 0 /* None */ ;
-            Debug.assert(storage.length === 3);
-            for(var i = 0; i < storage.length; i++) {
-                var nextToken = this.peekToken(i + 1);
-                if(!nextToken.hasLeadingTrivia()) {
-                    storage[i] = nextToken.tokenKind;
+            if(token0.tokenKind === 81 /* GreaterThanToken */  && !token0.hasTrailingTrivia()) {
+                var storage = this.mergeTokensStorage;
+                storage[0] = 0 /* None */ ;
+                storage[1] = 0 /* None */ ;
+                storage[2] = 0 /* None */ ;
+                for(var i = 0; i < storage.length; i++) {
+                    var nextToken = this.peekToken(i + 1);
+                    if(!nextToken.hasLeadingTrivia()) {
+                        storage[i] = nextToken.tokenKind;
+                    }
+                    if(nextToken.hasTrailingTrivia()) {
+                        break;
+                    }
                 }
-                if(nextToken.hasTrailingTrivia()) {
-                    break;
-                }
-            }
-            Debug.assert(storage.length === 3);
-            if(storage[0] === 81 /* GreaterThanToken */ ) {
-                if(storage[1] === 81 /* GreaterThanToken */ ) {
-                    if(storage[2] === 107 /* EqualsToken */ ) {
-                        return {
-                            tokenCount: 4,
-                            syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
-                        };
+                if(storage[0] === 81 /* GreaterThanToken */ ) {
+                    if(storage[1] === 81 /* GreaterThanToken */ ) {
+                        if(storage[2] === 107 /* EqualsToken */ ) {
+                            return {
+                                tokenCount: 4,
+                                syntaxKind: 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ 
+                            };
+                        } else {
+                            return {
+                                tokenCount: 3,
+                                syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
+                            };
+                        }
                     } else {
-                        return {
-                            tokenCount: 3,
-                            syntaxKind: 97 /* GreaterThanGreaterThanGreaterThanToken */ 
-                        };
+                        if(storage[1] === 107 /* EqualsToken */ ) {
+                            return {
+                                tokenCount: 3,
+                                syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
+                            };
+                        } else {
+                            return {
+                                tokenCount: 2,
+                                syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
+                            };
+                        }
                     }
                 } else {
-                    if(storage[1] === 107 /* EqualsToken */ ) {
-                        return {
-                            tokenCount: 3,
-                            syntaxKind: 113 /* GreaterThanGreaterThanEqualsToken */ 
-                        };
-                    } else {
+                    if(storage[0] === 107 /* EqualsToken */ ) {
                         return {
                             tokenCount: 2,
-                            syntaxKind: 96 /* GreaterThanGreaterThanToken */ 
+                            syntaxKind: 83 /* GreaterThanEqualsToken */ 
                         };
                     }
-                }
-            } else {
-                if(storage[0] === 107 /* EqualsToken */ ) {
-                    return {
-                        tokenCount: 2,
-                        syntaxKind: 83 /* GreaterThanEqualsToken */ 
-                    };
                 }
             }
             return null;
