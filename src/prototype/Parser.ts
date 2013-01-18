@@ -154,6 +154,7 @@ module Parser {
         ArrayLiteralExpression_AssignmentExpressions = 1 << 14,
         ParameterList_Parameters = 1 << 15,
         TypeArgumentList_Types = 1 << 16,
+        TypeParameterList_TypeParameters = 1 << 17,
 
         FirstListParsingState = SourceUnit_ModuleElements,
         LastListParsingState = TypeArgumentList_Types,
@@ -2411,7 +2412,8 @@ module Parser {
         }
 
         private isCallSignature(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
+            var tokenKind = this.currentToken().tokenKind;
+            return tokenKind === SyntaxKind.OpenParenToken || tokenKind == SyntaxKind.LessThanToken;
         }
 
         private isConstructSignature(): bool {
@@ -4073,10 +4075,46 @@ module Parser {
         }
 
         private parseCallSignature(): CallSignatureSyntax {
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
-            return this.factory.callSignature(null, parameterList, typeAnnotation);
+            return this.factory.callSignature(typeParameterList, parameterList, typeAnnotation);
+        }
+
+        private parseOptionalTypeParameterList(): TypeParameterListSyntax {
+            if (this.currentToken().tokenKind !== SyntaxKind.LessThanToken) {
+                return null;
+            }
+
+            var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+            var typeParameterList = this.parseSeparatedSyntaxList(ListParsingState.TypeParameterList_TypeParameters);
+            var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+
+            return this.factory.typeParameterList(lessThanToken, typeParameterList, greaterThanToken);
+        }
+
+        private isTypeParameter(): bool {
+            return this.isIdentifier(this.currentToken());
+        }
+        
+        private parseTypeParameter(): TypeParameterSyntax {
+            // Debug.assert(this.isTypeParameter());
+            var identifier = this.eatIdentifierToken();
+            var constraint = this.parseOptionalConstraint();
+
+            return this.factory.typeParameter(identifier, constraint);
+        }
+
+        private parseOptionalConstraint(): ConstraintSyntax {
+            if (this.currentToken().kind() !== SyntaxKind.ExtendsKeyword) {
+                return null;
+            }
+
+            var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
+            var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
+
+            return this.factory.constraint(extendsKeyword, type);
         }
 
         private parseParameterList(): ParameterListSyntax {
@@ -4537,6 +4575,7 @@ module Parser {
                 case ListParsingState.ParameterList_Parameters:
                     // TODO: It would be great to allow trailing separators for parameters.
                 case ListParsingState.TypeArgumentList_Types:
+                case ListParsingState.TypeParameterList_TypeParameters:
                     return false;
 
                 case ListParsingState.SourceUnit_ModuleElements:
@@ -4556,6 +4595,7 @@ module Parser {
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 case ListParsingState.TypeArgumentList_Types:
+                case ListParsingState.TypeParameterList_TypeParameters:
                     return true;
 
                 case ListParsingState.ObjectType_TypeMembers:
@@ -4591,6 +4631,7 @@ module Parser {
                 case ListParsingState.ParameterList_Parameters:
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                 case ListParsingState.TypeArgumentList_Types:
+                case ListParsingState.TypeParameterList_TypeParameters:
                     return false;
 
                 case ListParsingState.SourceUnit_ModuleElements:
@@ -4615,6 +4656,7 @@ module Parser {
                 case ListParsingState.ParameterList_Parameters:
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                 case ListParsingState.TypeArgumentList_Types:
+                case ListParsingState.TypeParameterList_TypeParameters:
                     return SyntaxKind.CommaToken;
 
                 case ListParsingState.ObjectType_TypeMembers:
@@ -4696,6 +4738,9 @@ module Parser {
                 case ListParsingState.TypeArgumentList_Types:
                     return this.isExpectedTypeArgumentList_TypesTerminator();
 
+                case ListParsingState.TypeParameterList_TypeParameters:
+                    return this.isExpectedTypeParameterList_TypeParametersTerminator();
+
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
 
@@ -4737,6 +4782,24 @@ module Parser {
             // If we're at a token that can follow the type argument list, then we'll also consider
             // the list terminated.
             if (this.canFollowTypeArgumentListInExpression(token.tokenKind)) {
+                return true;
+            }
+
+            // TODO: add more cases as necessary for error tolerance.
+            return false;
+        }
+
+        private isExpectedTypeParameterList_TypeParametersTerminator(): bool {
+            var token = this.currentToken();
+            if (token.tokenKind === SyntaxKind.GreaterThanToken) {
+                return true;
+            }
+
+            // These commonly follow type parameter lists.
+            if (token.tokenKind === SyntaxKind.OpenParenToken ||
+                token.tokenKind === SyntaxKind.OpenBraceToken ||
+                token.tokenKind === SyntaxKind.ExtendsKeyword ||
+                token.tokenKind === SyntaxKind.ImplementsKeyword) {
                 return true;
             }
 
@@ -4899,6 +4962,9 @@ module Parser {
                 case ListParsingState.TypeArgumentList_Types:
                     return this.isType(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true);
 
+                case ListParsingState.TypeParameterList_TypeParameters:
+                    return this.isTypeParameter();
+
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.isAssignmentOrOmittedExpression();
 
@@ -4957,6 +5023,9 @@ module Parser {
                 case ListParsingState.TypeArgumentList_Types:
                     return this.parseType(/*requireCompleteArraySuffix:*/ false);
 
+                case ListParsingState.TypeParameterList_TypeParameters:
+                    return this.parseTypeParameter();
+
                 default:
                     throw Errors.invalidOperation();
             }
@@ -5004,6 +5073,9 @@ module Parser {
 
                 case ListParsingState.TypeArgumentList_Types:
                     return Strings.type;
+
+                case ListParsingState.TypeParameterList_TypeParameters:
+                    return Strings.type_parameter;
 
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return Strings.expression;

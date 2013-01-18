@@ -27661,6 +27661,7 @@ var Strings = (function () {
     Strings.property_or_accessor = "property or accessor";
     Strings.parameter = "parameter";
     Strings.type = "type";
+    Strings.type_parameter = "type parameter";
     return Strings;
 })();
 var SyntaxTree = (function () {
@@ -27765,6 +27766,7 @@ var Parser;
         ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 14;
         ListParsingState.ParameterList_Parameters = 1 << 15;
         ListParsingState.TypeArgumentList_Types = 1 << 16;
+        ListParsingState.TypeParameterList_TypeParameters = 1 << 17;
         ListParsingState.FirstListParsingState = ListParsingState.SourceUnit_ModuleElements;
         ListParsingState.LastListParsingState = ListParsingState.TypeArgumentList_Types;
     })(ListParsingState || (ListParsingState = {}));
@@ -29041,7 +29043,8 @@ var Parser;
             return this.factory.propertySignature(identifier, questionToken, typeAnnotation);
         };
         ParserImpl.prototype.isCallSignature = function () {
-            return this.currentToken().tokenKind === 72 /* OpenParenToken */ ;
+            var tokenKind = this.currentToken().tokenKind;
+            return tokenKind === 72 /* OpenParenToken */  || tokenKind == 80 /* LessThanToken */ ;
         };
         ParserImpl.prototype.isConstructSignature = function () {
             return this.currentToken().tokenKind === 31 /* NewKeyword */ ;
@@ -30134,9 +30137,35 @@ var Parser;
             return this.factory.block(openBraceToken, statements, closeBraceToken);
         };
         ParserImpl.prototype.parseCallSignature = function () {
+            var typeParameterList = this.parseOptionalTypeParameterList();
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation();
-            return this.factory.callSignature(null, parameterList, typeAnnotation);
+            return this.factory.callSignature(typeParameterList, parameterList, typeAnnotation);
+        };
+        ParserImpl.prototype.parseOptionalTypeParameterList = function () {
+            if(this.currentToken().tokenKind !== 80 /* LessThanToken */ ) {
+                return null;
+            }
+            var lessThanToken = this.eatToken(80 /* LessThanToken */ );
+            var typeParameterList = this.parseSeparatedSyntaxList(131072 /* TypeParameterList_TypeParameters */ );
+            var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
+            return this.factory.typeParameterList(lessThanToken, typeParameterList, greaterThanToken);
+        };
+        ParserImpl.prototype.isTypeParameter = function () {
+            return this.isIdentifier(this.currentToken());
+        };
+        ParserImpl.prototype.parseTypeParameter = function () {
+            var identifier = this.eatIdentifierToken();
+            var constraint = this.parseOptionalConstraint();
+            return this.factory.typeParameter(identifier, constraint);
+        };
+        ParserImpl.prototype.parseOptionalConstraint = function () {
+            if(this.currentToken().kind() !== 48 /* ExtendsKeyword */ ) {
+                return null;
+            }
+            var extendsKeyword = this.eatKeyword(48 /* ExtendsKeyword */ );
+            var type = this.parseType(false);
+            return this.factory.constraint(extendsKeyword, type);
         };
         ParserImpl.prototype.parseParameterList = function () {
             var openParenToken = this.eatToken(72 /* OpenParenToken */ );
@@ -30410,7 +30439,8 @@ var Parser;
                 case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                 case 32768 /* ParameterList_Parameters */ :
-                case 65536 /* TypeArgumentList_Types */ : {
+                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeParameterList_TypeParameters */ : {
                     return false;
 
                 }
@@ -30431,7 +30461,8 @@ var Parser;
                 case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                 case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
-                case 65536 /* TypeArgumentList_Types */ : {
+                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeParameterList_TypeParameters */ : {
                     return true;
 
                 }
@@ -30470,7 +30501,8 @@ var Parser;
                 case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
                 case 32768 /* ParameterList_Parameters */ :
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                case 65536 /* TypeArgumentList_Types */ : {
+                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeParameterList_TypeParameters */ : {
                     return false;
 
                 }
@@ -30496,7 +30528,8 @@ var Parser;
                 case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
                 case 32768 /* ParameterList_Parameters */ :
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                case 65536 /* TypeArgumentList_Types */ : {
+                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeParameterList_TypeParameters */ : {
                     return 79 /* CommaToken */ ;
 
                 }
@@ -30591,6 +30624,10 @@ var Parser;
                     return this.isExpectedTypeArgumentList_TypesTerminator();
 
                 }
+                case 131072 /* TypeParameterList_TypeParameters */ : {
+                    return this.isExpectedTypeParameterList_TypeParametersTerminator();
+
+                }
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                     return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
 
@@ -30625,6 +30662,16 @@ var Parser;
                 return true;
             }
             if(this.canFollowTypeArgumentListInExpression(token.tokenKind)) {
+                return true;
+            }
+            return false;
+        };
+        ParserImpl.prototype.isExpectedTypeParameterList_TypeParametersTerminator = function () {
+            var token = this.currentToken();
+            if(token.tokenKind === 81 /* GreaterThanToken */ ) {
+                return true;
+            }
+            if(token.tokenKind === 72 /* OpenParenToken */  || token.tokenKind === 70 /* OpenBraceToken */  || token.tokenKind === 48 /* ExtendsKeyword */  || token.tokenKind === 51 /* ImplementsKeyword */ ) {
                 return true;
             }
             return false;
@@ -30752,6 +30799,10 @@ var Parser;
                     return this.isType(true, true);
 
                 }
+                case 131072 /* TypeParameterList_TypeParameters */ : {
+                    return this.isTypeParameter();
+
+                }
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {
                     return this.isAssignmentOrOmittedExpression();
 
@@ -30828,6 +30879,10 @@ var Parser;
                     return this.parseType(false);
 
                 }
+                case 131072 /* TypeParameterList_TypeParameters */ : {
+                    return this.parseTypeParameter();
+
+                }
                 default: {
                     throw Errors.invalidOperation();
 
@@ -30888,6 +30943,10 @@ var Parser;
                 }
                 case 65536 /* TypeArgumentList_Types */ : {
                     return Strings.type;
+
+                }
+                case 131072 /* TypeParameterList_TypeParameters */ : {
+                    return Strings.type_parameter;
 
                 }
                 case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ : {

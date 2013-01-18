@@ -11,4 +11,5 @@ class Strings {
     public static property_or_accessor: string = "property or accessor";
     public static parameter: string = "parameter";
     public static type: string = "type";
+    public static type_parameter: string = "type parameter";
 }
