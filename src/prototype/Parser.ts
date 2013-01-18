@@ -1032,6 +1032,7 @@ module Parser {
             //  b) it does not contain skipped text.
             //  c) it is not zero width.
             //  d) it is not a regex token.
+            //  e) it is not a parser generated token.
             //
             // NOTE: It is safe to get a token regardless of what our strict context was/is.  That's 
             // because the strict context doesn't change what tokens are scanned, only how the 
@@ -1042,7 +1043,8 @@ module Parser {
                     // Didn't intersect with the change range.
                     if (!token.hasSkippedText() &&
                         token.width() > 0 &&
-                        !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind)) {
+                        !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind) &&
+                        !SyntaxFacts.isParserGenerated(token.tokenKind)) {
 
                         // Didn't contain anything that would make it unusable.  Awesome.  This is
                         // a token we can reuse.
@@ -1802,6 +1804,19 @@ module Parser {
                 return null;
             }
 
+            if (!inExpression) {
+                // if we're not in an expression, this must be a type argument list.  Just parse
+                // it out as such.
+                var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+                var typeArguments = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+
+                return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
+            }
+
+            // If we're in an expression, then we only want to consume this as a type argument list
+            // if we're sure that it's a type arg list and not an arithmetic expression.
+
             var rewindPoint = this.getRewindPoint();
             try {
                 // We've seen a '<'.  Try to parse it out as a type argument list.
@@ -1809,14 +1824,12 @@ module Parser {
                 var typeArguments = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
                 var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
 
-                if (inExpression) {
-                    // We're in a context where '<' could be the start of a type argument list, or part
-                    // of an arithmetic expression.  We'll presume it's the latter unless we see the '>'
-                    // and a following token that guarantees that it's supposed to be a type argument list.
-                    if (greaterThanToken.fullWidth() === 0 || !this.canFollowTypeArgumentListInExpression(this.currentToken().kind())) {
-                        this.rewind(rewindPoint);
-                        return null;
-                    }
+                // We're in a context where '<' could be the start of a type argument list, or part
+                // of an arithmetic expression.  We'll presume it's the latter unless we see the '>'
+                // and a following token that guarantees that it's supposed to be a type argument list.
+                if (greaterThanToken.fullWidth() === 0 || !this.canFollowTypeArgumentListInExpression(this.currentToken().kind())) {
+                    this.rewind(rewindPoint);
+                    return null;
                 }
 
                 return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);

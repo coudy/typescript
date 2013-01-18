@@ -342,6 +342,19 @@ module SyntaxFacts {
         }
     }
 
+    export function isParserGenerated(kind: SyntaxKind): bool {
+        switch (kind) {
+            case SyntaxKind.GreaterThanGreaterThanToken:
+            case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
+            case SyntaxKind.GreaterThanEqualsToken:
+            case SyntaxKind.GreaterThanGreaterThanEqualsToken:
+            case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     // An identifier name is basically any word, even if that work is a reserved keyword.  so 
     // both 'foo' and 'return' are identifier names.
     export function isIdentifierName(kind: SyntaxKind): bool {

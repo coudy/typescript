@@ -363,27 +363,27 @@ class IncrementalParserTests {
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
     }
 
-    //public static testGenerics7() {
-    //    var source = "var v = T>>=2;";
+    public static testGenerics7() {
+        var source = "var v = T>>=2;";
 
-    //    var index = source.indexOf('=');
+        var index = source.indexOf('=');
 
-    //    var oldText = TextFactory.create(source);
-    //    var newTextAndChange = IncrementalParserTests.withChange(oldText, index, "= ".length, ": Foo<Bar<");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, "= ".length, ": Foo<Bar<");
 
-    //    // Note the decreased reuse of nodes compared to testStrictMode3
-    //    IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 2);
-    //}
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+    }
 
-    //public static testGenerics8() {
-    //    var source = "var v : Foo<Bar<T>>=2;";
+    public static testGenerics8() {
+        var source = "var v : Foo<Bar<T>>=2;";
 
-    //    var index = source.indexOf(':');
+        var index = source.indexOf(':');
 
-    //    var oldText = TextFactory.create(source);
-    //    var newTextAndChange = IncrementalParserTests.withChange(oldText, index, ": Foo<Bar<".length, "= ");
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, ": Foo<Bar<".length, "= ");
 
-    //    // Note the decreased reuse of nodes compared to testStrictMode3
-    //    IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 2);
-    //}
+        // Note the decreased reuse of nodes compared to testStrictMode3
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+    }
 }

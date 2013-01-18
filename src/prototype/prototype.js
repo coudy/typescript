@@ -1434,6 +1434,23 @@ var SyntaxFacts;
         }
     }
     SyntaxFacts.isAnyDivideOrRegularExpressionToken = isAnyDivideOrRegularExpressionToken;
+    function isParserGenerated(kind) {
+        switch(kind) {
+            case 96 /* GreaterThanGreaterThanToken */ :
+            case 97 /* GreaterThanGreaterThanGreaterThanToken */ :
+            case 83 /* GreaterThanEqualsToken */ :
+            case 113 /* GreaterThanGreaterThanEqualsToken */ :
+            case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */ : {
+                return true;
+
+            }
+            default: {
+                return false;
+
+            }
+        }
+    }
+    SyntaxFacts.isParserGenerated = isParserGenerated;
     function isIdentifierName(kind) {
         return kind === 11 /* IdentifierName */  || isAnyKeyword(kind);
     }
@@ -27991,7 +28008,7 @@ var Parser;
         IncrementalParserSource.prototype.canReuseTokenFromOldSourceUnit = function (position, token) {
             if(token !== null) {
                 if(!this.intersectsWithChangeRangeSpanInOriginalText(position, token.fullWidth())) {
-                    if(!token.hasSkippedText() && token.width() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind)) {
+                    if(!token.hasSkippedText() && token.width() > 0 && !SyntaxFacts.isAnyDivideOrRegularExpressionToken(token.tokenKind) && !SyntaxFacts.isParserGenerated(token.tokenKind)) {
                         return true;
                     }
                 }
@@ -28494,16 +28511,20 @@ var Parser;
             if(this.currentToken().kind() !== 80 /* LessThanToken */ ) {
                 return null;
             }
+            if(!inExpression) {
+                var lessThanToken = this.eatToken(80 /* LessThanToken */ );
+                var typeArguments = this.parseSeparatedSyntaxList(65536 /* TypeArgumentList_Types */ );
+                var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
+                return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
+            }
             var rewindPoint = this.getRewindPoint();
             try  {
                 var lessThanToken = this.eatToken(80 /* LessThanToken */ );
                 var typeArguments = this.parseSeparatedSyntaxList(65536 /* TypeArgumentList_Types */ );
                 var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
-                if(inExpression) {
-                    if(greaterThanToken.fullWidth() === 0 || !this.canFollowTypeArgumentListInExpression(this.currentToken().kind())) {
-                        this.rewind(rewindPoint);
-                        return null;
-                    }
+                if(greaterThanToken.fullWidth() === 0 || !this.canFollowTypeArgumentListInExpression(this.currentToken().kind())) {
+                    this.rewind(rewindPoint);
+                    return null;
                 }
                 return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
             }finally {
@@ -33432,6 +33453,20 @@ var IncrementalParserTests = (function () {
         var oldText = TextFactory.create(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, "Foo<Bar<".length);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
+    }
+    IncrementalParserTests.testGenerics7 = function testGenerics7() {
+        var source = "var v = T>>=2;";
+        var index = source.indexOf('=');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, "= ".length, ": Foo<Bar<");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
+    }
+    IncrementalParserTests.testGenerics8 = function testGenerics8() {
+        var source = "var v : Foo<Bar<T>>=2;";
+        var index = source.indexOf(':');
+        var oldText = TextFactory.create(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, ": Foo<Bar<".length, "= ");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
     }
     return IncrementalParserTests;
 })();
