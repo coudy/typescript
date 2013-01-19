@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /** This comment should appear for foo*/
 function foo() {
 }

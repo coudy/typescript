@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /** This is comment for c1*/
 var c1 = (function () {
     /** Constructor method*/

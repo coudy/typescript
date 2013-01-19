@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /** this is multi declare module*/
 var multiM;
 (function (multiM) {

@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /** Module comment*/
 var m1;
 (function (m1) {

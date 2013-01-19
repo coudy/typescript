@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /** This is class c2 without constuctor*/
 var c2 = (function () {
     function c2() { }

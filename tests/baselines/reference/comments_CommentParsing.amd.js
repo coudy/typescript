@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /// This is simple /// comments
 function simple() {
 }
