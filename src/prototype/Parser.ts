@@ -1874,31 +1874,17 @@ module Parser {
             }
         }
 
-        private parseSimpleName(inExpression: bool, afterDot: bool): ISimpleNameSyntax {
-            var identifier = afterDot ? this.eatIdentifierNameToken() : this.eatIdentifierToken();
-            if (identifier.fullWidth() === 0) {
-                return identifier;
-            }
-
-            var typeArgumentList = this.tryParseTypeArgumentList(inExpression);
-            if (typeArgumentList === null) {
-                return identifier;
-            }
-
-            return this.factory.genericName(identifier, typeArgumentList);
-        }
-
         private parseName(): INameSyntax {
             var shouldContinue = this.isIdentifier(this.currentToken());
-            var current: INameSyntax = this.parseSimpleName(/*inExpression: */ false, /*afterDot:*/ false);
+            var current: INameSyntax = this.eatIdentifierToken();
 
             while (shouldContinue && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
                 shouldContinue = ParserImpl.isIdentifierName(this.currentToken());
-                var simpleName = this.parseSimpleName(/*inExpression: */ false, /*afterDot:*/ true);
+                var identifier = this.eatIdentifierNameToken();
 
-                current = this.factory.qualifiedName(current, dotToken, simpleName);
+                current = this.factory.qualifiedName(current, dotToken, identifier);
             }
 
             return current;
@@ -3474,48 +3460,82 @@ module Parser {
                             return expression;
                         }
 
-                        expression = this.factory.invocationExpression(expression, this.parseArgumentList());
+                        expression = this.factory.invocationExpression(expression, this.parseArgumentList(/*typeArgumentList:*/ null));
+                        continue;
+
+                    case SyntaxKind.LessThanToken:
+                        // See if this is the start of a generic invocation.  If so, consume it and
+                        // keep checking for postfix expressions.  Otherwise, it's just a '<' that's 
+                        // part of an arithmetic expression.  Break out so we consume it higher in the
+                        // stack.
+                        var argumentList = this.tryParseArgumentList();
+                        if (argumentList !== null) {
+                            expression = this.factory.invocationExpression(expression, argumentList);
+                            continue;
+                        }
+
                         break;
 
                     case SyntaxKind.OpenBracketToken:
                         expression = this.parseElementAccessExpression(expression);
-                        break;
+                        continue;
 
                     case SyntaxKind.PlusPlusToken:
                     case SyntaxKind.MinusMinusToken:
                         // Because of automatic semicolon insertion, we should only consume the ++ or -- 
                         // if it is on the same line as the previous token.
                         if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
-                            return expression;
+                            break;
                         }
 
                         expression = this.factory.postfixUnaryExpression(
                             SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
-                        break;
+                        continue;
 
                     case SyntaxKind.DotToken:
                         expression = this.factory.memberAccessExpression(
-                            expression, this.eatToken(SyntaxKind.DotToken), this.parseSimpleName(/*isExpression:*/ true, /*afterDot:*/ true));
-                        break;
-
-                    default:
-                        return expression;
+                            expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
+                        continue;
                 }
+
+                return expression;
             }
         }
 
-        private isArgumentList(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.OpenParenToken;
+        private tryParseArgumentList(): ArgumentListSyntax {
+            var typeArgumentList: TypeArgumentListSyntax = null;
+
+            if (this.currentToken().tokenKind === SyntaxKind.LessThanToken) {
+                // If we have a '<', then only parse this as a arugment list if the type arguments
+                // are complete and we have an open paren.  if we don't, rewind and return nothing.
+                var rewindPoint = this.getRewindPoint();
+                try {
+                    typeArgumentList = this.tryParseTypeArgumentList(/*inExpression:*/ true);
+                    if (typeArgumentList === null || this.currentToken().tokenKind !== SyntaxKind.OpenParenToken) {
+                        this.rewind(rewindPoint);
+                        return null;
+                    }
+                }
+                finally {
+                    this.releaseRewindPoint(rewindPoint);
+                }
+            }
+
+            if (this.currentToken().tokenKind === SyntaxKind.OpenParenToken) {
+                return this.parseArgumentList(typeArgumentList);
+            }
+
+            return null;
         }
 
-        private parseArgumentList(): ArgumentListSyntax {
+        private parseArgumentList(typeArgumentList: TypeArgumentListSyntax): ArgumentListSyntax {
             // Debug.assert(this.isArgumentList());
 
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var arguments = this.parseSeparatedSyntaxList(ListParsingState.ArgumentList_AssignmentExpressions);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
-            return this.factory.argumentList(openParenToken, arguments, closeParenToken);
+            return this.factory.argumentList(typeArgumentList, openParenToken, arguments, closeParenToken);
         }
 
         private parseElementAccessExpression(expression: IExpressionSyntax): ElementAccessExpressionSyntax {
@@ -3570,7 +3590,8 @@ module Parser {
                     return this.parseSimpleArrowFunctionExpression();
                 }
                 else {
-                    return this.parseSimpleName(/*inExpression:*/ true, /*afterDot:*/ false);
+                    var identifier = this.eatIdentifierToken();
+                    return identifier;
                 }
             }
 
@@ -3772,11 +3793,7 @@ module Parser {
             // we want "new Foo()" to parse as "new Foo()" (one node), not "new (Foo())".
             var expression = this.parseTerm(/*allowInvocation:*/ false, /*insideObjectCreation:*/ true);
 
-            var argumentList: ArgumentListSyntax = null;
-            if (this.isArgumentList()) {
-                argumentList = this.parseArgumentList();
-            }
-
+            var argumentList = this.tryParseArgumentList();
             return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
         }
 
@@ -4315,8 +4332,17 @@ module Parser {
                 return this.parseTypeLiteral();
             }
             else {
-                return this.parseName();
+                return this.parseNameOrGenericType();
             }
+        }
+
+        private parseNameOrGenericType(): ITypeSyntax {
+            var name = this.parseName();
+            var typeArgumentList = this.tryParseTypeArgumentList(/*inExpression:*/ false);
+
+            return typeArgumentList === null
+                ? name
+                : this.factory.genericType(name, typeArgumentList);
         }
 
         private parseTypeLiteral(): ITypeSyntax {
@@ -5162,7 +5188,7 @@ module Parser {
                     return this.parseAssignmentExpression(/*allowIn:*/ true);
 
                 case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                    return this.parseName();
+                    return this.parseNameOrGenericType();
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                     return this.parseVariableDeclarator(/*allowIn:*/ true);

@@ -1,0 +1,118 @@
+{
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 23,
+        "hasZeroWidthToken": true,
+        "hasRegularExpressionToken": true,
+        "_moduleElements": [
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 23,
+                "hasRegularExpressionToken": true,
+                "_expression": {
+                    "kind": "DivideExpression",
+                    "fullWidth": 22,
+                    "hasRegularExpressionToken": true,
+                    "_left": {
+                        "kind": "DivideExpression",
+                        "fullWidth": 14,
+                        "hasRegularExpressionToken": true,
+                        "_left": {
+                            "kind": "ParenthesizedExpression",
+                            "fullWidth": 4,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_expression": {
+                                "kind": "NumericLiteral",
+                                "width": 1,
+                                "text": "1"
+                            },
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ")",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        },
+                        "_operatorToken": {
+                            "kind": "SlashToken",
+                            "width": 1,
+                            "text": "/"
+                        },
+                        "_right": {
+                            "kind": "IdentifierName",
+                            "width": 9,
+                            "text": "notregexp",
+                            "valueText": "notregexp"
+                        }
+                    },
+                    "_operatorToken": {
+                        "kind": "SlashToken",
+                        "width": 1,
+                        "text": "/"
+                    },
+                    "_right": {
+                        "kind": "InvocationExpression",
+                        "fullWidth": 7,
+                        "_expression": {
+                            "kind": "MemberAccessExpression",
+                            "fullWidth": 5,
+                            "_expression": {
+                                "kind": "IdentifierName",
+                                "width": 1,
+                                "text": "a",
+                                "valueText": "a"
+                            },
+                            "_dotToken": {
+                                "kind": "DotToken",
+                                "width": 1,
+                                "text": "."
+                            },
+                            "_identifier": {
+                                "kind": "IdentifierName",
+                                "width": 3,
+                                "text": "foo",
+                                "valueText": "foo"
+                            }
+                        },
+                        "_argumentList": {
+                            "kind": "ArgumentList",
+                            "fullWidth": 2,
+                            "_openParenToken": {
+                                "kind": "OpenParenToken",
+                                "width": 1,
+                                "text": "("
+                            },
+                            "_arguments": [],
+                            "_closeParenToken": {
+                                "kind": "CloseParenToken",
+                                "width": 1,
+                                "text": ")"
+                            }
+                        }
+                    }
+                },
+                "_semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 1,
+                    "text": ";"
+                }
+            }
+        ],
+        "_endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    }
+}
