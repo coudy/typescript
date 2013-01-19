@@ -105,16 +105,7 @@ class CompilerBaselineRunner extends RunnerBase {
                 } else {
                     return errorDescriptionLocal;
                 }
-            });
-
-            // check errors
-            Harness.Baseline.runBaseline('Correct errors for ' + filename + ' (async)', justName.replace(/\.ts/, '.errors.txt'), () => {
-                if (errorDescriptionAsync === '') {
-                    return null;
-                } else {
-                    return errorDescriptionAsync;
-                }
-            });
+            }); 
 
             // if the .d.ts is non-empty, confirm it compiles correctly as well
             if (!declFileCode) {

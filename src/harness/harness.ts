@@ -1340,7 +1340,7 @@ module Harness {
 
             // EOF, push whatever remains
             var newTestFile = {
-                content: currentFileContent,
+                content: currentFileContent || '',
                 name: currentFileName,
                 fileOptions: currentFileOptions,
                 originalFilePath: filename,
