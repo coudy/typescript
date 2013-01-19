@@ -215,13 +215,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
         return node.update(
             <INameSyntax>this.visitNodeOrToken(node.left()),
             this.visitToken(node.dotToken()),
-            <ISimpleNameSyntax>this.visitNodeOrToken(node.right()));
-    }
-
-    public visitGenericName(node: GenericNameSyntax): any {
-        return node.update(
-            this.visitToken(node.identifier()),
-            <TypeArgumentListSyntax>this.visitNode(node.typeArgumentList()));
+            this.visitToken(node.right()));
     }
 
     public visitTypeArgumentList(node: TypeArgumentListSyntax): any {
@@ -262,6 +256,12 @@ class SyntaxRewriter implements ISyntaxVisitor {
             this.visitToken(node.closeBracketToken()));
     }
 
+    public visitGenericType(node: GenericTypeSyntax): any {
+        return node.update(
+            <INameSyntax>this.visitNodeOrToken(node.name()),
+            <TypeArgumentListSyntax>this.visitNode(node.typeArgumentList()));
+    }
+
     public visitTypeAnnotation(node: TypeAnnotationSyntax): any {
         return node.update(
             this.visitToken(node.colonToken()),
@@ -289,7 +289,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
         return node.update(
             <IExpressionSyntax>this.visitNodeOrToken(node.expression()),
             this.visitToken(node.dotToken()),
-            <ISimpleNameSyntax>this.visitNodeOrToken(node.name()));
+            this.visitToken(node.name()));
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): any {
@@ -315,6 +315,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
 
     public visitArgumentList(node: ArgumentListSyntax): any {
         return node.update(
+            node.typeArgumentList() === null ? null : <TypeArgumentListSyntax>this.visitNode(node.typeArgumentList()),
             this.visitToken(node.openParenToken()),
             this.visitSeparatedList(node.arguments()),
             this.visitToken(node.closeParenToken()));

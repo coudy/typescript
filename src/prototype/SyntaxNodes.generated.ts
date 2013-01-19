@@ -3880,11 +3880,11 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     private _left: INameSyntax;
     private _dotToken: ISyntaxToken;
-    private _right: ISimpleNameSyntax;
+    private _right: ISyntaxToken;
 
     constructor(left: INameSyntax,
                 dotToken: ISyntaxToken,
-                right: ISimpleNameSyntax,
+                right: ISyntaxToken,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
@@ -3894,7 +3894,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     }
 
     public static create1(left: INameSyntax,
-                          right: ISimpleNameSyntax): QualifiedNameSyntax {
+                          right: ISyntaxToken): QualifiedNameSyntax {
         return new QualifiedNameSyntax(left, Syntax.token(SyntaxKind.DotToken), right, /*parsedInStrictMode:*/ false);
     }
 
@@ -3926,13 +3926,13 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         var token = null;
         if ((token = this._left.firstToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
-        if ((token = this._right.firstToken()) !== null) { return token; }
+        if (this._right.width() > 0) { return this._right; }
         return null;
     }
 
     public lastToken(): ISyntaxToken {
         var token = null;
-        if ((token = this._right.lastToken()) !== null) { return token; }
+        if (this._right.width() > 0) { return this._right; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
         if ((token = this._left.lastToken()) !== null) { return token; }
         return null;
@@ -3952,13 +3952,13 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return this._dotToken;
     }
 
-    public right(): ISimpleNameSyntax {
+    public right(): ISyntaxToken {
         return this._right;
     }
 
     public update(left: INameSyntax,
                   dotToken: ISyntaxToken,
-                  right: ISimpleNameSyntax): QualifiedNameSyntax {
+                  right: ISyntaxToken): QualifiedNameSyntax {
         if (this._left === left && this._dotToken === dotToken && this._right === right) {
             return this;
         }
@@ -3982,7 +3982,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return this.update(this._left, dotToken, this._right);
     }
 
-    public withRight(right: ISimpleNameSyntax): QualifiedNameSyntax {
+    public withRight(right: ISyntaxToken): QualifiedNameSyntax {
         return this.update(this._left, this._dotToken, right);
     }
 
@@ -4017,8 +4017,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         childWidth = this._right.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._right.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -4041,7 +4040,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         fullStart += childWidth;
 
         childWidth = this._right.fullWidth();
-        if (position < childWidth) { return (<any>this._right).findTokenInternal(position, fullStart); }
+        if (position < childWidth) { return { token: this._right, fullStart: fullStart }; }
         position -= childWidth;
         fullStart += childWidth;
 
@@ -4055,149 +4054,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         var other = <QualifiedNameSyntax>node;
         if (!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._right, other._right)) { return false; }
-        return true;
-    }
-}
-
-class GenericNameSyntax extends SyntaxNode implements ISimpleNameSyntax {
-    private _identifier: ISyntaxToken;
-    private _typeArgumentList: TypeArgumentListSyntax;
-
-    constructor(identifier: ISyntaxToken,
-                typeArgumentList: TypeArgumentListSyntax,
-                parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
-
-        this._identifier = identifier;
-        this._typeArgumentList = typeArgumentList;
-    }
-
-    public static create1(identifier: ISyntaxToken): GenericNameSyntax {
-        return new GenericNameSyntax(identifier, TypeArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
-    public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitGenericName(this);
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.GenericName;
-    }
-
-    private isSimpleName(): bool {
-        return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if ((token = this._typeArgumentList.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._typeArgumentList.lastToken()) !== null) { return token; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        return null;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._typeArgumentList);
-        array.splice(index, 0, this._identifier);
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public typeArgumentList(): TypeArgumentListSyntax {
-        return this._typeArgumentList;
-    }
-
-    public update(identifier: ISyntaxToken,
-                  typeArgumentList: TypeArgumentListSyntax): GenericNameSyntax {
-        if (this._identifier === identifier && this._typeArgumentList === typeArgumentList) {
-            return this;
-        }
-
-        return new GenericNameSyntax(identifier, typeArgumentList, /*parsedInStrictMode:*/ false);
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): GenericNameSyntax {
-        return <GenericNameSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): GenericNameSyntax {
-        return <GenericNameSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public withIdentifier(identifier: ISyntaxToken): GenericNameSyntax {
-        return this.update(identifier, this._typeArgumentList);
-    }
-
-    public withTypeArgumentList(typeArgumentList: TypeArgumentListSyntax): GenericNameSyntax {
-        return this.update(this._identifier, typeArgumentList);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._typeArgumentList).collectTextElements(elements);
-    }
-
-    private isTypeScriptSpecific(): bool {
-        return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._typeArgumentList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
-
-    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-        Debug.assert(position >= 0 && position < this.fullWidth());
-        var childWidth = 0;
-
-        childWidth = this._identifier.fullWidth();
-        if (position < childWidth) { return { token: this._identifier, fullStart: fullStart }; }
-        position -= childWidth;
-        fullStart += childWidth;
-
-        childWidth = this._typeArgumentList.fullWidth();
-        if (position < childWidth) { return (<any>this._typeArgumentList).findTokenInternal(position, fullStart); }
-        position -= childWidth;
-        fullStart += childWidth;
-
-        throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <GenericNameSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) { return false; }
+        if (!Syntax.tokenStructuralEquals(this._right, other._right)) { return false; }
         return true;
     }
 }
@@ -5199,6 +5056,157 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 }
 
+class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
+    private _name: INameSyntax;
+    private _typeArgumentList: TypeArgumentListSyntax;
+
+    constructor(name: INameSyntax,
+                typeArgumentList: TypeArgumentListSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode);
+
+        this._name = name;
+        this._typeArgumentList = typeArgumentList;
+    }
+
+    public static create1(name: INameSyntax): GenericTypeSyntax {
+        return new GenericTypeSyntax(name, TypeArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitGenericType(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.GenericType;
+    }
+
+    private isType(): bool {
+        return true;
+    }
+
+    private isUnaryExpression(): bool {
+        return true;
+    }
+
+    private isExpression(): bool {
+        return true;
+    }
+
+    public firstToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._name.firstToken()) !== null) { return token; }
+        if ((token = this._typeArgumentList.firstToken()) !== null) { return token; }
+        return null;
+    }
+
+    public lastToken(): ISyntaxToken {
+        var token = null;
+        if ((token = this._typeArgumentList.lastToken()) !== null) { return token; }
+        if ((token = this._name.lastToken()) !== null) { return token; }
+        return null;
+    }
+
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+        array.splice(index, 0, this._typeArgumentList);
+        array.splice(index, 0, this._name);
+    }
+
+    public name(): INameSyntax {
+        return this._name;
+    }
+
+    public typeArgumentList(): TypeArgumentListSyntax {
+        return this._typeArgumentList;
+    }
+
+    public update(name: INameSyntax,
+                  typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
+        if (this._name === name && this._typeArgumentList === typeArgumentList) {
+            return this;
+        }
+
+        return new GenericTypeSyntax(name, typeArgumentList, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): GenericTypeSyntax {
+        return <GenericTypeSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): GenericTypeSyntax {
+        return <GenericTypeSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withName(name: INameSyntax): GenericTypeSyntax {
+        return this.update(name, this._typeArgumentList);
+    }
+
+    public withTypeArgumentList(typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
+        return this.update(this._name, typeArgumentList);
+    }
+
+    private collectTextElements(elements: string[]): void {
+        (<any>this._name).collectTextElements(elements);
+        (<any>this._typeArgumentList).collectTextElements(elements);
+    }
+
+    private isTypeScriptSpecific(): bool {
+        return true;
+    }
+
+    private computeData(): number {
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+        var hasZeroWidthToken = false;
+        var hasRegularExpressionToken = false;
+
+        childWidth = this._name.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._name.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._name.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._name.hasRegularExpressionToken();
+
+        childWidth = this._typeArgumentList.fullWidth();
+        fullWidth += childWidth;
+        hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
+        hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
+        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
+
+        return (fullWidth << Constants.NodeFullWidthShift)
+             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+    }
+
+    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        Debug.assert(position >= 0 && position < this.fullWidth());
+        var childWidth = 0;
+
+        childWidth = this._name.fullWidth();
+        if (position < childWidth) { return (<any>this._name).findTokenInternal(position, fullStart); }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        childWidth = this._typeArgumentList.fullWidth();
+        if (position < childWidth) { return (<any>this._typeArgumentList).findTokenInternal(position, fullStart); }
+        position -= childWidth;
+        fullStart += childWidth;
+
+        throw Errors.invalidOperation();
+    }
+
+    private structuralEquals(node: SyntaxNode): bool {
+        if (this === node) { return true; }
+        if (node === null) { return false; }
+        if (this.kind() !== node.kind()) { return false; }
+        var other = <GenericTypeSyntax>node;
+        if (!Syntax.nodeOrTokenStructuralEquals(this._name, other._name)) { return false; }
+        if (!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) { return false; }
+        return true;
+    }
+}
+
 class TypeAnnotationSyntax extends SyntaxNode {
     private _colonToken: ISyntaxToken;
     private _type: ITypeSyntax;
@@ -5799,11 +5807,11 @@ class ParameterSyntax extends SyntaxNode {
 class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _expression: IExpressionSyntax;
     private _dotToken: ISyntaxToken;
-    private _name: ISimpleNameSyntax;
+    private _name: ISyntaxToken;
 
     constructor(expression: IExpressionSyntax,
                 dotToken: ISyntaxToken,
-                name: ISimpleNameSyntax,
+                name: ISyntaxToken,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
@@ -5813,7 +5821,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     }
 
     public static create1(expression: IExpressionSyntax,
-                          name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+                          name: ISyntaxToken): MemberAccessExpressionSyntax {
         return new MemberAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.DotToken), name, /*parsedInStrictMode:*/ false);
     }
 
@@ -5837,13 +5845,13 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         var token = null;
         if ((token = this._expression.firstToken()) !== null) { return token; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
-        if ((token = this._name.firstToken()) !== null) { return token; }
+        if (this._name.width() > 0) { return this._name; }
         return null;
     }
 
     public lastToken(): ISyntaxToken {
         var token = null;
-        if ((token = this._name.lastToken()) !== null) { return token; }
+        if (this._name.width() > 0) { return this._name; }
         if (this._dotToken.width() > 0) { return this._dotToken; }
         if ((token = this._expression.lastToken()) !== null) { return token; }
         return null;
@@ -5863,13 +5871,13 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this._dotToken;
     }
 
-    public name(): ISimpleNameSyntax {
+    public name(): ISyntaxToken {
         return this._name;
     }
 
     public update(expression: IExpressionSyntax,
                   dotToken: ISyntaxToken,
-                  name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+                  name: ISyntaxToken): MemberAccessExpressionSyntax {
         if (this._expression === expression && this._dotToken === dotToken && this._name === name) {
             return this;
         }
@@ -5893,7 +5901,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this._expression, dotToken, this._name);
     }
 
-    public withName(name: ISimpleNameSyntax): MemberAccessExpressionSyntax {
+    public withName(name: ISyntaxToken): MemberAccessExpressionSyntax {
         return this.update(this._expression, this._dotToken, name);
     }
 
@@ -5905,7 +5913,6 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._name.isTypeScriptSpecific()) { return true; }
         return false;
     }
 
@@ -5930,8 +5937,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         childWidth = this._name.fullWidth();
         fullWidth += childWidth;
         hasSkippedText = hasSkippedText || this._name.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._name.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._name.hasRegularExpressionToken();
+        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
 
         return (fullWidth << Constants.NodeFullWidthShift)
              | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
@@ -5954,7 +5960,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         fullStart += childWidth;
 
         childWidth = this._name.fullWidth();
-        if (position < childWidth) { return (<any>this._name).findTokenInternal(position, fullStart); }
+        if (position < childWidth) { return { token: this._name, fullStart: fullStart }; }
         position -= childWidth;
         fullStart += childWidth;
 
@@ -5968,7 +5974,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         var other = <MemberAccessExpressionSyntax>node;
         if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._name, other._name)) { return false; }
+        if (!Syntax.tokenStructuralEquals(this._name, other._name)) { return false; }
         return true;
     }
 }
@@ -6478,16 +6484,19 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
 }
 
 class ArgumentListSyntax extends SyntaxNode {
+    private _typeArgumentList: TypeArgumentListSyntax;
     private _openParenToken: ISyntaxToken;
     private _arguments: ISeparatedSyntaxList;
     private _closeParenToken: ISyntaxToken;
 
-    constructor(openParenToken: ISyntaxToken,
+    constructor(typeArgumentList: TypeArgumentListSyntax,
+                openParenToken: ISyntaxToken,
                 arguments: ISeparatedSyntaxList,
                 closeParenToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode);
 
+        this._typeArgumentList = typeArgumentList;
         this._openParenToken = openParenToken;
         this._arguments = arguments;
         this._closeParenToken = closeParenToken;
@@ -6495,11 +6504,11 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public static create(openParenToken: ISyntaxToken,
                          closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        return new ArgumentListSyntax(openParenToken, Syntax.emptySeparatedList, closeParenToken, /*parsedInStrictMode:*/ false);
+        return new ArgumentListSyntax(null, openParenToken, Syntax.emptySeparatedList, closeParenToken, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(): ArgumentListSyntax {
-        return new ArgumentListSyntax(Syntax.token(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
+        return new ArgumentListSyntax(null, Syntax.token(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -6512,6 +6521,7 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public firstToken(): ISyntaxToken {
         var token = null;
+        if (this._typeArgumentList !== null && (token = this._typeArgumentList.firstToken()) !== null) { return token; }
         if (this._openParenToken.width() > 0) { return this._openParenToken; }
         if ((token = this._arguments.firstToken()) !== null) { return token; }
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
@@ -6523,6 +6533,7 @@ class ArgumentListSyntax extends SyntaxNode {
         if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
         if ((token = this._arguments.lastToken()) !== null) { return token; }
         if (this._openParenToken.width() > 0) { return this._openParenToken; }
+        if (this._typeArgumentList !== null && (token = this._typeArgumentList.lastToken()) !== null) { return token; }
         return null;
     }
 
@@ -6530,6 +6541,11 @@ class ArgumentListSyntax extends SyntaxNode {
         array.splice(index, 0, this._closeParenToken);
         this._arguments.insertChildrenInto(array, index);
         array.splice(index, 0, this._openParenToken);
+        if (this._typeArgumentList !== null) { array.splice(index, 0, this._typeArgumentList); }
+    }
+
+    public typeArgumentList(): TypeArgumentListSyntax {
+        return this._typeArgumentList;
     }
 
     public openParenToken(): ISyntaxToken {
@@ -6544,14 +6560,15 @@ class ArgumentListSyntax extends SyntaxNode {
         return this._closeParenToken;
     }
 
-    public update(openParenToken: ISyntaxToken,
+    public update(typeArgumentList: TypeArgumentListSyntax,
+                  openParenToken: ISyntaxToken,
                   _arguments: ISeparatedSyntaxList,
                   closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        if (this._openParenToken === openParenToken && this._arguments === _arguments && this._closeParenToken === closeParenToken) {
+        if (this._typeArgumentList === typeArgumentList && this._openParenToken === openParenToken && this._arguments === _arguments && this._closeParenToken === closeParenToken) {
             return this;
         }
 
-        return new ArgumentListSyntax(openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ false);
+        return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArgumentListSyntax {
@@ -6562,12 +6579,16 @@ class ArgumentListSyntax extends SyntaxNode {
         return <ArgumentListSyntax>super.withTrailingTrivia(trivia);
     }
 
+    public withTypeArgumentList(typeArgumentList: TypeArgumentListSyntax): ArgumentListSyntax {
+        return this.update(typeArgumentList, this._openParenToken, this._arguments, this._closeParenToken);
+    }
+
     public withOpenParenToken(openParenToken: ISyntaxToken): ArgumentListSyntax {
-        return this.update(openParenToken, this._arguments, this._closeParenToken);
+        return this.update(this._typeArgumentList, openParenToken, this._arguments, this._closeParenToken);
     }
 
     public withArguments(_arguments: ISeparatedSyntaxList): ArgumentListSyntax {
-        return this.update(this._openParenToken, _arguments, this._closeParenToken);
+        return this.update(this._typeArgumentList, this._openParenToken, _arguments, this._closeParenToken);
     }
 
     public withArgument(_argument: IExpressionSyntax): ArgumentListSyntax {
@@ -6575,16 +6596,18 @@ class ArgumentListSyntax extends SyntaxNode {
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        return this.update(this._openParenToken, this._arguments, closeParenToken);
+        return this.update(this._typeArgumentList, this._openParenToken, this._arguments, closeParenToken);
     }
 
     private collectTextElements(elements: string[]): void {
+        if (this._typeArgumentList !== null) { (<any>this._typeArgumentList).collectTextElements(elements); }
         (<any>this._openParenToken).collectTextElements(elements);
         (<any>this._arguments).collectTextElements(elements);
         (<any>this._closeParenToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
+        if (this._typeArgumentList !== null && this._typeArgumentList.isTypeScriptSpecific()) { return true; }
         if (this._arguments.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6595,6 +6618,14 @@ class ArgumentListSyntax extends SyntaxNode {
         var hasSkippedText = false;
         var hasZeroWidthToken = false;
         var hasRegularExpressionToken = false;
+
+        if (this._typeArgumentList !== null) {
+            childWidth = this._typeArgumentList.fullWidth();
+            fullWidth += childWidth;
+            hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
+            hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
+            hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
+        }
 
         childWidth = this._openParenToken.fullWidth();
         fullWidth += childWidth;
@@ -6622,6 +6653,13 @@ class ArgumentListSyntax extends SyntaxNode {
         Debug.assert(position >= 0 && position < this.fullWidth());
         var childWidth = 0;
 
+        if (this._typeArgumentList !== null) {
+            childWidth = this._typeArgumentList.fullWidth();
+            if (position < childWidth) { return (<any>this._typeArgumentList).findTokenInternal(position, fullStart); }
+            position -= childWidth;
+            fullStart += childWidth;
+        }
+
         childWidth = this._openParenToken.fullWidth();
         if (position < childWidth) { return { token: this._openParenToken, fullStart: fullStart }; }
         position -= childWidth;
@@ -6645,6 +6683,7 @@ class ArgumentListSyntax extends SyntaxNode {
         if (node === null) { return false; }
         if (this.kind() !== node.kind()) { return false; }
         var other = <ArgumentListSyntax>node;
+        if (!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
         if (!Syntax.separatedListStructuralEquals(this._arguments, other._arguments)) { return false; }
         if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }

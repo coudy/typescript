@@ -1,7 +1,7 @@
 {
     "_sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 214,
+        "fullWidth": 196,
         "_moduleElements": [
             {
                 "kind": "ClassDeclaration",
@@ -51,9 +51,9 @@
                     },
                     "_typeNames": [
                         {
-                            "kind": "GenericName",
+                            "kind": "GenericType",
                             "fullWidth": 5,
-                            "_identifier": {
+                            "_name": {
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "A",
@@ -110,9 +110,9 @@
                     },
                     "_typeNames": [
                         {
-                            "kind": "GenericName",
+                            "kind": "GenericType",
                             "fullWidth": 5,
-                            "_identifier": {
+                            "_name": {
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "B",
@@ -235,9 +235,9 @@
                                     ]
                                 },
                                 "_type": {
-                                    "kind": "GenericName",
+                                    "kind": "GenericType",
                                     "fullWidth": 4,
-                                    "_identifier": {
+                                    "_name": {
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "C",
@@ -331,9 +331,9 @@
                                     ]
                                 },
                                 "_type": {
-                                    "kind": "GenericName",
+                                    "kind": "GenericType",
                                     "fullWidth": 5,
-                                    "_identifier": {
+                                    "_name": {
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "D",
@@ -457,161 +457,50 @@
                                     ]
                                 },
                                 "_type": {
-                                    "kind": "QualifiedName",
+                                    "kind": "GenericType",
                                     "fullWidth": 6,
-                                    "_left": {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "E",
-                                        "valueText": "E"
-                                    },
-                                    "_dotToken": {
-                                        "kind": "DotToken",
-                                        "width": 1,
-                                        "text": "."
-                                    },
-                                    "_right": {
-                                        "kind": "GenericName",
-                                        "fullWidth": 4,
-                                        "_identifier": {
+                                    "_name": {
+                                        "kind": "QualifiedName",
+                                        "fullWidth": 3,
+                                        "_left": {
+                                            "kind": "IdentifierName",
+                                            "width": 1,
+                                            "text": "E",
+                                            "valueText": "E"
+                                        },
+                                        "_dotToken": {
+                                            "kind": "DotToken",
+                                            "width": 1,
+                                            "text": "."
+                                        },
+                                        "_right": {
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "F",
                                             "valueText": "F"
-                                        },
-                                        "_typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 3,
-                                            "_lessThanToken": {
-                                                "kind": "LessThanToken",
-                                                "width": 1,
-                                                "text": "<"
-                                            },
-                                            "_typeArguments": [
-                                                {
-                                                    "kind": "IdentifierName",
-                                                    "width": 1,
-                                                    "text": "T",
-                                                    "valueText": "T"
-                                                }
-                                            ],
-                                            "_greaterThanToken": {
-                                                "kind": "GreaterThanToken",
-                                                "width": 1,
-                                                "text": ">"
-                                            }
                                         }
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                },
-                "_semicolonToken": {
-                    "kind": "SemicolonToken",
-                    "width": 1,
-                    "fullWidth": 3,
-                    "text": ";",
-                    "hasTrailingTrivia": true,
-                    "hasTrailingNewLine": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "NewLineTrivia",
-                            "text": "\r\n"
-                        }
-                    ]
-                }
-            },
-            {
-                "kind": "VariableStatement",
-                "fullWidth": 17,
-                "_variableDeclaration": {
-                    "kind": "VariableDeclaration",
-                    "fullWidth": 14,
-                    "_varKeyword": {
-                        "kind": "VarKeyword",
-                        "width": 3,
-                        "fullWidth": 4,
-                        "text": "var",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "_variableDeclarators": [
-                        {
-                            "kind": "VariableDeclarator",
-                            "fullWidth": 10,
-                            "_identifier": {
-                                "kind": "IdentifierName",
-                                "width": 2,
-                                "text": "v4",
-                                "valueText": "v4"
-                            },
-                            "_typeAnnotation": {
-                                "kind": "TypeAnnotation",
-                                "fullWidth": 8,
-                                "_colonToken": {
-                                    "kind": "ColonToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ":",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                "_type": {
-                                    "kind": "QualifiedName",
-                                    "fullWidth": 6,
-                                    "_left": {
-                                        "kind": "GenericName",
-                                        "fullWidth": 4,
-                                        "_identifier": {
-                                            "kind": "IdentifierName",
+                                    },
+                                    "_typeArgumentList": {
+                                        "kind": "TypeArgumentList",
+                                        "fullWidth": 3,
+                                        "_lessThanToken": {
+                                            "kind": "LessThanToken",
                                             "width": 1,
-                                            "text": "G",
-                                            "valueText": "G"
+                                            "text": "<"
                                         },
-                                        "_typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 3,
-                                            "_lessThanToken": {
-                                                "kind": "LessThanToken",
+                                        "_typeArguments": [
+                                            {
+                                                "kind": "IdentifierName",
                                                 "width": 1,
-                                                "text": "<"
-                                            },
-                                            "_typeArguments": [
-                                                {
-                                                    "kind": "IdentifierName",
-                                                    "width": 1,
-                                                    "text": "T",
-                                                    "valueText": "T"
-                                                }
-                                            ],
-                                            "_greaterThanToken": {
-                                                "kind": "GreaterThanToken",
-                                                "width": 1,
-                                                "text": ">"
+                                                "text": "T",
+                                                "valueText": "T"
                                             }
+                                        ],
+                                        "_greaterThanToken": {
+                                            "kind": "GreaterThanToken",
+                                            "width": 1,
+                                            "text": ">"
                                         }
-                                    },
-                                    "_dotToken": {
-                                        "kind": "DotToken",
-                                        "width": 1,
-                                        "text": "."
-                                    },
-                                    "_right": {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "H",
-                                        "valueText": "H"
                                     }
                                 }
                             }
@@ -635,10 +524,10 @@
             },
             {
                 "kind": "VariableStatement",
-                "fullWidth": 20,
+                "fullWidth": 19,
                 "_variableDeclaration": {
                     "kind": "VariableDeclaration",
-                    "fullWidth": 17,
+                    "fullWidth": 16,
                     "_varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
@@ -655,16 +544,16 @@
                     "_variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
-                            "fullWidth": 13,
+                            "fullWidth": 12,
                             "_identifier": {
                                 "kind": "IdentifierName",
                                 "width": 2,
-                                "text": "v5",
-                                "valueText": "v5"
+                                "text": "v3",
+                                "valueText": "v3"
                             },
                             "_typeAnnotation": {
                                 "kind": "TypeAnnotation",
-                                "fullWidth": 11,
+                                "fullWidth": 10,
                                 "_colonToken": {
                                     "kind": "ColonToken",
                                     "width": 1,
@@ -679,75 +568,64 @@
                                     ]
                                 },
                                 "_type": {
-                                    "kind": "QualifiedName",
-                                    "fullWidth": 9,
-                                    "_left": {
-                                        "kind": "GenericName",
-                                        "fullWidth": 4,
-                                        "_identifier": {
+                                    "kind": "GenericType",
+                                    "fullWidth": 8,
+                                    "_name": {
+                                        "kind": "QualifiedName",
+                                        "fullWidth": 5,
+                                        "_left": {
+                                            "kind": "QualifiedName",
+                                            "fullWidth": 3,
+                                            "_left": {
+                                                "kind": "IdentifierName",
+                                                "width": 1,
+                                                "text": "G",
+                                                "valueText": "G"
+                                            },
+                                            "_dotToken": {
+                                                "kind": "DotToken",
+                                                "width": 1,
+                                                "text": "."
+                                            },
+                                            "_right": {
+                                                "kind": "IdentifierName",
+                                                "width": 1,
+                                                "text": "H",
+                                                "valueText": "H"
+                                            }
+                                        },
+                                        "_dotToken": {
+                                            "kind": "DotToken",
+                                            "width": 1,
+                                            "text": "."
+                                        },
+                                        "_right": {
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "I",
                                             "valueText": "I"
-                                        },
-                                        "_typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 3,
-                                            "_lessThanToken": {
-                                                "kind": "LessThanToken",
-                                                "width": 1,
-                                                "text": "<"
-                                            },
-                                            "_typeArguments": [
-                                                {
-                                                    "kind": "IdentifierName",
-                                                    "width": 1,
-                                                    "text": "T",
-                                                    "valueText": "T"
-                                                }
-                                            ],
-                                            "_greaterThanToken": {
-                                                "kind": "GreaterThanToken",
-                                                "width": 1,
-                                                "text": ">"
-                                            }
                                         }
                                     },
-                                    "_dotToken": {
-                                        "kind": "DotToken",
-                                        "width": 1,
-                                        "text": "."
-                                    },
-                                    "_right": {
-                                        "kind": "GenericName",
-                                        "fullWidth": 4,
-                                        "_identifier": {
-                                            "kind": "IdentifierName",
+                                    "_typeArgumentList": {
+                                        "kind": "TypeArgumentList",
+                                        "fullWidth": 3,
+                                        "_lessThanToken": {
+                                            "kind": "LessThanToken",
                                             "width": 1,
-                                            "text": "J",
-                                            "valueText": "J"
+                                            "text": "<"
                                         },
-                                        "_typeArgumentList": {
-                                            "kind": "TypeArgumentList",
-                                            "fullWidth": 3,
-                                            "_lessThanToken": {
-                                                "kind": "LessThanToken",
+                                        "_typeArguments": [
+                                            {
+                                                "kind": "IdentifierName",
                                                 "width": 1,
-                                                "text": "<"
-                                            },
-                                            "_typeArguments": [
-                                                {
-                                                    "kind": "IdentifierName",
-                                                    "width": 1,
-                                                    "text": "T",
-                                                    "valueText": "T"
-                                                }
-                                            ],
-                                            "_greaterThanToken": {
-                                                "kind": "GreaterThanToken",
-                                                "width": 1,
-                                                "text": ">"
+                                                "text": "T",
+                                                "valueText": "T"
                                             }
+                                        ],
+                                        "_greaterThanToken": {
+                                            "kind": "GreaterThanToken",
+                                            "width": 1,
+                                            "text": ">"
                                         }
                                     }
                                 }
@@ -819,9 +697,9 @@
                                     "kind": "ArrayType",
                                     "fullWidth": 6,
                                     "_type": {
-                                        "kind": "GenericName",
+                                        "kind": "GenericType",
                                         "fullWidth": 4,
-                                        "_identifier": {
+                                        "_name": {
                                             "kind": "IdentifierName",
                                             "width": 1,
                                             "text": "K",
@@ -955,9 +833,9 @@
                                             ]
                                         },
                                         "_type": {
-                                            "kind": "GenericName",
+                                            "kind": "GenericType",
                                             "fullWidth": 4,
-                                            "_identifier": {
+                                            "_name": {
                                                 "kind": "IdentifierName",
                                                 "width": 1,
                                                 "text": "E",
@@ -1107,9 +985,9 @@
                                 ]
                             },
                             "_type": {
-                                "kind": "GenericName",
+                                "kind": "GenericType",
                                 "fullWidth": 5,
-                                "_identifier": {
+                                "_name": {
                                     "kind": "IdentifierName",
                                     "width": 1,
                                     "text": "F",

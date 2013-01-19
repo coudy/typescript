@@ -188,12 +188,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitQualifiedName(node: QualifiedNameSyntax): void {
         this.visitNodeOrToken(node.left());
         this.visitToken(node.dotToken());
-        this.visitNodeOrToken(node.right());
-    }
-
-    public visitGenericName(node: GenericNameSyntax): void {
-        this.visitToken(node.identifier());
-        this.visitNode(node.typeArgumentList());
+        this.visitToken(node.right());
     }
 
     public visitTypeArgumentList(node: TypeArgumentListSyntax): void {
@@ -229,6 +224,11 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.closeBracketToken());
     }
 
+    public visitGenericType(node: GenericTypeSyntax): void {
+        this.visitNodeOrToken(node.name());
+        this.visitNode(node.typeArgumentList());
+    }
+
     public visitTypeAnnotation(node: TypeAnnotationSyntax): void {
         this.visitToken(node.colonToken());
         this.visitNodeOrToken(node.type());
@@ -252,7 +252,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): void {
         this.visitNodeOrToken(node.expression());
         this.visitToken(node.dotToken());
-        this.visitNodeOrToken(node.name());
+        this.visitToken(node.name());
     }
 
     public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): void {
@@ -273,6 +273,7 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitArgumentList(node: ArgumentListSyntax): void {
+        this.visitOptionalNode(node.typeArgumentList());
         this.visitToken(node.openParenToken());
         this.visitSeparatedList(node.arguments());
         this.visitToken(node.closeParenToken());

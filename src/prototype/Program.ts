@@ -19,6 +19,10 @@ class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
 
+        Environment.standardOut.WriteLine("Testing emitter 1.");
+        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
+            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
+
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             IncrementalParserTests.runAllTests();
@@ -47,10 +51,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runIncremental(filePath, LanguageVersion.EcmaScript5));
-
-        Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
             
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5",

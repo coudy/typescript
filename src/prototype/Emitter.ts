@@ -116,15 +116,7 @@ module Emitter {
                 }
                 else if (name.kind() === SyntaxKind.QualifiedName) {
                     var qualifiedName = <QualifiedNameSyntax>name;
-                    var right = qualifiedName.right();
-
-                    if (right.kind() === SyntaxKind.GenericName) {
-                        result.unshift((<GenericNameSyntax>right).identifier());
-                    }
-                    else {
-                        result.unshift(<ISyntaxToken>right);
-                    }
-
+                    result.unshift(qualifiedName.right());
                     name = qualifiedName.left();
                 }
                 else {
@@ -143,11 +135,7 @@ module Emitter {
 
         private rightmostName(name: INameSyntax): ISyntaxToken {
             if (name.kind() === SyntaxKind.QualifiedName) {
-                name = (<QualifiedNameSyntax>name).right();
-            }
-
-            if (name.kind() === SyntaxKind.GenericName) {
-                return (<GenericNameSyntax>name).identifier();
+                return (<QualifiedNameSyntax>name).right();
             }
 
             return <ISyntaxToken>name;
@@ -1170,7 +1158,7 @@ module Emitter {
             }
 
             // Same issue for a generic name.
-            if (parent.kind() === SyntaxKind.GenericName) {
+            if (parent.kind() === SyntaxKind.GenericType) {
                 return token;
             }
 

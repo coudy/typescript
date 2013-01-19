@@ -23,12 +23,12 @@ interface ISyntaxVisitor {
     visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any;
     visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): any;
     visitQualifiedName(node: QualifiedNameSyntax): any;
-    visitGenericName(node: GenericNameSyntax): any;
     visitTypeArgumentList(node: TypeArgumentListSyntax): any;
     visitConstructorType(node: ConstructorTypeSyntax): any;
     visitFunctionType(node: FunctionTypeSyntax): any;
     visitObjectType(node: ObjectTypeSyntax): any;
     visitArrayType(node: ArrayTypeSyntax): any;
+    visitGenericType(node: GenericTypeSyntax): any;
     visitTypeAnnotation(node: TypeAnnotationSyntax): any;
     visitBlock(node: BlockSyntax): any;
     visitParameter(node: ParameterSyntax): any;
@@ -180,10 +180,6 @@ class SyntaxVisitor implements ISyntaxVisitor {
         return this.defaultVisit(node);
     }
 
-    private visitGenericName(node: GenericNameSyntax): any {
-        return this.defaultVisit(node);
-    }
-
     private visitTypeArgumentList(node: TypeArgumentListSyntax): any {
         return this.defaultVisit(node);
     }
@@ -201,6 +197,10 @@ class SyntaxVisitor implements ISyntaxVisitor {
     }
 
     private visitArrayType(node: ArrayTypeSyntax): any {
+        return this.defaultVisit(node);
+    }
+
+    private visitGenericType(node: GenericTypeSyntax): any {
         return this.defaultVisit(node);
     }
 

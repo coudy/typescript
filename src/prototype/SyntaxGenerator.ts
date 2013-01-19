@@ -273,20 +273,10 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'left', type: 'INameSyntax' },
             <any>{ name: 'dotToken', isToken: true },
-            <any>{ name: 'right', type: 'ISimpleNameSyntax' }
+            <any>{ name: 'right', isToken: true, tokenKinds:['IdentifierName'] }
         ],
         // Qualified names only show up in Types, which are TypeScript specific. Note that a dotted
         // expression (like A.B.Foo()) is a MemberAccessExpression, not a QualifiedName.
-        isTypeScriptSpecific: true
-    },
-    <any>{
-        name: 'GenericNameSyntax',
-        baseType: 'SyntaxNode',
-        interfaces: ['ISimpleNameSyntax'],
-        children: [
-            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
-            <any>{ name: 'typeArgumentList', type: 'TypeArgumentListSyntax' }
-        ],
         isTypeScriptSpecific: true
     },
     <any>{
@@ -347,6 +337,16 @@ var definitions:ITypeDefinition[] = [
         isTypeScriptSpecific: true
     },
     <any>{
+        name: 'GenericTypeSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ITypeSyntax'],
+        children: [
+            <any>{ name: 'name', type: 'INameSyntax' },
+            <any>{ name: 'typeArgumentList', type: 'TypeArgumentListSyntax' }
+        ],
+        isTypeScriptSpecific: true
+    },
+    <any>{
         name: 'TypeAnnotationSyntax',
         baseType: 'SyntaxNode',
         children: [
@@ -384,7 +384,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
             <any>{ name: 'dotToken', isToken: true },
-            <any>{ name: 'name', type: 'ISimpleNameSyntax' }
+            <any>{ name: 'name', isToken: true, tokenKinds: ['IdentifierName'] }
         ]
     },
     <any>{
@@ -421,6 +421,7 @@ var definitions:ITypeDefinition[] = [
         name: 'ArgumentListSyntax',
         baseType: 'SyntaxNode',
         children: [
+            <any>{ name: 'typeArgumentList', type: 'TypeArgumentListSyntax', isOptional: true },
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'arguments', isSeparatedList: true, elementType: 'IExpressionSyntax' },
             <any>{ name: 'closeParenToken', isToken: true }

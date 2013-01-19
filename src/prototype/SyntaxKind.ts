@@ -149,13 +149,13 @@ enum SyntaxKind {
 
     // Names
     QualifiedName,
-    GenericName,
 
     // Types
     ObjectType,
     FunctionType,
     ArrayType,
     ConstructorType,
+    GenericType,
 
     // Module elements.
     InterfaceDeclaration,
