@@ -128,15 +128,10 @@ class HarnessBatch {
                         bugs.forEach(bug => assert.bug(bug));
                     }
 
-                    if (_self.compilationSettings.parseOnly) {
-                        compiler.parseUnit(code.content, code.path);
+                    if (_self.compilationSettings.errorRecovery) {
+                        compiler.parser.setErrorRecovery(this.errorOut);
                     }
-                    else {
-                        if (_self.compilationSettings.errorRecovery) {
-                            compiler.parser.setErrorRecovery(this.errorOut);
-                        }
-                        compiler.addUnit(code.content, code.path, addAsResident);
-                    }
+                    compiler.addUnit(code.content, code.path, addAsResident);
                 }
             }
             catch (err) {
@@ -150,28 +145,22 @@ class HarnessBatch {
         }
 
         for (var iResCode = 0 ; iResCode < this.resolvedEnvironment.residentCode.length; iResCode++) {
-            if (!this.compilationSettings.parseOnly) {
-                consumeUnit(this.resolvedEnvironment.residentCode[iResCode], true);
-            }
+            consumeUnit(this.resolvedEnvironment.residentCode[iResCode], true);
         }
 
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            if (!this.compilationSettings.parseOnly || (iCode > 0)) {
-                consumeUnit(this.resolvedEnvironment.code[iCode], false);
-            }
+            consumeUnit(this.resolvedEnvironment.code[iCode], false);
         }
 
-        if (!this.compilationSettings.parseOnly) {
-            compiler.typeCheck();
-            compiler.emit({
-                createFile: createEmitFile,
-                directoryExists: IO.directoryExists,
-                fileExists: IO.fileExists,
-                resolvePath: IO.resolvePath
-            });
-            compiler.emitSettings.ioHost.createFile = createDeclareFile;
-            compiler.emitDeclarations();
-        }
+        compiler.typeCheck();
+        compiler.emit({
+            createFile: createEmitFile,
+            directoryExists: IO.directoryExists,
+            fileExists: IO.fileExists,
+            resolvePath: IO.resolvePath
+        });
+        compiler.emitSettings.ioHost.createFile = createDeclareFile;
+        compiler.emitDeclarations();
 
         if (this.errout) {
             this.errout.Close();

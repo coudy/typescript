@@ -26,11 +26,18 @@ module TypeScript {
     /// where we need an ISourceText object
     export class SourceUnit implements ISourceText, IResolvedFile {
         public referencedFiles: IFileReference[] = null;
-        constructor(public path: string, public content: string) {
+
+        constructor(public path: string,
+                    public content: string) {
         }
 
-        public getText(start: number, end: number): string { return this.content.substring(start, end); }
-        public getLength(): number { return this.content.length; }
+        public getText(start: number, end: number): string {
+            return this.content.substring(start, end);
+        }
+
+        public getLength(): number {
+            return this.content.length;
+        }
     }
 
     export interface IFileReference {

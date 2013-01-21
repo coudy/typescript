@@ -87,7 +87,6 @@ module TypeScript {
         public styleSettings = new StyleSettings();
         public propagateConstants = false;
         public minWhitespace = false;
-        public parseOnly = false;
         public errorRecovery = false;
         public emitComments = false;
         public watch = false;

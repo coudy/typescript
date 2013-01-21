@@ -34,8 +34,8 @@ class CommandLineHost implements TypeScript.IResolverHost {
     }
 
     public resolveCompilationEnvironment(preEnv: TypeScript.CompilationEnvironment,
-        resolver: TypeScript.ICodeResolver,
-        traceDependencies: bool): TypeScript.CompilationEnvironment {
+                                         resolver: TypeScript.ICodeResolver,
+                                         traceDependencies: bool): TypeScript.CompilationEnvironment {
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
@@ -66,6 +66,7 @@ class CommandLineHost implements TypeScript.IResolverHost {
         return resolvedEnv;
     }
 }
+
 class BatchCompiler {
     public compilationSettings: TypeScript.CompilationSettings;
     public compilationEnvironment: TypeScript.CompilationEnvironment;
@@ -74,7 +75,7 @@ class BatchCompiler {
     public compilerVersion = "0.9.0.0";
     public printedVersion = false;
 
-    constructor (public ioHost: IIO) { 
+    constructor(public ioHost: IIO) {
         this.compilationSettings = new TypeScript.CompilationSettings();
         this.compilationEnvironment = new TypeScript.CompilationEnvironment(this.compilationSettings, this.ioHost);
     }
@@ -144,15 +145,10 @@ class BatchCompiler {
                 }
 
                 if (code.content != null) {
-                    if (this.compilationSettings.parseOnly) {
-                        compiler.parseUnit(code.content, code.path);
+                    if (this.compilationSettings.errorRecovery) {
+                        compiler.parser.setErrorRecovery(this.ioHost.stderr);
                     }
-                    else {
-                        if (this.compilationSettings.errorRecovery) {
-                            compiler.parser.setErrorRecovery(this.ioHost.stderr);
-                        }
-                        compiler.addUnit(code.content, code.path, addAsResident, code.referencedFiles);
-                    }
+                    compiler.addUnit(code.content, code.path, addAsResident, code.referencedFiles);
                 }
             }
             catch (err) {
@@ -164,9 +160,7 @@ class BatchCompiler {
         }
 
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            if (!this.compilationSettings.parseOnly || (iCode > 0)) {
-                consumeUnit(this.resolvedEnvironment.code[iCode], false);
-            }
+            consumeUnit(this.resolvedEnvironment.code[iCode], false);
         }
 
         var emitterIOHost = {
@@ -177,14 +171,9 @@ class BatchCompiler {
         };
 
         try {
-            if (!this.compilationSettings.parseOnly) {
-                compiler.typeCheck();
-                compiler.emit(emitterIOHost);
-                compiler.emitDeclarations();
-            }
-            else {
-                compiler.emitAST(emitterIOHost);
-            }
+            compiler.typeCheck();
+            compiler.emit(emitterIOHost);
+            compiler.emitDeclarations();
         } catch (err) {
             compiler.errorReporter.hasErrors = true;
             // Catch emitter exceptions
@@ -267,14 +256,6 @@ class BatchCompiler {
                 this.compilationSettings.exec = true;
             }
         }, 'e');
-
-        opts.flag('parse', {
-            usage: 'Parse only',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.parseOnly = true;
-            }
-        });
 
         opts.flag('minw', {
             usage: 'Minimize whitespace',
