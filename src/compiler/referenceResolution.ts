@@ -36,6 +36,8 @@ module TypeScript {
     export interface IFileReference {
         minChar: number;
         limChar: number;
+        startLine: number;
+        startCol: number;
         path: string;
         isResident: bool;
     }
@@ -55,7 +57,7 @@ module TypeScript {
     }
 
     export interface IResolutionDispatcher {
-        postResolutionError(errorFile: string, errorMessage: string, errorObject: any): void;
+        postResolutionError(errorFile: string, line: number, col: number, errorMessage: string): void;
         postResolution(path: string, source: ISourceText): void;
     }
 
@@ -72,7 +74,7 @@ module TypeScript {
 
         constructor (public environment: CompilationEnvironment) { }
 
-        public resolveCode(referencePath: string, parentPath: string, performSearch: bool, resolutionDispatcher: TypeScript.IResolutionDispatcher): void {
+        public resolveCode(referencePath: string, parentPath: string, performSearch: bool, resolutionDispatcher: TypeScript.IResolutionDispatcher): bool {
             
             var resolvedFile: IResolvedFile = { content: null, path: referencePath };
             
@@ -137,6 +139,8 @@ module TypeScript {
                     }
                     catch (err) {
                         CompilerDiagnostics.debugPrint("   Did not find code for " + referencePath);
+                        // Resolution failed
+                        return false;
                     }
                 }
                 else {
@@ -179,29 +183,38 @@ module TypeScript {
                     var rootDir = ioHost.dirName(resolvedFile.path);
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
                     var preProcessedFileInfo = preProcessFile(sourceUnit, this.environment.compilationSettings);
+                    var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
                     sourceUnit.referencedFiles = preProcessedFileInfo.referencedFiles;
 
                     // resolve explicit references
                     for (var i = 0; i < preProcessedFileInfo.referencedFiles.length; i++) {
-                        var referencedFile = preProcessedFileInfo.referencedFiles[i];
-                        var normalizedPath = isRooted(referencedFile.path) ? referencedFile.path : rootDir + "/" + referencedFile.path;
+                        var fileReference = preProcessedFileInfo.referencedFiles[i];
+                        var normalizedPath = isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
-                        if (referencePath == normalizedPath) {
-                            resolutionDispatcher.postResolutionError(normalizedPath, "File contains reference to itself", null);
+                        if (resolvedFilePath == normalizedPath) {
+                            resolutionDispatcher.postResolutionError(normalizedPath, fileReference.startLine, fileReference.startCol, "Incorrect reference: File contains reference to itself.");
                             continue;
                         }
-                        this.resolveCode(referencedFile.path, rootDir, false, resolutionDispatcher);
+                        var resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
+                        if (!resolutionResult) {
+                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileReference.startLine, fileReference.startCol, "Incorrect reference: referenced file: \"" + fileReference.path + "\" cannot be resolved.");
+                        }
                     }
                     
                     // resolve imports
                     for (var i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
-                        this.resolveCode(preProcessedFileInfo.importedFiles[i].path, rootDir, true, resolutionDispatcher);
+                        var fileImport = preProcessedFileInfo.importedFiles[i];
+                        var resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
+                        if (!resolutionResult) {
+                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileImport.startLine, fileImport.startCol, "Incorrect reference: imported file: \"" + fileImport.path + "\" cannot be resolved.");
+                        }
                     }
 
                     // add the file to the appropriate code list
                     resolutionDispatcher.postResolution(sourceUnit.path, sourceUnit);
                 }
             }
+            return true;
         }
     }
 }

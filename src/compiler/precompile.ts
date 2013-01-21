@@ -141,7 +141,14 @@ module TypeScript {
             if (isResident) {
                 CompilerDiagnostics.debugPrint(path + " is resident");
             }
-            return { minChar: 0, limChar: 0, path: switchToForwardSlashes(adjustedPath), isResident: isResident };
+            return {
+                minChar: 0,
+                limChar: 0,
+                startLine: 0,
+                startCol: 0,
+                path: switchToForwardSlashes(adjustedPath),
+                isResident: isResident
+            };
         }
         else {
             return null;
@@ -250,7 +257,14 @@ module TypeScript {
 
                                 // import foo = module("foo")
                                 if (tok.tokenId == TokenID.StringLiteral) {
-                                    var ref = { minChar: scanner.startPos, limChar: scanner.pos, path: stripQuotes(switchToForwardSlashes(tok.getText())), isResident: false };
+                                    var ref = {
+                                        minChar: scanner.startPos,
+                                        limChar: scanner.pos,
+                                        startLine: scanner.line,
+                                        startCol: scanner.col,
+                                        path: stripQuotes(switchToForwardSlashes(tok.getText())),
+                                        isResident: false
+                                    };
                                     importedFiles.push(ref);
                                 }
                             }
@@ -283,6 +297,14 @@ module TypeScript {
                 if (referencedCode) {
                     referencedCode.minChar = comment.startPos;
                     referencedCode.limChar = referencedCode.minChar + comment.value.length;
+                    // Get the startLine and startCol
+                    var result = { line: -1, col: -1 };
+                    getSourceLineColFromMap(result, comment.startPos, scanner.lineMap);
+                    if (result.col >= 0) {
+                        result.col++;   // Make it 1-based
+                    }
+                    referencedCode.startLine = result.line;
+                    referencedCode.startCol = result.col;
                     referencedFiles.push(referencedCode);
                 }
 
