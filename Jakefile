@@ -253,7 +253,7 @@ task("tests", [run, serviceFile].concat(libraryTargets), function() {
 
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
-desc("Runs the tests using the built run.js file. Syntax is jake :runtests[host, testFile]. Both parameters are optional.");
+desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='. Both parameters are optional.");
 task("runtests", ["tests", builtTestDirectory], function() {
 	// Clean the local baselines directory
 	if (fs.exists(localBaseline)) {
@@ -261,8 +261,9 @@ task("runtests", ["tests", builtTestDirectory], function() {
 	}
 	jake.mkdirP(localBaseline);
 	host = process.env.host || process.env.TYPESCRIPT_HOST || "Node";
-	test = process.env.test || "";
-	var cmd = host + " " + run + " " + test;
+	tests = process.env.test || process.env.tests;
+	tests = tests ? tests.split(',').join(' ') : ([].slice.call(arguments).join(' ') || "");
+	var cmd = host + " " + run + " " + tests;
 	console.log(cmd);
 	var ex = jake.createExec([cmd]);
 	// Add listeners for output and error
