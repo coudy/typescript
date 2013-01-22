@@ -212,6 +212,14 @@ module TypeScript {
         var symbol = scopeChain.scope.findLocal(modName, false, false);
         var typeSymbol: TypeSymbol = null;
         var modType: ModuleType = null;
+
+        if (symbol && symbol.declAST && symbol.declAST.nodeType != NodeType.ModuleDeclaration) {
+            context.checker.errorReporter.simpleError(moduleDecl, "Conflicting symbol name for module '" + modName + "'");
+            // Create a new type symbol for the module but keep it anonyms
+            symbol = null;
+            modName = "";
+        }
+
         if ((symbol == null) || (symbol.kind() != SymbolKind.Type)) {
 
             if (modType == null) {
@@ -242,9 +250,6 @@ module TypeScript {
             modType.symbol = typeSymbol;
         }
         else {
-            if (symbol && symbol.declAST && symbol.declAST.nodeType != NodeType.ModuleDeclaration) {
-                context.checker.errorReporter.simpleError(moduleDecl, "Conflicting symbol name for module '" + modName + "'");
-            }
             typeSymbol = <TypeSymbol>symbol;
 
             // initialize new private scope for the type
