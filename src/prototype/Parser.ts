@@ -9,7 +9,7 @@
 /// <reference path='SyntaxTriviaList.ts' />
 /// <reference path='TextChangeRange.ts' />
 
-module Parser {
+module Parser1 {
     // Information the parser needs to effectively rewind.
     interface IParserRewindPoint {
         // Information used by normal parser source.

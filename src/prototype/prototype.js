@@ -27152,8 +27152,8 @@ var TextChangeRange = (function () {
     };
     return TextChangeRange;
 })();
-var Parser;
-(function (Parser) {
+var Parser1;
+(function (Parser1) {
     var ExpressionPrecedence;
     (function (ExpressionPrecedence) {
         ExpressionPrecedence._map = [];
@@ -30180,7 +30180,7 @@ var Parser;
         options = options || new ParseOptions();
         return new ParserImpl(source, options).parseSyntaxTree();
     }
-    Parser.parse = parse;
+    Parser1.parse = parse;
     function incrementalParse(oldSourceUnit, textChangeRanges, newText, languageVersion, stringTable, options) {
         if (typeof languageVersion === "undefined") { languageVersion = 1 /* EcmaScript5 */ ; }
         if (typeof stringTable === "undefined") { stringTable = null; }
@@ -30189,8 +30189,8 @@ var Parser;
         options = options || new ParseOptions();
         return new ParserImpl(source, options).parseSyntaxTree();
     }
-    Parser.incrementalParse = incrementalParse;
-})(Parser || (Parser = {}));
+    Parser1.incrementalParse = incrementalParse;
+})(Parser1 || (Parser1 = {}));
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
         try  {
@@ -32476,9 +32476,9 @@ var IncrementalParserTests = (function () {
         }).length;
     };
     IncrementalParserTests.compareTrees = function compareTrees(oldText, newText, textChangeRange, reusedElements) {
-        var oldTree = Parser.parse(oldText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
-        var newTree = Parser.parse(newText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
-        var incrementalNewTree = Parser.incrementalParse(oldTree.sourceUnit(), [
+        var oldTree = Parser1.parse(oldText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
+        var newTree = Parser1.parse(newText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
+        var incrementalNewTree = Parser1.incrementalParse(oldTree.sourceUnit(), [
             textChangeRange
         ], newText, 1 /* EcmaScript5 */ , IncrementalParserTests.stringTable);
         Debug.assert(newTree.structuralEquals(incrementalNewTree));
@@ -32752,14 +32752,14 @@ var Program = (function () {
         }
         var contents = Environment.readFile(filePath, true);
         var text = TextFactory.create(contents);
-        var tree = Parser.parse(text, 1 /* EcmaScript5 */ , stringTable);
+        var tree = Parser1.parse(text, 1 /* EcmaScript5 */ , stringTable);
         var totalIncrementalTime = 0;
         var count = 1000;
         var realStart = new Date().getTime();
         for(var i = 0; i < count; i++) {
             var start = new Date().getTime();
             var changeLength = i * 2;
-            var tree2 = Parser.incrementalParse(tree.sourceUnit(), [
+            var tree2 = Parser1.incrementalParse(tree.sourceUnit(), [
                 new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)
             ], text, 1 /* EcmaScript5 */ , stringTable);
             var end = new Date().getTime();
@@ -32833,7 +32833,7 @@ var Program = (function () {
         start = new Date().getTime();
         totalSize += contents.length;
         var text = TextFactory.create(contents);
-        var tree = Parser.parse(text, languageVersion, stringTable);
+        var tree = Parser1.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(tree.sourceUnit());
         end = new Date().getTime();
         totalTime += (end - start);
@@ -32860,7 +32860,7 @@ var Program = (function () {
             totalTime += (end - start);
         } else {
             var text = TextFactory.create(contents);
-            var tree = Parser.parse(text, languageVersion, stringTable);
+            var tree = Parser1.parse(text, languageVersion, stringTable);
             end = new Date().getTime();
             totalTime += (end - start);
             Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
@@ -32876,8 +32876,8 @@ var Program = (function () {
         }
         var contents = Environment.readFile(filePath, true);
         var text = TextFactory.create(contents);
-        var tree1 = Parser.parse(text, languageVersion, stringTable);
-        var tree2 = Parser.incrementalParse(Syntax.emptySourceUnit(), [
+        var tree1 = Parser1.parse(text, languageVersion, stringTable);
+        var tree2 = Parser1.incrementalParse(Syntax.emptySourceUnit(), [
             new TextChangeRange(new TextSpan(0, 0), text.length())
         ], text, languageVersion, stringTable);
         Debug.assert(tree1.structuralEquals(tree2));
@@ -32894,7 +32894,7 @@ var Program = (function () {
         start = new Date().getTime();
         totalSize += contents.length;
         var text = TextFactory.create(contents);
-        var tree = Parser.parse(text, languageVersion, stringTable);
+        var tree = Parser1.parse(text, languageVersion, stringTable);
         var sourceUnit = tree.sourceUnit();
         end = new Date().getTime();
         totalTime += (end - start);
@@ -33004,7 +33004,7 @@ var Program = (function () {
                 testCount++;
                 try  {
                     var stringText = TextFactory.create(contents);
-                    var tree = Parser.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
+                    var tree = Parser1.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
                     if(isNegative) {
                         var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
                         var canParseSuccessfully = negative262ExpectedResults[fileName];
@@ -33066,7 +33066,7 @@ var Program = (function () {
                 testCount++;
                 try  {
                     var stringText = TextFactory.create(contents);
-                    var tree = Parser.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
+                    var tree = Parser1.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
                     if(canParseSuccessfully) {
                         if(tree.diagnostics() && tree.diagnostics().length > 0) {
                             Environment.standardOut.WriteLine("Unexpected failure: " + filePath);

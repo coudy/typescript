@@ -347,7 +347,9 @@ module Services {
             var newScript = compiler.addSourceUnit(this.hostCache.getSourceText(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
         }
 
-        private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): TypeScript.UpdateUnitResult {
+        private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler,
+                                   hostUnitIndex: number,
+                                   unitIndex: number): TypeScript.UpdateUnitResult {
             var scriptId = this.hostCache.getScriptId(hostUnitIndex);
 
             //Note: We need to call "_setUnitIndexMapping" _before_ calling into the compiler,

@@ -111,6 +111,7 @@ module TypeScript {
         public generateDeclarationFiles = false;
 
         public useCaseSensitiveFileResolution = false;
+        public useFidelity = false;
 
         public setStyleOptions(str: string) {
             this.styleSettings.parseOptions(str);

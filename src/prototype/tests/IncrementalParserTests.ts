@@ -63,10 +63,10 @@ class IncrementalParserTests {
     // be a good thing.  If it decreases, that's not great (less reusability), but that may be 
     // unavoidable.  If it does decrease an investigation 
     private static compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedElements: number): void {
-        var oldTree = Parser.parse(oldText, LanguageVersion.EcmaScript5, stringTable);
+        var oldTree = Parser1.parse(oldText, LanguageVersion.EcmaScript5, stringTable);
         
-        var newTree = Parser.parse(newText, LanguageVersion.EcmaScript5, stringTable);
-        var incrementalNewTree = Parser.incrementalParse(
+        var newTree = Parser1.parse(newText, LanguageVersion.EcmaScript5, stringTable);
+        var incrementalNewTree = Parser1.incrementalParse(
             oldTree.sourceUnit(), [textChangeRange], newText, LanguageVersion.EcmaScript5, stringTable);
         
         // We should get the same tree when doign a full or incremental parse.

@@ -426,6 +426,14 @@ class BatchCompiler {
             }
         }, 'v');
 
+        opts.flag('fidelity', {
+            usage: 'Use the fidelity parser.',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.useFidelity = true;
+            }
+        });
+
         opts.parse(this.ioHost.arguments);
         
         if (this.compilationSettings.useDefaultLib) {

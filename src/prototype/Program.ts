@@ -97,7 +97,7 @@ class Program {
         // Environment.standardOut.WriteLine(filePath);
 
         var text = TextFactory.create(contents);
-        var tree = Parser.parse(text, LanguageVersion.EcmaScript5, stringTable);
+        var tree = Parser1.parse(text, LanguageVersion.EcmaScript5, stringTable);
 
         var totalIncrementalTime = 0;
         var count = 1000;
@@ -108,7 +108,7 @@ class Program {
             var start = new Date().getTime();
 
             var changeLength = i * 2;
-            var tree2 = Parser.incrementalParse(
+            var tree2 = Parser1.incrementalParse(
                 tree.sourceUnit(), [new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)], text, LanguageVersion.EcmaScript5, stringTable);
             var end = new Date().getTime();
 
@@ -219,7 +219,7 @@ class Program {
 
         var text = TextFactory.create(contents);
 
-        var tree = Parser.parse(text, languageVersion, stringTable);
+        var tree = Parser1.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(<SourceUnitSyntax>tree.sourceUnit());
 
         end = new Date().getTime();
@@ -263,7 +263,7 @@ class Program {
         }
         else {
             var text = TextFactory.create(contents);
-            var tree = Parser.parse(text, languageVersion, stringTable);
+            var tree = Parser1.parse(text, languageVersion, stringTable);
 
             end = new Date().getTime();
             totalTime += (end - start);
@@ -289,8 +289,8 @@ class Program {
 
         var text = TextFactory.create(contents);
 
-        var tree1 = Parser.parse(text, languageVersion, stringTable);
-        var tree2 = Parser.incrementalParse(
+        var tree1 = Parser1.parse(text, languageVersion, stringTable);
+        var tree2 = Parser1.incrementalParse(
             Syntax.emptySourceUnit(), [new TextChangeRange(new TextSpan(0, 0), text.length())], text, languageVersion, stringTable);
 
         Debug.assert(tree1.structuralEquals(tree2));
@@ -315,7 +315,7 @@ class Program {
         totalSize += contents.length;
 
         var text = TextFactory.create(contents);
-        var tree = Parser.parse(text, languageVersion, stringTable);
+        var tree = Parser1.parse(text, languageVersion, stringTable);
         var sourceUnit = tree.sourceUnit();
 
         end = new Date().getTime();
@@ -459,7 +459,7 @@ class Program {
 
                 try {
                     var stringText = TextFactory.create(contents);
-                    var tree = Parser.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
+                    var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     if (isNegative) {
                         var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -539,7 +539,7 @@ class Program {
 
                 try {
                     var stringText = TextFactory.create(contents);
-                    var tree = Parser.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
+                    var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     //Environment.standardOut.WriteLine(filePath);
                     // Environment.standardOut.Write(".");

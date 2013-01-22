@@ -78,7 +78,6 @@ module TypeScript {
     }
 
     export class UpdateUnitResult {
-
         constructor (public kind: UpdateUnitKind, public unitIndex: number, public script1: Script, public script2: Script) { }
 
         public scope1: AST = null;
@@ -282,6 +281,10 @@ module TypeScript {
                 this.units[index] = script.locationInfo;
                 this.typeChecker.collectTypes(script);
                 this.scripts.append(script);
+
+                var syntaxTree = Parser.parse();
+                this.syntaxTrees.push(syntaxTree);
+
                 return script
             });
         }
