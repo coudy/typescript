@@ -3169,7 +3169,9 @@ module TypeScript {
                 ast.limChar = max(ast.limChar, this.scanner.lastTokenLimChar());
                 //
                 ///////////////////////////////////////////////////////////
-                ast.preComments = preComments;
+                if (preComments) {
+                    ast.preComments = ast.preComments ? preComments.concat(ast.preComments) : preComments;
+                }
                 ast.postComments = this.parseCommentsForLine(this.scanner.line);
             }
             return ast;
@@ -4206,7 +4208,7 @@ module TypeScript {
             ///////////////////////////////////////////////////////////
 
             if (preComments) {
-                ast.preComments = preComments;
+                ast.preComments = ast.preComments ? preComments.concat(ast.preComments) : preComments;
             }
             if (this.ambientModule && (!this.okAmbientModuleMember(ast))) {
                 this.reportParseError("statement not permitted within ambient module");
