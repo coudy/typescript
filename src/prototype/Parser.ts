@@ -560,7 +560,7 @@ module Parser1 {
         private rewindPointPool: IParserRewindPoint[] = [];
         private rewindPointPoolCount = 0;
 
-        constructor(text: IText,
+        constructor(text: ISimpleText,
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
             this.slidingWindow = new SlidingWindow(this, /*defaultWindowSize:*/ 32, null);
@@ -767,7 +767,7 @@ module Parser1 {
 
         constructor(oldSourceUnit: SourceUnitSyntax,
                     changeRanges: TextChangeRange[],
-                    newText: IText,
+                    newText: ISimpleText,
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
             this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
@@ -5271,7 +5271,7 @@ module Parser1 {
         }
     }
 
-    export function parse(text: IText,
+    export function parse(text: ISimpleText,
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                           stringTable: Collections.StringTable = null,
                           options?: ParseOptions = null): SyntaxTree {
@@ -5283,7 +5283,7 @@ module Parser1 {
 
     export function incrementalParse(oldSourceUnit: SourceUnitSyntax,
                                      textChangeRanges: TextChangeRange[],
-                                     newText: IText,
+                                         newText: ISimpleText,
                                      languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                                      stringTable: Collections.StringTable = null,
                                      options?: ParseOptions = null): SyntaxTree {
