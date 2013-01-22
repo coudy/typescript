@@ -378,6 +378,10 @@ module Services {
                 return TypeScript.UpdateUnitResult.noEdits(unitIndex); // not updated
             }
 
+            if (this.compilationSettings.useFidelity) {
+                this.updateSyntaxTree(scriptId);
+            }
+
             //
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
@@ -390,9 +394,32 @@ module Services {
             return compiler.partialUpdateUnit(sourceText, scriptId, true/*setRecovery*/);
         }
 
+        private updateSyntaxTree(scriptId: string): void {
+            var previousScript = this.getScriptAST(scriptId);
+            var editRange = this.getScriptEditRange(previousScript);
+
+            var start = editRange.minChar;
+            var end = editRange.limChar;
+            var newLength = end - start + editRange.delta;
+
+            Debug.assert(newLength >= 0);
+
+            var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
+            var text = TextFactory.create(newSourceText.getText(0, newSourceText.getLength()));
+
+            var textChangeRange = new TextChangeRange(TextSpan.fromBounds(start, end), newLength);
+
+            var previousSyntaxTree = this.getSyntaxTree(scriptId);
+            var nextSyntaxTree = Parser1.incrementalParse(
+                previousSyntaxTree.sourceUnit(), [textChangeRange], text);
+
+            this.setSyntaxTree(scriptId, nextSyntaxTree);
+        }
+
         private attemptIncrementalUpdateUnit(scriptId: string): TypeScript.UpdateUnitResult {
             var previousScript = this.getScriptAST(scriptId);
-            var newSourceText = this.getSourceText(previousScript, false);
+            
+            var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
             var editRange = this.getScriptEditRange(previousScript);
 
             var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, scriptId, newSourceText, editRange);
@@ -658,6 +685,24 @@ module Services {
             }
 
             return <TypeScript.Script>this.compiler.scripts.members[unitIndex];
+        }
+
+        public getSyntaxTree(fileName: string): SyntaxTree {
+            var unitIndex = this.compilerCache.getUnitIndex(fileName);
+            if (unitIndex < 0) {
+                throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
+            }
+
+            return <SyntaxTree>this.compiler.syntaxTrees[unitIndex];
+        }
+
+        public setSyntaxTree(fileName: string, syntaxTree: SyntaxTree): void {
+            var unitIndex = this.compilerCache.getUnitIndex(fileName);
+            if (unitIndex < 0) {
+                throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
+            }
+
+            this.compiler.syntaxTrees[unitIndex] = syntaxTree;
         }
 
         public getLineMap(fileName: string): number[] {

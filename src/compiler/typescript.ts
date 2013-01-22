@@ -45,6 +45,9 @@
 ///<reference path='precompile.ts' />
 ///<reference path='incrementalParser.ts' />
 ///<reference path='declarationEmitter.ts' />
+///<reference path='..\prototype\ISyntaxNodeOrToken.ts' />
+///<reference path='..\prototype\Parser.ts' />
+///<reference path='..\prototype\TextFactory.ts' />
 
 module TypeScript {
 
@@ -139,6 +142,8 @@ module TypeScript {
         public persistentTypeState: PersistentGlobalTypeState;
 
         public emitSettings: EmitOptions;
+
+        public syntaxTrees: SyntaxTree[] = [];
 
         constructor(public errorOutput: ITextWriter,
                     public logger: ILogger = new NullLogger(),
@@ -271,6 +276,8 @@ module TypeScript {
             return this.addSourceUnit(new StringSourceText(prog), filename, keepResident, referencedFiles);
         }
 
+        private stringTable: Collections.StringTable = Collections.createStringTable();
+
         public addSourceUnit(sourceText: ISourceText, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + filename + ", " + keepResident + ")", () => {
                 var script: Script = this.parser.parse(sourceText, filename, this.units.length, AllowedElements.Global);
@@ -281,9 +288,12 @@ module TypeScript {
                 this.units[index] = script.locationInfo;
                 this.typeChecker.collectTypes(script);
                 this.scripts.append(script);
-
-                var syntaxTree = Parser.parse();
-                this.syntaxTrees.push(syntaxTree);
+                
+                if (this.settings.useFidelity) {
+                    var text = TextFactory.create(sourceText.getText(0, sourceText.getLength()));
+                    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
+                    this.syntaxTrees.push(syntaxTree);
+                }
 
                 return script
             });
