@@ -30,14 +30,6 @@ class SyntaxTree {
         return this._diagnostics;
     }
 
-    //public findToken(position: number): ISyntaxToken {
-    //    if (position < 0 || position > this._sourceUnit.endOfFileToken().end()) {
-    //        throw Errors.argumentOutOfRange("position");
-    //    }
-
-    //    return null;
-    //}
-
     public structuralEquals(tree: SyntaxTree): bool {
         return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), SyntaxDiagnostic.equals) &&
             this.sourceUnit().structuralEquals(tree.sourceUnit());
