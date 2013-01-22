@@ -673,42 +673,6 @@ module TypeScript {
             }
         }
 
-        public emitAST(ioHost: EmitterIOHost) {
-            this.parseEmitOption(ioHost);
-
-            var outFile: ITextWriter = null;
-            var context: PrintContext = null;
-
-            for (var i = 0, len = this.scripts.members.length; i < len; i++) {
-                var script = <Script>this.scripts.members[i];
-                if (this.emitSettings.outputMany || context == null) {
-                    var fname = this.units[i].filename;
-                    var mapToTxtFileName = (fileName: string, wholeFileNameReplaced: bool) => {
-                        return TypeScriptCompiler.mapToFileNameExtension(".txt", fileName, wholeFileNameReplaced);
-                    };
-                    var outFname = this.emitSettings.mapOutputFileName(fname, mapToTxtFileName);
-                    outFile = this.createFile(outFname, this.useUTF8ForFile(script));
-                    context = new PrintContext(outFile, this.parser);
-                }
-                getAstWalkerFactory().walk(script, prePrintAST, postPrintAST, null, context);
-                if (this.emitSettings.outputMany) {
-                    try {
-                        outFile.Close();
-                    } catch (e) {
-                        this.errorReporter.emitterError(null, e.message);
-                    }
-                }
-            }
-
-            if (!this.emitSettings.outputMany) {
-                try {
-                    outFile.Close();
-                } catch (e) {
-                    this.errorReporter.emitterError(null, e.message);
-                }
-            }
-        }
-
         private outputScriptToUTF8(script: Script): bool {
             return script.containsUnicodeChar || (this.emitSettings.emitComments && script.containsUnicodeCharInComment);
         }
