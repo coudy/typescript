@@ -286,20 +286,6 @@ module TypeScript {
             });
         }
 
-        public parseUnit(prog: string, filename: string) {
-            return this.parseSourceUnit(new StringSourceText(prog), filename);
-        }
-
-        public parseSourceUnit(sourceText: ISourceText, filename: string) {
-            this.parser.setErrorRecovery(this.errorOutput);
-            var script: Script = this.parser.parse(sourceText, filename, 0);
-
-            var index = this.units.length;
-            this.units[index] = script.locationInfo;
-            this.typeChecker.collectTypes(script);
-            this.scripts.append(script);
-        }
-
         public typeCheck() {
             return this.timeFunction("typeCheck()", () => {
                 var binder = new Binder(this.typeChecker);
