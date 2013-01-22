@@ -4,12 +4,30 @@
 /// <summary>
 /// Represents an immutable snapshot of text.
 /// </summary>
-interface IText {
+interface ISimpleText {
     /// <summary>
     /// Total number of characters in the text source.
     /// </summary>
     length(): number;
 
+    /// <summary>
+    /// Copy the count contents of IText starting from sourceIndex to destination starting at
+    /// destinationIndex.
+    /// </summary>
+    copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void;
+
+    substr(start: number, length: number, intern: bool);
+
+    /// <summary>
+    /// Gets the a new IText that corresponds to the contents of this IText for the given span.
+    /// </summary>
+    subText(span: TextSpan): ISimpleText;
+}
+
+/// <summary>
+/// Represents an immutable snapshot of text.
+/// </summary>
+interface IText extends ISimpleText {
     /// <summary>
     /// Total number of lines in the text.
     /// </summary>
@@ -55,12 +73,4 @@ interface IText {
     /// Gets the a new IText that corresponds to the contents of this IText for the given span.
     /// </summary>
     subText(span: TextSpan): IText;
-
-    substr(start: number, length: number, intern: bool);
-
-    /// <summary>
-    /// Copy the count contents of IText starting from sourceIndex to destination starting at
-    /// destinationIndex.
-    /// </summary>
-    copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void;
 }

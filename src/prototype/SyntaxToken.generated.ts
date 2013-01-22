@@ -4,13 +4,13 @@
 
 module Syntax {
     export class VariableWidthTokenWithNoTrivia implements ISyntaxToken {
-        private _sourceText: IText;
+        private _sourceText: ISimpleText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _textOrWidth: any;
         private _value: any = null;
 
-        constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, textOrWidth: any) {
+        constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, textOrWidth: any) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
             this.tokenKind = kind;
@@ -90,14 +90,14 @@ module Syntax {
     }
 
     export class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
-        private _sourceText: IText;
+        private _sourceText: ISimpleText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _textOrWidth: any;
         private _value: any = null;
 
-        constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any) {
+        constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
             this.tokenKind = kind;
@@ -179,14 +179,14 @@ module Syntax {
     }
 
     export class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
-        private _sourceText: IText;
+        private _sourceText: ISimpleText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _textOrWidth: any;
         private _value: any = null;
         private _trailingTriviaInfo: number;
 
-        constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, textOrWidth: any, trailingTriviaInfo: number) {
+        constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, textOrWidth: any, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
             this.tokenKind = kind;
@@ -268,7 +268,7 @@ module Syntax {
     }
 
     export class VariableWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
-        private _sourceText: IText;
+        private _sourceText: ISimpleText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _leadingTriviaInfo: number;
@@ -276,7 +276,7 @@ module Syntax {
         private _value: any = null;
         private _trailingTriviaInfo: number;
 
-        constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any, trailingTriviaInfo: number) {
+        constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, textOrWidth: any, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
             this.tokenKind = kind;
@@ -424,12 +424,12 @@ module Syntax {
     }
 
     export class FixedWidthTokenWithLeadingTrivia implements ISyntaxToken {
-        private _sourceText: IText;
+        private _sourceText: ISimpleText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _leadingTriviaInfo: number;
 
-        constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number) {
+        constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
             this.tokenKind = kind;
@@ -500,12 +500,12 @@ module Syntax {
     }
 
     export class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
-        private _sourceText: IText;
+        private _sourceText: ISimpleText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _trailingTriviaInfo: number;
 
-        constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, trailingTriviaInfo: number) {
+        constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
             this.tokenKind = kind;
@@ -576,13 +576,13 @@ module Syntax {
     }
 
     export class FixedWidthTokenWithLeadingAndTrailingTrivia implements ISyntaxToken {
-        private _sourceText: IText;
+        private _sourceText: ISimpleText;
         private _fullStart: number;
         public tokenKind: SyntaxKind;
         private _leadingTriviaInfo: number;
         private _trailingTriviaInfo: number;
 
-        constructor(sourceText: IText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, trailingTriviaInfo: number) {
+        constructor(sourceText: ISimpleText, fullStart: number,kind: SyntaxKind, leadingTriviaInfo: number, trailingTriviaInfo: number) {
             this._sourceText = sourceText;
             this._fullStart = fullStart;
             this.tokenKind = kind;
@@ -660,7 +660,7 @@ module Syntax {
         (<any>token.trailingTrivia()).collectTextElements(elements);
     }
 
-    export function fixedWidthToken(sourceText: IText, fullStart: number,
+    export function fixedWidthToken(sourceText: ISimpleText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         trailingTriviaInfo: number): ISyntaxToken {
@@ -681,7 +681,7 @@ module Syntax {
         }
     }
 
-    export function variableWidthToken(sourceText: IText, fullStart: number,
+    export function variableWidthToken(sourceText: ISimpleText, fullStart: number,
         kind: SyntaxKind,
         leadingTriviaInfo: number,
         width: number,

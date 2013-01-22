@@ -20,7 +20,7 @@
 class Scanner implements ISlidingWindowSource {
     private slidingWindow: SlidingWindow;
 
-    private text: IText;
+    private text: ISimpleText;
     private stringTable: Collections.StringTable;
     private languageVersion: LanguageVersion;
 
@@ -66,7 +66,7 @@ class Scanner implements ISlidingWindowSource {
     //    return new Scanner(text, languageVersion, new StringTable());
     //}
 
-    constructor(text: IText, languageVersion: LanguageVersion, stringTable: Collections.StringTable) {
+    constructor(text: ISimpleText, languageVersion: LanguageVersion, stringTable: Collections.StringTable) {
         Scanner.initializeStaticData();
 
         this.slidingWindow = new SlidingWindow(this, 2048, 0, text.length());
@@ -139,7 +139,7 @@ class Scanner implements ISlidingWindowSource {
     }
 
     // Scans a subsection of 'text' as trivia.
-    public static scanTrivia(text: IText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
+    public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
         Debug.assert(length > 0);
         var scanner = new Scanner(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, null);
         return scanner.scanTrivia(isTrailing);

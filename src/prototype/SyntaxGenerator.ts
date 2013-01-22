@@ -2281,7 +2281,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     result += " implements ISyntaxToken {\r\n";
 
     if (needsSourcetext) {
-        result += "        private _sourceText: IText;\r\n";
+        result += "        private _sourceText: ISimpleText;\r\n";
         result += "        private _fullStart: number;\r\n";
     }
 
@@ -2304,7 +2304,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     result += "\r\n";
 
     if (needsSourcetext) {
-        result += "        constructor(sourceText: IText, fullStart: number,";
+        result += "        constructor(sourceText: ISimpleText, fullStart: number,";
     }
     else {
         result += "        constructor(";
@@ -2536,7 +2536,7 @@ function generateTokens(): string {
 "        (<any>token.trailingTrivia()).collectTextElements(elements);\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    export function fixedWidthToken(sourceText: IText, fullStart: number,\r\n" +
+"    export function fixedWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
@@ -2557,7 +2557,7 @@ function generateTokens(): string {
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
-"    export function variableWidthToken(sourceText: IText, fullStart: number,\r\n" +
+"    export function variableWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" +
 "        kind: SyntaxKind,\r\n" +
 "        leadingTriviaInfo: number,\r\n" +
 "        width: number,\r\n" +
@@ -2953,10 +2953,10 @@ var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
 
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxVisitor.generated.ts", visitor, true);
-Environment.writeFile("C:\\fidelity\\src\\prototype\\SyntaxFactory.generated.ts", factory, true);
+Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
+Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
+Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
+Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
+Environment.writeFile("C:\\typescript\\public\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);
+Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxVisitor.generated.ts", visitor, true);
+Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxFactory.generated.ts", factory, true);
