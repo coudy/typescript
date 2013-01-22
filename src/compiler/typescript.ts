@@ -139,10 +139,11 @@ module TypeScript {
 
         public persistentTypeState: PersistentGlobalTypeState;
 
-
         public emitSettings: EmitOptions;
 
-        constructor (public errorOutput: ITextWriter, public logger: ILogger = new NullLogger(), public settings: CompilationSettings = defaultSettings) {
+        constructor(public errorOutput: ITextWriter,
+                    public logger: ILogger = new NullLogger(),
+                    public settings: CompilationSettings = defaultSettings) {
             this.errorReporter = new ErrorReporter(this.errorOutput);
             this.persistentTypeState = new PersistentGlobalTypeState(this.errorReporter);
             this.errorReporter.parser = this.parser;
