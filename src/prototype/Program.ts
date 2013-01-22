@@ -96,7 +96,7 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var tree = Parser1.parse(text, LanguageVersion.EcmaScript5, stringTable);
 
         var totalIncrementalTime = 0;
@@ -217,7 +217,7 @@ class Program {
 
         totalSize += contents.length;
 
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
 
         var tree = Parser1.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(<SourceUnitSyntax>tree.sourceUnit());
@@ -262,7 +262,7 @@ class Program {
             totalTime += (end - start);
         }
         else {
-            var text = TextFactory.create(contents);
+            var text = TextFactory.createText(contents);
             var tree = Parser1.parse(text, languageVersion, stringTable);
 
             end = new Date().getTime();
@@ -287,7 +287,7 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
 
         var tree1 = Parser1.parse(text, languageVersion, stringTable);
         var tree2 = Parser1.incrementalParse(
@@ -314,7 +314,7 @@ class Program {
 
         totalSize += contents.length;
 
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var tree = Parser1.parse(text, languageVersion, stringTable);
         var sourceUnit = tree.sourceUnit();
 
@@ -354,7 +354,7 @@ class Program {
         var start: number, end: number;
         start = new Date().getTime();
 
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
@@ -386,7 +386,7 @@ class Program {
         var start: number, end: number;
         start = new Date().getTime();
 
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
@@ -458,7 +458,7 @@ class Program {
                 testCount++;
 
                 try {
-                    var stringText = TextFactory.create(contents);
+                    var stringText = TextFactory.createText(contents);
                     var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     if (isNegative) {
@@ -538,7 +538,7 @@ class Program {
                 testCount++;
 
                 try {
-                    var stringText = TextFactory.create(contents);
+                    var stringText = TextFactory.createText(contents);
                     var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
                     //Environment.standardOut.WriteLine(filePath);

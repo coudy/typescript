@@ -30711,14 +30711,86 @@ var TextFactory;
             return this.source.substr(span.start(), span.length());
         };
         StringText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
-            return StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
+            StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
         };
         return StringText;
     })(TextBase);    
-    function create(value) {
+    var stringTable = Collections.createStringTable();
+    var SimpleSubText = (function () {
+        function SimpleSubText(text, span) {
+            this.text = null;
+            this.span = null;
+            if(text === null) {
+                throw Errors.argumentNull("text");
+            }
+            if(span.start() < 0 || span.start() >= text.length() || span.end() < 0 || span.end() > text.length()) {
+                throw Errors.argument("span");
+            }
+            this.text = text;
+            this.span = span;
+        }
+        SimpleSubText.prototype.checkSubSpan = function (span) {
+            if(span.start() < 0 || span.start() > this.length() || span.end() > this.length()) {
+                throw Errors.argumentOutOfRange("span");
+            }
+        };
+        SimpleSubText.prototype.length = function () {
+            return this.span.length();
+        };
+        SimpleSubText.prototype.subText = function (span) {
+            this.checkSubSpan(span);
+            return new SimpleSubText(this.text, this.getCompositeSpan(span.start(), span.length()));
+        };
+        SimpleSubText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
+            var span = this.getCompositeSpan(sourceIndex, count);
+            this.text.copyTo(span.start(), destination, destinationIndex, span.length());
+        };
+        SimpleSubText.prototype.substr = function (start, length, intern) {
+            var span = this.getCompositeSpan(start, length);
+            return this.text.substr(span.start(), span.length(), intern);
+        };
+        SimpleSubText.prototype.getCompositeSpan = function (start, length) {
+            var compositeStart = MathPrototype.min(this.text.length(), this.span.start() + start);
+            var compositeEnd = MathPrototype.min(this.text.length(), compositeStart + length);
+            return new TextSpan(compositeStart, compositeEnd - compositeStart);
+        };
+        return SimpleSubText;
+    })();    
+    var SimpleStringText = (function () {
+        function SimpleStringText(value) {
+            this.value = value;
+        }
+        SimpleStringText.prototype.length = function () {
+            return this.value.length;
+        };
+        SimpleStringText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
+            StringUtilities.copyTo(this.value, sourceIndex, destination, destinationIndex, count);
+        };
+        SimpleStringText.prototype.substr = function (start, length, intern) {
+            if(intern) {
+                var array = ArrayUtilities.createArray(length, 0);
+                this.copyTo(start, array, 0, length);
+                return stringTable.addCharArray(array, 0, length);
+            }
+            return this.value.substr(start, length);
+        };
+        SimpleStringText.prototype.subText = function (span) {
+            return new SimpleSubText(this, span);
+        };
+        return SimpleStringText;
+    })();    
+    function createText(value) {
         return new StringText(value);
     }
-    TextFactory.create = create;
+    TextFactory.createText = createText;
+    function createSimpleText(value) {
+        return new SimpleStringText(value);
+    }
+    TextFactory.createSimpleText = createSimpleText;
+    function createSimpleSubText(text, span) {
+        return new SimpleSubText(text, span);
+    }
+    TextFactory.createSimpleSubText = createSimpleSubText;
 })(TextFactory || (TextFactory = {}));
 var negative262ExpectedResults = {
     'Sbp_12.5_A9_T3.js': false,
@@ -32458,7 +32530,7 @@ var IncrementalParserTests = (function () {
         var contents = text.toString();
         var newContents = contents.substr(0, start) + newText + contents.substring(start + length);
         return {
-            text: TextFactory.create(newContents),
+            text: TextFactory.createText(newContents),
             textChangeRange: new TextChangeRange(new TextSpan(start, length), newText.length)
         };
     };
@@ -32494,7 +32566,7 @@ var IncrementalParserTests = (function () {
         source += "    public foo3() { }\r\n";
         source += "}";
         var semicolonIndex = source.indexOf(";");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     };
@@ -32507,40 +32579,40 @@ var IncrementalParserTests = (function () {
         source += "    public foo3() { }\r\n";
         source += "}";
         var index = source.indexOf("+ 1");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
     };
     IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
         var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
         var semicolonIndex = source.indexOf(";}");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
     };
     IncrementalParserTests.testIncrementalComment1 = function testIncrementalComment1() {
         var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
         var semicolonIndex = source.indexOf(";");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
     };
     IncrementalParserTests.testIncrementalComment2 = function testIncrementalComment2() {
         var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "//");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
     };
     IncrementalParserTests.testIncrementalComment3 = function testIncrementalComment3() {
         var source = "//class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, 2);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
     };
     IncrementalParserTests.testIncrementalComment4 = function testIncrementalComment4() {
         var source = "class C { public foo1() { /; } public foo2() { */ return 1; } public foo3() { } }";
         var index = source.indexOf(";");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
     };
@@ -32551,124 +32623,124 @@ var IncrementalParserTests = (function () {
         source += "    }\r\n";
         source += "}";
         var semicolonIndex = source.indexOf(";");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
     };
     IncrementalParserTests.testTypeMember1 = function testTypeMember1() {
         var source = "interface I { a: number; b: string; (c): d; new (e): f; g(): h }";
         var index = source.indexOf(": string");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
     };
     IncrementalParserTests.testVariableDeclarator1 = function testVariableDeclarator1() {
         var source = "enum E { a = 1, b = 1 << 1, c = 3, e = 4, f = 5, g = 7, h = 8, i = 9, j = 10 }";
         var index = source.indexOf("<<");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
     };
     IncrementalParserTests.testStrictMode1 = function testStrictMode1() {
         var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'strict';\r\n");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
     };
     IncrementalParserTests.testStrictMode2 = function testStrictMode2() {
         var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'use strict';\r\n");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
     };
     IncrementalParserTests.testStrictMode3 = function testStrictMode3() {
         var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
         var index = source.indexOf('f');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
     };
     IncrementalParserTests.testStrictMode4 = function testStrictMode4() {
         var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
         var index = source.indexOf('f');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 12);
     };
     IncrementalParserTests.testIncremental5 = function testIncremental5() {
         var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
         var index = source.indexOf('b');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "strict");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
     };
     IncrementalParserTests.testIncremental6 = function testIncremental6() {
         var source = "'use strict';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
         var index = source.indexOf('s');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "blahhh");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
     };
     IncrementalParserTests.testDelete1 = function testDelete1() {
         var source = "'use blahhh';\r\nfoo1();\r\nfoo2();\r\nfoo3();\r\nfoo4();\r\nfoo4();\r\nfoo6();\r\nfoo7();\r\nfoo8();\r\nfoo9();\r\n";
         var index = source.indexOf('f');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 59);
     };
     IncrementalParserTests.testGenerics1 = function testGenerics1() {
         var source = "var v = <T>(a);";
         var index = source.indexOf(';');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, " => 1");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
     };
     IncrementalParserTests.testGenerics2 = function testGenerics2() {
         var source = "var v = <T>(a) => 1;";
         var index = source.indexOf(' =>');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, " => 1".length);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
     };
     IncrementalParserTests.testGenerics3 = function testGenerics3() {
         var source = "var v = 1 >> = 2";
         var index = source.indexOf('>> =');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index + 2, 1);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
     };
     IncrementalParserTests.testGenerics4 = function testGenerics4() {
         var source = "var v = 1 >>= 2";
         var index = source.indexOf('>>=');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index + 2, " ");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
     };
     IncrementalParserTests.testGenerics5 = function testGenerics5() {
         var source = "var v = T>>(2)";
         var index = source.indexOf('T');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "Foo<Bar<");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
     };
     IncrementalParserTests.testGenerics6 = function testGenerics6() {
         var source = "var v = Foo<Bar<T>>(2)";
         var index = source.indexOf('Foo<Bar<');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, "Foo<Bar<".length);
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 5);
     };
     IncrementalParserTests.testGenerics7 = function testGenerics7() {
         var source = "var v = T>>=2;";
         var index = source.indexOf('=');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, "= ".length, ": Foo<Bar<");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
     };
     IncrementalParserTests.testGenerics8 = function testGenerics8() {
         var source = "var v : Foo<Bar<T>>=2;";
         var index = source.indexOf(':');
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, ": Foo<Bar<".length, "= ");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 3);
     };
@@ -32751,7 +32823,7 @@ var Program = (function () {
             return;
         }
         var contents = Environment.readFile(filePath, true);
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var tree = Parser1.parse(text, 1 /* EcmaScript5 */ , stringTable);
         var totalIncrementalTime = 0;
         var count = 1000;
@@ -32832,7 +32904,7 @@ var Program = (function () {
         var start, end;
         start = new Date().getTime();
         totalSize += contents.length;
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var tree = Parser1.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(tree.sourceUnit());
         end = new Date().getTime();
@@ -32859,7 +32931,7 @@ var Program = (function () {
             end = new Date().getTime();
             totalTime += (end - start);
         } else {
-            var text = TextFactory.create(contents);
+            var text = TextFactory.createText(contents);
             var tree = Parser1.parse(text, languageVersion, stringTable);
             end = new Date().getTime();
             totalTime += (end - start);
@@ -32875,7 +32947,7 @@ var Program = (function () {
             return;
         }
         var contents = Environment.readFile(filePath, true);
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var tree1 = Parser1.parse(text, languageVersion, stringTable);
         var tree2 = Parser1.incrementalParse(Syntax.emptySourceUnit(), [
             new TextChangeRange(new TextSpan(0, 0), text.length())
@@ -32893,7 +32965,7 @@ var Program = (function () {
         var start, end;
         start = new Date().getTime();
         totalSize += contents.length;
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var tree = Parser1.parse(text, languageVersion, stringTable);
         var sourceUnit = tree.sourceUnit();
         end = new Date().getTime();
@@ -32921,7 +32993,7 @@ var Program = (function () {
         var contents = Environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
         var tokens = [];
         var textArray = [];
@@ -32944,7 +33016,7 @@ var Program = (function () {
         var contents = Environment.readFile(filePath, true);
         var start, end;
         start = new Date().getTime();
-        var text = TextFactory.create(contents);
+        var text = TextFactory.createText(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
         var tokens = [];
         var textArray = [];
@@ -33003,7 +33075,7 @@ var Program = (function () {
                 var isNegative = contents.indexOf("@negative") >= 0;
                 testCount++;
                 try  {
-                    var stringText = TextFactory.create(contents);
+                    var stringText = TextFactory.createText(contents);
                     var tree = Parser1.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
                     if(isNegative) {
                         var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -33065,7 +33137,7 @@ var Program = (function () {
                 totalSize += contents.length;
                 testCount++;
                 try  {
-                    var stringText = TextFactory.create(contents);
+                    var stringText = TextFactory.createText(contents);
                     var tree = Parser1.parse(stringText, 1 /* EcmaScript5 */ , stringTable);
                     if(canParseSuccessfully) {
                         if(tree.diagnostics() && tree.diagnostics().length > 0) {

@@ -405,13 +405,14 @@ module Services {
             Debug.assert(newLength >= 0);
 
             var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
-            var text = TextFactory.create(newSourceText.getText(0, newSourceText.getLength()));
 
             var textChangeRange = new TextChangeRange(TextSpan.fromBounds(start, end), newLength);
 
+            var newText = new TypeScript.SourceSimpleText(newSourceText);
+
             var previousSyntaxTree = this.getSyntaxTree(scriptId);
             var nextSyntaxTree = Parser1.incrementalParse(
-                previousSyntaxTree.sourceUnit(), [textChangeRange], text);
+                previousSyntaxTree.sourceUnit(), [textChangeRange], newText);
 
             this.setSyntaxTree(scriptId, nextSyntaxTree);
         }
@@ -778,7 +779,7 @@ module Services {
             return this.host.getScriptEditRangeSinceVersion(hostUnitIndex, lastKnownVersion);
         }
 
-        public getSourceText(script: TypeScript.Script, cached: bool = false) {
+        public getSourceText(script: TypeScript.Script, cached: bool = false): TypeScript.ISourceText {
             return this.hostCache.getSourceText(this.hostCache.getUnitIndex(script.locationInfo.filename), cached);
         }
 

@@ -1,5 +1,8 @@
+///<reference path='ArrayUtilities.ts' />
 ///<reference path='CharacterCodes.ts' />
 ///<reference path='IText.ts' />
+///<reference path='StringUtilities.ts' />
+///<reference path='StringTable.ts' />
 
 module TextFactory {
     function getLengthOfLineBreakSlow(text: IText, index: number, c: number): number {
@@ -159,7 +162,7 @@ module TextFactory {
             return new SubText(this, span);
         }
 
-        public substr(start: number, length: number, intern: bool) {
+        public substr(start: number, length: number, intern: bool): string {
             throw Errors.abstract();
         }
 
@@ -446,11 +449,106 @@ module TextFactory {
         }
 
         public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
-            return StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
+            StringUtilities.copyTo(this.source, sourceIndex, destination, destinationIndex, count);
         }
     }
 
-    export function create(value: string): IText {
+    var stringTable = Collections.createStringTable();
+
+
+
+    /// <summary>
+    /// An IText that represents a subrange of another IText.
+    /// </summary>
+    class SimpleSubText implements ISimpleText {
+        private text: ISimpleText = null;
+        private span: TextSpan = null;
+
+        constructor(text: ISimpleText, span: TextSpan) {
+            if (text === null) {
+                throw Errors.argumentNull("text");
+            }
+
+            if (span.start() < 0 ||
+                span.start() >= text.length() ||
+                 span.end() < 0 ||
+                 span.end() > text.length()) {
+                throw Errors.argument("span");
+            }
+
+            this.text = text;
+            this.span = span;
+        }
+
+        private checkSubSpan(span: TextSpan): void {
+            if (span.start() < 0 || span.start() > this.length() || span.end() > this.length()) {
+                throw Errors.argumentOutOfRange("span");
+            }
+        }
+
+        public length(): number {
+            return this.span.length();
+        }
+
+        public subText(span: TextSpan): ISimpleText {
+            this.checkSubSpan(span);
+
+            return new SimpleSubText(this.text, this.getCompositeSpan(span.start(), span.length()));
+        }
+
+        public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
+            var span = this.getCompositeSpan(sourceIndex, count);
+            this.text.copyTo(span.start(), destination, destinationIndex, span.length());
+        }
+
+        public substr(start: number, length: number, intern: bool): string {
+            var span = this.getCompositeSpan(start, length);
+            return this.text.substr(span.start(), span.length(), intern);
+        }
+
+        private getCompositeSpan(start: number, length: number): TextSpan {
+            var compositeStart = MathPrototype.min(this.text.length(), this.span.start() + start);
+            var compositeEnd = MathPrototype.min(this.text.length(), compositeStart + length);
+            return new TextSpan(compositeStart, compositeEnd - compositeStart);
+        }
+    }
+
+    class SimpleStringText implements ISimpleText {
+        constructor(private value: string) {
+        }
+
+        public length(): number {
+            return this.value.length;
+        }
+
+        public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
+            StringUtilities.copyTo(this.value, sourceIndex, destination, destinationIndex, count);
+        }
+
+        public substr(start: number, length: number, intern: bool): string {
+            if (intern) {
+                var array = ArrayUtilities.createArray(length, 0);
+                this.copyTo(start, array, 0, length);
+                return stringTable.addCharArray(array, 0, length);
+            }
+
+            return this.value.substr(start, length);
+        }
+
+        public subText(span: TextSpan): ISimpleText {
+            return new SimpleSubText(this, span);
+        }
+    }
+
+    export function createText(value: string): IText {
         return new StringText(value);
+    }
+
+    export function createSimpleText(value: string): ISimpleText {
+        return new SimpleStringText(value);
+    }
+
+    export function createSimpleSubText(text: ISimpleText, span: TextSpan): ISimpleText {
+        return new SimpleSubText(text, span);
     }
 }

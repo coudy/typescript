@@ -39,7 +39,7 @@ class IncrementalParserTests {
         var contents = text.toString();
         var newContents = contents.substr(0, start) + newText + contents.substring(start + length);
 
-        return { text: TextFactory.create(newContents), textChangeRange: new TextChangeRange(new TextSpan(start, length), newText.length) }
+        return { text: TextFactory.createText(newContents), textChangeRange: new TextChangeRange(new TextSpan(start, length), newText.length) }
     }
 
     private static withInsert(text: IText, start: number, newText: string): { text: IText; textChangeRange: TextChangeRange; } {
@@ -88,7 +88,7 @@ class IncrementalParserTests {
 
         var semicolonIndex = source.indexOf(";");
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
@@ -105,7 +105,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf("+ 1");
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
@@ -116,7 +116,7 @@ class IncrementalParserTests {
 
         var semicolonIndex = source.indexOf(";}");
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
@@ -127,7 +127,7 @@ class IncrementalParserTests {
 
         var semicolonIndex = source.indexOf(";");
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 7);
@@ -136,7 +136,7 @@ class IncrementalParserTests {
     public static testIncrementalComment2() {
         var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "//");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
@@ -145,7 +145,7 @@ class IncrementalParserTests {
     public static testIncrementalComment3() {
         var source = "//class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, 2);
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 0);
@@ -155,7 +155,7 @@ class IncrementalParserTests {
         var source = "class C { public foo1() { /; } public foo2() { */ return 1; } public foo3() { } }";
         
         var index = source.indexOf(";");
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
@@ -171,7 +171,7 @@ class IncrementalParserTests {
 
         var semicolonIndex = source.indexOf(";");
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
@@ -183,7 +183,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf(": string");
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "?");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 43);
@@ -195,7 +195,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf("<<");
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
@@ -209,7 +209,7 @@ class IncrementalParserTests {
         // reuse with/without a strict mode change.
         var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'strict';\r\n");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
@@ -220,7 +220,7 @@ class IncrementalParserTests {
         // we'll have to reparse the nodes (and generate an error for 'static();'
         var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'use strict';\r\n");
 
         // Note the decreased reuse of nodes compared to testStrictMode1
@@ -237,7 +237,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('f');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
@@ -250,7 +250,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('f');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -262,7 +262,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('b');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "strict");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
@@ -273,7 +273,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('s');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 6, "blahhh");
 
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 37);
@@ -284,7 +284,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('f');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -296,7 +296,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf(';');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, " => 1");
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -308,7 +308,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf(' =>');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, " => 1".length);
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -320,7 +320,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('>> =');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index + 2, 1);
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -332,7 +332,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('>>=');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index + 2, " ");
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -344,7 +344,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('T');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "Foo<Bar<");
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -356,7 +356,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('Foo<Bar<');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, "Foo<Bar<".length);
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -368,7 +368,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf('=');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, "= ".length, ": Foo<Bar<");
 
         // Note the decreased reuse of nodes compared to testStrictMode3
@@ -380,7 +380,7 @@ class IncrementalParserTests {
 
         var index = source.indexOf(':');
 
-        var oldText = TextFactory.create(source);
+        var oldText = TextFactory.createText(source);
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, ": Foo<Bar<".length, "= ");
 
         // Note the decreased reuse of nodes compared to testStrictMode3

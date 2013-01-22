@@ -286,6 +286,28 @@ module TypeScript {
         getLength(): number;
     }
 
+    export class SourceSimpleText implements ISimpleText {
+        constructor(private text: ISourceText) {
+        }
+
+        public length() {
+            return this.text.getLength();
+        }
+
+        public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
+            StringUtilities.copyTo(this.text.getText(sourceIndex, sourceIndex +count), 0, destination, destinationIndex, count);
+        }
+
+        public substr(start: number, length: number, intern: bool): string {
+            // TODO: intern as appropriate.
+            return this.text.getText(start, start + length);
+        }
+
+        public subText(span: TextSpan): ISimpleText {
+            return TextFactory.createSimpleSubText(this, span);
+        }
+    }
+
     // Implementation on top of a contiguous string
     export class StringSourceText implements ISourceText {
         constructor (public text: string) {

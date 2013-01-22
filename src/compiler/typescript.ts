@@ -290,7 +290,7 @@ module TypeScript {
                 this.scripts.append(script);
                 
                 if (this.settings.useFidelity) {
-                    var text = TextFactory.create(sourceText.getText(0, sourceText.getLength()));
+                    var text = new TypeScript.SourceSimpleText(sourceText);
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
                     this.syntaxTrees.push(syntaxTree);
                 }
