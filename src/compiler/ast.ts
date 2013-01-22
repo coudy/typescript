@@ -1144,7 +1144,9 @@ module TypeScript {
     }
 
     export class LocationInfo {
-        constructor (public filename: string, public lineMap: number[], public unitIndex) { }
+        constructor(public filename: string,
+                    public lineMap: number[],
+                    public unitIndex) { }
     }
 
     export var unknownLocationInfo = new LocationInfo("unknown", null, -1);
