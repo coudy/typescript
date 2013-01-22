@@ -1505,6 +1505,46 @@ function generateKindMethod(definition: ITypeDefinition): string {
     return result;
 }
 
+function generateSlotMethods(definition: ITypeDefinition): string {
+    var result = "";
+
+    if (!definition.isAbstract) {
+        result += "\r\n";
+        result += "    private slotCount(): number {\r\n";
+        var slotCount = hasKind ? (definition.children.length - 1) : definition.children.length;
+
+        result += "        return " + slotCount + ";\r\n";
+        result += "    }\r\n\r\n";
+
+        result += "    private elementAtSlot(slot: number): ISyntaxElement {\r\n";
+
+        if (slotCount === 0) {
+            result += "        throw Errors.invalidOperation();\r\n";
+        }
+        else {
+            result += "        switch (slot) {\r\n";
+
+            var index = 0;
+            for (var i = 0; i < definition.children.length; i++) {
+                var child = definition.children[i];
+                if (child.type === "SyntaxKind") {
+                    continue;
+                }
+
+                result += "            case " + index + ": return this._" + definition.children[i].name + ";\r\n";
+                index++;
+            }
+
+            result += "            default: throw Errors.invalidOperation();\r\n";
+            result += "        }\r\n";
+        }
+
+        result += "    }\r\n";
+    }
+
+    return result;
+}
+
 function generateFirstTokenMethod(definition: ITypeDefinition): string {
     var result = "";
 
@@ -2090,10 +2130,11 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateFactoryMethod(definition);
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
+    result += generateSlotMethods(definition);
     result += generateIsMethod(definition);
     // result += generateIsMissingMethod(definition);
-    result += generateFirstTokenMethod(definition);
-    result += generateLastTokenMethod(definition);
+    //result += generateFirstTokenMethod(definition);
+    //result += generateLastTokenMethod(definition);
     result += generateInsertChildrenIntoMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);

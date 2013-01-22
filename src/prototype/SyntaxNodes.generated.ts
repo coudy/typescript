@@ -35,14 +35,16 @@ class SourceUnitSyntax extends SyntaxNode {
         return SyntaxKind.SourceUnit;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._moduleElements.firstToken()) !== null) { return token; }
-        return this._endOfFileToken;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        return this._endOfFileToken;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._moduleElements;
+            case 1: return this._endOfFileToken;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -202,22 +204,18 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ExternalModuleReference;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._moduleKeyword.width() > 0) { return this._moduleKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._stringLiteral.width() > 0) { return this._stringLiteral; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        return null;
+    private slotCount(): number {
+        return 4;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if (this._stringLiteral.width() > 0) { return this._stringLiteral; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._moduleKeyword.width() > 0) { return this._moduleKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._moduleKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._stringLiteral;
+            case 3: return this._closeParenToken;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -380,16 +378,15 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ModuleNameModuleReference;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._moduleName.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 1;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._moduleName.lastToken()) !== null) { return token; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._moduleName;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -504,28 +501,23 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ImportDeclaration;
     }
 
+    private slotCount(): number {
+        return 5;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._importKeyword;
+            case 1: return this._identifier;
+            case 2: return this._equalsToken;
+            case 3: return this._moduleReference;
+            case 4: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._importKeyword.width() > 0) { return this._importKeyword; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._equalsToken.width() > 0) { return this._equalsToken; }
-        if ((token = this._moduleReference.firstToken()) !== null) { return token; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if ((token = this._moduleReference.lastToken()) !== null) { return token; }
-        if (this._equalsToken.width() > 0) { return this._equalsToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._importKeyword.width() > 0) { return this._importKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -749,38 +741,28 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         return SyntaxKind.ClassDeclaration;
     }
 
+    private slotCount(): number {
+        return 10;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._exportKeyword;
+            case 1: return this._declareKeyword;
+            case 2: return this._classKeyword;
+            case 3: return this._identifier;
+            case 4: return this._typeParameterList;
+            case 5: return this._extendsClause;
+            case 6: return this._implementsClause;
+            case 7: return this._openBraceToken;
+            case 8: return this._classElements;
+            case 9: return this._closeBraceToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if (this._classKeyword.width() > 0) { return this._classKeyword; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
-        if (this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) { return token; }
-        if (this._implementsClause !== null && (token = this._implementsClause.firstToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._classElements.firstToken()) !== null) { return token; }
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._classElements.lastToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if (this._implementsClause !== null && (token = this._implementsClause.lastToken()) !== null) { return token; }
-        if (this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) { return token; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._classKeyword.width() > 0) { return this._classKeyword; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -1128,30 +1110,24 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return SyntaxKind.InterfaceDeclaration;
     }
 
+    private slotCount(): number {
+        return 6;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._exportKeyword;
+            case 1: return this._interfaceKeyword;
+            case 2: return this._identifier;
+            case 3: return this._typeParameterList;
+            case 4: return this._extendsClause;
+            case 5: return this._body;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        if (this._interfaceKeyword.width() > 0) { return this._interfaceKeyword; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
-        if (this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) { return token; }
-        if ((token = this._body.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._body.lastToken()) !== null) { return token; }
-        if (this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) { return token; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._interfaceKeyword.width() > 0) { return this._interfaceKeyword; }
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -1380,18 +1356,16 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ExtendsClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._extendsKeyword.width() > 0) { return this._extendsKeyword; }
-        if ((token = this._typeNames.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._typeNames.lastToken()) !== null) { return token; }
-        if (this._extendsKeyword.width() > 0) { return this._extendsKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._extendsKeyword;
+            case 1: return this._typeNames;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -1522,18 +1496,16 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ImplementsClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._implementsKeyword.width() > 0) { return this._implementsKeyword; }
-        if ((token = this._typeNames.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._typeNames.lastToken()) !== null) { return token; }
-        if (this._implementsKeyword.width() > 0) { return this._implementsKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._implementsKeyword;
+            case 1: return this._typeNames;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -1688,34 +1660,26 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ModuleDeclaration;
     }
 
+    private slotCount(): number {
+        return 8;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._exportKeyword;
+            case 1: return this._declareKeyword;
+            case 2: return this._moduleKeyword;
+            case 3: return this._moduleName;
+            case 4: return this._stringLiteral;
+            case 5: return this._openBraceToken;
+            case 6: return this._moduleElements;
+            case 7: return this._closeBraceToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if (this._moduleKeyword.width() > 0) { return this._moduleKeyword; }
-        if (this._moduleName !== null && (token = this._moduleName.firstToken()) !== null) { return token; }
-        if (this._stringLiteral !== null && this._stringLiteral.width() > 0) { return this._stringLiteral; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._moduleElements.firstToken()) !== null) { return token; }
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._moduleElements.lastToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if (this._stringLiteral !== null && this._stringLiteral.width() > 0) { return this._stringLiteral; }
-        if (this._moduleName !== null && (token = this._moduleName.lastToken()) !== null) { return token; }
-        if (this._moduleKeyword.width() > 0) { return this._moduleKeyword; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -2012,34 +1976,28 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.FunctionDeclaration;
     }
 
+    private slotCount(): number {
+        return 6;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._exportKeyword;
+            case 1: return this._declareKeyword;
+            case 2: return this._functionKeyword;
+            case 3: return this._functionSignature;
+            case 4: return this._block;
+            case 5: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if (this._functionKeyword.width() > 0) { return this._functionKeyword; }
-        if ((token = this._functionSignature.firstToken()) !== null) { return token; }
-        if (this._block !== null && (token = this._block.firstToken()) !== null) { return token; }
-        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._block !== null && (token = this._block.lastToken()) !== null) { return token; }
-        if ((token = this._functionSignature.lastToken()) !== null) { return token; }
-        if (this._functionKeyword.width() > 0) { return this._functionKeyword; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -2286,30 +2244,26 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.VariableStatement;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._exportKeyword;
+            case 1: return this._declareKeyword;
+            case 2: return this._variableDeclaration;
+            case 3: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if ((token = this._variableDeclaration.firstToken()) !== null) { return token; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if ((token = this._variableDeclaration.lastToken()) !== null) { return token; }
-        if (this._declareKeyword !== null && this._declareKeyword.width() > 0) { return this._declareKeyword; }
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -2491,18 +2445,16 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclaration;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._varKeyword.width() > 0) { return this._varKeyword; }
-        if ((token = this._variableDeclarators.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._variableDeclarators.lastToken()) !== null) { return token; }
-        if (this._varKeyword.width() > 0) { return this._varKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._varKeyword;
+            case 1: return this._variableDeclarators;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -2641,20 +2593,17 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclarator;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
-        if (this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) { return token; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._identifier;
+            case 1: return this._typeAnnotation;
+            case 2: return this._equalsValueClause;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -2814,18 +2763,16 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return SyntaxKind.EqualsValueClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._equalsToken.width() > 0) { return this._equalsToken; }
-        if ((token = this._value.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._value.lastToken()) !== null) { return token; }
-        if (this._equalsToken.width() > 0) { return this._equalsToken; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._equalsToken;
+            case 1: return this._value;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -2948,26 +2895,24 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         return visitor.visitPrefixUnaryExpression(this);
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._operatorToken;
+            case 1: return this._operand;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._operatorToken.width() > 0) { return this._operatorToken; }
-        if ((token = this._operand.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._operand.lastToken()) !== null) { return token; }
-        if (this._operatorToken.width() > 0) { return this._operatorToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -3112,28 +3057,25 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.ArrayLiteralExpression;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._openBracketToken;
+            case 1: return this._expressions;
+            case 2: return this._closeBracketToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        if ((token = this._expressions.firstToken()) !== null) { return token; }
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        if ((token = this._expressions.lastToken()) !== null) { return token; }
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -3275,18 +3217,16 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return SyntaxKind.OmittedExpression;
     }
 
+    private slotCount(): number {
+        return 0;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        throw Errors.invalidOperation();
+    }
+
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -3365,28 +3305,25 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ParenthesizedExpression;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._openParenToken;
+            case 1: return this._expression;
+            case 2: return this._closeParenToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -3574,20 +3511,17 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return SyntaxKind.SimpleArrowFunctionExpression;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if ((token = this._body.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._body.lastToken()) !== null) { return token; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._identifier;
+            case 1: return this._equalsGreaterThanToken;
+            case 2: return this._body;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -3739,20 +3673,17 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return SyntaxKind.ParenthesizedArrowFunctionExpression;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._callSignature.firstToken()) !== null) { return token; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if ((token = this._body.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._body.lastToken()) !== null) { return token; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if ((token = this._callSignature.lastToken()) !== null) { return token; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._callSignature;
+            case 1: return this._equalsGreaterThanToken;
+            case 2: return this._body;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -3906,6 +3837,19 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return SyntaxKind.QualifiedName;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._left;
+            case 1: return this._dotToken;
+            case 2: return this._right;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isName(): bool {
         return true;
     }
@@ -3920,22 +3864,6 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._left.firstToken()) !== null) { return token; }
-        if (this._dotToken.width() > 0) { return this._dotToken; }
-        if (this._right.width() > 0) { return this._right; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._right.width() > 0) { return this._right; }
-        if (this._dotToken.width() > 0) { return this._dotToken; }
-        if ((token = this._left.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -4092,20 +4020,17 @@ class TypeArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.TypeArgumentList;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
-        if ((token = this._typeArguments.firstToken()) !== null) { return token; }
-        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
-        if ((token = this._typeArguments.lastToken()) !== null) { return token; }
-        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._lessThanToken;
+            case 1: return this._typeArguments;
+            case 2: return this._greaterThanToken;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -4274,6 +4199,21 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ConstructorType;
     }
 
+    private slotCount(): number {
+        return 5;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._newKeyword;
+            case 1: return this._typeParameterList;
+            case 2: return this._parameterList;
+            case 3: return this._equalsGreaterThanToken;
+            case 4: return this._type;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isType(): bool {
         return true;
     }
@@ -4284,26 +4224,6 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._newKeyword.width() > 0) { return this._newKeyword; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if ((token = this._type.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._type.lastToken()) !== null) { return token; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
-        if (this._newKeyword.width() > 0) { return this._newKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -4514,6 +4434,20 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.FunctionType;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._typeParameterList;
+            case 1: return this._parameterList;
+            case 2: return this._equalsGreaterThanToken;
+            case 3: return this._type;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isType(): bool {
         return true;
     }
@@ -4524,24 +4458,6 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if ((token = this._type.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._type.lastToken()) !== null) { return token; }
-        if (this._equalsGreaterThanToken.width() > 0) { return this._equalsGreaterThanToken; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -4726,6 +4642,19 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ObjectType;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._openBraceToken;
+            case 1: return this._typeMembers;
+            case 2: return this._closeBraceToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isType(): bool {
         return true;
     }
@@ -4736,22 +4665,6 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._typeMembers.firstToken()) !== null) { return token; }
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._typeMembers.lastToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -4907,6 +4820,19 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ArrayType;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._type;
+            case 1: return this._openBracketToken;
+            case 2: return this._closeBracketToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isType(): bool {
         return true;
     }
@@ -4917,22 +4843,6 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._type.firstToken()) !== null) { return token; }
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        if ((token = this._type.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -5081,6 +4991,18 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.GenericType;
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._name;
+            case 1: return this._typeArgumentList;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isType(): bool {
         return true;
     }
@@ -5091,20 +5013,6 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._name.firstToken()) !== null) { return token; }
-        if ((token = this._typeArgumentList.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._typeArgumentList.lastToken()) !== null) { return token; }
-        if ((token = this._name.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -5232,18 +5140,16 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return SyntaxKind.TypeAnnotation;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._type.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._type.lastToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._colonToken;
+            case 1: return this._type;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -5378,28 +5284,25 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.Block;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._openBraceToken;
+            case 1: return this._statements;
+            case 2: return this._closeBraceToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._statements.firstToken()) !== null) { return token; }
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._statements.lastToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -5569,26 +5472,20 @@ class ParameterSyntax extends SyntaxNode {
         return SyntaxKind.Parameter;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._dotDotDotToken !== null && this._dotDotDotToken.width() > 0) { return this._dotDotDotToken; }
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
-        if (this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 6;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) { return token; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        if (this._dotDotDotToken !== null && this._dotDotDotToken.width() > 0) { return this._dotDotDotToken; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._dotDotDotToken;
+            case 1: return this._publicOrPrivateKeyword;
+            case 2: return this._identifier;
+            case 3: return this._questionToken;
+            case 4: return this._typeAnnotation;
+            case 5: return this._equalsValueClause;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -5833,28 +5730,25 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.MemberAccessExpression;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._expression;
+            case 1: return this._dotToken;
+            case 2: return this._name;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._dotToken.width() > 0) { return this._dotToken; }
-        if (this._name.width() > 0) { return this._name; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._name.width() > 0) { return this._name; }
-        if (this._dotToken.width() > 0) { return this._dotToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -5999,26 +5893,24 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return visitor.visitPostfixUnaryExpression(this);
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._operand;
+            case 1: return this._operatorToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._operand.firstToken()) !== null) { return token; }
-        if (this._operatorToken.width() > 0) { return this._operatorToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._operatorToken.width() > 0) { return this._operatorToken; }
-        if ((token = this._operand.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -6162,30 +6054,26 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ElementAccessExpression;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._expression;
+            case 1: return this._openBracketToken;
+            case 2: return this._argumentExpression;
+            case 3: return this._closeBracketToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        if ((token = this._argumentExpression.firstToken()) !== null) { return token; }
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        if ((token = this._argumentExpression.lastToken()) !== null) { return token; }
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -6359,26 +6247,24 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return SyntaxKind.InvocationExpression;
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._expression;
+            case 1: return this._argumentList;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if ((token = this._argumentList.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._argumentList.lastToken()) !== null) { return token; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -6519,22 +6405,18 @@ class ArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.ArgumentList;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._typeArgumentList !== null && (token = this._typeArgumentList.firstToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._arguments.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        return null;
+    private slotCount(): number {
+        return 4;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._arguments.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._typeArgumentList !== null && (token = this._typeArgumentList.lastToken()) !== null) { return token; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._typeArgumentList;
+            case 1: return this._openParenToken;
+            case 2: return this._arguments;
+            case 3: return this._closeParenToken;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -6714,24 +6596,21 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return visitor.visitBinaryExpression(this);
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._left;
+            case 1: return this._operatorToken;
+            case 2: return this._right;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._left.firstToken()) !== null) { return token; }
-        if (this._operatorToken.width() > 0) { return this._operatorToken; }
-        if ((token = this._right.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._right.lastToken()) !== null) { return token; }
-        if (this._operatorToken.width() > 0) { return this._operatorToken; }
-        if ((token = this._left.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -6904,28 +6783,23 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return SyntaxKind.ConditionalExpression;
     }
 
+    private slotCount(): number {
+        return 5;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._condition;
+            case 1: return this._questionToken;
+            case 2: return this._whenTrue;
+            case 3: return this._colonToken;
+            case 4: return this._whenFalse;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._condition.firstToken()) !== null) { return token; }
-        if (this._questionToken.width() > 0) { return this._questionToken; }
-        if ((token = this._whenTrue.firstToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._whenFalse.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._whenFalse.lastToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._whenTrue.lastToken()) !== null) { return token; }
-        if (this._questionToken.width() > 0) { return this._questionToken; }
-        if ((token = this._condition.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -7145,18 +7019,16 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.ConstructSignature;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._newKeyword.width() > 0) { return this._newKeyword; }
-        if ((token = this._callSignature.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._callSignature.lastToken()) !== null) { return token; }
-        if (this._newKeyword.width() > 0) { return this._newKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._newKeyword;
+            case 1: return this._callSignature;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -7291,20 +7163,17 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.FunctionSignature;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
-        if ((token = this._callSignature.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._callSignature.lastToken()) !== null) { return token; }
-        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._identifier;
+            case 1: return this._questionToken;
+            case 2: return this._callSignature;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -7470,22 +7339,18 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.IndexSignature;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        if ((token = this._parameter.firstToken()) !== null) { return token; }
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 4;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if (this._closeBracketToken.width() > 0) { return this._closeBracketToken; }
-        if ((token = this._parameter.lastToken()) !== null) { return token; }
-        if (this._openBracketToken.width() > 0) { return this._openBracketToken; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._openBracketToken;
+            case 1: return this._parameter;
+            case 2: return this._closeBracketToken;
+            case 3: return this._typeAnnotation;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -7668,20 +7533,17 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.PropertySignature;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if (this._questionToken !== null && this._questionToken.width() > 0) { return this._questionToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._identifier;
+            case 1: return this._questionToken;
+            case 2: return this._typeAnnotation;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -7846,20 +7708,17 @@ class ParameterListSyntax extends SyntaxNode {
         return SyntaxKind.ParameterList;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._parameters.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._parameters.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._openParenToken;
+            case 1: return this._parameters;
+            case 2: return this._closeParenToken;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -8020,20 +7879,17 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.CallSignature;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) { return token; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) { return token; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._typeParameterList;
+            case 1: return this._parameterList;
+            case 2: return this._typeAnnotation;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -8203,20 +8059,17 @@ class TypeParameterListSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameterList;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
-        if ((token = this._typeParameters.firstToken()) !== null) { return token; }
-        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
-        if ((token = this._typeParameters.lastToken()) !== null) { return token; }
-        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._lessThanToken;
+            case 1: return this._typeParameters;
+            case 2: return this._greaterThanToken;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -8373,18 +8226,16 @@ class TypeParameterSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameter;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._constraint !== null && (token = this._constraint.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._constraint !== null && (token = this._constraint.lastToken()) !== null) { return token; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._identifier;
+            case 1: return this._constraint;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -8515,18 +8366,16 @@ class ConstraintSyntax extends SyntaxNode {
         return SyntaxKind.Constraint;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._extendsKeyword.width() > 0) { return this._extendsKeyword; }
-        if ((token = this._type.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._type.lastToken()) !== null) { return token; }
-        if (this._extendsKeyword.width() > 0) { return this._extendsKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._extendsKeyword;
+            case 1: return this._type;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -8653,18 +8502,16 @@ class ElseClauseSyntax extends SyntaxNode {
         return SyntaxKind.ElseClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._elseKeyword.width() > 0) { return this._elseKeyword; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._elseKeyword.width() > 0) { return this._elseKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._elseKeyword;
+            case 1: return this._statement;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -8813,34 +8660,28 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.IfStatement;
     }
 
+    private slotCount(): number {
+        return 6;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._ifKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._condition;
+            case 3: return this._closeParenToken;
+            case 4: return this._statement;
+            case 5: return this._elseClause;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._ifKeyword.width() > 0) { return this._ifKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._condition.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        if (this._elseClause !== null && (token = this._elseClause.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._elseClause !== null && (token = this._elseClause.lastToken()) !== null) { return token; }
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._condition.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._ifKeyword.width() > 0) { return this._ifKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -9064,26 +8905,24 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ExpressionStatement;
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._expression;
+            case 1: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -9222,26 +9061,22 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         return SyntaxKind.ConstructorDeclaration;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._constructorKeyword;
+            case 1: return this._parameterList;
+            case 2: return this._block;
+            case 3: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isClassElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._constructorKeyword.width() > 0) { return this._constructorKeyword; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if (this._block !== null && (token = this._block.firstToken()) !== null) { return token; }
-        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._block !== null && (token = this._block.lastToken()) !== null) { return token; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._constructorKeyword.width() > 0) { return this._constructorKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -9434,32 +9269,27 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberFunctionDeclaration;
     }
 
+    private slotCount(): number {
+        return 5;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._publicOrPrivateKeyword;
+            case 1: return this._staticKeyword;
+            case 2: return this._functionSignature;
+            case 3: return this._block;
+            case 4: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isMemberDeclaration(): bool {
         return true;
     }
 
     private isClassElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if ((token = this._functionSignature.firstToken()) !== null) { return token; }
-        if (this._block !== null && (token = this._block.firstToken()) !== null) { return token; }
-        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken !== null && this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._block !== null && (token = this._block.lastToken()) !== null) { return token; }
-        if ((token = this._functionSignature.lastToken()) !== null) { return token; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -9737,28 +9567,21 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.GetMemberAccessorDeclaration;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if (this._getKeyword.width() > 0) { return this._getKeyword; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) { return token; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 7;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if (this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) { return token; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._getKeyword.width() > 0) { return this._getKeyword; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._publicOrPrivateKeyword;
+            case 1: return this._staticKeyword;
+            case 2: return this._getKeyword;
+            case 3: return this._identifier;
+            case 4: return this._parameterList;
+            case 5: return this._typeAnnotation;
+            case 6: return this._block;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -10028,26 +9851,20 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.SetMemberAccessorDeclaration;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if (this._setKeyword.width() > 0) { return this._setKeyword; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if ((token = this._parameterList.firstToken()) !== null) { return token; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 6;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if ((token = this._parameterList.lastToken()) !== null) { return token; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._setKeyword.width() > 0) { return this._setKeyword; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._publicOrPrivateKeyword;
+            case 1: return this._staticKeyword;
+            case 2: return this._setKeyword;
+            case 3: return this._identifier;
+            case 4: return this._parameterList;
+            case 5: return this._block;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -10282,30 +10099,26 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberVariableDeclaration;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._publicOrPrivateKeyword;
+            case 1: return this._staticKeyword;
+            case 2: return this._variableDeclarator;
+            case 3: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isMemberDeclaration(): bool {
         return true;
     }
 
     private isClassElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if ((token = this._variableDeclarator.firstToken()) !== null) { return token; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if ((token = this._variableDeclarator.lastToken()) !== null) { return token; }
-        if (this._staticKeyword !== null && this._staticKeyword.width() > 0) { return this._staticKeyword; }
-        if (this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) { return this._publicOrPrivateKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -10487,28 +10300,25 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ThrowStatement;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._throwKeyword;
+            case 1: return this._expression;
+            case 2: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._throwKeyword.width() > 0) { return this._throwKeyword; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._throwKeyword.width() > 0) { return this._throwKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -10666,28 +10476,25 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ReturnStatement;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._returnKeyword;
+            case 1: return this._expression;
+            case 2: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._returnKeyword.width() > 0) { return this._returnKeyword; }
-        if (this._expression !== null && (token = this._expression.firstToken()) !== null) { return token; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._expression !== null && (token = this._expression.lastToken()) !== null) { return token; }
-        if (this._returnKeyword.width() > 0) { return this._returnKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -10849,28 +10656,25 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return SyntaxKind.ObjectCreationExpression;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._newKeyword;
+            case 1: return this._expression;
+            case 2: return this._argumentList;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._newKeyword.width() > 0) { return this._newKeyword; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._argumentList !== null && (token = this._argumentList.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._argumentList !== null && (token = this._argumentList.lastToken()) !== null) { return token; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._newKeyword.width() > 0) { return this._newKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -11050,36 +10854,29 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.SwitchStatement;
     }
 
+    private slotCount(): number {
+        return 7;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._switchKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._expression;
+            case 3: return this._closeParenToken;
+            case 4: return this._openBraceToken;
+            case 5: return this._switchClauses;
+            case 6: return this._closeBraceToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._switchKeyword.width() > 0) { return this._switchKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._switchClauses.firstToken()) !== null) { return token; }
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._switchClauses.lastToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._switchKeyword.width() > 0) { return this._switchKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -11365,22 +11162,18 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.CaseSwitchClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._caseKeyword.width() > 0) { return this._caseKeyword; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._statements.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 4;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statements.lastToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._caseKeyword.width() > 0) { return this._caseKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._caseKeyword;
+            case 1: return this._expression;
+            case 2: return this._colonToken;
+            case 3: return this._statements;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -11566,20 +11359,17 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.DefaultSwitchClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._defaultKeyword.width() > 0) { return this._defaultKeyword; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._statements.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statements.lastToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if (this._defaultKeyword.width() > 0) { return this._defaultKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._defaultKeyword;
+            case 1: return this._colonToken;
+            case 2: return this._statements;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -11741,28 +11531,25 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.BreakStatement;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._breakKeyword;
+            case 1: return this._identifier;
+            case 2: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._breakKeyword.width() > 0) { return this._breakKeyword; }
-        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
-        if (this._breakKeyword.width() > 0) { return this._breakKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -11922,28 +11709,25 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ContinueStatement;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._continueKeyword;
+            case 1: return this._identifier;
+            case 2: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._continueKeyword.width() > 0) { return this._continueKeyword; }
-        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
-        if (this._continueKeyword.width() > 0) { return this._continueKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -12204,34 +11988,24 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForStatement;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._forKeyword.width() > 0) { return this._forKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._variableDeclaration !== null && (token = this._variableDeclaration.firstToken()) !== null) { return token; }
-        if (this._initializer !== null && (token = this._initializer.firstToken()) !== null) { return token; }
-        if (this._firstSemicolonToken.width() > 0) { return this._firstSemicolonToken; }
-        if (this._condition !== null && (token = this._condition.firstToken()) !== null) { return token; }
-        if (this._secondSemicolonToken.width() > 0) { return this._secondSemicolonToken; }
-        if (this._incrementor !== null && (token = this._incrementor.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 10;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if (this._incrementor !== null && (token = this._incrementor.lastToken()) !== null) { return token; }
-        if (this._secondSemicolonToken.width() > 0) { return this._secondSemicolonToken; }
-        if (this._condition !== null && (token = this._condition.lastToken()) !== null) { return token; }
-        if (this._firstSemicolonToken.width() > 0) { return this._firstSemicolonToken; }
-        if (this._initializer !== null && (token = this._initializer.lastToken()) !== null) { return token; }
-        if (this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._forKeyword.width() > 0) { return this._forKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._forKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._variableDeclaration;
+            case 3: return this._initializer;
+            case 4: return this._firstSemicolonToken;
+            case 5: return this._condition;
+            case 6: return this._secondSemicolonToken;
+            case 7: return this._incrementor;
+            case 8: return this._closeParenToken;
+            case 9: return this._statement;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -12587,30 +12361,22 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForInStatement;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._forKeyword.width() > 0) { return this._forKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._variableDeclaration !== null && (token = this._variableDeclaration.firstToken()) !== null) { return token; }
-        if (this._left !== null && (token = this._left.firstToken()) !== null) { return token; }
-        if (this._inKeyword.width() > 0) { return this._inKeyword; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 8;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._inKeyword.width() > 0) { return this._inKeyword; }
-        if (this._left !== null && (token = this._left.lastToken()) !== null) { return token; }
-        if (this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._forKeyword.width() > 0) { return this._forKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._forKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._variableDeclaration;
+            case 3: return this._left;
+            case 4: return this._inKeyword;
+            case 5: return this._expression;
+            case 6: return this._closeParenToken;
+            case 7: return this._statement;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -12894,24 +12660,19 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.WhileStatement;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._whileKeyword.width() > 0) { return this._whileKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._condition.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 5;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._condition.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._whileKeyword.width() > 0) { return this._whileKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._whileKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._condition;
+            case 3: return this._closeParenToken;
+            case 4: return this._statement;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -13117,32 +12878,27 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.WithStatement;
     }
 
+    private slotCount(): number {
+        return 5;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._withKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._condition;
+            case 3: return this._closeParenToken;
+            case 4: return this._statement;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._withKeyword.width() > 0) { return this._withKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._condition.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._condition.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._withKeyword.width() > 0) { return this._withKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -13357,30 +13113,24 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return SyntaxKind.EnumDeclaration;
     }
 
+    private slotCount(): number {
+        return 6;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._exportKeyword;
+            case 1: return this._enumKeyword;
+            case 2: return this._identifier;
+            case 3: return this._openBraceToken;
+            case 4: return this._variableDeclarators;
+            case 5: return this._closeBraceToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        if (this._enumKeyword.width() > 0) { return this._enumKeyword; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._variableDeclarators.firstToken()) !== null) { return token; }
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._variableDeclarators.lastToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._enumKeyword.width() > 0) { return this._enumKeyword; }
-        if (this._exportKeyword !== null && this._exportKeyword.width() > 0) { return this._exportKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -13610,30 +13360,26 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.CastExpression;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._lessThanToken;
+            case 1: return this._type;
+            case 2: return this._greaterThanToken;
+            case 3: return this._expression;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
-        if ((token = this._type.firstToken()) !== null) { return token; }
-        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._greaterThanToken.width() > 0) { return this._greaterThanToken; }
-        if ((token = this._type.lastToken()) !== null) { return token; }
-        if (this._lessThanToken.width() > 0) { return this._lessThanToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -13813,28 +13559,25 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ObjectLiteralExpression;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._openBraceToken;
+            case 1: return this._propertyAssignments;
+            case 2: return this._closeBraceToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        if ((token = this._propertyAssignments.firstToken()) !== null) { return token; }
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._closeBraceToken.width() > 0) { return this._closeBraceToken; }
-        if ((token = this._propertyAssignments.lastToken()) !== null) { return token; }
-        if (this._openBraceToken.width() > 0) { return this._openBraceToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -14014,20 +13757,17 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return SyntaxKind.SimplePropertyAssignment;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._propertyName.width() > 0) { return this._propertyName; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 3;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if (this._propertyName.width() > 0) { return this._propertyName; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._propertyName;
+            case 1: return this._colonToken;
+            case 2: return this._expression;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -14220,24 +13960,19 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.GetAccessorPropertyAssignment;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._getKeyword.width() > 0) { return this._getKeyword; }
-        if (this._propertyName.width() > 0) { return this._propertyName; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 5;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._propertyName.width() > 0) { return this._propertyName; }
-        if (this._getKeyword.width() > 0) { return this._getKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._getKeyword;
+            case 1: return this._propertyName;
+            case 2: return this._openParenToken;
+            case 3: return this._closeParenToken;
+            case 4: return this._block;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -14444,26 +14179,20 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.SetAccessorPropertyAssignment;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._setKeyword.width() > 0) { return this._setKeyword; }
-        if (this._propertyName.width() > 0) { return this._propertyName; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._parameterName.width() > 0) { return this._parameterName; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 6;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if (this._parameterName.width() > 0) { return this._parameterName; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._propertyName.width() > 0) { return this._propertyName; }
-        if (this._setKeyword.width() > 0) { return this._setKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._setKeyword;
+            case 1: return this._propertyName;
+            case 2: return this._openParenToken;
+            case 3: return this._parameterName;
+            case 4: return this._closeParenToken;
+            case 5: return this._block;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -14691,30 +14420,26 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return SyntaxKind.FunctionExpression;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._functionKeyword;
+            case 1: return this._identifier;
+            case 2: return this._callSignature;
+            case 3: return this._block;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._functionKeyword.width() > 0) { return this._functionKeyword; }
-        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
-        if ((token = this._callSignature.firstToken()) !== null) { return token; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if ((token = this._callSignature.lastToken()) !== null) { return token; }
-        if (this._identifier !== null && this._identifier.width() > 0) { return this._identifier; }
-        if (this._functionKeyword.width() > 0) { return this._functionKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -14889,24 +14614,23 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.EmptyStatement;
     }
 
+    private slotCount(): number {
+        return 1;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -15021,30 +14745,26 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.TryStatement;
     }
 
+    private slotCount(): number {
+        return 4;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._tryKeyword;
+            case 1: return this._block;
+            case 2: return this._catchClause;
+            case 3: return this._finallyClause;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._tryKeyword.width() > 0) { return this._tryKeyword; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        if (this._catchClause !== null && (token = this._catchClause.firstToken()) !== null) { return token; }
-        if (this._finallyClause !== null && (token = this._finallyClause.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._finallyClause !== null && (token = this._finallyClause.lastToken()) !== null) { return token; }
-        if (this._catchClause !== null && (token = this._catchClause.lastToken()) !== null) { return token; }
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if (this._tryKeyword.width() > 0) { return this._tryKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -15237,24 +14957,19 @@ class CatchClauseSyntax extends SyntaxNode {
         return SyntaxKind.CatchClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._catchKeyword.width() > 0) { return this._catchKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 5;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._catchKeyword.width() > 0) { return this._catchKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._catchKeyword;
+            case 1: return this._openParenToken;
+            case 2: return this._identifier;
+            case 3: return this._closeParenToken;
+            case 4: return this._block;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -15448,18 +15163,16 @@ class FinallyClauseSyntax extends SyntaxNode {
         return SyntaxKind.FinallyClause;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._finallyKeyword.width() > 0) { return this._finallyKeyword; }
-        if ((token = this._block.firstToken()) !== null) { return token; }
-        return null;
+    private slotCount(): number {
+        return 2;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._block.lastToken()) !== null) { return token; }
-        if (this._finallyKeyword.width() > 0) { return this._finallyKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._finallyKeyword;
+            case 1: return this._block;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -15591,28 +15304,25 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.LabeledStatement;
     }
 
+    private slotCount(): number {
+        return 3;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._identifier;
+            case 1: return this._colonToken;
+            case 2: return this._statement;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._identifier.width() > 0) { return this._identifier; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._colonToken.width() > 0) { return this._colonToken; }
-        if (this._identifier.width() > 0) { return this._identifier; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -15778,28 +15488,21 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.DoStatement;
     }
 
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._doKeyword.width() > 0) { return this._doKeyword; }
-        if ((token = this._statement.firstToken()) !== null) { return token; }
-        if (this._whileKeyword.width() > 0) { return this._whileKeyword; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if ((token = this._condition.firstToken()) !== null) { return token; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
+    private slotCount(): number {
+        return 7;
     }
 
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._closeParenToken.width() > 0) { return this._closeParenToken; }
-        if ((token = this._condition.lastToken()) !== null) { return token; }
-        if (this._openParenToken.width() > 0) { return this._openParenToken; }
-        if (this._whileKeyword.width() > 0) { return this._whileKeyword; }
-        if ((token = this._statement.lastToken()) !== null) { return token; }
-        if (this._doKeyword.width() > 0) { return this._doKeyword; }
-        return null;
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._doKeyword;
+            case 1: return this._statement;
+            case 2: return this._whileKeyword;
+            case 3: return this._openParenToken;
+            case 4: return this._condition;
+            case 5: return this._closeParenToken;
+            case 6: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -16039,26 +15742,24 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.TypeOfExpression;
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._typeOfKeyword;
+            case 1: return this._expression;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._typeOfKeyword.width() > 0) { return this._typeOfKeyword; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._typeOfKeyword.width() > 0) { return this._typeOfKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -16186,26 +15887,24 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.DeleteExpression;
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._deleteKeyword;
+            case 1: return this._expression;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._deleteKeyword.width() > 0) { return this._deleteKeyword; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._deleteKeyword.width() > 0) { return this._deleteKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -16333,26 +16032,24 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.VoidExpression;
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._voidKeyword;
+            case 1: return this._expression;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isUnaryExpression(): bool {
         return true;
     }
 
     private isExpression(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._voidKeyword.width() > 0) { return this._voidKeyword; }
-        if ((token = this._expression.firstToken()) !== null) { return token; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if ((token = this._expression.lastToken()) !== null) { return token; }
-        if (this._voidKeyword.width() > 0) { return this._voidKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
@@ -16480,26 +16177,24 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.DebuggerStatement;
     }
 
+    private slotCount(): number {
+        return 2;
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this._debuggerKeyword;
+            case 1: return this._semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
     private isStatement(): bool {
         return true;
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public firstToken(): ISyntaxToken {
-        var token = null;
-        if (this._debuggerKeyword.width() > 0) { return this._debuggerKeyword; }
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        return null;
-    }
-
-    public lastToken(): ISyntaxToken {
-        var token = null;
-        if (this._semicolonToken.width() > 0) { return this._semicolonToken; }
-        if (this._debuggerKeyword.width() > 0) { return this._debuggerKeyword; }
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {

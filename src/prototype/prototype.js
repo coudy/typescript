@@ -877,11 +877,49 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.kind = function () {
         throw Errors.abstract();
     };
-    SyntaxNode.prototype.firstToken = function () {
+    SyntaxNode.prototype.slotCount = function () {
         throw Errors.abstract();
     };
-    SyntaxNode.prototype.lastToken = function () {
+    SyntaxNode.prototype.elementAtSlot = function (slot) {
         throw Errors.abstract();
+    };
+    SyntaxNode.prototype.firstToken = function () {
+        for(var i = 0, n = this.slotCount(); i < n; i++) {
+            var element = this.elementAtSlot(i);
+            if(element != null) {
+                if(element.isToken()) {
+                    var token = element;
+                    if(token.width() > 0) {
+                        return token;
+                    }
+                } else {
+                    var token = (element).firstToken();
+                    if(token !== null) {
+                        return token;
+                    }
+                }
+            }
+        }
+        return null;
+    };
+    SyntaxNode.prototype.lastToken = function () {
+        for(var i = this.slotCount() - 1; i >= 0; i--) {
+            var element = this.elementAtSlot(i);
+            if(element != null) {
+                if(element.isToken()) {
+                    var token = element;
+                    if(token.width() > 0) {
+                        return token;
+                    }
+                } else {
+                    var token = (element).lastToken();
+                    if(token !== null) {
+                        return token;
+                    }
+                }
+            }
+        }
+        return null;
     };
     SyntaxNode.prototype.leadingTrivia = function () {
         return this.firstToken().leadingTrivia();
@@ -8689,15 +8727,18 @@ var SourceUnitSyntax = (function (_super) {
     SourceUnitSyntax.prototype.kind = function () {
         return 120 /* SourceUnit */ ;
     };
-    SourceUnitSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._moduleElements.firstToken()) !== null) {
-            return token;
-        }
-        return this._endOfFileToken;
+    SourceUnitSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    SourceUnitSyntax.prototype.lastToken = function () {
-        return this._endOfFileToken;
+    SourceUnitSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._moduleElements;
+            case 1:
+                return this._endOfFileToken;
+            default:
+                throw Errors.invalidOperation();
+        }
     };
     SourceUnitSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._endOfFileToken);
@@ -8837,37 +8878,22 @@ var ExternalModuleReferenceSyntax = (function (_super) {
     ExternalModuleReferenceSyntax.prototype.kind = function () {
         return 240 /* ExternalModuleReference */ ;
     };
-    ExternalModuleReferenceSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._moduleKeyword.width() > 0) {
-            return this._moduleKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._stringLiteral.width() > 0) {
-            return this._stringLiteral;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        return null;
+    ExternalModuleReferenceSyntax.prototype.slotCount = function () {
+        return 4;
     };
-    ExternalModuleReferenceSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
+    ExternalModuleReferenceSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._moduleKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._stringLiteral;
+            case 3:
+                return this._closeParenToken;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._stringLiteral.width() > 0) {
-            return this._stringLiteral;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._moduleKeyword.width() > 0) {
-            return this._moduleKeyword;
-        }
-        return null;
     };
     ExternalModuleReferenceSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeParenToken);
@@ -9024,19 +9050,16 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
     ModuleNameModuleReferenceSyntax.prototype.kind = function () {
         return 241 /* ModuleNameModuleReference */ ;
     };
-    ModuleNameModuleReferenceSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._moduleName.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ModuleNameModuleReferenceSyntax.prototype.slotCount = function () {
+        return 1;
     };
-    ModuleNameModuleReferenceSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._moduleName.lastToken()) !== null) {
-            return token;
+    ModuleNameModuleReferenceSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._moduleName;
+            default:
+                throw Errors.invalidOperation();
         }
-        return null;
     };
     ModuleNameModuleReferenceSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._moduleName);
@@ -9126,46 +9149,27 @@ var ImportDeclarationSyntax = (function (_super) {
     ImportDeclarationSyntax.prototype.kind = function () {
         return 132 /* ImportDeclaration */ ;
     };
+    ImportDeclarationSyntax.prototype.slotCount = function () {
+        return 5;
+    };
+    ImportDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._importKeyword;
+            case 1:
+                return this._identifier;
+            case 2:
+                return this._equalsToken;
+            case 3:
+                return this._moduleReference;
+            case 4:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ImportDeclarationSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    ImportDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._importKeyword.width() > 0) {
-            return this._importKeyword;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._equalsToken.width() > 0) {
-            return this._equalsToken;
-        }
-        if((token = this._moduleReference.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    ImportDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if((token = this._moduleReference.lastToken()) !== null) {
-            return token;
-        }
-        if(this._equalsToken.width() > 0) {
-            return this._equalsToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._importKeyword.width() > 0) {
-            return this._importKeyword;
-        }
-        return null;
     };
     ImportDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -9359,76 +9363,37 @@ var ClassDeclarationSyntax = (function (_super) {
     ClassDeclarationSyntax.prototype.kind = function () {
         return 130 /* ClassDeclaration */ ;
     };
+    ClassDeclarationSyntax.prototype.slotCount = function () {
+        return 10;
+    };
+    ClassDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._exportKeyword;
+            case 1:
+                return this._declareKeyword;
+            case 2:
+                return this._classKeyword;
+            case 3:
+                return this._identifier;
+            case 4:
+                return this._typeParameterList;
+            case 5:
+                return this._extendsClause;
+            case 6:
+                return this._implementsClause;
+            case 7:
+                return this._openBraceToken;
+            case 8:
+                return this._classElements;
+            case 9:
+                return this._closeBraceToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ClassDeclarationSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    ClassDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if(this._classKeyword.width() > 0) {
-            return this._classKeyword;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) {
-            return token;
-        }
-        if(this._implementsClause !== null && (token = this._implementsClause.firstToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if((token = this._classElements.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        return null;
-    };
-    ClassDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        if((token = this._classElements.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if(this._implementsClause !== null && (token = this._implementsClause.lastToken()) !== null) {
-            return token;
-        }
-        if(this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._classKeyword.width() > 0) {
-            return this._classKeyword;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        return null;
     };
     ClassDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBraceToken);
@@ -9777,52 +9742,29 @@ var InterfaceDeclarationSyntax = (function (_super) {
     InterfaceDeclarationSyntax.prototype.kind = function () {
         return 127 /* InterfaceDeclaration */ ;
     };
+    InterfaceDeclarationSyntax.prototype.slotCount = function () {
+        return 6;
+    };
+    InterfaceDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._exportKeyword;
+            case 1:
+                return this._interfaceKeyword;
+            case 2:
+                return this._identifier;
+            case 3:
+                return this._typeParameterList;
+            case 4:
+                return this._extendsClause;
+            case 5:
+                return this._body;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     InterfaceDeclarationSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    InterfaceDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        if(this._interfaceKeyword.width() > 0) {
-            return this._interfaceKeyword;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._extendsClause !== null && (token = this._extendsClause.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._body.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    InterfaceDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._body.lastToken()) !== null) {
-            return token;
-        }
-        if(this._extendsClause !== null && (token = this._extendsClause.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._interfaceKeyword.width() > 0) {
-            return this._interfaceKeyword;
-        }
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        return null;
     };
     InterfaceDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._body);
@@ -10049,25 +9991,18 @@ var ExtendsClauseSyntax = (function (_super) {
     ExtendsClauseSyntax.prototype.kind = function () {
         return 228 /* ExtendsClause */ ;
     };
-    ExtendsClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._extendsKeyword.width() > 0) {
-            return this._extendsKeyword;
-        }
-        if((token = this._typeNames.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ExtendsClauseSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    ExtendsClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._typeNames.lastToken()) !== null) {
-            return token;
+    ExtendsClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._extendsKeyword;
+            case 1:
+                return this._typeNames;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._extendsKeyword.width() > 0) {
-            return this._extendsKeyword;
-        }
-        return null;
     };
     ExtendsClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         this._typeNames.insertChildrenInto(array, index);
@@ -10183,25 +10118,18 @@ var ImplementsClauseSyntax = (function (_super) {
     ImplementsClauseSyntax.prototype.kind = function () {
         return 227 /* ImplementsClause */ ;
     };
-    ImplementsClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._implementsKeyword.width() > 0) {
-            return this._implementsKeyword;
-        }
-        if((token = this._typeNames.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ImplementsClauseSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    ImplementsClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._typeNames.lastToken()) !== null) {
-            return token;
+    ImplementsClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._implementsKeyword;
+            case 1:
+                return this._typeNames;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._implementsKeyword.width() > 0) {
-            return this._implementsKeyword;
-        }
-        return null;
     };
     ImplementsClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         this._typeNames.insertChildrenInto(array, index);
@@ -10326,64 +10254,33 @@ var ModuleDeclarationSyntax = (function (_super) {
     ModuleDeclarationSyntax.prototype.kind = function () {
         return 129 /* ModuleDeclaration */ ;
     };
+    ModuleDeclarationSyntax.prototype.slotCount = function () {
+        return 8;
+    };
+    ModuleDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._exportKeyword;
+            case 1:
+                return this._declareKeyword;
+            case 2:
+                return this._moduleKeyword;
+            case 3:
+                return this._moduleName;
+            case 4:
+                return this._stringLiteral;
+            case 5:
+                return this._openBraceToken;
+            case 6:
+                return this._moduleElements;
+            case 7:
+                return this._closeBraceToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ModuleDeclarationSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    ModuleDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if(this._moduleKeyword.width() > 0) {
-            return this._moduleKeyword;
-        }
-        if(this._moduleName !== null && (token = this._moduleName.firstToken()) !== null) {
-            return token;
-        }
-        if(this._stringLiteral !== null && this._stringLiteral.width() > 0) {
-            return this._stringLiteral;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if((token = this._moduleElements.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        return null;
-    };
-    ModuleDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        if((token = this._moduleElements.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if(this._stringLiteral !== null && this._stringLiteral.width() > 0) {
-            return this._stringLiteral;
-        }
-        if(this._moduleName !== null && (token = this._moduleName.lastToken()) !== null) {
-            return token;
-        }
-        if(this._moduleKeyword.width() > 0) {
-            return this._moduleKeyword;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        return null;
     };
     ModuleDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBraceToken);
@@ -10680,55 +10577,32 @@ var FunctionDeclarationSyntax = (function (_super) {
     FunctionDeclarationSyntax.prototype.kind = function () {
         return 128 /* FunctionDeclaration */ ;
     };
+    FunctionDeclarationSyntax.prototype.slotCount = function () {
+        return 6;
+    };
+    FunctionDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._exportKeyword;
+            case 1:
+                return this._declareKeyword;
+            case 2:
+                return this._functionKeyword;
+            case 3:
+                return this._functionSignature;
+            case 4:
+                return this._block;
+            case 5:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     FunctionDeclarationSyntax.prototype.isStatement = function () {
         return true;
     };
     FunctionDeclarationSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    FunctionDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if(this._functionKeyword.width() > 0) {
-            return this._functionKeyword;
-        }
-        if((token = this._functionSignature.firstToken()) !== null) {
-            return token;
-        }
-        if(this._block !== null && (token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    FunctionDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if(this._block !== null && (token = this._block.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._functionSignature.lastToken()) !== null) {
-            return token;
-        }
-        if(this._functionKeyword.width() > 0) {
-            return this._functionKeyword;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        return null;
     };
     FunctionDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._semicolonToken !== null) {
@@ -10982,43 +10856,28 @@ var VariableStatementSyntax = (function (_super) {
     VariableStatementSyntax.prototype.kind = function () {
         return 145 /* VariableStatement */ ;
     };
+    VariableStatementSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    VariableStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._exportKeyword;
+            case 1:
+                return this._declareKeyword;
+            case 2:
+                return this._variableDeclaration;
+            case 3:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     VariableStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     VariableStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    VariableStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if((token = this._variableDeclaration.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    VariableStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if((token = this._variableDeclaration.lastToken()) !== null) {
-            return token;
-        }
-        if(this._declareKeyword !== null && this._declareKeyword.width() > 0) {
-            return this._declareKeyword;
-        }
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        return null;
     };
     VariableStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -11202,25 +11061,18 @@ var VariableDeclarationSyntax = (function (_super) {
     VariableDeclarationSyntax.prototype.kind = function () {
         return 221 /* VariableDeclaration */ ;
     };
-    VariableDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._varKeyword.width() > 0) {
-            return this._varKeyword;
-        }
-        if((token = this._variableDeclarators.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    VariableDeclarationSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    VariableDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._variableDeclarators.lastToken()) !== null) {
-            return token;
+    VariableDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._varKeyword;
+            case 1:
+                return this._variableDeclarators;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._varKeyword.width() > 0) {
-            return this._varKeyword;
-        }
-        return null;
     };
     VariableDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         this._variableDeclarators.insertChildrenInto(array, index);
@@ -11343,31 +11195,20 @@ var VariableDeclaratorSyntax = (function (_super) {
     VariableDeclaratorSyntax.prototype.kind = function () {
         return 222 /* VariableDeclarator */ ;
     };
-    VariableDeclaratorSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
-            return token;
-        }
-        if(this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    VariableDeclaratorSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    VariableDeclaratorSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) {
-            return token;
+    VariableDeclaratorSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._identifier;
+            case 1:
+                return this._typeAnnotation;
+            case 2:
+                return this._equalsValueClause;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        return null;
     };
     VariableDeclaratorSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._equalsValueClause !== null) {
@@ -11522,25 +11363,18 @@ var EqualsValueClauseSyntax = (function (_super) {
     EqualsValueClauseSyntax.prototype.kind = function () {
         return 229 /* EqualsValueClause */ ;
     };
-    EqualsValueClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._equalsToken.width() > 0) {
-            return this._equalsToken;
-        }
-        if((token = this._value.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    EqualsValueClauseSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    EqualsValueClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._value.lastToken()) !== null) {
-            return token;
+    EqualsValueClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._equalsToken;
+            case 1:
+                return this._value;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._equalsToken.width() > 0) {
-            return this._equalsToken;
-        }
-        return null;
     };
     EqualsValueClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._value);
@@ -11649,31 +11483,24 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
     PrefixUnaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitPrefixUnaryExpression(this);
     };
+    PrefixUnaryExpressionSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    PrefixUnaryExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._operatorToken;
+            case 1:
+                return this._operand;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     PrefixUnaryExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     PrefixUnaryExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    PrefixUnaryExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._operatorToken.width() > 0) {
-            return this._operatorToken;
-        }
-        if((token = this._operand.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    PrefixUnaryExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._operand.lastToken()) !== null) {
-            return token;
-        }
-        if(this._operatorToken.width() > 0) {
-            return this._operatorToken;
-        }
-        return null;
     };
     PrefixUnaryExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._operand);
@@ -11797,37 +11624,26 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
     ArrayLiteralExpressionSyntax.prototype.kind = function () {
         return 211 /* ArrayLiteralExpression */ ;
     };
+    ArrayLiteralExpressionSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ArrayLiteralExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._openBracketToken;
+            case 1:
+                return this._expressions;
+            case 2:
+                return this._closeBracketToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ArrayLiteralExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     ArrayLiteralExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ArrayLiteralExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        if((token = this._expressions.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        return null;
-    };
-    ArrayLiteralExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        if((token = this._expressions.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        return null;
     };
     ArrayLiteralExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBracketToken);
@@ -11965,16 +11781,14 @@ var OmittedExpressionSyntax = (function (_super) {
     OmittedExpressionSyntax.prototype.kind = function () {
         return 220 /* OmittedExpression */ ;
     };
+    OmittedExpressionSyntax.prototype.slotCount = function () {
+        return 0;
+    };
+    OmittedExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        throw Errors.invalidOperation();
+    };
     OmittedExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    OmittedExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        return null;
-    };
-    OmittedExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        return null;
     };
     OmittedExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
     };
@@ -12035,37 +11849,26 @@ var ParenthesizedExpressionSyntax = (function (_super) {
     ParenthesizedExpressionSyntax.prototype.kind = function () {
         return 214 /* ParenthesizedExpression */ ;
     };
+    ParenthesizedExpressionSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ParenthesizedExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._openParenToken;
+            case 1:
+                return this._expression;
+            case 2:
+                return this._closeParenToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ParenthesizedExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     ParenthesizedExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ParenthesizedExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        return null;
-    };
-    ParenthesizedExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        return null;
     };
     ParenthesizedExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeParenToken);
@@ -12232,31 +12035,20 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
     SimpleArrowFunctionExpressionSyntax.prototype.kind = function () {
         return 216 /* SimpleArrowFunctionExpression */ ;
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if((token = this._body.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    SimpleArrowFunctionExpressionSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._body.lastToken()) !== null) {
-            return token;
+    SimpleArrowFunctionExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._identifier;
+            case 1:
+                return this._equalsGreaterThanToken;
+            case 2:
+                return this._body;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        return null;
     };
     SimpleArrowFunctionExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._body);
@@ -12392,31 +12184,20 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
     ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = function () {
         return 215 /* ParenthesizedArrowFunctionExpression */ ;
     };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._callSignature.firstToken()) !== null) {
-            return token;
-        }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if((token = this._body.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._body.lastToken()) !== null) {
-            return token;
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._callSignature;
+            case 1:
+                return this._equalsGreaterThanToken;
+            case 2:
+                return this._body;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if((token = this._callSignature.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._body);
@@ -12550,6 +12331,21 @@ var QualifiedNameSyntax = (function (_super) {
     QualifiedNameSyntax.prototype.kind = function () {
         return 121 /* QualifiedName */ ;
     };
+    QualifiedNameSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    QualifiedNameSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._left;
+            case 1:
+                return this._dotToken;
+            case 2:
+                return this._right;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     QualifiedNameSyntax.prototype.isName = function () {
         return true;
     };
@@ -12561,32 +12357,6 @@ var QualifiedNameSyntax = (function (_super) {
     };
     QualifiedNameSyntax.prototype.isExpression = function () {
         return true;
-    };
-    QualifiedNameSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._left.firstToken()) !== null) {
-            return token;
-        }
-        if(this._dotToken.width() > 0) {
-            return this._dotToken;
-        }
-        if(this._right.width() > 0) {
-            return this._right;
-        }
-        return null;
-    };
-    QualifiedNameSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._right.width() > 0) {
-            return this._right;
-        }
-        if(this._dotToken.width() > 0) {
-            return this._dotToken;
-        }
-        if((token = this._left.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     QualifiedNameSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._right);
@@ -12725,31 +12495,20 @@ var TypeArgumentListSyntax = (function (_super) {
     TypeArgumentListSyntax.prototype.kind = function () {
         return 225 /* TypeArgumentList */ ;
     };
-    TypeArgumentListSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._lessThanToken.width() > 0) {
-            return this._lessThanToken;
-        }
-        if((token = this._typeArguments.firstToken()) !== null) {
-            return token;
-        }
-        if(this._greaterThanToken.width() > 0) {
-            return this._greaterThanToken;
-        }
-        return null;
+    TypeArgumentListSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    TypeArgumentListSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._greaterThanToken.width() > 0) {
-            return this._greaterThanToken;
+    TypeArgumentListSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._lessThanToken;
+            case 1:
+                return this._typeArguments;
+            case 2:
+                return this._greaterThanToken;
+            default:
+                throw Errors.invalidOperation();
         }
-        if((token = this._typeArguments.lastToken()) !== null) {
-            return token;
-        }
-        if(this._lessThanToken.width() > 0) {
-            return this._lessThanToken;
-        }
-        return null;
     };
     TypeArgumentListSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._greaterThanToken);
@@ -12895,6 +12654,25 @@ var ConstructorTypeSyntax = (function (_super) {
     ConstructorTypeSyntax.prototype.kind = function () {
         return 125 /* ConstructorType */ ;
     };
+    ConstructorTypeSyntax.prototype.slotCount = function () {
+        return 5;
+    };
+    ConstructorTypeSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._newKeyword;
+            case 1:
+                return this._typeParameterList;
+            case 2:
+                return this._parameterList;
+            case 3:
+                return this._equalsGreaterThanToken;
+            case 4:
+                return this._type;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ConstructorTypeSyntax.prototype.isType = function () {
         return true;
     };
@@ -12903,44 +12681,6 @@ var ConstructorTypeSyntax = (function (_super) {
     };
     ConstructorTypeSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ConstructorTypeSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._newKeyword.width() > 0) {
-            return this._newKeyword;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if((token = this._type.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    ConstructorTypeSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._type.lastToken()) !== null) {
-            return token;
-        }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._newKeyword.width() > 0) {
-            return this._newKeyword;
-        }
-        return null;
     };
     ConstructorTypeSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._type);
@@ -13132,6 +12872,23 @@ var FunctionTypeSyntax = (function (_super) {
     FunctionTypeSyntax.prototype.kind = function () {
         return 123 /* FunctionType */ ;
     };
+    FunctionTypeSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    FunctionTypeSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._typeParameterList;
+            case 1:
+                return this._parameterList;
+            case 2:
+                return this._equalsGreaterThanToken;
+            case 3:
+                return this._type;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     FunctionTypeSyntax.prototype.isType = function () {
         return true;
     };
@@ -13140,38 +12897,6 @@ var FunctionTypeSyntax = (function (_super) {
     };
     FunctionTypeSyntax.prototype.isExpression = function () {
         return true;
-    };
-    FunctionTypeSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if((token = this._type.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    FunctionTypeSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._type.lastToken()) !== null) {
-            return token;
-        }
-        if(this._equalsGreaterThanToken.width() > 0) {
-            return this._equalsGreaterThanToken;
-        }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     FunctionTypeSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._type);
@@ -13338,6 +13063,21 @@ var ObjectTypeSyntax = (function (_super) {
     ObjectTypeSyntax.prototype.kind = function () {
         return 122 /* ObjectType */ ;
     };
+    ObjectTypeSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ObjectTypeSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._openBraceToken;
+            case 1:
+                return this._typeMembers;
+            case 2:
+                return this._closeBraceToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ObjectTypeSyntax.prototype.isType = function () {
         return true;
     };
@@ -13346,32 +13086,6 @@ var ObjectTypeSyntax = (function (_super) {
     };
     ObjectTypeSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ObjectTypeSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if((token = this._typeMembers.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        return null;
-    };
-    ObjectTypeSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        if((token = this._typeMembers.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        return null;
     };
     ObjectTypeSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBraceToken);
@@ -13512,6 +13226,21 @@ var ArrayTypeSyntax = (function (_super) {
     ArrayTypeSyntax.prototype.kind = function () {
         return 124 /* ArrayType */ ;
     };
+    ArrayTypeSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ArrayTypeSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._type;
+            case 1:
+                return this._openBracketToken;
+            case 2:
+                return this._closeBracketToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ArrayTypeSyntax.prototype.isType = function () {
         return true;
     };
@@ -13520,32 +13249,6 @@ var ArrayTypeSyntax = (function (_super) {
     };
     ArrayTypeSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ArrayTypeSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._type.firstToken()) !== null) {
-            return token;
-        }
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        return null;
-    };
-    ArrayTypeSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        if((token = this._type.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     ArrayTypeSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBracketToken);
@@ -13680,6 +13383,19 @@ var GenericTypeSyntax = (function (_super) {
     GenericTypeSyntax.prototype.kind = function () {
         return 126 /* GenericType */ ;
     };
+    GenericTypeSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    GenericTypeSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._name;
+            case 1:
+                return this._typeArgumentList;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     GenericTypeSyntax.prototype.isType = function () {
         return true;
     };
@@ -13688,26 +13404,6 @@ var GenericTypeSyntax = (function (_super) {
     };
     GenericTypeSyntax.prototype.isExpression = function () {
         return true;
-    };
-    GenericTypeSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._name.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._typeArgumentList.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    GenericTypeSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._typeArgumentList.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._name.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     GenericTypeSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._typeArgumentList);
@@ -13816,25 +13512,18 @@ var TypeAnnotationSyntax = (function (_super) {
     TypeAnnotationSyntax.prototype.kind = function () {
         return 238 /* TypeAnnotation */ ;
     };
-    TypeAnnotationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._type.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    TypeAnnotationSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    TypeAnnotationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._type.lastToken()) !== null) {
-            return token;
+    TypeAnnotationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._colonToken;
+            case 1:
+                return this._type;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        return null;
     };
     TypeAnnotationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._type);
@@ -13949,37 +13638,26 @@ var BlockSyntax = (function (_super) {
     BlockSyntax.prototype.kind = function () {
         return 143 /* Block */ ;
     };
+    BlockSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    BlockSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._openBraceToken;
+            case 1:
+                return this._statements;
+            case 2:
+                return this._closeBraceToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     BlockSyntax.prototype.isStatement = function () {
         return true;
     };
     BlockSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    BlockSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if((token = this._statements.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        return null;
-    };
-    BlockSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        if((token = this._statements.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        return null;
     };
     BlockSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBraceToken);
@@ -14129,49 +13807,26 @@ var ParameterSyntax = (function (_super) {
     ParameterSyntax.prototype.kind = function () {
         return 237 /* Parameter */ ;
     };
-    ParameterSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._dotDotDotToken !== null && this._dotDotDotToken.width() > 0) {
-            return this._dotDotDotToken;
-        }
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._questionToken !== null && this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
-            return token;
-        }
-        if(this._equalsValueClause !== null && (token = this._equalsValueClause.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ParameterSyntax.prototype.slotCount = function () {
+        return 6;
     };
-    ParameterSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._equalsValueClause !== null && (token = this._equalsValueClause.lastToken()) !== null) {
-            return token;
+    ParameterSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._dotDotDotToken;
+            case 1:
+                return this._publicOrPrivateKeyword;
+            case 2:
+                return this._identifier;
+            case 3:
+                return this._questionToken;
+            case 4:
+                return this._typeAnnotation;
+            case 5:
+                return this._equalsValueClause;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
-        }
-        if(this._questionToken !== null && this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        if(this._dotDotDotToken !== null && this._dotDotDotToken.width() > 0) {
-            return this._dotDotDotToken;
-        }
-        return null;
     };
     ParameterSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._equalsValueClause !== null) {
@@ -14432,37 +14087,26 @@ var MemberAccessExpressionSyntax = (function (_super) {
     MemberAccessExpressionSyntax.prototype.kind = function () {
         return 209 /* MemberAccessExpression */ ;
     };
+    MemberAccessExpressionSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    MemberAccessExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._expression;
+            case 1:
+                return this._dotToken;
+            case 2:
+                return this._name;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     MemberAccessExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     MemberAccessExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    MemberAccessExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._dotToken.width() > 0) {
-            return this._dotToken;
-        }
-        if(this._name.width() > 0) {
-            return this._name;
-        }
-        return null;
-    };
-    MemberAccessExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._name.width() > 0) {
-            return this._name;
-        }
-        if(this._dotToken.width() > 0) {
-            return this._dotToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     MemberAccessExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._name);
@@ -14595,31 +14239,24 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
     PostfixUnaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitPostfixUnaryExpression(this);
     };
+    PostfixUnaryExpressionSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    PostfixUnaryExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._operand;
+            case 1:
+                return this._operatorToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     PostfixUnaryExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     PostfixUnaryExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    PostfixUnaryExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._operand.firstToken()) !== null) {
-            return token;
-        }
-        if(this._operatorToken.width() > 0) {
-            return this._operatorToken;
-        }
-        return null;
-    };
-    PostfixUnaryExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._operatorToken.width() > 0) {
-            return this._operatorToken;
-        }
-        if((token = this._operand.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     PostfixUnaryExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._operatorToken);
@@ -14741,43 +14378,28 @@ var ElementAccessExpressionSyntax = (function (_super) {
     ElementAccessExpressionSyntax.prototype.kind = function () {
         return 218 /* ElementAccessExpression */ ;
     };
+    ElementAccessExpressionSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    ElementAccessExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._expression;
+            case 1:
+                return this._openBracketToken;
+            case 2:
+                return this._argumentExpression;
+            case 3:
+                return this._closeBracketToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ElementAccessExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     ElementAccessExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ElementAccessExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        if((token = this._argumentExpression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        return null;
-    };
-    ElementAccessExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        if((token = this._argumentExpression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     ElementAccessExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBracketToken);
@@ -14940,31 +14562,24 @@ var InvocationExpressionSyntax = (function (_super) {
     InvocationExpressionSyntax.prototype.kind = function () {
         return 210 /* InvocationExpression */ ;
     };
+    InvocationExpressionSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    InvocationExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._expression;
+            case 1:
+                return this._argumentList;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     InvocationExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     InvocationExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    InvocationExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._argumentList.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    InvocationExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._argumentList.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     InvocationExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._argumentList);
@@ -15084,37 +14699,22 @@ var ArgumentListSyntax = (function (_super) {
     ArgumentListSyntax.prototype.kind = function () {
         return 223 /* ArgumentList */ ;
     };
-    ArgumentListSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._typeArgumentList !== null && (token = this._typeArgumentList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._arguments.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        return null;
+    ArgumentListSyntax.prototype.slotCount = function () {
+        return 4;
     };
-    ArgumentListSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
+    ArgumentListSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._typeArgumentList;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._arguments;
+            case 3:
+                return this._closeParenToken;
+            default:
+                throw Errors.invalidOperation();
         }
-        if((token = this._arguments.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._typeArgumentList !== null && (token = this._typeArgumentList.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     ArgumentListSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeParenToken);
@@ -15286,34 +14886,23 @@ var BinaryExpressionSyntax = (function (_super) {
     BinaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitBinaryExpression(this);
     };
+    BinaryExpressionSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    BinaryExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._left;
+            case 1:
+                return this._operatorToken;
+            case 2:
+                return this._right;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     BinaryExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    BinaryExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._left.firstToken()) !== null) {
-            return token;
-        }
-        if(this._operatorToken.width() > 0) {
-            return this._operatorToken;
-        }
-        if((token = this._right.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    BinaryExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._right.lastToken()) !== null) {
-            return token;
-        }
-        if(this._operatorToken.width() > 0) {
-            return this._operatorToken;
-        }
-        if((token = this._left.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     BinaryExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._right);
@@ -15462,46 +15051,27 @@ var ConditionalExpressionSyntax = (function (_super) {
     ConditionalExpressionSyntax.prototype.kind = function () {
         return 183 /* ConditionalExpression */ ;
     };
+    ConditionalExpressionSyntax.prototype.slotCount = function () {
+        return 5;
+    };
+    ConditionalExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._condition;
+            case 1:
+                return this._questionToken;
+            case 2:
+                return this._whenTrue;
+            case 3:
+                return this._colonToken;
+            case 4:
+                return this._whenFalse;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ConditionalExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ConditionalExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._condition.firstToken()) !== null) {
-            return token;
-        }
-        if(this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if((token = this._whenTrue.firstToken()) !== null) {
-            return token;
-        }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._whenFalse.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    ConditionalExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._whenFalse.lastToken()) !== null) {
-            return token;
-        }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._whenTrue.lastToken()) !== null) {
-            return token;
-        }
-        if(this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if((token = this._condition.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     ConditionalExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._whenFalse);
@@ -15708,25 +15278,18 @@ var ConstructSignatureSyntax = (function (_super) {
     ConstructSignatureSyntax.prototype.kind = function () {
         return 140 /* ConstructSignature */ ;
     };
-    ConstructSignatureSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._newKeyword.width() > 0) {
-            return this._newKeyword;
-        }
-        if((token = this._callSignature.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ConstructSignatureSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    ConstructSignatureSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._callSignature.lastToken()) !== null) {
-            return token;
+    ConstructSignatureSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._newKeyword;
+            case 1:
+                return this._callSignature;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._newKeyword.width() > 0) {
-            return this._newKeyword;
-        }
-        return null;
     };
     ConstructSignatureSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._callSignature);
@@ -15841,31 +15404,20 @@ var FunctionSignatureSyntax = (function (_super) {
     FunctionSignatureSyntax.prototype.kind = function () {
         return 142 /* FunctionSignature */ ;
     };
-    FunctionSignatureSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._questionToken !== null && this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if((token = this._callSignature.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    FunctionSignatureSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    FunctionSignatureSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._callSignature.lastToken()) !== null) {
-            return token;
+    FunctionSignatureSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._identifier;
+            case 1:
+                return this._questionToken;
+            case 2:
+                return this._callSignature;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._questionToken !== null && this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        return null;
     };
     FunctionSignatureSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._callSignature);
@@ -16016,37 +15568,22 @@ var IndexSignatureSyntax = (function (_super) {
     IndexSignatureSyntax.prototype.kind = function () {
         return 141 /* IndexSignature */ ;
     };
-    IndexSignatureSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        if((token = this._parameter.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    IndexSignatureSyntax.prototype.slotCount = function () {
+        return 4;
     };
-    IndexSignatureSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
+    IndexSignatureSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._openBracketToken;
+            case 1:
+                return this._parameter;
+            case 2:
+                return this._closeBracketToken;
+            case 3:
+                return this._typeAnnotation;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeBracketToken.width() > 0) {
-            return this._closeBracketToken;
-        }
-        if((token = this._parameter.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBracketToken.width() > 0) {
-            return this._openBracketToken;
-        }
-        return null;
     };
     IndexSignatureSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._typeAnnotation !== null) {
@@ -16215,31 +15752,20 @@ var PropertySignatureSyntax = (function (_super) {
     PropertySignatureSyntax.prototype.kind = function () {
         return 138 /* PropertySignature */ ;
     };
-    PropertySignatureSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._questionToken !== null && this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    PropertySignatureSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    PropertySignatureSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
+    PropertySignatureSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._identifier;
+            case 1:
+                return this._questionToken;
+            case 2:
+                return this._typeAnnotation;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._questionToken !== null && this._questionToken.width() > 0) {
-            return this._questionToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        return null;
     };
     PropertySignatureSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._typeAnnotation !== null) {
@@ -16394,31 +15920,20 @@ var ParameterListSyntax = (function (_super) {
     ParameterListSyntax.prototype.kind = function () {
         return 224 /* ParameterList */ ;
     };
-    ParameterListSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._parameters.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        return null;
+    ParameterListSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    ParameterListSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
+    ParameterListSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._openParenToken;
+            case 1:
+                return this._parameters;
+            case 2:
+                return this._closeParenToken;
+            default:
+                throw Errors.invalidOperation();
         }
-        if((token = this._parameters.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        return null;
     };
     ParameterListSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeParenToken);
@@ -16565,31 +16080,20 @@ var CallSignatureSyntax = (function (_super) {
     CallSignatureSyntax.prototype.kind = function () {
         return 139 /* CallSignature */ ;
     };
-    CallSignatureSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._typeParameterList !== null && (token = this._typeParameterList.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    CallSignatureSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    CallSignatureSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
+    CallSignatureSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._typeParameterList;
+            case 1:
+                return this._parameterList;
+            case 2:
+                return this._typeAnnotation;
+            default:
+                throw Errors.invalidOperation();
         }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeParameterList !== null && (token = this._typeParameterList.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     CallSignatureSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._typeAnnotation !== null) {
@@ -16749,31 +16253,20 @@ var TypeParameterListSyntax = (function (_super) {
     TypeParameterListSyntax.prototype.kind = function () {
         return 226 /* TypeParameterList */ ;
     };
-    TypeParameterListSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._lessThanToken.width() > 0) {
-            return this._lessThanToken;
-        }
-        if((token = this._typeParameters.firstToken()) !== null) {
-            return token;
-        }
-        if(this._greaterThanToken.width() > 0) {
-            return this._greaterThanToken;
-        }
-        return null;
+    TypeParameterListSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    TypeParameterListSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._greaterThanToken.width() > 0) {
-            return this._greaterThanToken;
+    TypeParameterListSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._lessThanToken;
+            case 1:
+                return this._typeParameters;
+            case 2:
+                return this._greaterThanToken;
+            default:
+                throw Errors.invalidOperation();
         }
-        if((token = this._typeParameters.lastToken()) !== null) {
-            return token;
-        }
-        if(this._lessThanToken.width() > 0) {
-            return this._lessThanToken;
-        }
-        return null;
     };
     TypeParameterListSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._greaterThanToken);
@@ -16916,25 +16409,18 @@ var TypeParameterSyntax = (function (_super) {
     TypeParameterSyntax.prototype.kind = function () {
         return 235 /* TypeParameter */ ;
     };
-    TypeParameterSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._constraint !== null && (token = this._constraint.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    TypeParameterSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    TypeParameterSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._constraint !== null && (token = this._constraint.lastToken()) !== null) {
-            return token;
+    TypeParameterSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._identifier;
+            case 1:
+                return this._constraint;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        return null;
     };
     TypeParameterSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._constraint !== null) {
@@ -17053,25 +16539,18 @@ var ConstraintSyntax = (function (_super) {
     ConstraintSyntax.prototype.kind = function () {
         return 236 /* Constraint */ ;
     };
-    ConstraintSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._extendsKeyword.width() > 0) {
-            return this._extendsKeyword;
-        }
-        if((token = this._type.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ConstraintSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    ConstraintSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._type.lastToken()) !== null) {
-            return token;
+    ConstraintSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._extendsKeyword;
+            case 1:
+                return this._type;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._extendsKeyword.width() > 0) {
-            return this._extendsKeyword;
-        }
-        return null;
     };
     ConstraintSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._type);
@@ -17182,25 +16661,18 @@ var ElseClauseSyntax = (function (_super) {
     ElseClauseSyntax.prototype.kind = function () {
         return 232 /* ElseClause */ ;
     };
-    ElseClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._elseKeyword.width() > 0) {
-            return this._elseKeyword;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ElseClauseSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    ElseClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
+    ElseClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._elseKeyword;
+            case 1:
+                return this._statement;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._elseKeyword.width() > 0) {
-            return this._elseKeyword;
-        }
-        return null;
     };
     ElseClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._statement);
@@ -17321,55 +16793,32 @@ var IfStatementSyntax = (function (_super) {
     IfStatementSyntax.prototype.kind = function () {
         return 144 /* IfStatement */ ;
     };
+    IfStatementSyntax.prototype.slotCount = function () {
+        return 6;
+    };
+    IfStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._ifKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._condition;
+            case 3:
+                return this._closeParenToken;
+            case 4:
+                return this._statement;
+            case 5:
+                return this._elseClause;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     IfStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     IfStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    IfStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._ifKeyword.width() > 0) {
-            return this._ifKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._condition.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        if(this._elseClause !== null && (token = this._elseClause.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    IfStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._elseClause !== null && (token = this._elseClause.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._condition.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._ifKeyword.width() > 0) {
-            return this._ifKeyword;
-        }
-        return null;
     };
     IfStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._elseClause !== null) {
@@ -17589,31 +17038,24 @@ var ExpressionStatementSyntax = (function (_super) {
     ExpressionStatementSyntax.prototype.kind = function () {
         return 146 /* ExpressionStatement */ ;
     };
+    ExpressionStatementSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    ExpressionStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._expression;
+            case 1:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ExpressionStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     ExpressionStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    ExpressionStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    ExpressionStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        return null;
     };
     ExpressionStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -17732,40 +17174,25 @@ var ConstructorDeclarationSyntax = (function (_super) {
     ConstructorDeclarationSyntax.prototype.kind = function () {
         return 135 /* ConstructorDeclaration */ ;
     };
+    ConstructorDeclarationSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    ConstructorDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._constructorKeyword;
+            case 1:
+                return this._parameterList;
+            case 2:
+                return this._block;
+            case 3:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ConstructorDeclarationSyntax.prototype.isClassElement = function () {
         return true;
-    };
-    ConstructorDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._constructorKeyword.width() > 0) {
-            return this._constructorKeyword;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._block !== null && (token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    ConstructorDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if(this._block !== null && (token = this._block.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._constructorKeyword.width() > 0) {
-            return this._constructorKeyword;
-        }
-        return null;
     };
     ConstructorDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._semicolonToken !== null) {
@@ -17944,49 +17371,30 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
     MemberFunctionDeclarationSyntax.prototype.kind = function () {
         return 133 /* MemberFunctionDeclaration */ ;
     };
+    MemberFunctionDeclarationSyntax.prototype.slotCount = function () {
+        return 5;
+    };
+    MemberFunctionDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._publicOrPrivateKeyword;
+            case 1:
+                return this._staticKeyword;
+            case 2:
+                return this._functionSignature;
+            case 3:
+                return this._block;
+            case 4:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     MemberFunctionDeclarationSyntax.prototype.isMemberDeclaration = function () {
         return true;
     };
     MemberFunctionDeclarationSyntax.prototype.isClassElement = function () {
         return true;
-    };
-    MemberFunctionDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if((token = this._functionSignature.firstToken()) !== null) {
-            return token;
-        }
-        if(this._block !== null && (token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    MemberFunctionDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken !== null && this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if(this._block !== null && (token = this._block.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._functionSignature.lastToken()) !== null) {
-            return token;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        return null;
     };
     MemberFunctionDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._semicolonToken !== null) {
@@ -18244,55 +17652,28 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
     GetMemberAccessorDeclarationSyntax.prototype.kind = function () {
         return 136 /* GetMemberAccessorDeclaration */ ;
     };
-    GetMemberAccessorDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if(this._getKeyword.width() > 0) {
-            return this._getKeyword;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    GetMemberAccessorDeclarationSyntax.prototype.slotCount = function () {
+        return 7;
     };
-    GetMemberAccessorDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._block.lastToken()) !== null) {
-            return token;
+    GetMemberAccessorDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._publicOrPrivateKeyword;
+            case 1:
+                return this._staticKeyword;
+            case 2:
+                return this._getKeyword;
+            case 3:
+                return this._identifier;
+            case 4:
+                return this._parameterList;
+            case 5:
+                return this._typeAnnotation;
+            case 6:
+                return this._block;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._typeAnnotation !== null && (token = this._typeAnnotation.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._getKeyword.width() > 0) {
-            return this._getKeyword;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        return null;
     };
     GetMemberAccessorDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._block);
@@ -18550,49 +17931,26 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
     SetMemberAccessorDeclarationSyntax.prototype.kind = function () {
         return 137 /* SetMemberAccessorDeclaration */ ;
     };
-    SetMemberAccessorDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if(this._setKeyword.width() > 0) {
-            return this._setKeyword;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if((token = this._parameterList.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    SetMemberAccessorDeclarationSyntax.prototype.slotCount = function () {
+        return 6;
     };
-    SetMemberAccessorDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._block.lastToken()) !== null) {
-            return token;
+    SetMemberAccessorDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._publicOrPrivateKeyword;
+            case 1:
+                return this._staticKeyword;
+            case 2:
+                return this._setKeyword;
+            case 3:
+                return this._identifier;
+            case 4:
+                return this._parameterList;
+            case 5:
+                return this._block;
+            default:
+                throw Errors.invalidOperation();
         }
-        if((token = this._parameterList.lastToken()) !== null) {
-            return token;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._setKeyword.width() > 0) {
-            return this._setKeyword;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        return null;
     };
     SetMemberAccessorDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._block);
@@ -18818,43 +18176,28 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     MemberVariableDeclarationSyntax.prototype.kind = function () {
         return 134 /* MemberVariableDeclaration */ ;
     };
+    MemberVariableDeclarationSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    MemberVariableDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._publicOrPrivateKeyword;
+            case 1:
+                return this._staticKeyword;
+            case 2:
+                return this._variableDeclarator;
+            case 3:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     MemberVariableDeclarationSyntax.prototype.isMemberDeclaration = function () {
         return true;
     };
     MemberVariableDeclarationSyntax.prototype.isClassElement = function () {
         return true;
-    };
-    MemberVariableDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if((token = this._variableDeclarator.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    MemberVariableDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if((token = this._variableDeclarator.lastToken()) !== null) {
-            return token;
-        }
-        if(this._staticKeyword !== null && this._staticKeyword.width() > 0) {
-            return this._staticKeyword;
-        }
-        if(this._publicOrPrivateKeyword !== null && this._publicOrPrivateKeyword.width() > 0) {
-            return this._publicOrPrivateKeyword;
-        }
-        return null;
     };
     MemberVariableDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -19030,37 +18373,26 @@ var ThrowStatementSyntax = (function (_super) {
     ThrowStatementSyntax.prototype.kind = function () {
         return 154 /* ThrowStatement */ ;
     };
+    ThrowStatementSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ThrowStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._throwKeyword;
+            case 1:
+                return this._expression;
+            case 2:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ThrowStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     ThrowStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    ThrowStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._throwKeyword.width() > 0) {
-            return this._throwKeyword;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    ThrowStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._throwKeyword.width() > 0) {
-            return this._throwKeyword;
-        }
-        return null;
     };
     ThrowStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -19202,37 +18534,26 @@ var ReturnStatementSyntax = (function (_super) {
     ReturnStatementSyntax.prototype.kind = function () {
         return 147 /* ReturnStatement */ ;
     };
+    ReturnStatementSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ReturnStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._returnKeyword;
+            case 1:
+                return this._expression;
+            case 2:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ReturnStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     ReturnStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    ReturnStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._returnKeyword.width() > 0) {
-            return this._returnKeyword;
-        }
-        if(this._expression !== null && (token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    ReturnStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if(this._expression !== null && (token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._returnKeyword.width() > 0) {
-            return this._returnKeyword;
-        }
-        return null;
     };
     ReturnStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -19382,37 +18703,26 @@ var ObjectCreationExpressionSyntax = (function (_super) {
     ObjectCreationExpressionSyntax.prototype.kind = function () {
         return 213 /* ObjectCreationExpression */ ;
     };
+    ObjectCreationExpressionSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ObjectCreationExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._newKeyword;
+            case 1:
+                return this._expression;
+            case 2:
+                return this._argumentList;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ObjectCreationExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     ObjectCreationExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ObjectCreationExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._newKeyword.width() > 0) {
-            return this._newKeyword;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._argumentList !== null && (token = this._argumentList.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    ObjectCreationExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._argumentList !== null && (token = this._argumentList.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._newKeyword.width() > 0) {
-            return this._newKeyword;
-        }
-        return null;
     };
     ObjectCreationExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._argumentList !== null) {
@@ -19567,61 +18877,34 @@ var SwitchStatementSyntax = (function (_super) {
     SwitchStatementSyntax.prototype.kind = function () {
         return 148 /* SwitchStatement */ ;
     };
+    SwitchStatementSyntax.prototype.slotCount = function () {
+        return 7;
+    };
+    SwitchStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._switchKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._expression;
+            case 3:
+                return this._closeParenToken;
+            case 4:
+                return this._openBraceToken;
+            case 5:
+                return this._switchClauses;
+            case 6:
+                return this._closeBraceToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     SwitchStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     SwitchStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    SwitchStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._switchKeyword.width() > 0) {
-            return this._switchKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if((token = this._switchClauses.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        return null;
-    };
-    SwitchStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        if((token = this._switchClauses.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._switchKeyword.width() > 0) {
-            return this._switchKeyword;
-        }
-        return null;
     };
     SwitchStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBraceToken);
@@ -19891,37 +19174,22 @@ var CaseSwitchClauseSyntax = (function (_super) {
     CaseSwitchClauseSyntax.prototype.kind = function () {
         return 230 /* CaseSwitchClause */ ;
     };
-    CaseSwitchClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._caseKeyword.width() > 0) {
-            return this._caseKeyword;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._statements.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    CaseSwitchClauseSyntax.prototype.slotCount = function () {
+        return 4;
     };
-    CaseSwitchClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statements.lastToken()) !== null) {
-            return token;
+    CaseSwitchClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._caseKeyword;
+            case 1:
+                return this._expression;
+            case 2:
+                return this._colonToken;
+            case 3:
+                return this._statements;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._caseKeyword.width() > 0) {
-            return this._caseKeyword;
-        }
-        return null;
     };
     CaseSwitchClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         this._statements.insertChildrenInto(array, index);
@@ -20093,31 +19361,20 @@ var DefaultSwitchClauseSyntax = (function (_super) {
     DefaultSwitchClauseSyntax.prototype.kind = function () {
         return 231 /* DefaultSwitchClause */ ;
     };
-    DefaultSwitchClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._defaultKeyword.width() > 0) {
-            return this._defaultKeyword;
-        }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._statements.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    DefaultSwitchClauseSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    DefaultSwitchClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statements.lastToken()) !== null) {
-            return token;
+    DefaultSwitchClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._defaultKeyword;
+            case 1:
+                return this._colonToken;
+            case 2:
+                return this._statements;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if(this._defaultKeyword.width() > 0) {
-            return this._defaultKeyword;
-        }
-        return null;
     };
     DefaultSwitchClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         this._statements.insertChildrenInto(array, index);
@@ -20264,37 +19521,26 @@ var BreakStatementSyntax = (function (_super) {
     BreakStatementSyntax.prototype.kind = function () {
         return 149 /* BreakStatement */ ;
     };
+    BreakStatementSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    BreakStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._breakKeyword;
+            case 1:
+                return this._identifier;
+            case 2:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     BreakStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     BreakStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    BreakStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._breakKeyword.width() > 0) {
-            return this._breakKeyword;
-        }
-        if(this._identifier !== null && this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    BreakStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if(this._identifier !== null && this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._breakKeyword.width() > 0) {
-            return this._breakKeyword;
-        }
-        return null;
     };
     BreakStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -20443,37 +19689,26 @@ var ContinueStatementSyntax = (function (_super) {
     ContinueStatementSyntax.prototype.kind = function () {
         return 150 /* ContinueStatement */ ;
     };
+    ContinueStatementSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ContinueStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._continueKeyword;
+            case 1:
+                return this._identifier;
+            case 2:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ContinueStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     ContinueStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    ContinueStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._continueKeyword.width() > 0) {
-            return this._continueKeyword;
-        }
-        if(this._identifier !== null && this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    ContinueStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if(this._identifier !== null && this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._continueKeyword.width() > 0) {
-            return this._continueKeyword;
-        }
-        return null;
     };
     ContinueStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -20691,73 +19926,34 @@ var ForStatementSyntax = (function (_super) {
     ForStatementSyntax.prototype.kind = function () {
         return 151 /* ForStatement */ ;
     };
-    ForStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._forKeyword.width() > 0) {
-            return this._forKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._variableDeclaration !== null && (token = this._variableDeclaration.firstToken()) !== null) {
-            return token;
-        }
-        if(this._initializer !== null && (token = this._initializer.firstToken()) !== null) {
-            return token;
-        }
-        if(this._firstSemicolonToken.width() > 0) {
-            return this._firstSemicolonToken;
-        }
-        if(this._condition !== null && (token = this._condition.firstToken()) !== null) {
-            return token;
-        }
-        if(this._secondSemicolonToken.width() > 0) {
-            return this._secondSemicolonToken;
-        }
-        if(this._incrementor !== null && (token = this._incrementor.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ForStatementSyntax.prototype.slotCount = function () {
+        return 10;
     };
-    ForStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
+    ForStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._forKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._variableDeclaration;
+            case 3:
+                return this._initializer;
+            case 4:
+                return this._firstSemicolonToken;
+            case 5:
+                return this._condition;
+            case 6:
+                return this._secondSemicolonToken;
+            case 7:
+                return this._incrementor;
+            case 8:
+                return this._closeParenToken;
+            case 9:
+                return this._statement;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if(this._incrementor !== null && (token = this._incrementor.lastToken()) !== null) {
-            return token;
-        }
-        if(this._secondSemicolonToken.width() > 0) {
-            return this._secondSemicolonToken;
-        }
-        if(this._condition !== null && (token = this._condition.lastToken()) !== null) {
-            return token;
-        }
-        if(this._firstSemicolonToken.width() > 0) {
-            return this._firstSemicolonToken;
-        }
-        if(this._initializer !== null && (token = this._initializer.lastToken()) !== null) {
-            return token;
-        }
-        if(this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._forKeyword.width() > 0) {
-            return this._forKeyword;
-        }
-        return null;
     };
     ForStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._statement);
@@ -21108,61 +20304,30 @@ var ForInStatementSyntax = (function (_super) {
     ForInStatementSyntax.prototype.kind = function () {
         return 152 /* ForInStatement */ ;
     };
-    ForInStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._forKeyword.width() > 0) {
-            return this._forKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._variableDeclaration !== null && (token = this._variableDeclaration.firstToken()) !== null) {
-            return token;
-        }
-        if(this._left !== null && (token = this._left.firstToken()) !== null) {
-            return token;
-        }
-        if(this._inKeyword.width() > 0) {
-            return this._inKeyword;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    ForInStatementSyntax.prototype.slotCount = function () {
+        return 8;
     };
-    ForInStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
+    ForInStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._forKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._variableDeclaration;
+            case 3:
+                return this._left;
+            case 4:
+                return this._inKeyword;
+            case 5:
+                return this._expression;
+            case 6:
+                return this._closeParenToken;
+            case 7:
+                return this._statement;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._inKeyword.width() > 0) {
-            return this._inKeyword;
-        }
-        if(this._left !== null && (token = this._left.lastToken()) !== null) {
-            return token;
-        }
-        if(this._variableDeclaration !== null && (token = this._variableDeclaration.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._forKeyword.width() > 0) {
-            return this._forKeyword;
-        }
-        return null;
     };
     ForInStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._statement);
@@ -21442,43 +20607,24 @@ var WhileStatementSyntax = (function (_super) {
     WhileStatementSyntax.prototype.kind = function () {
         return 155 /* WhileStatement */ ;
     };
-    WhileStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._whileKeyword.width() > 0) {
-            return this._whileKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._condition.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    WhileStatementSyntax.prototype.slotCount = function () {
+        return 5;
     };
-    WhileStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
+    WhileStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._whileKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._condition;
+            case 3:
+                return this._closeParenToken;
+            case 4:
+                return this._statement;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._condition.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._whileKeyword.width() > 0) {
-            return this._whileKeyword;
-        }
-        return null;
     };
     WhileStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._statement);
@@ -21668,49 +20814,30 @@ var WithStatementSyntax = (function (_super) {
     WithStatementSyntax.prototype.kind = function () {
         return 160 /* WithStatement */ ;
     };
+    WithStatementSyntax.prototype.slotCount = function () {
+        return 5;
+    };
+    WithStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._withKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._condition;
+            case 3:
+                return this._closeParenToken;
+            case 4:
+                return this._statement;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     WithStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     WithStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    WithStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._withKeyword.width() > 0) {
-            return this._withKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._condition.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    WithStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._condition.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._withKeyword.width() > 0) {
-            return this._withKeyword;
-        }
-        return null;
     };
     WithStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._statement);
@@ -21904,52 +21031,29 @@ var EnumDeclarationSyntax = (function (_super) {
     EnumDeclarationSyntax.prototype.kind = function () {
         return 131 /* EnumDeclaration */ ;
     };
+    EnumDeclarationSyntax.prototype.slotCount = function () {
+        return 6;
+    };
+    EnumDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._exportKeyword;
+            case 1:
+                return this._enumKeyword;
+            case 2:
+                return this._identifier;
+            case 3:
+                return this._openBraceToken;
+            case 4:
+                return this._variableDeclarators;
+            case 5:
+                return this._closeBraceToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     EnumDeclarationSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    EnumDeclarationSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        if(this._enumKeyword.width() > 0) {
-            return this._enumKeyword;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if((token = this._variableDeclarators.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        return null;
-    };
-    EnumDeclarationSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        if((token = this._variableDeclarators.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._enumKeyword.width() > 0) {
-            return this._enumKeyword;
-        }
-        if(this._exportKeyword !== null && this._exportKeyword.width() > 0) {
-            return this._exportKeyword;
-        }
-        return null;
     };
     EnumDeclarationSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBraceToken);
@@ -22171,43 +21275,28 @@ var CastExpressionSyntax = (function (_super) {
     CastExpressionSyntax.prototype.kind = function () {
         return 217 /* CastExpression */ ;
     };
+    CastExpressionSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    CastExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._lessThanToken;
+            case 1:
+                return this._type;
+            case 2:
+                return this._greaterThanToken;
+            case 3:
+                return this._expression;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     CastExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     CastExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    CastExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._lessThanToken.width() > 0) {
-            return this._lessThanToken;
-        }
-        if((token = this._type.firstToken()) !== null) {
-            return token;
-        }
-        if(this._greaterThanToken.width() > 0) {
-            return this._greaterThanToken;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    CastExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._greaterThanToken.width() > 0) {
-            return this._greaterThanToken;
-        }
-        if((token = this._type.lastToken()) !== null) {
-            return token;
-        }
-        if(this._lessThanToken.width() > 0) {
-            return this._lessThanToken;
-        }
-        return null;
     };
     CastExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._expression);
@@ -22368,37 +21457,26 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
     ObjectLiteralExpressionSyntax.prototype.kind = function () {
         return 212 /* ObjectLiteralExpression */ ;
     };
+    ObjectLiteralExpressionSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    ObjectLiteralExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._openBraceToken;
+            case 1:
+                return this._propertyAssignments;
+            case 2:
+                return this._closeBraceToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     ObjectLiteralExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     ObjectLiteralExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    ObjectLiteralExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        if((token = this._propertyAssignments.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        return null;
-    };
-    ObjectLiteralExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._closeBraceToken.width() > 0) {
-            return this._closeBraceToken;
-        }
-        if((token = this._propertyAssignments.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openBraceToken.width() > 0) {
-            return this._openBraceToken;
-        }
-        return null;
     };
     ObjectLiteralExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._closeBraceToken);
@@ -22561,31 +21639,20 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
     SimplePropertyAssignmentSyntax.prototype.kind = function () {
         return 239 /* SimplePropertyAssignment */ ;
     };
-    SimplePropertyAssignmentSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._propertyName.width() > 0) {
-            return this._propertyName;
-        }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    SimplePropertyAssignmentSyntax.prototype.slotCount = function () {
+        return 3;
     };
-    SimplePropertyAssignmentSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
+    SimplePropertyAssignmentSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._propertyName;
+            case 1:
+                return this._colonToken;
+            case 2:
+                return this._expression;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if(this._propertyName.width() > 0) {
-            return this._propertyName;
-        }
-        return null;
     };
     SimplePropertyAssignmentSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._expression);
@@ -22754,43 +21821,24 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
     GetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
         return 242 /* GetAccessorPropertyAssignment */ ;
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._getKeyword.width() > 0) {
-            return this._getKeyword;
-        }
-        if(this._propertyName.width() > 0) {
-            return this._propertyName;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    GetAccessorPropertyAssignmentSyntax.prototype.slotCount = function () {
+        return 5;
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._block.lastToken()) !== null) {
-            return token;
+    GetAccessorPropertyAssignmentSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._getKeyword;
+            case 1:
+                return this._propertyName;
+            case 2:
+                return this._openParenToken;
+            case 3:
+                return this._closeParenToken;
+            case 4:
+                return this._block;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._propertyName.width() > 0) {
-            return this._propertyName;
-        }
-        if(this._getKeyword.width() > 0) {
-            return this._getKeyword;
-        }
-        return null;
     };
     GetAccessorPropertyAssignmentSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._block);
@@ -22980,49 +22028,26 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
     SetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
         return 243 /* SetAccessorPropertyAssignment */ ;
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._setKeyword.width() > 0) {
-            return this._setKeyword;
-        }
-        if(this._propertyName.width() > 0) {
-            return this._propertyName;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._parameterName.width() > 0) {
-            return this._parameterName;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    SetAccessorPropertyAssignmentSyntax.prototype.slotCount = function () {
+        return 6;
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._block.lastToken()) !== null) {
-            return token;
+    SetAccessorPropertyAssignmentSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._setKeyword;
+            case 1:
+                return this._propertyName;
+            case 2:
+                return this._openParenToken;
+            case 3:
+                return this._parameterName;
+            case 4:
+                return this._closeParenToken;
+            case 5:
+                return this._block;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if(this._parameterName.width() > 0) {
-            return this._parameterName;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._propertyName.width() > 0) {
-            return this._propertyName;
-        }
-        if(this._setKeyword.width() > 0) {
-            return this._setKeyword;
-        }
-        return null;
     };
     SetAccessorPropertyAssignmentSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._block);
@@ -23237,43 +22262,28 @@ var FunctionExpressionSyntax = (function (_super) {
     FunctionExpressionSyntax.prototype.kind = function () {
         return 219 /* FunctionExpression */ ;
     };
+    FunctionExpressionSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    FunctionExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._functionKeyword;
+            case 1:
+                return this._identifier;
+            case 2:
+                return this._callSignature;
+            case 3:
+                return this._block;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     FunctionExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     FunctionExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    FunctionExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._functionKeyword.width() > 0) {
-            return this._functionKeyword;
-        }
-        if(this._identifier !== null && this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if((token = this._callSignature.firstToken()) !== null) {
-            return token;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    FunctionExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._block.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._callSignature.lastToken()) !== null) {
-            return token;
-        }
-        if(this._identifier !== null && this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._functionKeyword.width() > 0) {
-            return this._functionKeyword;
-        }
-        return null;
     };
     FunctionExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._block);
@@ -23443,25 +22453,22 @@ var EmptyStatementSyntax = (function (_super) {
     EmptyStatementSyntax.prototype.kind = function () {
         return 153 /* EmptyStatement */ ;
     };
+    EmptyStatementSyntax.prototype.slotCount = function () {
+        return 1;
+    };
+    EmptyStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     EmptyStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     EmptyStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    EmptyStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    EmptyStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
     };
     EmptyStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -23555,43 +22562,28 @@ var TryStatementSyntax = (function (_super) {
     TryStatementSyntax.prototype.kind = function () {
         return 156 /* TryStatement */ ;
     };
+    TryStatementSyntax.prototype.slotCount = function () {
+        return 4;
+    };
+    TryStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._tryKeyword;
+            case 1:
+                return this._block;
+            case 2:
+                return this._catchClause;
+            case 3:
+                return this._finallyClause;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     TryStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     TryStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    TryStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._tryKeyword.width() > 0) {
-            return this._tryKeyword;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        if(this._catchClause !== null && (token = this._catchClause.firstToken()) !== null) {
-            return token;
-        }
-        if(this._finallyClause !== null && (token = this._finallyClause.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    TryStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._finallyClause !== null && (token = this._finallyClause.lastToken()) !== null) {
-            return token;
-        }
-        if(this._catchClause !== null && (token = this._catchClause.lastToken()) !== null) {
-            return token;
-        }
-        if((token = this._block.lastToken()) !== null) {
-            return token;
-        }
-        if(this._tryKeyword.width() > 0) {
-            return this._tryKeyword;
-        }
-        return null;
     };
     TryStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         if(this._finallyClause !== null) {
@@ -23774,43 +22766,24 @@ var CatchClauseSyntax = (function (_super) {
     CatchClauseSyntax.prototype.kind = function () {
         return 233 /* CatchClause */ ;
     };
-    CatchClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._catchKeyword.width() > 0) {
-            return this._catchKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    CatchClauseSyntax.prototype.slotCount = function () {
+        return 5;
     };
-    CatchClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._block.lastToken()) !== null) {
-            return token;
+    CatchClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._catchKeyword;
+            case 1:
+                return this._openParenToken;
+            case 2:
+                return this._identifier;
+            case 3:
+                return this._closeParenToken;
+            case 4:
+                return this._block;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._catchKeyword.width() > 0) {
-            return this._catchKeyword;
-        }
-        return null;
     };
     CatchClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._block);
@@ -23996,25 +22969,18 @@ var FinallyClauseSyntax = (function (_super) {
     FinallyClauseSyntax.prototype.kind = function () {
         return 234 /* FinallyClause */ ;
     };
-    FinallyClauseSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._finallyKeyword.width() > 0) {
-            return this._finallyKeyword;
-        }
-        if((token = this._block.firstToken()) !== null) {
-            return token;
-        }
-        return null;
+    FinallyClauseSyntax.prototype.slotCount = function () {
+        return 2;
     };
-    FinallyClauseSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._block.lastToken()) !== null) {
-            return token;
+    FinallyClauseSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._finallyKeyword;
+            case 1:
+                return this._block;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._finallyKeyword.width() > 0) {
-            return this._finallyKeyword;
-        }
-        return null;
     };
     FinallyClauseSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._block);
@@ -24129,37 +23095,26 @@ var LabeledStatementSyntax = (function (_super) {
     LabeledStatementSyntax.prototype.kind = function () {
         return 157 /* LabeledStatement */ ;
     };
+    LabeledStatementSyntax.prototype.slotCount = function () {
+        return 3;
+    };
+    LabeledStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._identifier;
+            case 1:
+                return this._colonToken;
+            case 2:
+                return this._statement;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     LabeledStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     LabeledStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    LabeledStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    LabeledStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
-        }
-        if(this._colonToken.width() > 0) {
-            return this._colonToken;
-        }
-        if(this._identifier.width() > 0) {
-            return this._identifier;
-        }
-        return null;
     };
     LabeledStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._statement);
@@ -24302,55 +23257,28 @@ var DoStatementSyntax = (function (_super) {
     DoStatementSyntax.prototype.kind = function () {
         return 158 /* DoStatement */ ;
     };
-    DoStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._doKeyword.width() > 0) {
-            return this._doKeyword;
-        }
-        if((token = this._statement.firstToken()) !== null) {
-            return token;
-        }
-        if(this._whileKeyword.width() > 0) {
-            return this._whileKeyword;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if((token = this._condition.firstToken()) !== null) {
-            return token;
-        }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
+    DoStatementSyntax.prototype.slotCount = function () {
+        return 7;
     };
-    DoStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
+    DoStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._doKeyword;
+            case 1:
+                return this._statement;
+            case 2:
+                return this._whileKeyword;
+            case 3:
+                return this._openParenToken;
+            case 4:
+                return this._condition;
+            case 5:
+                return this._closeParenToken;
+            case 6:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
         }
-        if(this._closeParenToken.width() > 0) {
-            return this._closeParenToken;
-        }
-        if((token = this._condition.lastToken()) !== null) {
-            return token;
-        }
-        if(this._openParenToken.width() > 0) {
-            return this._openParenToken;
-        }
-        if(this._whileKeyword.width() > 0) {
-            return this._whileKeyword;
-        }
-        if((token = this._statement.lastToken()) !== null) {
-            return token;
-        }
-        if(this._doKeyword.width() > 0) {
-            return this._doKeyword;
-        }
-        return null;
     };
     DoStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);
@@ -24585,31 +23513,24 @@ var TypeOfExpressionSyntax = (function (_super) {
     TypeOfExpressionSyntax.prototype.kind = function () {
         return 168 /* TypeOfExpression */ ;
     };
+    TypeOfExpressionSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    TypeOfExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._typeOfKeyword;
+            case 1:
+                return this._expression;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     TypeOfExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     TypeOfExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    TypeOfExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._typeOfKeyword.width() > 0) {
-            return this._typeOfKeyword;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    TypeOfExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._typeOfKeyword.width() > 0) {
-            return this._typeOfKeyword;
-        }
-        return null;
     };
     TypeOfExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._expression);
@@ -24723,31 +23644,24 @@ var DeleteExpressionSyntax = (function (_super) {
     DeleteExpressionSyntax.prototype.kind = function () {
         return 167 /* DeleteExpression */ ;
     };
+    DeleteExpressionSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    DeleteExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._deleteKeyword;
+            case 1:
+                return this._expression;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     DeleteExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     DeleteExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    DeleteExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._deleteKeyword.width() > 0) {
-            return this._deleteKeyword;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    DeleteExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._deleteKeyword.width() > 0) {
-            return this._deleteKeyword;
-        }
-        return null;
     };
     DeleteExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._expression);
@@ -24861,31 +23775,24 @@ var VoidExpressionSyntax = (function (_super) {
     VoidExpressionSyntax.prototype.kind = function () {
         return 169 /* VoidExpression */ ;
     };
+    VoidExpressionSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    VoidExpressionSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._voidKeyword;
+            case 1:
+                return this._expression;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     VoidExpressionSyntax.prototype.isUnaryExpression = function () {
         return true;
     };
     VoidExpressionSyntax.prototype.isExpression = function () {
         return true;
-    };
-    VoidExpressionSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._voidKeyword.width() > 0) {
-            return this._voidKeyword;
-        }
-        if((token = this._expression.firstToken()) !== null) {
-            return token;
-        }
-        return null;
-    };
-    VoidExpressionSyntax.prototype.lastToken = function () {
-        var token = null;
-        if((token = this._expression.lastToken()) !== null) {
-            return token;
-        }
-        if(this._voidKeyword.width() > 0) {
-            return this._voidKeyword;
-        }
-        return null;
     };
     VoidExpressionSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._expression);
@@ -24999,31 +23906,24 @@ var DebuggerStatementSyntax = (function (_super) {
     DebuggerStatementSyntax.prototype.kind = function () {
         return 159 /* DebuggerStatement */ ;
     };
+    DebuggerStatementSyntax.prototype.slotCount = function () {
+        return 2;
+    };
+    DebuggerStatementSyntax.prototype.elementAtSlot = function (slot) {
+        switch(slot) {
+            case 0:
+                return this._debuggerKeyword;
+            case 1:
+                return this._semicolonToken;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
     DebuggerStatementSyntax.prototype.isStatement = function () {
         return true;
     };
     DebuggerStatementSyntax.prototype.isModuleElement = function () {
         return true;
-    };
-    DebuggerStatementSyntax.prototype.firstToken = function () {
-        var token = null;
-        if(this._debuggerKeyword.width() > 0) {
-            return this._debuggerKeyword;
-        }
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        return null;
-    };
-    DebuggerStatementSyntax.prototype.lastToken = function () {
-        var token = null;
-        if(this._semicolonToken.width() > 0) {
-            return this._semicolonToken;
-        }
-        if(this._debuggerKeyword.width() > 0) {
-            return this._debuggerKeyword;
-        }
-        return null;
     };
     DebuggerStatementSyntax.prototype.insertChildrenInto = function (array, index) {
         array.splice(index, 0, this._semicolonToken);

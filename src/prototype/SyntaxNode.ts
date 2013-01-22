@@ -23,14 +23,60 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         throw Errors.abstract();
     }
 
+    private slotCount(): number {
+        throw Errors.abstract();
+    }
+
+    private elementAtSlot(slot: number): ISyntaxElement {
+        throw Errors.abstract();
+    }
+
     // Returns the first non-missing token inside this node (or null if there are no such token).
     public firstToken(): ISyntaxToken {
-        throw Errors.abstract();
+        for (var i = 0, n = this.slotCount(); i < n; i++) {
+            var element = this.elementAtSlot(i);
+
+            if (element != null) {
+                if (element.isToken()) {
+                    var token = <ISyntaxToken>element;
+                    if (token.width() > 0) {
+                        return token;
+                    }
+                }
+                else {
+                    var token = (<any>element).firstToken();
+                    if (token !== null) {
+                        return token;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     // Returns the last non-missing token inside this node (or null if there are no such token).
     public lastToken(): ISyntaxToken {
-        throw Errors.abstract();
+        for (var i = this.slotCount() - 1; i >= 0; i--) {
+            var element = this.elementAtSlot(i);
+
+            if (element != null) {
+                if (element.isToken()) {
+                    var token = <ISyntaxToken>element;
+                    if (token.width() > 0) {
+                        return token;
+                    }
+                }
+                else {
+                    var token = (<any>element).lastToken();
+                    if (token !== null) {
+                        return token;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public leadingTrivia(): ISyntaxTriviaList {
