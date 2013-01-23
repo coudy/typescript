@@ -96,6 +96,35 @@ module Syntax {
         return true;
     }
     
+    export function elementStructuralEquals(element1: ISyntaxElement, element2: ISyntaxElement) {
+        if (element1 === element2) {
+            return true;
+        }
+
+        if (element1 === null || element2 === null) {
+            return false;
+        }
+
+        if (element2.kind() !== element2.kind()) {
+            return false;
+        }
+
+        if (element1.isToken()) {
+            return tokenStructuralEquals(<ISyntaxToken>element1, <ISyntaxToken>element2);
+        }
+        else if (element1.isNode()) {
+            return nodeStructuralEquals(<SyntaxNode>element1, <SyntaxNode>element2) ;
+        }
+        else if (element1.isList()) {
+            return listStructuralEquals(<ISyntaxList>element1, <ISyntaxList>element2);
+        }
+        else if (element1.isSeparatedList()) {
+            return separatedListStructuralEquals(<ISeparatedSyntaxList>element1, <ISeparatedSyntaxList>element2);
+        }
+
+        throw Errors.invalidOperation();
+    }
+
     export function identifierName(text: string, info: ITokenInfo = null): ISyntaxToken {
         return identifier(text);
     }

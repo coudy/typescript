@@ -2144,7 +2144,7 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
     result += generateFindTokenInternalMethod(definition);
-    result += generateStructuralEqualsMethod(definition);
+    // result += generateStructuralEqualsMethod(definition);
 
     result += "}";
 

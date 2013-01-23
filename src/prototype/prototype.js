@@ -1060,7 +1060,23 @@ var SyntaxNode = (function () {
         return false;
     };
     SyntaxNode.prototype.structuralEquals = function (node) {
-        throw Errors.abstract();
+        if(this === node) {
+            return true;
+        }
+        if(node === null) {
+            return false;
+        }
+        if(this.kind() !== node.kind()) {
+            return false;
+        }
+        for(var i = 0, n = this.slotCount(); i < n; i++) {
+            var element1 = this.elementAtSlot(i);
+            var element2 = node.elementAtSlot(i);
+            if(!Syntax.elementStructuralEquals(element1, element2)) {
+                return false;
+            }
+        }
+        return true;
     };
     return SyntaxNode;
 })();
@@ -8675,6 +8691,28 @@ var Syntax;
         return true;
     }
     Syntax.separatedListStructuralEquals = separatedListStructuralEquals;
+    function elementStructuralEquals(element1, element2) {
+        if(element1 === element2) {
+            return true;
+        }
+        if(element1 === null || element2 === null) {
+            return false;
+        }
+        if(element2.kind() !== element2.kind()) {
+            return false;
+        }
+        if(element1.isToken()) {
+            return tokenStructuralEquals(element1, element2);
+        } else if(element1.isNode()) {
+            return nodeStructuralEquals(element1, element2);
+        } else if(element1.isList()) {
+            return listStructuralEquals(element1, element2);
+        } else if(element1.isSeparatedList()) {
+            return separatedListStructuralEquals(element1, element2);
+        }
+        throw Errors.invalidOperation();
+    }
+    Syntax.elementStructuralEquals = elementStructuralEquals;
     function identifierName(text, info) {
         if (typeof info === "undefined") { info = null; }
         return Syntax.identifier(text);
@@ -8828,25 +8866,6 @@ var SourceUnitSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    SourceUnitSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.listStructuralEquals(this._moduleElements, other._moduleElements)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._endOfFileToken, other._endOfFileToken)) {
-            return false;
-        }
-        return true;
     };
     return SourceUnitSyntax;
 })(SyntaxNode);
@@ -9008,31 +9027,6 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ExternalModuleReferenceSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._moduleKeyword, other._moduleKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._stringLiteral, other._stringLiteral)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        return true;
-    };
     return ExternalModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
 var ModuleNameModuleReferenceSyntax = (function (_super) {
@@ -9102,22 +9096,6 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ModuleNameModuleReferenceSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._moduleName, other._moduleName)) {
-            return false;
-        }
-        return true;
     };
     return ModuleNameModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
@@ -9282,34 +9260,6 @@ var ImportDeclarationSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ImportDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._importKeyword, other._importKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._equalsToken, other._equalsToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._moduleReference, other._moduleReference)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return ImportDeclarationSyntax;
 })(SyntaxNode);
@@ -9607,49 +9557,6 @@ var ClassDeclarationSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ClassDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._classKeyword, other._classKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._implementsClause, other._implementsClause)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) {
-            return false;
-        }
-        if(!Syntax.listStructuralEquals(this._classElements, other._classElements)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) {
-            return false;
-        }
-        return true;
-    };
     return ClassDeclarationSyntax;
 })(SyntaxNode);
 var InterfaceDeclarationSyntax = (function (_super) {
@@ -9847,37 +9754,6 @@ var InterfaceDeclarationSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    InterfaceDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._interfaceKeyword, other._interfaceKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._body, other._body)) {
-            return false;
-        }
-        return true;
-    };
     return InterfaceDeclarationSyntax;
 })(SyntaxNode);
 var ExtendsClauseSyntax = (function (_super) {
@@ -9978,25 +9854,6 @@ var ExtendsClauseSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ExtendsClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._extendsKeyword, other._extendsKeyword)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._typeNames, other._typeNames)) {
-            return false;
-        }
-        return true;
-    };
     return ExtendsClauseSyntax;
 })(SyntaxNode);
 var ImplementsClauseSyntax = (function (_super) {
@@ -10096,25 +9953,6 @@ var ImplementsClauseSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ImplementsClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._implementsKeyword, other._implementsKeyword)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._typeNames, other._typeNames)) {
-            return false;
-        }
-        return true;
     };
     return ImplementsClauseSyntax;
 })(SyntaxNode);
@@ -10368,43 +10206,6 @@ var ModuleDeclarationSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ModuleDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._moduleKeyword, other._moduleKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._moduleName, other._moduleName)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._stringLiteral, other._stringLiteral)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) {
-            return false;
-        }
-        if(!Syntax.listStructuralEquals(this._moduleElements, other._moduleElements)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) {
-            return false;
-        }
-        return true;
-    };
     return ModuleDeclarationSyntax;
 })(SyntaxNode);
 var FunctionDeclarationSyntax = (function (_super) {
@@ -10623,37 +10424,6 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    FunctionDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._functionKeyword, other._functionKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._functionSignature, other._functionSignature)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
-    };
     return FunctionDeclarationSyntax;
 })(SyntaxNode);
 var VariableStatementSyntax = (function (_super) {
@@ -10819,31 +10589,6 @@ var VariableStatementSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    VariableStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._variableDeclaration, other._variableDeclaration)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
-    };
     return VariableStatementSyntax;
 })(SyntaxNode);
 var VariableDeclarationSyntax = (function (_super) {
@@ -10946,25 +10691,6 @@ var VariableDeclarationSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    VariableDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._varKeyword, other._varKeyword)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._variableDeclarators, other._variableDeclarators)) {
-            return false;
-        }
-        return true;
     };
     return VariableDeclarationSyntax;
 })(SyntaxNode);
@@ -11098,28 +10824,6 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    VariableDeclaratorSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._equalsValueClause, other._equalsValueClause)) {
-            return false;
-        }
-        return true;
-    };
     return VariableDeclaratorSyntax;
 })(SyntaxNode);
 var EqualsValueClauseSyntax = (function (_super) {
@@ -11217,25 +10921,6 @@ var EqualsValueClauseSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    EqualsValueClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._equalsToken, other._equalsToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._value, other._value)) {
-            return false;
-        }
-        return true;
     };
     return EqualsValueClauseSyntax;
 })(SyntaxNode);
@@ -11341,25 +11026,6 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    PrefixUnaryExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._operatorToken, other._operatorToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._operand, other._operand)) {
-            return false;
-        }
-        return true;
     };
     return PrefixUnaryExpressionSyntax;
 })(SyntaxNode);
@@ -11495,28 +11161,6 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ArrayLiteralExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._expressions, other._expressions)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) {
-            return false;
-        }
-        return true;
-    };
     return ArrayLiteralExpressionSyntax;
 })(SyntaxNode);
 var OmittedExpressionSyntax = (function (_super) {
@@ -11561,19 +11205,6 @@ var OmittedExpressionSyntax = (function (_super) {
     };
     OmittedExpressionSyntax.prototype.findTokenInternal = function (position, fullStart) {
         throw Errors.invalidOperation();
-    };
-    OmittedExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        return true;
     };
     return OmittedExpressionSyntax;
 })(SyntaxNode);
@@ -11700,28 +11331,6 @@ var ParenthesizedExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ParenthesizedExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        return true;
     };
     return ParenthesizedExpressionSyntax;
 })(SyntaxNode);
@@ -11868,28 +11477,6 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._body, other._body)) {
-            return false;
-        }
-        return true;
-    };
     return SimpleArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
 var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
@@ -12004,28 +11591,6 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._body, other._body)) {
-            return false;
-        }
-        return true;
     };
     return ParenthesizedArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
@@ -12156,28 +11721,6 @@ var QualifiedNameSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    QualifiedNameSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._right, other._right)) {
-            return false;
-        }
-        return true;
-    };
     return QualifiedNameSyntax;
 })(SyntaxNode);
 var TypeArgumentListSyntax = (function (_super) {
@@ -12302,28 +11845,6 @@ var TypeArgumentListSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    TypeArgumentListSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._typeArguments, other._typeArguments)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) {
-            return false;
-        }
-        return true;
     };
     return TypeArgumentListSyntax;
 })(SyntaxNode);
@@ -12498,34 +12019,6 @@ var ConstructorTypeSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ConstructorTypeSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) {
-            return false;
-        }
-        return true;
-    };
     return ConstructorTypeSyntax;
 })(SyntaxNode);
 var FunctionTypeSyntax = (function (_super) {
@@ -12677,31 +12170,6 @@ var FunctionTypeSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    FunctionTypeSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) {
-            return false;
-        }
-        return true;
-    };
     return FunctionTypeSyntax;
 })(SyntaxNode);
 var ObjectTypeSyntax = (function (_super) {
@@ -12836,28 +12304,6 @@ var ObjectTypeSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ObjectTypeSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._typeMembers, other._typeMembers)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) {
-            return false;
-        }
-        return true;
-    };
     return ObjectTypeSyntax;
 })(SyntaxNode);
 var ArrayTypeSyntax = (function (_super) {
@@ -12984,28 +12430,6 @@ var ArrayTypeSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ArrayTypeSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) {
-            return false;
-        }
-        return true;
-    };
     return ArrayTypeSyntax;
 })(SyntaxNode);
 var GenericTypeSyntax = (function (_super) {
@@ -13108,25 +12532,6 @@ var GenericTypeSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    GenericTypeSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._name, other._name)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) {
-            return false;
-        }
-        return true;
-    };
     return GenericTypeSyntax;
 })(SyntaxNode);
 var TypeAnnotationSyntax = (function (_super) {
@@ -13221,25 +12626,6 @@ var TypeAnnotationSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    TypeAnnotationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) {
-            return false;
-        }
-        return true;
     };
     return TypeAnnotationSyntax;
 })(SyntaxNode);
@@ -13374,28 +12760,6 @@ var BlockSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    BlockSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) {
-            return false;
-        }
-        if(!Syntax.listStructuralEquals(this._statements, other._statements)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) {
-            return false;
-        }
-        return true;
     };
     return BlockSyntax;
 })(SyntaxNode);
@@ -13616,37 +12980,6 @@ var ParameterSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    ParameterSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._dotDotDotToken, other._dotDotDotToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._equalsValueClause, other._equalsValueClause)) {
-            return false;
-        }
-        return true;
-    };
     return ParameterSyntax;
 })(SyntaxNode);
 var MemberAccessExpressionSyntax = (function (_super) {
@@ -13773,28 +13106,6 @@ var MemberAccessExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    MemberAccessExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._name, other._name)) {
-            return false;
-        }
-        return true;
-    };
     return MemberAccessExpressionSyntax;
 })(SyntaxNode);
 var PostfixUnaryExpressionSyntax = (function (_super) {
@@ -13899,25 +13210,6 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    PostfixUnaryExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._operand, other._operand)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._operatorToken, other._operatorToken)) {
-            return false;
-        }
-        return true;
     };
     return PostfixUnaryExpressionSyntax;
 })(SyntaxNode);
@@ -14068,31 +13360,6 @@ var ElementAccessExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ElementAccessExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._argumentExpression, other._argumentExpression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) {
-            return false;
-        }
-        return true;
-    };
     return ElementAccessExpressionSyntax;
 })(SyntaxNode);
 var InvocationExpressionSyntax = (function (_super) {
@@ -14197,25 +13464,6 @@ var InvocationExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    InvocationExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._argumentList, other._argumentList)) {
-            return false;
-        }
-        return true;
     };
     return InvocationExpressionSyntax;
 })(SyntaxNode);
@@ -14372,31 +13620,6 @@ var ArgumentListSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ArgumentListSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._arguments, other._arguments)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        return true;
-    };
     return ArgumentListSyntax;
 })(SyntaxNode);
 var BinaryExpressionSyntax = (function (_super) {
@@ -14522,28 +13745,6 @@ var BinaryExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    BinaryExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._operatorToken, other._operatorToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._right, other._right)) {
-            return false;
-        }
-        return true;
     };
     return BinaryExpressionSyntax;
 })(SyntaxNode);
@@ -14714,34 +13915,6 @@ var ConditionalExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ConditionalExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._whenTrue, other._whenTrue)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._whenFalse, other._whenFalse)) {
-            return false;
-        }
-        return true;
-    };
     return ConditionalExpressionSyntax;
 })(SyntaxNode);
 var TypeMemberSyntax = (function (_super) {
@@ -14855,25 +14028,6 @@ var ConstructSignatureSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ConstructSignatureSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) {
-            return false;
-        }
-        return true;
     };
     return ConstructSignatureSyntax;
 })(TypeMemberSyntax);
@@ -15001,28 +14155,6 @@ var FunctionSignatureSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    FunctionSignatureSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) {
-            return false;
-        }
-        return true;
     };
     return FunctionSignatureSyntax;
 })(TypeMemberSyntax);
@@ -15168,31 +14300,6 @@ var IndexSignatureSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    IndexSignatureSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameter, other._parameter)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
-            return false;
-        }
-        return true;
-    };
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
 var PropertySignatureSyntax = (function (_super) {
@@ -15321,28 +14428,6 @@ var PropertySignatureSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    PropertySignatureSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
-            return false;
-        }
-        return true;
-    };
     return PropertySignatureSyntax;
 })(TypeMemberSyntax);
 var ParameterListSyntax = (function (_super) {
@@ -15470,28 +14555,6 @@ var ParameterListSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ParameterListSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._parameters, other._parameters)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        return true;
     };
     return ParameterListSyntax;
 })(SyntaxNode);
@@ -15626,28 +14689,6 @@ var CallSignatureSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    CallSignatureSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
-            return false;
-        }
-        return true;
-    };
     return CallSignatureSyntax;
 })(TypeMemberSyntax);
 var TypeParameterListSyntax = (function (_super) {
@@ -15773,28 +14814,6 @@ var TypeParameterListSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    TypeParameterListSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._typeParameters, other._typeParameters)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) {
-            return false;
-        }
-        return true;
-    };
     return TypeParameterListSyntax;
 })(SyntaxNode);
 var TypeParameterSyntax = (function (_super) {
@@ -15897,25 +14916,6 @@ var TypeParameterSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    TypeParameterSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._constraint, other._constraint)) {
-            return false;
-        }
-        return true;
-    };
     return TypeParameterSyntax;
 })(SyntaxNode);
 var ConstraintSyntax = (function (_super) {
@@ -16010,25 +15010,6 @@ var ConstraintSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ConstraintSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._extendsKeyword, other._extendsKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) {
-            return false;
-        }
-        return true;
     };
     return ConstraintSyntax;
 })(SyntaxNode);
@@ -16127,25 +15108,6 @@ var ElseClauseSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ElseClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._elseKeyword, other._elseKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        return true;
     };
     return ElseClauseSyntax;
 })(SyntaxNode);
@@ -16348,37 +15310,6 @@ var IfStatementSyntax = (function (_super) {
         }
         throw Errors.invalidOperation();
     };
-    IfStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._ifKeyword, other._ifKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._elseClause, other._elseClause)) {
-            return false;
-        }
-        return true;
-    };
     return IfStatementSyntax;
 })(SyntaxNode);
 var ExpressionStatementSyntax = (function (_super) {
@@ -16482,25 +15413,6 @@ var ExpressionStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ExpressionStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return ExpressionStatementSyntax;
 })(SyntaxNode);
@@ -16652,31 +15564,6 @@ var ConstructorDeclarationSyntax = (function (_super) {
             fullStart += childWidth;
         }
         throw Errors.invalidOperation();
-    };
-    ConstructorDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._constructorKeyword, other._constructorKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return ConstructorDeclarationSyntax;
 })(SyntaxNode);
@@ -16861,34 +15748,6 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
             fullStart += childWidth;
         }
         throw Errors.invalidOperation();
-    };
-    MemberFunctionDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._functionSignature, other._functionSignature)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return MemberFunctionDeclarationSyntax;
 })(SyntaxNode);
@@ -17143,40 +16002,6 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    GetMemberAccessorDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._getKeyword, other._getKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        return true;
-    };
     return GetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var SetMemberAccessorDeclarationSyntax = (function (_super) {
@@ -17369,37 +16194,6 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    SetMemberAccessorDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._setKeyword, other._setKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        return true;
-    };
     return SetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var MemberVariableDeclarationSyntax = (function (_super) {
@@ -17556,31 +16350,6 @@ var MemberVariableDeclarationSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    MemberVariableDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._variableDeclarator, other._variableDeclarator)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
-    };
     return MemberVariableDeclarationSyntax;
 })(SyntaxNode);
 var ThrowStatementSyntax = (function (_super) {
@@ -17706,28 +16475,6 @@ var ThrowStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ThrowStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._throwKeyword, other._throwKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return ThrowStatementSyntax;
 })(SyntaxNode);
@@ -17862,28 +16609,6 @@ var ReturnStatementSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ReturnStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._returnKeyword, other._returnKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
-    };
     return ReturnStatementSyntax;
 })(SyntaxNode);
 var ObjectCreationExpressionSyntax = (function (_super) {
@@ -18017,28 +16742,6 @@ var ObjectCreationExpressionSyntax = (function (_super) {
             fullStart += childWidth;
         }
         throw Errors.invalidOperation();
-    };
-    ObjectCreationExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._argumentList, other._argumentList)) {
-            return false;
-        }
-        return true;
     };
     return ObjectCreationExpressionSyntax;
 })(SyntaxNode);
@@ -18263,40 +16966,6 @@ var SwitchStatementSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    SwitchStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._switchKeyword, other._switchKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) {
-            return false;
-        }
-        if(!Syntax.listStructuralEquals(this._switchClauses, other._switchClauses)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) {
-            return false;
-        }
-        return true;
-    };
     return SwitchStatementSyntax;
 })(SyntaxNode);
 var SwitchClauseSyntax = (function (_super) {
@@ -18473,31 +17142,6 @@ var CaseSwitchClauseSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    CaseSwitchClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._caseKeyword, other._caseKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) {
-            return false;
-        }
-        if(!Syntax.listStructuralEquals(this._statements, other._statements)) {
-            return false;
-        }
-        return true;
-    };
     return CaseSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var DefaultSwitchClauseSyntax = (function (_super) {
@@ -18625,28 +17269,6 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    DefaultSwitchClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._defaultKeyword, other._defaultKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) {
-            return false;
-        }
-        if(!Syntax.listStructuralEquals(this._statements, other._statements)) {
-            return false;
-        }
-        return true;
     };
     return DefaultSwitchClauseSyntax;
 })(SwitchClauseSyntax);
@@ -18780,28 +17402,6 @@ var BreakStatementSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    BreakStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._breakKeyword, other._breakKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
-    };
     return BreakStatementSyntax;
 })(SyntaxNode);
 var ContinueStatementSyntax = (function (_super) {
@@ -18933,28 +17533,6 @@ var ContinueStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ContinueStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._continueKeyword, other._continueKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return ContinueStatementSyntax;
 })(SyntaxNode);
@@ -19315,49 +17893,6 @@ var ForStatementSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ForStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._forKeyword, other._forKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._variableDeclaration, other._variableDeclaration)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._initializer, other._initializer)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._firstSemicolonToken, other._firstSemicolonToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._secondSemicolonToken, other._secondSemicolonToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._incrementor, other._incrementor)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        return true;
-    };
     return ForStatementSyntax;
 })(BaseForStatementSyntax);
 var ForInStatementSyntax = (function (_super) {
@@ -19602,43 +18137,6 @@ var ForInStatementSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    ForInStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._forKeyword, other._forKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._variableDeclaration, other._variableDeclaration)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._inKeyword, other._inKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        return true;
-    };
     return ForInStatementSyntax;
 })(BaseForStatementSyntax);
 var WhileStatementSyntax = (function (_super) {
@@ -19803,34 +18301,6 @@ var WhileStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    WhileStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._whileKeyword, other._whileKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        return true;
     };
     return WhileStatementSyntax;
 })(IterationStatementSyntax);
@@ -20002,34 +18472,6 @@ var WithStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    WithStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._withKeyword, other._withKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        return true;
     };
     return WithStatementSyntax;
 })(SyntaxNode);
@@ -20229,37 +18671,6 @@ var EnumDeclarationSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    EnumDeclarationSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._enumKeyword, other._enumKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._variableDeclarators, other._variableDeclarators)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) {
-            return false;
-        }
-        return true;
-    };
     return EnumDeclarationSyntax;
 })(SyntaxNode);
 var CastExpressionSyntax = (function (_super) {
@@ -20403,31 +18814,6 @@ var CastExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    CastExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        return true;
-    };
     return CastExpressionSyntax;
 })(SyntaxNode);
 var ObjectLiteralExpressionSyntax = (function (_super) {
@@ -20561,28 +18947,6 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    ObjectLiteralExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) {
-            return false;
-        }
-        if(!Syntax.separatedListStructuralEquals(this._propertyAssignments, other._propertyAssignments)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) {
-            return false;
-        }
-        return true;
     };
     return ObjectLiteralExpressionSyntax;
 })(SyntaxNode);
@@ -20722,28 +19086,6 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    SimplePropertyAssignmentSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._propertyName, other._propertyName)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        return true;
     };
     return SimplePropertyAssignmentSyntax;
 })(PropertyAssignmentSyntax);
@@ -20937,34 +19279,6 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._getKeyword, other._getKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._propertyName, other._propertyName)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        return true;
-    };
     return GetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var SetAccessorPropertyAssignmentSyntax = (function (_super) {
@@ -21151,37 +19465,6 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._setKeyword, other._setKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._propertyName, other._propertyName)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._parameterName, other._parameterName)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        return true;
-    };
     return SetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var FunctionExpressionSyntax = (function (_super) {
@@ -21338,31 +19621,6 @@ var FunctionExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    FunctionExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._functionKeyword, other._functionKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        return true;
-    };
     return FunctionExpressionSyntax;
 })(SyntaxNode);
 var EmptyStatementSyntax = (function (_super) {
@@ -21443,22 +19701,6 @@ var EmptyStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    EmptyStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return EmptyStatementSyntax;
 })(SyntaxNode);
@@ -21620,31 +19862,6 @@ var TryStatementSyntax = (function (_super) {
             fullStart += childWidth;
         }
         throw Errors.invalidOperation();
-    };
-    TryStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._tryKeyword, other._tryKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._catchClause, other._catchClause)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._finallyClause, other._finallyClause)) {
-            return false;
-        }
-        return true;
     };
     return TryStatementSyntax;
 })(SyntaxNode);
@@ -21810,34 +20027,6 @@ var CatchClauseSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    CatchClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._catchKeyword, other._catchKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        return true;
-    };
     return CatchClauseSyntax;
 })(SyntaxNode);
 var FinallyClauseSyntax = (function (_super) {
@@ -21935,25 +20124,6 @@ var FinallyClauseSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    FinallyClauseSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._finallyKeyword, other._finallyKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeStructuralEquals(this._block, other._block)) {
-            return false;
-        }
-        return true;
     };
     return FinallyClauseSyntax;
 })(SyntaxNode);
@@ -22080,28 +20250,6 @@ var LabeledStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    LabeledStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        return true;
     };
     return LabeledStatementSyntax;
 })(SyntaxNode);
@@ -22312,40 +20460,6 @@ var DoStatementSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    DoStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._doKeyword, other._doKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._whileKeyword, other._whileKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
-    };
     return DoStatementSyntax;
 })(IterationStatementSyntax);
 var TypeOfExpressionSyntax = (function (_super) {
@@ -22449,25 +20563,6 @@ var TypeOfExpressionSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    TypeOfExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._typeOfKeyword, other._typeOfKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        return true;
     };
     return TypeOfExpressionSyntax;
 })(SyntaxNode);
@@ -22573,25 +20668,6 @@ var DeleteExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    DeleteExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._deleteKeyword, other._deleteKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        return true;
-    };
     return DeleteExpressionSyntax;
 })(SyntaxNode);
 var VoidExpressionSyntax = (function (_super) {
@@ -22696,25 +20772,6 @@ var VoidExpressionSyntax = (function (_super) {
         fullStart += childWidth;
         throw Errors.invalidOperation();
     };
-    VoidExpressionSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._voidKeyword, other._voidKeyword)) {
-            return false;
-        }
-        if(!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) {
-            return false;
-        }
-        return true;
-    };
     return VoidExpressionSyntax;
 })(SyntaxNode);
 var DebuggerStatementSyntax = (function (_super) {
@@ -22817,25 +20874,6 @@ var DebuggerStatementSyntax = (function (_super) {
         position -= childWidth;
         fullStart += childWidth;
         throw Errors.invalidOperation();
-    };
-    DebuggerStatementSyntax.prototype.structuralEquals = function (node) {
-        if(this === node) {
-            return true;
-        }
-        if(node === null) {
-            return false;
-        }
-        if(this.kind() !== node.kind()) {
-            return false;
-        }
-        var other = node;
-        if(!Syntax.tokenStructuralEquals(this._debuggerKeyword, other._debuggerKeyword)) {
-            return false;
-        }
-        if(!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) {
-            return false;
-        }
-        return true;
     };
     return DebuggerStatementSyntax;
 })(SyntaxNode);

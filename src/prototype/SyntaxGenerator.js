@@ -4335,7 +4335,6 @@ function generateNode(definition) {
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
     result += generateFindTokenInternalMethod(definition);
-    result += generateStructuralEqualsMethod(definition);
     result += "}";
     return result;
 }

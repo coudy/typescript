@@ -129,16 +129,6 @@ class SourceUnitSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <SourceUnitSyntax>node;
-        if (!Syntax.listStructuralEquals(this._moduleElements, other._moduleElements)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._endOfFileToken, other._endOfFileToken)) { return false; }
-        return true;
-    }
 }
 
 class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
@@ -322,18 +312,6 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ExternalModuleReferenceSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._moduleKeyword, other._moduleKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._stringLiteral, other._stringLiteral)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        return true;
-    }
 }
 
 class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
@@ -422,15 +400,6 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ModuleNameModuleReferenceSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._moduleName, other._moduleName)) { return false; }
-        return true;
     }
 }
 
@@ -621,19 +590,6 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ImportDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._importKeyword, other._importKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._equalsToken, other._equalsToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._moduleReference, other._moduleReference)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -973,24 +929,6 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ClassDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._classKeyword, other._classKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._implementsClause, other._implementsClause)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
-        if (!Syntax.listStructuralEquals(this._classElements, other._classElements)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) { return false; }
-        return true;
-    }
 }
 
 class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
@@ -1223,20 +1161,6 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <InterfaceDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._interfaceKeyword, other._interfaceKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._extendsClause, other._extendsClause)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._body, other._body)) { return false; }
-        return true;
-    }
 }
 
 class ExtendsClauseSyntax extends SyntaxNode {
@@ -1357,16 +1281,6 @@ class ExtendsClauseSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ExtendsClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._extendsKeyword, other._extendsKeyword)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._typeNames, other._typeNames)) { return false; }
-        return true;
-    }
 }
 
 class ImplementsClauseSyntax extends SyntaxNode {
@@ -1486,16 +1400,6 @@ class ImplementsClauseSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ImplementsClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._implementsKeyword, other._implementsKeyword)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._typeNames, other._typeNames)) { return false; }
-        return true;
     }
 }
 
@@ -1782,22 +1686,6 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ModuleDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._moduleKeyword, other._moduleKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._moduleName, other._moduleName)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._stringLiteral, other._stringLiteral)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
-        if (!Syntax.listStructuralEquals(this._moduleElements, other._moduleElements)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) { return false; }
-        return true;
-    }
 }
 
 class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
@@ -2040,20 +1928,6 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <FunctionDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._functionKeyword, other._functionKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._functionSignature, other._functionSignature)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
-    }
 }
 
 class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -2240,18 +2114,6 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <VariableStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._declareKeyword, other._declareKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._variableDeclaration, other._variableDeclaration)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
-    }
 }
 
 class VariableDeclarationSyntax extends SyntaxNode {
@@ -2372,16 +2234,6 @@ class VariableDeclarationSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <VariableDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._varKeyword, other._varKeyword)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._variableDeclarators, other._variableDeclarators)) { return false; }
-        return true;
     }
 }
 
@@ -2537,17 +2389,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <VariableDeclaratorSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._equalsValueClause, other._equalsValueClause)) { return false; }
-        return true;
-    }
 }
 
 class EqualsValueClauseSyntax extends SyntaxNode {
@@ -2664,16 +2505,6 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <EqualsValueClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._equalsToken, other._equalsToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._value, other._value)) { return false; }
-        return true;
     }
 }
 
@@ -2803,16 +2634,6 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <PrefixUnaryExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._operatorToken, other._operatorToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._operand, other._operand)) { return false; }
-        return true;
     }
 }
 
@@ -2971,17 +2792,6 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ArrayLiteralExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._expressions, other._expressions)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) { return false; }
-        return true;
-    }
 }
 
 class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
@@ -3040,14 +2850,6 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 
     private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <OmittedExpressionSyntax>node;
-        return true;
     }
 }
 
@@ -3196,17 +2998,6 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ParenthesizedExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        return true;
     }
 }
 
@@ -3382,17 +3173,6 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <SimpleArrowFunctionExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._body, other._body)) { return false; }
-        return true;
-    }
 }
 
 class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
@@ -3532,17 +3312,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ParenthesizedArrowFunctionExpressionSyntax>node;
-        if (!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._body, other._body)) { return false; }
-        return true;
     }
 }
 
@@ -3700,17 +3469,6 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <QualifiedNameSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._right, other._right)) { return false; }
-        return true;
-    }
 }
 
 class TypeArgumentListSyntax extends SyntaxNode {
@@ -3858,17 +3616,6 @@ class TypeArgumentListSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <TypeArgumentListSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._typeArguments, other._typeArguments)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) { return false; }
-        return true;
     }
 }
 
@@ -4080,19 +3827,6 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ConstructorTypeSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
-        return true;
-    }
 }
 
 class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -4279,18 +4013,6 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <FunctionTypeSyntax>node;
-        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._equalsGreaterThanToken, other._equalsGreaterThanToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
-        return true;
-    }
 }
 
 class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -4451,17 +4173,6 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ObjectTypeSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._typeMembers, other._typeMembers)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) { return false; }
-        return true;
-    }
 }
 
 class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -4613,17 +4324,6 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ArrayTypeSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) { return false; }
-        return true;
-    }
 }
 
 class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -4753,16 +4453,6 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <GenericTypeSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._name, other._name)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) { return false; }
-        return true;
-    }
 }
 
 class TypeAnnotationSyntax extends SyntaxNode {
@@ -4878,16 +4568,6 @@ class TypeAnnotationSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <TypeAnnotationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
-        return true;
     }
 }
 
@@ -5045,17 +4725,6 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <BlockSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
-        if (!Syntax.listStructuralEquals(this._statements, other._statements)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) { return false; }
-        return true;
     }
 }
 
@@ -5295,20 +4964,6 @@ class ParameterSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ParameterSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._dotDotDotToken, other._dotDotDotToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._equalsValueClause, other._equalsValueClause)) { return false; }
-        return true;
-    }
 }
 
 class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -5458,17 +5113,6 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <MemberAccessExpressionSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._dotToken, other._dotToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._name, other._name)) { return false; }
-        return true;
-    }
 }
 
 class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -5597,16 +5241,6 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <PostfixUnaryExpressionSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._operand, other._operand)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._operatorToken, other._operatorToken)) { return false; }
-        return true;
     }
 }
 
@@ -5782,18 +5416,6 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ElementAccessExpressionSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._argumentExpression, other._argumentExpression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) { return false; }
-        return true;
-    }
 }
 
 class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -5920,16 +5542,6 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <InvocationExpressionSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._argumentList, other._argumentList)) { return false; }
-        return true;
     }
 }
 
@@ -6109,18 +5721,6 @@ class ArgumentListSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ArgumentListSyntax>node;
-        if (!Syntax.nodeStructuralEquals(this._typeArgumentList, other._typeArgumentList)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._arguments, other._arguments)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        return true;
-    }
 }
 
 class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
@@ -6271,17 +5871,6 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <BinaryExpressionSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._operatorToken, other._operatorToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._right, other._right)) { return false; }
-        return true;
     }
 }
 
@@ -6479,19 +6068,6 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ConditionalExpressionSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._whenTrue, other._whenTrue)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._whenFalse, other._whenFalse)) { return false; }
-        return true;
-    }
 }
 
 class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
@@ -6629,16 +6205,6 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ConstructSignatureSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) { return false; }
-        return true;
     }
 }
 
@@ -6788,17 +6354,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <FunctionSignatureSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) { return false; }
-        return true;
     }
 }
 
@@ -6973,18 +6528,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <IndexSignatureSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._openBracketToken, other._openBracketToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameter, other._parameter)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBracketToken, other._closeBracketToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
-        return true;
-    }
 }
 
 class PropertySignatureSyntax extends TypeMemberSyntax {
@@ -7136,17 +6679,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <PropertySignatureSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._questionToken, other._questionToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
-        return true;
-    }
 }
 
 class ParameterListSyntax extends SyntaxNode {
@@ -7295,17 +6827,6 @@ class ParameterListSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ParameterListSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._parameters, other._parameters)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        return true;
     }
 }
 
@@ -7463,17 +6984,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <CallSignatureSyntax>node;
-        if (!Syntax.nodeStructuralEquals(this._typeParameterList, other._typeParameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
-        return true;
-    }
 }
 
 class TypeParameterListSyntax extends SyntaxNode {
@@ -7622,17 +7132,6 @@ class TypeParameterListSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <TypeParameterListSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._typeParameters, other._typeParameters)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) { return false; }
-        return true;
-    }
 }
 
 class TypeParameterSyntax extends SyntaxNode {
@@ -7757,16 +7256,6 @@ class TypeParameterSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <TypeParameterSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._constraint, other._constraint)) { return false; }
-        return true;
-    }
 }
 
 class ConstraintSyntax extends SyntaxNode {
@@ -7882,16 +7371,6 @@ class ConstraintSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ConstraintSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._extendsKeyword, other._extendsKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
-        return true;
     }
 }
 
@@ -8009,16 +7488,6 @@ class ElseClauseSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ElseClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._elseKeyword, other._elseKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        return true;
     }
 }
 
@@ -8254,20 +7723,6 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <IfStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._ifKeyword, other._ifKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._elseClause, other._elseClause)) { return false; }
-        return true;
-    }
 }
 
 class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -8392,16 +7847,6 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ExpressionStatementSyntax>node;
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -8582,18 +8027,6 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         }
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ConstructorDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._constructorKeyword, other._constructorKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -8808,19 +8241,6 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         }
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <MemberFunctionDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._functionSignature, other._functionSignature)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -9120,21 +8540,6 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <GetMemberAccessorDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._getKeyword, other._getKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._typeAnnotation, other._typeAnnotation)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        return true;
-    }
 }
 
 class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
@@ -9359,20 +8764,6 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <SetMemberAccessorDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._setKeyword, other._setKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._parameterList, other._parameterList)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        return true;
-    }
 }
 
 class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
@@ -9556,18 +8947,6 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <MemberVariableDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._publicOrPrivateKeyword, other._publicOrPrivateKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._staticKeyword, other._staticKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._variableDeclarator, other._variableDeclarator)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
-    }
 }
 
 class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -9715,17 +9094,6 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ThrowStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._throwKeyword, other._throwKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -9883,17 +9251,6 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ReturnStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._returnKeyword, other._returnKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -10053,17 +9410,6 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         }
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ObjectCreationExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._newKeyword, other._newKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._argumentList, other._argumentList)) { return false; }
-        return true;
     }
 }
 
@@ -10320,21 +9666,6 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <SwitchStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._switchKeyword, other._switchKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
-        if (!Syntax.listStructuralEquals(this._switchClauses, other._switchClauses)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) { return false; }
-        return true;
-    }
 }
 
 class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
@@ -10540,18 +9871,6 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <CaseSwitchClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._caseKeyword, other._caseKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) { return false; }
-        if (!Syntax.listStructuralEquals(this._statements, other._statements)) { return false; }
-        return true;
-    }
 }
 
 class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
@@ -10700,17 +10019,6 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <DefaultSwitchClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._defaultKeyword, other._defaultKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) { return false; }
-        if (!Syntax.listStructuralEquals(this._statements, other._statements)) { return false; }
-        return true;
     }
 }
 
@@ -10867,17 +10175,6 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <BreakStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._breakKeyword, other._breakKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
-    }
 }
 
 class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -11032,17 +10329,6 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ContinueStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._continueKeyword, other._continueKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -11454,24 +10740,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ForStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._forKeyword, other._forKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._variableDeclaration, other._variableDeclaration)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._initializer, other._initializer)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._firstSemicolonToken, other._firstSemicolonToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._secondSemicolonToken, other._secondSemicolonToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._incrementor, other._incrementor)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        return true;
-    }
 }
 
 class ForInStatementSyntax extends BaseForStatementSyntax {
@@ -11751,22 +11019,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ForInStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._forKeyword, other._forKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._variableDeclaration, other._variableDeclaration)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._left, other._left)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._inKeyword, other._inKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        return true;
-    }
 }
 
 class WhileStatementSyntax extends IterationStatementSyntax {
@@ -11955,19 +11207,6 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <WhileStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._whileKeyword, other._whileKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        return true;
     }
 }
 
@@ -12165,19 +11404,6 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <WithStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._withKeyword, other._withKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        return true;
     }
 }
 
@@ -12406,20 +11632,6 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <EnumDeclarationSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._exportKeyword, other._exportKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._enumKeyword, other._enumKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._variableDeclarators, other._variableDeclarators)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) { return false; }
-        return true;
-    }
 }
 
 class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -12592,18 +11804,6 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <CastExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._lessThanToken, other._lessThanToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._type, other._type)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._greaterThanToken, other._greaterThanToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        return true;
-    }
 }
 
 class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -12760,17 +11960,6 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <ObjectLiteralExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._openBraceToken, other._openBraceToken)) { return false; }
-        if (!Syntax.separatedListStructuralEquals(this._propertyAssignments, other._propertyAssignments)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeBraceToken, other._closeBraceToken)) { return false; }
-        return true;
     }
 }
 
@@ -12934,17 +12123,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <SimplePropertyAssignmentSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._propertyName, other._propertyName)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        return true;
     }
 }
 
@@ -13166,19 +12344,6 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <GetAccessorPropertyAssignmentSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._getKeyword, other._getKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._propertyName, other._propertyName)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        return true;
-    }
 }
 
 class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
@@ -13389,20 +12554,6 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <SetAccessorPropertyAssignmentSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._setKeyword, other._setKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._propertyName, other._propertyName)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._parameterName, other._parameterName)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        return true;
-    }
 }
 
 class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -13586,18 +12737,6 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <FunctionExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._functionKeyword, other._functionKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._callSignature, other._callSignature)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        return true;
-    }
 }
 
 class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -13697,15 +12836,6 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <EmptyStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }
 
@@ -13895,18 +13025,6 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <TryStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._tryKeyword, other._tryKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._catchClause, other._catchClause)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._finallyClause, other._finallyClause)) { return false; }
-        return true;
-    }
 }
 
 class CatchClauseSyntax extends SyntaxNode {
@@ -14093,19 +13211,6 @@ class CatchClauseSyntax extends SyntaxNode {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <CatchClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._catchKeyword, other._catchKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        return true;
-    }
 }
 
 class FinallyClauseSyntax extends SyntaxNode {
@@ -14222,16 +13327,6 @@ class FinallyClauseSyntax extends SyntaxNode {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <FinallyClauseSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._finallyKeyword, other._finallyKeyword)) { return false; }
-        if (!Syntax.nodeStructuralEquals(this._block, other._block)) { return false; }
-        return true;
     }
 }
 
@@ -14381,17 +13476,6 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <LabeledStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._identifier, other._identifier)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._colonToken, other._colonToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        return true;
     }
 }
 
@@ -14628,21 +13712,6 @@ class DoStatementSyntax extends IterationStatementSyntax {
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <DoStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._doKeyword, other._doKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._statement, other._statement)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._whileKeyword, other._whileKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._openParenToken, other._openParenToken)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._condition, other._condition)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._closeParenToken, other._closeParenToken)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
-    }
 }
 
 class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -14767,16 +13836,6 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <TypeOfExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._typeOfKeyword, other._typeOfKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        return true;
     }
 }
 
@@ -14903,16 +13962,6 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <DeleteExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._deleteKeyword, other._deleteKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        return true;
-    }
 }
 
 class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -15038,16 +14087,6 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
 
         throw Errors.invalidOperation();
     }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <VoidExpressionSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._voidKeyword, other._voidKeyword)) { return false; }
-        if (!Syntax.nodeOrTokenStructuralEquals(this._expression, other._expression)) { return false; }
-        return true;
-    }
 }
 
 class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -15170,15 +14209,5 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         fullStart += childWidth;
 
         throw Errors.invalidOperation();
-    }
-
-    private structuralEquals(node: SyntaxNode): bool {
-        if (this === node) { return true; }
-        if (node === null) { return false; }
-        if (this.kind() !== node.kind()) { return false; }
-        var other = <DebuggerStatementSyntax>node;
-        if (!Syntax.tokenStructuralEquals(this._debuggerKeyword, other._debuggerKeyword)) { return false; }
-        if (!Syntax.tokenStructuralEquals(this._semicolonToken, other._semicolonToken)) { return false; }
-        return true;
     }
 }

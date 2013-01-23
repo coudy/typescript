@@ -288,6 +288,19 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     public structuralEquals(node: SyntaxNode): bool {
-        throw Errors.abstract();
+        if (this === node) { return true; }
+        if (node === null) { return false; }
+        if (this.kind() !== node.kind()) { return false; }
+
+        for (var i = 0, n = this.slotCount(); i < n; i++) {
+            var element1 = this.elementAtSlot(i);
+            var element2 = node.elementAtSlot(i);
+
+            if (!Syntax.elementStructuralEquals(element1, element2)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
