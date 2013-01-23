@@ -19,7 +19,7 @@ class SyntaxElementsCollector extends SyntaxWalker {
 
     public static collectElements(node: SourceUnitSyntax): ISyntaxElement[] {
         var collector = new SyntaxElementsCollector();
-        node.accept(collector);
+        collector.visitNode(node);
         return collector.elements;
     }
 }

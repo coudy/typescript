@@ -1,4 +1,4 @@
-///<reference path='SyntaxWalker.generated.ts' />
+///<reference path='SyntaxWalker.ts' />
 
 ///<reference path='HashTable.ts' />
 ///<reference path='SyntaxToken.ts' />

@@ -2989,7 +2989,7 @@ function generateFactory(): string {
 var syntaxNodes = generateNodes();
 var rewriter = generateRewriter();
 var tokens = generateTokens();
-var walker = generateWalker();
+// var walker = generateWalker();
 var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
@@ -2997,7 +2997,7 @@ var factory = generateFactory();
 Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
 Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
 Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
+// Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
 Environment.writeFile("C:\\typescript\\public\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);
 Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxVisitor.generated.ts", visitor, true);
 Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxFactory.generated.ts", factory, true);
