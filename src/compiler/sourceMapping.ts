@@ -43,14 +43,22 @@ module TypeScript {
         public jsFileName: string;
         public tsFileName: string;
 
-        constructor(tsFileName: string, jsFileName: string, public jsFile: ITextWriter, public sourceMapOut: ITextWriter, public errorReporter: ErrorReporter) {
+        constructor(tsFileName: string, jsFileName: string, public jsFile: ITextWriter, public sourceMapOut: ITextWriter,
+            public errorReporter: ErrorReporter, emitFullPathOfSourceMap: bool) {
             this.currentMappings.push(this.sourceMappings);
 
             jsFileName = switchToForwardSlashes(jsFileName);
             this.jsFileName = TypeScript.getPrettyName(jsFileName, false, true);
-
+            
             var removalIndex = jsFileName.lastIndexOf(this.jsFileName);
             var fixedPath = jsFileName.substring(0, removalIndex);
+
+            if (emitFullPathOfSourceMap) {
+                if (jsFileName.indexOf("://") == -1) {
+                    jsFileName = "file:///" + jsFileName;
+                }
+                this.jsFileName = jsFileName;
+            }
 
             this.tsFileName = TypeScript.getRelativePathToFixedPath(fixedPath, tsFileName);
         }
