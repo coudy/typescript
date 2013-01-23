@@ -370,4 +370,18 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
         return true;
     }
+
+    public width(): number {
+        return this.fullWidth() - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+    }
+
+    public leadingTriviaWidth() {
+        var firstToken = this.firstToken();
+        return firstToken === null ? 0 : firstToken.leadingTriviaWidth();
+    }
+
+    public trailingTriviaWidth() {
+        var lastToken = this.lastToken();
+        return lastToken === null ? 0 : lastToken.leadingTriviaWidth();
+    }
 }

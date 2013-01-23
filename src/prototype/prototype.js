@@ -1127,6 +1127,17 @@ var SyntaxNode = (function () {
         }
         return true;
     };
+    SyntaxNode.prototype.width = function () {
+        return this.fullWidth() - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+    };
+    SyntaxNode.prototype.leadingTriviaWidth = function () {
+        var firstToken = this.firstToken();
+        return firstToken === null ? 0 : firstToken.leadingTriviaWidth();
+    };
+    SyntaxNode.prototype.trailingTriviaWidth = function () {
+        var lastToken = this.lastToken();
+        return lastToken === null ? 0 : lastToken.leadingTriviaWidth();
+    };
     return SyntaxNode;
 })();
 var IntegerUtilities = (function () {
