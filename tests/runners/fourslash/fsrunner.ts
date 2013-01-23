@@ -17,8 +17,11 @@ class FourslashRunner extends RunnerBase
             }
         }
 
-        //runSingleFourslashTest(Harness.userSpecifiedroot + 'tests/cases/fourslash/comments_Interface.ts');
-        this.enumerateFiles('tests/cases/fourslash').forEach(runSingleFourslashTest);
+        if (this.tests.length === 0) {
+            this.tests = this.enumerateFiles('tests/cases/fourslash');
+        }
+        
+        this.tests.forEach(runSingleFourslashTest);
     }
 }
 

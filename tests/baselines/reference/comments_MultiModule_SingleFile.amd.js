@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /** this is multi declare module*/
 var multiM;
 (function (multiM) {
@@ -10,8 +7,14 @@ var multiM;
         return b;
     })();
     multiM.b = b;    
+    // class d
+    var d = (function () {
+        function d() { }
+        return d;
+    })();
+    multiM.d = d;    
 })(multiM || (multiM = {}));
-/** thi is multi module 2*/
+/// this is multi module 2
 var multiM;
 (function (multiM) {
     /** class c comment*/
@@ -20,6 +23,12 @@ var multiM;
         return c;
     })();
     multiM.c = c;    
+    /// class e
+    var e = (function () {
+        function e() { }
+        return e;
+    })();
+    multiM.e = e;    
 })(multiM || (multiM = {}));
 new multiM.b();
 new multiM.c();
@@ -29,10 +38,13 @@ module multiM {
     /** class b*/
     class b {
     }
+    class d {
+    }
 }
-/** thi is multi module 2*/
 module multiM {
     /** class c comment*/
     class c {
+    }
+    class e {
     }
 }

@@ -1,4 +1,3 @@
-// @comments: true
 /**
 * @name Foo
 * @class

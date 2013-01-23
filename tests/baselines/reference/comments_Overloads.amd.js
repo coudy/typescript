@@ -58,6 +58,7 @@ var c3 = (function () {
     return c3;
 })();
 var c4 = (function () {
+    /** c4 3 */
     function c4(aorb) {
     }
     return c4;
@@ -101,6 +102,9 @@ interface i1 {
     foo(a: number): number;
     /** foo 2*/
     foo(b: string): number;
+    foo(arr: number[]): number;
+    /** foo 4 */
+    foo(arr: string[]): number;
     foo2(a: number): number;
     /** foo2 2*/
     foo2(b: string): number;
@@ -109,8 +113,10 @@ interface i1 {
     /** foo4 1*/
     foo4(a: number): number;
     foo4(b: string): number;
-    /** new 1*/
+    /** foo4 any */
+    foo4(c: any): any;
     new(a: string);
+    /** new 1*/
     new(b: number);
 }
 var i1_i: i1;

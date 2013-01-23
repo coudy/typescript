@@ -234,6 +234,14 @@ class BatchCompiler {
             }
         });
 
+        opts.flag('fullSourceMapPath', {
+            usage: 'Writes the full path of map file in the generated js file',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.emitFullSourceMapPath = true;
+            }
+        });
+
         opts.flag('declaration', {
             usage: 'Generates corresponding .d.ts file',
             set: () => {

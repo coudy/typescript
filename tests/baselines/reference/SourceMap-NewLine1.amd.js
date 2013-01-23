@@ -7,6 +7,10 @@
 //@ sourceMappingURL=comments_MultiModule_MultiFile_0.js.map
 ////[comments_MultiModule_MultiFile_1.js]
 //@ sourceMappingURL=comments_MultiModule_MultiFile_1.js.map
+////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js]
+//@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map
+////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js]
+//@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 ////[importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[importInsideModule_file2.js]

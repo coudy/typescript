@@ -7,11 +7,20 @@ module multiM {
     /** class b*/
     export class b {
     }
+
+    // class d
+    export class d {
+    }
 }
-/** thi is multi module 2*/
+
+/// this is multi module 2
 module multiM {
     /** class c comment*/
     export class c {
+    }
+
+    /// class e
+    export class e {
     }
 }
 new multiM.b();

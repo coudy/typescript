@@ -43,6 +43,11 @@ interface i1 {
     foo(a: number): number;
     /** foo 2*/
     foo(b: string): number;
+    // foo 3
+    foo(arr: number[]): number;
+    /** foo 4 */
+    foo(arr: string[]): number;
+
     foo2(a: number): number;
     /** foo2 2*/
     foo2(b: string): number;
@@ -51,8 +56,11 @@ interface i1 {
     /** foo4 1*/
     foo4(a: number): number;
     foo4(b: string): number;
-    /** new 1*/
+    /** foo4 any */
+    foo4(c: any): any;
+    /// new 1
     new (a: string);
+    /** new 1*/
     new (b: number);
 }
 var i1_i: i1;
@@ -124,6 +132,7 @@ class c1 {
 class c2 {
     /** c2 1*/
     constructor(a: number);
+    // c2 2
     constructor(b: string);
     constructor(aorb: any) {
     }
@@ -140,6 +149,7 @@ class c4 {
     constructor(a: number);
     /** c4 2*/
     constructor(b: string);
+    /** c4 3 */
     constructor(aorb: any) {
     }
 }

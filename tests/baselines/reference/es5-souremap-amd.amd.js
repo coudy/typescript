@@ -8,7 +8,7 @@ var A = (function () {
 })();
 //@ sourceMappingURL=0.js.map
 ////[0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["A","A.constructor","A.B"],"mappings":"AAIA;IAEIA,SAFEA,CAACA;IAKHC,CAACA;IAEDD,gBAAAA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;IACLF;AAACA,CAAAA,IAAA"}
+{"version":3,"file":"0.js","sources":["0.ts"],"names":["A","A.constructor","A.B"],"mappings":"AACA;IAEIA,SAFEA,CAACA;IAKHC,CAACA;IAEDD,gBAAAA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;IACLF;AAACA,CAAAA,IAAA"}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_1.js]
@@ -17,3 +17,7 @@ var A = (function () {
 //@ sourceMappingURL=comments_MultiModule_MultiFile_0.js.map
 ////[comments_MultiModule_MultiFile_1.js]
 //@ sourceMappingURL=comments_MultiModule_MultiFile_1.js.map
+////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js]
+//@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.js.map
+////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js]
+//@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map

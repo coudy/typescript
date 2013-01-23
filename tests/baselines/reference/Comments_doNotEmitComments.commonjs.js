@@ -37,7 +37,7 @@ var m1;
         return b;
     })();
     m1.b = b;    
-})(m1 || (m1 = {}));
+    })(m1 || (m1 = {}));
 ////[0.d.ts]
 var myVariable: number;
 function foo(p: number): void;
@@ -63,5 +63,7 @@ module m1 {
     class b {
         public x: number;
         constructor(x: number);
+    }
+    module m2 {
     }
 }

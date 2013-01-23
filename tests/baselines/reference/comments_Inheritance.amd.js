@@ -5,7 +5,8 @@ var __extends = this.__extends || function (d, b) {
 };
 var c1 = (function () {
     function c1() { }
-    c1.prototype.i1_f1 = function () {
+    c1.prototype.i1_f1 = // i1_f1
+    function () {
     };
     c1.prototype.i1_nc_f1 = function () {
     };
@@ -213,9 +214,11 @@ interface i2 {
     nc_l1: () => void;
 }
 interface i3 extends i2 {
-    /** i3 p1*/
+    /** i3 p1 */
     p1: number;
-    /** i3 f1*/
+    /**
+    * i3 f1
+    */
     f1(): void;
     /** i3 l1*/
     l1: () => void;

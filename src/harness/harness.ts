@@ -1113,12 +1113,12 @@ module Harness {
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             path = switchToForwardSlashes(path);
             var filename = path.match(/[^\/]*$/)[0];
-            var code = readFile(path);            
+            var code = readFile(path);
 
             compileUnit(code, filename, callback, settingsCallback, context, references);
         }
 
-        export function compileUnit(code: string, filename: string, callback: (res: CompilerResult) => void, settingsCallback?: (settings?: TypeScript.CompilationSettings) => void, context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+        export function compileUnit(code: string, filename: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             // not recursive
             function clone/* <T> */(source: any, target: any) {
                 for (var prop in source) {
@@ -1140,8 +1140,8 @@ module Harness {
             try {
                 compileString(code, filename, callback, context, references);
             } finally {
-                // If settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
-                // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
+            // If settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
+            // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
                 if (settingsCallback) {
                     compiler.settings = oldCompilerSettings;
                     compiler.emitSettings = oldEmitSettings;
@@ -1158,12 +1158,12 @@ module Harness {
             var dependencies = units.slice(0, units.length - 1);
             var compilationContext = Harness.Compiler.defineCompilationContextForTest(unitPath, dependencies);
 
-            compileUnit(lastUnit.content, unitPath, callback, settingsCallback, compilationContext, lastUnit.references);            
+            compileUnit(lastUnit.content, unitPath, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             var scripts: TypeScript.Script[] = [];
-            
+
             reset();
 
             if (context) {
@@ -1241,11 +1241,7 @@ module Harness {
         private optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;  // multiple matches on multiple lines
 
         // List of allowed metadata names
-        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", ];
-
-        function isMultiFileTest(code: string) {
-            return (code.indexOf('// @Filename') != -1);
-        }
+        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out"];
 
         function extractCompilerSettings(content: string): CompilerSetting[] {
 
@@ -1264,105 +1260,95 @@ module Harness {
 
             var settings = extractCompilerSettings(code);
 
-            if (!isMultiFileTest(code)) {
-                return { settings: settings, testUnitData: [{ content: code, name: filename, originalFilePath: filename, references: [] }] };
-            } else {
+            // List of all the subfiles we've parsed out
+            var files: TestUnitData[] = [];
 
-                // List of all the subfiles we've parsed out
-                var files: TestUnitData[] = [];
+            var lines = splitContentByNewlines(code);
 
-                var lines = splitContentByNewlines(code);
+            // Stuff related to the subfile we're parsing
+            var currentFileContent: string = null;
+            var currentFileOptions = {};
+            var currentFileName = null;
+            var refs: TypeScript.IFileReference[] = [];
 
-                // Stuff related to the subfile we're parsing
-                var currentFileContent: string = null;
-                var currentFileOptions = {};
-                var currentFileName = null;
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+                var isTripleSlashReference = /[\/]{3}\s*<reference path/.test(line);
+                var testMetaData = optionRegex.exec(line);
+                // Triple slash references need to be tracked as they are added to the compiler as an additional parameter to addUnit
+                if (isTripleSlashReference) {
+                    var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
+                    if (isRef) {
+                        var ref = {
+                            minChar: 0,
+                            limChar: 0,
+                            path: isRef[1],
+                            isResident: false
+                        };
 
-                var refs: TypeScript.IFileReference[] = null;
-                for (var i = 0; i < lines.length; i++) {
-                    var line = lines[i];
-                    var isTripleSlashReference = /[\/]{3}\s*<reference path/.test(line);
-                    var testMetaData = optionRegex.exec(line);
-                    // Triple slash references need to be tracked as they are added to the compiler as an additional parameter to addUnit
-                    if (isTripleSlashReference) {
-                        var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
-                        if (isRef) {
-                            var ref = {
-                                minChar: 0,
-                                limChar: 0,
-                                path: isRef[1],
-                                isResident: false
-                            };
-
-                            if (!refs) {
-                                refs = [];
-                            }
-                            refs.push(ref);
-                        }
-                    } else if (testMetaData) {
-                        // Comment line, check for global/file @options and record them
-                        optionRegex.lastIndex = 0;
-                        var fileNameIndex = fileMetadataNames.indexOf(testMetaData[1].toLowerCase());
-                        if (fileNameIndex == -1) {
-                            throw new Error('Unrecognized metadata name "' + testMetaData[1] + '". Available file metadata names are: ' + fileMetadataNames.join(', '));
-                        } else if (fileNameIndex == 0) {
-                            currentFileOptions[testMetaData[1]] = testMetaData[2];
-                        } else {
-                            continue;
-                        }
-
-                        // New metadata statement after having collected some code to go with the previous metadata
-                        if (currentFileName) {
-                            // Store result file
-                            var newTestFile =
-                                {
-                                    content: currentFileContent,
-                                    name: currentFileName,
-                                    fileOptions: currentFileOptions,
-                                    originalFilePath: filename,
-                                    references: refs
-                                };
-                            files.push(newTestFile);
-
-                            // Reset local data
-                            currentFileContent = null;
-                            currentFileOptions = {};
-                            currentFileName = testMetaData[2];
-                            refs = null;
-                        } else {
-                            // First metadata marker in the file
-                            currentFileName = testMetaData[2];
-                        }
-                    } else {
-                        // Subfile content line
-                        // Append to the current subfile content, inserting a newline needed
-                        if (currentFileContent === null) {
-                            currentFileContent = '';
-                        } else {
-                            // End-of-line
-                            currentFileContent = currentFileContent + '\n';
-                        }
-                        currentFileContent = currentFileContent + line;
+                        refs.push(ref);
                     }
+                } else if (testMetaData) {
+                    // Comment line, check for global/file @options and record them
+                    optionRegex.lastIndex = 0;
+                    var fileNameIndex = fileMetadataNames.indexOf(testMetaData[1].toLowerCase());
+                    if (fileNameIndex == -1) {
+                        throw new Error('Unrecognized metadata name "' + testMetaData[1] + '". Available file metadata names are: ' + fileMetadataNames.join(', '));
+                    } else if (fileNameIndex == 0) {
+                        currentFileOptions[testMetaData[1]] = testMetaData[2];
+                    } else {
+                        continue;
+                    }
+
+                    // New metadata statement after having collected some code to go with the previous metadata
+                    if (currentFileName) {
+                        // Store result file
+                        var newTestFile =
+                            {
+                                content: currentFileContent,
+                                name: currentFileName,
+                                fileOptions: currentFileOptions,
+                                originalFilePath: filename,
+                                references: refs
+                            };
+                        files.push(newTestFile);
+
+                        // Reset local data
+                        currentFileContent = null;
+                        currentFileOptions = {};
+                        currentFileName = testMetaData[2];
+                        refs = [];
+                    } else {
+                        // First metadata marker in the file
+                        currentFileName = testMetaData[2];
+                    }
+                } else {
+                    // Subfile content line
+                    // Append to the current subfile content, inserting a newline needed
+                    if (currentFileContent === null) {
+                        currentFileContent = '';
+                    } else {
+                        // End-of-line
+                        currentFileContent = currentFileContent + '\n';
+                    }
+                    currentFileContent = currentFileContent + line;
                 }
-
-                // EOF, push whatever remains
-                var newTestFile =
-                    {
-                        content: currentFileContent,
-                        name: currentFileName,
-                        fileOptions: currentFileOptions,
-                        originalFilePath: filename,
-                        references: refs || []
-                    };
-                files.push(newTestFile);
-
-                if (files.length < 2) {
-                    throw new Error("Only parsed 0 or 1 units out of a supposed multi file test. \'" + filename + "\'");
-                }
-
-                return { settings: settings, testUnitData: files };
             }
+
+            // normalize the filename for the single file case
+            currentFileName = files.length > 0 ? currentFileName : '0.ts';
+
+            // EOF, push whatever remains
+            var newTestFile = {
+                content: currentFileContent || '',
+                name: currentFileName,
+                fileOptions: currentFileOptions,
+                originalFilePath: filename,
+                references: refs
+            };
+            files.push(newTestFile);
+
+            return { settings: settings, testUnitData: files };
         }
     }
 

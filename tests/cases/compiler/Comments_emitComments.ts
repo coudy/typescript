@@ -80,4 +80,11 @@ module m1 {
 
         }
     }
+
+    /// module m2
+    export module m2 {
+    }
 }
+
+/// this is x
+declare var x;

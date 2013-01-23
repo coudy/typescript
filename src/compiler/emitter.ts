@@ -48,6 +48,7 @@ module TypeScript {
         public minWhitespace: bool;
         public propagateConstants: bool;
         public emitComments: bool;
+        public emitFullSourceMapPath: bool;
         public outputOption: string;
         public ioHost: EmitterIOHost = null;
         public outputMany: bool = true;
@@ -58,6 +59,7 @@ module TypeScript {
             this.propagateConstants = settings.propagateConstants;
             this.emitComments = settings.emitComments;
             this.outputOption = settings.outputOption;
+            this.emitFullSourceMapPath = settings.emitFullSourceMapPath;
         }
 
         public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: bool) => string) {
@@ -692,7 +694,7 @@ module TypeScript {
                             if (prevSourceMapper != null) {
                                 this.allSourceMappers = [];
                                 var sourceMappingFile = this.createFile(this.emittingFileName + SourceMapper.MapFileExtension, false);
-                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, sourceMappingFile, this.errorReporter));
+                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, sourceMappingFile, this.errorReporter, this.emitOptions.emitFullSourceMapPath));
                                 this.emitState.column = 0;
                                 this.emitState.line = 0;
                             }

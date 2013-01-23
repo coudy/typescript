@@ -1,6 +1,3 @@
-// @target: ES5
-// @declaration: true
-// @comments: true
 /** Module comment*/
 var m1;
 (function (m1) {
@@ -28,6 +25,21 @@ var m1;
         return foo();
     }
     m1.fooExport = fooExport;
+    // shouldn't appear
+    function foo2Export(/**hm*/ a) {
+    }
+    m1.foo2Export = foo2Export;
+    /** foo3Export
+    * comment
+    */
+    function foo3Export() {
+    }
+    m1.foo3Export = foo3Export;
+    /** foo4Export
+    * comment
+    */
+    function foo4Export() {
+    }
 })(m1 || (m1 = {}));
 m1.fooExport();
 var myvar = new m1.m2.c();
@@ -130,6 +142,17 @@ var m7;
                 return c;
             })();
             m9.c = c;            
+            /** class d */
+            var d = (function () {
+                function d() { }
+                return d;
+            })();            
+            // class e
+            var e = (function () {
+                function e() { }
+                return e;
+            })();
+            m9.e = e;            
         })(m8.m9 || (m8.m9 = {}));
         var m9 = m8.m9;
     })(m7.m8 || (m7.m8 = {}));
@@ -151,6 +174,11 @@ module m1 {
     }
     /** exported function*/
     function fooExport(): number;
+    function foo2Export(/**hm*/ a: string): void;
+    /** foo3Export
+    * comment
+    */
+    function foo3Export(): void;
 }
 var myvar: m1.m2.c;
 /** module comment of m2.m3*/
@@ -191,5 +219,7 @@ module m6.m7.m8 {
 module m7.m8.m9 {
     /** Exported class comment*/
     class c {
+    }
+    class e {
     }
 }

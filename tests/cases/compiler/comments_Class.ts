@@ -28,13 +28,40 @@ class c5 {
 }
 var i5 = new c5();
 var i5_c = c5;
-/** class with statics and constructor*/
-class c6 {
-    /** s1 comment*/
-    static s1: number;
-    /** constructor comment*/
-    constructor() {
+
+/// class with statics and constructor
+class c6 { /// class with statics and constructor2
+    /// s1 comment
+    static s1: number; /// s1 comment2
+    /// constructor comment
+    constructor() { /// constructor comment2
     }
 }
 var i6 = new c6();
 var i6_c = c6;
+
+// class with statics and constructor
+class c7 {
+    // s1 comment
+    static s1: number;
+    // constructor comment
+    constructor() {
+    }
+}
+var i7 = new c7();
+var i7_c = c7;
+
+/** class with statics and constructor
+ */
+class c8 {
+    /** s1 comment */
+    static s1: number; /** s1 comment2 */
+    /** constructor comment 
+    */
+    constructor() {
+        /** constructor comment2 
+        */
+    }
+}
+var i8 = new c8();
+var i8_c = c8;

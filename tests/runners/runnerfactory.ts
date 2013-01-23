@@ -8,11 +8,12 @@ class RunnerFactory {
     private runners = {};
 
     public addTest(name: string) {
-        if (/tests\\cases\\compiler/.test(name)) {            
+        var normalizedName = name.replace(/\\/g, "/"); // normalize slashes so either kind can be used on the command line
+        if (/tests\/cases\/compiler/.test(normalizedName)) {
             this.runners['compiler'] = this.runners['compiler'] || new CompilerBaselineRunner();
             this.runners['compiler'].addTest(Harness.userSpecifiedroot + name);
         }
-        else if (/tests\\cases\\fourslash/.test(name)) {
+        else if (/tests\/cases\/fourslash/.test(normalizedName)) {
             this.runners['fourslash'] = this.runners['fourslash'] || new FourslashRunner();
             this.runners['fourslash'].addTest(Harness.userSpecifiedroot + name);
         } else {
