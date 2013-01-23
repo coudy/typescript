@@ -217,7 +217,52 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     private computeData(): number {
-        throw Errors.abstract();
+        var slotCount = this.slotCount();
+
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+
+        // If we have no children (like an OmmittedExpressionSyntax), we automatically have a zero 
+        // width token.
+        var hasZeroWidthToken = slotCount === 0;
+        var hasRegularExpressionToken = false;
+
+        for (var i = 0, n = slotCount; i < n; i++) {
+            var element: any = this.elementAtSlot(i);
+
+            if (element !== null) {
+                var childWidth = element.fullWidth();
+                fullWidth += childWidth;
+
+                if (!hasSkippedText) {
+                    hasSkippedText = element.hasSkippedText();
+                }
+
+                if (!hasZeroWidthToken) {
+                    if (element.isToken()) {
+                        hasZeroWidthToken = childWidth === 0;
+                    }
+                    else {
+                        hasZeroWidthToken = element.hasZeroWidthToken();
+                    }
+                }
+
+                if (!hasRegularExpressionToken) {
+                    if (element.isToken()) {
+                        hasRegularExpressionToken = SyntaxFacts.isAnyDivideOrRegularExpressionToken(element.tokenKind);
+                    }
+                    else {
+                        hasRegularExpressionToken = element.hasRegularExpressionToken();
+                    }
+                }
+            }
+        }
+
+        return (fullWidth << Constants.NodeFullWidthShift)
+             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
     
     private data(): number {

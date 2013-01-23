@@ -1013,7 +1013,37 @@ var SyntaxNode = (function () {
         return this.data() >>> 4 /* NodeFullWidthShift */ ;
     };
     SyntaxNode.prototype.computeData = function () {
-        throw Errors.abstract();
+        var slotCount = this.slotCount();
+        var fullWidth = 0;
+        var childWidth = 0;
+        var hasSkippedText = false;
+        var hasZeroWidthToken = slotCount === 0;
+        var hasRegularExpressionToken = false;
+        for(var i = 0, n = slotCount; i < n; i++) {
+            var element = this.elementAtSlot(i);
+            if(element !== null) {
+                var childWidth = element.fullWidth();
+                fullWidth += childWidth;
+                if(!hasSkippedText) {
+                    hasSkippedText = element.hasSkippedText();
+                }
+                if(!hasZeroWidthToken) {
+                    if(element.isToken()) {
+                        hasZeroWidthToken = childWidth === 0;
+                    } else {
+                        hasZeroWidthToken = element.hasZeroWidthToken();
+                    }
+                }
+                if(!hasRegularExpressionToken) {
+                    if(element.isToken()) {
+                        hasRegularExpressionToken = SyntaxFacts.isAnyDivideOrRegularExpressionToken(element.tokenKind);
+                    } else {
+                        hasRegularExpressionToken = element.hasRegularExpressionToken();
+                    }
+                }
+            }
+        }
+        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     SyntaxNode.prototype.data = function () {
         if(this._data === 0 || this._data === 8 /* NodeParsedInStrictModeMask */ ) {
@@ -8849,23 +8879,6 @@ var SourceUnitSyntax = (function (_super) {
         }
         return false;
     };
-    SourceUnitSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._moduleElements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleElements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleElements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleElements.hasRegularExpressionToken();
-        childWidth = this._endOfFileToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._endOfFileToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return SourceUnitSyntax;
 })(SyntaxNode);
 var ModuleReferenceSyntax = (function (_super) {
@@ -8961,30 +8974,6 @@ var ExternalModuleReferenceSyntax = (function (_super) {
     ExternalModuleReferenceSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ExternalModuleReferenceSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._moduleKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._stringLiteral.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._stringLiteral.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ExternalModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
 var ModuleNameModuleReferenceSyntax = (function (_super) {
@@ -9030,19 +9019,6 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
     };
     ModuleNameModuleReferenceSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    ModuleNameModuleReferenceSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._moduleName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleName.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ModuleNameModuleReferenceSyntax;
 })(ModuleReferenceSyntax);
@@ -9131,35 +9107,6 @@ var ImportDeclarationSyntax = (function (_super) {
     };
     ImportDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    ImportDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._importKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._importKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._equalsToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._moduleReference.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleReference.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleReference.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleReference.hasRegularExpressionToken();
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ImportDeclarationSyntax;
 })(SyntaxNode);
@@ -9302,68 +9249,6 @@ var ClassDeclarationSyntax = (function (_super) {
     ClassDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ClassDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._classKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._classKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-        if(this._extendsClause !== null) {
-            childWidth = this._extendsClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._extendsClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._extendsClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._extendsClause.hasRegularExpressionToken();
-        }
-        if(this._implementsClause !== null) {
-            childWidth = this._implementsClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._implementsClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._implementsClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._implementsClause.hasRegularExpressionToken();
-        }
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._classElements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._classElements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._classElements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._classElements.hasRegularExpressionToken();
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ClassDeclarationSyntax;
 })(SyntaxNode);
 var InterfaceDeclarationSyntax = (function (_super) {
@@ -9464,47 +9349,6 @@ var InterfaceDeclarationSyntax = (function (_super) {
     InterfaceDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    InterfaceDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._interfaceKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._interfaceKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-        if(this._extendsClause !== null) {
-            childWidth = this._extendsClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._extendsClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._extendsClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._extendsClause.hasRegularExpressionToken();
-        }
-        childWidth = this._body.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._body.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return InterfaceDeclarationSyntax;
 })(SyntaxNode);
 var ExtendsClauseSyntax = (function (_super) {
@@ -9568,23 +9412,6 @@ var ExtendsClauseSyntax = (function (_super) {
     ExtendsClauseSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ExtendsClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._extendsKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._extendsKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._typeNames.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeNames.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ExtendsClauseSyntax;
 })(SyntaxNode);
 var ImplementsClauseSyntax = (function (_super) {
@@ -9647,23 +9474,6 @@ var ImplementsClauseSyntax = (function (_super) {
     };
     ImplementsClauseSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    ImplementsClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._implementsKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._implementsKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._typeNames.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeNames.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ImplementsClauseSyntax;
 })(SyntaxNode);
@@ -9788,56 +9598,6 @@ var ModuleDeclarationSyntax = (function (_super) {
     ModuleDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ModuleDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._moduleKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._moduleName !== null) {
-            childWidth = this._moduleName.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._moduleName.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._moduleName.hasRegularExpressionToken();
-        }
-        if(this._stringLiteral !== null) {
-            childWidth = this._stringLiteral.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._stringLiteral.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._moduleElements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleElements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleElements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleElements.hasRegularExpressionToken();
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ModuleDeclarationSyntax;
 })(SyntaxNode);
 var FunctionDeclarationSyntax = (function (_super) {
@@ -9953,48 +9713,6 @@ var FunctionDeclarationSyntax = (function (_super) {
         }
         return false;
     };
-    FunctionDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._functionKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._functionSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._functionSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._functionSignature.hasRegularExpressionToken();
-        if(this._block !== null) {
-            childWidth = this._block.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        }
-        if(this._semicolonToken !== null) {
-            childWidth = this._semicolonToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return FunctionDeclarationSyntax;
 })(SyntaxNode);
 var VariableStatementSyntax = (function (_super) {
@@ -10089,35 +9807,6 @@ var VariableStatementSyntax = (function (_super) {
         }
         return false;
     };
-    VariableStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._variableDeclaration.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return VariableStatementSyntax;
 })(SyntaxNode);
 var VariableDeclarationSyntax = (function (_super) {
@@ -10183,23 +9872,6 @@ var VariableDeclarationSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    VariableDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._varKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._varKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._variableDeclarators.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclarators.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarators.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return VariableDeclarationSyntax;
 })(SyntaxNode);
@@ -10277,32 +9949,6 @@ var VariableDeclaratorSyntax = (function (_super) {
         }
         return false;
     };
-    VariableDeclaratorSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-        if(this._equalsValueClause !== null) {
-            childWidth = this._equalsValueClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._equalsValueClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._equalsValueClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._equalsValueClause.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return VariableDeclaratorSyntax;
 })(SyntaxNode);
 var EqualsValueClauseSyntax = (function (_super) {
@@ -10363,23 +10009,6 @@ var EqualsValueClauseSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    EqualsValueClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._equalsToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._value.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._value.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._value.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._value.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return EqualsValueClauseSyntax;
 })(SyntaxNode);
@@ -10448,23 +10077,6 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    PrefixUnaryExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._operatorToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._operand.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operand.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._operand.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return PrefixUnaryExpressionSyntax;
 })(SyntaxNode);
@@ -10550,27 +10162,6 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
         }
         return false;
     };
-    ArrayLiteralExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expressions.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expressions.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expressions.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expressions.hasRegularExpressionToken();
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ArrayLiteralExpressionSyntax;
 })(SyntaxNode);
 var OmittedExpressionSyntax = (function (_super) {
@@ -10604,14 +10195,6 @@ var OmittedExpressionSyntax = (function (_super) {
     };
     OmittedExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
-    };
-    OmittedExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = true;
-        var hasRegularExpressionToken = false;
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return OmittedExpressionSyntax;
 })(SyntaxNode);
@@ -10688,27 +10271,6 @@ var ParenthesizedExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ParenthesizedExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ParenthesizedExpressionSyntax;
 })(SyntaxNode);
@@ -10805,27 +10367,6 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
     SimpleArrowFunctionExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._body.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._body.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return SimpleArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
 var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
@@ -10892,28 +10433,6 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
     };
     ParenthesizedArrowFunctionExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._body.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._body.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ParenthesizedArrowFunctionExpressionSyntax;
 })(ArrowFunctionExpressionSyntax);
@@ -10994,27 +10513,6 @@ var QualifiedNameSyntax = (function (_super) {
     QualifiedNameSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    QualifiedNameSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._left.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._left.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
-        childWidth = this._dotToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._dotToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._right.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._right.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return QualifiedNameSyntax;
 })(SyntaxNode);
 var TypeArgumentListSyntax = (function (_super) {
@@ -11089,27 +10587,6 @@ var TypeArgumentListSyntax = (function (_super) {
     };
     TypeArgumentListSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    TypeArgumentListSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._lessThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._typeArguments.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeArguments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeArguments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArguments.hasRegularExpressionToken();
-        childWidth = this._greaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return TypeArgumentListSyntax;
 })(SyntaxNode);
@@ -11208,39 +10685,6 @@ var ConstructorTypeSyntax = (function (_super) {
     ConstructorTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ConstructorTypeSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._newKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ConstructorTypeSyntax;
 })(SyntaxNode);
 var FunctionTypeSyntax = (function (_super) {
@@ -11329,35 +10773,6 @@ var FunctionTypeSyntax = (function (_super) {
     FunctionTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    FunctionTypeSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return FunctionTypeSyntax;
 })(SyntaxNode);
 var ObjectTypeSyntax = (function (_super) {
@@ -11442,27 +10857,6 @@ var ObjectTypeSyntax = (function (_super) {
     ObjectTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ObjectTypeSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._typeMembers.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeMembers.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeMembers.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeMembers.hasRegularExpressionToken();
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ObjectTypeSyntax;
 })(SyntaxNode);
 var ArrayTypeSyntax = (function (_super) {
@@ -11539,27 +10933,6 @@ var ArrayTypeSyntax = (function (_super) {
     ArrayTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ArrayTypeSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ArrayTypeSyntax;
 })(SyntaxNode);
 var GenericTypeSyntax = (function (_super) {
@@ -11627,24 +11000,6 @@ var GenericTypeSyntax = (function (_super) {
     GenericTypeSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    GenericTypeSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._name.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._name.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._name.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._name.hasRegularExpressionToken();
-        childWidth = this._typeArgumentList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return GenericTypeSyntax;
 })(SyntaxNode);
 var TypeAnnotationSyntax = (function (_super) {
@@ -11702,23 +11057,6 @@ var TypeAnnotationSyntax = (function (_super) {
     };
     TypeAnnotationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    TypeAnnotationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return TypeAnnotationSyntax;
 })(SyntaxNode);
@@ -11803,27 +11141,6 @@ var BlockSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    BlockSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return BlockSyntax;
 })(SyntaxNode);
@@ -11937,50 +11254,6 @@ var ParameterSyntax = (function (_super) {
         }
         return false;
     };
-    ParameterSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._dotDotDotToken !== null) {
-            childWidth = this._dotDotDotToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._dotDotDotToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._questionToken !== null) {
-            childWidth = this._questionToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-        if(this._equalsValueClause !== null) {
-            childWidth = this._equalsValueClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._equalsValueClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._equalsValueClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._equalsValueClause.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ParameterSyntax;
 })(SyntaxNode);
 var MemberAccessExpressionSyntax = (function (_super) {
@@ -12057,27 +11330,6 @@ var MemberAccessExpressionSyntax = (function (_super) {
         }
         return false;
     };
-    MemberAccessExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._dotToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._dotToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._name.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._name.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return MemberAccessExpressionSyntax;
 })(SyntaxNode);
 var PostfixUnaryExpressionSyntax = (function (_super) {
@@ -12145,23 +11397,6 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    PostfixUnaryExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._operand.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operand.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._operand.hasRegularExpressionToken();
-        childWidth = this._operatorToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return PostfixUnaryExpressionSyntax;
 })(SyntaxNode);
@@ -12251,32 +11486,6 @@ var ElementAccessExpressionSyntax = (function (_super) {
         }
         return false;
     };
-    ElementAccessExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._argumentExpression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._argumentExpression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._argumentExpression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._argumentExpression.hasRegularExpressionToken();
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ElementAccessExpressionSyntax;
 })(SyntaxNode);
 var InvocationExpressionSyntax = (function (_super) {
@@ -12346,24 +11555,6 @@ var InvocationExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    InvocationExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._argumentList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._argumentList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._argumentList.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return InvocationExpressionSyntax;
 })(SyntaxNode);
@@ -12455,34 +11646,6 @@ var ArgumentListSyntax = (function (_super) {
         }
         return false;
     };
-    ArgumentListSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._typeArgumentList !== null) {
-            childWidth = this._typeArgumentList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
-        }
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._arguments.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._arguments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._arguments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._arguments.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ArgumentListSyntax;
 })(SyntaxNode);
 var BinaryExpressionSyntax = (function (_super) {
@@ -12559,29 +11722,6 @@ var BinaryExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    BinaryExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._left.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._left.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
-        childWidth = this._operatorToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._operatorToken.tokenKind);
-        childWidth = this._right.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._right.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return BinaryExpressionSyntax;
 })(SyntaxNode);
@@ -12680,37 +11820,6 @@ var ConditionalExpressionSyntax = (function (_super) {
         }
         return false;
     };
-    ConditionalExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-        childWidth = this._questionToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._whenTrue.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whenTrue.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._whenTrue.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._whenTrue.hasRegularExpressionToken();
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._whenFalse.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whenFalse.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._whenFalse.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._whenFalse.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ConditionalExpressionSyntax;
 })(SyntaxNode);
 var TypeMemberSyntax = (function (_super) {
@@ -12788,23 +11897,6 @@ var ConstructSignatureSyntax = (function (_super) {
     ConstructSignatureSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    ConstructSignatureSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._newKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ConstructSignatureSyntax;
 })(TypeMemberSyntax);
 var FunctionSignatureSyntax = (function (_super) {
@@ -12877,29 +11969,6 @@ var FunctionSignatureSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    FunctionSignatureSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._questionToken !== null) {
-            childWidth = this._questionToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return FunctionSignatureSyntax;
 })(TypeMemberSyntax);
@@ -12980,34 +12049,6 @@ var IndexSignatureSyntax = (function (_super) {
     IndexSignatureSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    IndexSignatureSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._parameter.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameter.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameter.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameter.hasRegularExpressionToken();
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return IndexSignatureSyntax;
 })(TypeMemberSyntax);
 var PropertySignatureSyntax = (function (_super) {
@@ -13077,31 +12118,6 @@ var PropertySignatureSyntax = (function (_super) {
     };
     PropertySignatureSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    PropertySignatureSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._questionToken !== null) {
-            childWidth = this._questionToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return PropertySignatureSyntax;
 })(TypeMemberSyntax);
@@ -13180,27 +12196,6 @@ var ParameterListSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ParameterListSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._parameters.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameters.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameters.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameters.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ParameterListSyntax;
 })(SyntaxNode);
@@ -13281,33 +12276,6 @@ var CallSignatureSyntax = (function (_super) {
         }
         return false;
     };
-    CallSignatureSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return CallSignatureSyntax;
 })(TypeMemberSyntax);
 var TypeParameterListSyntax = (function (_super) {
@@ -13383,27 +12351,6 @@ var TypeParameterListSyntax = (function (_super) {
     TypeParameterListSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    TypeParameterListSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._lessThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._typeParameters.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeParameters.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeParameters.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameters.hasRegularExpressionToken();
-        childWidth = this._greaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return TypeParameterListSyntax;
 })(SyntaxNode);
 var TypeParameterSyntax = (function (_super) {
@@ -13465,25 +12412,6 @@ var TypeParameterSyntax = (function (_super) {
     TypeParameterSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    TypeParameterSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._constraint !== null) {
-            childWidth = this._constraint.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._constraint.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._constraint.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._constraint.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return TypeParameterSyntax;
 })(SyntaxNode);
 var ConstraintSyntax = (function (_super) {
@@ -13541,23 +12469,6 @@ var ConstraintSyntax = (function (_super) {
     };
     ConstraintSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    ConstraintSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._extendsKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._extendsKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ConstraintSyntax;
 })(SyntaxNode);
@@ -13619,23 +12530,6 @@ var ElseClauseSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ElseClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._elseKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._elseKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ElseClauseSyntax;
 })(SyntaxNode);
@@ -13749,43 +12643,6 @@ var IfStatementSyntax = (function (_super) {
         }
         return false;
     };
-    IfStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._ifKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._ifKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        if(this._elseClause !== null) {
-            childWidth = this._elseClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._elseClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._elseClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._elseClause.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return IfStatementSyntax;
 })(SyntaxNode);
 var ExpressionStatementSyntax = (function (_super) {
@@ -13852,23 +12709,6 @@ var ExpressionStatementSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ExpressionStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ExpressionStatementSyntax;
 })(SyntaxNode);
@@ -13951,36 +12791,6 @@ var ConstructorDeclarationSyntax = (function (_super) {
     };
     ConstructorDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    ConstructorDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._constructorKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._constructorKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        if(this._block !== null) {
-            childWidth = this._block.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        }
-        if(this._semicolonToken !== null) {
-            childWidth = this._semicolonToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ConstructorDeclarationSyntax;
 })(SyntaxNode);
@@ -14075,44 +12885,6 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
     };
     MemberFunctionDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    MemberFunctionDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._functionSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._functionSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._functionSignature.hasRegularExpressionToken();
-        if(this._block !== null) {
-            childWidth = this._block.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        }
-        if(this._semicolonToken !== null) {
-            childWidth = this._semicolonToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return MemberFunctionDeclarationSyntax;
 })(SyntaxNode);
@@ -14257,51 +13029,6 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
     GetMemberAccessorDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    GetMemberAccessorDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._getKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._getKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        if(this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return GetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var SetMemberAccessorDeclarationSyntax = (function (_super) {
@@ -14399,44 +13126,6 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
     SetMemberAccessorDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    SetMemberAccessorDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._setKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._setKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return SetMemberAccessorDeclarationSyntax;
 })(MemberAccessorDeclarationSyntax);
 var MemberVariableDeclarationSyntax = (function (_super) {
@@ -14522,35 +13211,6 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     MemberVariableDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    MemberVariableDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        if(this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._variableDeclarator.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclarator.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarator.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarator.hasRegularExpressionToken();
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return MemberVariableDeclarationSyntax;
 })(SyntaxNode);
 var ThrowStatementSyntax = (function (_super) {
@@ -14626,27 +13286,6 @@ var ThrowStatementSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ThrowStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._throwKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._throwKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ThrowStatementSyntax;
 })(SyntaxNode);
@@ -14726,29 +13365,6 @@ var ReturnStatementSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ReturnStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._returnKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._returnKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._expression !== null) {
-            childWidth = this._expression.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        }
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ReturnStatementSyntax;
 })(SyntaxNode);
@@ -14831,30 +13447,6 @@ var ObjectCreationExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ObjectCreationExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._newKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        if(this._argumentList !== null) {
-            childWidth = this._argumentList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._argumentList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._argumentList.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ObjectCreationExpressionSyntax;
 })(SyntaxNode);
@@ -14979,44 +13571,6 @@ var SwitchStatementSyntax = (function (_super) {
         }
         return false;
     };
-    SwitchStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._switchKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._switchKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._switchClauses.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._switchClauses.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._switchClauses.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._switchClauses.hasRegularExpressionToken();
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return SwitchStatementSyntax;
 })(SyntaxNode);
 var SwitchClauseSyntax = (function (_super) {
@@ -15132,32 +13686,6 @@ var CaseSwitchClauseSyntax = (function (_super) {
         }
         return false;
     };
-    CaseSwitchClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._caseKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._caseKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return CaseSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var DefaultSwitchClauseSyntax = (function (_super) {
@@ -15236,27 +13764,6 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         }
         return false;
     };
-    DefaultSwitchClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._defaultKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._defaultKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return DefaultSwitchClauseSyntax;
 })(SwitchClauseSyntax);
 var BreakStatementSyntax = (function (_super) {
@@ -15333,28 +13840,6 @@ var BreakStatementSyntax = (function (_super) {
     BreakStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
     };
-    BreakStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._breakKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._breakKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._identifier !== null) {
-            childWidth = this._identifier.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return BreakStatementSyntax;
 })(SyntaxNode);
 var ContinueStatementSyntax = (function (_super) {
@@ -15430,28 +13915,6 @@ var ContinueStatementSyntax = (function (_super) {
     };
     ContinueStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
-    };
-    ContinueStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._continueKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._continueKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._identifier !== null) {
-            childWidth = this._identifier.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ContinueStatementSyntax;
 })(SyntaxNode);
@@ -15663,67 +14126,6 @@ var ForStatementSyntax = (function (_super) {
         }
         return false;
     };
-    ForStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._forKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._forKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._variableDeclaration !== null) {
-            childWidth = this._variableDeclaration.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
-        }
-        if(this._initializer !== null) {
-            childWidth = this._initializer.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._initializer.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._initializer.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._initializer.hasRegularExpressionToken();
-        }
-        childWidth = this._firstSemicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._firstSemicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._condition !== null) {
-            childWidth = this._condition.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-        }
-        childWidth = this._secondSemicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._secondSemicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._incrementor !== null) {
-            childWidth = this._incrementor.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._incrementor.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._incrementor.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._incrementor.hasRegularExpressionToken();
-        }
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ForStatementSyntax;
 })(BaseForStatementSyntax);
 var ForInStatementSyntax = (function (_super) {
@@ -15851,54 +14253,6 @@ var ForInStatementSyntax = (function (_super) {
         }
         return false;
     };
-    ForInStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._forKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._forKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._variableDeclaration !== null) {
-            childWidth = this._variableDeclaration.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
-        }
-        if(this._left !== null) {
-            childWidth = this._left.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._left.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
-        }
-        childWidth = this._inKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._inKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return ForInStatementSyntax;
 })(BaseForStatementSyntax);
 var WhileStatementSyntax = (function (_super) {
@@ -15989,36 +14343,6 @@ var WhileStatementSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    WhileStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._whileKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whileKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return WhileStatementSyntax;
 })(IterationStatementSyntax);
@@ -16116,36 +14440,6 @@ var WithStatementSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    WithStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._withKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._withKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return WithStatementSyntax;
 })(SyntaxNode);
@@ -16252,41 +14546,6 @@ var EnumDeclarationSyntax = (function (_super) {
     EnumDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
-    EnumDeclarationSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        if(this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._enumKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._enumKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._variableDeclarators.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclarators.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarators.hasRegularExpressionToken();
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return EnumDeclarationSyntax;
 })(SyntaxNode);
 var CastExpressionSyntax = (function (_super) {
@@ -16368,32 +14627,6 @@ var CastExpressionSyntax = (function (_super) {
     };
     CastExpressionSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
-    };
-    CastExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._lessThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-        childWidth = this._greaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return CastExpressionSyntax;
 })(SyntaxNode);
@@ -16478,27 +14711,6 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    ObjectLiteralExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._propertyAssignments.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyAssignments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._propertyAssignments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._propertyAssignments.hasRegularExpressionToken();
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return ObjectLiteralExpressionSyntax;
 })(SyntaxNode);
@@ -16588,27 +14800,6 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    SimplePropertyAssignmentSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._propertyName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return SimplePropertyAssignmentSyntax;
 })(PropertyAssignmentSyntax);
@@ -16726,35 +14917,6 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         }
         return false;
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._getKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._getKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._propertyName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return GetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var SetAccessorPropertyAssignmentSyntax = (function (_super) {
@@ -16852,39 +15014,6 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         }
         return false;
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._setKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._setKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._propertyName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._parameterName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return SetAccessorPropertyAssignmentSyntax;
 })(AccessorPropertyAssignmentSyntax);
 var FunctionExpressionSyntax = (function (_super) {
@@ -16976,34 +15105,6 @@ var FunctionExpressionSyntax = (function (_super) {
         }
         return false;
     };
-    FunctionExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._functionKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        if(this._identifier !== null) {
-            childWidth = this._identifier.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return FunctionExpressionSyntax;
 })(SyntaxNode);
 var EmptyStatementSyntax = (function (_super) {
@@ -17058,18 +15159,6 @@ var EmptyStatementSyntax = (function (_super) {
     };
     EmptyStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
-    };
-    EmptyStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return EmptyStatementSyntax;
 })(SyntaxNode);
@@ -17165,37 +15254,6 @@ var TryStatementSyntax = (function (_super) {
         }
         return false;
     };
-    TryStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._tryKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._tryKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        if(this._catchClause !== null) {
-            childWidth = this._catchClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._catchClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._catchClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._catchClause.hasRegularExpressionToken();
-        }
-        if(this._finallyClause !== null) {
-            childWidth = this._finallyClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._finallyClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._finallyClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._finallyClause.hasRegularExpressionToken();
-        }
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return TryStatementSyntax;
 })(SyntaxNode);
 var CatchClauseSyntax = (function (_super) {
@@ -17284,35 +15342,6 @@ var CatchClauseSyntax = (function (_super) {
         }
         return false;
     };
-    CatchClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._catchKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._catchKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return CatchClauseSyntax;
 })(SyntaxNode);
 var FinallyClauseSyntax = (function (_super) {
@@ -17373,23 +15402,6 @@ var FinallyClauseSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    FinallyClauseSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._finallyKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._finallyKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return FinallyClauseSyntax;
 })(SyntaxNode);
@@ -17466,27 +15478,6 @@ var LabeledStatementSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    LabeledStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return LabeledStatementSyntax;
 })(SyntaxNode);
@@ -17597,44 +15588,6 @@ var DoStatementSyntax = (function (_super) {
         }
         return false;
     };
-    DoStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._doKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._doKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-        childWidth = this._whileKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whileKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return DoStatementSyntax;
 })(IterationStatementSyntax);
 var TypeOfExpressionSyntax = (function (_super) {
@@ -17701,23 +15654,6 @@ var TypeOfExpressionSyntax = (function (_super) {
             return true;
         }
         return false;
-    };
-    TypeOfExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._typeOfKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeOfKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return TypeOfExpressionSyntax;
 })(SyntaxNode);
@@ -17786,23 +15722,6 @@ var DeleteExpressionSyntax = (function (_super) {
         }
         return false;
     };
-    DeleteExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._deleteKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._deleteKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return DeleteExpressionSyntax;
 })(SyntaxNode);
 var VoidExpressionSyntax = (function (_super) {
@@ -17870,23 +15789,6 @@ var VoidExpressionSyntax = (function (_super) {
         }
         return false;
     };
-    VoidExpressionSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._voidKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._voidKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
-    };
     return VoidExpressionSyntax;
 })(SyntaxNode);
 var DebuggerStatementSyntax = (function (_super) {
@@ -17950,22 +15852,6 @@ var DebuggerStatementSyntax = (function (_super) {
     };
     DebuggerStatementSyntax.prototype.isTypeScriptSpecific = function () {
         return false;
-    };
-    DebuggerStatementSyntax.prototype.computeData = function () {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-        childWidth = this._debuggerKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._debuggerKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        return (fullWidth << 4 /* NodeFullWidthShift */ ) | (hasSkippedText ? 1 /* NodeSkippedTextMask */  : 0) | (hasZeroWidthToken ? 2 /* NodeZeroWidthTokenMask */  : 0) | (hasRegularExpressionToken ? 4 /* NodeRegularExpressionTokenMask */  : 0);
     };
     return DebuggerStatementSyntax;
 })(SyntaxNode);

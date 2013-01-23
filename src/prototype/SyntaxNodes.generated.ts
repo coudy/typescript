@@ -88,30 +88,6 @@ class SourceUnitSyntax extends SyntaxNode {
         if (this._moduleElements.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._moduleElements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleElements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleElements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleElements.hasRegularExpressionToken();
-
-        childWidth = this._endOfFileToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._endOfFileToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
@@ -235,39 +211,6 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._moduleKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._stringLiteral.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._stringLiteral.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
@@ -325,25 +268,6 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._moduleName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleName.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -463,45 +387,6 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._importKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._importKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._equalsToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._moduleReference.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleReference.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleReference.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleReference.hasRegularExpressionToken();
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -697,83 +582,6 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._classKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._classKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-
-        if (this._extendsClause !== null) {
-            childWidth = this._extendsClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._extendsClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._extendsClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._extendsClause.hasRegularExpressionToken();
-        }
-
-        if (this._implementsClause !== null) {
-            childWidth = this._implementsClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._implementsClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._implementsClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._implementsClause.hasRegularExpressionToken();
-        }
-
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._classElements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._classElements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._classElements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._classElements.hasRegularExpressionToken();
-
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
@@ -911,58 +719,6 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._interfaceKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._interfaceKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-
-        if (this._extendsClause !== null) {
-            childWidth = this._extendsClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._extendsClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._extendsClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._extendsClause.hasRegularExpressionToken();
-        }
-
-        childWidth = this._body.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._body.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ExtendsClauseSyntax extends SyntaxNode {
@@ -1042,30 +798,6 @@ class ExtendsClauseSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._extendsKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._extendsKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._typeNames.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeNames.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ImplementsClauseSyntax extends SyntaxNode {
@@ -1144,30 +876,6 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._implementsKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._implementsKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._typeNames.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeNames.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeNames.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeNames.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -1336,69 +1044,6 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._moduleKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._moduleName !== null) {
-            childWidth = this._moduleName.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._moduleName.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._moduleName.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._moduleName.hasRegularExpressionToken();
-        }
-
-        if (this._stringLiteral !== null) {
-            childWidth = this._stringLiteral.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._stringLiteral.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._moduleElements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._moduleElements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._moduleElements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._moduleElements.hasRegularExpressionToken();
-
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
@@ -1543,59 +1188,6 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         if (this._block !== null && this._block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._functionKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._functionSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._functionSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._functionSignature.hasRegularExpressionToken();
-
-        if (this._block !== null) {
-            childWidth = this._block.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        }
-
-        if (this._semicolonToken !== null) {
-            childWidth = this._semicolonToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -1713,44 +1305,6 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this._variableDeclaration.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._declareKeyword !== null) {
-            childWidth = this._declareKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._declareKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._variableDeclaration.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class VariableDeclarationSyntax extends SyntaxNode {
@@ -1830,30 +1384,6 @@ class VariableDeclarationSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         if (this._variableDeclarators.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._varKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._varKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._variableDeclarators.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclarators.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarators.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -1949,40 +1479,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         if (this._equalsValueClause !== null && this._equalsValueClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-
-        if (this._equalsValueClause !== null) {
-            childWidth = this._equalsValueClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._equalsValueClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._equalsValueClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._equalsValueClause.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class EqualsValueClauseSyntax extends SyntaxNode {
@@ -2058,30 +1554,6 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         if (this._value.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._equalsToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._value.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._value.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._value.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._value.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -2170,30 +1642,6 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
     private isTypeScriptSpecific(): bool {
         if (this._operand.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._operatorToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._operand.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operand.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._operand.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -2301,35 +1749,6 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         if (this._expressions.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expressions.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expressions.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expressions.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expressions.hasRegularExpressionToken();
-
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
@@ -2371,19 +1790,6 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 
     private isTypeScriptSpecific(): bool {
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = true;
-        var hasRegularExpressionToken = false;
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -2481,35 +1887,6 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -2634,35 +2011,6 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._body.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._body.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
@@ -2750,36 +2098,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._body.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._body.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._body.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._body.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -2886,35 +2204,6 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._left.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._left.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
-
-        childWidth = this._dotToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._dotToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._right.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._right.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class TypeArgumentListSyntax extends SyntaxNode {
@@ -3011,35 +2300,6 @@ class TypeArgumentListSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._lessThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._typeArguments.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeArguments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeArguments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArguments.hasRegularExpressionToken();
-
-        childWidth = this._greaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -3174,49 +2434,6 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._newKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -3336,44 +2553,6 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        childWidth = this._equalsGreaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._equalsGreaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -3483,35 +2662,6 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._typeMembers.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeMembers.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeMembers.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeMembers.hasRegularExpressionToken();
-
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -3612,35 +2762,6 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
@@ -3728,31 +2849,6 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._name.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._name.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._name.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._name.hasRegularExpressionToken();
-
-        childWidth = this._typeArgumentList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class TypeAnnotationSyntax extends SyntaxNode {
@@ -3827,30 +2923,6 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -3957,35 +3029,6 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._statements.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
-
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -4123,61 +3166,6 @@ class ParameterSyntax extends SyntaxNode {
         if (this._equalsValueClause !== null) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._dotDotDotToken !== null) {
-            childWidth = this._dotDotDotToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._dotDotDotToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._questionToken !== null) {
-            childWidth = this._questionToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-
-        if (this._equalsValueClause !== null) {
-            childWidth = this._equalsValueClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._equalsValueClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._equalsValueClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._equalsValueClause.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -4276,35 +3264,6 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._dotToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._dotToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._name.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._name.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -4392,30 +3351,6 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     private isTypeScriptSpecific(): bool {
         if (this._operand.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._operand.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operand.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._operand.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._operand.hasRegularExpressionToken();
-
-        childWidth = this._operatorToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -4529,41 +3464,6 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         if (this._argumentExpression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._argumentExpression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._argumentExpression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._argumentExpression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._argumentExpression.hasRegularExpressionToken();
-
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -4648,31 +3548,6 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._argumentList.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._argumentList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._argumentList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._argumentList.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -4786,43 +3661,6 @@ class ArgumentListSyntax extends SyntaxNode {
         if (this._arguments.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._typeArgumentList !== null) {
-            childWidth = this._typeArgumentList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeArgumentList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeArgumentList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeArgumentList.hasRegularExpressionToken();
-        }
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._arguments.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._arguments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._arguments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._arguments.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
@@ -4920,37 +3758,6 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         if (this._left.isTypeScriptSpecific()) { return true; }
         if (this._right.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._left.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._left.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
-
-        childWidth = this._operatorToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._operatorToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this._operatorToken.tokenKind);
-
-        childWidth = this._right.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._right.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._right.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._right.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -5075,47 +3882,6 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         if (this._whenFalse.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-
-        childWidth = this._questionToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._whenTrue.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whenTrue.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._whenTrue.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._whenTrue.hasRegularExpressionToken();
-
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._whenFalse.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whenFalse.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._whenFalse.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._whenFalse.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
@@ -5213,30 +3979,6 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._newKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class FunctionSignatureSyntax extends TypeMemberSyntax {
@@ -5330,37 +4072,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._callSignature.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._questionToken !== null) {
-            childWidth = this._questionToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -5469,43 +4180,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._openBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._parameter.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameter.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameter.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameter.hasRegularExpressionToken();
-
-        childWidth = this._closeBracketToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBracketToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class PropertySignatureSyntax extends TypeMemberSyntax {
@@ -5597,39 +4271,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._questionToken !== null) {
-            childWidth = this._questionToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._questionToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -5729,35 +4370,6 @@ class ParameterListSyntax extends SyntaxNode {
         if (this._parameters.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._parameters.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameters.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameters.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameters.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class CallSignatureSyntax extends TypeMemberSyntax {
@@ -5852,41 +4464,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         if (this._parameterList.isTypeScriptSpecific()) { return true; }
         if (this._typeAnnotation !== null) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._typeParameterList !== null) {
-            childWidth = this._typeParameterList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeParameterList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeParameterList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameterList.hasRegularExpressionToken();
-        }
-
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -5985,35 +4562,6 @@ class TypeParameterListSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._lessThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._typeParameters.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeParameters.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._typeParameters.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._typeParameters.hasRegularExpressionToken();
-
-        childWidth = this._greaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class TypeParameterSyntax extends SyntaxNode {
@@ -6093,32 +4641,6 @@ class TypeParameterSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._constraint !== null) {
-            childWidth = this._constraint.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._constraint.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._constraint.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._constraint.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ConstraintSyntax extends SyntaxNode {
@@ -6193,30 +4715,6 @@ class ConstraintSyntax extends SyntaxNode {
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._extendsKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._extendsKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -6293,30 +4791,6 @@ class ElseClauseSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         if (this._statement.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._elseKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._elseKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -6465,54 +4939,6 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this._elseClause !== null && this._elseClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._ifKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._ifKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        if (this._elseClause !== null) {
-            childWidth = this._elseClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._elseClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._elseClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._elseClause.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -6596,30 +5022,6 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -6730,45 +5132,6 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._constructorKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._constructorKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        if (this._block !== null) {
-            childWidth = this._block.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        }
-
-        if (this._semicolonToken !== null) {
-            childWidth = this._semicolonToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -6895,54 +5258,6 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     private isTypeScriptSpecific(): bool {
         return true;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._functionSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._functionSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._functionSignature.hasRegularExpressionToken();
-
-        if (this._block !== null) {
-            childWidth = this._block.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-        }
-
-        if (this._semicolonToken !== null) {
-            childWidth = this._semicolonToken.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -7137,63 +5452,6 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._getKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._getKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        if (this._typeAnnotation !== null) {
-            childWidth = this._typeAnnotation.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._typeAnnotation.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._typeAnnotation.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._typeAnnotation.hasRegularExpressionToken();
-        }
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
@@ -7328,55 +5586,6 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._setKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._setKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._parameterList.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterList.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._parameterList.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._parameterList.hasRegularExpressionToken();
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
@@ -7491,44 +5700,6 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._publicOrPrivateKeyword !== null) {
-            childWidth = this._publicOrPrivateKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._publicOrPrivateKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        if (this._staticKeyword !== null) {
-            childWidth = this._staticKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._staticKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._variableDeclarator.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclarator.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarator.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarator.hasRegularExpressionToken();
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -7625,35 +5796,6 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._throwKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._throwKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -7757,37 +5899,6 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this._expression !== null && this._expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._returnKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._returnKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._expression !== null) {
-            childWidth = this._expression.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-        }
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -7890,38 +6001,6 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._argumentList !== null && this._argumentList.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._newKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._newKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        if (this._argumentList !== null) {
-            childWidth = this._argumentList.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._argumentList.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._argumentList.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._argumentList.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -8086,56 +6165,6 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this._switchClauses.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._switchKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._switchKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._switchClauses.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._switchClauses.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._switchClauses.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._switchClauses.hasRegularExpressionToken();
-
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
@@ -8279,41 +6308,6 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         if (this._statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._caseKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._caseKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
@@ -8411,35 +6405,6 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._statements.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._defaultKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._defaultKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statements.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statements.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statements.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statements.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -8542,36 +6507,6 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private isTypeScriptSpecific(): bool {
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._breakKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._breakKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._identifier !== null) {
-            childWidth = this._identifier.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -8672,36 +6607,6 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._continueKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._continueKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._identifier !== null) {
-            childWidth = this._identifier.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -8972,82 +6877,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         if (this._statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._forKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._forKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._variableDeclaration !== null) {
-            childWidth = this._variableDeclaration.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
-        }
-
-        if (this._initializer !== null) {
-            childWidth = this._initializer.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._initializer.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._initializer.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._initializer.hasRegularExpressionToken();
-        }
-
-        childWidth = this._firstSemicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._firstSemicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._condition !== null) {
-            childWidth = this._condition.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-        }
-
-        childWidth = this._secondSemicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._secondSemicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._incrementor !== null) {
-            childWidth = this._incrementor.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._incrementor.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._incrementor.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._incrementor.hasRegularExpressionToken();
-        }
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ForInStatementSyntax extends BaseForStatementSyntax {
@@ -9215,67 +7044,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         if (this._statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._forKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._forKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._variableDeclaration !== null) {
-            childWidth = this._variableDeclaration.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._variableDeclaration.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._variableDeclaration.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclaration.hasRegularExpressionToken();
-        }
-
-        if (this._left !== null) {
-            childWidth = this._left.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._left.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._left.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._left.hasRegularExpressionToken();
-        }
-
-        childWidth = this._inKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._inKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class WhileStatementSyntax extends IterationStatementSyntax {
@@ -9392,46 +7160,6 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._whileKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whileKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -9557,46 +7285,6 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._withKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._withKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -9740,52 +7428,6 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        if (this._exportKeyword !== null) {
-            childWidth = this._exportKeyword.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._exportKeyword.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._enumKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._enumKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._variableDeclarators.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._variableDeclarators.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._variableDeclarators.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._variableDeclarators.hasRegularExpressionToken();
-
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -9896,41 +7538,6 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
     private isTypeScriptSpecific(): bool {
         return true;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._lessThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._lessThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._type.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._type.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._type.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._type.hasRegularExpressionToken();
-
-        childWidth = this._greaterThanToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._greaterThanToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -10036,35 +7643,6 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
     private isTypeScriptSpecific(): bool {
         if (this._propertyAssignments.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._openBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._propertyAssignments.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyAssignments.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._propertyAssignments.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._propertyAssignments.hasRegularExpressionToken();
-
-        childWidth = this._closeBraceToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeBraceToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -10177,35 +7755,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._propertyName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -10356,45 +7905,6 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._getKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._getKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._propertyName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
@@ -10524,50 +8034,6 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._setKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._setKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._propertyName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._propertyName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._parameterName.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._parameterName.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -10685,43 +8151,6 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._functionKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._functionKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        if (this._identifier !== null) {
-            childWidth = this._identifier.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-        }
-
-        childWidth = this._callSignature.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._callSignature.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._callSignature.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._callSignature.hasRegularExpressionToken();
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -10791,24 +8220,6 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -10927,46 +8338,6 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this._finallyClause !== null && this._finallyClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._tryKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._tryKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        if (this._catchClause !== null) {
-            childWidth = this._catchClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._catchClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._catchClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._catchClause.hasRegularExpressionToken();
-        }
-
-        if (this._finallyClause !== null) {
-            childWidth = this._finallyClause.fullWidth();
-            fullWidth += childWidth;
-            hasSkippedText = hasSkippedText || this._finallyClause.hasSkippedText();
-            hasZeroWidthToken = hasZeroWidthToken || this._finallyClause.hasZeroWidthToken();
-            hasRegularExpressionToken = hasRegularExpressionToken || this._finallyClause.hasRegularExpressionToken();
-        }
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class CatchClauseSyntax extends SyntaxNode {
@@ -11082,45 +8453,6 @@ class CatchClauseSyntax extends SyntaxNode {
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._catchKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._catchKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class FinallyClauseSyntax extends SyntaxNode {
@@ -11196,30 +8528,6 @@ class FinallyClauseSyntax extends SyntaxNode {
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._finallyKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._finallyKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._block.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._block.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._block.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._block.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -11318,35 +8626,6 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
     private isTypeScriptSpecific(): bool {
         if (this._statement.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._identifier.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._identifier.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._colonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._colonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -11491,56 +8770,6 @@ class DoStatementSyntax extends IterationStatementSyntax {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._doKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._doKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._statement.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._statement.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._statement.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._statement.hasRegularExpressionToken();
-
-        childWidth = this._whileKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._whileKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._openParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._openParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._condition.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._condition.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._condition.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._condition.hasRegularExpressionToken();
-
-        childWidth = this._closeParenToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._closeParenToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -11624,30 +8853,6 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._typeOfKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._typeOfKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }
 
@@ -11733,30 +8938,6 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._deleteKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._deleteKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
@@ -11841,30 +9022,6 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._voidKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._voidKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._expression.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._expression.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || this._expression.hasZeroWidthToken();
-        hasRegularExpressionToken = hasRegularExpressionToken || this._expression.hasRegularExpressionToken();
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
-    }
 }
 
 class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
@@ -11947,28 +9104,5 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isTypeScriptSpecific(): bool {
         return false;
-    }
-
-    private computeData(): number {
-        var fullWidth = 0;
-        var childWidth = 0;
-        var hasSkippedText = false;
-        var hasZeroWidthToken = false;
-        var hasRegularExpressionToken = false;
-
-        childWidth = this._debuggerKeyword.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._debuggerKeyword.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        childWidth = this._semicolonToken.fullWidth();
-        fullWidth += childWidth;
-        hasSkippedText = hasSkippedText || this._semicolonToken.hasSkippedText();
-        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);
-
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
     }
 }

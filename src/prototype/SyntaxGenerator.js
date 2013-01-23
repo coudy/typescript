@@ -4333,7 +4333,6 @@ function generateNode(definition) {
     result += generateTriviaMethods(definition);
     result += generateWithMethods(definition);
     result += generateIsTypeScriptSpecificMethod(definition);
-    result += generateComputeDataMethod(definition);
     result += "}";
     return result;
 }
