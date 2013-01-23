@@ -435,18 +435,20 @@ module TypeScript {
                     member.varFlags |= VarFlags.Constant;
                 }
                 else if (memberValue.nodeType === NodeType.Lsh) {
+                    // If the initializer is of the form "value << value" then treat it as a constant
+                    // as well.
                     var binop = <BinaryExpression>memberValue;
                     if (binop.operand1.nodeType === NodeType.NumberLit && binop.operand2.nodeType === NodeType.NumberLit) {
                         member.varFlags |= VarFlags.Constant;
                     }
                 }
                 else if (memberValue.nodeType === NodeType.Name) {
-                    // IO.stdout.WriteLine("Got an enum value that points to a name");
+                    // If the initializer refers to an earlier enum value, then treat it as a constant
+                    // as well.
                     var nameNode = <Identifier>memberValue;
                     for (var i = 0; i < memberNames.length; i++) {
                         var memberName = memberNames[i];
                         if (memberName.text === nameNode.text) {
-                            // IO.stdout.WriteLine("Got an enum value that points to a member");
                             member.varFlags |= VarFlags.Constant;
                             break;
                         }
