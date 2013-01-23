@@ -2143,7 +2143,7 @@ function generateNode(definition: ITypeDefinition): string {
     // result += generateCollectTextElementsMethod(definition);
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
-    result += generateFindTokenInternalMethod(definition);
+    // result += generateFindTokenInternalMethod(definition);
     // result += generateStructuralEqualsMethod(definition);
 
     result += "}";

@@ -264,7 +264,29 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-        throw Errors.abstract();
+        Debug.assert(position >= 0 && position < this.fullWidth());
+
+        for (var i = 0, n = this.slotCount(); i < n; i++) {
+            var element = this.elementAtSlot(i);
+
+            if (element !== null) {
+                var childWidth = element.fullWidth();
+
+                if (position < childWidth) {
+                    if (element.isToken()) {
+                        return { token: <ISyntaxToken>element, fullStart: fullStart };
+                    }
+                    else {
+                        return (<any>element).findTokenInternal(position, fullStart);
+                    }
+                }
+
+                position -= childWidth;
+                fullStart += childWidth;
+            }
+        }
+
+        throw Errors.invalidOperation();
     }
 
     public isModuleElement(): bool {
