@@ -1,12 +1,14 @@
-// ///<reference path='..\compiler\parser.ts' />
+///<reference path='..\compiler\parser.ts' />
 ///<reference path='Emitter.ts' />
 ///<reference path='Parser.ts' />
 ///<reference path='Environment.ts' />
 ///<reference path='TextFactory.ts' />
 ///<reference path='Test262.ts' />
+///<reference path='Timer.ts' />
 ///<reference path='Top1000.ts' />
 ///<reference path='tests\IncrementalParserTests.ts' />
 
+var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile = 
@@ -18,6 +20,14 @@ var generate = false;
 class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
+
+        Environment.standardOut.WriteLine("Testing against monoco.");
+        this.runTests("C:\\temp\\monoco-files",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+
+        if (true) {
+            // return;
+        }
 
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5",
@@ -32,10 +42,6 @@ class Program {
             IncrementalParserTests.runAllTests();
         }
 
-        if (true) {
-            // return;
-        }
-            
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
@@ -55,10 +61,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter2\\ecmascript5",
             filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ true));
-
-        Environment.standardOut.WriteLine("Testing against monoco.");
-        this.runTests("C:\\temp\\monoco-files",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262",
@@ -101,18 +103,18 @@ class Program {
 
         var totalIncrementalTime = 0;
         var count = 1000;
-
-        var realStart = new Date().getTime();
+        var timer = new Timer();
 
         for (var i = 0; i < count; i++) {
-            var start = new Date().getTime();
-
+            timer.start();
+            
             var changeLength = i * 2;
             var tree2 = Parser1.incrementalParse(
                 tree.sourceUnit(), [new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)], text, LanguageVersion.EcmaScript5, stringTable);
-            var end = new Date().getTime();
+            
+            timer.end();
 
-            totalIncrementalTime += (end - start);
+            totalIncrementalTime += timer.time;
 
             Debug.assert(tree.structuralEquals(tree2));
 
@@ -124,12 +126,11 @@ class Program {
 
             tree = tree2;
         }
-        var realEnd = new Date().getTime();
         
         var rateBytesPerMillisecond = (contents.length * count) / totalIncrementalTime;
         var rateBytesPerSecond = rateBytesPerMillisecond * 1000;
         var rateMBPerSecond = rateBytesPerSecond / (1024 * 1024);
-        // Environment.standardOut.WriteLine("Incremental wall: " + (realEnd - realStart));
+
         Environment.standardOut.WriteLine("Incremental time: " + totalIncrementalTime);
         Environment.standardOut.WriteLine("Incremental rate: " + rateMBPerSecond + " MB/s");
     }
@@ -212,9 +213,6 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        var start: number, end: number;
-        start = new Date().getTime();
-
         totalSize += contents.length;
 
         var text = TextFactory.createText(contents);
@@ -222,9 +220,6 @@ class Program {
         var tree = Parser1.parse(text, languageVersion, stringTable);
         var emitted = Emitter.emit(<SourceUnitSyntax>tree.sourceUnit());
 
-        end = new Date().getTime();
-        totalTime += (end - start);
-        
         var result = justText
             ? <any>emitted.fullText()
             : { fullText: emitted.fullText().split("\r\n"), sourceUnit: emitted };
@@ -246,32 +241,30 @@ class Program {
 
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
-        
-        var start: number, end: number;
-        start = new Date().getTime();
 
         totalSize += contents.length;
 
         if (useTypeScript) {
-            //var text1 = new TypeScript.StringSourceText(contents);
-            //var parser1 = new TypeScript.Parser(); 
-            //parser1.errorRecovery = true;
-            //var unit1 = parser1.parse(text1, filePath, 0);
-
-            end = new Date().getTime();
-            totalTime += (end - start);
+            var text1 = new TypeScript.StringSourceText(contents);
+            
+            var parser1 = new TypeScript.Parser(); 
+            parser1.errorRecovery = true;
+            var unit1 = parser1.parse(text1, filePath, 0);
+            timer.end();
         }
         else {
             var text = TextFactory.createText(contents);
-            var tree = Parser1.parse(text, languageVersion, stringTable);
 
-            end = new Date().getTime();
-            totalTime += (end - start);
+            timer.start();
+            var tree = Parser1.parse(text, languageVersion, stringTable);
+            timer.end();
 
             Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
             
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
+
+        totalTime += timer.time;
     }
 
     runIncremental(filePath: string,
@@ -309,17 +302,11 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        var start: number, end: number;
-        start = new Date().getTime();
-
         totalSize += contents.length;
 
         var text = TextFactory.createText(contents);
         var tree = Parser1.parse(text, languageVersion, stringTable);
         var sourceUnit = tree.sourceUnit();
-
-        end = new Date().getTime();
-        totalTime += (end - start);
 
         Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
 
@@ -361,9 +348,6 @@ class Program {
 
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-        var start: number, end: number;
-        start = new Date().getTime();
-
         var text = TextFactory.createText(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
 
@@ -379,9 +363,6 @@ class Program {
                 break;
             }
         }
-
-        end = new Date().getTime();
-        totalTime += (end - start);
 
         this.checkResult(filePath, tokens, verify, generateBaseline, false);
     }
@@ -393,9 +374,6 @@ class Program {
 
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-        var start: number, end: number;
-        start = new Date().getTime();
-
         var text = TextFactory.createText(contents);
         var scanner = new Scanner(text, languageVersion, stringTable);
 
@@ -411,9 +389,6 @@ class Program {
                 break;
             }
         }
-
-        end = new Date().getTime();
-        totalTime += (end - start);
 
         if (verify) {
             var tokenText = ArrayUtilities.select(tokens, t => t.fullText()).join("");
@@ -435,7 +410,7 @@ class Program {
                 continue;
             }
 
-            this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*allowErrors:*/ false);
+            this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false);
         }
     }
 
@@ -458,54 +433,45 @@ class Program {
             // as UTF8.
             var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-            var start: number, end: number;
-            start = new Date().getTime();
+            totalSize += contents.length;
+            var isNegative = contents.indexOf("@negative") >= 0
+
+            testCount++;
 
             try {
-                totalSize += contents.length;
-                var isNegative = contents.indexOf("@negative") >= 0
+                var stringText = TextFactory.createText(contents);
+                var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
-                testCount++;
+                if (isNegative) {
+                    var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
+                    var canParseSuccessfully = <bool>negative262ExpectedResults[fileName];
 
-                try {
-                    var stringText = TextFactory.createText(contents);
-                    var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
-
-                    if (isNegative) {
-                        var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
-                        var canParseSuccessfully = <bool>negative262ExpectedResults[fileName];
-
-                        if (canParseSuccessfully) {
-                            // We expected to parse this successfully.  Report an error if we didn't.
-                            if (tree.diagnostics() && tree.diagnostics().length > 0) {
-                                Environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
-                                failCount++;
-                            }
-                        }
-                        else {
-                            // We expected to fail on this.  Report an error if we don't.
-                            if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
-                                Environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
-                                failCount++;
-                            }
+                    if (canParseSuccessfully) {
+                        // We expected to parse this successfully.  Report an error if we didn't.
+                        if (tree.diagnostics() && tree.diagnostics().length > 0) {
+                            Environment.standardOut.WriteLine("Negative test. Unexpected failure: " + filePath);
+                            failCount++;
                         }
                     }
                     else {
-                        // Not a negative test.  We can't have any errors or skipped tokens.
-                        if (tree.diagnostics() && tree.diagnostics().length > 0) {
-                            Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                        // We expected to fail on this.  Report an error if we don't.
+                        if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
+                            Environment.standardOut.WriteLine("Negative test. Unexpected success: " + filePath);
                             failCount++;
                         }
                     }
                 }
-                catch (e) {
-                    failCount++;
-                    this.handleException(filePath, e);
+                else {
+                    // Not a negative test.  We can't have any errors or skipped tokens.
+                    if (tree.diagnostics() && tree.diagnostics().length > 0) {
+                        Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                        failCount++;
+                    }
                 }
             }
-            finally {
-                end = new Date().getTime();
-                totalTime += (end - start);
+            catch (e) {
+                failCount++;
+                this.handleException(filePath, e);
             }
         }
 
@@ -528,7 +494,7 @@ class Program {
 
         var testCount = 0;
         var failCount = 0;
-        var skippedTests:string[] = [];
+        var skippedTests: string[] = [];
 
         for (var index in testFiles) {
             var filePath: string = testFiles[index];
@@ -540,42 +506,33 @@ class Program {
             var canParseSuccessfully = expectedTop1000Failures[filePath.substr(path.length + 1)] === undefined;
             var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-            var start: number, end: number;
-            start = new Date().getTime();
+            totalSize += contents.length;
+            testCount++;
 
             try {
-                totalSize += contents.length;
-                testCount++;
+                var stringText = TextFactory.createText(contents);
+                var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
 
-                try {
-                    var stringText = TextFactory.createText(contents);
-                    var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
+            //Environment.standardOut.WriteLine(filePath);
+            // Environment.standardOut.Write(".");
 
-                    //Environment.standardOut.WriteLine(filePath);
-                    // Environment.standardOut.Write(".");
-
-                    if (canParseSuccessfully) {
-                        if (tree.diagnostics() && tree.diagnostics().length > 0) {
-                            Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
-                            failCount++;
-                        }
-                    }
-                    else {
-                        // We expected to fail on this.  Report an error if we don't.
-                        if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
-                            Environment.standardOut.WriteLine("Unexpected success: " + filePath);
-                            failCount++;
-                        }
+                if (canParseSuccessfully) {
+                    if (tree.diagnostics() && tree.diagnostics().length > 0) {
+                        Environment.standardOut.WriteLine("Unexpected failure: " + filePath);
+                        failCount++;
                     }
                 }
-                catch (e) {
-                    failCount++;
-                    this.handleException(filePath, e);
+                else {
+                    // We expected to fail on this.  Report an error if we don't.
+                    if (tree.diagnostics() === null || tree.diagnostics().length === 0) {
+                        Environment.standardOut.WriteLine("Unexpected success: " + filePath);
+                        failCount++;
+                    }
                 }
             }
-            finally {
-                end = new Date().getTime();
-                totalTime += (end - start);
+            catch (e) {
+                failCount++;
+                this.handleException(filePath, e);
             }
         }
 
@@ -592,8 +549,8 @@ class Program {
 }
 
 // (<any>WScript).StdIn.ReadLine();
-var totalSize = 0;
 var totalTime = 0;
+var totalSize = 0;
 var program = new Program();
 
 // New parser.
@@ -610,7 +567,7 @@ if (true) {
 if (false) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(true, false);
+    program.runAllTests(true, true);
     program.parseArguments(true);
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
