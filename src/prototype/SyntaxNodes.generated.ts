@@ -84,11 +84,6 @@ class SourceUnitSyntax extends SyntaxNode {
         return this.update(this._moduleElements, endOfFileToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._moduleElements).collectTextElements(elements);
-        (<any>this._endOfFileToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._moduleElements.isTypeScriptSpecific()) { return true; }
         return false;
@@ -264,13 +259,6 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return this.update(this._moduleKeyword, this._openParenToken, this._stringLiteral, closeParenToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._moduleKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._stringLiteral).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -399,10 +387,6 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     public withModuleName(moduleName: INameSyntax): ModuleNameModuleReferenceSyntax {
         return this.update(moduleName);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._moduleName).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -562,14 +546,6 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
         return this.update(this._importKeyword, this._identifier, this._equalsToken, this._moduleReference, semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._importKeyword).collectTextElements(elements);
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._equalsToken).collectTextElements(elements);
-        (<any>this._moduleReference).collectTextElements(elements);
-        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -848,19 +824,6 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
-        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
-        (<any>this._classKeyword).collectTextElements(elements);
-        (<any>this._identifier).collectTextElements(elements);
-        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
-        if (this._extendsClause !== null) { (<any>this._extendsClause).collectTextElements(elements); }
-        if (this._implementsClause !== null) { (<any>this._implementsClause).collectTextElements(elements); }
-        (<any>this._openBraceToken).collectTextElements(elements);
-        (<any>this._classElements).collectTextElements(elements);
-        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1162,15 +1125,6 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, body);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
-        (<any>this._interfaceKeyword).collectTextElements(elements);
-        (<any>this._identifier).collectTextElements(elements);
-        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
-        if (this._extendsClause !== null) { (<any>this._extendsClause).collectTextElements(elements); }
-        (<any>this._body).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -1359,11 +1313,6 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._extendsKeyword).collectTextElements(elements);
-        (<any>this._typeNames).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -1492,11 +1441,6 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
     public withTypeName(typeName: INameSyntax): ImplementsClauseSyntax {
         return this.withTypeNames(Syntax.separatedList([typeName]));
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._implementsKeyword).collectTextElements(elements);
-        (<any>this._typeNames).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1715,17 +1659,6 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, closeBraceToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
-        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
-        (<any>this._moduleKeyword).collectTextElements(elements);
-        if (this._moduleName !== null) { (<any>this._moduleName).collectTextElements(elements); }
-        if (this._stringLiteral !== null) { (<any>this._stringLiteral).collectTextElements(elements); }
-        (<any>this._openBraceToken).collectTextElements(elements);
-        (<any>this._moduleElements).collectTextElements(elements);
-        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2002,15 +1935,6 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, this._block, semicolonToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
-        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
-        (<any>this._functionKeyword).collectTextElements(elements);
-        (<any>this._functionSignature).collectTextElements(elements);
-        if (this._block !== null) { (<any>this._block).collectTextElements(elements); }
-        if (this._semicolonToken !== null) { (<any>this._semicolonToken).collectTextElements(elements); }
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._exportKeyword !== null) { return true; }
         if (this._declareKeyword !== null) { return true; }
@@ -2241,13 +2165,6 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this._exportKeyword, this._declareKeyword, this._variableDeclaration, semicolonToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
-        if (this._declareKeyword !== null) { (<any>this._declareKeyword).collectTextElements(elements); }
-        (<any>this._variableDeclaration).collectTextElements(elements);
-        (<any>this._semicolonToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._exportKeyword !== null) { return true; }
         if (this._declareKeyword !== null) { return true; }
@@ -2411,11 +2328,6 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return this.withVariableDeclarators(Syntax.separatedList([variableDeclarator]));
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._varKeyword).collectTextElements(elements);
-        (<any>this._variableDeclarators).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._variableDeclarators.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2558,12 +2470,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
     public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): VariableDeclaratorSyntax {
         return this.update(this._identifier, this._typeAnnotation, equalsValueClause);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._identifier).collectTextElements(elements);
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
-        if (this._equalsValueClause !== null) { (<any>this._equalsValueClause).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2714,11 +2620,6 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return this.update(this._equalsToken, value);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._equalsToken).collectTextElements(elements);
-        (<any>this._value).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._value.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2856,11 +2757,6 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
 
     public withOperand(operand: IUnaryExpressionSyntax): PrefixUnaryExpressionSyntax {
         return this.update(this._kind, this._operatorToken, operand);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._operatorToken).collectTextElements(elements);
-        (<any>this._operand).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3020,12 +2916,6 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this._openBracketToken, this._expressions, closeBracketToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._openBracketToken).collectTextElements(elements);
-        (<any>this._expressions).collectTextElements(elements);
-        (<any>this._closeBracketToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expressions.isTypeScriptSpecific()) { return true; }
         return false;
@@ -3129,9 +3019,6 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 
     public withTrailingTrivia(trivia: ISyntaxTriviaList): OmittedExpressionSyntax {
         return <OmittedExpressionSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    private collectTextElements(elements: string[]): void {
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3253,12 +3140,6 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
         return this.update(this._openParenToken, this._expression, closeParenToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3447,12 +3328,6 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return this.update(this._identifier, this._equalsGreaterThanToken, body);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
-        (<any>this._body).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -3601,12 +3476,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
     public withBody(body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
         return this.update(this._callSignature, this._equalsGreaterThanToken, body);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._callSignature).collectTextElements(elements);
-        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
-        (<any>this._body).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3777,12 +3646,6 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return this.update(this._left, this._dotToken, right);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._left).collectTextElements(elements);
-        (<any>this._dotToken).collectTextElements(elements);
-        (<any>this._right).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -3940,12 +3803,6 @@ class TypeArgumentListSyntax extends SyntaxNode {
 
     public withGreaterThanToken(greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
         return this.update(this._lessThanToken, this._typeArguments, greaterThanToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._lessThanToken).collectTextElements(elements);
-        (<any>this._typeArguments).collectTextElements(elements);
-        (<any>this._greaterThanToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4141,14 +3998,6 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     public withType(type: ITypeSyntax): ConstructorTypeSyntax {
         return this.update(this._newKeyword, this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._newKeyword).collectTextElements(elements);
-        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
-        (<any>this._parameterList).collectTextElements(elements);
-        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
-        (<any>this._type).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4360,13 +4209,6 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
-        (<any>this._parameterList).collectTextElements(elements);
-        (<any>this._equalsGreaterThanToken).collectTextElements(elements);
-        (<any>this._type).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -4555,12 +4397,6 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this._openBraceToken, this._typeMembers, closeBraceToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._openBraceToken).collectTextElements(elements);
-        (<any>this._typeMembers).collectTextElements(elements);
-        (<any>this._closeBraceToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -4723,12 +4559,6 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this._type, this._openBracketToken, closeBracketToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._type).collectTextElements(elements);
-        (<any>this._openBracketToken).collectTextElements(elements);
-        (<any>this._closeBracketToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -4878,11 +4708,6 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this._name, typeArgumentList);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._name).collectTextElements(elements);
-        (<any>this._typeArgumentList).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -5008,11 +4833,6 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
     public withType(type: ITypeSyntax): TypeAnnotationSyntax {
         return this.update(this._colonToken, type);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._colonToken).collectTextElements(elements);
-        (<any>this._type).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5169,12 +4989,6 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): BlockSyntax {
         return this.update(this._openBraceToken, this._statements, closeBraceToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._openBraceToken).collectTextElements(elements);
-        (<any>this._statements).collectTextElements(elements);
-        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5369,15 +5183,6 @@ class ParameterSyntax extends SyntaxNode {
 
     public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax {
         return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, equalsValueClause);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        if (this._dotDotDotToken !== null) { (<any>this._dotDotDotToken).collectTextElements(elements); }
-        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
-        (<any>this._identifier).collectTextElements(elements);
-        if (this._questionToken !== null) { (<any>this._questionToken).collectTextElements(elements); }
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
-        if (this._equalsValueClause !== null) { (<any>this._equalsValueClause).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5598,12 +5403,6 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this._expression, this._dotToken, name);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._dotToken).collectTextElements(elements);
-        (<any>this._name).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -5752,11 +5551,6 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     public withOperatorToken(operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
         return this.update(this._kind, this._operand, operatorToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._operand).collectTextElements(elements);
-        (<any>this._operatorToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5921,13 +5715,6 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this._expression, this._openBracketToken, this._argumentExpression, closeBracketToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._openBracketToken).collectTextElements(elements);
-        (<any>this._argumentExpression).collectTextElements(elements);
-        (<any>this._closeBracketToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._argumentExpression.isTypeScriptSpecific()) { return true; }
@@ -6085,11 +5872,6 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
 
     public withArgumentList(argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
         return this.update(this._expression, argumentList);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._argumentList).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6254,13 +6036,6 @@ class ArgumentListSyntax extends SyntaxNode {
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ArgumentListSyntax {
         return this.update(this._typeArgumentList, this._openParenToken, this._arguments, closeParenToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        if (this._typeArgumentList !== null) { (<any>this._typeArgumentList).collectTextElements(elements); }
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._arguments).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6437,12 +6212,6 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 
     public withRight(right: IExpressionSyntax): BinaryExpressionSyntax {
         return this.update(this._kind, this._left, this._operatorToken, right);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._left).collectTextElements(elements);
-        (<any>this._operatorToken).collectTextElements(elements);
-        (<any>this._right).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6631,14 +6400,6 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return this.update(this._condition, this._questionToken, this._whenTrue, this._colonToken, whenFalse);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._condition).collectTextElements(elements);
-        (<any>this._questionToken).collectTextElements(elements);
-        (<any>this._whenTrue).collectTextElements(elements);
-        (<any>this._colonToken).collectTextElements(elements);
-        (<any>this._whenFalse).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._whenTrue.isTypeScriptSpecific()) { return true; }
@@ -6825,11 +6586,6 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return this.update(this._newKeyword, callSignature);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._newKeyword).collectTextElements(elements);
-        (<any>this._callSignature).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -6972,12 +6728,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
 
     public withCallSignature(callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
         return this.update(this._identifier, this._questionToken, callSignature);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._identifier).collectTextElements(elements);
-        if (this._questionToken !== null) { (<any>this._questionToken).collectTextElements(elements); }
-        (<any>this._callSignature).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7154,13 +6904,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return this.update(this._openBracketToken, this._parameter, this._closeBracketToken, typeAnnotation);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._openBracketToken).collectTextElements(elements);
-        (<any>this._parameter).collectTextElements(elements);
-        (<any>this._closeBracketToken).collectTextElements(elements);
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -7331,12 +7074,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return this.update(this._identifier, this._questionToken, typeAnnotation);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._identifier).collectTextElements(elements);
-        if (this._questionToken !== null) { (<any>this._questionToken).collectTextElements(elements); }
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -7504,12 +7241,6 @@ class ParameterListSyntax extends SyntaxNode {
         return this.update(this._openParenToken, this._parameters, closeParenToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._parameters).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._parameters.isTypeScriptSpecific()) { return true; }
         return false;
@@ -7663,12 +7394,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
         return this.update(this._typeParameterList, this._parameterList, typeAnnotation);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        if (this._typeParameterList !== null) { (<any>this._typeParameterList).collectTextElements(elements); }
-        (<any>this._parameterList).collectTextElements(elements);
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7843,12 +7568,6 @@ class TypeParameterListSyntax extends SyntaxNode {
         return this.update(this._lessThanToken, this._typeParameters, greaterThanToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._lessThanToken).collectTextElements(elements);
-        (<any>this._typeParameters).collectTextElements(elements);
-        (<any>this._greaterThanToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -7990,11 +7709,6 @@ class TypeParameterSyntax extends SyntaxNode {
         return this.update(this._identifier, constraint);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._identifier).collectTextElements(elements);
-        if (this._constraint !== null) { (<any>this._constraint).collectTextElements(elements); }
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -8125,11 +7839,6 @@ class ConstraintSyntax extends SyntaxNode {
         return this.update(this._extendsKeyword, type);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._extendsKeyword).collectTextElements(elements);
-        (<any>this._type).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -8254,11 +7963,6 @@ class ElseClauseSyntax extends SyntaxNode {
 
     public withStatement(statement: IStatementSyntax): ElseClauseSyntax {
         return this.update(this._elseKeyword, statement);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._elseKeyword).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -8457,15 +8161,6 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, elseClause);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._ifKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._condition).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
-        if (this._elseClause !== null) { (<any>this._elseClause).collectTextElements(elements); }
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
@@ -8653,11 +8348,6 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this._expression, semicolonToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._semicolonToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -8818,13 +8508,6 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ConstructorDeclarationSyntax {
         return this.update(this._constructorKeyword, this._parameterList, this._block, semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._constructorKeyword).collectTextElements(elements);
-        (<any>this._parameterList).collectTextElements(elements);
-        if (this._block !== null) { (<any>this._block).collectTextElements(elements); }
-        if (this._semicolonToken !== null) { (<any>this._semicolonToken).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -9033,14 +8716,6 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
         return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
-        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
-        (<any>this._functionSignature).collectTextElements(elements);
-        if (this._block !== null) { (<any>this._block).collectTextElements(elements); }
-        if (this._semicolonToken !== null) { (<any>this._semicolonToken).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -9337,16 +9012,6 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, block);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
-        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
-        (<any>this._getKeyword).collectTextElements(elements);
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._parameterList).collectTextElements(elements);
-        if (this._typeAnnotation !== null) { (<any>this._typeAnnotation).collectTextElements(elements); }
-        (<any>this._block).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -9601,15 +9266,6 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, block);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
-        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
-        (<any>this._setKeyword).collectTextElements(elements);
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._parameterList).collectTextElements(elements);
-        (<any>this._block).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -9828,13 +9484,6 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, semicolonToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._publicOrPrivateKeyword !== null) { (<any>this._publicOrPrivateKeyword).collectTextElements(elements); }
-        if (this._staticKeyword !== null) { (<any>this._staticKeyword).collectTextElements(elements); }
-        (<any>this._variableDeclarator).collectTextElements(elements);
-        (<any>this._semicolonToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -10012,12 +9661,6 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this._throwKeyword, this._expression, semicolonToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._throwKeyword).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._semicolonToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -10180,12 +9823,6 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ReturnStatementSyntax {
         return this.update(this._returnKeyword, this._expression, semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._returnKeyword).collectTextElements(elements);
-        if (this._expression !== null) { (<any>this._expression).collectTextElements(elements); }
-        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10354,12 +9991,6 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
 
     public withArgumentList(argumentList: ArgumentListSyntax): ObjectCreationExpressionSyntax {
         return this.update(this._newKeyword, this._expression, argumentList);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._newKeyword).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-        if (this._argumentList !== null) { (<any>this._argumentList).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10590,16 +10221,6 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
         return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, closeBraceToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._switchKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._openBraceToken).collectTextElements(elements);
-        (<any>this._switchClauses).collectTextElements(elements);
-        (<any>this._closeBraceToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -10852,13 +10473,6 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._caseKeyword).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._colonToken).collectTextElements(elements);
-        (<any>this._statements).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         if (this._statements.isTypeScriptSpecific()) { return true; }
@@ -11032,12 +10646,6 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._defaultKeyword).collectTextElements(elements);
-        (<any>this._colonToken).collectTextElements(elements);
-        (<any>this._statements).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._statements.isTypeScriptSpecific()) { return true; }
         return false;
@@ -11200,12 +10808,6 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): BreakStatementSyntax {
         return this.update(this._breakKeyword, this._identifier, semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._breakKeyword).collectTextElements(elements);
-        if (this._identifier !== null) { (<any>this._identifier).collectTextElements(elements); }
-        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -11372,12 +10974,6 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ContinueStatementSyntax {
         return this.update(this._continueKeyword, this._identifier, semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._continueKeyword).collectTextElements(elements);
-        if (this._identifier !== null) { (<any>this._identifier).collectTextElements(elements); }
-        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -11709,19 +11305,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, statement);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._forKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        if (this._variableDeclaration !== null) { (<any>this._variableDeclaration).collectTextElements(elements); }
-        if (this._initializer !== null) { (<any>this._initializer).collectTextElements(elements); }
-        (<any>this._firstSemicolonToken).collectTextElements(elements);
-        if (this._condition !== null) { (<any>this._condition).collectTextElements(elements); }
-        (<any>this._secondSemicolonToken).collectTextElements(elements);
-        if (this._incrementor !== null) { (<any>this._incrementor).collectTextElements(elements); }
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._variableDeclaration !== null && this._variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this._initializer !== null && this._initializer.isTypeScriptSpecific()) { return true; }
@@ -12049,17 +11632,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, statement);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._forKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        if (this._variableDeclaration !== null) { (<any>this._variableDeclaration).collectTextElements(elements); }
-        if (this._left !== null) { (<any>this._left).collectTextElements(elements); }
-        (<any>this._inKeyword).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._variableDeclaration !== null && this._variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this._left !== null && this._left.isTypeScriptSpecific()) { return true; }
@@ -12307,14 +11879,6 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return this.update(this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._whileKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._condition).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._condition.isTypeScriptSpecific()) { return true; }
         if (this._statement.isTypeScriptSpecific()) { return true; }
@@ -12523,14 +12087,6 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withStatement(statement: IStatementSyntax): WithStatementSyntax {
         return this.update(this._withKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._withKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._condition).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -12762,15 +12318,6 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, closeBraceToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        if (this._exportKeyword !== null) { (<any>this._exportKeyword).collectTextElements(elements); }
-        (<any>this._enumKeyword).collectTextElements(elements);
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._openBraceToken).collectTextElements(elements);
-        (<any>this._variableDeclarators).collectTextElements(elements);
-        (<any>this._closeBraceToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -12980,13 +12527,6 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return this.update(this._lessThanToken, this._type, this._greaterThanToken, expression);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._lessThanToken).collectTextElements(elements);
-        (<any>this._type).collectTextElements(elements);
-        (<any>this._greaterThanToken).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         return true;
     }
@@ -13166,12 +12706,6 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this._openBraceToken, this._propertyAssignments, closeBraceToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._openBraceToken).collectTextElements(elements);
-        (<any>this._propertyAssignments).collectTextElements(elements);
-        (<any>this._closeBraceToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._propertyAssignments.isTypeScriptSpecific()) { return true; }
         return false;
@@ -13344,12 +12878,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     public withExpression(expression: IExpressionSyntax): SimplePropertyAssignmentSyntax {
         return this.update(this._propertyName, this._colonToken, expression);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._propertyName).collectTextElements(elements);
-        (<any>this._colonToken).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13561,14 +13089,6 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     public withBlock(block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
         return this.update(this._getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, block);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._getKeyword).collectTextElements(elements);
-        (<any>this._propertyName).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._block).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -13784,15 +13304,6 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, block);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._setKeyword).collectTextElements(elements);
-        (<any>this._propertyName).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._parameterName).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._block).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -14004,13 +13515,6 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return this.update(this._functionKeyword, this._identifier, this._callSignature, block);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._functionKeyword).collectTextElements(elements);
-        if (this._identifier !== null) { (<any>this._identifier).collectTextElements(elements); }
-        (<any>this._callSignature).collectTextElements(elements);
-        (<any>this._block).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._callSignature.isTypeScriptSpecific()) { return true; }
         if (this._block.isTypeScriptSpecific()) { return true; }
@@ -14159,10 +13663,6 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): EmptyStatementSyntax {
         return this.update(semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14316,13 +13816,6 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withFinallyClause(finallyClause: FinallyClauseSyntax): TryStatementSyntax {
         return this.update(this._tryKeyword, this._block, this._catchClause, finallyClause);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._tryKeyword).collectTextElements(elements);
-        (<any>this._block).collectTextElements(elements);
-        if (this._catchClause !== null) { (<any>this._catchClause).collectTextElements(elements); }
-        if (this._finallyClause !== null) { (<any>this._finallyClause).collectTextElements(elements); }
     }
 
     private isTypeScriptSpecific(): bool {
@@ -14525,14 +14018,6 @@ class CatchClauseSyntax extends SyntaxNode {
         return this.update(this._catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, block);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._catchKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._block).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -14693,11 +14178,6 @@ class FinallyClauseSyntax extends SyntaxNode {
         return this.update(this._finallyKeyword, block);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._finallyKeyword).collectTextElements(elements);
-        (<any>this._block).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -14845,12 +14325,6 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withStatement(statement: IStatementSyntax): LabeledStatementSyntax {
         return this.update(this._identifier, this._colonToken, statement);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._identifier).collectTextElements(elements);
-        (<any>this._colonToken).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -15057,16 +14531,6 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, semicolonToken);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._doKeyword).collectTextElements(elements);
-        (<any>this._statement).collectTextElements(elements);
-        (<any>this._whileKeyword).collectTextElements(elements);
-        (<any>this._openParenToken).collectTextElements(elements);
-        (<any>this._condition).collectTextElements(elements);
-        (<any>this._closeParenToken).collectTextElements(elements);
-        (<any>this._semicolonToken).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._statement.isTypeScriptSpecific()) { return true; }
         if (this._condition.isTypeScriptSpecific()) { return true; }
@@ -15259,11 +14723,6 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return this.update(this._typeOfKeyword, expression);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._typeOfKeyword).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -15397,11 +14856,6 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
 
     public withExpression(expression: IExpressionSyntax): DeleteExpressionSyntax {
         return this.update(this._deleteKeyword, expression);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._deleteKeyword).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -15539,11 +14993,6 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return this.update(this._voidKeyword, expression);
     }
 
-    private collectTextElements(elements: string[]): void {
-        (<any>this._voidKeyword).collectTextElements(elements);
-        (<any>this._expression).collectTextElements(elements);
-    }
-
     private isTypeScriptSpecific(): bool {
         if (this._expression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -15677,11 +15126,6 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): DebuggerStatementSyntax {
         return this.update(this._debuggerKeyword, semicolonToken);
-    }
-
-    private collectTextElements(elements: string[]): void {
-        (<any>this._debuggerKeyword).collectTextElements(elements);
-        (<any>this._semicolonToken).collectTextElements(elements);
     }
 
     private isTypeScriptSpecific(): bool {

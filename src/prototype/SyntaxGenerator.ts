@@ -2133,14 +2133,14 @@ function generateNode(definition: ITypeDefinition): string {
     result += generateSlotMethods(definition);
     result += generateIsMethod(definition);
     // result += generateIsMissingMethod(definition);
-    //result += generateFirstTokenMethod(definition);
-    //result += generateLastTokenMethod(definition);
+    // result += generateFirstTokenMethod(definition);
+    // result += generateLastTokenMethod(definition);
     // result += generateInsertChildrenIntoMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateTriviaMethods(definition);
     result += generateWithMethods(definition);
-    result += generateCollectTextElementsMethod(definition);
+    // result += generateCollectTextElementsMethod(definition);
     result += generateIsTypeScriptSpecificMethod(definition);
     result += generateComputeDataMethod(definition);
     result += generateFindTokenInternalMethod(definition);

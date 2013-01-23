@@ -146,6 +146,16 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         return elements.join("");
     }
 
+    private collectTextElements(elements: string[]): void {
+        for (var i = 0, n = this.slotCount(); i < n; i++) {
+            var element: any = this.elementAtSlot(i);
+
+            if (element !== null) {
+                element.collectTextElements(elements)
+            }
+        }
+    }
+
     public replaceToken(token1: ISyntaxToken, token2: ISyntaxToken): SyntaxNode {
         return this.accept(new SyntaxTokenReplacer(token1, token2));
     }
