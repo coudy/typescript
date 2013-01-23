@@ -334,6 +334,32 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         throw Errors.invalidOperation();
     }
 
+    public findTokenOnLeft(position: number): { token: ISyntaxToken; fullStart: number; } {
+        var token = this.findToken(position);
+        var start = token.fullStart + token.token.leadingTriviaWidth();
+
+        // Position better fall within this token.
+        Debug.assert(position >= token.fullStart && position < (token.fullStart + token.token.fullWidth()));
+
+        // if position is after the start of the token, then this token is the token on the left.
+        if (position > start) {
+            return token;
+        }
+
+        // we're in the trivia before the start of the token.  Need to return the previous token.
+        if (token.fullStart === 0) {
+            // Already on the first token.  Nothing before us.
+            return null;
+        }
+
+        var previousToken = this.findToken(token.fullStart - 1);
+
+        // Position better be after this token.
+        Debug.assert((previousToken.fullStart + previousToken.token.fullWidth()) <= position);
+
+        return previousToken;
+    }
+
     public isModuleElement(): bool {
         return false;
     }

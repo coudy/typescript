@@ -1093,6 +1093,20 @@ var SyntaxNode = (function () {
         }
         throw Errors.invalidOperation();
     };
+    SyntaxNode.prototype.findTokenOnLeft = function (position) {
+        var token = this.findToken(position);
+        var start = token.fullStart + token.token.leadingTriviaWidth();
+        Debug.assert(position >= token.fullStart && position < (token.fullStart + token.token.fullWidth()));
+        if(position > start) {
+            return token;
+        }
+        if(token.fullStart === 0) {
+            return null;
+        }
+        var previousToken = this.findToken(token.fullStart - 1);
+        Debug.assert((previousToken.fullStart + previousToken.token.fullWidth()) <= position);
+        return previousToken;
+    };
     SyntaxNode.prototype.isModuleElement = function () {
         return false;
     };
