@@ -13,7 +13,7 @@ class SyntaxNodeInvariantsChecker extends SyntaxWalker {
     private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
     public static checkInvariants(node: SyntaxNode): void {
-        new SyntaxNodeInvariantsChecker().visitNode(node);
+        node.accept(new SyntaxNodeInvariantsChecker());
     }
 
     private visitToken(token: ISyntaxToken): void {

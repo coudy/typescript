@@ -23,11 +23,11 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         throw Errors.abstract();
     }
 
-    public slotCount(): number {
+    private slotCount(): number {
         throw Errors.abstract();
     }
 
-    public elementAtSlot(slot: number): ISyntaxElement {
+    private elementAtSlot(slot: number): ISyntaxElement {
         throw Errors.abstract();
     }
 
