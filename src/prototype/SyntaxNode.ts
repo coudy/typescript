@@ -339,7 +339,9 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         var start = token.fullStart + token.token.leadingTriviaWidth();
 
         // Position better fall within this token.
-        Debug.assert(position >= token.fullStart && position < (token.fullStart + token.token.fullWidth()));
+        Debug.assert(position >= token.fullStart);
+        Debug.assert(position < (token.fullStart + token.token.fullWidth()) ||
+                     token.token.tokenKind === SyntaxKind.EndOfFileToken);
 
         // if position is after the start of the token, then this token is the token on the left.
         if (position > start) {

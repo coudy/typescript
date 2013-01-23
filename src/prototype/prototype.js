@@ -1096,7 +1096,8 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.findTokenOnLeft = function (position) {
         var token = this.findToken(position);
         var start = token.fullStart + token.token.leadingTriviaWidth();
-        Debug.assert(position >= token.fullStart && position < (token.fullStart + token.token.fullWidth()));
+        Debug.assert(position >= token.fullStart);
+        Debug.assert(position < (token.fullStart + token.token.fullWidth()) || token.token.tokenKind === 10 /* EndOfFileToken */ );
         if(position > start) {
             return token;
         }
@@ -23514,8 +23515,12 @@ var Program = (function () {
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Testing findToken.");
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, true);
+        });
         Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental 2.");
@@ -23525,27 +23530,23 @@ var Program = (function () {
         if(true) {
         }
         Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
         });
-        Environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, generate);
-        });
         Environment.standardOut.WriteLine("Testing trivia.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
             return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
             return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runIncremental(filePath, 1 /* EcmaScript5 */ );
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, true);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
@@ -23553,11 +23554,11 @@ var Program = (function () {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262", function (filePath) {
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
+        this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {
         var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
@@ -23731,10 +23732,14 @@ var Program = (function () {
         end = new Date().getTime();
         totalTime += (end - start);
         Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
-        var result = {
+        var tokens = {
+        };
+        var tokensOnLeft = {
         };
         for(var i = 0; i <= contents.length; i++) {
             var token = sourceUnit.findToken(i).token;
+            var left = sourceUnit.findTokenOnLeft(i);
+            var tokenOnLeft = left === null ? null : left.token;
             Debug.assert(token.isToken());
             if(i === contents.length) {
                 Debug.assert(token.kind() === 10 /* EndOfFileToken */ );
@@ -23742,8 +23747,13 @@ var Program = (function () {
                 Debug.assert(token.width() > 0 || token.kind() === 10 /* EndOfFileToken */ );
                 Debug.assert(token.fullWidth() > 0);
             }
-            result[i] = token;
+            tokens[i] = token;
+            tokensOnLeft[i] = tokenOnLeft;
         }
+        var result = {
+            tokens: tokens,
+            tokensOnLeft: tokensOnLeft
+        };
         this.checkResult(filePath, result, verify, generateBaseline, false);
     };
     Program.prototype.runTrivia = function (filePath, languageVersion, verify, generateBaseline) {

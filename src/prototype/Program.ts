@@ -19,8 +19,12 @@ class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
 
+        Environment.standardOut.WriteLine("Testing findToken.");
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5",
+            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+
         Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter\\ecmascript5",
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter\\ecmascript5",
             filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
 
         Environment.standardOut.WriteLine("Testing Incremental 2.");
@@ -33,27 +37,23 @@ class Program {
         }
             
         Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
-
-        Environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\findToken\\ecmascript5",
-            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing trivia.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\trivia\\ecmascript5",
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\trivia\\ecmascript5",
             filePath => this.runTrivia(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\scanner\\ecmascript5",
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\scanner\\ecmascript5",
             filePath => this.runScanner(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing Incremental 1.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\parser\\ecmascript5",
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
             filePath => this.runIncremental(filePath, LanguageVersion.EcmaScript5));
             
         Environment.standardOut.WriteLine("Testing emitter 2.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\emitter2\\ecmascript5",
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter2\\ecmascript5",
             filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ true));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
@@ -61,11 +61,11 @@ class Program {
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests("C:\\fidelity\\src\\prototype\\tests\\test262",
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ generate));
         
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed("C:\\fidelity\\src\\prototype\\SyntaxNodes.generated.ts");
+        this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
     }
 
     private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
@@ -323,10 +323,14 @@ class Program {
 
         Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
 
-        var result = {};
+        var tokens = {};
+        var tokensOnLeft = {};
 
         for (var i = 0; i <= contents.length; i++) {
             var token = sourceUnit.findToken(i).token;
+
+            var left = sourceUnit.findTokenOnLeft(i);
+            var tokenOnLeft = left === null ? null : left.token;
 
             Debug.assert(token.isToken());
             if (i === contents.length) {
@@ -337,9 +341,15 @@ class Program {
                 Debug.assert(token.fullWidth() > 0);
             }
 
-            result[i] = token;
+            tokens[i] = token;
+            tokensOnLeft[i] = tokenOnLeft;
         }
-        
+
+        var result = {
+            tokens: tokens,
+            tokensOnLeft: tokensOnLeft
+        };
+
         this.checkResult(filePath, result, verify, generateBaseline, /*justText:*/ false);
     }
 
