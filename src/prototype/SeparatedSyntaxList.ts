@@ -37,6 +37,7 @@ module Syntax {
         firstToken: (): ISyntaxToken => null,
         lastToken: (): ISyntaxToken => null,
         fullWidth: () => 0,
+        width: () => 0,
         fullText: () => "",
 
         toItemAndSeparatorArray: (): ISyntaxNodeOrToken[] => [],
@@ -114,6 +115,10 @@ module Syntax {
 
         public fullWidth(): number {
             return this.item.fullWidth();
+        }
+
+        public width(): number {
+            return this.item.width();
         }
 
         public fullText(): string {
@@ -291,6 +296,11 @@ module Syntax {
 
         public fullWidth(): number {
             return this.data() >>> Constants.NodeFullWidthShift;
+        }
+
+        public width(): number {
+            var fullWidth = this.fullWidth();
+            return fullWidth - this.firstToken().leadingTriviaWidth() - this.lastToken().trailingTriviaWidth();
         }
 
         private computeData(): number {

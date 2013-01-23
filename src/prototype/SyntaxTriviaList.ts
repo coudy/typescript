@@ -24,6 +24,7 @@ module Syntax {
         },
 
         fullWidth: (): number => 0,
+        width: (): number => 0,
         fullText: (): string => "",
 
         hasComment: (): bool => false,
@@ -93,6 +94,10 @@ module Syntax {
             return this.item.fullWidth();
         }
 
+        public width(): number {
+            return this.fullWidth();
+        }
+
         public fullText(): string {
             return this.item.fullText();
         }
@@ -159,6 +164,10 @@ module Syntax {
 
         public fullWidth(): number {
             return ArrayUtilities.sum(this.trivia, t => t.fullWidth());
+        }
+
+        public width(): number {
+            return this.fullWidth();
         }
 
         public fullText(): string {

@@ -35,6 +35,10 @@ module Syntax {
             return this._text.length;
         }
 
+        public width(): number {
+            return this.fullWidth();
+        }
+
         public fullText(): string {
             return this._text;
         }

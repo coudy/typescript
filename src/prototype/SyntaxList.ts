@@ -42,6 +42,10 @@ module Syntax {
             return 0;
         }
 
+        public width(): number {
+            return 0;
+        }
+
         public fullText(): string {
             return "";
         }
@@ -124,6 +128,10 @@ module Syntax {
 
         public fullWidth(): number {
             return this.item.fullWidth();
+        }
+
+        public width(): number {
+            return this.item.width();
         }
 
         public fullText(): string {
@@ -252,6 +260,11 @@ module Syntax {
 
         public fullWidth(): number {
             return this.data() >>> Constants.NodeFullWidthShift;
+        }
+
+        public width(): number {
+            var fullWidth = this.fullWidth();
+            return fullWidth - this.firstToken().leadingTriviaWidth() - this.lastToken().trailingTriviaWidth();
         }
 
         private computeData(): number {

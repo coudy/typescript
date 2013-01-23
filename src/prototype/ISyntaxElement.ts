@@ -14,6 +14,9 @@ interface ISyntaxElement {
     // With of this element, including leading and trailing trivia.
     fullWidth(): number;
 
+    // Width of this element, not including leading and trailing trivia.
+    width(): number;
+
     // Text for this element, including leading and trailing trivia.
     fullText(): string;
 }

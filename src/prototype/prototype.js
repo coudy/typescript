@@ -1552,6 +1552,9 @@ var Syntax;
         fullWidth: function () {
             return 0;
         },
+        width: function () {
+            return 0;
+        },
         fullText: function () {
             return "";
         },
@@ -1644,6 +1647,9 @@ var Syntax;
         };
         SingletonSeparatedSyntaxList.prototype.fullWidth = function () {
             return this.item.fullWidth();
+        };
+        SingletonSeparatedSyntaxList.prototype.width = function () {
+            return this.item.width();
         };
         SingletonSeparatedSyntaxList.prototype.fullText = function () {
             return this.item.fullText();
@@ -1813,6 +1819,10 @@ var Syntax;
         NormalSeparatedSyntaxList.prototype.fullWidth = function () {
             return this.data() >>> 4 /* NodeFullWidthShift */ ;
         };
+        NormalSeparatedSyntaxList.prototype.width = function () {
+            var fullWidth = this.fullWidth();
+            return fullWidth - this.firstToken().leadingTriviaWidth() - this.lastToken().trailingTriviaWidth();
+        };
         NormalSeparatedSyntaxList.prototype.computeData = function () {
             var fullWidth = 0;
             var hasSkippedText = false;
@@ -1951,6 +1961,9 @@ var Syntax;
         EmptySyntaxList.prototype.fullWidth = function () {
             return 0;
         };
+        EmptySyntaxList.prototype.width = function () {
+            return 0;
+        };
         EmptySyntaxList.prototype.fullText = function () {
             return "";
         };
@@ -2029,6 +2042,9 @@ var Syntax;
         };
         SingletonSyntaxList.prototype.fullWidth = function () {
             return this.item.fullWidth();
+        };
+        SingletonSyntaxList.prototype.width = function () {
+            return this.item.width();
         };
         SingletonSyntaxList.prototype.fullText = function () {
             return this.item.fullText();
@@ -2143,6 +2159,10 @@ var Syntax;
         };
         NormalSyntaxList.prototype.fullWidth = function () {
             return this.data() >>> 4 /* NodeFullWidthShift */ ;
+        };
+        NormalSyntaxList.prototype.width = function () {
+            var fullWidth = this.fullWidth();
+            return fullWidth - this.firstToken().leadingTriviaWidth() - this.lastToken().trailingTriviaWidth();
         };
         NormalSyntaxList.prototype.computeData = function () {
             var fullWidth = 0;
@@ -4650,6 +4670,9 @@ var Syntax;
         SyntaxTrivia.prototype.fullWidth = function () {
             return this._text.length;
         };
+        SyntaxTrivia.prototype.width = function () {
+            return this.fullWidth();
+        };
         SyntaxTrivia.prototype.fullText = function () {
             return this._text;
         };
@@ -4754,6 +4777,9 @@ var Syntax;
         fullWidth: function () {
             return 0;
         },
+        width: function () {
+            return 0;
+        },
         fullText: function () {
             return "";
         },
@@ -4832,6 +4858,9 @@ var Syntax;
         SingletonSyntaxTriviaList.prototype.fullWidth = function () {
             return this.item.fullWidth();
         };
+        SingletonSyntaxTriviaList.prototype.width = function () {
+            return this.fullWidth();
+        };
         SingletonSyntaxTriviaList.prototype.fullText = function () {
             return this.item.fullText();
         };
@@ -4903,6 +4932,9 @@ var Syntax;
             return ArrayUtilities.sum(this.trivia, function (t) {
                 return t.fullWidth();
             });
+        };
+        NormalSyntaxTriviaList.prototype.width = function () {
+            return this.fullWidth();
         };
         NormalSyntaxTriviaList.prototype.fullText = function () {
             var result = "";
@@ -23517,7 +23549,7 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, true);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
