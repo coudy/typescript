@@ -79,6 +79,21 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         return null;
     }
 
+    public insertChildrenInto(array: ISyntaxElement[], index: number) {
+        for (var i = this.slotCount() - 1; i >= 0; i--) {
+            var element = this.elementAtSlot(i);
+
+            if (element !== null) {
+                if (element.isNode() || element.isToken()) {
+                    array.splice(index, 0, element);
+                }
+                else {
+                    (<any>element).insertChildrenInto(array, index);
+                }
+            }
+        }
+    }
+
     public leadingTrivia(): ISyntaxTriviaList {
         return this.firstToken().leadingTrivia();
     }
@@ -260,10 +275,6 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
     public isSwitchClause(): bool {
         return false;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number): void {
-        throw Errors.abstract();
     }
 
     public structuralEquals(node: SyntaxNode): bool {

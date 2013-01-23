@@ -2135,7 +2135,7 @@ function generateNode(definition: ITypeDefinition): string {
     // result += generateIsMissingMethod(definition);
     //result += generateFirstTokenMethod(definition);
     //result += generateLastTokenMethod(definition);
-    result += generateInsertChildrenIntoMethod(definition);
+    // result += generateInsertChildrenIntoMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateTriviaMethods(definition);

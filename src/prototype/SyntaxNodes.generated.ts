@@ -47,11 +47,6 @@ class SourceUnitSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._endOfFileToken);
-        this._moduleElements.insertChildrenInto(array, index);
-    }
-
     public moduleElements(): ISyntaxList {
         return this._moduleElements;
     }
@@ -218,13 +213,6 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._stringLiteral);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._moduleKeyword);
-    }
-
     public moduleKeyword(): ISyntaxToken {
         return this._moduleKeyword;
     }
@@ -389,10 +377,6 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._moduleName);
-    }
-
     public moduleName(): INameSyntax {
         return this._moduleName;
     }
@@ -518,14 +502,6 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        array.splice(index, 0, this._moduleReference);
-        array.splice(index, 0, this._equalsToken);
-        array.splice(index, 0, this._identifier);
-        array.splice(index, 0, this._importKeyword);
     }
 
     public importKeyword(): ISyntaxToken {
@@ -763,19 +739,6 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBraceToken);
-        this._classElements.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBraceToken);
-        if (this._implementsClause !== null) { array.splice(index, 0, this._implementsClause); }
-        if (this._extendsClause !== null) { array.splice(index, 0, this._extendsClause); }
-        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
-        array.splice(index, 0, this._identifier);
-        array.splice(index, 0, this._classKeyword);
-        if (this._declareKeyword !== null) { array.splice(index, 0, this._declareKeyword); }
-        if (this._exportKeyword !== null) { array.splice(index, 0, this._exportKeyword); }
     }
 
     public exportKeyword(): ISyntaxToken {
@@ -1130,15 +1093,6 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._body);
-        if (this._extendsClause !== null) { array.splice(index, 0, this._extendsClause); }
-        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
-        array.splice(index, 0, this._identifier);
-        array.splice(index, 0, this._interfaceKeyword);
-        if (this._exportKeyword !== null) { array.splice(index, 0, this._exportKeyword); }
-    }
-
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -1368,11 +1322,6 @@ class ExtendsClauseSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        this._typeNames.insertChildrenInto(array, index);
-        array.splice(index, 0, this._extendsKeyword);
-    }
-
     public extendsKeyword(): ISyntaxToken {
         return this._extendsKeyword;
     }
@@ -1506,11 +1455,6 @@ class ImplementsClauseSyntax extends SyntaxNode {
             case 1: return this._typeNames;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        this._typeNames.insertChildrenInto(array, index);
-        array.splice(index, 0, this._implementsKeyword);
     }
 
     public implementsKeyword(): ISyntaxToken {
@@ -1680,17 +1624,6 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBraceToken);
-        this._moduleElements.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBraceToken);
-        if (this._stringLiteral !== null) { array.splice(index, 0, this._stringLiteral); }
-        if (this._moduleName !== null) { array.splice(index, 0, this._moduleName); }
-        array.splice(index, 0, this._moduleKeyword);
-        if (this._declareKeyword !== null) { array.splice(index, 0, this._declareKeyword); }
-        if (this._exportKeyword !== null) { array.splice(index, 0, this._exportKeyword); }
     }
 
     public exportKeyword(): ISyntaxToken {
@@ -2000,15 +1933,6 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._semicolonToken !== null) { array.splice(index, 0, this._semicolonToken); }
-        if (this._block !== null) { array.splice(index, 0, this._block); }
-        array.splice(index, 0, this._functionSignature);
-        array.splice(index, 0, this._functionKeyword);
-        if (this._declareKeyword !== null) { array.splice(index, 0, this._declareKeyword); }
-        if (this._exportKeyword !== null) { array.splice(index, 0, this._exportKeyword); }
-    }
-
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -2266,13 +2190,6 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        array.splice(index, 0, this._variableDeclaration);
-        if (this._declareKeyword !== null) { array.splice(index, 0, this._declareKeyword); }
-        if (this._exportKeyword !== null) { array.splice(index, 0, this._exportKeyword); }
-    }
-
     public exportKeyword(): ISyntaxToken {
         return this._exportKeyword;
     }
@@ -2457,11 +2374,6 @@ class VariableDeclarationSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        this._variableDeclarators.insertChildrenInto(array, index);
-        array.splice(index, 0, this._varKeyword);
-    }
-
     public varKeyword(): ISyntaxToken {
         return this._varKeyword;
     }
@@ -2604,12 +2516,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
             case 2: return this._equalsValueClause;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._equalsValueClause !== null) { array.splice(index, 0, this._equalsValueClause); }
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        array.splice(index, 0, this._identifier);
     }
 
     public identifier(): ISyntaxToken {
@@ -2775,11 +2681,6 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._value);
-        array.splice(index, 0, this._equalsToken);
-    }
-
     public equalsToken(): ISyntaxToken {
         return this._equalsToken;
     }
@@ -2913,11 +2814,6 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._operand);
-        array.splice(index, 0, this._operatorToken);
     }
 
     public kind(): SyntaxKind {
@@ -3078,12 +2974,6 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBracketToken);
-        this._expressions.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBracketToken);
-    }
-
     public openBracketToken(): ISyntaxToken {
         return this._openBracketToken;
     }
@@ -3229,9 +3119,6 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-    }
-
     private update(): OmittedExpressionSyntax {
         return this;
     }
@@ -3324,12 +3211,6 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._openParenToken);
     }
 
     public openParenToken(): ISyntaxToken {
@@ -3524,12 +3405,6 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._body);
-        array.splice(index, 0, this._equalsGreaterThanToken);
-        array.splice(index, 0, this._identifier);
-    }
-
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
@@ -3684,12 +3559,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
             case 2: return this._body;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._body);
-        array.splice(index, 0, this._equalsGreaterThanToken);
-        array.splice(index, 0, this._callSignature);
     }
 
     public callSignature(): CallSignatureSyntax {
@@ -3866,12 +3735,6 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._right);
-        array.splice(index, 0, this._dotToken);
-        array.splice(index, 0, this._left);
-    }
-
     public left(): INameSyntax {
         return this._left;
     }
@@ -4031,12 +3894,6 @@ class TypeArgumentListSyntax extends SyntaxNode {
             case 2: return this._greaterThanToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._greaterThanToken);
-        this._typeArguments.insertChildrenInto(array, index);
-        array.splice(index, 0, this._lessThanToken);
     }
 
     public lessThanToken(): ISyntaxToken {
@@ -4224,14 +4081,6 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._type);
-        array.splice(index, 0, this._equalsGreaterThanToken);
-        array.splice(index, 0, this._parameterList);
-        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
-        array.splice(index, 0, this._newKeyword);
     }
 
     public newKeyword(): ISyntaxToken {
@@ -4460,13 +4309,6 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._type);
-        array.splice(index, 0, this._equalsGreaterThanToken);
-        array.splice(index, 0, this._parameterList);
-        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
-    }
-
     public typeParameterList(): TypeParameterListSyntax {
         return this._typeParameterList;
     }
@@ -4667,12 +4509,6 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBraceToken);
-        this._typeMembers.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBraceToken);
-    }
-
     public openBraceToken(): ISyntaxToken {
         return this._openBraceToken;
     }
@@ -4845,12 +4681,6 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBracketToken);
-        array.splice(index, 0, this._openBracketToken);
-        array.splice(index, 0, this._type);
-    }
-
     public type(): ITypeSyntax {
         return this._type;
     }
@@ -5015,11 +4845,6 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._typeArgumentList);
-        array.splice(index, 0, this._name);
-    }
-
     public name(): INameSyntax {
         return this._name;
     }
@@ -5150,11 +4975,6 @@ class TypeAnnotationSyntax extends SyntaxNode {
             case 1: return this._type;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._type);
-        array.splice(index, 0, this._colonToken);
     }
 
     public colonToken(): ISyntaxToken {
@@ -5303,12 +5123,6 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBraceToken);
-        this._statements.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBraceToken);
     }
 
     public openBraceToken(): ISyntaxToken {
@@ -5486,15 +5300,6 @@ class ParameterSyntax extends SyntaxNode {
             case 5: return this._equalsValueClause;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._equalsValueClause !== null) { array.splice(index, 0, this._equalsValueClause); }
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        if (this._questionToken !== null) { array.splice(index, 0, this._questionToken); }
-        array.splice(index, 0, this._identifier);
-        if (this._publicOrPrivateKeyword !== null) { array.splice(index, 0, this._publicOrPrivateKeyword); }
-        if (this._dotDotDotToken !== null) { array.splice(index, 0, this._dotDotDotToken); }
     }
 
     public dotDotDotToken(): ISyntaxToken {
@@ -5751,12 +5556,6 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._name);
-        array.splice(index, 0, this._dotToken);
-        array.splice(index, 0, this._expression);
-    }
-
     public expression(): IExpressionSyntax {
         return this._expression;
     }
@@ -5911,11 +5710,6 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._operatorToken);
-        array.splice(index, 0, this._operand);
     }
 
     public kind(): SyntaxKind {
@@ -6074,13 +5868,6 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBracketToken);
-        array.splice(index, 0, this._argumentExpression);
-        array.splice(index, 0, this._openBracketToken);
-        array.splice(index, 0, this._expression);
     }
 
     public expression(): IExpressionSyntax {
@@ -6267,11 +6054,6 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._argumentList);
-        array.splice(index, 0, this._expression);
-    }
-
     public expression(): IExpressionSyntax {
         return this._expression;
     }
@@ -6417,13 +6199,6 @@ class ArgumentListSyntax extends SyntaxNode {
             case 3: return this._closeParenToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeParenToken);
-        this._arguments.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openParenToken);
-        if (this._typeArgumentList !== null) { array.splice(index, 0, this._typeArgumentList); }
     }
 
     public typeArgumentList(): TypeArgumentListSyntax {
@@ -6613,12 +6388,6 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._right);
-        array.splice(index, 0, this._operatorToken);
-        array.splice(index, 0, this._left);
-    }
-
     public kind(): SyntaxKind {
         return this._kind;
     }
@@ -6800,14 +6569,6 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._whenFalse);
-        array.splice(index, 0, this._colonToken);
-        array.splice(index, 0, this._whenTrue);
-        array.splice(index, 0, this._questionToken);
-        array.splice(index, 0, this._condition);
     }
 
     public condition(): IExpressionSyntax {
@@ -7031,11 +6792,6 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._callSignature);
-        array.splice(index, 0, this._newKeyword);
-    }
-
     public newKeyword(): ISyntaxToken {
         return this._newKeyword;
     }
@@ -7174,12 +6930,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
             case 2: return this._callSignature;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._callSignature);
-        if (this._questionToken !== null) { array.splice(index, 0, this._questionToken); }
-        array.splice(index, 0, this._identifier);
     }
 
     public identifier(): ISyntaxToken {
@@ -7351,13 +7101,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
             case 3: return this._typeAnnotation;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        array.splice(index, 0, this._closeBracketToken);
-        array.splice(index, 0, this._parameter);
-        array.splice(index, 0, this._openBracketToken);
     }
 
     public openBracketToken(): ISyntaxToken {
@@ -7546,12 +7289,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        if (this._questionToken !== null) { array.splice(index, 0, this._questionToken); }
-        array.splice(index, 0, this._identifier);
-    }
-
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
@@ -7721,12 +7458,6 @@ class ParameterListSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeParenToken);
-        this._parameters.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openParenToken);
-    }
-
     public openParenToken(): ISyntaxToken {
         return this._openParenToken;
     }
@@ -7890,12 +7621,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
             case 2: return this._typeAnnotation;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        array.splice(index, 0, this._parameterList);
-        if (this._typeParameterList !== null) { array.splice(index, 0, this._typeParameterList); }
     }
 
     public typeParameterList(): TypeParameterListSyntax {
@@ -8072,12 +7797,6 @@ class TypeParameterListSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._greaterThanToken);
-        this._typeParameters.insertChildrenInto(array, index);
-        array.splice(index, 0, this._lessThanToken);
-    }
-
     public lessThanToken(): ISyntaxToken {
         return this._lessThanToken;
     }
@@ -8238,11 +7957,6 @@ class TypeParameterSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._constraint !== null) { array.splice(index, 0, this._constraint); }
-        array.splice(index, 0, this._identifier);
-    }
-
     public identifier(): ISyntaxToken {
         return this._identifier;
     }
@@ -8378,11 +8092,6 @@ class ConstraintSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._type);
-        array.splice(index, 0, this._extendsKeyword);
-    }
-
     public extendsKeyword(): ISyntaxToken {
         return this._extendsKeyword;
     }
@@ -8512,11 +8221,6 @@ class ElseClauseSyntax extends SyntaxNode {
             case 1: return this._statement;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._elseKeyword);
     }
 
     public elseKeyword(): ISyntaxToken {
@@ -8682,15 +8386,6 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._elseClause !== null) { array.splice(index, 0, this._elseClause); }
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._condition);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._ifKeyword);
     }
 
     public ifKeyword(): ISyntaxToken {
@@ -8925,11 +8620,6 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        array.splice(index, 0, this._expression);
-    }
-
     public expression(): IExpressionSyntax {
         return this._expression;
     }
@@ -9077,13 +8767,6 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
 
     private isClassElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._semicolonToken !== null) { array.splice(index, 0, this._semicolonToken); }
-        if (this._block !== null) { array.splice(index, 0, this._block); }
-        array.splice(index, 0, this._parameterList);
-        array.splice(index, 0, this._constructorKeyword);
     }
 
     public constructorKeyword(): ISyntaxToken {
@@ -9290,14 +8973,6 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     private isClassElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._semicolonToken !== null) { array.splice(index, 0, this._semicolonToken); }
-        if (this._block !== null) { array.splice(index, 0, this._block); }
-        array.splice(index, 0, this._functionSignature);
-        if (this._staticKeyword !== null) { array.splice(index, 0, this._staticKeyword); }
-        if (this._publicOrPrivateKeyword !== null) { array.splice(index, 0, this._publicOrPrivateKeyword); }
     }
 
     public publicOrPrivateKeyword(): ISyntaxToken {
@@ -9584,16 +9259,6 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._block);
-        if (this._typeAnnotation !== null) { array.splice(index, 0, this._typeAnnotation); }
-        array.splice(index, 0, this._parameterList);
-        array.splice(index, 0, this._identifier);
-        array.splice(index, 0, this._getKeyword);
-        if (this._staticKeyword !== null) { array.splice(index, 0, this._staticKeyword); }
-        if (this._publicOrPrivateKeyword !== null) { array.splice(index, 0, this._publicOrPrivateKeyword); }
-    }
-
     public publicOrPrivateKeyword(): ISyntaxToken {
         return this._publicOrPrivateKeyword;
     }
@@ -9867,15 +9532,6 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._block);
-        array.splice(index, 0, this._parameterList);
-        array.splice(index, 0, this._identifier);
-        array.splice(index, 0, this._setKeyword);
-        if (this._staticKeyword !== null) { array.splice(index, 0, this._staticKeyword); }
-        if (this._publicOrPrivateKeyword !== null) { array.splice(index, 0, this._publicOrPrivateKeyword); }
-    }
-
     public publicOrPrivateKeyword(): ISyntaxToken {
         return this._publicOrPrivateKeyword;
     }
@@ -10121,13 +9777,6 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        array.splice(index, 0, this._variableDeclarator);
-        if (this._staticKeyword !== null) { array.splice(index, 0, this._staticKeyword); }
-        if (this._publicOrPrivateKeyword !== null) { array.splice(index, 0, this._publicOrPrivateKeyword); }
-    }
-
     public publicOrPrivateKeyword(): ISyntaxToken {
         return this._publicOrPrivateKeyword;
     }
@@ -10321,12 +9970,6 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._throwKeyword);
-    }
-
     public throwKeyword(): ISyntaxToken {
         return this._throwKeyword;
     }
@@ -10495,12 +10138,6 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        if (this._expression !== null) { array.splice(index, 0, this._expression); }
-        array.splice(index, 0, this._returnKeyword);
     }
 
     public returnKeyword(): ISyntaxToken {
@@ -10675,12 +10312,6 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._argumentList !== null) { array.splice(index, 0, this._argumentList); }
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._newKeyword);
     }
 
     public newKeyword(): ISyntaxToken {
@@ -10877,16 +10508,6 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBraceToken);
-        this._switchClauses.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBraceToken);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._switchKeyword);
     }
 
     public switchKeyword(): ISyntaxToken {
@@ -11176,13 +10797,6 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        this._statements.insertChildrenInto(array, index);
-        array.splice(index, 0, this._colonToken);
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._caseKeyword);
-    }
-
     public caseKeyword(): ISyntaxToken {
         return this._caseKeyword;
     }
@@ -11372,12 +10986,6 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        this._statements.insertChildrenInto(array, index);
-        array.splice(index, 0, this._colonToken);
-        array.splice(index, 0, this._defaultKeyword);
-    }
-
     public defaultKeyword(): ISyntaxToken {
         return this._defaultKeyword;
     }
@@ -11552,12 +11160,6 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        if (this._identifier !== null) { array.splice(index, 0, this._identifier); }
-        array.splice(index, 0, this._breakKeyword);
-    }
-
     public breakKeyword(): ISyntaxToken {
         return this._breakKeyword;
     }
@@ -11728,12 +11330,6 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        if (this._identifier !== null) { array.splice(index, 0, this._identifier); }
-        array.splice(index, 0, this._continueKeyword);
     }
 
     public continueKeyword(): ISyntaxToken {
@@ -12006,19 +11602,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
             case 9: return this._statement;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._closeParenToken);
-        if (this._incrementor !== null) { array.splice(index, 0, this._incrementor); }
-        array.splice(index, 0, this._secondSemicolonToken);
-        if (this._condition !== null) { array.splice(index, 0, this._condition); }
-        array.splice(index, 0, this._firstSemicolonToken);
-        if (this._initializer !== null) { array.splice(index, 0, this._initializer); }
-        if (this._variableDeclaration !== null) { array.splice(index, 0, this._variableDeclaration); }
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._forKeyword);
     }
 
     public forKeyword(): ISyntaxToken {
@@ -12379,17 +11962,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._inKeyword);
-        if (this._left !== null) { array.splice(index, 0, this._left); }
-        if (this._variableDeclaration !== null) { array.splice(index, 0, this._variableDeclaration); }
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._forKeyword);
-    }
-
     public forKeyword(): ISyntaxToken {
         return this._forKeyword;
     }
@@ -12675,14 +12247,6 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._condition);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._whileKeyword);
-    }
-
     public whileKeyword(): ISyntaxToken {
         return this._whileKeyword;
     }
@@ -12899,14 +12463,6 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._condition);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._withKeyword);
     }
 
     public withKeyword(): ISyntaxToken {
@@ -13131,15 +12687,6 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBraceToken);
-        this._variableDeclarators.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBraceToken);
-        array.splice(index, 0, this._identifier);
-        array.splice(index, 0, this._enumKeyword);
-        if (this._exportKeyword !== null) { array.splice(index, 0, this._exportKeyword); }
     }
 
     public exportKeyword(): ISyntaxToken {
@@ -13382,13 +12929,6 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._greaterThanToken);
-        array.splice(index, 0, this._type);
-        array.splice(index, 0, this._lessThanToken);
-    }
-
     public lessThanToken(): ISyntaxToken {
         return this._lessThanToken;
     }
@@ -13580,12 +13120,6 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._closeBraceToken);
-        this._propertyAssignments.insertChildrenInto(array, index);
-        array.splice(index, 0, this._openBraceToken);
-    }
-
     public openBraceToken(): ISyntaxToken {
         return this._openBraceToken;
     }
@@ -13768,12 +13302,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
             case 2: return this._expression;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._colonToken);
-        array.splice(index, 0, this._propertyName);
     }
 
     public propertyName(): ISyntaxToken {
@@ -13973,14 +13501,6 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
             case 4: return this._block;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._block);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._propertyName);
-        array.splice(index, 0, this._getKeyword);
     }
 
     public getKeyword(): ISyntaxToken {
@@ -14193,15 +13713,6 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
             case 5: return this._block;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._block);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._parameterName);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._propertyName);
-        array.splice(index, 0, this._setKeyword);
     }
 
     public setKeyword(): ISyntaxToken {
@@ -14442,13 +13953,6 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._block);
-        array.splice(index, 0, this._callSignature);
-        if (this._identifier !== null) { array.splice(index, 0, this._identifier); }
-        array.splice(index, 0, this._functionKeyword);
-    }
-
     public functionKeyword(): ISyntaxToken {
         return this._functionKeyword;
     }
@@ -14633,10 +14137,6 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-    }
-
     public semicolonToken(): ISyntaxToken {
         return this._semicolonToken;
     }
@@ -14765,13 +14265,6 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        if (this._finallyClause !== null) { array.splice(index, 0, this._finallyClause); }
-        if (this._catchClause !== null) { array.splice(index, 0, this._catchClause); }
-        array.splice(index, 0, this._block);
-        array.splice(index, 0, this._tryKeyword);
     }
 
     public tryKeyword(): ISyntaxToken {
@@ -14972,14 +14465,6 @@ class CatchClauseSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._block);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._identifier);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._catchKeyword);
-    }
-
     public catchKeyword(): ISyntaxToken {
         return this._catchKeyword;
     }
@@ -15175,11 +14660,6 @@ class FinallyClauseSyntax extends SyntaxNode {
         }
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._block);
-        array.splice(index, 0, this._finallyKeyword);
-    }
-
     public finallyKeyword(): ISyntaxToken {
         return this._finallyKeyword;
     }
@@ -15323,12 +14803,6 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._colonToken);
-        array.splice(index, 0, this._identifier);
     }
 
     public identifier(): ISyntaxToken {
@@ -15503,16 +14977,6 @@ class DoStatementSyntax extends IterationStatementSyntax {
             case 6: return this._semicolonToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        array.splice(index, 0, this._closeParenToken);
-        array.splice(index, 0, this._condition);
-        array.splice(index, 0, this._openParenToken);
-        array.splice(index, 0, this._whileKeyword);
-        array.splice(index, 0, this._statement);
-        array.splice(index, 0, this._doKeyword);
     }
 
     public doKeyword(): ISyntaxToken {
@@ -15762,11 +15226,6 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._typeOfKeyword);
-    }
-
     public typeOfKeyword(): ISyntaxToken {
         return this._typeOfKeyword;
     }
@@ -15905,11 +15364,6 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
 
     private isExpression(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._deleteKeyword);
     }
 
     public deleteKeyword(): ISyntaxToken {
@@ -16052,11 +15506,6 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return true;
     }
 
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._expression);
-        array.splice(index, 0, this._voidKeyword);
-    }
-
     public voidKeyword(): ISyntaxToken {
         return this._voidKeyword;
     }
@@ -16195,11 +15644,6 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        array.splice(index, 0, this._semicolonToken);
-        array.splice(index, 0, this._debuggerKeyword);
     }
 
     public debuggerKeyword(): ISyntaxToken {

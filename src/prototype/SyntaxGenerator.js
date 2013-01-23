@@ -4328,7 +4328,6 @@ function generateNode(definition) {
     result += generateKindMethod(definition);
     result += generateSlotMethods(definition);
     result += generateIsMethod(definition);
-    result += generateInsertChildrenIntoMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
     result += generateTriviaMethods(definition);
