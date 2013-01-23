@@ -9,6 +9,11 @@ interface ISyntaxNodeOrToken extends ISyntaxElement {
     leadingTrivia(): ISyntaxTriviaList;
     trailingTrivia(): ISyntaxTriviaList;
 
+    width(): number;
+
+    leadingTriviaWidth(): number;
+    trailingTriviaWidth(): number;
+    
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
     withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
 
