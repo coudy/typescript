@@ -12,7 +12,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    // "ErrorRecovery_ModuleElement2.ts";
+    // "0_000048.ts";
     // "0_000137.ts";
     undefined;
 
@@ -22,13 +22,13 @@ class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
 
-        Environment.standardOut.WriteLine("Testing against fuzz.");
-        this.runTests("C:\\temp\\fuzz",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 2000);
+        //Environment.standardOut.WriteLine("Testing against fuzz.");
+        //this.runTests("C:\\temp\\fuzz",
+        //    filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 2000);
 
-        if (true) {
-            return;
-        }
+        //if (true) {
+        //    return;
+        //}
 
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
