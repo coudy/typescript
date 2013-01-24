@@ -1136,10 +1136,11 @@ module Services {
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
         public getBraceMatchingAtPosition(fileName: string, position: number): TextRange[] {
-            this.minimalRefresh();
+            this.refresh();
 
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new BraceMatchingManager(syntaxAST);
+            var syntaxTree = this.compilerState.getSyntaxTree(fileName);
+            var manager = new BraceMatchingManager(syntaxTree);
+
             return manager.getBraceMatchingAtPosition(position);
         }
 
