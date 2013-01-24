@@ -40,7 +40,10 @@ module Syntax {
         concat: (trivia: ISyntaxTriviaList): ISyntaxTriviaList => trivia,
 
         leadingTriviaWidth: () => 0,
-        trailingTriviaWidth: () => 0
+        trailingTriviaWidth: () => 0,
+
+        firstToken: () => null,
+        lastToken: () => null,
     };
 
     function concatTrivia(list1: ISyntaxTriviaList, list2: ISyntaxTriviaList): ISyntaxTriviaList {
@@ -139,6 +142,14 @@ module Syntax {
 
         public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
             return concatTrivia(this, trivia);
+        }
+
+        public firstToken(): ISyntaxToken {
+            return null;
+        }
+
+        public lastToken(): ISyntaxToken {
+            return null;
         }
     }
 
@@ -245,6 +256,14 @@ module Syntax {
 
         public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
             return concatTrivia(this, trivia);
+        }
+
+        public firstToken(): ISyntaxToken {
+            return null;
+        }
+
+        public lastToken(): ISyntaxToken {
+            return null;
         }
     }
 

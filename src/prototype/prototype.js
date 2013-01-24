@@ -20917,18 +20917,17 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.firstToken = function () {
         for(var i = 0, n = this.slotCount(); i < n; i++) {
             var element = this.elementAtSlot(i);
-            if(element != null) {
-                if(element.isToken()) {
-                    var token = element;
-                    if(token.width() > 0) {
-                        return token;
-                    }
-                } else {
-                    var token = (element).firstToken();
-                    if(token !== null) {
-                        return token;
-                    }
-                }
+            if(element != null && element.fullWidth() > 0) {
+                return element.firstToken();
+            }
+        }
+        return null;
+    };
+    SyntaxNode.prototype.lastToken = function () {
+        for(var i = this.slotCount() - 1; i >= 0; i--) {
+            var element = this.elementAtSlot(i);
+            if(element != null && element.fullWidth() > 0) {
+                return element.lastToken();
             }
         }
         return null;
@@ -20940,30 +20939,11 @@ var SyntaxNode = (function () {
             if(child === element) {
                 return offset;
             }
-            if(child != null) {
+            if(child !== null) {
                 offset += child.fullWidth();
             }
         }
-        return -1;
-    };
-    SyntaxNode.prototype.lastToken = function () {
-        for(var i = this.slotCount() - 1; i >= 0; i--) {
-            var element = this.elementAtSlot(i);
-            if(element != null) {
-                if(element.isToken()) {
-                    var token = element;
-                    if(token.width() > 0) {
-                        return token;
-                    }
-                } else {
-                    var token = (element).lastToken();
-                    if(token !== null) {
-                        return token;
-                    }
-                }
-            }
-        }
-        return null;
+        throw Errors.invalidOperation();
     };
     SyntaxNode.prototype.insertChildrenInto = function (array, index) {
         for(var i = this.slotCount() - 1; i >= 0; i--) {
@@ -32585,6 +32565,12 @@ var Syntax;
         SyntaxTrivia.prototype.collectTextElements = function (elements) {
             elements.push(this.fullText());
         };
+        SyntaxTrivia.prototype.firstToken = function () {
+            return null;
+        };
+        SyntaxTrivia.prototype.lastToken = function () {
+            return null;
+        };
         return SyntaxTrivia;
     })();    
     function trivia(kind, text) {
@@ -32706,6 +32692,12 @@ var Syntax;
         },
         trailingTriviaWidth: function () {
             return 0;
+        },
+        firstToken: function () {
+            return null;
+        },
+        lastToken: function () {
+            return null;
         }
     };
     function concatTrivia(list1, list2) {
@@ -32798,6 +32790,12 @@ var Syntax;
         };
         SingletonSyntaxTriviaList.prototype.concat = function (trivia) {
             return concatTrivia(this, trivia);
+        };
+        SingletonSyntaxTriviaList.prototype.firstToken = function () {
+            return null;
+        };
+        SingletonSyntaxTriviaList.prototype.lastToken = function () {
+            return null;
         };
         return SingletonSyntaxTriviaList;
     })();    
@@ -32896,6 +32894,12 @@ var Syntax;
         };
         NormalSyntaxTriviaList.prototype.concat = function (trivia) {
             return concatTrivia(this, trivia);
+        };
+        NormalSyntaxTriviaList.prototype.firstToken = function () {
+            return null;
+        };
+        NormalSyntaxTriviaList.prototype.lastToken = function () {
+            return null;
         };
         return NormalSyntaxTriviaList;
     })();    

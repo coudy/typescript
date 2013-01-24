@@ -66,6 +66,14 @@ module Syntax {
         public collectTextElements(elements: string[]): void {
             elements.push(this.fullText());
         }
+
+        public firstToken(): ISyntaxToken {
+            return null;
+        }
+
+        public lastToken(): ISyntaxToken {
+            return null;
+        }
     }
 
     export function trivia(kind: SyntaxKind, text: string): ISyntaxTrivia {

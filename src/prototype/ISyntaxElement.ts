@@ -22,6 +22,9 @@ interface ISyntaxElement {
 
     leadingTriviaWidth(): number;
     trailingTriviaWidth(): number;
+
+    firstToken(): ISyntaxToken;
+    lastToken(): ISyntaxToken;
 }
 
 interface ISyntaxNode extends ISyntaxNodeOrToken {

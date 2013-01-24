@@ -36,19 +36,21 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         for (var i = 0, n = this.slotCount(); i < n; i++) {
             var element = this.elementAtSlot(i);
 
-            if (element != null) {
-                if (element.isToken()) {
-                    var token = <ISyntaxToken>element;
-                    if (token.width() > 0) {
-                        return token;
-                    }
-                }
-                else {
-                    var token = (<any>element).firstToken();
-                    if (token !== null) {
-                        return token;
-                    }
-                }
+            if (element != null && element.fullWidth() > 0) {
+                return element.firstToken();
+            }
+        }
+
+        return null;
+    }
+
+    // Returns the last non-missing token inside this node (or null if there are no such token).
+    public lastToken(): ISyntaxToken {
+        for (var i = this.slotCount() - 1; i >= 0; i--) {
+            var element = this.elementAtSlot(i);
+
+            if (element != null && element.fullWidth() > 0) {
+                return element.lastToken();
             }
         }
 
@@ -62,35 +64,13 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             if (child === element) {
                 return offset;
             }
+
             if (child !== null) {
                 offset += child.fullWidth();
             }
         }
+
         throw Errors.invalidOperation();
-    }
-
-    // Returns the last non-missing token inside this node (or null if there are no such token).
-    public lastToken(): ISyntaxToken {
-        for (var i = this.slotCount() - 1; i >= 0; i--) {
-            var element = this.elementAtSlot(i);
-
-            if (element != null) {
-                if (element.isToken()) {
-                    var token = <ISyntaxToken>element;
-                    if (token.width() > 0) {
-                        return token;
-                    }
-                }
-                else {
-                    var token = (<any>element).lastToken();
-                    if (token !== null) {
-                        return token;
-                    }
-                }
-            }
-        }
-
-        return null;
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
