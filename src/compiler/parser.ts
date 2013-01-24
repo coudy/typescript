@@ -14,7 +14,6 @@
 //
 
 ///<reference path='typescript.ts' />
-///<reference path='io.ts' />
 
 module TypeScript {
 
