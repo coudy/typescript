@@ -62,11 +62,11 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             if (child === element) {
                 return offset;
             }
-            if (child != null) {
+            if (child !== null) {
                 offset += child.fullWidth();
             }
         }
-        return -1;
+        throw Errors.invalidOperation();
     }
 
     // Returns the last non-missing token inside this node (or null if there are no such token).
