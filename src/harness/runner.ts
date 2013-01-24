@@ -66,7 +66,7 @@ class ConsoleLogger extends Harness.Logger {
     }
 
     public start() {
-        IO.printLine("Running tests" + (iterations > 1 ? " "  + iterations + " times" : "") + (reverse ? " in reverse." : "."));
+        IO.printLine("Running tests" + (iterations > 1 ? " " + iterations + " times" : "") + (reverse ? " in reverse." : "."));
     }
 
     public end() {
@@ -275,6 +275,15 @@ opts.option('iterations', {
     set: function (str) {
         var val = parseInt(str);
         iterations = val < 1 ? 1 : val;
+    }
+});
+
+opts.option('compiler-baselines', {
+    experimental: true,
+    set: function (str) {
+        var runner = new CompilerBaselineRunner();
+        runner.options = str;
+        runners.push(runner);
     }
 });
 
