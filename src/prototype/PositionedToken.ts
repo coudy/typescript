@@ -22,6 +22,10 @@ class PositionedElement {
     public fullStart(): number {
         return this._fullStart;
     }
+
+    public fullEnd(): number {
+        return this.fullStart() + this.element().fullWidth();
+    }
 }
 
 class PositionedNode extends PositionedElement {
