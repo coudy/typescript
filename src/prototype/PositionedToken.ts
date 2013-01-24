@@ -26,6 +26,14 @@ class PositionedElement {
     public fullEnd(): number {
         return this.fullStart() + this.element().fullWidth();
     }
+
+    public start(): number {
+        return this.fullStart() + this.element().leadingTriviaWidth();
+    }
+
+    public end(): number {
+        return this.fullStart() + this.element().leadingTriviaWidth() + this.element().width();
+    }
 }
 
 class PositionedNode extends PositionedElement {
