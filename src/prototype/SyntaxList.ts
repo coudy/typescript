@@ -6,10 +6,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return true; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public toJSON(key) {
             return [];
@@ -99,8 +97,6 @@ module Syntax {
         public isNode(): bool { return false; }
         public isList(): bool { return true; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public toJSON(key) {
             return [this.item];
@@ -193,10 +189,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return true; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public toJSON(key) {
             return this.nodeOrTokens;

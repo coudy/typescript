@@ -27,10 +27,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return this.width(); }
@@ -116,10 +114,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
@@ -205,10 +201,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
@@ -297,10 +291,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
@@ -373,10 +365,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return this.width(); }
@@ -446,10 +436,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
@@ -522,10 +510,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
@@ -601,10 +587,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return true; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }

@@ -6,12 +6,6 @@
 module Syntax {
     export var emptyTriviaList: ISyntaxTriviaList = {
         kind: (): SyntaxKind => SyntaxKind.TriviaList,
-        isToken: (): bool => false,
-        isNode: (): bool => false,
-        isList: (): bool => false,
-        isSeparatedList: (): bool => false,
-        isTriviaList: (): bool => true,
-        isTrivia: (): bool => false,
 
         count: (): number => 0,
 
@@ -24,7 +18,6 @@ module Syntax {
         },
 
         fullWidth: (): number => 0,
-        width: (): number => 0,
         fullText: (): string => "",
 
         hasComment: (): bool => false,
@@ -38,12 +31,6 @@ module Syntax {
         toArray: (): ISyntaxTrivia[] => [],
 
         concat: (trivia: ISyntaxTriviaList): ISyntaxTriviaList => trivia,
-
-        leadingTriviaWidth: () => 0,
-        trailingTriviaWidth: () => 0,
-
-        firstToken: () => null,
-        lastToken: () => null,
     };
 
     function concatTrivia(list1: ISyntaxTriviaList, list2: ISyntaxTriviaList): ISyntaxTriviaList {
@@ -67,13 +54,7 @@ module Syntax {
 
     class SingletonSyntaxTriviaList implements ISyntaxTriviaList {
         private item: ISyntaxTrivia;
-        public isToken(): bool { return false; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return true; }
-        public isTrivia(): bool { return false; }
-        
+
         constructor(item: ISyntaxTrivia) {
             this.item = item;
         }
@@ -100,20 +81,8 @@ module Syntax {
             return this.item.fullWidth();
         }
 
-        public width(): number {
-            return this.fullWidth();
-        }
-
         public fullText(): string {
             return this.item.fullText();
-        }
-
-        public leadingTriviaWidth(): number {
-            return 0;
-        }
-
-        public trailingTriviaWidth(): number {
-            return 0;
         }
 
         public hasComment(): bool {
@@ -143,14 +112,6 @@ module Syntax {
         public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
             return concatTrivia(this, trivia);
         }
-
-        public firstToken(): ISyntaxToken {
-            return null;
-        }
-
-        public lastToken(): ISyntaxToken {
-            return null;
-        }
     }
 
     class NormalSyntaxTriviaList implements ISyntaxTriviaList {
@@ -161,12 +122,6 @@ module Syntax {
         }
 
         public kind(): SyntaxKind { return SyntaxKind.TriviaList; }
-        public isToken(): bool { return false; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
-        public isTriviaList(): bool { return true; }
-        public isTrivia(): bool { return false; }
 
         public count() {
             return this.trivia.length;
@@ -186,18 +141,6 @@ module Syntax {
 
         public fullWidth(): number {
             return ArrayUtilities.sum(this.trivia, t => t.fullWidth());
-        }
-
-        public width(): number {
-            return this.fullWidth();
-        }
-
-        public leadingTriviaWidth(): number {
-            return 0;
-        }
-
-        public trailingTriviaWidth(): number {
-            return 0;
         }
 
         public fullText(): string {
@@ -256,14 +199,6 @@ module Syntax {
 
         public concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList {
             return concatTrivia(this, trivia);
-        }
-
-        public firstToken(): ISyntaxToken {
-            return null;
-        }
-
-        public lastToken(): ISyntaxToken {
-            return null;
         }
     }
 

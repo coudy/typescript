@@ -10,10 +10,8 @@ module Syntax {
 
         isNode: () => false,
         isToken: () => false,
-        isTrivia: () => false,
         isList: () => false,
         isSeparatedList: () => true,
-        isTriviaList: () => false,
 
         toJSON: (key) => [],
 
@@ -80,10 +78,8 @@ module Syntax {
 
         public isNode(): bool { return false; }
         public isToken(): bool { return false; }
-        public isTrivia(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return true; }
-        public isTriviaList(): bool { return false; }
 
         public itemAndSeparatorCount() { return 1; }
         public itemCount() { return 1; }
@@ -194,8 +190,6 @@ module Syntax {
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return true; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
         public toJSON(key) { return this.elements; }
 
         public itemAndSeparatorCount() { return this.elements.length; }

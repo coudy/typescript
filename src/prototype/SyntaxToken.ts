@@ -116,8 +116,6 @@ module Syntax {
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return false; }
-        public isTriviaList(): bool { return false; }
         public kind() { return this.tokenKind; }
 
         public toJSON(key) { return tokenToJSON(this); }

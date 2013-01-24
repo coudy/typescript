@@ -2366,10 +2366,8 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     result +=
 "        public isNode(): bool { return false; }\r\n" +
 "        public isToken(): bool { return true; }\r\n" +
-"        public isTrivia(): bool { return false; }\r\n" +
 "        public isList(): bool { return false; }\r\n" +
-"        public isSeparatedList(): bool { return false; }\r\n" +
-"        public isTriviaList(): bool { return false; }\r\n\r\n";
+"        public isSeparatedList(): bool { return false; }\r\n\r\n";
 
     result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
 

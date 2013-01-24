@@ -14,10 +14,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
     public isNode(): bool{ return true; }
     public isToken(): bool { return false; }
-    public isTrivia(): bool { return false; }
     public isList(): bool{ return false; }
     public isSeparatedList(): bool{ return false; }
-    public isTriviaList(): bool { return false; }
 
     public kind(): SyntaxKind {
         throw Errors.abstract();

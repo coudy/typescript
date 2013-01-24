@@ -20893,16 +20893,10 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.isToken = function () {
         return false;
     };
-    SyntaxNode.prototype.isTrivia = function () {
-        return false;
-    };
     SyntaxNode.prototype.isList = function () {
         return false;
     };
     SyntaxNode.prototype.isSeparatedList = function () {
-        return false;
-    };
-    SyntaxNode.prototype.isTriviaList = function () {
         return false;
     };
     SyntaxNode.prototype.kind = function () {
@@ -21580,17 +21574,11 @@ var Syntax;
         isToken: function () {
             return false;
         },
-        isTrivia: function () {
-            return false;
-        },
         isList: function () {
             return false;
         },
         isSeparatedList: function () {
             return true;
-        },
-        isTriviaList: function () {
-            return false;
         },
         toJSON: function (key) {
             return [];
@@ -21678,17 +21666,11 @@ var Syntax;
         SingletonSeparatedSyntaxList.prototype.isToken = function () {
             return false;
         };
-        SingletonSeparatedSyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
         SingletonSeparatedSyntaxList.prototype.isList = function () {
             return false;
         };
         SingletonSeparatedSyntaxList.prototype.isSeparatedList = function () {
             return true;
-        };
-        SingletonSeparatedSyntaxList.prototype.isTriviaList = function () {
-            return false;
         };
         SingletonSeparatedSyntaxList.prototype.itemAndSeparatorCount = function () {
             return 1;
@@ -21793,12 +21775,6 @@ var Syntax;
         };
         NormalSeparatedSyntaxList.prototype.isSeparatedList = function () {
             return true;
-        };
-        NormalSeparatedSyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
-        NormalSeparatedSyntaxList.prototype.isTriviaList = function () {
-            return false;
         };
         NormalSeparatedSyntaxList.prototype.toJSON = function (key) {
             return this.elements;
@@ -22007,16 +21983,10 @@ var Syntax;
         EmptySyntaxList.prototype.isToken = function () {
             return false;
         };
-        EmptySyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
         EmptySyntaxList.prototype.isList = function () {
             return true;
         };
         EmptySyntaxList.prototype.isSeparatedList = function () {
-            return false;
-        };
-        EmptySyntaxList.prototype.isTriviaList = function () {
             return false;
         };
         EmptySyntaxList.prototype.toJSON = function (key) {
@@ -22091,12 +22061,6 @@ var Syntax;
             return true;
         };
         SingletonSyntaxList.prototype.isSeparatedList = function () {
-            return false;
-        };
-        SingletonSyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
-        SingletonSyntaxList.prototype.isTriviaList = function () {
             return false;
         };
         SingletonSyntaxList.prototype.toJSON = function (key) {
@@ -22177,16 +22141,10 @@ var Syntax;
         NormalSyntaxList.prototype.isToken = function () {
             return false;
         };
-        NormalSyntaxList.prototype.isTrivia = function () {
-            return false;
-        };
         NormalSyntaxList.prototype.isList = function () {
             return true;
         };
         NormalSyntaxList.prototype.isSeparatedList = function () {
-            return false;
-        };
-        NormalSyntaxList.prototype.isTriviaList = function () {
             return false;
         };
         NormalSyntaxList.prototype.toJSON = function (key) {
@@ -22594,12 +22552,6 @@ var Syntax;
             return false;
         };
         EmptyToken.prototype.isSeparatedList = function () {
-            return false;
-        };
-        EmptyToken.prototype.isTrivia = function () {
-            return false;
-        };
-        EmptyToken.prototype.isTriviaList = function () {
             return false;
         };
         EmptyToken.prototype.kind = function () {
@@ -31425,16 +31377,10 @@ var Syntax;
         VariableWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithNoTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         VariableWidthTokenWithNoTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.kind = function () {
@@ -31560,16 +31506,10 @@ var Syntax;
         VariableWidthTokenWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         VariableWidthTokenWithLeadingTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.kind = function () {
@@ -31695,16 +31635,10 @@ var Syntax;
         VariableWidthTokenWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         VariableWidthTokenWithTrailingTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.kind = function () {
@@ -31831,16 +31765,10 @@ var Syntax;
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
@@ -31961,16 +31889,10 @@ var Syntax;
         FixedWidthTokenWithNoTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithNoTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         FixedWidthTokenWithNoTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.kind = function () {
@@ -32085,16 +32007,10 @@ var Syntax;
         FixedWidthTokenWithLeadingTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithLeadingTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         FixedWidthTokenWithLeadingTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.kind = function () {
@@ -32215,16 +32131,10 @@ var Syntax;
         FixedWidthTokenWithTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithTrailingTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         FixedWidthTokenWithTrailingTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.kind = function () {
@@ -32346,16 +32256,10 @@ var Syntax;
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
             return true;
         };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTrivia = function () {
-            return false;
-        };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTriviaList = function () {
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
@@ -32517,38 +32421,11 @@ var Syntax;
             result.text = this._text;
             return result;
         };
-        SyntaxTrivia.prototype.isToken = function () {
-            return false;
-        };
-        SyntaxTrivia.prototype.isNode = function () {
-            return false;
-        };
-        SyntaxTrivia.prototype.isList = function () {
-            return false;
-        };
-        SyntaxTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        SyntaxTrivia.prototype.isTrivia = function () {
-            return true;
-        };
-        SyntaxTrivia.prototype.isTriviaList = function () {
-            return false;
-        };
         SyntaxTrivia.prototype.kind = function () {
             return this._kind;
         };
         SyntaxTrivia.prototype.fullWidth = function () {
             return this._text.length;
-        };
-        SyntaxTrivia.prototype.width = function () {
-            return this.fullWidth();
-        };
-        SyntaxTrivia.prototype.leadingTriviaWidth = function () {
-            return 0;
-        };
-        SyntaxTrivia.prototype.trailingTriviaWidth = function () {
-            return 0;
         };
         SyntaxTrivia.prototype.fullText = function () {
             return this._text;
@@ -32564,12 +32441,6 @@ var Syntax;
         };
         SyntaxTrivia.prototype.collectTextElements = function (elements) {
             elements.push(this.fullText());
-        };
-        SyntaxTrivia.prototype.firstToken = function () {
-            return null;
-        };
-        SyntaxTrivia.prototype.lastToken = function () {
-            return null;
         };
         return SyntaxTrivia;
     })();    
@@ -32631,24 +32502,6 @@ var Syntax;
         kind: function () {
             return 3 /* TriviaList */ ;
         },
-        isToken: function () {
-            return false;
-        },
-        isNode: function () {
-            return false;
-        },
-        isList: function () {
-            return false;
-        },
-        isSeparatedList: function () {
-            return false;
-        },
-        isTriviaList: function () {
-            return true;
-        },
-        isTrivia: function () {
-            return false;
-        },
         count: function () {
             return 0;
         },
@@ -32659,9 +32512,6 @@ var Syntax;
             throw Errors.argumentOutOfRange("index");
         },
         fullWidth: function () {
-            return 0;
-        },
-        width: function () {
             return 0;
         },
         fullText: function () {
@@ -32686,18 +32536,6 @@ var Syntax;
         },
         concat: function (trivia) {
             return trivia;
-        },
-        leadingTriviaWidth: function () {
-            return 0;
-        },
-        trailingTriviaWidth: function () {
-            return 0;
-        },
-        firstToken: function () {
-            return null;
-        },
-        lastToken: function () {
-            return null;
         }
     };
     function concatTrivia(list1, list2) {
@@ -32718,24 +32556,6 @@ var Syntax;
         function SingletonSyntaxTriviaList(item) {
             this.item = item;
         }
-        SingletonSyntaxTriviaList.prototype.isToken = function () {
-            return false;
-        };
-        SingletonSyntaxTriviaList.prototype.isNode = function () {
-            return false;
-        };
-        SingletonSyntaxTriviaList.prototype.isList = function () {
-            return false;
-        };
-        SingletonSyntaxTriviaList.prototype.isSeparatedList = function () {
-            return false;
-        };
-        SingletonSyntaxTriviaList.prototype.isTriviaList = function () {
-            return true;
-        };
-        SingletonSyntaxTriviaList.prototype.isTrivia = function () {
-            return false;
-        };
         SingletonSyntaxTriviaList.prototype.kind = function () {
             return 3 /* TriviaList */ ;
         };
@@ -32754,17 +32574,8 @@ var Syntax;
         SingletonSyntaxTriviaList.prototype.fullWidth = function () {
             return this.item.fullWidth();
         };
-        SingletonSyntaxTriviaList.prototype.width = function () {
-            return this.fullWidth();
-        };
         SingletonSyntaxTriviaList.prototype.fullText = function () {
             return this.item.fullText();
-        };
-        SingletonSyntaxTriviaList.prototype.leadingTriviaWidth = function () {
-            return 0;
-        };
-        SingletonSyntaxTriviaList.prototype.trailingTriviaWidth = function () {
-            return 0;
         };
         SingletonSyntaxTriviaList.prototype.hasComment = function () {
             return isComment(this.item);
@@ -32791,12 +32602,6 @@ var Syntax;
         SingletonSyntaxTriviaList.prototype.concat = function (trivia) {
             return concatTrivia(this, trivia);
         };
-        SingletonSyntaxTriviaList.prototype.firstToken = function () {
-            return null;
-        };
-        SingletonSyntaxTriviaList.prototype.lastToken = function () {
-            return null;
-        };
         return SingletonSyntaxTriviaList;
     })();    
     var NormalSyntaxTriviaList = (function () {
@@ -32805,24 +32610,6 @@ var Syntax;
         }
         NormalSyntaxTriviaList.prototype.kind = function () {
             return 3 /* TriviaList */ ;
-        };
-        NormalSyntaxTriviaList.prototype.isToken = function () {
-            return false;
-        };
-        NormalSyntaxTriviaList.prototype.isNode = function () {
-            return false;
-        };
-        NormalSyntaxTriviaList.prototype.isList = function () {
-            return false;
-        };
-        NormalSyntaxTriviaList.prototype.isSeparatedList = function () {
-            return false;
-        };
-        NormalSyntaxTriviaList.prototype.isTriviaList = function () {
-            return true;
-        };
-        NormalSyntaxTriviaList.prototype.isTrivia = function () {
-            return false;
         };
         NormalSyntaxTriviaList.prototype.count = function () {
             return this.trivia.length;
@@ -32840,15 +32627,6 @@ var Syntax;
             return ArrayUtilities.sum(this.trivia, function (t) {
                 return t.fullWidth();
             });
-        };
-        NormalSyntaxTriviaList.prototype.width = function () {
-            return this.fullWidth();
-        };
-        NormalSyntaxTriviaList.prototype.leadingTriviaWidth = function () {
-            return 0;
-        };
-        NormalSyntaxTriviaList.prototype.trailingTriviaWidth = function () {
-            return 0;
         };
         NormalSyntaxTriviaList.prototype.fullText = function () {
             var result = "";
@@ -32894,12 +32672,6 @@ var Syntax;
         };
         NormalSyntaxTriviaList.prototype.concat = function (trivia) {
             return concatTrivia(this, trivia);
-        };
-        NormalSyntaxTriviaList.prototype.firstToken = function () {
-            return null;
-        };
-        NormalSyntaxTriviaList.prototype.lastToken = function () {
-            return null;
         };
         return NormalSyntaxTriviaList;
     })();    

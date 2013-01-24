@@ -4441,7 +4441,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     }
     result += ");\r\n";
     result += "        }\r\n\r\n";
-    result += "        public isNode(): bool { return false; }\r\n" + "        public isToken(): bool { return true; }\r\n" + "        public isTrivia(): bool { return false; }\r\n" + "        public isList(): bool { return false; }\r\n" + "        public isSeparatedList(): bool { return false; }\r\n" + "        public isTriviaList(): bool { return false; }\r\n\r\n";
+    result += "        public isNode(): bool { return false; }\r\n" + "        public isToken(): bool { return true; }\r\n" + "        public isList(): bool { return false; }\r\n" + "        public isSeparatedList(): bool { return false; }\r\n\r\n";
     result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";

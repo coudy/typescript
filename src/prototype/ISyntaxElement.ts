@@ -1,15 +1,13 @@
 ///<reference path='SyntaxKind.ts' />
+///<reference path='ISyntaxToken.ts' />
 
 interface ISyntaxElement {
     kind(): SyntaxKind;
 
     isNode(): bool;
     isToken(): bool;
-    isTrivia(): bool;
-
     isList(): bool;
     isSeparatedList(): bool;
-    isTriviaList(): bool;
 
     // With of this element, including leading and trailing trivia.
     fullWidth(): number;

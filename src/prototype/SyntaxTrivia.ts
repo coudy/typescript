@@ -20,31 +20,12 @@ module Syntax {
             return result;
         }
 
-        public isToken(): bool { return false; }
-        public isNode(): bool { return false; }
-        public isList(): bool { return false; }
-        public isSeparatedList(): bool { return false; }
-        public isTrivia(): bool { return true; }
-        public isTriviaList(): bool { return false; }
-
         public kind(): SyntaxKind {
             return this._kind;
         }
 
         public fullWidth(): number {
             return this._text.length;
-        }
-
-        public width(): number {
-            return this.fullWidth();
-        }
-
-        public leadingTriviaWidth(): number {
-            return 0;
-        }
-
-        public trailingTriviaWidth(): number {
-            return 0;
         }
 
         public fullText(): string {
@@ -65,14 +46,6 @@ module Syntax {
 
         public collectTextElements(elements: string[]): void {
             elements.push(this.fullText());
-        }
-
-        public firstToken(): ISyntaxToken {
-            return null;
-        }
-
-        public lastToken(): ISyntaxToken {
-            return null;
         }
     }
 
