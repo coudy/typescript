@@ -35764,20 +35764,32 @@ var Parser1;
             this.skippedTokens = skippedTokens;
             this.position = 0;
         }
+        SkippedTokensAdder.prototype.skippedElement = function (element) {
+            var elementWidth = 0;
+            if(this.skippedTokens.length !== 0) {
+                var skippedToken = this.skippedTokens[0];
+                var elementWidth = element.fullWidth();
+                if(this.position + elementWidth >= skippedToken.position) {
+                    return false;
+                }
+            }
+            this.position += elementWidth;
+            return true;
+        };
         SkippedTokensAdder.prototype.visitNode = function (node) {
-            if(this.skippedTokens.length === 0) {
+            if(this.skippedElement(node)) {
                 return node;
             }
             return _super.prototype.visitNode.call(this, node);
         };
         SkippedTokensAdder.prototype.visitList = function (list) {
-            if(this.skippedTokens.length === 0) {
+            if(this.skippedElement(list)) {
                 return list;
             }
             return _super.prototype.visitList.call(this, list);
         };
         SkippedTokensAdder.prototype.visitSeparatedList = function (list) {
-            if(this.skippedTokens.length === 0) {
+            if(this.skippedElement(list)) {
                 return list;
             }
             return _super.prototype.visitSeparatedList.call(this, list);
