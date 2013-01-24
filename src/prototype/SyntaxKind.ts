@@ -309,8 +309,8 @@ enum SyntaxKind {
     FirstKeyword = FirstStandardKeyword,
     LastKeyword = LastTypeScriptKeyword,
 
-    FirstToken = IdentifierName,
-    LastToken = EndOfFileToken,
+    FirstToken = ErrorToken,
+    LastToken = SlashEqualsToken,
 
     FirstPunctuation = OpenBraceToken,
     LastPunctuation = SlashEqualsToken,

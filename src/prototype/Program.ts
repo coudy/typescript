@@ -22,17 +22,17 @@ class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
 
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
+        Environment.standardOut.WriteLine("Testing against fuzz.");
+        this.runTests("C:\\temp\\fuzz",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 1000);
 
         if (true) {
             // return;
         }
 
-        //Environment.standardOut.WriteLine("Testing against fuzz.");
-        //this.runTests("C:\\temp\\fuzz",
-        //    filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 1000);
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
