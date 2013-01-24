@@ -4,6 +4,21 @@
 
 class CompilerBaselineRunner extends RunnerBase {
 
+    constructor() {
+        super();
+        this.errors = true;
+        this.emit = true;
+        this.decl = true;
+        this.output = true;
+    }
+
+    private errors;
+    private emit;
+    private decl;
+    private output;
+
+    public options: string;
+
     // the compiler flags which we support and functions to set the right settings
     private supportedFlags: { flag: string; setFlag: (x: TypeScript.CompilationSettings, value: string) => void; }[] = [
     { flag: 'comments', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.emitComments = value.toLowerCase() === 'true' ? true : false; } },
@@ -99,16 +114,18 @@ class CompilerBaselineRunner extends RunnerBase {
             });
 
             // check errors
-            Harness.Baseline.runBaseline('Correct errors for ' + filename + ' (commonjs)', justName.replace(/\.ts/, '.errors.txt'), () => {
-                if (errorDescriptionLocal === '') {
-                    return null;
-                } else {
-                    return errorDescriptionLocal;
-                }
-            }); 
+            if (that.errors) {
+                Harness.Baseline.runBaseline('Correct errors for ' + filename + ' (commonjs)', justName.replace(/\.ts/, '.errors.txt'), () => {
+                    if (errorDescriptionLocal === '') {
+                        return null;
+                    } else {
+                        return errorDescriptionLocal;
+                    }
+                });
+            }
 
             // if the .d.ts is non-empty, confirm it compiles correctly as well
-            if (!declFileCode) {
+            if (that.decl && !declFileCode) {
                 var declErrors = '';
                 Harness.Compiler.compileString(declFileCode, declFileName, function (result) {
                     for (var i = 0; i < result.errors.length; i++) {
@@ -122,37 +139,43 @@ class CompilerBaselineRunner extends RunnerBase {
             }
 
             if (!Harness.Compiler.isDeclareFile(lastUnit.name)) {
-                // check js output
-                Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + filename, justName.replace(/\.ts/, '.commonjs.js'), () => {
-                    return jsOutputSync;
-                });
-
-                Harness.Baseline.runBaseline('Correct JS output (AMD) for ' + filename, justName.replace(/\.ts/, '.amd.js'), () => {
-                    return jsOutputAsync;
-                });
-
-                // check runtime output
-                Harness.Baseline.runBaseline('Correct runtime output for ' + filename, justName.replace(/\.ts/, '.output.txt'), () => {
-                    var runResult = null;
-                    Harness.Runner.runJSString(jsOutputSync, (error, result) => {
-                        if (error === null) {
-                            runResult = result;
-                        }
+                if (that.emit) {
+                    // check js output
+                    Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + filename, justName.replace(/\.ts/, '.commonjs.js'), () => {
+                        return jsOutputSync;
                     });
 
-                    if (typeof runResult === 'string') {
-                        // Some interesting runtime result to report
-                        return runResult;
-                    } else {
-                        return null;
-                    }
-                });
+                    Harness.Baseline.runBaseline('Correct JS output (AMD) for ' + filename, justName.replace(/\.ts/, '.amd.js'), () => {
+                        return jsOutputAsync;
+                    });
+                }
+
+                if (that.output) {
+                    // check runtime output
+                    Harness.Baseline.runBaseline('Correct runtime output for ' + filename, justName.replace(/\.ts/, '.output.txt'), () => {
+                        var runResult = null;
+                        Harness.Runner.runJSString(jsOutputSync, (error, result) => {
+                            if (error === null) {
+                                runResult = result;
+                            }
+                        });
+
+                        if (typeof runResult === 'string') {
+                            // Some interesting runtime result to report
+                            return runResult;
+                        } else {
+                            return null;
+                        }
+                    });
+                }
             }
         });
     }
 
     public runTests() {
         Harness.Compiler.recreate()
+
+        this.parseOptions();
 
         if (this.tests.length === 0) {
             this.enumerateFiles('tests/cases/compiler').forEach(fn => {
@@ -162,6 +185,35 @@ class CompilerBaselineRunner extends RunnerBase {
         }
         else {
             this.tests.forEach(test => this.checkTestCodeOutput(test));
+        }
+    }
+
+    private parseOptions() {
+        if (this.options && this.options.length > 0) {
+            this.errors = false;
+            this.emit = false;
+            this.decl = false;
+            this.output = false;
+
+            var opts = this.options.split(',');
+            for (var i = 0; i < opts.length; i++) {
+                switch (opts[i]) {
+                    case 'error':
+                        this.errors = true;
+                        break;
+                    case 'emit':
+                        this.emit = true;
+                        break;
+                    case 'decl':
+                        this.decl = true;
+                        break;
+                    case 'output':
+                        this.output = true;
+                        break;
+                    default:
+                        throw new Error('unsupported flag');
+                }
+            }
         }
     }
 }
