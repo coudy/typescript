@@ -3,12 +3,12 @@
 class PositionedElement {
     private _parent: PositionedElement;
     private _element: ISyntaxElement;
-    private _position: number;
+    private _fullStart: number;
 
-    constructor(parent: PositionedElement, element: ISyntaxElement, position: number) {
+    constructor(parent: PositionedElement, element: ISyntaxElement, fullStart: number) {
         this._parent = parent;
         this._element = element;
-        this._position = position;
+        this._fullStart = fullStart;
     }
 
     public parent(): PositionedElement {
@@ -19,8 +19,8 @@ class PositionedElement {
         return this._element;
     }
 
-    public position(): number {
-        return this._position;
+    public fullStart(): number {
+        return this._fullStart;
     }
 }
 
