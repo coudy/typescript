@@ -47582,8 +47582,9 @@ var Program = (function () {
         Environment.standardOut.WriteLine("Testing against fuzz.");
         this.runTests("C:\\temp\\fuzz", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
-        }, 1000);
+        }, 2000);
         if(true) {
+            return;
         }
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
@@ -47757,6 +47758,7 @@ var Program = (function () {
         totalSize += contents.length;
         if(useTypeScript) {
             var text1 = new TypeScript.StringSourceText(contents);
+            timer.start();
             var parser1 = new TypeScript.Parser();
             parser1.errorRecovery = true;
             var unit1 = parser1.parse(text1, filePath, 0);
@@ -47999,7 +48001,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);

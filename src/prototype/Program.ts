@@ -24,10 +24,10 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against fuzz.");
         this.runTests("C:\\temp\\fuzz",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 1000);
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 2000);
 
         if (true) {
-            // return;
+            return;
         }
 
         Environment.standardOut.WriteLine("Testing parser.");
@@ -260,7 +260,8 @@ class Program {
 
         if (useTypeScript) {
             var text1 = new TypeScript.StringSourceText(contents);
-            
+
+            timer.start();
             var parser1 = new TypeScript.Parser(); 
             parser1.errorRecovery = true;
             var unit1 = parser1.parse(text1, filePath, 0);
@@ -582,7 +583,7 @@ if (true) {
 }
 
 // Existing parser.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);
