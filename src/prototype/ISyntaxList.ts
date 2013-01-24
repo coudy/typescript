@@ -6,11 +6,7 @@ interface ISyntaxList extends ISyntaxElement {
     itemAt(index: number): ISyntaxNodeOrToken;
     toArray(): ISyntaxNodeOrToken[];
 
-    firstToken(): ISyntaxToken;
-    lastToken(): ISyntaxToken;
-
     isTypeScriptSpecific(): bool;
-
     hasSkippedText(): bool;
     hasZeroWidthToken(): bool;
     hasRegularExpressionToken(): bool;

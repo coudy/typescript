@@ -1,6 +1,4 @@
 interface ISyntaxNodeOrToken extends ISyntaxElement {
-    firstToken(): ISyntaxToken;
-    lastToken(): ISyntaxToken;
     hasSkippedText(): bool;
     isTypeScriptSpecific(): bool;
     hasZeroWidthToken(): bool;
