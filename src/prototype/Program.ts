@@ -11,8 +11,9 @@
 var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
-var specificFile = 
-    // "GreaterThanTokenAmbiguity20.ts";
+var specificFile =
+    "ErrorRecovery_LeftShift1.ts";
+    // "0_000137.ts";
     undefined;
 
 var generate = false;
@@ -21,13 +22,21 @@ class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
 
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
+
+        if (true) {
+            return;
+        }
+
+        Environment.standardOut.WriteLine("Testing against fuzz.");
+        this.runTests("C:\\temp\\fuzz",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 1000);
+
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
-
-        if (true) {
-            // return;
-        }
 
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5",
@@ -41,10 +50,6 @@ class Program {
         if (specificFile === undefined) {
             IncrementalParserTests.runAllTests();
         }
-
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\trivia\\ecmascript5",
@@ -147,9 +152,12 @@ class Program {
 
     private runTests(
         path: string,
-        action: (filePath: string) => void) {
+        action: (filePath: string) => void,
+        count: number = -1) {
 
         var testFiles = Environment.listFiles(path, null, { recursive: true });
+        var indexNum = 0;
+
         for (var index in testFiles) {
             var filePath = testFiles[index];
             if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
@@ -161,7 +169,13 @@ class Program {
             }
             catch (e) {
                 this.handleException(filePath, e);
-           }
+            }
+
+            indexNum++;
+
+            if (count != -1 && indexNum > count) {
+                break;
+            }
         }
     }
 
@@ -403,6 +417,10 @@ class Program {
     }
 
     parseArguments(useTypeScript: bool): void {
+        if (true) {
+            return;
+        }
+
         Environment.standardOut.WriteLine("Testing input files.");
         for (var index in Environment.arguments) {
             var filePath: string = Environment.arguments[index];
@@ -564,7 +582,7 @@ if (true) {
 }
 
 // Existing parser.
-if (false) {
+if (true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);
@@ -574,7 +592,7 @@ if (false) {
 }
 
 // Test 262.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.run262();

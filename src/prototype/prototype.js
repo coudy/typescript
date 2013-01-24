@@ -47554,19 +47554,29 @@ var IncrementalParserTests = (function () {
 })();
 var timer = new Timer();
 var stringTable = Collections.createStringTable();
-var specificFile = undefined;
+var specificFile = "ErrorRecovery_LeftShift1.ts";
+undefined;
 var generate = false;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
+        });
+        if(true) {
+            return;
+        }
+        Environment.standardOut.WriteLine("Testing against fuzz.");
+        this.runTests("C:\\temp\\fuzz", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
+        }, 1000);
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
-        if(true) {
-        }
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -47579,10 +47589,6 @@ var Program = (function () {
         if(specificFile === undefined) {
             IncrementalParserTests.runAllTests();
         }
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
-        });
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
             return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, generate);
@@ -47660,10 +47666,12 @@ var Program = (function () {
             Environment.standardOut.WriteLine(e.message);
         }
     };
-    Program.prototype.runTests = function (path, action) {
+    Program.prototype.runTests = function (path, action, count) {
+        if (typeof count === "undefined") { count = -1; }
         var testFiles = Environment.listFiles(path, null, {
             recursive: true
         });
+        var indexNum = 0;
         for(var index in testFiles) {
             var filePath = testFiles[index];
             if(specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
@@ -47673,6 +47681,10 @@ var Program = (function () {
                 action(filePath);
             } catch (e) {
                 this.handleException(filePath, e);
+            }
+            indexNum++;
+            if(count != -1 && indexNum > count) {
+                break;
             }
         }
     };
@@ -47846,6 +47858,9 @@ var Program = (function () {
         this.checkResult(filePath, result, verify, generateBaseline, false);
     };
     Program.prototype.parseArguments = function (useTypeScript) {
+        if(true) {
+            return;
+        }
         Environment.standardOut.WriteLine("Testing input files.");
         for(var index in Environment.arguments) {
             var filePath = Environment.arguments[index];
@@ -47968,7 +47983,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);
@@ -47976,7 +47991,7 @@ if(false) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.run262();
