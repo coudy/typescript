@@ -26,6 +26,7 @@
 ///<reference path='languageService.ts' />
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />
+///<reference path='outliningElementsCollector.ts' />
 
 module Services {
     export function copyDataObject(dst: any, src: any): any {

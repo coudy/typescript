@@ -14,107 +14,125 @@
 //
 
 ///<reference path='typescriptServices.ts' />
+///<reference path='..\prototype\TextSpanWalker.ts' />
 
 module Services {
 
-    export class BraceMatchingManager {
+    class ForwardBranceMatchingWalker extends TextSpanWalker {
+        private openBraceCount = 0;
+        public closingBracePosition: TextSpan = null;
 
-        constructor(private scriptSyntaxAST: Services.ScriptSyntaxAST) {
+        constructor(span: TextSpan, private bracePosition: number, private openningBraceKind: SyntaxKind, private closingBraceKind: SyntaxKind) {
+            super(span);
+        }
+        
+        public visitToken(token: ISyntaxToken): void {
+            var tokenStart = this.position() + token.leadingTriviaWidth();
+            if (tokenStart > this.bracePosition) {
+                if (token.kind() === this.closingBraceKind && token.fullWidth() > 0) {
+                    if (this.openBraceCount === 0) {
+                        this.closingBracePosition = new TextSpan(tokenStart, token.width());
+                    }
+                    this.openBraceCount--;
+                } else if (token.kind() === this.openningBraceKind && token.fullWidth() > 0) {
+                    this.openBraceCount++;
+                }
+            }
+            super.visitToken(token);
+        }
+
+        public visitNode(node: SyntaxNode): void {
+            if (this.closingBracePosition !== null) {
+                // Found a matching brace
+                return;
+            }
+            super.visitNode(node);
+        }
+
+        public static getMatchingCloseBrace(node: SourceUnitSyntax, bracePosition: number, openningBraceKind: SyntaxKind, closingBraceKind: SyntaxKind): TextSpan {
+            var forwardBranceMatchingWalker = new ForwardBranceMatchingWalker(new TextSpan(bracePosition, node.fullWidth()), bracePosition, openningBraceKind, closingBraceKind);
+            node.accept(forwardBranceMatchingWalker);
+            return forwardBranceMatchingWalker.closingBracePosition;
+        }
+    }
+
+    class BackwardBranceMatchingWalker extends TextSpanWalker {
+        public openBracePositions: TextSpan[] = [];
+
+        constructor(span: TextSpan, private bracePosition: number, private openningBraceKind: SyntaxKind, private closingBraceKind: SyntaxKind) {
+            super(span);
+        }
+
+        public visitToken(token: ISyntaxToken): void {
+            var tokenStart = this.position() + token.leadingTriviaWidth();
+            if (tokenStart < this.bracePosition) {
+                if (token.kind() === this.openningBraceKind && token.fullWidth() > 0) {
+                    this.openBracePositions.push(new TextSpan(tokenStart, token.width()));
+                } else if (token.kind() === this.closingBraceKind && token.fullWidth() > 0) {
+                    this.openBracePositions.pop();
+                }
+            }
+            super.visitToken(token);
+        }
+
+        public static getMatchingOpenBrace(node: SourceUnitSyntax, bracePosition: number, openningBraceKind: SyntaxKind, closingBraceKind: SyntaxKind): TextSpan {
+            var backwardBranceMatchingWalker = new BackwardBranceMatchingWalker(new TextSpan(0, bracePosition), bracePosition, openningBraceKind, closingBraceKind);
+            node.accept(backwardBranceMatchingWalker);
+            return backwardBranceMatchingWalker.openBracePositions.pop();
+        }
+    }
+
+    export class BraceMatchingManager {
+        
+        constructor(private syntaxTree: SyntaxTree) {
         }
 
         // Given a script name and position in the script, return a pair of text range if the 
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
-        public getBraceMatchingAtPosition(position: number): TextRange[]{
-            var openBraces = "{([";
-            var openBracesTokens = [TypeScript.TokenID.OpenBrace, TypeScript.TokenID.OpenParen, TypeScript.TokenID.OpenBracket];
-            var closeBraces = "})]";
-            var closeBracesTokens = [TypeScript.TokenID.CloseBrace, TypeScript.TokenID.CloseParen, TypeScript.TokenID.CloseBracket];
+        public getBraceMatchingAtPosition(position: number): TextRange[] {
+
+            var openBraceKinds = [SyntaxKind.OpenBraceToken, SyntaxKind.OpenParenToken, SyntaxKind.OpenBracketToken];
+            var closeBraceKinds = [SyntaxKind.CloseBraceToken, SyntaxKind.CloseParenToken, SyntaxKind.CloseBracketToken];
 
             var result = new TextRange[]();
-            var character = this.scriptSyntaxAST.getSourceText().getText(position, position + 1);
-            var openBraceIndex = openBraces.indexOf(character);
-            if (openBraceIndex >= 0) {
-                var closeBracePos = this.getMatchingBraceForward(position, openBracesTokens[openBraceIndex], closeBracesTokens[openBraceIndex]);
-                if (closeBracePos >= 0) {
-                    var range1 = new TextRange(position, position + 1);
-                    var range2 = new TextRange(closeBracePos, closeBracePos + 1);
-                    result.push(range1, range2);
-                }
-            }
 
-            character = this.scriptSyntaxAST.getSourceText().getText(position - 1, position);
-            var closeBraceIndex = closeBraces.indexOf(character);
-            if (closeBraceIndex >= 0) {
-                var openBracePos = this.getMatchingBraceBackward(position - 1, closeBracesTokens[closeBraceIndex], openBracesTokens[closeBraceIndex]);
-                if (openBracePos >= 0) {
-                    var range1 = new TextRange(position - 1, position);
-                    var range2 = new TextRange(openBracePos, openBracePos + 1);
-                    result.push(range1, range2);
-                }
-            }
-            return result;
-        }
-
-        public getMatchingBraceForward(position: number, openToken: TypeScript.TokenID, closeToken: TypeScript.TokenID): number {
-            var tokenStream = this.scriptSyntaxAST.getTokenStream()
-            var balanceCount = 0;
-            var foundOpenToken = false;
-            while (tokenStream.moveNext()) {
-                if (tokenStream.tokenStartPos() === position) {
-                    if (tokenStream.tokenId() === openToken) {
-                        foundOpenToken = true;
-                    }
-                    else {
-                        break;
-                    }
-                }
-
-                if (foundOpenToken) {
-                    if (tokenStream.tokenId() === openToken) {
-                        balanceCount++;
-                    }
-                    else if (tokenStream.tokenId() === closeToken) {
-                        balanceCount--;
-                        if (balanceCount === 0) {
-                            return tokenStream.tokenStartPos();
+            // Check if the current token is an open brace
+            var findTokenResult = this.syntaxTree.sourceUnit().findToken(position);
+            if (findTokenResult.token.fullWidth() > 0) {
+                var openBraceKindIndex = openBraceKinds.indexOf(findTokenResult.token.kind());
+                if (openBraceKindIndex >= 0) {
+                    var bracePosition = findTokenResult.fullStart + findTokenResult.token.leadingTriviaWidth();
+                    if (bracePosition == position) {
+                        var closeBracePosition = ForwardBranceMatchingWalker.getMatchingCloseBrace(this.syntaxTree.sourceUnit(), position, openBraceKinds[openBraceKindIndex], closeBraceKinds[openBraceKindIndex]);
+                        if (closeBracePosition) {
+                            var range1 = new TextRange(position, position + 1);
+                            var range2 = new TextRange(closeBracePosition.start(), closeBracePosition.end());
+                            result.push(range1, range2);
                         }
                     }
                 }
             }
 
-            return -1;
-        }
-
-        public getMatchingBraceBackward(position: number, closeToken: TypeScript.TokenID, openToken: TypeScript.TokenID): number {
-            var tokenStream = this.scriptSyntaxAST.getTokenStream();
-            var openTokenPositions: number[] = [];
-            var foundOpenToken = false;
-            while (tokenStream.moveNext()) {
-                // We didn't find the close token: no match!
-                if (tokenStream.tokenStartPos() > position) {
-                    break;
-                }
-
-                // Found the close brace: return position of most recently found open token
-                if (tokenStream.tokenStartPos() === position && tokenStream.tokenId() === closeToken) {
-                    if (openTokenPositions.length > 0) {
-                        return openTokenPositions[openTokenPositions.length - 1];
-                    }
-                    break;
-                }
-
-                if (tokenStream.tokenId() === openToken) {
-                    openTokenPositions.push(tokenStream.tokenStartPos());
-                }
-                else if (tokenStream.tokenId() === closeToken) {
-                    if (openTokenPositions.length > 0) {
-                        openTokenPositions.pop();
+            // Check if the current token to the left is a close brace
+            if (findTokenResult.fullStart > position - 1) {
+                findTokenResult = this.syntaxTree.sourceUnit().findTokenOnLeft(position);
+            }
+            if (findTokenResult.token.fullWidth() > 0) {
+                var closeBraceKindIndex = closeBraceKinds.indexOf(findTokenResult.token.kind());
+                if (closeBraceKindIndex >= 0) {
+                    var bracePosition = findTokenResult.fullStart + findTokenResult.token.leadingTriviaWidth();
+                    if (bracePosition == (position - 1)) {
+                        var openBracePosition = BackwardBranceMatchingWalker.getMatchingOpenBrace(this.syntaxTree.sourceUnit(), position - 1, openBraceKinds[closeBraceKindIndex], closeBraceKinds[closeBraceKindIndex]);
+                        if (openBracePosition) {
+                            var range1 = new TextRange(position - 1, position);
+                            var range2 = new TextRange(openBracePosition.start(), openBracePosition.end());
+                            result.push(range1, range2);
+                        }
                     }
                 }
             }
-
-            return -1;
+            return result;
         }
     }
 }

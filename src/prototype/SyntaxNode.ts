@@ -55,6 +55,20 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         return null;
     }
 
+    public getRelativeChildOffset(element: ISyntaxElement): number {
+        var offset = 0;
+        for (var i = 0, n = this.slotCount(); i < n; i++) {
+            var child = this.elementAtSlot(i);
+            if (child === element) {
+                return offset;
+            }
+            if (child != null) {
+                offset += child.fullWidth();
+            }
+        }
+        return -1;
+    }
+
     // Returns the last non-missing token inside this node (or null if there are no such token).
     public lastToken(): ISyntaxToken {
         for (var i = this.slotCount() - 1; i >= 0; i--) {
@@ -410,6 +424,6 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
     public trailingTriviaWidth() {
         var lastToken = this.lastToken();
-        return lastToken === null ? 0 : lastToken.leadingTriviaWidth();
+        return lastToken === null ? 0 : lastToken.trailingTriviaWidth();
     }
 }
