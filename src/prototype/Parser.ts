@@ -1348,7 +1348,7 @@ module Parser1 {
         //we should keep it simple so that it can be inlined.
         private eatToken(kind: SyntaxKind): ISyntaxToken {
             // Assert disabled because it is actually expensive enugh to affect perf.
-            // Debug.assert(SyntaxFacts.isTokenKind(kind))
+            Debug.assert(SyntaxFacts.isTokenKind(kind))
 
             var token = this.currentToken();
             if (token.tokenKind === kind) {

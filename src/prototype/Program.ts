@@ -12,8 +12,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    // "0_000048.ts";
-    // "0_000137.ts";
+    // "ArgumentList1.ts";
     undefined;
 
 var generate = false;

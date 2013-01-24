@@ -400,17 +400,13 @@ module Syntax {
             for (var i = 0; i < nodes.length; i++) {
                 var item = nodes[i];
 
-                if (i % 2 === 0) {
-                    // Debug.assert(!SyntaxFacts.isTokenKind(item.kind()));
-                }
-                else {
+                if (i % 2 === 1) {
                     Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
                 }
             }
         }
 
         if (nodes.length === 1) {
-            // Debug.assert(nodes[0].isNode());
             return new SingletonSeparatedSyntaxList(nodes[0]);
         }
 

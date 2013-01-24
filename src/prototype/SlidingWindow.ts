@@ -169,7 +169,7 @@ class SlidingWindow {
 
     public peekItemN(n: number): any {
         // Assert disabled because it is actually expensive enugh to affect perf.
-        // Debug.assert(n >= 0);
+        Debug.assert(n >= 0);
         while (this.currentRelativeItemIndex + n >= this.windowCount) {
             if (!this.addMoreItemsToWindow(/*argument:*/ null)) {
                 return this.defaultValue;

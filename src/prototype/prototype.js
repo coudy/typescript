@@ -20183,6 +20183,7 @@ var SlidingWindow = (function () {
         return this.window[this.currentRelativeItemIndex];
     };
     SlidingWindow.prototype.peekItemN = function (n) {
+        Debug.assert(n >= 0);
         while(this.currentRelativeItemIndex + n >= this.windowCount) {
             if(!this.addMoreItemsToWindow(null)) {
                 return this.defaultValue;
@@ -21935,8 +21936,7 @@ var Syntax;
         if(validate) {
             for(var i = 0; i < nodes.length; i++) {
                 var item = nodes[i];
-                if(i % 2 === 0) {
-                } else {
+                if(i % 2 === 1) {
                     Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
                 }
             }
@@ -32527,6 +32527,7 @@ var Syntax;
     })();    
     function trivia(kind, text) {
         Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */  || kind === 8 /* SkippedTextTrivia */ );
+        Debug.assert(text.length > 0);
         return new SyntaxTrivia(kind, text);
     }
     Syntax.trivia = trivia;
@@ -36333,6 +36334,7 @@ var Parser1;
             return node;
         };
         ParserImpl.prototype.eatToken = function (kind) {
+            Debug.assert(SyntaxFacts.isTokenKind(kind));
             var token = this.currentToken();
             if(token.tokenKind === kind) {
                 this.moveToNextToken();

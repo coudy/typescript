@@ -66,7 +66,7 @@ module Syntax {
                      kind === SyntaxKind.SingleLineCommentTrivia ||
                      kind === SyntaxKind.WhitespaceTrivia ||
                      kind === SyntaxKind.SkippedTextTrivia);
-        // Debug.assert(text.length > 0);
+        Debug.assert(text.length > 0);
         return new SyntaxTrivia(kind, text);
     }
 
