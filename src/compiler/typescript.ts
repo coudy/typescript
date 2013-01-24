@@ -352,7 +352,7 @@ module TypeScript {
         public cleanASTTypesForReTypeCheck(ast: AST) {
             function cleanASTType(ast: AST, parent: AST): AST {
                 ast.type = null;
-                if (ast.nodeType == NodeType.VarDecl) {
+				if (ast.nodeType == NodeType.VarDecl) {
                     var vardecl = <VarDecl>ast;
                     vardecl.sym = null;
                 }
@@ -382,6 +382,9 @@ module TypeScript {
                 else if (ast.nodeType == NodeType.Catch) {
                     (<Catch>ast).containedScope = null;
                 }
+				else if (ast.nodeType === NodeType.Script) {
+					(<Script>ast).externallyVisibleImportedSymbols = [];
+				}
                 return ast;
             }
             TypeScript.getAstWalkerFactory().walk(ast, cleanASTType);
