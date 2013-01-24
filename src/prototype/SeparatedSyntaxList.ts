@@ -1,5 +1,7 @@
 ///<reference path='IntegerUtilities.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
+///<reference path='PositionedElement.ts' />
+///<reference path='SyntaxFacts.ts' />
 ///<reference path='SyntaxFacts.ts' />
 
 module Syntax {
@@ -50,7 +52,7 @@ module Syntax {
         hasZeroWidthToken: () => false,
         hasRegularExpressionToken: () => false,
 
-        findTokenInternal: (position: number, fullStart: number): { token: ISyntaxElement; fullStart: number; } => {
+        findTokenInternal: (parent: PositionedElement, position: number, fullStart: number): PositionedToken => {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
@@ -167,9 +169,10 @@ module Syntax {
             return this.item.hasRegularExpressionToken();
         }
 
-        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxElement; fullStart: number; } {
+        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (<any>this.item).findTokenInternal(position, fullStart);
+            return (<any>this.item).findTokenInternal(
+                new PositionedSeparatedList(parent, this, fullStart), position, fullStart);
         }
 
         public insertChildrenInto(array: ISyntaxElement[], index: number): void {
@@ -369,19 +372,14 @@ module Syntax {
             return this._data;
         }
 
-        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            parent = new PositionedSeparatedList(parent, this, fullStart);
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
 
                 var childWidth = element.fullWidth();
-
-                if (i % 2 === 0) {
-                    // Node
-                    if (position < childWidth) { return (<any>element).findTokenInternal(position, fullStart); }
-                }
-                else {
-                    // Token
-                    if (position < childWidth) { return { token: <ISyntaxToken>element, fullStart: fullStart }; }
+                if (position < childWidth) {
+                    return (<any>element).findTokenInternal(parent, position, fullStart);
                 }
 
                 position -= childWidth;

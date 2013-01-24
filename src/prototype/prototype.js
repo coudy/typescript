@@ -21103,33 +21103,24 @@ var SyntaxNode = (function () {
         if(position < 0 || position >= this.fullWidth()) {
             throw Errors.argumentOutOfRange("position");
         }
-        return this.findTokenInternal(position, 0);
+        return this.findTokenInternal(null, position, 0);
     };
     SyntaxNode.prototype.tryGetEndOfFileAt = function (position) {
         if(this.kind() === 120 /* SourceUnit */  && position === this.fullWidth()) {
             var sourceUnit = this;
-            return {
-                token: sourceUnit.endOfFileToken(),
-                fullStart: sourceUnit.moduleElements().fullWidth()
-            };
+            return new PositionedToken(new PositionedNode(null, sourceUnit, 0), sourceUnit.endOfFileToken(), sourceUnit.moduleElements().fullWidth());
         }
         return null;
     };
-    SyntaxNode.prototype.findTokenInternal = function (position, fullStart) {
+    SyntaxNode.prototype.findTokenInternal = function (parent, position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
+        parent = new PositionedNode(parent, this, fullStart);
         for(var i = 0, n = this.slotCount(); i < n; i++) {
             var element = this.elementAtSlot(i);
             if(element !== null) {
                 var childWidth = element.fullWidth();
                 if(position < childWidth) {
-                    if(element.isToken()) {
-                        return {
-                            token: element,
-                            fullStart: fullStart
-                        };
-                    } else {
-                        return (element).findTokenInternal(position, fullStart);
-                    }
+                    return (element).findTokenInternal(parent, position, fullStart);
                 }
                 position -= childWidth;
                 fullStart += childWidth;
@@ -21138,18 +21129,18 @@ var SyntaxNode = (function () {
         throw Errors.invalidOperation();
     };
     SyntaxNode.prototype.findTokenOnLeft = function (position) {
-        var token = this.findToken(position);
-        var start = token.fullStart + token.token.leadingTriviaWidth();
-        Debug.assert(position >= token.fullStart);
-        Debug.assert(position < (token.fullStart + token.token.fullWidth()) || token.token.tokenKind === 10 /* EndOfFileToken */ );
+        var positionedToken = this.findToken(position);
+        var start = positionedToken.start();
+        Debug.assert(position >= positionedToken.fullStart());
+        Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === 10 /* EndOfFileToken */ );
         if(position > start) {
-            return token;
+            return positionedToken;
         }
-        if(token.fullStart === 0) {
+        if(positionedToken.fullStart() === 0) {
             return null;
         }
-        var previousToken = this.findToken(token.fullStart - 1);
-        Debug.assert((previousToken.fullStart + previousToken.token.fullWidth()) <= position);
+        var previousToken = this.findToken(positionedToken.fullStart() - 1);
+        Debug.assert(previousToken.fullEnd() <= position);
         return previousToken;
     };
     SyntaxNode.prototype.isModuleElement = function () {
@@ -21222,6 +21213,72 @@ var IntegerUtilities = (function () {
     };
     return IntegerUtilities;
 })();
+var PositionedElement = (function () {
+    function PositionedElement(parent, element, fullStart) {
+        this._parent = parent;
+        this._element = element;
+        this._fullStart = fullStart;
+    }
+    PositionedElement.prototype.parent = function () {
+        return this._parent;
+    };
+    PositionedElement.prototype.element = function () {
+        return this._element;
+    };
+    PositionedElement.prototype.fullStart = function () {
+        return this._fullStart;
+    };
+    PositionedElement.prototype.fullEnd = function () {
+        return this.fullStart() + this.element().fullWidth();
+    };
+    PositionedElement.prototype.start = function () {
+        return this.fullStart() + this.element().leadingTriviaWidth();
+    };
+    PositionedElement.prototype.end = function () {
+        return this.fullStart() + this.element().leadingTriviaWidth() + this.element().width();
+    };
+    return PositionedElement;
+})();
+var PositionedNode = (function (_super) {
+    __extends(PositionedNode, _super);
+    function PositionedNode(parent, node, position) {
+        _super.call(this, parent, node, position);
+    }
+    PositionedNode.prototype.node = function () {
+        return this.element();
+    };
+    return PositionedNode;
+})(PositionedElement);
+var PositionedToken = (function (_super) {
+    __extends(PositionedToken, _super);
+    function PositionedToken(parent, token, position) {
+        _super.call(this, parent, token, position);
+    }
+    PositionedToken.prototype.token = function () {
+        return this.element();
+    };
+    return PositionedToken;
+})(PositionedElement);
+var PositionedList = (function (_super) {
+    __extends(PositionedList, _super);
+    function PositionedList(parent, list, position) {
+        _super.call(this, parent, list, position);
+    }
+    PositionedList.prototype.list = function () {
+        return this.element();
+    };
+    return PositionedList;
+})(PositionedElement);
+var PositionedSeparatedList = (function (_super) {
+    __extends(PositionedSeparatedList, _super);
+    function PositionedSeparatedList(parent, list, position) {
+        _super.call(this, parent, list, position);
+    }
+    PositionedSeparatedList.prototype.list = function () {
+        return this.element();
+    };
+    return PositionedSeparatedList;
+})(PositionedElement);
 var SyntaxFacts;
 (function (SyntaxFacts) {
     var textToKeywordKind = {
@@ -21611,7 +21668,7 @@ var Syntax;
         hasRegularExpressionToken: function () {
             return false;
         },
-        findTokenInternal: function (position, fullStart) {
+        findTokenInternal: function (parent, position, fullStart) {
             throw Errors.invalidOperation();
         },
         insertChildrenInto: function (array, index) {
@@ -21728,9 +21785,9 @@ var Syntax;
         SingletonSeparatedSyntaxList.prototype.hasRegularExpressionToken = function () {
             return this.item.hasRegularExpressionToken();
         };
-        SingletonSeparatedSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
+        SingletonSeparatedSyntaxList.prototype.findTokenInternal = function (parent, position, fullStart) {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (this.item).findTokenInternal(position, fullStart);
+            return (this.item).findTokenInternal(new PositionedSeparatedList(parent, this, fullStart), position, fullStart);
         };
         SingletonSeparatedSyntaxList.prototype.insertChildrenInto = function (array, index) {
             array.splice(index, 0, this.item);
@@ -21904,21 +21961,13 @@ var Syntax;
             }
             return this._data;
         };
-        NormalSeparatedSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
+        NormalSeparatedSyntaxList.prototype.findTokenInternal = function (parent, position, fullStart) {
+            parent = new PositionedSeparatedList(parent, this, fullStart);
             for(var i = 0, n = this.elements.length; i < n; i++) {
                 var element = this.elements[i];
                 var childWidth = element.fullWidth();
-                if(i % 2 === 0) {
-                    if(position < childWidth) {
-                        return (element).findTokenInternal(position, fullStart);
-                    }
-                } else {
-                    if(position < childWidth) {
-                        return {
-                            token: element,
-                            fullStart: fullStart
-                        };
-                    }
+                if(position < childWidth) {
+                    return (element).findTokenInternal(parent, position, fullStart);
                 }
                 position -= childWidth;
                 fullStart += childWidth;
@@ -22037,7 +22086,7 @@ var Syntax;
         EmptySyntaxList.prototype.hasRegularExpressionToken = function () {
             return false;
         };
-        EmptySyntaxList.prototype.findTokenInternal = function (position, fullStart) {
+        EmptySyntaxList.prototype.findTokenInternal = function (parent, position, fullStart) {
             throw Errors.invalidOperation();
         };
         EmptySyntaxList.prototype.insertChildrenInto = function (array, index) {
@@ -22125,9 +22174,9 @@ var Syntax;
         SingletonSyntaxList.prototype.hasRegularExpressionToken = function () {
             return this.item.hasRegularExpressionToken();
         };
-        SingletonSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
+        SingletonSyntaxList.prototype.findTokenInternal = function (parent, position, fullStart) {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (this.item).findTokenInternal(position, fullStart);
+            return (this.item).findTokenInternal(new PositionedList(parent, this, fullStart), position, fullStart);
         };
         SingletonSyntaxList.prototype.insertChildrenInto = function (array, index) {
             array.splice(index, 0, this.item);
@@ -22135,9 +22184,9 @@ var Syntax;
         return SingletonSyntaxList;
     })();    
     var NormalSyntaxList = (function () {
-        function NormalSyntaxList(nodes) {
+        function NormalSyntaxList(nodeOrTokens) {
             this._data = -1;
-            this.nodes = nodes;
+            this.nodeOrTokens = nodeOrTokens;
         }
         NormalSyntaxList.prototype.kind = function () {
             return 1 /* List */ ;
@@ -22161,29 +22210,29 @@ var Syntax;
             return false;
         };
         NormalSyntaxList.prototype.toJSON = function (key) {
-            return this.nodes;
+            return this.nodeOrTokens;
         };
         NormalSyntaxList.prototype.count = function () {
-            return this.nodes.length;
+            return this.nodeOrTokens.length;
         };
         NormalSyntaxList.prototype.itemAt = function (index) {
-            if(index < 0 || index >= this.nodes.length) {
+            if(index < 0 || index >= this.nodeOrTokens.length) {
                 throw Errors.argumentOutOfRange("index");
             }
-            return this.nodes[index];
+            return this.nodeOrTokens[index];
         };
         NormalSyntaxList.prototype.collectTextElements = function (elements) {
-            for(var i = 0, n = this.nodes.length; i < n; i++) {
-                var element = this.nodes[i];
+            for(var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var element = this.nodeOrTokens[i];
                 element.collectTextElements(elements);
             }
         };
         NormalSyntaxList.prototype.toArray = function () {
-            return this.nodes.slice(0);
+            return this.nodeOrTokens.slice(0);
         };
         NormalSyntaxList.prototype.firstToken = function () {
-            for(var i = 0, n = this.nodes.length; i < n; i++) {
-                var token = this.nodes[i].firstToken();
+            for(var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var token = this.nodeOrTokens[i].firstToken();
                 if(token !== null) {
                     return token;
                 }
@@ -22191,8 +22240,8 @@ var Syntax;
             return null;
         };
         NormalSyntaxList.prototype.lastToken = function () {
-            for(var i = this.nodes.length - 1; i >= 0; i--) {
-                var token = this.nodes[i].lastToken();
+            for(var i = this.nodeOrTokens.length - 1; i >= 0; i--) {
+                var token = this.nodeOrTokens[i].lastToken();
                 if(token !== null) {
                     return token;
                 }
@@ -22205,8 +22254,8 @@ var Syntax;
             return elements.join("");
         };
         NormalSyntaxList.prototype.isTypeScriptSpecific = function () {
-            for(var i = 0, n = this.nodes.length; i < n; i++) {
-                if(this.nodes[i].isTypeScriptSpecific()) {
+            for(var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                if(this.nodeOrTokens[i].isTypeScriptSpecific()) {
                     return true;
                 }
             }
@@ -22239,8 +22288,8 @@ var Syntax;
             var hasSkippedText = false;
             var hasZeroWidthToken = false;
             var hasRegularExpressionToken = false;
-            for(var i = 0, n = this.nodes.length; i < n; i++) {
-                var node = this.nodes[i];
+            for(var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var node = this.nodeOrTokens[i];
                 fullWidth += node.fullWidth();
                 hasSkippedText = hasSkippedText || node.hasSkippedText();
                 hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
@@ -22254,13 +22303,14 @@ var Syntax;
             }
             return this._data;
         };
-        NormalSyntaxList.prototype.findTokenInternal = function (position, fullStart) {
+        NormalSyntaxList.prototype.findTokenInternal = function (parent, position, fullStart) {
             Debug.assert(position >= 0 && position < this.fullWidth());
-            for(var i = 0, n = this.nodes.length; i < n; i++) {
-                var node = this.nodes[i];
-                var childWidth = node.fullWidth();
+            parent = new PositionedList(parent, this, fullStart);
+            for(var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var nodeOrToken = this.nodeOrTokens[i];
+                var childWidth = nodeOrToken.fullWidth();
                 if(position < childWidth) {
-                    return (node).findTokenInternal(position, fullStart);
+                    return (nodeOrToken).findTokenInternal(parent, position, fullStart);
                 }
                 position -= childWidth;
                 fullStart += childWidth;
@@ -22269,12 +22319,12 @@ var Syntax;
         };
         NormalSyntaxList.prototype.insertChildrenInto = function (array, index) {
             if(index === 0) {
-                array.unshift.apply(array, this.nodes);
+                array.unshift.apply(array, this.nodeOrTokens);
             } else {
                 array.splice.apply(array, [
                     index, 
                     0
-                ].concat(this.nodes));
+                ].concat(this.nodeOrTokens));
             }
         };
         return NormalSyntaxList;
@@ -22581,11 +22631,8 @@ var Syntax;
         EmptyToken.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
         };
-        EmptyToken.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        EmptyToken.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         EmptyToken.prototype.firstToken = function () {
             return this;
@@ -22780,11 +22827,8 @@ var Syntax;
         RealizedToken.prototype.trailingTrivia = function () {
             return this._trailingTrivia;
         };
-        RealizedToken.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        RealizedToken.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         RealizedToken.prototype.collectTextElements = function (elements) {
             (this.leadingTrivia()).collectTextElements(elements);
@@ -31506,11 +31550,8 @@ var Syntax;
         VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        VariableWidthTokenWithNoTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        VariableWidthTokenWithNoTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         VariableWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -31644,11 +31685,8 @@ var Syntax;
         VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        VariableWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        VariableWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         VariableWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -31782,11 +31820,8 @@ var Syntax;
         VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        VariableWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        VariableWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         VariableWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -31921,11 +31956,8 @@ var Syntax;
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -32045,11 +32077,8 @@ var Syntax;
         FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        FixedWidthTokenWithNoTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        FixedWidthTokenWithNoTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         FixedWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -32178,11 +32207,8 @@ var Syntax;
         FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        FixedWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        FixedWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         FixedWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -32311,11 +32337,8 @@ var Syntax;
         FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        FixedWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        FixedWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         FixedWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -32445,11 +32468,8 @@ var Syntax;
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
             collectTokenTextElements(this, elements);
         };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (position, fullStart) {
-            return {
-                token: this,
-                fullStart: fullStart
-            };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
             return this.realize().withLeadingTrivia(leadingTrivia);
@@ -36134,10 +36154,10 @@ var Parser1;
             var start = changeRange.span().start();
             for(var i = 0; start > 0 && i <= maxLookahead; i++) {
                 var tokenAndFullStart = sourceUnit.findToken(start);
-                var token = tokenAndFullStart.token;
+                var token = tokenAndFullStart.token();
                 Debug.assert(token.tokenKind !== 0 /* None */ );
                 Debug.assert(token.fullWidth() > 0);
-                var position = tokenAndFullStart.fullStart;
+                var position = tokenAndFullStart.fullStart();
                 start = MathPrototype.max(0, position - 1);
             }
             var finalSpan = TextSpan.fromBounds(start, changeRange.span().end());
@@ -47329,6 +47349,12 @@ var Program = (function () {
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Testing findToken.");
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
+        });
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
@@ -47336,10 +47362,6 @@ var Program = (function () {
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
-        });
-        Environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
@@ -47369,8 +47391,6 @@ var Program = (function () {
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {
         var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
@@ -47549,9 +47569,9 @@ var Program = (function () {
         var tokensOnLeft = {
         };
         for(var i = 0; i <= contents.length; i++) {
-            var token = sourceUnit.findToken(i).token;
+            var token = sourceUnit.findToken(i).token();
             var left = sourceUnit.findTokenOnLeft(i);
-            var tokenOnLeft = left === null ? null : left.token;
+            var tokenOnLeft = left === null ? null : left.token();
             Debug.assert(token.isToken());
             if(i === contents.length) {
                 Debug.assert(token.kind() === 10 /* EndOfFileToken */ );

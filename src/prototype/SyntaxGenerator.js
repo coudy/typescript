@@ -952,8 +952,8 @@ var SyntaxKind;
     SyntaxKind.LastTypeScriptKeyword = SyntaxKind.StringKeyword;
     SyntaxKind.FirstKeyword = SyntaxKind.FirstStandardKeyword;
     SyntaxKind.LastKeyword = SyntaxKind.LastTypeScriptKeyword;
-    SyntaxKind.FirstToken = SyntaxKind.IdentifierName;
-    SyntaxKind.LastToken = SyntaxKind.EndOfFileToken;
+    SyntaxKind.FirstToken = SyntaxKind.ErrorToken;
+    SyntaxKind.LastToken = SyntaxKind.SlashEqualsToken;
     SyntaxKind.FirstPunctuation = SyntaxKind.OpenBraceToken;
     SyntaxKind.LastPunctuation = SyntaxKind.SlashEqualsToken;
     SyntaxKind.FirstFixedWidth = SyntaxKind.FirstKeyword;
@@ -4254,47 +4254,6 @@ function generateStructuralEqualsMethod(definition) {
     result += "    }\r\n";
     return result;
 }
-function generateFindTokenInternalMethod(definition) {
-    if(definition.isAbstract) {
-        return "";
-    }
-    var result = "\r\n    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {\r\n";
-    if(definition.children.length > 0) {
-        result += "        Debug.assert(position >= 0 && position < this.fullWidth());\r\n";
-        result += "        var childWidth = 0;\r\n";
-    }
-    for(var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
-        if(child.type === "SyntaxKind") {
-            continue;
-        }
-        var indent = "";
-        if(child.isOptional) {
-            result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
-            indent = "    ";
-        } else {
-            result += "\r\n";
-        }
-        result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
-        result += indent + "        if (position < childWidth) { ";
-        if(child.isToken) {
-            result += "return { token: " + getPropertyAccess(child) + ", fullStart: fullStart }; }\r\n";
-        } else {
-            result += "return (<any>" + getPropertyAccess(child) + ").findTokenInternal(position, fullStart); }\r\n";
-        }
-        result += indent + "        position -= childWidth;\r\n";
-        result += indent + "        fullStart += childWidth;\r\n";
-        if(child.isOptional) {
-            result += "        }\r\n";
-        }
-    }
-    if(definition.children.length > 0) {
-        result += "\r\n";
-    }
-    result += "        throw Errors.invalidOperation();\r\n";
-    result += "    }\r\n";
-    return result;
-}
 function generateCollectTextElementsMethod(definition) {
     if(definition.isAbstract) {
         return "";
@@ -4545,7 +4504,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedText(): bool { return false; }\r\n";
     result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        private firstToken() { return this; }\r\n" + "        private lastToken() { return this; }\r\n" + "        private isTypeScriptSpecific() { return false; }\r\n" + "        private hasZeroWidthToken() { return false; }\r\n" + "        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }\r\n" + "        private realize(): ISyntaxToken { return realize(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
-    result += "        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {\r\n" + "            return { token: this, fullStart: fullStart };\r\n" + "        }\r\n\r\n";
+    result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";
     result += "    }\r\n";
     return result;

@@ -12,7 +12,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    // "ArgumentList1.ts";
+    // "FindToken11.ts";
     undefined;
 
 var generate = false;
@@ -20,6 +20,13 @@ var generate = false;
 class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
+
+        Environment.standardOut.WriteLine("Testing findToken.");
+        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5",
+            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+
+        Environment.standardOut.WriteLine("Testing Incremental Perf.");
+        this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
 
         //Environment.standardOut.WriteLine("Testing against fuzz.");
         //this.runTests("C:\\temp\\fuzz",
@@ -36,10 +43,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
-
-        Environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5",
-            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
 
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter\\ecmascript5",
@@ -69,9 +72,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ generate));
-        
-        Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
     }
 
     private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
@@ -328,10 +328,10 @@ class Program {
         var tokensOnLeft = {};
 
         for (var i = 0; i <= contents.length; i++) {
-            var token = sourceUnit.findToken(i).token;
+            var token = sourceUnit.findToken(i).token();
 
             var left = sourceUnit.findTokenOnLeft(i);
-            var tokenOnLeft = left === null ? null : left.token;
+            var tokenOnLeft = left === null ? null : left.token();
 
             Debug.assert(token.isToken());
             if (i === contents.length) {

@@ -74,7 +74,7 @@ module Syntax {
             return false;
         }
 
-        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             // This should never have been called on this list.  It has a 0 width, so the client 
             // should have skipped over this.
             throw Errors.invalidOperation();
@@ -170,9 +170,10 @@ module Syntax {
             return this.item.hasRegularExpressionToken();
         }
 
-        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             Debug.assert(position >= 0 && position < this.item.fullWidth());
-            return (<any>this.item).findTokenInternal(position, fullStart);
+            return (<any>this.item).findTokenInternal(
+                new PositionedList(parent, this, fullStart), position, fullStart);
         }
 
         public insertChildrenInto(array: ISyntaxElement[], index: number): void {
@@ -181,11 +182,11 @@ module Syntax {
     }
 
     class NormalSyntaxList implements ISyntaxList {
-        private nodes: ISyntaxNodeOrToken[];
+        private nodeOrTokens: ISyntaxNodeOrToken[];
         private _data: number = -1;
 
-        constructor(nodes: ISyntaxNodeOrToken[]) {
-            this.nodes = nodes;
+        constructor(nodeOrTokens: ISyntaxNodeOrToken[]) {
+            this.nodeOrTokens = nodeOrTokens;
         }
 
         public kind(): SyntaxKind { return SyntaxKind.List; }
@@ -198,35 +199,35 @@ module Syntax {
         public isTriviaList(): bool { return false; }
 
         public toJSON(key) {
-            return this.nodes;
+            return this.nodeOrTokens;
         }
 
         public count() {
-            return this.nodes.length;
+            return this.nodeOrTokens.length;
         }
 
         public itemAt(index: number): ISyntaxNodeOrToken {
-            if (index < 0 || index >= this.nodes.length) {
+            if (index < 0 || index >= this.nodeOrTokens.length) {
                 throw Errors.argumentOutOfRange("index");
             }
 
-            return this.nodes[index];
+            return this.nodeOrTokens[index];
         }
 
         private collectTextElements(elements: string[]): void {
-            for (var i = 0, n = this.nodes.length; i < n; i++) {
-                var element: any = this.nodes[i];
+            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var element: any = this.nodeOrTokens[i];
                 element.collectTextElements(elements);
             }
         }
 
         public toArray(): ISyntaxNodeOrToken[] {
-            return this.nodes.slice(0);
+            return this.nodeOrTokens.slice(0);
         }
 
         public firstToken(): ISyntaxToken {
-            for (var i = 0, n = this.nodes.length; i < n; i++) {
-                var token = this.nodes[i].firstToken();
+            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var token = this.nodeOrTokens[i].firstToken();
                 if (token !== null) {
                     return token;
                 }
@@ -236,8 +237,8 @@ module Syntax {
         }
 
         public lastToken(): ISyntaxToken {
-            for (var i = this.nodes.length - 1; i >= 0; i--) {
-                var token = this.nodes[i].lastToken();
+            for (var i = this.nodeOrTokens.length - 1; i >= 0; i--) {
+                var token = this.nodeOrTokens[i].lastToken();
                 if (token !== null) {
                     return token;
                 }
@@ -253,8 +254,8 @@ module Syntax {
         }
 
         public isTypeScriptSpecific(): bool {
-            for (var i = 0, n = this.nodes.length; i < n; i++) {
-                if (this.nodes[i].isTypeScriptSpecific()) {
+            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                if (this.nodeOrTokens[i].isTypeScriptSpecific()) {
                     return true;
                 }
             }
@@ -297,8 +298,8 @@ module Syntax {
             var hasZeroWidthToken = false;
             var hasRegularExpressionToken = false;
 
-            for (var i = 0, n = this.nodes.length; i < n; i++) {
-                var node = this.nodes[i];
+            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var node = this.nodeOrTokens[i];
                 fullWidth += node.fullWidth();
                 hasSkippedText = hasSkippedText || node.hasSkippedText();
                 hasZeroWidthToken = hasZeroWidthToken || node.hasZeroWidthToken();
@@ -319,14 +320,17 @@ module Syntax {
             return this._data;
         }
 
-        public findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+        public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
             Debug.assert(position >= 0 && position < this.fullWidth());
+            
+            parent = new PositionedList(parent, this, fullStart);
+            for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
+                var nodeOrToken = this.nodeOrTokens[i];
 
-            for (var i = 0, n = this.nodes.length; i < n; i++) {
-                var node = this.nodes[i];
-
-                var childWidth = node.fullWidth();
-                if (position < childWidth) { return (<any>node).findTokenInternal(position, fullStart); }
+                var childWidth = nodeOrToken.fullWidth();
+                if (position < childWidth) {
+                    return (<any>nodeOrToken).findTokenInternal(parent, position, fullStart);
+                }
 
                 position -= childWidth;
                 fullStart += childWidth;
@@ -337,11 +341,11 @@ module Syntax {
 
         public insertChildrenInto(array: ISyntaxElement[], index: number): void {
             if (index === 0) {
-                array.unshift.apply(array, this.nodes);
+                array.unshift.apply(array, this.nodeOrTokens);
             }
             else {
                 // TODO: this seems awfully innefficient.  Can we do better here?
-                array.splice.apply(array, [index, <any>0].concat(this.nodes));
+                array.splice.apply(array, [index, <any>0].concat(this.nodeOrTokens));
             }
         }
     }

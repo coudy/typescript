@@ -841,11 +841,11 @@ module Parser1 {
             for (var i = 0; start > 0 && i <= maxLookahead; i++)
             {
                 var tokenAndFullStart = sourceUnit.findToken(start);
-                var token = tokenAndFullStart.token;
+                var token = tokenAndFullStart.token();
                 Debug.assert(token.tokenKind !== SyntaxKind.None);
                 Debug.assert(token.fullWidth() > 0);
 
-                var position = tokenAndFullStart.fullStart;
+                var position = tokenAndFullStart.fullStart();
 
                 start = MathPrototype.max(0, position - 1);
             }

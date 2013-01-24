@@ -123,8 +123,8 @@ module Syntax {
         public toJSON(key) { return tokenToJSON(this); }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         private firstToken() { return this; }
@@ -235,8 +235,8 @@ module Syntax {
         public leadingTrivia(): ISyntaxTriviaList { return this._leadingTrivia; }
         public trailingTrivia(): ISyntaxTriviaList { return this._trailingTrivia; }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         private collectTextElements(elements: string[]): void {

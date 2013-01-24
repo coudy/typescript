@@ -300,7 +300,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     /// Note: findToken will always return a non missing token with width greater than or equal to
     /// 1 (except for EOF).  Empty tokens syntehsized by teh parser are never returned.
     /// </summary>
-    public findToken(position: number): { token: ISyntaxToken; fullStart: number; } {
+    public findToken(position: number): PositionedToken {
         var endOfFileToken = this.tryGetEndOfFileAt(position);
         if (endOfFileToken !== null) {
             return endOfFileToken;
@@ -310,21 +310,24 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             throw Errors.argumentOutOfRange("position");
         }
 
-        return this.findTokenInternal(position, 0);
+        return this.findTokenInternal(null, position, 0);
     }
 
-    private tryGetEndOfFileAt(position: number): { token: ISyntaxToken; fullStart: number; } {
+    private tryGetEndOfFileAt(position: number): PositionedToken {
         if (this.kind() === SyntaxKind.SourceUnit && position === this.fullWidth()) {
             var sourceUnit = <SourceUnitSyntax>this;
-            return { token: sourceUnit.endOfFileToken(), fullStart: sourceUnit.moduleElements().fullWidth() };
+            return new PositionedToken(
+                new PositionedNode(null, sourceUnit, 0),
+                sourceUnit.endOfFileToken(), sourceUnit.moduleElements().fullWidth());
         }
 
         return null;
     }
 
-    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
+    private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
         Debug.assert(position >= 0 && position < this.fullWidth());
 
+        parent = new PositionedNode(parent, this, fullStart);
         for (var i = 0, n = this.slotCount(); i < n; i++) {
             var element = this.elementAtSlot(i);
 
@@ -332,12 +335,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
                 var childWidth = element.fullWidth();
 
                 if (position < childWidth) {
-                    if (element.isToken()) {
-                        return { token: <ISyntaxToken>element, fullStart: fullStart };
-                    }
-                    else {
-                        return (<any>element).findTokenInternal(position, fullStart);
-                    }
+                    return (<any>element).findTokenInternal(parent, position, fullStart);
                 }
 
                 position -= childWidth;
@@ -348,30 +346,30 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         throw Errors.invalidOperation();
     }
 
-    public findTokenOnLeft(position: number): { token: ISyntaxToken; fullStart: number; } {
-        var token = this.findToken(position);
-        var start = token.fullStart + token.token.leadingTriviaWidth();
+    public findTokenOnLeft(position: number): PositionedToken {
+        var positionedToken = this.findToken(position);
+        var start = positionedToken.start();
 
         // Position better fall within this token.
-        Debug.assert(position >= token.fullStart);
-        Debug.assert(position < (token.fullStart + token.token.fullWidth()) ||
-                     token.token.tokenKind === SyntaxKind.EndOfFileToken);
+        Debug.assert(position >= positionedToken.fullStart());
+        Debug.assert(position < positionedToken.fullEnd() ||
+                     positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
 
         // if position is after the start of the token, then this token is the token on the left.
         if (position > start) {
-            return token;
+            return positionedToken;
         }
 
         // we're in the trivia before the start of the token.  Need to return the previous token.
-        if (token.fullStart === 0) {
+        if (positionedToken.fullStart() === 0) {
             // Already on the first token.  Nothing before us.
             return null;
         }
 
-        var previousToken = this.findToken(token.fullStart - 1);
+        var previousToken = this.findToken(positionedToken.fullStart() - 1);
 
         // Position better be after this token.
-        Debug.assert((previousToken.fullStart + previousToken.token.fullWidth()) <= position);
+        Debug.assert(previousToken.fullEnd() <= position);
 
         return previousToken;
     }

@@ -2032,62 +2032,6 @@ function generateStructuralEqualsMethod(definition: ITypeDefinition): string {
     return result;
 }
 
-function generateFindTokenInternalMethod(definition: ITypeDefinition): string {
-    if (definition.isAbstract) {
-        return "";
-    }
-
-    var result = "\r\n    private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {\r\n";
-
-    if (definition.children.length > 0) {
-        result += "        Debug.assert(position >= 0 && position < this.fullWidth());\r\n";
-        result += "        var childWidth = 0;\r\n";
-    }
-
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
-
-        if (child.type === "SyntaxKind") {
-            continue;
-        }
-
-        var indent = "";
-        if (child.isOptional) {
-            result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
-            indent = "    ";
-        }
-        else {
-            result += "\r\n";
-        }
-
-        result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
-        result += indent + "        if (position < childWidth) { ";
-        
-        if (child.isToken) {
-            result += "return { token: " + getPropertyAccess(child) + ", fullStart: fullStart }; }\r\n";
-        }
-        else {
-            result += "return (<any>" + getPropertyAccess(child) + ").findTokenInternal(position, fullStart); }\r\n";
-        }
-
-        result += indent + "        position -= childWidth;\r\n";
-        result += indent + "        fullStart += childWidth;\r\n";
-
-        if (child.isOptional) {
-            result += "        }\r\n";
-        }
-    }
-
-    if (definition.children.length > 0) {
-        result += "\r\n";
-    }
-
-    result += "        throw Errors.invalidOperation();\r\n";
-    result += "    }\r\n";
-
-    return result;
-}
-
 function generateCollectTextElementsMethod(definition: ITypeDefinition): string {
     if (definition.isAbstract) {
         return "";
@@ -2525,8 +2469,8 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 
     result +=
-"        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {\r\n" +
-"            return { token: this, fullStart: fullStart };\r\n" +
+"        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" +
+"            return new PositionedToken(parent, this, fullStart);\r\n" +
 "        }\r\n\r\n";
 
     result += 

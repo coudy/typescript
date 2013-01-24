@@ -76,8 +76,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -165,8 +165,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -254,8 +254,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -346,8 +346,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -410,8 +410,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -486,8 +486,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -562,8 +562,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
@@ -641,8 +641,8 @@ module Syntax {
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
-        private findTokenInternal(position: number, fullStart: number): { token: ISyntaxToken; fullStart: number; } {
-            return { token: this, fullStart: fullStart };
+        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
+            return new PositionedToken(parent, this, fullStart);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
