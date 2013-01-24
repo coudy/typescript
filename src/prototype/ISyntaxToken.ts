@@ -2,12 +2,9 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 ///<reference path='SyntaxVisitor.generated.ts' />
 
-interface ISyntaxToken extends ISyntaxElement, INameSyntax {
+interface ISyntaxToken extends ISyntaxNodeOrToken, INameSyntax {
     // Same as kind(), just exposed through a property for perf.
     tokenKind: SyntaxKind;
-
-    // Width of this token, not including leading or trailing trivia.
-    width(): number;
 
     // Text for this token, not including leading or trailing trivia.
     text(): string;
@@ -18,13 +15,11 @@ interface ISyntaxToken extends ISyntaxElement, INameSyntax {
     hasLeadingComment(): bool;
     hasLeadingNewLine(): bool;
     hasLeadingSkippedText(): bool;
-    leadingTriviaWidth(): number;
 
     hasTrailingTrivia(): bool;
     hasTrailingComment(): bool;
     hasTrailingNewLine(): bool;
     hasTrailingSkippedText(): bool;
-    trailingTriviaWidth(): number;
 
     hasSkippedText(): bool;
 

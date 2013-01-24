@@ -36,9 +36,11 @@ module Syntax {
 
         firstToken: (): ISyntaxToken => null,
         lastToken: (): ISyntaxToken => null,
+
         fullWidth: () => 0,
-        width: () => 0,
         fullText: () => "",
+
+        width: () => 0,
 
         toItemAndSeparatorArray: (): ISyntaxNodeOrToken[] => [],
         toItemArray: (): ISyntaxNodeOrToken[] => [],
@@ -55,7 +57,10 @@ module Syntax {
         },
 
         insertChildrenInto: (array: ISyntaxElement[], index: number): void => {
-        }
+        },
+
+        leadingTriviaWidth: () => 0,
+        trailingTriviaWidth:() => 0
     }
 
     class SingletonSeparatedSyntaxList implements ISeparatedSyntaxList {
@@ -81,6 +86,7 @@ module Syntax {
         public itemAndSeparatorCount() { return 1; }
         public itemCount() { return 1; }
         public separatorCount() { return 0; }
+
         public itemOrSeparatorAt(index: number): ISyntaxNodeOrToken {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
@@ -123,6 +129,14 @@ module Syntax {
 
         public fullText(): string {
             return this.item.fullText();
+        }
+
+        public leadingTriviaWidth(): number {
+            return this.item.leadingTriviaWidth();
+        }
+
+        public trailingTriviaWidth(): number {
+            return this.item.trailingTriviaWidth();
         }
 
         public toArray(): ISyntaxElement[] {
@@ -300,7 +314,15 @@ module Syntax {
 
         public width(): number {
             var fullWidth = this.fullWidth();
-            return fullWidth - this.firstToken().leadingTriviaWidth() - this.lastToken().trailingTriviaWidth();
+            return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+        }
+
+        public leadingTriviaWidth(): number {
+            return this.firstToken().leadingTriviaWidth();
+        }
+
+        public trailingTriviaWidth(): number {
+            return this.lastToken().trailingTriviaWidth();
         }
 
         private computeData(): number {

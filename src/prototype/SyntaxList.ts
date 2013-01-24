@@ -46,6 +46,14 @@ module Syntax {
             return 0;
         }
 
+        public leadingTriviaWidth(): number {
+            return 0;
+        }
+
+        public trailingTriviaWidth(): number {
+            return 0;
+        }
+
         public fullText(): string {
             return "";
         }
@@ -132,6 +140,14 @@ module Syntax {
 
         public width(): number {
             return this.item.width();
+        }
+
+        public leadingTriviaWidth(): number {
+            return this.item.leadingTriviaWidth();
+        }
+
+        public trailingTriviaWidth(): number {
+            return this.item.trailingTriviaWidth();
         }
 
         public fullText(): string {
@@ -264,7 +280,15 @@ module Syntax {
 
         public width(): number {
             var fullWidth = this.fullWidth();
-            return fullWidth - this.firstToken().leadingTriviaWidth() - this.lastToken().trailingTriviaWidth();
+            return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+        }
+
+        public leadingTriviaWidth(): number {
+            return this.firstToken().leadingTriviaWidth();
+        }
+
+        public trailingTriviaWidth(): number {
+            return this.lastToken().trailingTriviaWidth();
         }
 
         private computeData(): number {

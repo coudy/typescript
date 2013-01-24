@@ -39,6 +39,14 @@ module Syntax {
             return this.fullWidth();
         }
 
+        public leadingTriviaWidth(): number {
+            return 0;
+        }
+
+        public trailingTriviaWidth(): number {
+            return 0;
+        }
+
         public fullText(): string {
             return this._text;
         }

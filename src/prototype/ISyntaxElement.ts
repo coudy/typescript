@@ -19,6 +19,9 @@ interface ISyntaxElement {
 
     // Text for this element, including leading and trailing trivia.
     fullText(): string;
+
+    leadingTriviaWidth(): number;
+    trailingTriviaWidth(): number;
 }
 
 interface ISyntaxNode extends ISyntaxNodeOrToken {

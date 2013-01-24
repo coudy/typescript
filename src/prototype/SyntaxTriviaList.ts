@@ -38,6 +38,9 @@ module Syntax {
         toArray: (): ISyntaxTrivia[] => [],
 
         concat: (trivia: ISyntaxTriviaList): ISyntaxTriviaList => trivia,
+
+        leadingTriviaWidth: () => 0,
+        trailingTriviaWidth: () => 0
     };
 
     function concatTrivia(list1: ISyntaxTriviaList, list2: ISyntaxTriviaList): ISyntaxTriviaList {
@@ -100,6 +103,14 @@ module Syntax {
 
         public fullText(): string {
             return this.item.fullText();
+        }
+
+        public leadingTriviaWidth(): number {
+            return 0;
+        }
+
+        public trailingTriviaWidth(): number {
+            return 0;
         }
 
         public hasComment(): bool {
@@ -168,6 +179,14 @@ module Syntax {
 
         public width(): number {
             return this.fullWidth();
+        }
+
+        public leadingTriviaWidth(): number {
+            return 0;
+        }
+
+        public trailingTriviaWidth(): number {
+            return 0;
         }
 
         public fullText(): string {
