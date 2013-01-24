@@ -165,22 +165,18 @@ module Parser1 {
         // The token we skipped.
         skippedToken: ISyntaxToken;
 
-        // The token that we will attach the skipped token to.  Can be null in the case where we 
-        // haven't seen a single token yet.  In that case, the skipped token will be added to the
-        // first token in the tree.
-        owningToken: ISyntaxToken;
+        // The position of the skipped token
+        position: number;
     }
 
     // Helper class to take the tokens that we've skipped over and attach them as 'SkippedText' 
     // trivia to the token that preceded them (or to the first token in the file if no token 
     // preceded them).
     class SkippedTokensAdder extends SyntaxRewriter {
-        private skippedTokens: SkippedToken[];
+        private position: number = 0;
 
-        constructor(skippedTokens: SkippedToken[]) {
+        constructor(private skippedTokens: SkippedToken[]) {
             super();
-
-            this.skippedTokens = skippedTokens;
         }
 
         private visitNode(node: SyntaxNode): SyntaxNode {
@@ -212,19 +208,25 @@ module Parser1 {
                 return token;
             }
 
-            var currentOwner = null;
+            // Don't add skipped tokens to a 0-width token (unless it is the EOF token).
+            if (token.fullWidth() === 0 && token.tokenKind !== SyntaxKind.EndOfFileToken) {
+                return token;
+            }
+
+            var relativePosition = 0;
 
             // First check for skipped tokens at the beginning the document.  These will get attached
             // to the first token we run into.
             var leadingTrivia: ISyntaxTrivia[] = null;
             while (this.skippedTokens.length > 0 &&
-                   this.skippedTokens[0].owningToken === currentOwner) {
+                   this.skippedTokens[0].position === relativePosition) {
                 leadingTrivia = leadingTrivia || [];
 
                 var skippedToken = this.skippedTokens.shift().skippedToken;
                 this.addSkippedTokenTo(skippedToken, leadingTrivia);
 
-                currentOwner = skippedToken;
+                relativePosition += skippedToken.fullWidth();
+                this.position += skippedToken.fullWidth();
             }
 
             if (leadingTrivia !== null) {
@@ -234,11 +236,11 @@ module Parser1 {
 
             // Now find the skipped tokens that were assigned to this token.  Consume skipped tokens
             // as long as they belong to this token (or to a skipped token that follows it).
-            currentOwner = token;
+            this.position += token.fullWidth();
 
             var trailingTrivia: ISyntaxTrivia[] = null;
             while (this.skippedTokens.length > 0 &&
-                   this.skippedTokens[0].owningToken === currentOwner) {
+                   this.skippedTokens[0].position === this.position) {
                 // Initialize the list of trailing trivia to the trailing trivia of the token if it
                 // has any.  This way any skipped tokens will go after the existing trivia.
                 trailingTrivia = trailingTrivia || token.trailingTrivia().toArray();
@@ -246,9 +248,7 @@ module Parser1 {
                 var skippedToken = this.skippedTokens.shift().skippedToken;
                 this.addSkippedTokenTo(skippedToken, trailingTrivia);
 
-                // Update currentToken.  That way if the next skipped token has it as the owner,
-                // then we'll consume that as well.
-                currentOwner = skippedToken;
+                this.position += skippedToken.fullWidth();
             }
 
             var result = token;
@@ -271,7 +271,7 @@ module Parser1 {
         }
 
         private addSkippedTokenTo(skippedToken: ISyntaxToken, array: ISyntaxTrivia[]): void {
-            // Debug.assert(skippedToken.text().length > 0);
+            Debug.assert(skippedToken.text().length > 0);
 
             // first, add the leading trivia of the skipped token to the array
             this.addTriviaTo(skippedToken.leadingTrivia(), array);
@@ -1663,7 +1663,10 @@ module Parser1 {
                 return sourceUnit;
             }
 
-            return sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
+            var result = sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
+            Debug.assert(this.skippedTokens.length === 0);
+
+            return result;
         }
 
         private setStrictMode(isInStrictMode: bool) {
@@ -4524,7 +4527,7 @@ module Parser1 {
             // Otherwise, if none of the lists we're in can capture this token, then we need to 
             // unilaterally skip it.  Note: we've already reported an error above.
             var token = this.currentToken();
-            this.skippedTokens.push({ skippedToken: token, owningToken: this.previousToken() });
+            this.skippedTokens.push({ skippedToken: token, position: this.source.absolutePosition() });
 
             // Consume this token and move onto the next item in the list.
             this.moveToNextToken();

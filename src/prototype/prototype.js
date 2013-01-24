@@ -35762,6 +35762,7 @@ var Parser1;
         function SkippedTokensAdder(skippedTokens) {
                 _super.call(this);
             this.skippedTokens = skippedTokens;
+            this.position = 0;
         }
         SkippedTokensAdder.prototype.visitNode = function (node) {
             if(this.skippedTokens.length === 0) {
@@ -35785,24 +35786,28 @@ var Parser1;
             if(this.skippedTokens.length === 0) {
                 return token;
             }
-            var currentOwner = null;
+            if(token.fullWidth() === 0 && token.tokenKind !== 10 /* EndOfFileToken */ ) {
+                return token;
+            }
+            var relativePosition = 0;
             var leadingTrivia = null;
-            while(this.skippedTokens.length > 0 && this.skippedTokens[0].owningToken === currentOwner) {
+            while(this.skippedTokens.length > 0 && this.skippedTokens[0].position === relativePosition) {
                 leadingTrivia = leadingTrivia || [];
                 var skippedToken = this.skippedTokens.shift().skippedToken;
                 this.addSkippedTokenTo(skippedToken, leadingTrivia);
-                currentOwner = skippedToken;
+                relativePosition += skippedToken.fullWidth();
+                this.position += skippedToken.fullWidth();
             }
             if(leadingTrivia !== null) {
                 this.addTriviaTo(token.leadingTrivia(), leadingTrivia);
             }
-            currentOwner = token;
+            this.position += token.fullWidth();
             var trailingTrivia = null;
-            while(this.skippedTokens.length > 0 && this.skippedTokens[0].owningToken === currentOwner) {
+            while(this.skippedTokens.length > 0 && this.skippedTokens[0].position === this.position) {
                 trailingTrivia = trailingTrivia || token.trailingTrivia().toArray();
                 var skippedToken = this.skippedTokens.shift().skippedToken;
                 this.addSkippedTokenTo(skippedToken, trailingTrivia);
-                currentOwner = skippedToken;
+                this.position += skippedToken.fullWidth();
             }
             var result = token;
             if(leadingTrivia !== null) {
@@ -35819,6 +35824,7 @@ var Parser1;
             }
         };
         SkippedTokensAdder.prototype.addSkippedTokenTo = function (skippedToken, array) {
+            Debug.assert(skippedToken.text().length > 0);
             this.addTriviaTo(skippedToken.leadingTrivia(), array);
             array.push(Syntax.trivia(8 /* SkippedTextTrivia */ , skippedToken.text()));
             this.addTriviaTo(skippedToken.trailingTrivia(), array);
@@ -36511,7 +36517,9 @@ var Parser1;
             if(this.skippedTokens.length === 0) {
                 return sourceUnit;
             }
-            return sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
+            var result = sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
+            Debug.assert(this.skippedTokens.length === 0);
+            return result;
         };
         ParserImpl.prototype.setStrictMode = function (isInStrictMode) {
             this.isInStrictMode = isInStrictMode;
@@ -38256,7 +38264,7 @@ var Parser1;
             var token = this.currentToken();
             this.skippedTokens.push({
                 skippedToken: token,
-                owningToken: this.previousToken()
+                position: this.source.absolutePosition()
             });
             this.moveToNextToken();
             return false;
@@ -47554,8 +47562,7 @@ var IncrementalParserTests = (function () {
 })();
 var timer = new Timer();
 var stringTable = Collections.createStringTable();
-var specificFile = "ErrorRecovery_LeftShift1.ts";
-undefined;
+var specificFile = undefined;
 var generate = false;
 var Program = (function () {
     function Program() { }
@@ -47567,12 +47574,7 @@ var Program = (function () {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
         });
         if(true) {
-            return;
         }
-        Environment.standardOut.WriteLine("Testing against fuzz.");
-        this.runTests("C:\\temp\\fuzz", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
-        }, 1000);
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
@@ -47983,7 +47985,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);

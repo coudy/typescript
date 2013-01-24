@@ -12,7 +12,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    "ErrorRecovery_LeftShift1.ts";
+    // "SkippedTokens3.ts";
     // "0_000137.ts";
     undefined;
 
@@ -27,12 +27,12 @@ class Program {
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
 
         if (true) {
-            return;
+            // return;
         }
 
-        Environment.standardOut.WriteLine("Testing against fuzz.");
-        this.runTests("C:\\temp\\fuzz",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 1000);
+        //Environment.standardOut.WriteLine("Testing against fuzz.");
+        //this.runTests("C:\\temp\\fuzz",
+        //    filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 1000);
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
@@ -582,7 +582,7 @@ if (true) {
 }
 
 // Existing parser.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);
