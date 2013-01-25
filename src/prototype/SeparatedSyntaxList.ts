@@ -31,8 +31,7 @@ module Syntax {
             throw Errors.argumentOutOfRange("index");
         },
 
-        collectTextElements: (elements: string[]): void => {
-        },
+        collectTextElements: (elements: string[]): void => { },
 
         firstToken: (): ISyntaxToken => null,
         lastToken: (): ISyntaxToken => null,
@@ -106,7 +105,7 @@ module Syntax {
         }
 
         private collectTextElements(elements: string[]): void {
-            (<any>this.item).collectTextElements(elements);
+            this.item.collectTextElements(elements);
         }
 
         public firstToken(): ISyntaxToken {
@@ -385,7 +384,7 @@ module Syntax {
 
         private collectTextElements(elements: string[]): void {
             for (var i = 0, n = this.elements.length; i < n; i++) {
-                var element: any = this.elements[i];
+                var element = this.elements[i];
                 element.collectTextElements(elements);
             }
         }

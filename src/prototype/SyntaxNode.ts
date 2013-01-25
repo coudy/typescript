@@ -144,9 +144,9 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         return elements.join("");
     }
 
-    private collectTextElements(elements: string[]): void {
+    public collectTextElements(elements: string[]): void {
         for (var i = 0, n = this.slotCount(); i < n; i++) {
-            var element: any = this.elementAtSlot(i);
+            var element = this.elementAtSlot(i);
 
             if (element !== null) {
                 element.collectTextElements(elements)

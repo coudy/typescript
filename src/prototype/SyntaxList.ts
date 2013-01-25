@@ -115,7 +115,7 @@ module Syntax {
         }
 
         private collectTextElements(elements: string[]): void {
-            (<any>this.item).collectTextElements(elements, this);
+            this.item.collectTextElements(elements);
         }
 
         public toArray(): ISyntaxNodeOrToken[] {
@@ -210,7 +210,7 @@ module Syntax {
 
         private collectTextElements(elements: string[]): void {
             for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
-                var element: any = this.nodeOrTokens[i];
+                var element = this.nodeOrTokens[i];
                 element.collectTextElements(elements);
             }
         }

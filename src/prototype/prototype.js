@@ -21271,7 +21271,7 @@ var Syntax;
             throw Errors.argumentOutOfRange("index");
         };
         SingletonSeparatedSyntaxList.prototype.collectTextElements = function (elements) {
-            (this.item).collectTextElements(elements);
+            this.item.collectTextElements(elements);
         };
         SingletonSeparatedSyntaxList.prototype.firstToken = function () {
             return this.item.firstToken();
@@ -21652,7 +21652,7 @@ var Syntax;
             return this.item;
         };
         SingletonSyntaxList.prototype.collectTextElements = function (elements) {
-            (this.item).collectTextElements(elements, this);
+            this.item.collectTextElements(elements);
         };
         SingletonSyntaxList.prototype.toArray = function () {
             return [
@@ -27444,9 +27444,9 @@ var Syntax;
             return new PositionedToken(parent, this, fullStart);
         };
         RealizedToken.prototype.collectTextElements = function (elements) {
-            (this.leadingTrivia()).collectTextElements(elements);
+            this.leadingTrivia().collectTextElements(elements);
             elements.push(this.text());
-            (this.trailingTrivia()).collectTextElements(elements);
+            this.trailingTrivia().collectTextElements(elements);
         };
         RealizedToken.prototype.withLeadingTrivia = function (leadingTrivia) {
             return new RealizedToken(this.tokenKind, leadingTrivia, this._text, this._value, this._trailingTrivia);

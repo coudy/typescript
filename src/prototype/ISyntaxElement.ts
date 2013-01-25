@@ -35,6 +35,8 @@ interface ISyntaxElement {
 
     firstToken(): ISyntaxToken;
     lastToken(): ISyntaxToken;
+
+    collectTextElements(elements: string[]): void;
 }
 
 interface ISyntaxNode extends ISyntaxNodeOrToken {

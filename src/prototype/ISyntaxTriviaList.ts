@@ -19,4 +19,6 @@ interface ISyntaxTriviaList {
     toArray(): ISyntaxTrivia[];
 
     concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList;
+
+    collectTextElements(elements: string[]): void;
 }

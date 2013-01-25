@@ -2032,33 +2032,6 @@ function generateStructuralEqualsMethod(definition: ITypeDefinition): string {
     return result;
 }
 
-function generateCollectTextElementsMethod(definition: ITypeDefinition): string {
-    if (definition.isAbstract) {
-        return "";
-    }
-
-    var result = "\r\n    private collectTextElements(elements: string[]): void {\r\n";
-
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
-
-        if (child.type === "SyntaxKind") {
-            continue;
-        }
-
-        if (child.isOptional) {
-            result += "        if (" + getPropertyAccess(child) + " !== null) { (<any>" + getPropertyAccess(child) + ").collectTextElements(elements); }\r\n";
-        }
-        else {
-            result += "        (<any>" + getPropertyAccess(child) + ").collectTextElements(elements);\r\n";
-        }
-    }
-
-    result += "    }\r\n";
-
-    return result;
-}
-
 function generateNode(definition: ITypeDefinition): string {
     var result = "class " + definition.name + " extends " + definition.baseType 
 
@@ -2514,9 +2487,9 @@ function generateTokens(): string {
 
     result += 
 "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" +
-"        (<any>token.leadingTrivia()).collectTextElements(elements);\r\n" +
+"        token.leadingTrivia().collectTextElements(elements);\r\n" +
 "        elements.push(token.text());\r\n" +
-"        (<any>token.trailingTrivia()).collectTextElements(elements);\r\n" +
+"        token.trailingTrivia().collectTextElements(elements);\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    export function fixedWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" +

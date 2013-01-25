@@ -238,9 +238,9 @@ module Syntax {
         }
 
         private collectTextElements(elements: string[]): void {
-            (<any>this.leadingTrivia()).collectTextElements(elements);
+            this.leadingTrivia().collectTextElements(elements);
             elements.push(this.text());
-            (<any>this.trailingTrivia()).collectTextElements(elements);
+            this.trailingTrivia().collectTextElements(elements);
         }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {
