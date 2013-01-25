@@ -22258,18 +22258,17 @@ var ArrayUtilities = (function () {
     return ArrayUtilities;
 })();
 var SlidingWindow = (function () {
-    function SlidingWindow(source, defaultWindowSize, defaultValue, sourceLength) {
+    function SlidingWindow(source, window, defaultValue, sourceLength) {
         if (typeof sourceLength === "undefined") { sourceLength = -1; }
         this.source = source;
+        this.window = window;
         this.defaultValue = defaultValue;
         this.sourceLength = sourceLength;
-        this.window = [];
         this.windowCount = 0;
         this.windowAbsoluteStartIndex = 0;
         this.currentRelativeItemIndex = 0;
         this._pinCount = 0;
         this.firstPinnedAbsoluteIndex = -1;
-        this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
     }
     SlidingWindow.prototype.windowAbsoluteEndIndex = function () {
         return this.windowAbsoluteStartIndex + this.windowCount;
@@ -26386,9 +26385,10 @@ var Unicode = (function () {
     return Unicode;
 })();
 var Scanner = (function () {
-    function Scanner(text, languageVersion, stringTable) {
+    function Scanner(text, languageVersion, stringTable, window) {
+        if (typeof window === "undefined") { window = ArrayUtilities.createArray(2048, 0); }
         Scanner.initializeStaticData();
-        this.slidingWindow = new SlidingWindow(this, 2048, 0, text.length());
+        this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
         this.text = text;
         this.stringTable = stringTable;
         this.languageVersion = languageVersion;
@@ -26468,9 +26468,10 @@ var Scanner = (function () {
             }
         }
     };
+    Scanner.triviaWindow = ArrayUtilities.createArray(2048, 0);
     Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
         Debug.assert(length > 0);
-        var scanner = new Scanner(text.subText(new TextSpan(start, length)), 1 /* EcmaScript5 */ , null);
+        var scanner = new Scanner(text.subText(new TextSpan(start, length)), 1 /* EcmaScript5 */ , null, Scanner.triviaWindow);
         return scanner.scanTrivia(isTrailing);
     };
     Scanner.prototype.scanTrivia = function (isTrailing) {
@@ -35790,7 +35791,7 @@ var Parser1;
             this._tokenDiagnostics = [];
             this.rewindPointPool = [];
             this.rewindPointPoolCount = 0;
-            this.slidingWindow = new SlidingWindow(this, 32, null);
+            this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(32, null), null);
             this.scanner = new Scanner(text, languageVersion, stringTable);
         }
         NormalParserSource.prototype.currentNode = function () {
@@ -52261,7 +52262,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {

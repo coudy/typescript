@@ -62,14 +62,13 @@ class Scanner implements ISlidingWindowSource {
         }
     }
 
-    //public static create(text: IText, languageVersion: LanguageVersion): Scanner {
-    //    return new Scanner(text, languageVersion, new StringTable());
-    //}
-
-    constructor(text: ISimpleText, languageVersion: LanguageVersion, stringTable: Collections.StringTable) {
+    constructor(text: ISimpleText,
+                languageVersion: LanguageVersion,
+                stringTable: Collections.StringTable,
+                window: number[] = ArrayUtilities.createArray(2048, 0)) {
         Scanner.initializeStaticData();
-
-        this.slidingWindow = new SlidingWindow(this, 2048, 0, text.length());
+        
+        this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
         this.text = text;
         this.stringTable = stringTable;
         this.languageVersion = languageVersion;
@@ -138,10 +137,12 @@ class Scanner implements ISlidingWindowSource {
         }
     }
 
+    private static triviaWindow = ArrayUtilities.createArray(2048, 0);
+
     // Scans a subsection of 'text' as trivia.
     public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
         Debug.assert(length > 0);
-        var scanner = new Scanner(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, null);
+        var scanner = new Scanner(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, null, Scanner.triviaWindow);
         return scanner.scanTrivia(isTrailing);
     }
     

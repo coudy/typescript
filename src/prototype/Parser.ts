@@ -437,7 +437,7 @@ module Parser1 {
         constructor(text: ISimpleText,
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
-            this.slidingWindow = new SlidingWindow(this, /*defaultWindowSize:*/ 32, null);
+            this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
             this.scanner = new Scanner(text, languageVersion, stringTable);
         }
 

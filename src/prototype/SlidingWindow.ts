@@ -8,8 +8,6 @@ interface ISlidingWindowSource {
 }
 
 class SlidingWindow {
-    // A window of items that has been read in from the underlying source.
-    public window: any[] = [];
 
     // The number of valid items in window.
     private windowCount: number = 0;
@@ -35,12 +33,12 @@ class SlidingWindow {
 
     constructor(// Underlying source that we retrieve items from.
                 private source: ISlidingWindowSource,
-                defaultWindowSize: number,
+                // A window of items that has been read in from the underlying source.
+                public window: any[],
                 // The default value to return when there are no more items left in the window.
                 private defaultValue: any,
                 // The length of the source we're reading from if we know it up front.  -1 if we do not.
                 private sourceLength = -1) {
-        this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
     }
 
     // The last legal index of the window (exclusive).
