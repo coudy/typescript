@@ -128,7 +128,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return true; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
 
         public fullWidth() { return 0; }
@@ -197,7 +197,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 

@@ -23,7 +23,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5",
-            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
+            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");

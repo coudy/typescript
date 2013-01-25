@@ -68,7 +68,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
@@ -155,7 +155,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
@@ -242,7 +242,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
@@ -332,7 +332,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
@@ -394,7 +394,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
@@ -468,7 +468,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
@@ -542,7 +542,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
@@ -619,7 +619,7 @@ module Syntax {
         private firstToken() { return this; }
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return false; }
+        private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }

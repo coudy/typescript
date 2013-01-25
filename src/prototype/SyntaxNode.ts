@@ -242,12 +242,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
                 }
 
                 if (!hasZeroWidthToken) {
-                    if (element.isToken()) {
-                        hasZeroWidthToken = childWidth === 0;
-                    }
-                    else {
-                        hasZeroWidthToken = element.hasZeroWidthToken();
-                    }
+                    hasZeroWidthToken = element.hasZeroWidthToken();
                 }
 
                 if (!hasRegularExpressionToken) {

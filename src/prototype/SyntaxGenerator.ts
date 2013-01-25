@@ -2460,7 +2460,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 "        private firstToken() { return this; }\r\n" +
 "        private lastToken() { return this; }\r\n" +
 "        private isTypeScriptSpecific() { return false; }\r\n" +
-"        private hasZeroWidthToken() { return false; }\r\n" +
+"        private hasZeroWidthToken() { return this.fullWidth() === 0; }\r\n" +
 "        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
 "        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        private realize(): ISyntaxToken { return realize(this); }\r\n" +

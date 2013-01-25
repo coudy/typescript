@@ -20619,11 +20619,7 @@ var SyntaxNode = (function () {
                     hasSkippedText = element.hasSkippedText();
                 }
                 if(!hasZeroWidthToken) {
-                    if(element.isToken()) {
-                        hasZeroWidthToken = childWidth === 0;
-                    } else {
-                        hasZeroWidthToken = element.hasZeroWidthToken();
-                    }
+                    hasZeroWidthToken = element.hasZeroWidthToken();
                 }
                 if(!hasRegularExpressionToken) {
                     hasRegularExpressionToken = element.hasRegularExpressionToken();
@@ -23105,7 +23101,7 @@ var Syntax;
             return false;
         };
         VariableWidthTokenWithNoTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         VariableWidthTokenWithNoTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -23234,7 +23230,7 @@ var Syntax;
             return false;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         VariableWidthTokenWithLeadingTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -23363,7 +23359,7 @@ var Syntax;
             return false;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -23493,7 +23489,7 @@ var Syntax;
             return false;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -23608,7 +23604,7 @@ var Syntax;
             return false;
         };
         FixedWidthTokenWithNoTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         FixedWidthTokenWithNoTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -23732,7 +23728,7 @@ var Syntax;
             return false;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -23856,7 +23852,7 @@ var Syntax;
             return false;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         FixedWidthTokenWithTrailingTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -23981,7 +23977,7 @@ var Syntax;
             return false;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
@@ -27261,7 +27257,7 @@ var Syntax;
             return false;
         };
         EmptyToken.prototype.hasZeroWidthToken = function () {
-            return true;
+            return this.fullWidth() === 0;
         };
         EmptyToken.prototype.hasRegularExpressionToken = function () {
             return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
@@ -27364,7 +27360,7 @@ var Syntax;
             return false;
         };
         RealizedToken.prototype.hasZeroWidthToken = function () {
-            return false;
+            return this.fullWidth() === 0;
         };
         RealizedToken.prototype.hasRegularExpressionToken = function () {
             return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
@@ -47130,7 +47126,7 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
