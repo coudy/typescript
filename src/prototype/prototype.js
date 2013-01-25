@@ -52221,13 +52221,6 @@ var Program = (function () {
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
-        Environment.standardOut.WriteLine("Testing against fuzz.");
-        this.runTests("C:\\temp\\fuzz", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
-        }, 2000);
-        if(true) {
-            return;
-        }
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -52268,7 +52261,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, true);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {
