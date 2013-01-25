@@ -32,7 +32,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             }
         }
 
-        Debug.assert(newItems === null || newItems.length === list.count());
+        // Debug.assert(newItems === null || newItems.length === list.count());
         return newItems === null ? list : Syntax.list(newItems);
     }
 
@@ -55,7 +55,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             }
         }
 
-        Debug.assert(newItems === null || newItems.length === list.itemAndSeparatorCount());
+        // Debug.assert(newItems === null || newItems.length === list.itemAndSeparatorCount());
         return newItems === null ? list : Syntax.separatedList(newItems);
     }
 

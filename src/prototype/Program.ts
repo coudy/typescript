@@ -316,8 +316,6 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        totalSize += contents.length;
-
         var text = TextFactory.createText(contents);
         var tree = Parser1.parse(text, languageVersion, stringTable);
         var sourceUnit = tree.sourceUnit();
@@ -467,7 +465,6 @@ class Program {
             // as UTF8.
             var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-            totalSize += contents.length;
             var isNegative = contents.indexOf("@negative") >= 0
 
             testCount++;
@@ -540,7 +537,6 @@ class Program {
             var canParseSuccessfully = expectedTop1000Failures[filePath.substr(path.length + 1)] === undefined;
             var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-            totalSize += contents.length;
             testCount++;
 
             try {

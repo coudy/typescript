@@ -50,12 +50,8 @@ module Syntax {
     }
 
     export function trivia(kind: SyntaxKind, text: string): ISyntaxTrivia {
-        Debug.assert(kind === SyntaxKind.MultiLineCommentTrivia ||
-                     kind === SyntaxKind.NewLineTrivia ||
-                     kind === SyntaxKind.SingleLineCommentTrivia ||
-                     kind === SyntaxKind.WhitespaceTrivia ||
-                     kind === SyntaxKind.SkippedTextTrivia);
-        Debug.assert(text.length > 0);
+        // Debug.assert(kind === SyntaxKind.MultiLineCommentTrivia || kind === SyntaxKind.NewLineTrivia || kind === SyntaxKind.SingleLineCommentTrivia || kind === SyntaxKind.WhitespaceTrivia || kind === SyntaxKind.SkippedTextTrivia);
+        // Debug.assert(text.length > 0);
         return new SyntaxTrivia(kind, text);
     }
 
@@ -85,7 +81,7 @@ module Syntax {
     // Otherwise, there will be one entry in the array for each line spanned by the trivia.  Each
     // entry will contain the line separator at the end of the string.
     export function splitMultiLineCommentTriviaIntoMultipleLines(trivia: ISyntaxTrivia): string[] {
-        Debug.assert(trivia.kind() === SyntaxKind.MultiLineCommentTrivia);
+        // Debug.assert(trivia.kind() === SyntaxKind.MultiLineCommentTrivia);
         var result: string[] = [];
 
         var triviaText = trivia.fullText();
