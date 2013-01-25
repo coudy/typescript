@@ -331,8 +331,8 @@ module TextFactory {
     /// An IText that represents a subrange of another IText.
     /// </summary>
     class SubText extends TextBase {
-        private text: IText = null;
-        private span: TextSpan = null;
+        private text: IText;
+        private span: TextSpan;
 
         constructor(text: IText, span: TextSpan) {
             super();

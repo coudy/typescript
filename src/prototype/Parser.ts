@@ -4573,7 +4573,8 @@ module Parser1 {
             // have to deal with them.
             for (var i = items.length - 1; i >= 0; i--) {
                 var item = items[i];
-                if (item.fullWidth() > 0) {
+                var lastToken = item.lastToken();
+                if (lastToken.fullWidth() > 0) {
                     items[i] = this.addSkippedTokenAfterNodeOrToken(item, skippedToken);
                     return;
                 }

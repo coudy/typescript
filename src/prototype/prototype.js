@@ -38323,7 +38323,8 @@ var Parser1;
         ParserImpl.prototype.addSkippedTokenToList = function (items, skippedTokens, skippedToken) {
             for(var i = items.length - 1; i >= 0; i--) {
                 var item = items[i];
-                if(item.fullWidth() > 0) {
+                var lastToken = item.lastToken();
+                if(lastToken.fullWidth() > 0) {
                     items[i] = this.addSkippedTokenAfterNodeOrToken(item, skippedToken);
                     return;
                 }
@@ -39051,8 +39052,6 @@ var TextFactory;
         __extends(SubText, _super);
         function SubText(text, span) {
                 _super.call(this);
-            this.text = null;
-            this.span = null;
             if(text === null) {
                 throw Errors.argumentNull("text");
             }
@@ -52222,6 +52221,13 @@ var Program = (function () {
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Testing against fuzz.");
+        this.runTests("C:\\temp\\fuzz", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
+        }, 2000);
+        if(true) {
+            return;
+        }
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
