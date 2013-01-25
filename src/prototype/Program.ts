@@ -23,7 +23,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5",
-            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ false));
 
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
@@ -326,6 +326,8 @@ class Program {
 
         var tokens = {};
         var tokensOnLeft = {};
+        var leftToRight = [];
+        var rightToLeft = [];
 
         for (var i = 0; i <= contents.length; i++) {
             var token = sourceUnit.findToken(i).token();
@@ -346,9 +348,23 @@ class Program {
             tokensOnLeft[i] = tokenOnLeft;
         }
 
+        var positionedToken = sourceUnit.findToken(0);
+        while (positionedToken !== null) {
+            leftToRight.push(positionedToken.token());
+            positionedToken = positionedToken.nextToken();
+        }
+
+        positionedToken = sourceUnit.findToken(contents.length);
+        while (positionedToken !== null) {
+            rightToLeft.push(positionedToken.token());
+            positionedToken = positionedToken.previousToken();
+        }
+
         var result = {
             tokens: tokens,
-            tokensOnLeft: tokensOnLeft
+            tokensOnLeft: tokensOnLeft,
+            leftToRight: leftToRight,
+            rightToLeft: rightToLeft,
         };
 
         this.checkResult(filePath, result, verify, generateBaseline, /*justText:*/ false);
@@ -582,7 +598,7 @@ if (true) {
 }
 
 // Existing parser.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);

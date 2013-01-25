@@ -116,5 +116,55 @@
                 }
             ]
         }
-    }
+    },
+    "leftToRight": [
+        {
+            "kind": "SemicolonToken",
+            "width": 1,
+            "fullWidth": 3,
+            "text": ";",
+            "hasTrailingTrivia": true,
+            "hasTrailingSkippedText": true,
+            "trailingTrivia": [
+                {
+                    "kind": "WhitespaceTrivia",
+                    "text": " "
+                },
+                {
+                    "kind": "SkippedTextTrivia",
+                    "text": "\\"
+                }
+            ]
+        },
+        {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    ],
+    "rightToLeft": [
+        {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        },
+        {
+            "kind": "SemicolonToken",
+            "width": 1,
+            "fullWidth": 3,
+            "text": ";",
+            "hasTrailingTrivia": true,
+            "hasTrailingSkippedText": true,
+            "trailingTrivia": [
+                {
+                    "kind": "WhitespaceTrivia",
+                    "text": " "
+                },
+                {
+                    "kind": "SkippedTextTrivia",
+                    "text": "\\"
+                }
+            ]
+        }
+    ]
 }

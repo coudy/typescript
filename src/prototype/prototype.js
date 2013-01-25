@@ -20776,12 +20776,19 @@ var PositionedElement = (function () {
     PositionedElement.prototype.end = function () {
         return this.fullStart() + this.element().leadingTriviaWidth() + this.element().width();
     };
+    PositionedElement.prototype.root = function () {
+        var current = this;
+        while(current.parent() !== null) {
+            current = current.parent();
+        }
+        return current;
+    };
     return PositionedElement;
 })();
 var PositionedNode = (function (_super) {
     __extends(PositionedNode, _super);
-    function PositionedNode(parent, node, position) {
-        _super.call(this, parent, node, position);
+    function PositionedNode(parent, node, fullStart) {
+        _super.call(this, parent, node, fullStart);
     }
     PositionedNode.prototype.node = function () {
         return this.element();
@@ -20790,18 +20797,31 @@ var PositionedNode = (function (_super) {
 })(PositionedElement);
 var PositionedToken = (function (_super) {
     __extends(PositionedToken, _super);
-    function PositionedToken(parent, token, position) {
-        _super.call(this, parent, token, position);
+    function PositionedToken(parent, token, fullStart) {
+        _super.call(this, parent, token, fullStart);
     }
     PositionedToken.prototype.token = function () {
         return this.element();
+    };
+    PositionedToken.prototype.previousToken = function () {
+        var fullStart = this.fullStart();
+        if(fullStart === 0) {
+            return null;
+        }
+        return this.root().node().findToken(fullStart - 1);
+    };
+    PositionedToken.prototype.nextToken = function () {
+        if(this.token().tokenKind === 10 /* EndOfFileToken */ ) {
+            return null;
+        }
+        return this.root().node().findToken(this.fullEnd());
     };
     return PositionedToken;
 })(PositionedElement);
 var PositionedList = (function (_super) {
     __extends(PositionedList, _super);
-    function PositionedList(parent, list, position) {
-        _super.call(this, parent, list, position);
+    function PositionedList(parent, list, fullStart) {
+        _super.call(this, parent, list, fullStart);
     }
     PositionedList.prototype.list = function () {
         return this.element();
@@ -20810,8 +20830,8 @@ var PositionedList = (function (_super) {
 })(PositionedElement);
 var PositionedSeparatedList = (function (_super) {
     __extends(PositionedSeparatedList, _super);
-    function PositionedSeparatedList(parent, list, position) {
-        _super.call(this, parent, list, position);
+    function PositionedSeparatedList(parent, list, fullStart) {
+        _super.call(this, parent, list, fullStart);
     }
     PositionedSeparatedList.prototype.list = function () {
         return this.element();
@@ -47126,7 +47146,7 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
-            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, generate);
+            return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
@@ -47343,6 +47363,8 @@ var Program = (function () {
         };
         var tokensOnLeft = {
         };
+        var leftToRight = [];
+        var rightToLeft = [];
         for(var i = 0; i <= contents.length; i++) {
             var token = sourceUnit.findToken(i).token();
             var left = sourceUnit.findTokenOnLeft(i);
@@ -47357,9 +47379,21 @@ var Program = (function () {
             tokens[i] = token;
             tokensOnLeft[i] = tokenOnLeft;
         }
+        var positionedToken = sourceUnit.findToken(0);
+        while(positionedToken !== null) {
+            leftToRight.push(positionedToken.token());
+            positionedToken = positionedToken.nextToken();
+        }
+        positionedToken = sourceUnit.findToken(contents.length);
+        while(positionedToken !== null) {
+            rightToLeft.push(positionedToken.token());
+            positionedToken = positionedToken.previousToken();
+        }
         var result = {
             tokens: tokens,
-            tokensOnLeft: tokensOnLeft
+            tokensOnLeft: tokensOnLeft,
+            leftToRight: leftToRight,
+            rightToLeft: rightToLeft
         };
         this.checkResult(filePath, result, verify, generateBaseline, false);
     };
@@ -47539,7 +47573,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(true) {
+if(false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);

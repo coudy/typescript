@@ -34,31 +34,57 @@ class PositionedElement {
     public end(): number {
         return this.fullStart() + this.element().leadingTriviaWidth() + this.element().width();
     }
+
+    public root(): PositionedNode {
+        var current = this;
+        while (current.parent() !== null) {
+            current = current.parent();
+        }
+
+        return <PositionedNode>current;
+    }
 }
 
 class PositionedNode extends PositionedElement {
-    constructor(parent: PositionedElement, node: SyntaxNode, position: number) {
-        super(parent, node, position);
+    constructor(parent: PositionedElement, node: SyntaxNode, fullStart: number) {
+        super(parent, node, fullStart);
     }
-
+    
     public node(): SyntaxNode {
         return <SyntaxNode>this.element();
     }
 }
 
 class PositionedToken extends PositionedElement {
-    constructor(parent: PositionedElement, token: ISyntaxToken, position: number) {
-        super(parent, token, position);
+    constructor(parent: PositionedElement, token: ISyntaxToken, fullStart: number) {
+        super(parent, token, fullStart);
     }
 
     public token(): ISyntaxToken {
         return <ISyntaxToken>this.element();
     }
+
+    public previousToken(): PositionedToken {
+        var fullStart = this.fullStart();
+        if (fullStart === 0) {
+            return null;
+        }
+
+        return this.root().node().findToken(fullStart - 1);
+    }
+
+    public nextToken(): PositionedToken {
+        if (this.token().tokenKind === SyntaxKind.EndOfFileToken) {
+            return null;
+        }
+
+        return this.root().node().findToken(this.fullEnd());
+    }
 }
 
 class PositionedList extends PositionedElement {
-    constructor(parent: PositionedElement, list: ISyntaxList, position: number) {
-        super(parent, list, position);
+    constructor(parent: PositionedElement, list: ISyntaxList, fullStart: number) {
+        super(parent, list, fullStart);
     }
 
     public list(): ISyntaxList {
@@ -67,8 +93,8 @@ class PositionedList extends PositionedElement {
 }
 
 class PositionedSeparatedList extends PositionedElement {
-    constructor(parent: PositionedElement, list: ISeparatedSyntaxList, position: number) {
-        super(parent, list, position);
+    constructor(parent: PositionedElement, list: ISeparatedSyntaxList, fullStart: number) {
+        super(parent, list, fullStart);
     }
 
     public list(): ISeparatedSyntaxList {

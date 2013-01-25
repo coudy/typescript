@@ -68,5 +68,39 @@
             "width": 1,
             "text": ";"
         }
-    }
+    },
+    "leftToRight": [
+        {
+            "kind": "RegularExpressionLiteral",
+            "width": 5,
+            "text": "/foo/"
+        },
+        {
+            "kind": "SemicolonToken",
+            "width": 1,
+            "text": ";"
+        },
+        {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    ],
+    "rightToLeft": [
+        {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        },
+        {
+            "kind": "SemicolonToken",
+            "width": 1,
+            "text": ";"
+        },
+        {
+            "kind": "RegularExpressionLiteral",
+            "width": 5,
+            "text": "/foo/"
+        }
+    ]
 }
