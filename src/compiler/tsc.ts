@@ -17,6 +17,17 @@
 ///<reference path='io.ts'/>
 ///<reference path='optionsParser.ts'/>
 
+class DiagnosticsLogger implements TypeScript.ILogger {
+    public information(): bool { return false; }
+    public debug(): bool { return false; }
+    public warning(): bool { return false; }
+    public error(): bool { return false; }
+    public fatal(): bool { return false; }
+    public log(s: string): void {
+        WScript.Echo(s);
+    }
+}
+
 class CommandLineHost implements TypeScript.IResolverHost {
 
     public pathMap: any = {};
@@ -109,7 +120,7 @@ class BatchCompiler {
     public compile(): bool {
         var compiler: TypeScript.TypeScriptCompiler;
 
-        compiler = new TypeScript.TypeScriptCompiler(this.ioHost.stderr, new TypeScript.NullLogger(), this.compilationSettings);
+        compiler = new TypeScript.TypeScriptCompiler(this.ioHost.stderr, this.compilationSettings.gatherDiagnostics ? <any>(new DiagnosticsLogger()) : new TypeScript.NullLogger(), this.compilationSettings);
         compiler.setErrorOutput(this.ioHost.stderr);
         compiler.setErrorCallback(
             (minChar, charLen, message, unitIndex) => {
@@ -171,9 +182,14 @@ class BatchCompiler {
         };
 
         try {
-            compiler.typeCheck();
-            compiler.emit(emitterIOHost);
-            compiler.emitDeclarations();
+            if (this.compilationSettings.usePull) {
+                compiler.pullTypeCheck();
+            }
+            else {
+                compiler.typeCheck();
+                compiler.emit(emitterIOHost);
+                compiler.emitDeclarations();
+            }
         } catch (err) {
             compiler.errorReporter.hasErrors = true;
             // Catch emitter exceptions
@@ -374,6 +390,23 @@ class BatchCompiler {
                 this.compilationSettings.inferPropertiesFromThisAssignment = true;
             }
         });
+
+        opts.flag('diagnostics', {
+            usage: 'gather diagnostic info about the compilation process',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.gatherDiagnostics = true;
+            }
+        });
+
+        opts.flag('pull', {
+            usage: 'use "pull model" for typecheck operations',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.usePull = true;
+            }
+        });
+
 
         opts.option('target', {
             usage: 'Specify ECMAScript target version: "ES3" (default), or "ES5"',
