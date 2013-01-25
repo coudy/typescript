@@ -282,7 +282,7 @@ interface JQueryStatic {
 
     makeArray(obj: any): any[];
 
-    map(array: any[], callback: (elementOfArray: any, indexInArray: any) =>any): any[];
+    map(array: any[], callback: (elementOfArray: any, indexInArray: any) =>any): JQuery;
     
     merge(first: any[], second: any[]): any[];
 
