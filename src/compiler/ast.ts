@@ -21,9 +21,13 @@ module TypeScript {
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
     }
 
+    export var astID = 0;
+
     export class AST extends ASTSpan {
         public type: Type = null;
         public flags = ASTFlags.Writeable;
+
+        private astID = astID++;
 
         // REVIEW: for diagnostic purposes
         public passCreated: number = CompilerDiagnostics.analysisPass;
@@ -37,6 +41,8 @@ module TypeScript {
         constructor (public nodeType: NodeType) {
             super();
         }
+
+        public getID() { return this.astID; }
 
         public isExpression() { return false; }
 

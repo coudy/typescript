@@ -113,6 +113,9 @@ module TypeScript {
 
         public useCaseSensitiveFileResolution = false;
         public useFidelity = true;
+        public usePull = false;
+
+        public gatherDiagnostics = false;
 
         public setStyleOptions(str: string) {
             this.styleSettings.parseOptions(str);

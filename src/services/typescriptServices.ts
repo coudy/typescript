@@ -17,13 +17,14 @@
 ///<reference path='..\compiler\typescript.ts' />
 ///<reference path='coreServices.ts' />
 ///<reference path='classifier.ts' />
-///<reference path='compilerState.ts' />
+///<reference path='pullCompilerState.ts' />
 ///<reference path='scriptSyntaxAST.ts' />
 ///<reference path='braceMatchingManager.ts' />
 ///<reference path='symbolSet.ts' />
 ///<reference path='symbolTree.ts' />
 ///<reference path='overridesCollector.ts' />
 ///<reference path='languageService.ts' />
+///<reference path='pullLanguageService.ts' />
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />
 ///<reference path='outliningElementsCollector.ts' />

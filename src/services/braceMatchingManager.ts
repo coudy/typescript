@@ -18,7 +18,7 @@
 
 module Services {
 
-    class ForwardBranceMatchingWalker extends TextSpanWalker {
+    class ForwardBraceMatchingWalker extends TextSpanWalker {
         private openBraceCount = 0;
         public closingBracePosition: TextSpan = null;
 
@@ -50,13 +50,13 @@ module Services {
         }
 
         public static getMatchingCloseBrace(node: SourceUnitSyntax, bracePosition: number, openningBraceKind: SyntaxKind, closingBraceKind: SyntaxKind): TextSpan {
-            var forwardBranceMatchingWalker = new ForwardBranceMatchingWalker(new TextSpan(bracePosition, node.fullWidth()), bracePosition, openningBraceKind, closingBraceKind);
+            var forwardBranceMatchingWalker = new ForwardBraceMatchingWalker(new TextSpan(bracePosition, node.fullWidth()), bracePosition, openningBraceKind, closingBraceKind);
             node.accept(forwardBranceMatchingWalker);
             return forwardBranceMatchingWalker.closingBracePosition;
         }
     }
 
-    class BackwardBranceMatchingWalker extends TextSpanWalker {
+    class BackwardBraceMatchingWalker extends TextSpanWalker {
         public openBracePositions: TextSpan[] = [];
 
         constructor(span: TextSpan, private bracePosition: number, private openningBraceKind: SyntaxKind, private closingBraceKind: SyntaxKind) {
@@ -76,7 +76,7 @@ module Services {
         }
 
         public static getMatchingOpenBrace(node: SourceUnitSyntax, bracePosition: number, openningBraceKind: SyntaxKind, closingBraceKind: SyntaxKind): TextSpan {
-            var backwardBranceMatchingWalker = new BackwardBranceMatchingWalker(new TextSpan(0, bracePosition), bracePosition, openningBraceKind, closingBraceKind);
+            var backwardBranceMatchingWalker = new BackwardBraceMatchingWalker(new TextSpan(0, bracePosition), bracePosition, openningBraceKind, closingBraceKind);
             node.accept(backwardBranceMatchingWalker);
             return backwardBranceMatchingWalker.openBracePositions.pop();
         }
@@ -103,8 +103,8 @@ module Services {
                 var openBraceKindIndex = openBraceKinds.indexOf(findTokenResult.token().kind());
                 if (openBraceKindIndex >= 0) {
                     var bracePosition = findTokenResult.fullStart() + findTokenResult.token().leadingTriviaWidth();
-                    if (bracePosition === position) {
-                        var closeBracePosition = ForwardBranceMatchingWalker.getMatchingCloseBrace(this.syntaxTree.sourceUnit(), position, openBraceKinds[openBraceKindIndex], closeBraceKinds[openBraceKindIndex]);
+                        if (bracePosition === position) {
+                        var closeBracePosition = ForwardBraceMatchingWalker.getMatchingCloseBrace(this.syntaxTree.sourceUnit(), position, openBraceKinds[openBraceKindIndex], closeBraceKinds[openBraceKindIndex]);
                         if (closeBracePosition) {
                             var range1 = new TextRange(position, position + 1);
                             var range2 = new TextRange(closeBracePosition.start(), closeBracePosition.end());
@@ -123,7 +123,7 @@ module Services {
                 if (closeBraceKindIndex >= 0) {
                     var bracePosition = findTokenResult.fullStart() + findTokenResult.token().leadingTriviaWidth();
                     if (bracePosition === (position - 1)) {
-                        var openBracePosition = BackwardBranceMatchingWalker.getMatchingOpenBrace(this.syntaxTree.sourceUnit(), position - 1, openBraceKinds[closeBraceKindIndex], closeBraceKinds[closeBraceKindIndex]);
+                        var openBracePosition = BackwardBraceMatchingWalker.getMatchingOpenBrace(this.syntaxTree.sourceUnit(), position - 1, openBraceKinds[closeBraceKindIndex], closeBraceKinds[closeBraceKindIndex]);
                         if (openBracePosition) {
                             var range1 = new TextRange(position - 1, position);
                             var range2 = new TextRange(openBracePosition.start(), openBracePosition.end());
