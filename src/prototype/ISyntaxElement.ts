@@ -9,6 +9,19 @@ interface ISyntaxElement {
     isList(): bool;
     isSeparatedList(): bool;
 
+    // True if this element is typescript specific and would not be legal in pure javascript.
+    isTypeScriptSpecific(): bool;
+
+    // True if this element (or any child element) contains any skipped text trivia.
+    hasSkippedText(): bool;
+
+    // True if this element (or any child element) contains any zero width tokens.
+    hasZeroWidthToken(): bool;
+
+    // True if this element (or any child element) contains any regular expression token.
+    hasRegularExpressionToken(): bool;
+
+
     // With of this element, including leading and trailing trivia.
     fullWidth(): number;
 

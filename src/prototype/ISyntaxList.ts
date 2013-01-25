@@ -6,10 +6,5 @@ interface ISyntaxList extends ISyntaxElement {
     itemAt(index: number): ISyntaxNodeOrToken;
     toArray(): ISyntaxNodeOrToken[];
 
-    isTypeScriptSpecific(): bool;
-    hasSkippedText(): bool;
-    hasZeroWidthToken(): bool;
-    hasRegularExpressionToken(): bool;
-
     insertChildrenInto(array: ISyntaxElement[], index: number): void;
 }

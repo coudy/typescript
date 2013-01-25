@@ -14,14 +14,5 @@ interface ISeparatedSyntaxList extends ISyntaxElement {
     separatorCount();
     separatorAt(index: number): ISyntaxToken;
 
-    firstToken(): ISyntaxToken;
-    lastToken(): ISyntaxToken;
-
-    isTypeScriptSpecific(): bool;
-
-    hasSkippedText(): bool;
-    hasZeroWidthToken(): bool;
-    hasRegularExpressionToken(): bool;
-
     insertChildrenInto(array: ISyntaxElement[], index: number): void;
 }

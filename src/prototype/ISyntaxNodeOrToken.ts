@@ -1,9 +1,4 @@
 interface ISyntaxNodeOrToken extends ISyntaxElement {
-    hasSkippedText(): bool;
-    isTypeScriptSpecific(): bool;
-    hasZeroWidthToken(): bool;
-    hasRegularExpressionToken(): bool;
-
     leadingTrivia(): ISyntaxTriviaList;
     trailingTrivia(): ISyntaxTriviaList;
 
