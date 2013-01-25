@@ -165,7 +165,7 @@ module Syntax {
         }
 
         public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
-            // Debug.assert(position >= 0 && position < this.item.fullWidth());
+            Debug.assert(position >= 0 && position < this.item.fullWidth());
             return (<any>this.item).findTokenInternal(
                 new PositionedSeparatedList(parent, this, fullStart), position, fullStart);
         }
@@ -414,7 +414,7 @@ module Syntax {
                 var item = nodes[i];
 
                 if (i % 2 === 1) {
-                    // Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
+                    Debug.assert(SyntaxFacts.isTokenKind(item.kind()));
                 }
             }
         }

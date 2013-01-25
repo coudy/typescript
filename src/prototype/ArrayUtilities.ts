@@ -54,7 +54,7 @@ class ArrayUtilities {
     }
 
     public static min(array: any[], func: (v: any) => number): number {
-        // Debug.assert(array.length > 0);
+        Debug.assert(array.length > 0);
         var min = func(array[0]);
 
         for (var i = 1; i < array.length; i++) {
@@ -68,7 +68,7 @@ class ArrayUtilities {
     }
 
     public static max(array: any[], func: (v: any) => number): number {
-        // Debug.assert(array.length > 0);
+        Debug.assert(array.length > 0);
         var max = func(array[0]);
 
         for (var i = 1; i < array.length; i++) {

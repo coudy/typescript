@@ -311,7 +311,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
-        // Debug.assert(position >= 0 && position < this.fullWidth());
+        Debug.assert(position >= 0 && position < this.fullWidth());
 
         parent = new PositionedNode(parent, this, fullStart);
         for (var i = 0, n = this.slotCount(); i < n; i++) {
@@ -337,8 +337,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         var start = positionedToken.start();
 
         // Position better fall within this token.
-        // Debug.assert(position >= positionedToken.fullStart());
-        // Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
+        Debug.assert(position >= positionedToken.fullStart());
+        Debug.assert(position < positionedToken.fullEnd() || positionedToken.token().tokenKind === SyntaxKind.EndOfFileToken);
 
         // if position is after the start of the token, then this token is the token on the left.
         if (position > start) {
@@ -354,7 +354,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         var previousToken = this.findToken(positionedToken.fullStart() - 1);
 
         // Position better be after this token.
-        // Debug.assert(previousToken.fullEnd() <= position);
+        Debug.assert(previousToken.fullEnd() <= position);
 
         return previousToken;
     }

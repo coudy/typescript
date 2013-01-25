@@ -167,7 +167,7 @@ module Syntax {
         }
 
         public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
-            // Debug.assert(position >= 0 && position < this.item.fullWidth());
+            Debug.assert(position >= 0 && position < this.item.fullWidth());
             return (<any>this.item).findTokenInternal(
                 new PositionedList(parent, this, fullStart), position, fullStart);
         }
@@ -315,7 +315,7 @@ module Syntax {
         }
 
         public findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
-            // Debug.assert(position >= 0 && position < this.fullWidth());
+            Debug.assert(position >= 0 && position < this.fullWidth());
             
             parent = new PositionedList(parent, this, fullStart);
             for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {

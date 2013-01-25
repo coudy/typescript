@@ -13,7 +13,7 @@ class CharacterInfo {
     }
 
     public static hexValue(c: number): number {
-        // Debug.assert(isHexDigit(c));
+        Debug.assert(isHexDigit(c));
         return isDecimalDigit(c)
             ? (c - CharacterCodes._0)
             : (c >= CharacterCodes.A && c <= CharacterCodes.F)
