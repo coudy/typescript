@@ -70,7 +70,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -157,7 +157,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -244,7 +244,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -334,7 +334,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -396,7 +396,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -470,7 +470,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -544,7 +544,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -621,7 +621,7 @@ module Syntax {
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return false; }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 

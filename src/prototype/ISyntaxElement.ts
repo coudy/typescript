@@ -21,7 +21,6 @@ interface ISyntaxElement {
     // True if this element (or any child element) contains any regular expression token.
     hasRegularExpressionToken(): bool;
 
-
     // With of this element, including leading and trailing trivia.
     fullWidth(): number;
 

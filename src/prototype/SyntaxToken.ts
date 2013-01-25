@@ -129,7 +129,7 @@ module Syntax {
         private lastToken() { return this; }
         private isTypeScriptSpecific() { return false; }
         private hasZeroWidthToken() { return true; }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
+        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
 
         public fullWidth() { return 0; }
         public width() { return 0; }

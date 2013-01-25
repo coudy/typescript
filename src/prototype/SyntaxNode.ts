@@ -79,8 +79,14 @@ class SyntaxNode implements ISyntaxNodeOrToken {
                 if (element.isNode() || element.isToken()) {
                     array.splice(index, 0, element);
                 }
+                else if (element.isList()) {
+                    (<ISyntaxList>element).insertChildrenInto(array, index);
+                }
+                else if (element.isSeparatedList()) {
+                    (<ISeparatedSyntaxList>element).insertChildrenInto(array, index);
+                }
                 else {
-                    (<any>element).insertChildrenInto(array, index);
+                    throw Errors.invalidOperation();
                 }
             }
         }
@@ -134,7 +140,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
     public fullText(): string {
         var elements: string[] = [];
-        (<any>this).collectTextElements(elements);
+        this.collectTextElements(elements);
         return elements.join("");
     }
 
@@ -158,6 +164,10 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
     public withTrailingTrivia(trivia: ISyntaxTriviaList): SyntaxNode {
         return this.replaceToken(this.lastToken(), this.lastToken().withTrailingTrivia(trivia));
+    }
+
+    public hasLeadingTrivia(): bool {
+        return this.lastToken().hasLeadingTrivia();
     }
 
     public hasTrailingTrivia(): bool {
@@ -221,7 +231,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         var hasRegularExpressionToken = false;
 
         for (var i = 0, n = slotCount; i < n; i++) {
-            var element: any = this.elementAtSlot(i);
+            var element = this.elementAtSlot(i);
 
             if (element !== null) {
                 var childWidth = element.fullWidth();
@@ -241,12 +251,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
                 }
 
                 if (!hasRegularExpressionToken) {
-                    if (element.isToken()) {
-                        hasRegularExpressionToken = SyntaxFacts.isAnyDivideOrRegularExpressionToken(element.tokenKind);
-                    }
-                    else {
-                        hasRegularExpressionToken = element.hasRegularExpressionToken();
-                    }
+                    hasRegularExpressionToken = element.hasRegularExpressionToken();
                 }
             }
         }

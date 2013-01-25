@@ -2462,7 +2462,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 "        private isTypeScriptSpecific() { return false; }\r\n" +
 "        private hasZeroWidthToken() { return false; }\r\n" +
 "        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
-"        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }\r\n" +
+"        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        private realize(): ISyntaxToken { return realize(this); }\r\n" +
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 

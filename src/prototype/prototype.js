@@ -19609,760 +19609,6 @@ var TypeScript;
     })();
     TypeScript.DeclarationEmitter = DeclarationEmitter;    
 })(TypeScript || (TypeScript = {}));
-var SyntaxRewriter = (function () {
-    function SyntaxRewriter() { }
-    SyntaxRewriter.prototype.visitToken = function (token) {
-        return token;
-    };
-    SyntaxRewriter.prototype.visitNode = function (node) {
-        return node.accept(this);
-    };
-    SyntaxRewriter.prototype.visitNodeOrToken = function (node) {
-        return node.isToken() ? this.visitToken(node) : this.visitNode(node);
-    };
-    SyntaxRewriter.prototype.visitList = function (list) {
-        var newItems = null;
-        for(var i = 0, n = list.count(); i < n; i++) {
-            var item = list.itemAt(i);
-            var newItem = this.visitNodeOrToken(item);
-            if(item !== newItem && newItems === null) {
-                newItems = [];
-                for(var j = 0; j < i; j++) {
-                    newItems.push(list.itemAt(j));
-                }
-            }
-            if(newItems) {
-                newItems.push(newItem);
-            }
-        }
-        Debug.assert(newItems === null || newItems.length === list.count());
-        return newItems === null ? list : Syntax.list(newItems);
-    };
-    SyntaxRewriter.prototype.visitSeparatedList = function (list) {
-        var newItems = null;
-        for(var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {
-            var item = list.itemOrSeparatorAt(i);
-            var newItem = item.isToken() ? this.visitToken(item) : this.visitNode(item);
-            if(item !== newItem && newItems === null) {
-                newItems = [];
-                for(var j = 0; j < i; j++) {
-                    newItems.push(list.itemOrSeparatorAt(j));
-                }
-            }
-            if(newItems) {
-                newItems.push(newItem);
-            }
-        }
-        Debug.assert(newItems === null || newItems.length === list.itemAndSeparatorCount());
-        return newItems === null ? list : Syntax.separatedList(newItems);
-    };
-    SyntaxRewriter.prototype.visitSourceUnit = function (node) {
-        return node.update(this.visitList(node.moduleElements()), this.visitToken(node.endOfFileToken()));
-    };
-    SyntaxRewriter.prototype.visitExternalModuleReference = function (node) {
-        return node.update(this.visitToken(node.moduleKeyword()), this.visitToken(node.openParenToken()), this.visitToken(node.stringLiteral()), this.visitToken(node.closeParenToken()));
-    };
-    SyntaxRewriter.prototype.visitModuleNameModuleReference = function (node) {
-        return node.withModuleName(this.visitNodeOrToken(node.moduleName()));
-    };
-    SyntaxRewriter.prototype.visitImportDeclaration = function (node) {
-        return node.update(this.visitToken(node.importKeyword()), this.visitToken(node.identifier()), this.visitToken(node.equalsToken()), this.visitNode(node.moduleReference()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitClassDeclaration = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.classKeyword()), this.visitToken(node.identifier()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), node.implementsClause() === null ? null : this.visitNode(node.implementsClause()), this.visitToken(node.openBraceToken()), this.visitList(node.classElements()), this.visitToken(node.closeBraceToken()));
-    };
-    SyntaxRewriter.prototype.visitInterfaceDeclaration = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.interfaceKeyword()), this.visitToken(node.identifier()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), this.visitNode(node.body()));
-    };
-    SyntaxRewriter.prototype.visitExtendsClause = function (node) {
-        return node.update(this.visitToken(node.extendsKeyword()), this.visitSeparatedList(node.typeNames()));
-    };
-    SyntaxRewriter.prototype.visitImplementsClause = function (node) {
-        return node.update(this.visitToken(node.implementsKeyword()), this.visitSeparatedList(node.typeNames()));
-    };
-    SyntaxRewriter.prototype.visitModuleDeclaration = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.moduleKeyword()), node.moduleName() === null ? null : this.visitNodeOrToken(node.moduleName()), node.stringLiteral() === null ? null : this.visitToken(node.stringLiteral()), this.visitToken(node.openBraceToken()), this.visitList(node.moduleElements()), this.visitToken(node.closeBraceToken()));
-    };
-    SyntaxRewriter.prototype.visitFunctionDeclaration = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.functionKeyword()), this.visitNode(node.functionSignature()), node.block() === null ? null : this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitVariableStatement = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitNode(node.variableDeclaration()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitVariableDeclaration = function (node) {
-        return node.update(this.visitToken(node.varKeyword()), this.visitSeparatedList(node.variableDeclarators()));
-    };
-    SyntaxRewriter.prototype.visitVariableDeclarator = function (node) {
-        return node.update(this.visitToken(node.identifier()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), node.equalsValueClause() === null ? null : this.visitNode(node.equalsValueClause()));
-    };
-    SyntaxRewriter.prototype.visitEqualsValueClause = function (node) {
-        return node.update(this.visitToken(node.equalsToken()), this.visitNodeOrToken(node.value()));
-    };
-    SyntaxRewriter.prototype.visitPrefixUnaryExpression = function (node) {
-        return node.update(node.kind(), this.visitToken(node.operatorToken()), this.visitNodeOrToken(node.operand()));
-    };
-    SyntaxRewriter.prototype.visitArrayLiteralExpression = function (node) {
-        return node.update(this.visitToken(node.openBracketToken()), this.visitSeparatedList(node.expressions()), this.visitToken(node.closeBracketToken()));
-    };
-    SyntaxRewriter.prototype.visitOmittedExpression = function (node) {
-        return node;
-    };
-    SyntaxRewriter.prototype.visitParenthesizedExpression = function (node) {
-        return node.update(this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.expression()), this.visitToken(node.closeParenToken()));
-    };
-    SyntaxRewriter.prototype.visitSimpleArrowFunctionExpression = function (node) {
-        return node.update(this.visitToken(node.identifier()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.body()));
-    };
-    SyntaxRewriter.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
-        return node.update(this.visitNode(node.callSignature()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.body()));
-    };
-    SyntaxRewriter.prototype.visitQualifiedName = function (node) {
-        return node.update(this.visitNodeOrToken(node.left()), this.visitToken(node.dotToken()), this.visitToken(node.right()));
-    };
-    SyntaxRewriter.prototype.visitTypeArgumentList = function (node) {
-        return node.update(this.visitToken(node.lessThanToken()), this.visitSeparatedList(node.typeArguments()), this.visitToken(node.greaterThanToken()));
-    };
-    SyntaxRewriter.prototype.visitConstructorType = function (node) {
-        return node.update(this.visitToken(node.newKeyword()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
-    };
-    SyntaxRewriter.prototype.visitFunctionType = function (node) {
-        return node.update(node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
-    };
-    SyntaxRewriter.prototype.visitObjectType = function (node) {
-        return node.update(this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.typeMembers()), this.visitToken(node.closeBraceToken()));
-    };
-    SyntaxRewriter.prototype.visitArrayType = function (node) {
-        return node.update(this.visitNodeOrToken(node.type()), this.visitToken(node.openBracketToken()), this.visitToken(node.closeBracketToken()));
-    };
-    SyntaxRewriter.prototype.visitGenericType = function (node) {
-        return node.update(this.visitNodeOrToken(node.name()), this.visitNode(node.typeArgumentList()));
-    };
-    SyntaxRewriter.prototype.visitTypeAnnotation = function (node) {
-        return node.update(this.visitToken(node.colonToken()), this.visitNodeOrToken(node.type()));
-    };
-    SyntaxRewriter.prototype.visitBlock = function (node) {
-        return node.update(this.visitToken(node.openBraceToken()), this.visitList(node.statements()), this.visitToken(node.closeBraceToken()));
-    };
-    SyntaxRewriter.prototype.visitParameter = function (node) {
-        return node.update(node.dotDotDotToken() === null ? null : this.visitToken(node.dotDotDotToken()), node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), node.equalsValueClause() === null ? null : this.visitNode(node.equalsValueClause()));
-    };
-    SyntaxRewriter.prototype.visitMemberAccessExpression = function (node) {
-        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.dotToken()), this.visitToken(node.name()));
-    };
-    SyntaxRewriter.prototype.visitPostfixUnaryExpression = function (node) {
-        return node.update(node.kind(), this.visitNodeOrToken(node.operand()), this.visitToken(node.operatorToken()));
-    };
-    SyntaxRewriter.prototype.visitElementAccessExpression = function (node) {
-        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.openBracketToken()), this.visitNodeOrToken(node.argumentExpression()), this.visitToken(node.closeBracketToken()));
-    };
-    SyntaxRewriter.prototype.visitInvocationExpression = function (node) {
-        return node.update(this.visitNodeOrToken(node.expression()), this.visitNode(node.argumentList()));
-    };
-    SyntaxRewriter.prototype.visitArgumentList = function (node) {
-        return node.update(node.typeArgumentList() === null ? null : this.visitNode(node.typeArgumentList()), this.visitToken(node.openParenToken()), this.visitSeparatedList(node.arguments()), this.visitToken(node.closeParenToken()));
-    };
-    SyntaxRewriter.prototype.visitBinaryExpression = function (node) {
-        return node.update(node.kind(), this.visitNodeOrToken(node.left()), this.visitToken(node.operatorToken()), this.visitNodeOrToken(node.right()));
-    };
-    SyntaxRewriter.prototype.visitConditionalExpression = function (node) {
-        return node.update(this.visitNodeOrToken(node.condition()), this.visitToken(node.questionToken()), this.visitNodeOrToken(node.whenTrue()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.whenFalse()));
-    };
-    SyntaxRewriter.prototype.visitConstructSignature = function (node) {
-        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.callSignature()));
-    };
-    SyntaxRewriter.prototype.visitFunctionSignature = function (node) {
-        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), this.visitNode(node.callSignature()));
-    };
-    SyntaxRewriter.prototype.visitIndexSignature = function (node) {
-        return node.update(this.visitToken(node.openBracketToken()), this.visitNode(node.parameter()), this.visitToken(node.closeBracketToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
-    };
-    SyntaxRewriter.prototype.visitPropertySignature = function (node) {
-        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
-    };
-    SyntaxRewriter.prototype.visitParameterList = function (node) {
-        return node.update(this.visitToken(node.openParenToken()), this.visitSeparatedList(node.parameters()), this.visitToken(node.closeParenToken()));
-    };
-    SyntaxRewriter.prototype.visitCallSignature = function (node) {
-        return node.update(node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
-    };
-    SyntaxRewriter.prototype.visitTypeParameterList = function (node) {
-        return node.update(this.visitToken(node.lessThanToken()), this.visitSeparatedList(node.typeParameters()), this.visitToken(node.greaterThanToken()));
-    };
-    SyntaxRewriter.prototype.visitTypeParameter = function (node) {
-        return node.update(this.visitToken(node.identifier()), node.constraint() === null ? null : this.visitNode(node.constraint()));
-    };
-    SyntaxRewriter.prototype.visitConstraint = function (node) {
-        return node.update(this.visitToken(node.extendsKeyword()), this.visitNodeOrToken(node.type()));
-    };
-    SyntaxRewriter.prototype.visitElseClause = function (node) {
-        return node.update(this.visitToken(node.elseKeyword()), this.visitNodeOrToken(node.statement()));
-    };
-    SyntaxRewriter.prototype.visitIfStatement = function (node) {
-        return node.update(this.visitToken(node.ifKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()), node.elseClause() === null ? null : this.visitNode(node.elseClause()));
-    };
-    SyntaxRewriter.prototype.visitExpressionStatement = function (node) {
-        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitConstructorDeclaration = function (node) {
-        return node.update(this.visitToken(node.constructorKeyword()), this.visitNode(node.parameterList()), node.block() === null ? null : this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitMemberFunctionDeclaration = function (node) {
-        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitNode(node.functionSignature()), node.block() === null ? null : this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitGetMemberAccessorDeclaration = function (node) {
-        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitToken(node.getKeyword()), this.visitToken(node.identifier()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), this.visitNode(node.block()));
-    };
-    SyntaxRewriter.prototype.visitSetMemberAccessorDeclaration = function (node) {
-        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitToken(node.setKeyword()), this.visitToken(node.identifier()), this.visitNode(node.parameterList()), this.visitNode(node.block()));
-    };
-    SyntaxRewriter.prototype.visitMemberVariableDeclaration = function (node) {
-        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitNode(node.variableDeclarator()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitThrowStatement = function (node) {
-        return node.update(this.visitToken(node.throwKeyword()), this.visitNodeOrToken(node.expression()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitReturnStatement = function (node) {
-        return node.update(this.visitToken(node.returnKeyword()), node.expression() === null ? null : this.visitNodeOrToken(node.expression()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitObjectCreationExpression = function (node) {
-        return node.update(this.visitToken(node.newKeyword()), this.visitNodeOrToken(node.expression()), node.argumentList() === null ? null : this.visitNode(node.argumentList()));
-    };
-    SyntaxRewriter.prototype.visitSwitchStatement = function (node) {
-        return node.update(this.visitToken(node.switchKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.expression()), this.visitToken(node.closeParenToken()), this.visitToken(node.openBraceToken()), this.visitList(node.switchClauses()), this.visitToken(node.closeBraceToken()));
-    };
-    SyntaxRewriter.prototype.visitCaseSwitchClause = function (node) {
-        return node.update(this.visitToken(node.caseKeyword()), this.visitNodeOrToken(node.expression()), this.visitToken(node.colonToken()), this.visitList(node.statements()));
-    };
-    SyntaxRewriter.prototype.visitDefaultSwitchClause = function (node) {
-        return node.update(this.visitToken(node.defaultKeyword()), this.visitToken(node.colonToken()), this.visitList(node.statements()));
-    };
-    SyntaxRewriter.prototype.visitBreakStatement = function (node) {
-        return node.update(this.visitToken(node.breakKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitContinueStatement = function (node) {
-        return node.update(this.visitToken(node.continueKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitForStatement = function (node) {
-        return node.update(this.visitToken(node.forKeyword()), this.visitToken(node.openParenToken()), node.variableDeclaration() === null ? null : this.visitNode(node.variableDeclaration()), node.initializer() === null ? null : this.visitNodeOrToken(node.initializer()), this.visitToken(node.firstSemicolonToken()), node.condition() === null ? null : this.visitNodeOrToken(node.condition()), this.visitToken(node.secondSemicolonToken()), node.incrementor() === null ? null : this.visitNodeOrToken(node.incrementor()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
-    };
-    SyntaxRewriter.prototype.visitForInStatement = function (node) {
-        return node.update(this.visitToken(node.forKeyword()), this.visitToken(node.openParenToken()), node.variableDeclaration() === null ? null : this.visitNode(node.variableDeclaration()), node.left() === null ? null : this.visitNodeOrToken(node.left()), this.visitToken(node.inKeyword()), this.visitNodeOrToken(node.expression()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
-    };
-    SyntaxRewriter.prototype.visitWhileStatement = function (node) {
-        return node.update(this.visitToken(node.whileKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
-    };
-    SyntaxRewriter.prototype.visitWithStatement = function (node) {
-        return node.update(this.visitToken(node.withKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
-    };
-    SyntaxRewriter.prototype.visitEnumDeclaration = function (node) {
-        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.enumKeyword()), this.visitToken(node.identifier()), this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.variableDeclarators()), this.visitToken(node.closeBraceToken()));
-    };
-    SyntaxRewriter.prototype.visitCastExpression = function (node) {
-        return node.update(this.visitToken(node.lessThanToken()), this.visitNodeOrToken(node.type()), this.visitToken(node.greaterThanToken()), this.visitNodeOrToken(node.expression()));
-    };
-    SyntaxRewriter.prototype.visitObjectLiteralExpression = function (node) {
-        return node.update(this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.propertyAssignments()), this.visitToken(node.closeBraceToken()));
-    };
-    SyntaxRewriter.prototype.visitSimplePropertyAssignment = function (node) {
-        return node.update(this.visitToken(node.propertyName()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.expression()));
-    };
-    SyntaxRewriter.prototype.visitGetAccessorPropertyAssignment = function (node) {
-        return node.update(this.visitToken(node.getKeyword()), this.visitToken(node.propertyName()), this.visitToken(node.openParenToken()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
-    };
-    SyntaxRewriter.prototype.visitSetAccessorPropertyAssignment = function (node) {
-        return node.update(this.visitToken(node.setKeyword()), this.visitToken(node.propertyName()), this.visitToken(node.openParenToken()), this.visitToken(node.parameterName()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
-    };
-    SyntaxRewriter.prototype.visitFunctionExpression = function (node) {
-        return node.update(this.visitToken(node.functionKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitNode(node.callSignature()), this.visitNode(node.block()));
-    };
-    SyntaxRewriter.prototype.visitEmptyStatement = function (node) {
-        return node.withSemicolonToken(this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitTryStatement = function (node) {
-        return node.update(this.visitToken(node.tryKeyword()), this.visitNode(node.block()), node.catchClause() === null ? null : this.visitNode(node.catchClause()), node.finallyClause() === null ? null : this.visitNode(node.finallyClause()));
-    };
-    SyntaxRewriter.prototype.visitCatchClause = function (node) {
-        return node.update(this.visitToken(node.catchKeyword()), this.visitToken(node.openParenToken()), this.visitToken(node.identifier()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
-    };
-    SyntaxRewriter.prototype.visitFinallyClause = function (node) {
-        return node.update(this.visitToken(node.finallyKeyword()), this.visitNode(node.block()));
-    };
-    SyntaxRewriter.prototype.visitLabeledStatement = function (node) {
-        return node.update(this.visitToken(node.identifier()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.statement()));
-    };
-    SyntaxRewriter.prototype.visitDoStatement = function (node) {
-        return node.update(this.visitToken(node.doKeyword()), this.visitNodeOrToken(node.statement()), this.visitToken(node.whileKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitToken(node.semicolonToken()));
-    };
-    SyntaxRewriter.prototype.visitTypeOfExpression = function (node) {
-        return node.update(this.visitToken(node.typeOfKeyword()), this.visitNodeOrToken(node.expression()));
-    };
-    SyntaxRewriter.prototype.visitDeleteExpression = function (node) {
-        return node.update(this.visitToken(node.deleteKeyword()), this.visitNodeOrToken(node.expression()));
-    };
-    SyntaxRewriter.prototype.visitVoidExpression = function (node) {
-        return node.update(this.visitToken(node.voidKeyword()), this.visitNodeOrToken(node.expression()));
-    };
-    SyntaxRewriter.prototype.visitDebuggerStatement = function (node) {
-        return node.update(this.visitToken(node.debuggerKeyword()), this.visitToken(node.semicolonToken()));
-    };
-    return SyntaxRewriter;
-})();
-var Debug = (function () {
-    function Debug() { }
-    Debug.assert = function assert(expression) {
-        if(!expression) {
-            throw new Error("Debug Failure. False expression.");
-        }
-    };
-    return Debug;
-})();
-var Errors = (function () {
-    function Errors() { }
-    Errors.argument = function argument(argument, message) {
-        return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
-    };
-    Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
-        return new Error("Argument out of range: " + argument + ".");
-    };
-    Errors.argumentNull = function argumentNull(argument) {
-        return new Error("Argument null: " + argument + ".");
-    };
-    Errors.abstract = function abstract() {
-        return new Error("Operation not implemented properly by subclass.");
-    };
-    Errors.notYetImplemented = function notYetImplemented() {
-        return new Error("Not yet implemented.");
-    };
-    Errors.invalidOperation = function invalidOperation(message) {
-        return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
-    };
-    return Errors;
-})();
-var ArrayUtilities = (function () {
-    function ArrayUtilities() { }
-    ArrayUtilities.isArray = function isArray(value) {
-        return Object.prototype.toString.apply(value, []) === '[object Array]';
-    };
-    ArrayUtilities.sequenceEquals = function sequenceEquals(array1, array2, equals) {
-        if(array1 === array2) {
-            return true;
-        }
-        if(array1 === null || array2 === null) {
-            return false;
-        }
-        if(array1.length !== array2.length) {
-            return false;
-        }
-        for(var i = 0, n = array1.length; i < n; i++) {
-            if(!equals(array1[i], array2[i])) {
-                return false;
-            }
-        }
-        return true;
-    };
-    ArrayUtilities.contains = function contains(array, value) {
-        for(var i = 0; i < array.length; i++) {
-            if(array[i] === value) {
-                return true;
-            }
-        }
-        return false;
-    };
-    ArrayUtilities.groupBy = function groupBy(array, func) {
-        var result = {
-        };
-        for(var i = 0, n = array.length; i < n; i++) {
-            var v = array[i];
-            var k = func(v);
-            var list = result[k] || [];
-            list.push(v);
-            result[k] = list;
-        }
-        return result;
-    };
-    ArrayUtilities.min = function min(array, func) {
-        Debug.assert(array.length > 0);
-        var min = func(array[0]);
-        for(var i = 1; i < array.length; i++) {
-            var next = func(array[i]);
-            if(next < min) {
-                min = next;
-            }
-        }
-        return min;
-    };
-    ArrayUtilities.max = function max(array, func) {
-        Debug.assert(array.length > 0);
-        var max = func(array[0]);
-        for(var i = 1; i < array.length; i++) {
-            var next = func(array[i]);
-            if(next > max) {
-                max = next;
-            }
-        }
-        return max;
-    };
-    ArrayUtilities.last = function last(array) {
-        if(array.length === 0) {
-            throw Errors.argumentOutOfRange('array');
-        }
-        return array[array.length - 1];
-    };
-    ArrayUtilities.firstOrDefault = function firstOrDefault(array, func) {
-        for(var i = 0, n = array.length; i < n; i++) {
-            var value = array[i];
-            if(func(value)) {
-                return value;
-            }
-        }
-        return null;
-    };
-    ArrayUtilities.sum = function sum(array, func) {
-        var result = 0;
-        for(var i = 0, n = array.length; i < n; i++) {
-            result += func(array[i]);
-        }
-        return result;
-    };
-    ArrayUtilities.whereNotNull = function whereNotNull(array) {
-        var result = [];
-        for(var i = 0; i < array.length; i++) {
-            var value = array[i];
-            if(value !== null) {
-                result.push(value);
-            }
-        }
-        return result;
-    };
-    ArrayUtilities.select = function select(values, func) {
-        var result = [];
-        for(var i = 0; i < values.length; i++) {
-            result.push(func(values[i]));
-        }
-        return result;
-    };
-    ArrayUtilities.where = function where(values, func) {
-        var result = [];
-        for(var i = 0; i < values.length; i++) {
-            if(func(values[i])) {
-                result.push(values[i]);
-            }
-        }
-        return result;
-    };
-    ArrayUtilities.any = function any(array, func) {
-        for(var i = 0, n = array.length; i < n; i++) {
-            if(func(array[i])) {
-                return true;
-            }
-        }
-        return false;
-    };
-    ArrayUtilities.all = function all(array, func) {
-        for(var i = 0, n = array.length; i < n; i++) {
-            if(!func(array[i])) {
-                return false;
-            }
-        }
-        return true;
-    };
-    ArrayUtilities.binarySearch = function binarySearch(array, value) {
-        var low = 0;
-        var high = array.length - 1;
-        while(low <= high) {
-            var middle = low + ((high - low) >> 1);
-            var midValue = array[middle];
-            if(midValue === value) {
-                return middle;
-            } else if(midValue > value) {
-                high = middle - 1;
-            } else {
-                low = middle + 1;
-            }
-        }
-        return ~low;
-    };
-    ArrayUtilities.createArray = function createArray(length, defaultvalue) {
-        if (typeof defaultvalue === "undefined") { defaultvalue = null; }
-        var result = [];
-        for(var i = 0; i < length; i++) {
-            result.push(defaultvalue);
-        }
-        return result;
-    };
-    ArrayUtilities.grow = function grow(array, length, defaultValue) {
-        var count = length - array.length;
-        for(var i = 0; i < count; i++) {
-            array.push(defaultValue);
-        }
-    };
-    ArrayUtilities.copy = function copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
-        for(var i = 0; i < length; i++) {
-            destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i];
-        }
-    };
-    return ArrayUtilities;
-})();
-var SlidingWindow = (function () {
-    function SlidingWindow(source, defaultWindowSize, defaultValue, sourceLength) {
-        if (typeof sourceLength === "undefined") { sourceLength = -1; }
-        this.source = source;
-        this.defaultValue = defaultValue;
-        this.sourceLength = sourceLength;
-        this.window = [];
-        this.windowCount = 0;
-        this.windowAbsoluteStartIndex = 0;
-        this.currentRelativeItemIndex = 0;
-        this._pinCount = 0;
-        this.firstPinnedAbsoluteIndex = -1;
-        this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
-    }
-    SlidingWindow.prototype.windowAbsoluteEndIndex = function () {
-        return this.windowAbsoluteStartIndex + this.windowCount;
-    };
-    SlidingWindow.prototype.addMoreItemsToWindow = function (argument) {
-        if(this.sourceLength >= 0 && this.absoluteIndex() >= this.sourceLength) {
-            return false;
-        }
-        if(this.windowCount >= this.window.length) {
-            this.tryShiftOrGrowWindow();
-        }
-        var spaceAvailable = this.window.length - this.windowCount;
-        var amountFetched = this.source.fetchMoreItems(argument, this.windowAbsoluteEndIndex(), this.window, this.windowCount, spaceAvailable);
-        this.windowCount += amountFetched;
-        return amountFetched > 0;
-    };
-    SlidingWindow.prototype.tryShiftOrGrowWindow = function () {
-        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
-        var isAllowedToShift = this.firstPinnedAbsoluteIndex === -1 || this.firstPinnedAbsoluteIndex > this.windowAbsoluteStartIndex;
-        if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
-            var shiftStartIndex = this.firstPinnedAbsoluteIndex === -1 ? this.currentRelativeItemIndex : this.firstPinnedAbsoluteIndex - this.windowAbsoluteStartIndex;
-            var shiftCount = this.windowCount - shiftStartIndex;
-            Debug.assert(shiftStartIndex > 0);
-            if(shiftCount > 0) {
-                ArrayUtilities.copy(this.window, shiftStartIndex, this.window, 0, shiftCount);
-            }
-            this.windowAbsoluteStartIndex += shiftStartIndex;
-            this.windowCount -= shiftStartIndex;
-            this.currentRelativeItemIndex -= shiftStartIndex;
-        } else {
-            ArrayUtilities.grow(this.window, this.window.length * 2, this.defaultValue);
-        }
-    };
-    SlidingWindow.prototype.absoluteIndex = function () {
-        return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
-    };
-    SlidingWindow.prototype.isAtEndOfSource = function () {
-        return this.absoluteIndex() >= this.sourceLength;
-    };
-    SlidingWindow.prototype.getAndPinAbsoluteIndex = function () {
-        var absoluteIndex = this.absoluteIndex();
-        var pinCount = this._pinCount++;
-        if(pinCount === 0) {
-            this.firstPinnedAbsoluteIndex = absoluteIndex;
-        }
-        return absoluteIndex;
-    };
-    SlidingWindow.prototype.releaseAndUnpinAbsoluteIndex = function (absoluteIndex) {
-        this._pinCount--;
-        if(this._pinCount === 0) {
-            this.firstPinnedAbsoluteIndex = -1;
-        }
-    };
-    SlidingWindow.prototype.rewindToPinnedIndex = function (absoluteIndex) {
-        var relativeIndex = absoluteIndex - this.windowAbsoluteStartIndex;
-        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
-        this.currentRelativeItemIndex = relativeIndex;
-    };
-    SlidingWindow.prototype.currentItem = function (argument) {
-        if(this.currentRelativeItemIndex >= this.windowCount) {
-            if(!this.addMoreItemsToWindow(argument)) {
-                return this.defaultValue;
-            }
-        }
-        return this.window[this.currentRelativeItemIndex];
-    };
-    SlidingWindow.prototype.peekItemN = function (n) {
-        Debug.assert(n >= 0);
-        while(this.currentRelativeItemIndex + n >= this.windowCount) {
-            if(!this.addMoreItemsToWindow(null)) {
-                return this.defaultValue;
-            }
-        }
-        return this.window[this.currentRelativeItemIndex + n];
-    };
-    SlidingWindow.prototype.moveToNextItem = function () {
-        this.currentRelativeItemIndex++;
-    };
-    SlidingWindow.prototype.disgardAllItemsFromCurrentIndexOnwards = function () {
-        this.windowCount = this.currentRelativeItemIndex;
-    };
-    SlidingWindow.prototype.setAbsoluteIndex = function (absoluteIndex) {
-        if(this.absoluteIndex() === absoluteIndex) {
-            return;
-        }
-        if(this._pinCount > 0) {
-            Debug.assert(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex());
-        }
-        if(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
-            this.currentRelativeItemIndex = (absoluteIndex - this.windowAbsoluteStartIndex);
-        } else {
-            this.windowAbsoluteStartIndex = absoluteIndex;
-            this.windowCount = 0;
-            this.currentRelativeItemIndex = 0;
-        }
-    };
-    SlidingWindow.prototype.pinCount = function () {
-        return this._pinCount;
-    };
-    return SlidingWindow;
-})();
-var ParseOptions = (function () {
-    function ParseOptions(allowAutomaticSemicolonInsertion) {
-        if (typeof allowAutomaticSemicolonInsertion === "undefined") { allowAutomaticSemicolonInsertion = true; }
-        this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
-    }
-    ParseOptions.prototype.allowAutomaticSemicolonInsertion = function () {
-        return this._allowAutomaticSemicolonInsertion;
-    };
-    return ParseOptions;
-})();
-var CharacterCodes;
-(function (CharacterCodes) {
-    CharacterCodes._map = [];
-    CharacterCodes.nullCharacter = 0;
-    CharacterCodes.maxAsciiCharacter = 127;
-    CharacterCodes.lineFeed = 10;
-    CharacterCodes.carriageReturn = 13;
-    CharacterCodes.lineSeparator = 8232;
-    CharacterCodes.paragraphSeparator = 8233;
-    CharacterCodes.space = 32;
-    CharacterCodes.nextLine = 133;
-    CharacterCodes.nonBreakingSpace = 160;
-    CharacterCodes._ = 95;
-    CharacterCodes.$ = 36;
-    CharacterCodes._0 = 48;
-    CharacterCodes._9 = 57;
-    CharacterCodes.a = 97;
-    CharacterCodes.b = 98;
-    CharacterCodes.c = 99;
-    CharacterCodes.d = 100;
-    CharacterCodes.e = 101;
-    CharacterCodes.f = 102;
-    CharacterCodes.g = 103;
-    CharacterCodes.h = 104;
-    CharacterCodes.i = 105;
-    CharacterCodes.k = 107;
-    CharacterCodes.l = 108;
-    CharacterCodes.m = 109;
-    CharacterCodes.n = 110;
-    CharacterCodes.o = 111;
-    CharacterCodes.p = 112;
-    CharacterCodes.r = 114;
-    CharacterCodes.s = 115;
-    CharacterCodes.t = 116;
-    CharacterCodes.u = 117;
-    CharacterCodes.v = 118;
-    CharacterCodes.w = 119;
-    CharacterCodes.x = 120;
-    CharacterCodes.y = 121;
-    CharacterCodes.z = 122;
-    CharacterCodes.A = 65;
-    CharacterCodes.E = 69;
-    CharacterCodes.F = 70;
-    CharacterCodes.X = 88;
-    CharacterCodes.Z = 90;
-    CharacterCodes.ampersand = 38;
-    CharacterCodes.asterisk = 42;
-    CharacterCodes.backslash = 92;
-    CharacterCodes.bar = 124;
-    CharacterCodes.caret = 94;
-    CharacterCodes.closeBrace = 125;
-    CharacterCodes.closeBracket = 93;
-    CharacterCodes.closeParen = 41;
-    CharacterCodes.colon = 58;
-    CharacterCodes.comma = 44;
-    CharacterCodes.dot = 46;
-    CharacterCodes.doubleQuote = 34;
-    CharacterCodes.equals = 61;
-    CharacterCodes.exclamation = 33;
-    CharacterCodes.greaterThan = 62;
-    CharacterCodes.lessThan = 60;
-    CharacterCodes.minus = 45;
-    CharacterCodes.openBrace = 123;
-    CharacterCodes.openBracket = 91;
-    CharacterCodes.openParen = 40;
-    CharacterCodes.percent = 37;
-    CharacterCodes.plus = 43;
-    CharacterCodes.question = 63;
-    CharacterCodes.semicolon = 59;
-    CharacterCodes.singleQuote = 39;
-    CharacterCodes.slash = 47;
-    CharacterCodes.tilde = 126;
-    CharacterCodes.backspace = 8;
-    CharacterCodes.formFeed = 12;
-    CharacterCodes.byteOrderMark = 65279;
-    CharacterCodes.tab = 9;
-    CharacterCodes.verticalTab = 11;
-})(CharacterCodes || (CharacterCodes = {}));
-var CharacterInfo = (function () {
-    function CharacterInfo() { }
-    CharacterInfo.isDecimalDigit = function isDecimalDigit(c) {
-        return c >= 48 /* _0 */  && c <= 57 /* _9 */ ;
-    };
-    CharacterInfo.isHexDigit = function isHexDigit(c) {
-        return CharacterInfo.isDecimalDigit(c) || (c >= 65 /* A */  && c <= 70 /* F */ ) || (c >= 97 /* a */  && c <= 102 /* f */ );
-    };
-    CharacterInfo.hexValue = function hexValue(c) {
-        Debug.assert(CharacterInfo.isHexDigit(c));
-        return CharacterInfo.isDecimalDigit(c) ? (c - 48 /* _0 */ ) : (c >= 65 /* A */  && c <= 70 /* F */ ) ? c - 65 /* A */  + 10 : c - 97 /* a */  + 10;
-    };
-    CharacterInfo.isWhitespace = function isWhitespace(ch) {
-        switch(ch) {
-            case 32 /* space */ :
-            case 9 /* tab */ :
-            case 11 /* verticalTab */ :
-            case 12 /* formFeed */ :
-            case 160 /* nonBreakingSpace */ :
-            case 65279 /* byteOrderMark */ :
-                return true;
-        }
-        return false;
-    };
-    CharacterInfo.isLineTerminator = function isLineTerminator(ch) {
-        switch(ch) {
-            case 13 /* carriageReturn */ :
-            case 10 /* lineFeed */ :
-            case 8233 /* paragraphSeparator */ :
-            case 8232 /* lineSeparator */ :
-                return true;
-        }
-        return false;
-    };
-    return CharacterInfo;
-})();
-var Constants;
-(function (Constants) {
-    Constants._map = [];
-    Constants.Max31BitInteger = 1073741823;
-    Constants.Min31BitInteger = -1073741824;
-    Constants.TriviaNewLineMask = 1;
-    Constants.TriviaCommentMask = 2;
-    Constants.TriviaFullWidthShift = 2;
-    Constants.NodeSkippedTextMask = 1;
-    Constants.NodeZeroWidthTokenMask = 2;
-    Constants.NodeRegularExpressionTokenMask = 4;
-    Constants.NodeParsedInStrictModeMask = 8;
-    Constants.NodeFullWidthShift = 4;
-})(Constants || (Constants = {}));
-var LanguageVersion;
-(function (LanguageVersion) {
-    LanguageVersion._map = [];
-    LanguageVersion._map[0] = "EcmaScript3";
-    LanguageVersion.EcmaScript3 = 0;
-    LanguageVersion._map[1] = "EcmaScript5";
-    LanguageVersion.EcmaScript5 = 1;
-})(LanguageVersion || (LanguageVersion = {}));
 var SyntaxKind;
 (function (SyntaxKind) {
     SyntaxKind._map = [];
@@ -20871,6 +20117,326 @@ var SyntaxKind;
     SyntaxKind.FirstFixedWidth = SyntaxKind.FirstKeyword;
     SyntaxKind.LastFixedWidth = SyntaxKind.LastPunctuation;
 })(SyntaxKind || (SyntaxKind = {}));
+var SyntaxRewriter = (function () {
+    function SyntaxRewriter() { }
+    SyntaxRewriter.prototype.visitToken = function (token) {
+        return token;
+    };
+    SyntaxRewriter.prototype.visitNode = function (node) {
+        return node.accept(this);
+    };
+    SyntaxRewriter.prototype.visitNodeOrToken = function (node) {
+        return node.isToken() ? this.visitToken(node) : this.visitNode(node);
+    };
+    SyntaxRewriter.prototype.visitList = function (list) {
+        var newItems = null;
+        for(var i = 0, n = list.count(); i < n; i++) {
+            var item = list.itemAt(i);
+            var newItem = this.visitNodeOrToken(item);
+            if(item !== newItem && newItems === null) {
+                newItems = [];
+                for(var j = 0; j < i; j++) {
+                    newItems.push(list.itemAt(j));
+                }
+            }
+            if(newItems) {
+                newItems.push(newItem);
+            }
+        }
+        Debug.assert(newItems === null || newItems.length === list.count());
+        return newItems === null ? list : Syntax.list(newItems);
+    };
+    SyntaxRewriter.prototype.visitSeparatedList = function (list) {
+        var newItems = null;
+        for(var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {
+            var item = list.itemOrSeparatorAt(i);
+            var newItem = item.isToken() ? this.visitToken(item) : this.visitNode(item);
+            if(item !== newItem && newItems === null) {
+                newItems = [];
+                for(var j = 0; j < i; j++) {
+                    newItems.push(list.itemOrSeparatorAt(j));
+                }
+            }
+            if(newItems) {
+                newItems.push(newItem);
+            }
+        }
+        Debug.assert(newItems === null || newItems.length === list.itemAndSeparatorCount());
+        return newItems === null ? list : Syntax.separatedList(newItems);
+    };
+    SyntaxRewriter.prototype.visitSourceUnit = function (node) {
+        return node.update(this.visitList(node.moduleElements()), this.visitToken(node.endOfFileToken()));
+    };
+    SyntaxRewriter.prototype.visitExternalModuleReference = function (node) {
+        return node.update(this.visitToken(node.moduleKeyword()), this.visitToken(node.openParenToken()), this.visitToken(node.stringLiteral()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitModuleNameModuleReference = function (node) {
+        return node.withModuleName(this.visitNodeOrToken(node.moduleName()));
+    };
+    SyntaxRewriter.prototype.visitImportDeclaration = function (node) {
+        return node.update(this.visitToken(node.importKeyword()), this.visitToken(node.identifier()), this.visitToken(node.equalsToken()), this.visitNode(node.moduleReference()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitClassDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.classKeyword()), this.visitToken(node.identifier()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), node.implementsClause() === null ? null : this.visitNode(node.implementsClause()), this.visitToken(node.openBraceToken()), this.visitList(node.classElements()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitInterfaceDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.interfaceKeyword()), this.visitToken(node.identifier()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), node.extendsClause() === null ? null : this.visitNode(node.extendsClause()), this.visitNode(node.body()));
+    };
+    SyntaxRewriter.prototype.visitExtendsClause = function (node) {
+        return node.update(this.visitToken(node.extendsKeyword()), this.visitSeparatedList(node.typeNames()));
+    };
+    SyntaxRewriter.prototype.visitImplementsClause = function (node) {
+        return node.update(this.visitToken(node.implementsKeyword()), this.visitSeparatedList(node.typeNames()));
+    };
+    SyntaxRewriter.prototype.visitModuleDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.moduleKeyword()), node.moduleName() === null ? null : this.visitNodeOrToken(node.moduleName()), node.stringLiteral() === null ? null : this.visitToken(node.stringLiteral()), this.visitToken(node.openBraceToken()), this.visitList(node.moduleElements()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitFunctionDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitToken(node.functionKeyword()), this.visitNode(node.functionSignature()), node.block() === null ? null : this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitVariableStatement = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), node.declareKeyword() === null ? null : this.visitToken(node.declareKeyword()), this.visitNode(node.variableDeclaration()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitVariableDeclaration = function (node) {
+        return node.update(this.visitToken(node.varKeyword()), this.visitSeparatedList(node.variableDeclarators()));
+    };
+    SyntaxRewriter.prototype.visitVariableDeclarator = function (node) {
+        return node.update(this.visitToken(node.identifier()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), node.equalsValueClause() === null ? null : this.visitNode(node.equalsValueClause()));
+    };
+    SyntaxRewriter.prototype.visitEqualsValueClause = function (node) {
+        return node.update(this.visitToken(node.equalsToken()), this.visitNodeOrToken(node.value()));
+    };
+    SyntaxRewriter.prototype.visitPrefixUnaryExpression = function (node) {
+        return node.update(node.kind(), this.visitToken(node.operatorToken()), this.visitNodeOrToken(node.operand()));
+    };
+    SyntaxRewriter.prototype.visitArrayLiteralExpression = function (node) {
+        return node.update(this.visitToken(node.openBracketToken()), this.visitSeparatedList(node.expressions()), this.visitToken(node.closeBracketToken()));
+    };
+    SyntaxRewriter.prototype.visitOmittedExpression = function (node) {
+        return node;
+    };
+    SyntaxRewriter.prototype.visitParenthesizedExpression = function (node) {
+        return node.update(this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.expression()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitSimpleArrowFunctionExpression = function (node) {
+        return node.update(this.visitToken(node.identifier()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.body()));
+    };
+    SyntaxRewriter.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
+        return node.update(this.visitNode(node.callSignature()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.body()));
+    };
+    SyntaxRewriter.prototype.visitQualifiedName = function (node) {
+        return node.update(this.visitNodeOrToken(node.left()), this.visitToken(node.dotToken()), this.visitToken(node.right()));
+    };
+    SyntaxRewriter.prototype.visitTypeArgumentList = function (node) {
+        return node.update(this.visitToken(node.lessThanToken()), this.visitSeparatedList(node.typeArguments()), this.visitToken(node.greaterThanToken()));
+    };
+    SyntaxRewriter.prototype.visitConstructorType = function (node) {
+        return node.update(this.visitToken(node.newKeyword()), node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
+    };
+    SyntaxRewriter.prototype.visitFunctionType = function (node) {
+        return node.update(node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), this.visitToken(node.equalsGreaterThanToken()), this.visitNodeOrToken(node.type()));
+    };
+    SyntaxRewriter.prototype.visitObjectType = function (node) {
+        return node.update(this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.typeMembers()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitArrayType = function (node) {
+        return node.update(this.visitNodeOrToken(node.type()), this.visitToken(node.openBracketToken()), this.visitToken(node.closeBracketToken()));
+    };
+    SyntaxRewriter.prototype.visitGenericType = function (node) {
+        return node.update(this.visitNodeOrToken(node.name()), this.visitNode(node.typeArgumentList()));
+    };
+    SyntaxRewriter.prototype.visitTypeAnnotation = function (node) {
+        return node.update(this.visitToken(node.colonToken()), this.visitNodeOrToken(node.type()));
+    };
+    SyntaxRewriter.prototype.visitBlock = function (node) {
+        return node.update(this.visitToken(node.openBraceToken()), this.visitList(node.statements()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitParameter = function (node) {
+        return node.update(node.dotDotDotToken() === null ? null : this.visitToken(node.dotDotDotToken()), node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), node.equalsValueClause() === null ? null : this.visitNode(node.equalsValueClause()));
+    };
+    SyntaxRewriter.prototype.visitMemberAccessExpression = function (node) {
+        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.dotToken()), this.visitToken(node.name()));
+    };
+    SyntaxRewriter.prototype.visitPostfixUnaryExpression = function (node) {
+        return node.update(node.kind(), this.visitNodeOrToken(node.operand()), this.visitToken(node.operatorToken()));
+    };
+    SyntaxRewriter.prototype.visitElementAccessExpression = function (node) {
+        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.openBracketToken()), this.visitNodeOrToken(node.argumentExpression()), this.visitToken(node.closeBracketToken()));
+    };
+    SyntaxRewriter.prototype.visitInvocationExpression = function (node) {
+        return node.update(this.visitNodeOrToken(node.expression()), this.visitNode(node.argumentList()));
+    };
+    SyntaxRewriter.prototype.visitArgumentList = function (node) {
+        return node.update(node.typeArgumentList() === null ? null : this.visitNode(node.typeArgumentList()), this.visitToken(node.openParenToken()), this.visitSeparatedList(node.arguments()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitBinaryExpression = function (node) {
+        return node.update(node.kind(), this.visitNodeOrToken(node.left()), this.visitToken(node.operatorToken()), this.visitNodeOrToken(node.right()));
+    };
+    SyntaxRewriter.prototype.visitConditionalExpression = function (node) {
+        return node.update(this.visitNodeOrToken(node.condition()), this.visitToken(node.questionToken()), this.visitNodeOrToken(node.whenTrue()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.whenFalse()));
+    };
+    SyntaxRewriter.prototype.visitConstructSignature = function (node) {
+        return node.update(this.visitToken(node.newKeyword()), this.visitNode(node.callSignature()));
+    };
+    SyntaxRewriter.prototype.visitFunctionSignature = function (node) {
+        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), this.visitNode(node.callSignature()));
+    };
+    SyntaxRewriter.prototype.visitIndexSignature = function (node) {
+        return node.update(this.visitToken(node.openBracketToken()), this.visitNode(node.parameter()), this.visitToken(node.closeBracketToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitPropertySignature = function (node) {
+        return node.update(this.visitToken(node.identifier()), node.questionToken() === null ? null : this.visitToken(node.questionToken()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitParameterList = function (node) {
+        return node.update(this.visitToken(node.openParenToken()), this.visitSeparatedList(node.parameters()), this.visitToken(node.closeParenToken()));
+    };
+    SyntaxRewriter.prototype.visitCallSignature = function (node) {
+        return node.update(node.typeParameterList() === null ? null : this.visitNode(node.typeParameterList()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()));
+    };
+    SyntaxRewriter.prototype.visitTypeParameterList = function (node) {
+        return node.update(this.visitToken(node.lessThanToken()), this.visitSeparatedList(node.typeParameters()), this.visitToken(node.greaterThanToken()));
+    };
+    SyntaxRewriter.prototype.visitTypeParameter = function (node) {
+        return node.update(this.visitToken(node.identifier()), node.constraint() === null ? null : this.visitNode(node.constraint()));
+    };
+    SyntaxRewriter.prototype.visitConstraint = function (node) {
+        return node.update(this.visitToken(node.extendsKeyword()), this.visitNodeOrToken(node.type()));
+    };
+    SyntaxRewriter.prototype.visitElseClause = function (node) {
+        return node.update(this.visitToken(node.elseKeyword()), this.visitNodeOrToken(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitIfStatement = function (node) {
+        return node.update(this.visitToken(node.ifKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()), node.elseClause() === null ? null : this.visitNode(node.elseClause()));
+    };
+    SyntaxRewriter.prototype.visitExpressionStatement = function (node) {
+        return node.update(this.visitNodeOrToken(node.expression()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitConstructorDeclaration = function (node) {
+        return node.update(this.visitToken(node.constructorKeyword()), this.visitNode(node.parameterList()), node.block() === null ? null : this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitMemberFunctionDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitNode(node.functionSignature()), node.block() === null ? null : this.visitNode(node.block()), node.semicolonToken() === null ? null : this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitGetMemberAccessorDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitToken(node.getKeyword()), this.visitToken(node.identifier()), this.visitNode(node.parameterList()), node.typeAnnotation() === null ? null : this.visitNode(node.typeAnnotation()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitSetMemberAccessorDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitToken(node.setKeyword()), this.visitToken(node.identifier()), this.visitNode(node.parameterList()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitMemberVariableDeclaration = function (node) {
+        return node.update(node.publicOrPrivateKeyword() === null ? null : this.visitToken(node.publicOrPrivateKeyword()), node.staticKeyword() === null ? null : this.visitToken(node.staticKeyword()), this.visitNode(node.variableDeclarator()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitThrowStatement = function (node) {
+        return node.update(this.visitToken(node.throwKeyword()), this.visitNodeOrToken(node.expression()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitReturnStatement = function (node) {
+        return node.update(this.visitToken(node.returnKeyword()), node.expression() === null ? null : this.visitNodeOrToken(node.expression()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitObjectCreationExpression = function (node) {
+        return node.update(this.visitToken(node.newKeyword()), this.visitNodeOrToken(node.expression()), node.argumentList() === null ? null : this.visitNode(node.argumentList()));
+    };
+    SyntaxRewriter.prototype.visitSwitchStatement = function (node) {
+        return node.update(this.visitToken(node.switchKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.expression()), this.visitToken(node.closeParenToken()), this.visitToken(node.openBraceToken()), this.visitList(node.switchClauses()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitCaseSwitchClause = function (node) {
+        return node.update(this.visitToken(node.caseKeyword()), this.visitNodeOrToken(node.expression()), this.visitToken(node.colonToken()), this.visitList(node.statements()));
+    };
+    SyntaxRewriter.prototype.visitDefaultSwitchClause = function (node) {
+        return node.update(this.visitToken(node.defaultKeyword()), this.visitToken(node.colonToken()), this.visitList(node.statements()));
+    };
+    SyntaxRewriter.prototype.visitBreakStatement = function (node) {
+        return node.update(this.visitToken(node.breakKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitContinueStatement = function (node) {
+        return node.update(this.visitToken(node.continueKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitForStatement = function (node) {
+        return node.update(this.visitToken(node.forKeyword()), this.visitToken(node.openParenToken()), node.variableDeclaration() === null ? null : this.visitNode(node.variableDeclaration()), node.initializer() === null ? null : this.visitNodeOrToken(node.initializer()), this.visitToken(node.firstSemicolonToken()), node.condition() === null ? null : this.visitNodeOrToken(node.condition()), this.visitToken(node.secondSemicolonToken()), node.incrementor() === null ? null : this.visitNodeOrToken(node.incrementor()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitForInStatement = function (node) {
+        return node.update(this.visitToken(node.forKeyword()), this.visitToken(node.openParenToken()), node.variableDeclaration() === null ? null : this.visitNode(node.variableDeclaration()), node.left() === null ? null : this.visitNodeOrToken(node.left()), this.visitToken(node.inKeyword()), this.visitNodeOrToken(node.expression()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitWhileStatement = function (node) {
+        return node.update(this.visitToken(node.whileKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitWithStatement = function (node) {
+        return node.update(this.visitToken(node.withKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitNodeOrToken(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitEnumDeclaration = function (node) {
+        return node.update(node.exportKeyword() === null ? null : this.visitToken(node.exportKeyword()), this.visitToken(node.enumKeyword()), this.visitToken(node.identifier()), this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.variableDeclarators()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitCastExpression = function (node) {
+        return node.update(this.visitToken(node.lessThanToken()), this.visitNodeOrToken(node.type()), this.visitToken(node.greaterThanToken()), this.visitNodeOrToken(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitObjectLiteralExpression = function (node) {
+        return node.update(this.visitToken(node.openBraceToken()), this.visitSeparatedList(node.propertyAssignments()), this.visitToken(node.closeBraceToken()));
+    };
+    SyntaxRewriter.prototype.visitSimplePropertyAssignment = function (node) {
+        return node.update(this.visitToken(node.propertyName()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitGetAccessorPropertyAssignment = function (node) {
+        return node.update(this.visitToken(node.getKeyword()), this.visitToken(node.propertyName()), this.visitToken(node.openParenToken()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitSetAccessorPropertyAssignment = function (node) {
+        return node.update(this.visitToken(node.setKeyword()), this.visitToken(node.propertyName()), this.visitToken(node.openParenToken()), this.visitToken(node.parameterName()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitFunctionExpression = function (node) {
+        return node.update(this.visitToken(node.functionKeyword()), node.identifier() === null ? null : this.visitToken(node.identifier()), this.visitNode(node.callSignature()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitEmptyStatement = function (node) {
+        return node.withSemicolonToken(this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitTryStatement = function (node) {
+        return node.update(this.visitToken(node.tryKeyword()), this.visitNode(node.block()), node.catchClause() === null ? null : this.visitNode(node.catchClause()), node.finallyClause() === null ? null : this.visitNode(node.finallyClause()));
+    };
+    SyntaxRewriter.prototype.visitCatchClause = function (node) {
+        return node.update(this.visitToken(node.catchKeyword()), this.visitToken(node.openParenToken()), this.visitToken(node.identifier()), this.visitToken(node.closeParenToken()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitFinallyClause = function (node) {
+        return node.update(this.visitToken(node.finallyKeyword()), this.visitNode(node.block()));
+    };
+    SyntaxRewriter.prototype.visitLabeledStatement = function (node) {
+        return node.update(this.visitToken(node.identifier()), this.visitToken(node.colonToken()), this.visitNodeOrToken(node.statement()));
+    };
+    SyntaxRewriter.prototype.visitDoStatement = function (node) {
+        return node.update(this.visitToken(node.doKeyword()), this.visitNodeOrToken(node.statement()), this.visitToken(node.whileKeyword()), this.visitToken(node.openParenToken()), this.visitNodeOrToken(node.condition()), this.visitToken(node.closeParenToken()), this.visitToken(node.semicolonToken()));
+    };
+    SyntaxRewriter.prototype.visitTypeOfExpression = function (node) {
+        return node.update(this.visitToken(node.typeOfKeyword()), this.visitNodeOrToken(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitDeleteExpression = function (node) {
+        return node.update(this.visitToken(node.deleteKeyword()), this.visitNodeOrToken(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitVoidExpression = function (node) {
+        return node.update(this.visitToken(node.voidKeyword()), this.visitNodeOrToken(node.expression()));
+    };
+    SyntaxRewriter.prototype.visitDebuggerStatement = function (node) {
+        return node.update(this.visitToken(node.debuggerKeyword()), this.visitToken(node.semicolonToken()));
+    };
+    return SyntaxRewriter;
+})();
+var Errors = (function () {
+    function Errors() { }
+    Errors.argument = function argument(argument, message) {
+        return new Error("Invalid argument: " + argument + "." + (message ? (" " + message) : ""));
+    };
+    Errors.argumentOutOfRange = function argumentOutOfRange(argument) {
+        return new Error("Argument out of range: " + argument + ".");
+    };
+    Errors.argumentNull = function argumentNull(argument) {
+        return new Error("Argument null: " + argument + ".");
+    };
+    Errors.abstract = function abstract() {
+        return new Error("Operation not implemented properly by subclass.");
+    };
+    Errors.notYetImplemented = function notYetImplemented() {
+        return new Error("Not yet implemented.");
+    };
+    Errors.invalidOperation = function invalidOperation(message) {
+        return new Error(message ? ("Invalid operation: " + message) : "Invalid operation.");
+    };
+    return Errors;
+})();
 var SyntaxTokenReplacer = (function (_super) {
     __extends(SyntaxTokenReplacer, _super);
     function SyntaxTokenReplacer(token1, token2) {
@@ -20945,8 +20511,12 @@ var SyntaxNode = (function () {
             if(element !== null) {
                 if(element.isNode() || element.isToken()) {
                     array.splice(index, 0, element);
-                } else {
+                } else if(element.isList()) {
                     (element).insertChildrenInto(array, index);
+                } else if(element.isSeparatedList()) {
+                    (element).insertChildrenInto(array, index);
+                } else {
+                    throw Errors.invalidOperation();
                 }
             }
         }
@@ -20989,7 +20559,7 @@ var SyntaxNode = (function () {
     };
     SyntaxNode.prototype.fullText = function () {
         var elements = [];
-        (this).collectTextElements(elements);
+        this.collectTextElements(elements);
         return elements.join("");
     };
     SyntaxNode.prototype.collectTextElements = function (elements) {
@@ -21008,6 +20578,9 @@ var SyntaxNode = (function () {
     };
     SyntaxNode.prototype.withTrailingTrivia = function (trivia) {
         return this.replaceToken(this.lastToken(), this.lastToken().withTrailingTrivia(trivia));
+    };
+    SyntaxNode.prototype.hasLeadingTrivia = function () {
+        return this.lastToken().hasLeadingTrivia();
     };
     SyntaxNode.prototype.hasTrailingTrivia = function () {
         return this.lastToken().hasTrailingTrivia();
@@ -21053,11 +20626,7 @@ var SyntaxNode = (function () {
                     }
                 }
                 if(!hasRegularExpressionToken) {
-                    if(element.isToken()) {
-                        hasRegularExpressionToken = SyntaxFacts.isAnyDivideOrRegularExpressionToken(element.tokenKind);
-                    } else {
-                        hasRegularExpressionToken = element.hasRegularExpressionToken();
-                    }
+                    hasRegularExpressionToken = element.hasRegularExpressionToken();
                 }
             }
         }
@@ -21253,6 +20822,15 @@ var PositionedSeparatedList = (function (_super) {
     };
     return PositionedSeparatedList;
 })(PositionedElement);
+var Debug = (function () {
+    function Debug() { }
+    Debug.assert = function assert(expression) {
+        if(!expression) {
+            throw new Error("Debug Failure. False expression.");
+        }
+    };
+    return Debug;
+})();
 var SyntaxFacts;
 (function (SyntaxFacts) {
     var textToKeywordKind = {
@@ -22460,6 +22038,5113 @@ var Hash = (function () {
     };
     return Hash;
 })();
+var ArrayUtilities = (function () {
+    function ArrayUtilities() { }
+    ArrayUtilities.isArray = function isArray(value) {
+        return Object.prototype.toString.apply(value, []) === '[object Array]';
+    };
+    ArrayUtilities.sequenceEquals = function sequenceEquals(array1, array2, equals) {
+        if(array1 === array2) {
+            return true;
+        }
+        if(array1 === null || array2 === null) {
+            return false;
+        }
+        if(array1.length !== array2.length) {
+            return false;
+        }
+        for(var i = 0, n = array1.length; i < n; i++) {
+            if(!equals(array1[i], array2[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+    ArrayUtilities.contains = function contains(array, value) {
+        for(var i = 0; i < array.length; i++) {
+            if(array[i] === value) {
+                return true;
+            }
+        }
+        return false;
+    };
+    ArrayUtilities.groupBy = function groupBy(array, func) {
+        var result = {
+        };
+        for(var i = 0, n = array.length; i < n; i++) {
+            var v = array[i];
+            var k = func(v);
+            var list = result[k] || [];
+            list.push(v);
+            result[k] = list;
+        }
+        return result;
+    };
+    ArrayUtilities.min = function min(array, func) {
+        Debug.assert(array.length > 0);
+        var min = func(array[0]);
+        for(var i = 1; i < array.length; i++) {
+            var next = func(array[i]);
+            if(next < min) {
+                min = next;
+            }
+        }
+        return min;
+    };
+    ArrayUtilities.max = function max(array, func) {
+        Debug.assert(array.length > 0);
+        var max = func(array[0]);
+        for(var i = 1; i < array.length; i++) {
+            var next = func(array[i]);
+            if(next > max) {
+                max = next;
+            }
+        }
+        return max;
+    };
+    ArrayUtilities.last = function last(array) {
+        if(array.length === 0) {
+            throw Errors.argumentOutOfRange('array');
+        }
+        return array[array.length - 1];
+    };
+    ArrayUtilities.firstOrDefault = function firstOrDefault(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            var value = array[i];
+            if(func(value)) {
+                return value;
+            }
+        }
+        return null;
+    };
+    ArrayUtilities.sum = function sum(array, func) {
+        var result = 0;
+        for(var i = 0, n = array.length; i < n; i++) {
+            result += func(array[i]);
+        }
+        return result;
+    };
+    ArrayUtilities.whereNotNull = function whereNotNull(array) {
+        var result = [];
+        for(var i = 0; i < array.length; i++) {
+            var value = array[i];
+            if(value !== null) {
+                result.push(value);
+            }
+        }
+        return result;
+    };
+    ArrayUtilities.select = function select(values, func) {
+        var result = [];
+        for(var i = 0; i < values.length; i++) {
+            result.push(func(values[i]));
+        }
+        return result;
+    };
+    ArrayUtilities.where = function where(values, func) {
+        var result = [];
+        for(var i = 0; i < values.length; i++) {
+            if(func(values[i])) {
+                result.push(values[i]);
+            }
+        }
+        return result;
+    };
+    ArrayUtilities.any = function any(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            if(func(array[i])) {
+                return true;
+            }
+        }
+        return false;
+    };
+    ArrayUtilities.all = function all(array, func) {
+        for(var i = 0, n = array.length; i < n; i++) {
+            if(!func(array[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+    ArrayUtilities.binarySearch = function binarySearch(array, value) {
+        var low = 0;
+        var high = array.length - 1;
+        while(low <= high) {
+            var middle = low + ((high - low) >> 1);
+            var midValue = array[middle];
+            if(midValue === value) {
+                return middle;
+            } else if(midValue > value) {
+                high = middle - 1;
+            } else {
+                low = middle + 1;
+            }
+        }
+        return ~low;
+    };
+    ArrayUtilities.createArray = function createArray(length, defaultvalue) {
+        if (typeof defaultvalue === "undefined") { defaultvalue = null; }
+        var result = [];
+        for(var i = 0; i < length; i++) {
+            result.push(defaultvalue);
+        }
+        return result;
+    };
+    ArrayUtilities.grow = function grow(array, length, defaultValue) {
+        var count = length - array.length;
+        for(var i = 0; i < count; i++) {
+            array.push(defaultValue);
+        }
+    };
+    ArrayUtilities.copy = function copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length) {
+        for(var i = 0; i < length; i++) {
+            destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i];
+        }
+    };
+    return ArrayUtilities;
+})();
+var SlidingWindow = (function () {
+    function SlidingWindow(source, defaultWindowSize, defaultValue, sourceLength) {
+        if (typeof sourceLength === "undefined") { sourceLength = -1; }
+        this.source = source;
+        this.defaultValue = defaultValue;
+        this.sourceLength = sourceLength;
+        this.window = [];
+        this.windowCount = 0;
+        this.windowAbsoluteStartIndex = 0;
+        this.currentRelativeItemIndex = 0;
+        this._pinCount = 0;
+        this.firstPinnedAbsoluteIndex = -1;
+        this.window = ArrayUtilities.createArray(defaultWindowSize, defaultValue);
+    }
+    SlidingWindow.prototype.windowAbsoluteEndIndex = function () {
+        return this.windowAbsoluteStartIndex + this.windowCount;
+    };
+    SlidingWindow.prototype.addMoreItemsToWindow = function (argument) {
+        if(this.sourceLength >= 0 && this.absoluteIndex() >= this.sourceLength) {
+            return false;
+        }
+        if(this.windowCount >= this.window.length) {
+            this.tryShiftOrGrowWindow();
+        }
+        var spaceAvailable = this.window.length - this.windowCount;
+        var amountFetched = this.source.fetchMoreItems(argument, this.windowAbsoluteEndIndex(), this.window, this.windowCount, spaceAvailable);
+        this.windowCount += amountFetched;
+        return amountFetched > 0;
+    };
+    SlidingWindow.prototype.tryShiftOrGrowWindow = function () {
+        var currentIndexIsPastWindowHalfwayPoint = this.currentRelativeItemIndex > (this.window.length >>> 1);
+        var isAllowedToShift = this.firstPinnedAbsoluteIndex === -1 || this.firstPinnedAbsoluteIndex > this.windowAbsoluteStartIndex;
+        if(currentIndexIsPastWindowHalfwayPoint && isAllowedToShift) {
+            var shiftStartIndex = this.firstPinnedAbsoluteIndex === -1 ? this.currentRelativeItemIndex : this.firstPinnedAbsoluteIndex - this.windowAbsoluteStartIndex;
+            var shiftCount = this.windowCount - shiftStartIndex;
+            Debug.assert(shiftStartIndex > 0);
+            if(shiftCount > 0) {
+                ArrayUtilities.copy(this.window, shiftStartIndex, this.window, 0, shiftCount);
+            }
+            this.windowAbsoluteStartIndex += shiftStartIndex;
+            this.windowCount -= shiftStartIndex;
+            this.currentRelativeItemIndex -= shiftStartIndex;
+        } else {
+            ArrayUtilities.grow(this.window, this.window.length * 2, this.defaultValue);
+        }
+    };
+    SlidingWindow.prototype.absoluteIndex = function () {
+        return this.windowAbsoluteStartIndex + this.currentRelativeItemIndex;
+    };
+    SlidingWindow.prototype.isAtEndOfSource = function () {
+        return this.absoluteIndex() >= this.sourceLength;
+    };
+    SlidingWindow.prototype.getAndPinAbsoluteIndex = function () {
+        var absoluteIndex = this.absoluteIndex();
+        var pinCount = this._pinCount++;
+        if(pinCount === 0) {
+            this.firstPinnedAbsoluteIndex = absoluteIndex;
+        }
+        return absoluteIndex;
+    };
+    SlidingWindow.prototype.releaseAndUnpinAbsoluteIndex = function (absoluteIndex) {
+        this._pinCount--;
+        if(this._pinCount === 0) {
+            this.firstPinnedAbsoluteIndex = -1;
+        }
+    };
+    SlidingWindow.prototype.rewindToPinnedIndex = function (absoluteIndex) {
+        var relativeIndex = absoluteIndex - this.windowAbsoluteStartIndex;
+        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
+        this.currentRelativeItemIndex = relativeIndex;
+    };
+    SlidingWindow.prototype.currentItem = function (argument) {
+        if(this.currentRelativeItemIndex >= this.windowCount) {
+            if(!this.addMoreItemsToWindow(argument)) {
+                return this.defaultValue;
+            }
+        }
+        return this.window[this.currentRelativeItemIndex];
+    };
+    SlidingWindow.prototype.peekItemN = function (n) {
+        Debug.assert(n >= 0);
+        while(this.currentRelativeItemIndex + n >= this.windowCount) {
+            if(!this.addMoreItemsToWindow(null)) {
+                return this.defaultValue;
+            }
+        }
+        return this.window[this.currentRelativeItemIndex + n];
+    };
+    SlidingWindow.prototype.moveToNextItem = function () {
+        this.currentRelativeItemIndex++;
+    };
+    SlidingWindow.prototype.disgardAllItemsFromCurrentIndexOnwards = function () {
+        this.windowCount = this.currentRelativeItemIndex;
+    };
+    SlidingWindow.prototype.setAbsoluteIndex = function (absoluteIndex) {
+        if(this.absoluteIndex() === absoluteIndex) {
+            return;
+        }
+        if(this._pinCount > 0) {
+            Debug.assert(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex());
+        }
+        if(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {
+            this.currentRelativeItemIndex = (absoluteIndex - this.windowAbsoluteStartIndex);
+        } else {
+            this.windowAbsoluteStartIndex = absoluteIndex;
+            this.windowCount = 0;
+            this.currentRelativeItemIndex = 0;
+        }
+    };
+    SlidingWindow.prototype.pinCount = function () {
+        return this._pinCount;
+    };
+    return SlidingWindow;
+})();
+var CharacterCodes;
+(function (CharacterCodes) {
+    CharacterCodes._map = [];
+    CharacterCodes.nullCharacter = 0;
+    CharacterCodes.maxAsciiCharacter = 127;
+    CharacterCodes.lineFeed = 10;
+    CharacterCodes.carriageReturn = 13;
+    CharacterCodes.lineSeparator = 8232;
+    CharacterCodes.paragraphSeparator = 8233;
+    CharacterCodes.space = 32;
+    CharacterCodes.nextLine = 133;
+    CharacterCodes.nonBreakingSpace = 160;
+    CharacterCodes._ = 95;
+    CharacterCodes.$ = 36;
+    CharacterCodes._0 = 48;
+    CharacterCodes._9 = 57;
+    CharacterCodes.a = 97;
+    CharacterCodes.b = 98;
+    CharacterCodes.c = 99;
+    CharacterCodes.d = 100;
+    CharacterCodes.e = 101;
+    CharacterCodes.f = 102;
+    CharacterCodes.g = 103;
+    CharacterCodes.h = 104;
+    CharacterCodes.i = 105;
+    CharacterCodes.k = 107;
+    CharacterCodes.l = 108;
+    CharacterCodes.m = 109;
+    CharacterCodes.n = 110;
+    CharacterCodes.o = 111;
+    CharacterCodes.p = 112;
+    CharacterCodes.r = 114;
+    CharacterCodes.s = 115;
+    CharacterCodes.t = 116;
+    CharacterCodes.u = 117;
+    CharacterCodes.v = 118;
+    CharacterCodes.w = 119;
+    CharacterCodes.x = 120;
+    CharacterCodes.y = 121;
+    CharacterCodes.z = 122;
+    CharacterCodes.A = 65;
+    CharacterCodes.E = 69;
+    CharacterCodes.F = 70;
+    CharacterCodes.X = 88;
+    CharacterCodes.Z = 90;
+    CharacterCodes.ampersand = 38;
+    CharacterCodes.asterisk = 42;
+    CharacterCodes.backslash = 92;
+    CharacterCodes.bar = 124;
+    CharacterCodes.caret = 94;
+    CharacterCodes.closeBrace = 125;
+    CharacterCodes.closeBracket = 93;
+    CharacterCodes.closeParen = 41;
+    CharacterCodes.colon = 58;
+    CharacterCodes.comma = 44;
+    CharacterCodes.dot = 46;
+    CharacterCodes.doubleQuote = 34;
+    CharacterCodes.equals = 61;
+    CharacterCodes.exclamation = 33;
+    CharacterCodes.greaterThan = 62;
+    CharacterCodes.lessThan = 60;
+    CharacterCodes.minus = 45;
+    CharacterCodes.openBrace = 123;
+    CharacterCodes.openBracket = 91;
+    CharacterCodes.openParen = 40;
+    CharacterCodes.percent = 37;
+    CharacterCodes.plus = 43;
+    CharacterCodes.question = 63;
+    CharacterCodes.semicolon = 59;
+    CharacterCodes.singleQuote = 39;
+    CharacterCodes.slash = 47;
+    CharacterCodes.tilde = 126;
+    CharacterCodes.backspace = 8;
+    CharacterCodes.formFeed = 12;
+    CharacterCodes.byteOrderMark = 65279;
+    CharacterCodes.tab = 9;
+    CharacterCodes.verticalTab = 11;
+})(CharacterCodes || (CharacterCodes = {}));
+var CharacterInfo = (function () {
+    function CharacterInfo() { }
+    CharacterInfo.isDecimalDigit = function isDecimalDigit(c) {
+        return c >= 48 /* _0 */  && c <= 57 /* _9 */ ;
+    };
+    CharacterInfo.isHexDigit = function isHexDigit(c) {
+        return CharacterInfo.isDecimalDigit(c) || (c >= 65 /* A */  && c <= 70 /* F */ ) || (c >= 97 /* a */  && c <= 102 /* f */ );
+    };
+    CharacterInfo.hexValue = function hexValue(c) {
+        Debug.assert(CharacterInfo.isHexDigit(c));
+        return CharacterInfo.isDecimalDigit(c) ? (c - 48 /* _0 */ ) : (c >= 65 /* A */  && c <= 70 /* F */ ) ? c - 65 /* A */  + 10 : c - 97 /* a */  + 10;
+    };
+    CharacterInfo.isWhitespace = function isWhitespace(ch) {
+        switch(ch) {
+            case 32 /* space */ :
+            case 9 /* tab */ :
+            case 11 /* verticalTab */ :
+            case 12 /* formFeed */ :
+            case 160 /* nonBreakingSpace */ :
+            case 65279 /* byteOrderMark */ :
+                return true;
+        }
+        return false;
+    };
+    CharacterInfo.isLineTerminator = function isLineTerminator(ch) {
+        switch(ch) {
+            case 13 /* carriageReturn */ :
+            case 10 /* lineFeed */ :
+            case 8233 /* paragraphSeparator */ :
+            case 8232 /* lineSeparator */ :
+                return true;
+        }
+        return false;
+    };
+    return CharacterInfo;
+})();
+var Constants;
+(function (Constants) {
+    Constants._map = [];
+    Constants.Max31BitInteger = 1073741823;
+    Constants.Min31BitInteger = -1073741824;
+    Constants.TriviaNewLineMask = 1;
+    Constants.TriviaCommentMask = 2;
+    Constants.TriviaFullWidthShift = 2;
+    Constants.NodeSkippedTextMask = 1;
+    Constants.NodeZeroWidthTokenMask = 2;
+    Constants.NodeRegularExpressionTokenMask = 4;
+    Constants.NodeParsedInStrictModeMask = 8;
+    Constants.NodeFullWidthShift = 4;
+})(Constants || (Constants = {}));
+var LanguageVersion;
+(function (LanguageVersion) {
+    LanguageVersion._map = [];
+    LanguageVersion._map[0] = "EcmaScript3";
+    LanguageVersion.EcmaScript3 = 0;
+    LanguageVersion._map[1] = "EcmaScript5";
+    LanguageVersion.EcmaScript5 = 1;
+})(LanguageVersion || (LanguageVersion = {}));
+var Contract = (function () {
+    function Contract() { }
+    Contract.requires = function requires(expression) {
+        if(!expression) {
+            throw new Error("Contract violated. False expression.");
+        }
+    };
+    Contract.throwIfFalse = function throwIfFalse(expression) {
+        if(!expression) {
+            throw new Error("Contract violated. False expression.");
+        }
+    };
+    Contract.throwIfNull = function throwIfNull(value) {
+        if(value === null) {
+            throw new Error("Contract violated. Null value.");
+        }
+    };
+    return Contract;
+})();
+var MathPrototype = (function () {
+    function MathPrototype() { }
+    MathPrototype.max = function max(a, b) {
+        return a >= b ? a : b;
+    };
+    MathPrototype.min = function min(a, b) {
+        return a <= b ? a : b;
+    };
+    return MathPrototype;
+})();
+var TextSpan = (function () {
+    function TextSpan(start, length) {
+        if(start < 0) {
+            Errors.argument("start");
+        }
+        if(start + length < start) {
+            throw new Error("length");
+        }
+        this._start = start;
+        this._length = length;
+    }
+    TextSpan.prototype.start = function () {
+        return this._start;
+    };
+    TextSpan.prototype.length = function () {
+        return this._length;
+    };
+    TextSpan.prototype.end = function () {
+        return this._start + this._length;
+    };
+    TextSpan.prototype.isEmpty = function () {
+        return this._length === 0;
+    };
+    TextSpan.prototype.containsPosition = function (position) {
+        return position >= this._start && position < this.end();
+    };
+    TextSpan.prototype.containsTextSpan = function (span) {
+        return span._start >= this._start && span.end() <= this.end();
+    };
+    TextSpan.prototype.overlapsWith = function (span) {
+        var overlapStart = MathPrototype.max(this._start, span._start);
+        var overlapEnd = MathPrototype.min(this.end(), span.end());
+        return overlapStart < overlapEnd;
+    };
+    TextSpan.prototype.overlap = function (span) {
+        var overlapStart = MathPrototype.max(this._start, span._start);
+        var overlapEnd = MathPrototype.min(this.end(), span.end());
+        if(overlapStart < overlapEnd) {
+            return TextSpan.fromBounds(overlapStart, overlapEnd);
+        }
+        return null;
+    };
+    TextSpan.prototype.intersectsWithTextSpan = function (span) {
+        return span._start <= this.end() && span.end() >= this._start;
+    };
+    TextSpan.prototype.intersectsWith = function (start, length) {
+        var end = start + length;
+        return start <= this.end() && end >= this._start;
+    };
+    TextSpan.prototype.intersectsWithPosition = function (position) {
+        return position <= this.end() && position >= this._start;
+    };
+    TextSpan.prototype.intersection = function (span) {
+        var intersectStart = MathPrototype.max(this._start, span._start);
+        var intersectEnd = MathPrototype.min(this.end(), span.end());
+        if(intersectStart <= intersectEnd) {
+            return TextSpan.fromBounds(intersectStart, intersectEnd);
+        }
+        return null;
+    };
+    TextSpan.fromBounds = function fromBounds(start, end) {
+        Contract.requires(start >= 0);
+        Contract.requires(end - start >= 0);
+        return new TextSpan(start, end - start);
+    };
+    return TextSpan;
+})();
+var LinePosition = (function () {
+    function LinePosition(line, character) {
+        this._line = 0;
+        this._character = 0;
+        if(line < 0) {
+            throw Errors.argumentOutOfRange("line");
+        }
+        if(character < 0) {
+            throw Errors.argumentOutOfRange("character");
+        }
+        this._line = line;
+        this._character = character;
+    }
+    LinePosition.prototype.line = function () {
+        return this._line;
+    };
+    LinePosition.prototype.character = function () {
+        return this._character;
+    };
+    return LinePosition;
+})();
+var ScannerUtilities = (function () {
+    function ScannerUtilities() { }
+    ScannerUtilities.identifierKind = function identifierKind(array, startIndex, length) {
+        switch(length) {
+            case 2:
+                switch(array[startIndex]) {
+                    case 100 /* d */ :
+                        return (array[startIndex + 1] === 111 /* o */ ) ? 22 /* DoKeyword */  : 11 /* IdentifierName */ ;
+                    case 105 /* i */ :
+                        switch(array[startIndex + 1]) {
+                            case 102 /* f */ :
+                                return 28 /* IfKeyword */ ;
+                            case 110 /* n */ :
+                                return 29 /* InKeyword */ ;
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 3:
+                switch(array[startIndex]) {
+                    case 102 /* f */ :
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 114 /* r */ ) ? 26 /* ForKeyword */  : 11 /* IdentifierName */ ;
+                    case 110 /* n */ :
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 119 /* w */ ) ? 31 /* NewKeyword */  : 11 /* IdentifierName */ ;
+                    case 116 /* t */ :
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 121 /* y */ ) ? 38 /* TryKeyword */  : 11 /* IdentifierName */ ;
+                    case 118 /* v */ :
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 114 /* r */ ) ? 40 /* VarKeyword */  : 11 /* IdentifierName */ ;
+                    case 108 /* l */ :
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 53 /* LetKeyword */  : 11 /* IdentifierName */ ;
+                    case 97 /* a */ :
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 121 /* y */ ) ? 60 /* AnyKeyword */  : 11 /* IdentifierName */ ;
+                    case 103 /* g */ :
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 65 /* GetKeyword */  : 11 /* IdentifierName */ ;
+                    case 115 /* s */ :
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 68 /* SetKeyword */  : 11 /* IdentifierName */ ;
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 4:
+                switch(array[startIndex]) {
+                    case 99 /* c */ :
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 16 /* CaseKeyword */  : 11 /* IdentifierName */ ;
+                    case 101 /* e */ :
+                        switch(array[startIndex + 1]) {
+                            case 108 /* l */ :
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 23 /* ElseKeyword */  : 11 /* IdentifierName */ ;
+                            case 110 /* n */ :
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 109 /* m */ ) ? 46 /* EnumKeyword */  : 11 /* IdentifierName */ ;
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    case 110 /* n */ :
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 108 /* l */ ) ? 32 /* NullKeyword */  : 11 /* IdentifierName */ ;
+                    case 116 /* t */ :
+                        switch(array[startIndex + 1]) {
+                            case 104 /* h */ :
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 115 /* s */ ) ? 35 /* ThisKeyword */  : 11 /* IdentifierName */ ;
+                            case 114 /* r */ :
+                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 101 /* e */ ) ? 37 /* TrueKeyword */  : 11 /* IdentifierName */ ;
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    case 118 /* v */ :
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 100 /* d */ ) ? 41 /* VoidKeyword */  : 11 /* IdentifierName */ ;
+                    case 119 /* w */ :
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 104 /* h */ ) ? 43 /* WithKeyword */  : 11 /* IdentifierName */ ;
+                    case 98 /* b */ :
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */ ) ? 62 /* BoolKeyword */  : 11 /* IdentifierName */ ;
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 5:
+                switch(array[startIndex]) {
+                    case 98 /* b */ :
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 107 /* k */ ) ? 15 /* BreakKeyword */  : 11 /* IdentifierName */ ;
+                    case 99 /* c */ :
+                        switch(array[startIndex + 1]) {
+                            case 97 /* a */ :
+                                return (array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 104 /* h */ ) ? 17 /* CatchKeyword */  : 11 /* IdentifierName */ ;
+                            case 108 /* l */ :
+                                return (array[startIndex + 2] === 97 /* a */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 115 /* s */ ) ? 44 /* ClassKeyword */  : 11 /* IdentifierName */ ;
+                            case 111 /* o */ :
+                                return (array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */ ) ? 45 /* ConstKeyword */  : 11 /* IdentifierName */ ;
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    case 102 /* f */ :
+                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 101 /* e */ ) ? 24 /* FalseKeyword */  : 11 /* IdentifierName */ ;
+                    case 116 /* t */ :
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 114 /* r */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 119 /* w */ ) ? 36 /* ThrowKeyword */  : 11 /* IdentifierName */ ;
+                    case 119 /* w */ :
+                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */ ) ? 42 /* WhileKeyword */  : 11 /* IdentifierName */ ;
+                    case 115 /* s */ :
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */ ) ? 50 /* SuperKeyword */  : 11 /* IdentifierName */ ;
+                    case 121 /* y */ :
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 100 /* d */ ) ? 59 /* YieldKeyword */  : 11 /* IdentifierName */ ;
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 6:
+                switch(array[startIndex]) {
+                    case 100 /* d */ :
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 101 /* e */ ) ? 21 /* DeleteKeyword */  : 11 /* IdentifierName */ ;
+                    case 114 /* r */ :
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 110 /* n */ ) ? 33 /* ReturnKeyword */  : 11 /* IdentifierName */ ;
+                    case 115 /* s */ :
+                        switch(array[startIndex + 1]) {
+                            case 119 /* w */ :
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 99 /* c */  && array[startIndex + 5] === 104 /* h */ ) ? 34 /* SwitchKeyword */  : 11 /* IdentifierName */ ;
+                            case 116 /* t */ :
+                                switch(array[startIndex + 2]) {
+                                    case 97 /* a */ :
+                                        return (array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 58 /* StaticKeyword */  : 11 /* IdentifierName */ ;
+                                    case 114 /* r */ :
+                                        return (array[startIndex + 3] === 105 /* i */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 103 /* g */ ) ? 69 /* StringKeyword */  : 11 /* IdentifierName */ ;
+                                    default:
+                                        return 11 /* IdentifierName */ ;
+                                }
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    case 116 /* t */ :
+                        return (array[startIndex + 1] === 121 /* y */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 111 /* o */  && array[startIndex + 5] === 102 /* f */ ) ? 39 /* TypeOfKeyword */  : 11 /* IdentifierName */ ;
+                    case 101 /* e */ :
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 47 /* ExportKeyword */  : 11 /* IdentifierName */ ;
+                    case 105 /* i */ :
+                        return (array[startIndex + 1] === 109 /* m */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 49 /* ImportKeyword */  : 11 /* IdentifierName */ ;
+                    case 112 /* p */ :
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 57 /* PublicKeyword */  : 11 /* IdentifierName */ ;
+                    case 109 /* m */ :
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 100 /* d */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 101 /* e */ ) ? 66 /* ModuleKeyword */  : 11 /* IdentifierName */ ;
+                    case 110 /* n */ :
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 109 /* m */  && array[startIndex + 3] === 98 /* b */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 114 /* r */ ) ? 67 /* NumberKeyword */  : 11 /* IdentifierName */ ;
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 7:
+                switch(array[startIndex]) {
+                    case 100 /* d */ :
+                        switch(array[startIndex + 1]) {
+                            case 101 /* e */ :
+                                switch(array[startIndex + 2]) {
+                                    case 102 /* f */ :
+                                        return (array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 117 /* u */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 116 /* t */ ) ? 20 /* DefaultKeyword */  : 11 /* IdentifierName */ ;
+                                    case 99 /* c */ :
+                                        return (array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 101 /* e */ ) ? 64 /* DeclareKeyword */  : 11 /* IdentifierName */ ;
+                                    default:
+                                        return 11 /* IdentifierName */ ;
+                                }
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    case 102 /* f */ :
+                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 121 /* y */ ) ? 25 /* FinallyKeyword */  : 11 /* IdentifierName */ ;
+                    case 101 /* e */ :
+                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 100 /* d */  && array[startIndex + 6] === 115 /* s */ ) ? 48 /* ExtendsKeyword */  : 11 /* IdentifierName */ ;
+                    case 112 /* p */ :
+                        switch(array[startIndex + 1]) {
+                            case 97 /* a */ :
+                                return (array[startIndex + 2] === 99 /* c */  && array[startIndex + 3] === 107 /* k */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */ ) ? 54 /* PackageKeyword */  : 11 /* IdentifierName */ ;
+                            case 114 /* r */ :
+                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 118 /* v */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 116 /* t */  && array[startIndex + 6] === 101 /* e */ ) ? 55 /* PrivateKeyword */  : 11 /* IdentifierName */ ;
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    case 98 /* b */ :
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 97 /* a */  && array[startIndex + 6] === 110 /* n */ ) ? 61 /* BooleanKeyword */  : 11 /* IdentifierName */ ;
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 8:
+                switch(array[startIndex]) {
+                    case 99 /* c */ :
+                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 101 /* e */ ) ? 18 /* ContinueKeyword */  : 11 /* IdentifierName */ ;
+                    case 100 /* d */ :
+                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 103 /* g */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 114 /* r */ ) ? 19 /* DebuggerKeyword */  : 11 /* IdentifierName */ ;
+                    case 102 /* f */ :
+                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 105 /* i */  && array[startIndex + 6] === 111 /* o */  && array[startIndex + 7] === 110 /* n */ ) ? 27 /* FunctionKeyword */  : 11 /* IdentifierName */ ;
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 9:
+                switch(array[startIndex]) {
+                    case 105 /* i */ :
+                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 102 /* f */  && array[startIndex + 6] === 97 /* a */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 101 /* e */ ) ? 52 /* InterfaceKeyword */  : 11 /* IdentifierName */ ;
+                    case 112 /* p */ :
+                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 99 /* c */  && array[startIndex + 6] === 116 /* t */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 100 /* d */ ) ? 56 /* ProtectedKeyword */  : 11 /* IdentifierName */ ;
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 10:
+                switch(array[startIndex]) {
+                    case 105 /* i */ :
+                        switch(array[startIndex + 1]) {
+                            case 110 /* n */ :
+                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 99 /* c */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 111 /* o */  && array[startIndex + 9] === 102 /* f */ ) ? 30 /* InstanceOfKeyword */  : 11 /* IdentifierName */ ;
+                            case 109 /* m */ :
+                                return (array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 109 /* m */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 110 /* n */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 115 /* s */ ) ? 51 /* ImplementsKeyword */  : 11 /* IdentifierName */ ;
+                            default:
+                                return 11 /* IdentifierName */ ;
+                        }
+                    default:
+                        return 11 /* IdentifierName */ ;
+                }
+            case 11:
+                return (array[startIndex] === 99 /* c */  && array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 111 /* o */  && array[startIndex + 10] === 114 /* r */ ) ? 63 /* ConstructorKeyword */  : 11 /* IdentifierName */ ;
+            default:
+                return 11 /* IdentifierName */ ;
+        }
+    };
+    return ScannerUtilities;
+})();
+var StringUtilities = (function () {
+    function StringUtilities() { }
+    StringUtilities.fromCharCodeArray = function fromCharCodeArray(array) {
+        return String.fromCharCode.apply(null, array);
+    };
+    StringUtilities.endsWith = function endsWith(string, value) {
+        return string.substring(string.length - value.length, string.length) === value;
+    };
+    StringUtilities.startsWith = function startsWith(string, value) {
+        return string.substr(0, value.length) === value;
+    };
+    StringUtilities.copyTo = function copyTo(source, sourceIndex, destination, destinationIndex, count) {
+        for(var i = 0; i < count; i++) {
+            destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
+        }
+    };
+    StringUtilities.repeat = function repeat(value, count) {
+        return Array(count + 1).join(value);
+    };
+    return StringUtilities;
+})();
+var Collections;
+(function (Collections) {
+    Collections.DefaultStringTableCapacity = 256;
+    var StringTableEntry = (function () {
+        function StringTableEntry(Text, HashCode, Next) {
+            this.Text = Text;
+            this.HashCode = HashCode;
+            this.Next = Next;
+        }
+        return StringTableEntry;
+    })();    
+    var StringTable = (function () {
+        function StringTable(capacity) {
+            this.entries = [];
+            this.count = 0;
+            var size = Hash.getPrime(capacity);
+            this.entries = ArrayUtilities.createArray(size);
+        }
+        StringTable.prototype.addCharArray = function (key, start, len) {
+            var hashCode = Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 2147483647;
+            Debug.assert(hashCode > 0);
+            var entry = this.findCharArrayEntry(key, start, len, hashCode);
+            if(entry !== null) {
+                return entry.Text;
+            }
+            var slice = key.slice(start, start + len);
+            return this.addEntry(StringUtilities.fromCharCodeArray(slice), hashCode);
+        };
+        StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
+            for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
+                if(e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
+                    return e;
+                }
+            }
+            return null;
+        };
+        StringTable.prototype.addEntry = function (text, hashCode) {
+            var index = hashCode % this.entries.length;
+            var e = new StringTableEntry(text, hashCode, this.entries[index]);
+            this.entries[index] = e;
+            if(this.count === this.entries.length) {
+                this.grow();
+            }
+            this.count++;
+            return e.Text;
+        };
+        StringTable.prototype.grow = function () {
+            var newSize = Hash.expandPrime(this.entries.length);
+            var oldEntries = this.entries;
+            var newEntries = ArrayUtilities.createArray(newSize);
+            this.entries = newEntries;
+            for(var i = 0; i < oldEntries.length; i++) {
+                var e = oldEntries[i];
+                while(e !== null) {
+                    var newIndex = e.HashCode % newSize;
+                    var tmp = e.Next;
+                    e.Next = newEntries[newIndex];
+                    newEntries[newIndex] = e;
+                    e = tmp;
+                }
+            }
+        };
+        StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
+            if(text.length !== length) {
+                return false;
+            }
+            var s = start;
+            for(var i = 0; i < length; i++) {
+                if(text.charCodeAt(i) !== array[s]) {
+                    return false;
+                }
+                s++;
+            }
+            return true;
+        };
+        return StringTable;
+    })();
+    Collections.StringTable = StringTable;    
+    function createStringTable(capacity) {
+        if (typeof capacity === "undefined") { capacity = Collections.DefaultStringTableCapacity; }
+        return new StringTable(capacity);
+    }
+    Collections.createStringTable = createStringTable;
+})(Collections || (Collections = {}));
+var DiagnosticCode;
+(function (DiagnosticCode) {
+    DiagnosticCode._map = [];
+    DiagnosticCode._map[0] = "Unrecognized_escape_sequence";
+    DiagnosticCode.Unrecognized_escape_sequence = 0;
+    DiagnosticCode._map[1] = "Unexpected_character_0";
+    DiagnosticCode.Unexpected_character_0 = 1;
+    DiagnosticCode._map[2] = "Missing_closing_quote_character";
+    DiagnosticCode.Missing_closing_quote_character = 2;
+    DiagnosticCode._map[3] = "Identifier_expected";
+    DiagnosticCode.Identifier_expected = 3;
+    DiagnosticCode._map[4] = "_0_keyword_expected";
+    DiagnosticCode._0_keyword_expected = 4;
+    DiagnosticCode._map[5] = "_0_expected";
+    DiagnosticCode._0_expected = 5;
+    DiagnosticCode._map[6] = "Identifier_expected__0_is_a_keyword";
+    DiagnosticCode.Identifier_expected__0_is_a_keyword = 6;
+    DiagnosticCode._map[7] = "Automatic_semicolon_insertion_not_allowed";
+    DiagnosticCode.Automatic_semicolon_insertion_not_allowed = 7;
+    DiagnosticCode._map[8] = "Unexpected_token__0_expected";
+    DiagnosticCode.Unexpected_token__0_expected = 8;
+    DiagnosticCode._map[9] = "Trailing_separator_not_allowed";
+    DiagnosticCode.Trailing_separator_not_allowed = 9;
+    DiagnosticCode._map[10] = "_StarSlash__expected";
+    DiagnosticCode._StarSlash__expected = 10;
+})(DiagnosticCode || (DiagnosticCode = {}));
+var DiagnosticMessages = (function () {
+    function DiagnosticMessages() { }
+    DiagnosticMessages.codeToFormatString = [];
+    DiagnosticMessages.initializeStaticData = function initializeStaticData() {
+        if(DiagnosticMessages.codeToFormatString.length === 0) {
+            DiagnosticMessages.codeToFormatString[0 /* Unrecognized_escape_sequence */ ] = "Unrecognized escape sequence.";
+            DiagnosticMessages.codeToFormatString[1 /* Unexpected_character_0 */ ] = "Unexpected character {0}.";
+            DiagnosticMessages.codeToFormatString[2 /* Missing_closing_quote_character */ ] = "Missing close quote character.";
+            DiagnosticMessages.codeToFormatString[3 /* Identifier_expected */ ] = "Identifier expected.";
+            DiagnosticMessages.codeToFormatString[4 /* _0_keyword_expected */ ] = "'{0}' keyword expected.";
+            DiagnosticMessages.codeToFormatString[5 /* _0_expected */ ] = "'{0}' expected.";
+            DiagnosticMessages.codeToFormatString[6 /* Identifier_expected__0_is_a_keyword */ ] = "Identifier expected; '{0}' is a keyword.";
+            DiagnosticMessages.codeToFormatString[7 /* Automatic_semicolon_insertion_not_allowed */ ] = "Automatic semicolon insertion not allowed.";
+            DiagnosticMessages.codeToFormatString[8 /* Unexpected_token__0_expected */ ] = "Unexpected token; '{0}' expected.";
+            DiagnosticMessages.codeToFormatString[9 /* Trailing_separator_not_allowed */ ] = "Trailing separator not allowed.";
+            DiagnosticMessages.codeToFormatString[10 /* _StarSlash__expected */ ] = "'*/' expected.";
+        }
+    };
+    DiagnosticMessages.getFormatString = function getFormatString(code) {
+        DiagnosticMessages.initializeStaticData();
+        return DiagnosticMessages.codeToFormatString[code];
+    };
+    DiagnosticMessages.getDiagnosticMessage = function getDiagnosticMessage(code, args) {
+        var formatString = DiagnosticMessages.getFormatString(code);
+        var result = formatString.replace(/{(\d+)}/g, function (match, num) {
+            return typeof args[num] !== 'undefined' ? args[num] : match;
+        });
+        return result;
+    };
+    return DiagnosticMessages;
+})();
+var Diagnostic = (function () {
+    function Diagnostic(diagnosticCode, arguments) {
+        this._diagnosticCode = diagnosticCode;
+        this._arguments = (arguments && arguments.length > 0) ? arguments : null;
+    }
+    Diagnostic.prototype.diagnosticCode = function () {
+        return this._diagnosticCode;
+    };
+    Diagnostic.prototype.additionalLocations = function () {
+        return [];
+    };
+    Diagnostic.prototype.message = function () {
+        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this._arguments);
+    };
+    Diagnostic.equals = function equals(diagnostic1, diagnostic2) {
+        return diagnostic1._diagnosticCode === diagnostic2._diagnosticCode && ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, function (v1, v2) {
+            return v1 === v2;
+        });
+    };
+    return Diagnostic;
+})();
+var SyntaxDiagnostic = (function (_super) {
+    __extends(SyntaxDiagnostic, _super);
+    function SyntaxDiagnostic(position, width, code, args) {
+        _super.call(this, code, args);
+        if(width < 0) {
+            throw Errors.argumentOutOfRange("width");
+        }
+        this._position = position;
+        this._width = width;
+    }
+    SyntaxDiagnostic.prototype.toJSON = function (key) {
+        var result = {
+        };
+        result._position = this._position;
+        result._width = this._width;
+        result._diagnosticCode = (DiagnosticCode)._map[this.diagnosticCode()];
+        var arguments = (this)._arguments;
+        if(arguments && arguments.length > 0) {
+            result._arguments = arguments;
+        }
+        return result;
+    };
+    SyntaxDiagnostic.prototype.position = function () {
+        return this._position;
+    };
+    SyntaxDiagnostic.prototype.width = function () {
+        return this._width;
+    };
+    SyntaxDiagnostic.equals = function equals(diagnostic1, diagnostic2) {
+        return diagnostic1._position === diagnostic2._position && diagnostic1._width === diagnostic2._width && Diagnostic.equals(diagnostic1, diagnostic2);
+    };
+    return SyntaxDiagnostic;
+})(Diagnostic);
+var Syntax;
+(function (Syntax) {
+    var VariableWidthTokenWithNoTrivia = (function () {
+        function VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, textOrWidth) {
+            this._value = null;
+            this._sourceText = sourceText;
+            this._fullStart = fullStart;
+            this.tokenKind = kind;
+            this._textOrWidth = textOrWidth;
+        }
+        VariableWidthTokenWithNoTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithNoTrivia(this._sourceText, this._fullStart, this.tokenKind, this._textOrWidth);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.isNode = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.isToken = function () {
+            return true;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.isList = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.fullWidth = function () {
+            return this.width();
+        };
+        VariableWidthTokenWithNoTrivia.prototype.start = function () {
+            return this._fullStart;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.end = function () {
+            return this.start() + this.width();
+        };
+        VariableWidthTokenWithNoTrivia.prototype.width = function () {
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.text = function () {
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
+            }
+            return this._textOrWidth;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.fullText = function () {
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.value = function () {
+            return this._value || (this._value = Syntax.value(this));
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasLeadingComment = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasLeadingNewLine = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.leadingTriviaWidth = function () {
+            return 0;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasTrailingComment = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasTrailingNewLine = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.trailingTriviaWidth = function () {
+            return 0;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        VariableWidthTokenWithNoTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return VariableWidthTokenWithNoTrivia;
+    })();
+    Syntax.VariableWidthTokenWithNoTrivia = VariableWidthTokenWithNoTrivia;    
+    var VariableWidthTokenWithLeadingTrivia = (function () {
+        function VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth) {
+            this._value = null;
+            this._sourceText = sourceText;
+            this._fullStart = fullStart;
+            this.tokenKind = kind;
+            this._leadingTriviaInfo = leadingTriviaInfo;
+            this._textOrWidth = textOrWidth;
+        }
+        VariableWidthTokenWithLeadingTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithLeadingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo, this._textOrWidth);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.isNode = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.isToken = function () {
+            return true;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.isList = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.fullWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo) + this.width();
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.start = function () {
+            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.end = function () {
+            return this.start() + this.width();
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.width = function () {
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.text = function () {
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
+            }
+            return this._textOrWidth;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.fullText = function () {
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
+            return this._value || (this._value = Syntax.value(this));
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
+            return true;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingComment = function () {
+            return hasTriviaComment(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingNewLine = function () {
+            return hasTriviaNewLine(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.leadingTriviaWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.leadingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingComment = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingNewLine = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.trailingTriviaWidth = function () {
+            return 0;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return VariableWidthTokenWithLeadingTrivia;
+    })();
+    Syntax.VariableWidthTokenWithLeadingTrivia = VariableWidthTokenWithLeadingTrivia;    
+    var VariableWidthTokenWithTrailingTrivia = (function () {
+        function VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, textOrWidth, trailingTriviaInfo) {
+            this._value = null;
+            this._sourceText = sourceText;
+            this._fullStart = fullStart;
+            this.tokenKind = kind;
+            this._textOrWidth = textOrWidth;
+            this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+        VariableWidthTokenWithTrailingTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._textOrWidth, this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.isToken = function () {
+            return true;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.isList = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.fullWidth = function () {
+            return this.width() + getTriviaWidth(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.start = function () {
+            return this._fullStart;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.end = function () {
+            return this.start() + this.width();
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.width = function () {
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.text = function () {
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
+            }
+            return this._textOrWidth;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.fullText = function () {
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
+            return this._value || (this._value = Syntax.value(this));
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingComment = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingNewLine = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.leadingTriviaWidth = function () {
+            return 0;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
+            return true;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingComment = function () {
+            return hasTriviaComment(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingNewLine = function () {
+            return hasTriviaNewLine(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.trailingTriviaWidth = function () {
+            return getTriviaWidth(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return VariableWidthTokenWithTrailingTrivia;
+    })();
+    Syntax.VariableWidthTokenWithTrailingTrivia = VariableWidthTokenWithTrailingTrivia;    
+    var VariableWidthTokenWithLeadingAndTrailingTrivia = (function () {
+        function VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth, trailingTriviaInfo) {
+            this._value = null;
+            this._sourceText = sourceText;
+            this._fullStart = fullStart;
+            this.tokenKind = kind;
+            this._leadingTriviaInfo = leadingTriviaInfo;
+            this._textOrWidth = textOrWidth;
+            this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
+            return new VariableWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo, this._textOrWidth, this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
+            return true;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.start = function () {
+            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.end = function () {
+            return this.start() + this.width();
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.width = function () {
+            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.text = function () {
+            if(typeof this._textOrWidth === 'number') {
+                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
+            }
+            return this._textOrWidth;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function () {
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
+            return this._value || (this._value = Syntax.value(this));
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
+            return true;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingComment = function () {
+            return hasTriviaComment(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingNewLine = function () {
+            return hasTriviaNewLine(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTriviaWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
+            return true;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingComment = function () {
+            return hasTriviaComment(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingNewLine = function () {
+            return hasTriviaNewLine(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTriviaWidth = function () {
+            return getTriviaWidth(this._trailingTriviaInfo);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return VariableWidthTokenWithLeadingAndTrailingTrivia;
+    })();
+    Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia = VariableWidthTokenWithLeadingAndTrailingTrivia;    
+    var FixedWidthTokenWithNoTrivia = (function () {
+        function FixedWidthTokenWithNoTrivia(kind) {
+            this.tokenKind = kind;
+        }
+        FixedWidthTokenWithNoTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithNoTrivia(this.tokenKind);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.isNode = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.isToken = function () {
+            return true;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.isList = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.fullWidth = function () {
+            return this.width();
+        };
+        FixedWidthTokenWithNoTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.tokenKind);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.fullText = function () {
+            return this.text();
+        };
+        FixedWidthTokenWithNoTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasLeadingComment = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasLeadingNewLine = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.leadingTriviaWidth = function () {
+            return 0;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasTrailingComment = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasTrailingNewLine = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.trailingTriviaWidth = function () {
+            return 0;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        FixedWidthTokenWithNoTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return FixedWidthTokenWithNoTrivia;
+    })();
+    Syntax.FixedWidthTokenWithNoTrivia = FixedWidthTokenWithNoTrivia;    
+    var FixedWidthTokenWithLeadingTrivia = (function () {
+        function FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo) {
+            this._sourceText = sourceText;
+            this._fullStart = fullStart;
+            this.tokenKind = kind;
+            this._leadingTriviaInfo = leadingTriviaInfo;
+        }
+        FixedWidthTokenWithLeadingTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithLeadingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.isNode = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.isToken = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.isList = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.fullWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo) + this.width();
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.start = function () {
+            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.end = function () {
+            return this.start() + this.width();
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.tokenKind);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.fullText = function () {
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingComment = function () {
+            return hasTriviaComment(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingNewLine = function () {
+            return hasTriviaNewLine(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.leadingTriviaWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.leadingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingComment = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingNewLine = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.trailingTriviaWidth = function () {
+            return 0;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return FixedWidthTokenWithLeadingTrivia;
+    })();
+    Syntax.FixedWidthTokenWithLeadingTrivia = FixedWidthTokenWithLeadingTrivia;    
+    var FixedWidthTokenWithTrailingTrivia = (function () {
+        function FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo) {
+            this._sourceText = sourceText;
+            this._fullStart = fullStart;
+            this.tokenKind = kind;
+            this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+        FixedWidthTokenWithTrailingTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.isToken = function () {
+            return true;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.isList = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.fullWidth = function () {
+            return this.width() + getTriviaWidth(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.start = function () {
+            return this._fullStart;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.end = function () {
+            return this.start() + this.width();
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.tokenKind);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.fullText = function () {
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingComment = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingNewLine = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.leadingTriviaWidth = function () {
+            return 0;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingComment = function () {
+            return hasTriviaComment(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingNewLine = function () {
+            return hasTriviaNewLine(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.trailingTriviaWidth = function () {
+            return getTriviaWidth(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return FixedWidthTokenWithTrailingTrivia;
+    })();
+    Syntax.FixedWidthTokenWithTrailingTrivia = FixedWidthTokenWithTrailingTrivia;    
+    var FixedWidthTokenWithLeadingAndTrailingTrivia = (function () {
+        function FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo) {
+            this._sourceText = sourceText;
+            this._fullStart = fullStart;
+            this.tokenKind = kind;
+            this._leadingTriviaInfo = leadingTriviaInfo;
+            this._trailingTriviaInfo = trailingTriviaInfo;
+        }
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
+            return new FixedWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo, this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
+            return this.tokenKind;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.start = function () {
+            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.end = function () {
+            return this.start() + this.width();
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.width = function () {
+            return this.text().length;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.text = function () {
+            return SyntaxFacts.getText(this.tokenKind);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function () {
+            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
+            return null;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingComment = function () {
+            return hasTriviaComment(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingNewLine = function () {
+            return hasTriviaNewLine(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTriviaWidth = function () {
+            return getTriviaWidth(this._leadingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
+            return true;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingComment = function () {
+            return hasTriviaComment(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingNewLine = function () {
+            return hasTriviaNewLine(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTriviaWidth = function () {
+            return getTriviaWidth(this._trailingTriviaInfo);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function () {
+            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasSkippedText = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
+            return Syntax.tokenToJSON(this);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.lastToken = function () {
+            return this;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTypeScriptSpecific = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasZeroWidthToken = function () {
+            return false;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.accept = function (visitor) {
+            return visitor.visitToken(this);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasRegularExpressionToken = function () {
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
+            return Syntax.realize(this);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
+            collectTokenTextElements(this, elements);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
+            return new PositionedToken(parent, this, fullStart);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
+            return this.realize().withLeadingTrivia(leadingTrivia);
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
+            return this.realize().withTrailingTrivia(trailingTrivia);
+        };
+        return FixedWidthTokenWithLeadingAndTrailingTrivia;
+    })();
+    Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia = FixedWidthTokenWithLeadingAndTrailingTrivia;    
+    function collectTokenTextElements(token, elements) {
+        (token.leadingTrivia()).collectTextElements(elements);
+        elements.push(token.text());
+        (token.trailingTrivia()).collectTextElements(elements);
+    }
+    function fixedWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo) {
+        if(leadingTriviaInfo === 0) {
+            if(trailingTriviaInfo === 0) {
+                return new FixedWidthTokenWithNoTrivia(kind);
+            } else {
+                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);
+            }
+        } else if(trailingTriviaInfo === 0) {
+            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);
+        } else {
+            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+        }
+    }
+    Syntax.fixedWidthToken = fixedWidthToken;
+    function variableWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
+        if(leadingTriviaInfo === 0) {
+            if(trailingTriviaInfo === 0) {
+                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);
+            } else {
+                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);
+            }
+        } else if(trailingTriviaInfo === 0) {
+            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);
+        } else {
+            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
+        }
+    }
+    Syntax.variableWidthToken = variableWidthToken;
+    function getTriviaWidth(value) {
+        return value >>> 2 /* TriviaFullWidthShift */ ;
+    }
+    function hasTriviaComment(value) {
+        return (value & 2 /* TriviaCommentMask */ ) !== 0;
+    }
+    function hasTriviaNewLine(value) {
+        return (value & 1 /* TriviaNewLineMask */ ) !== 0;
+    }
+})(Syntax || (Syntax = {}));
+var Syntax;
+(function (Syntax) {
+    var SyntaxTrivia = (function () {
+        function SyntaxTrivia(kind, text) {
+            this._kind = kind;
+            this._text = text;
+        }
+        SyntaxTrivia.prototype.toJSON = function (key) {
+            var result = {
+            };
+            result.kind = (SyntaxKind)._map[this._kind];
+            result.text = this._text;
+            return result;
+        };
+        SyntaxTrivia.prototype.kind = function () {
+            return this._kind;
+        };
+        SyntaxTrivia.prototype.fullWidth = function () {
+            return this._text.length;
+        };
+        SyntaxTrivia.prototype.fullText = function () {
+            return this._text;
+        };
+        SyntaxTrivia.prototype.isComment = function () {
+            return this.kind() === 7 /* SingleLineCommentTrivia */  || this.kind() === 6 /* MultiLineCommentTrivia */ ;
+        };
+        SyntaxTrivia.prototype.isNewLine = function () {
+            return this.kind() === 5 /* NewLineTrivia */ ;
+        };
+        SyntaxTrivia.prototype.isSkippedText = function () {
+            return this.kind() === 8 /* SkippedTextTrivia */ ;
+        };
+        SyntaxTrivia.prototype.collectTextElements = function (elements) {
+            elements.push(this.fullText());
+        };
+        return SyntaxTrivia;
+    })();    
+    function trivia(kind, text) {
+        Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */  || kind === 8 /* SkippedTextTrivia */ );
+        Debug.assert(text.length > 0);
+        return new SyntaxTrivia(kind, text);
+    }
+    Syntax.trivia = trivia;
+    function spaces(count) {
+        return trivia(4 /* WhitespaceTrivia */ , StringUtilities.repeat(" ", count));
+    }
+    Syntax.spaces = spaces;
+    function whitespace(text) {
+        return trivia(4 /* WhitespaceTrivia */ , text);
+    }
+    Syntax.whitespace = whitespace;
+    function multiLineComment(text) {
+        return trivia(6 /* MultiLineCommentTrivia */ , text);
+    }
+    Syntax.multiLineComment = multiLineComment;
+    function singleLineComment(text) {
+        return trivia(7 /* SingleLineCommentTrivia */ , text);
+    }
+    Syntax.singleLineComment = singleLineComment;
+    Syntax.spaceTrivia = spaces(1);
+    Syntax.lineFeedTrivia = trivia(5 /* NewLineTrivia */ , "\n");
+    Syntax.carriageReturnTrivia = trivia(5 /* NewLineTrivia */ , "\r");
+    Syntax.carriageReturnLineFeedTrivia = trivia(5 /* NewLineTrivia */ , "\r\n");
+    function splitMultiLineCommentTriviaIntoMultipleLines(trivia) {
+        Debug.assert(trivia.kind() === 6 /* MultiLineCommentTrivia */ );
+        var result = [];
+        var triviaText = trivia.fullText();
+        var currentIndex = 0;
+        for(var i = 0; i < triviaText.length; i++) {
+            var ch = triviaText.charCodeAt(i);
+            var isCarriageReturnLineFeed = false;
+            switch(ch) {
+                case 13 /* carriageReturn */ :
+                    if(i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === 10 /* lineFeed */ ) {
+                        i++;
+                    }
+                case 10 /* lineFeed */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ :
+                    result.push(triviaText.substring(currentIndex, i + 1));
+                    currentIndex = i + 1;
+                    continue;
+            }
+        }
+        result.push(triviaText.substring(currentIndex));
+        return result;
+    }
+    Syntax.splitMultiLineCommentTriviaIntoMultipleLines = splitMultiLineCommentTriviaIntoMultipleLines;
+})(Syntax || (Syntax = {}));
+var Syntax;
+(function (Syntax) {
+    Syntax.emptyTriviaList = {
+        kind: function () {
+            return 3 /* TriviaList */ ;
+        },
+        count: function () {
+            return 0;
+        },
+        syntaxTriviaAt: function (index) {
+            throw Errors.argumentOutOfRange("index");
+        },
+        last: function () {
+            throw Errors.argumentOutOfRange("index");
+        },
+        fullWidth: function () {
+            return 0;
+        },
+        fullText: function () {
+            return "";
+        },
+        hasComment: function () {
+            return false;
+        },
+        hasNewLine: function () {
+            return false;
+        },
+        hasSkippedText: function () {
+            return false;
+        },
+        toJSON: function (key) {
+            return [];
+        },
+        collectTextElements: function (elements) {
+        },
+        toArray: function () {
+            return [];
+        },
+        concat: function (trivia) {
+            return trivia;
+        }
+    };
+    function concatTrivia(list1, list2) {
+        if(list1.count() === 0) {
+            return list2;
+        }
+        if(list2.count() === 0) {
+            return list1;
+        }
+        var trivia = list1.toArray();
+        trivia.push.apply(trivia, list2.toArray());
+        return triviaList(trivia);
+    }
+    function isComment(trivia) {
+        return trivia.kind() === 6 /* MultiLineCommentTrivia */  || trivia.kind() === 7 /* SingleLineCommentTrivia */ ;
+    }
+    var SingletonSyntaxTriviaList = (function () {
+        function SingletonSyntaxTriviaList(item) {
+            this.item = item;
+        }
+        SingletonSyntaxTriviaList.prototype.kind = function () {
+            return 3 /* TriviaList */ ;
+        };
+        SingletonSyntaxTriviaList.prototype.count = function () {
+            return 1;
+        };
+        SingletonSyntaxTriviaList.prototype.syntaxTriviaAt = function (index) {
+            if(index !== 0) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this.item;
+        };
+        SingletonSyntaxTriviaList.prototype.last = function () {
+            return this.item;
+        };
+        SingletonSyntaxTriviaList.prototype.fullWidth = function () {
+            return this.item.fullWidth();
+        };
+        SingletonSyntaxTriviaList.prototype.fullText = function () {
+            return this.item.fullText();
+        };
+        SingletonSyntaxTriviaList.prototype.hasComment = function () {
+            return isComment(this.item);
+        };
+        SingletonSyntaxTriviaList.prototype.hasNewLine = function () {
+            return this.item.kind() === 5 /* NewLineTrivia */ ;
+        };
+        SingletonSyntaxTriviaList.prototype.hasSkippedText = function () {
+            return this.item.kind() === 8 /* SkippedTextTrivia */ ;
+        };
+        SingletonSyntaxTriviaList.prototype.toJSON = function (key) {
+            return [
+                this.item
+            ];
+        };
+        SingletonSyntaxTriviaList.prototype.collectTextElements = function (elements) {
+            (this.item).collectTextElements(elements);
+        };
+        SingletonSyntaxTriviaList.prototype.toArray = function () {
+            return [
+                this.item
+            ];
+        };
+        SingletonSyntaxTriviaList.prototype.concat = function (trivia) {
+            return concatTrivia(this, trivia);
+        };
+        return SingletonSyntaxTriviaList;
+    })();    
+    var NormalSyntaxTriviaList = (function () {
+        function NormalSyntaxTriviaList(trivia) {
+            this.trivia = trivia;
+        }
+        NormalSyntaxTriviaList.prototype.kind = function () {
+            return 3 /* TriviaList */ ;
+        };
+        NormalSyntaxTriviaList.prototype.count = function () {
+            return this.trivia.length;
+        };
+        NormalSyntaxTriviaList.prototype.syntaxTriviaAt = function (index) {
+            if(index < 0 || index >= this.trivia.length) {
+                throw Errors.argumentOutOfRange("index");
+            }
+            return this.trivia[index];
+        };
+        NormalSyntaxTriviaList.prototype.last = function () {
+            return this.trivia[this.trivia.length - 1];
+        };
+        NormalSyntaxTriviaList.prototype.fullWidth = function () {
+            return ArrayUtilities.sum(this.trivia, function (t) {
+                return t.fullWidth();
+            });
+        };
+        NormalSyntaxTriviaList.prototype.fullText = function () {
+            var result = "";
+            for(var i = 0, n = this.trivia.length; i < n; i++) {
+                result += this.trivia[i].fullText();
+            }
+            return result;
+        };
+        NormalSyntaxTriviaList.prototype.hasComment = function () {
+            for(var i = 0; i < this.trivia.length; i++) {
+                if(isComment(this.trivia[i])) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.hasNewLine = function () {
+            for(var i = 0; i < this.trivia.length; i++) {
+                if(this.trivia[i].kind() === 5 /* NewLineTrivia */ ) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.hasSkippedText = function () {
+            for(var i = 0; i < this.trivia.length; i++) {
+                if(this.trivia[i].kind() === 8 /* SkippedTextTrivia */ ) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        NormalSyntaxTriviaList.prototype.toJSON = function (key) {
+            return this.trivia;
+        };
+        NormalSyntaxTriviaList.prototype.collectTextElements = function (elements) {
+            for(var i = 0; i < this.trivia.length; i++) {
+                (this.trivia[i]).collectTextElements(elements);
+            }
+        };
+        NormalSyntaxTriviaList.prototype.toArray = function () {
+            return this.trivia.slice(0);
+        };
+        NormalSyntaxTriviaList.prototype.concat = function (trivia) {
+            return concatTrivia(this, trivia);
+        };
+        return NormalSyntaxTriviaList;
+    })();    
+    function triviaList(trivia) {
+        if(trivia === undefined || trivia === null || trivia.length === 0) {
+            return Syntax.emptyTriviaList;
+        }
+        if(trivia.length === 1) {
+            return new SingletonSyntaxTriviaList(trivia[0]);
+        }
+        return new NormalSyntaxTriviaList(trivia);
+    }
+    Syntax.triviaList = triviaList;
+    Syntax.spaceTriviaList = triviaList([
+        Syntax.spaceTrivia
+    ]);
+})(Syntax || (Syntax = {}));
+var Unicode = (function () {
+    function Unicode() { }
+    Unicode.unicodeES3IdentifierStart = [
+        170, 
+        170, 
+        181, 
+        181, 
+        186, 
+        186, 
+        192, 
+        214, 
+        216, 
+        246, 
+        248, 
+        543, 
+        546, 
+        563, 
+        592, 
+        685, 
+        688, 
+        696, 
+        699, 
+        705, 
+        720, 
+        721, 
+        736, 
+        740, 
+        750, 
+        750, 
+        890, 
+        890, 
+        902, 
+        902, 
+        904, 
+        906, 
+        908, 
+        908, 
+        910, 
+        929, 
+        931, 
+        974, 
+        976, 
+        983, 
+        986, 
+        1011, 
+        1024, 
+        1153, 
+        1164, 
+        1220, 
+        1223, 
+        1224, 
+        1227, 
+        1228, 
+        1232, 
+        1269, 
+        1272, 
+        1273, 
+        1329, 
+        1366, 
+        1369, 
+        1369, 
+        1377, 
+        1415, 
+        1488, 
+        1514, 
+        1520, 
+        1522, 
+        1569, 
+        1594, 
+        1600, 
+        1610, 
+        1649, 
+        1747, 
+        1749, 
+        1749, 
+        1765, 
+        1766, 
+        1786, 
+        1788, 
+        1808, 
+        1808, 
+        1810, 
+        1836, 
+        1920, 
+        1957, 
+        2309, 
+        2361, 
+        2365, 
+        2365, 
+        2384, 
+        2384, 
+        2392, 
+        2401, 
+        2437, 
+        2444, 
+        2447, 
+        2448, 
+        2451, 
+        2472, 
+        2474, 
+        2480, 
+        2482, 
+        2482, 
+        2486, 
+        2489, 
+        2524, 
+        2525, 
+        2527, 
+        2529, 
+        2544, 
+        2545, 
+        2565, 
+        2570, 
+        2575, 
+        2576, 
+        2579, 
+        2600, 
+        2602, 
+        2608, 
+        2610, 
+        2611, 
+        2613, 
+        2614, 
+        2616, 
+        2617, 
+        2649, 
+        2652, 
+        2654, 
+        2654, 
+        2674, 
+        2676, 
+        2693, 
+        2699, 
+        2701, 
+        2701, 
+        2703, 
+        2705, 
+        2707, 
+        2728, 
+        2730, 
+        2736, 
+        2738, 
+        2739, 
+        2741, 
+        2745, 
+        2749, 
+        2749, 
+        2768, 
+        2768, 
+        2784, 
+        2784, 
+        2821, 
+        2828, 
+        2831, 
+        2832, 
+        2835, 
+        2856, 
+        2858, 
+        2864, 
+        2866, 
+        2867, 
+        2870, 
+        2873, 
+        2877, 
+        2877, 
+        2908, 
+        2909, 
+        2911, 
+        2913, 
+        2949, 
+        2954, 
+        2958, 
+        2960, 
+        2962, 
+        2965, 
+        2969, 
+        2970, 
+        2972, 
+        2972, 
+        2974, 
+        2975, 
+        2979, 
+        2980, 
+        2984, 
+        2986, 
+        2990, 
+        2997, 
+        2999, 
+        3001, 
+        3077, 
+        3084, 
+        3086, 
+        3088, 
+        3090, 
+        3112, 
+        3114, 
+        3123, 
+        3125, 
+        3129, 
+        3168, 
+        3169, 
+        3205, 
+        3212, 
+        3214, 
+        3216, 
+        3218, 
+        3240, 
+        3242, 
+        3251, 
+        3253, 
+        3257, 
+        3294, 
+        3294, 
+        3296, 
+        3297, 
+        3333, 
+        3340, 
+        3342, 
+        3344, 
+        3346, 
+        3368, 
+        3370, 
+        3385, 
+        3424, 
+        3425, 
+        3461, 
+        3478, 
+        3482, 
+        3505, 
+        3507, 
+        3515, 
+        3517, 
+        3517, 
+        3520, 
+        3526, 
+        3585, 
+        3632, 
+        3634, 
+        3635, 
+        3648, 
+        3654, 
+        3713, 
+        3714, 
+        3716, 
+        3716, 
+        3719, 
+        3720, 
+        3722, 
+        3722, 
+        3725, 
+        3725, 
+        3732, 
+        3735, 
+        3737, 
+        3743, 
+        3745, 
+        3747, 
+        3749, 
+        3749, 
+        3751, 
+        3751, 
+        3754, 
+        3755, 
+        3757, 
+        3760, 
+        3762, 
+        3763, 
+        3773, 
+        3773, 
+        3776, 
+        3780, 
+        3782, 
+        3782, 
+        3804, 
+        3805, 
+        3840, 
+        3840, 
+        3904, 
+        3911, 
+        3913, 
+        3946, 
+        3976, 
+        3979, 
+        4096, 
+        4129, 
+        4131, 
+        4135, 
+        4137, 
+        4138, 
+        4176, 
+        4181, 
+        4256, 
+        4293, 
+        4304, 
+        4342, 
+        4352, 
+        4441, 
+        4447, 
+        4514, 
+        4520, 
+        4601, 
+        4608, 
+        4614, 
+        4616, 
+        4678, 
+        4680, 
+        4680, 
+        4682, 
+        4685, 
+        4688, 
+        4694, 
+        4696, 
+        4696, 
+        4698, 
+        4701, 
+        4704, 
+        4742, 
+        4744, 
+        4744, 
+        4746, 
+        4749, 
+        4752, 
+        4782, 
+        4784, 
+        4784, 
+        4786, 
+        4789, 
+        4792, 
+        4798, 
+        4800, 
+        4800, 
+        4802, 
+        4805, 
+        4808, 
+        4814, 
+        4816, 
+        4822, 
+        4824, 
+        4846, 
+        4848, 
+        4878, 
+        4880, 
+        4880, 
+        4882, 
+        4885, 
+        4888, 
+        4894, 
+        4896, 
+        4934, 
+        4936, 
+        4954, 
+        5024, 
+        5108, 
+        5121, 
+        5740, 
+        5743, 
+        5750, 
+        5761, 
+        5786, 
+        5792, 
+        5866, 
+        6016, 
+        6067, 
+        6176, 
+        6263, 
+        6272, 
+        6312, 
+        7680, 
+        7835, 
+        7840, 
+        7929, 
+        7936, 
+        7957, 
+        7960, 
+        7965, 
+        7968, 
+        8005, 
+        8008, 
+        8013, 
+        8016, 
+        8023, 
+        8025, 
+        8025, 
+        8027, 
+        8027, 
+        8029, 
+        8029, 
+        8031, 
+        8061, 
+        8064, 
+        8116, 
+        8118, 
+        8124, 
+        8126, 
+        8126, 
+        8130, 
+        8132, 
+        8134, 
+        8140, 
+        8144, 
+        8147, 
+        8150, 
+        8155, 
+        8160, 
+        8172, 
+        8178, 
+        8180, 
+        8182, 
+        8188, 
+        8319, 
+        8319, 
+        8450, 
+        8450, 
+        8455, 
+        8455, 
+        8458, 
+        8467, 
+        8469, 
+        8469, 
+        8473, 
+        8477, 
+        8484, 
+        8484, 
+        8486, 
+        8486, 
+        8488, 
+        8488, 
+        8490, 
+        8493, 
+        8495, 
+        8497, 
+        8499, 
+        8505, 
+        8544, 
+        8579, 
+        12293, 
+        12295, 
+        12321, 
+        12329, 
+        12337, 
+        12341, 
+        12344, 
+        12346, 
+        12353, 
+        12436, 
+        12445, 
+        12446, 
+        12449, 
+        12538, 
+        12540, 
+        12542, 
+        12549, 
+        12588, 
+        12593, 
+        12686, 
+        12704, 
+        12727, 
+        13312, 
+        13312, 
+        19893, 
+        19893, 
+        19968, 
+        19968, 
+        40869, 
+        40869, 
+        40960, 
+        42124, 
+        44032, 
+        44032, 
+        55203, 
+        55203, 
+        63744, 
+        64045, 
+        64256, 
+        64262, 
+        64275, 
+        64279, 
+        64285, 
+        64285, 
+        64287, 
+        64296, 
+        64298, 
+        64310, 
+        64312, 
+        64316, 
+        64318, 
+        64318, 
+        64320, 
+        64321, 
+        64323, 
+        64324, 
+        64326, 
+        64433, 
+        64467, 
+        64829, 
+        64848, 
+        64911, 
+        64914, 
+        64967, 
+        65008, 
+        65019, 
+        65136, 
+        65138, 
+        65140, 
+        65140, 
+        65142, 
+        65276, 
+        65313, 
+        65338, 
+        65345, 
+        65370, 
+        65382, 
+        65470, 
+        65474, 
+        65479, 
+        65482, 
+        65487, 
+        65490, 
+        65495, 
+        65498, 
+        65500
+    ];
+    Unicode.unicodeES3IdentifierPart = [
+        768, 
+        846, 
+        864, 
+        866, 
+        1155, 
+        1158, 
+        1425, 
+        1441, 
+        1443, 
+        1465, 
+        1467, 
+        1469, 
+        1471, 
+        1471, 
+        1473, 
+        1474, 
+        1476, 
+        1476, 
+        1611, 
+        1621, 
+        1632, 
+        1641, 
+        1648, 
+        1648, 
+        1750, 
+        1756, 
+        1759, 
+        1764, 
+        1767, 
+        1768, 
+        1770, 
+        1773, 
+        1776, 
+        1785, 
+        1809, 
+        1809, 
+        1840, 
+        1866, 
+        1958, 
+        1968, 
+        2305, 
+        2307, 
+        2364, 
+        2364, 
+        2366, 
+        2381, 
+        2385, 
+        2388, 
+        2402, 
+        2403, 
+        2406, 
+        2415, 
+        2433, 
+        2435, 
+        2492, 
+        2492, 
+        2494, 
+        2500, 
+        2503, 
+        2504, 
+        2507, 
+        2509, 
+        2519, 
+        2519, 
+        2530, 
+        2531, 
+        2534, 
+        2543, 
+        2562, 
+        2562, 
+        2620, 
+        2620, 
+        2622, 
+        2626, 
+        2631, 
+        2632, 
+        2635, 
+        2637, 
+        2662, 
+        2673, 
+        2689, 
+        2691, 
+        2748, 
+        2748, 
+        2750, 
+        2757, 
+        2759, 
+        2761, 
+        2763, 
+        2765, 
+        2790, 
+        2799, 
+        2817, 
+        2819, 
+        2876, 
+        2876, 
+        2878, 
+        2883, 
+        2887, 
+        2888, 
+        2891, 
+        2893, 
+        2902, 
+        2903, 
+        2918, 
+        2927, 
+        2946, 
+        2947, 
+        3006, 
+        3010, 
+        3014, 
+        3016, 
+        3018, 
+        3021, 
+        3031, 
+        3031, 
+        3047, 
+        3055, 
+        3073, 
+        3075, 
+        3134, 
+        3140, 
+        3142, 
+        3144, 
+        3146, 
+        3149, 
+        3157, 
+        3158, 
+        3174, 
+        3183, 
+        3202, 
+        3203, 
+        3262, 
+        3268, 
+        3270, 
+        3272, 
+        3274, 
+        3277, 
+        3285, 
+        3286, 
+        3302, 
+        3311, 
+        3330, 
+        3331, 
+        3390, 
+        3395, 
+        3398, 
+        3400, 
+        3402, 
+        3405, 
+        3415, 
+        3415, 
+        3430, 
+        3439, 
+        3458, 
+        3459, 
+        3530, 
+        3530, 
+        3535, 
+        3540, 
+        3542, 
+        3542, 
+        3544, 
+        3551, 
+        3570, 
+        3571, 
+        3633, 
+        3633, 
+        3636, 
+        3642, 
+        3655, 
+        3662, 
+        3664, 
+        3673, 
+        3761, 
+        3761, 
+        3764, 
+        3769, 
+        3771, 
+        3772, 
+        3784, 
+        3789, 
+        3792, 
+        3801, 
+        3864, 
+        3865, 
+        3872, 
+        3881, 
+        3893, 
+        3893, 
+        3895, 
+        3895, 
+        3897, 
+        3897, 
+        3902, 
+        3903, 
+        3953, 
+        3972, 
+        3974, 
+        3975, 
+        3984, 
+        3991, 
+        3993, 
+        4028, 
+        4038, 
+        4038, 
+        4140, 
+        4146, 
+        4150, 
+        4153, 
+        4160, 
+        4169, 
+        4182, 
+        4185, 
+        4969, 
+        4977, 
+        6068, 
+        6099, 
+        6112, 
+        6121, 
+        6160, 
+        6169, 
+        6313, 
+        6313, 
+        8255, 
+        8256, 
+        8400, 
+        8412, 
+        8417, 
+        8417, 
+        12330, 
+        12335, 
+        12441, 
+        12442, 
+        12539, 
+        12539, 
+        64286, 
+        64286, 
+        65056, 
+        65059, 
+        65075, 
+        65076, 
+        65101, 
+        65103, 
+        65296, 
+        65305, 
+        65343, 
+        65343, 
+        65381, 
+        65381
+    ];
+    Unicode.unicodeES5IdentifierStart = [
+        170, 
+        170, 
+        181, 
+        181, 
+        186, 
+        186, 
+        192, 
+        214, 
+        216, 
+        246, 
+        248, 
+        705, 
+        710, 
+        721, 
+        736, 
+        740, 
+        748, 
+        748, 
+        750, 
+        750, 
+        880, 
+        884, 
+        886, 
+        887, 
+        890, 
+        893, 
+        902, 
+        902, 
+        904, 
+        906, 
+        908, 
+        908, 
+        910, 
+        929, 
+        931, 
+        1013, 
+        1015, 
+        1153, 
+        1162, 
+        1319, 
+        1329, 
+        1366, 
+        1369, 
+        1369, 
+        1377, 
+        1415, 
+        1488, 
+        1514, 
+        1520, 
+        1522, 
+        1568, 
+        1610, 
+        1646, 
+        1647, 
+        1649, 
+        1747, 
+        1749, 
+        1749, 
+        1765, 
+        1766, 
+        1774, 
+        1775, 
+        1786, 
+        1788, 
+        1791, 
+        1791, 
+        1808, 
+        1808, 
+        1810, 
+        1839, 
+        1869, 
+        1957, 
+        1969, 
+        1969, 
+        1994, 
+        2026, 
+        2036, 
+        2037, 
+        2042, 
+        2042, 
+        2048, 
+        2069, 
+        2074, 
+        2074, 
+        2084, 
+        2084, 
+        2088, 
+        2088, 
+        2112, 
+        2136, 
+        2208, 
+        2208, 
+        2210, 
+        2220, 
+        2308, 
+        2361, 
+        2365, 
+        2365, 
+        2384, 
+        2384, 
+        2392, 
+        2401, 
+        2417, 
+        2423, 
+        2425, 
+        2431, 
+        2437, 
+        2444, 
+        2447, 
+        2448, 
+        2451, 
+        2472, 
+        2474, 
+        2480, 
+        2482, 
+        2482, 
+        2486, 
+        2489, 
+        2493, 
+        2493, 
+        2510, 
+        2510, 
+        2524, 
+        2525, 
+        2527, 
+        2529, 
+        2544, 
+        2545, 
+        2565, 
+        2570, 
+        2575, 
+        2576, 
+        2579, 
+        2600, 
+        2602, 
+        2608, 
+        2610, 
+        2611, 
+        2613, 
+        2614, 
+        2616, 
+        2617, 
+        2649, 
+        2652, 
+        2654, 
+        2654, 
+        2674, 
+        2676, 
+        2693, 
+        2701, 
+        2703, 
+        2705, 
+        2707, 
+        2728, 
+        2730, 
+        2736, 
+        2738, 
+        2739, 
+        2741, 
+        2745, 
+        2749, 
+        2749, 
+        2768, 
+        2768, 
+        2784, 
+        2785, 
+        2821, 
+        2828, 
+        2831, 
+        2832, 
+        2835, 
+        2856, 
+        2858, 
+        2864, 
+        2866, 
+        2867, 
+        2869, 
+        2873, 
+        2877, 
+        2877, 
+        2908, 
+        2909, 
+        2911, 
+        2913, 
+        2929, 
+        2929, 
+        2947, 
+        2947, 
+        2949, 
+        2954, 
+        2958, 
+        2960, 
+        2962, 
+        2965, 
+        2969, 
+        2970, 
+        2972, 
+        2972, 
+        2974, 
+        2975, 
+        2979, 
+        2980, 
+        2984, 
+        2986, 
+        2990, 
+        3001, 
+        3024, 
+        3024, 
+        3077, 
+        3084, 
+        3086, 
+        3088, 
+        3090, 
+        3112, 
+        3114, 
+        3123, 
+        3125, 
+        3129, 
+        3133, 
+        3133, 
+        3160, 
+        3161, 
+        3168, 
+        3169, 
+        3205, 
+        3212, 
+        3214, 
+        3216, 
+        3218, 
+        3240, 
+        3242, 
+        3251, 
+        3253, 
+        3257, 
+        3261, 
+        3261, 
+        3294, 
+        3294, 
+        3296, 
+        3297, 
+        3313, 
+        3314, 
+        3333, 
+        3340, 
+        3342, 
+        3344, 
+        3346, 
+        3386, 
+        3389, 
+        3389, 
+        3406, 
+        3406, 
+        3424, 
+        3425, 
+        3450, 
+        3455, 
+        3461, 
+        3478, 
+        3482, 
+        3505, 
+        3507, 
+        3515, 
+        3517, 
+        3517, 
+        3520, 
+        3526, 
+        3585, 
+        3632, 
+        3634, 
+        3635, 
+        3648, 
+        3654, 
+        3713, 
+        3714, 
+        3716, 
+        3716, 
+        3719, 
+        3720, 
+        3722, 
+        3722, 
+        3725, 
+        3725, 
+        3732, 
+        3735, 
+        3737, 
+        3743, 
+        3745, 
+        3747, 
+        3749, 
+        3749, 
+        3751, 
+        3751, 
+        3754, 
+        3755, 
+        3757, 
+        3760, 
+        3762, 
+        3763, 
+        3773, 
+        3773, 
+        3776, 
+        3780, 
+        3782, 
+        3782, 
+        3804, 
+        3807, 
+        3840, 
+        3840, 
+        3904, 
+        3911, 
+        3913, 
+        3948, 
+        3976, 
+        3980, 
+        4096, 
+        4138, 
+        4159, 
+        4159, 
+        4176, 
+        4181, 
+        4186, 
+        4189, 
+        4193, 
+        4193, 
+        4197, 
+        4198, 
+        4206, 
+        4208, 
+        4213, 
+        4225, 
+        4238, 
+        4238, 
+        4256, 
+        4293, 
+        4295, 
+        4295, 
+        4301, 
+        4301, 
+        4304, 
+        4346, 
+        4348, 
+        4680, 
+        4682, 
+        4685, 
+        4688, 
+        4694, 
+        4696, 
+        4696, 
+        4698, 
+        4701, 
+        4704, 
+        4744, 
+        4746, 
+        4749, 
+        4752, 
+        4784, 
+        4786, 
+        4789, 
+        4792, 
+        4798, 
+        4800, 
+        4800, 
+        4802, 
+        4805, 
+        4808, 
+        4822, 
+        4824, 
+        4880, 
+        4882, 
+        4885, 
+        4888, 
+        4954, 
+        4992, 
+        5007, 
+        5024, 
+        5108, 
+        5121, 
+        5740, 
+        5743, 
+        5759, 
+        5761, 
+        5786, 
+        5792, 
+        5866, 
+        5870, 
+        5872, 
+        5888, 
+        5900, 
+        5902, 
+        5905, 
+        5920, 
+        5937, 
+        5952, 
+        5969, 
+        5984, 
+        5996, 
+        5998, 
+        6000, 
+        6016, 
+        6067, 
+        6103, 
+        6103, 
+        6108, 
+        6108, 
+        6176, 
+        6263, 
+        6272, 
+        6312, 
+        6314, 
+        6314, 
+        6320, 
+        6389, 
+        6400, 
+        6428, 
+        6480, 
+        6509, 
+        6512, 
+        6516, 
+        6528, 
+        6571, 
+        6593, 
+        6599, 
+        6656, 
+        6678, 
+        6688, 
+        6740, 
+        6823, 
+        6823, 
+        6917, 
+        6963, 
+        6981, 
+        6987, 
+        7043, 
+        7072, 
+        7086, 
+        7087, 
+        7098, 
+        7141, 
+        7168, 
+        7203, 
+        7245, 
+        7247, 
+        7258, 
+        7293, 
+        7401, 
+        7404, 
+        7406, 
+        7409, 
+        7413, 
+        7414, 
+        7424, 
+        7615, 
+        7680, 
+        7957, 
+        7960, 
+        7965, 
+        7968, 
+        8005, 
+        8008, 
+        8013, 
+        8016, 
+        8023, 
+        8025, 
+        8025, 
+        8027, 
+        8027, 
+        8029, 
+        8029, 
+        8031, 
+        8061, 
+        8064, 
+        8116, 
+        8118, 
+        8124, 
+        8126, 
+        8126, 
+        8130, 
+        8132, 
+        8134, 
+        8140, 
+        8144, 
+        8147, 
+        8150, 
+        8155, 
+        8160, 
+        8172, 
+        8178, 
+        8180, 
+        8182, 
+        8188, 
+        8305, 
+        8305, 
+        8319, 
+        8319, 
+        8336, 
+        8348, 
+        8450, 
+        8450, 
+        8455, 
+        8455, 
+        8458, 
+        8467, 
+        8469, 
+        8469, 
+        8473, 
+        8477, 
+        8484, 
+        8484, 
+        8486, 
+        8486, 
+        8488, 
+        8488, 
+        8490, 
+        8493, 
+        8495, 
+        8505, 
+        8508, 
+        8511, 
+        8517, 
+        8521, 
+        8526, 
+        8526, 
+        8544, 
+        8584, 
+        11264, 
+        11310, 
+        11312, 
+        11358, 
+        11360, 
+        11492, 
+        11499, 
+        11502, 
+        11506, 
+        11507, 
+        11520, 
+        11557, 
+        11559, 
+        11559, 
+        11565, 
+        11565, 
+        11568, 
+        11623, 
+        11631, 
+        11631, 
+        11648, 
+        11670, 
+        11680, 
+        11686, 
+        11688, 
+        11694, 
+        11696, 
+        11702, 
+        11704, 
+        11710, 
+        11712, 
+        11718, 
+        11720, 
+        11726, 
+        11728, 
+        11734, 
+        11736, 
+        11742, 
+        11823, 
+        11823, 
+        12293, 
+        12295, 
+        12321, 
+        12329, 
+        12337, 
+        12341, 
+        12344, 
+        12348, 
+        12353, 
+        12438, 
+        12445, 
+        12447, 
+        12449, 
+        12538, 
+        12540, 
+        12543, 
+        12549, 
+        12589, 
+        12593, 
+        12686, 
+        12704, 
+        12730, 
+        12784, 
+        12799, 
+        13312, 
+        13312, 
+        19893, 
+        19893, 
+        19968, 
+        19968, 
+        40908, 
+        40908, 
+        40960, 
+        42124, 
+        42192, 
+        42237, 
+        42240, 
+        42508, 
+        42512, 
+        42527, 
+        42538, 
+        42539, 
+        42560, 
+        42606, 
+        42623, 
+        42647, 
+        42656, 
+        42735, 
+        42775, 
+        42783, 
+        42786, 
+        42888, 
+        42891, 
+        42894, 
+        42896, 
+        42899, 
+        42912, 
+        42922, 
+        43000, 
+        43009, 
+        43011, 
+        43013, 
+        43015, 
+        43018, 
+        43020, 
+        43042, 
+        43072, 
+        43123, 
+        43138, 
+        43187, 
+        43250, 
+        43255, 
+        43259, 
+        43259, 
+        43274, 
+        43301, 
+        43312, 
+        43334, 
+        43360, 
+        43388, 
+        43396, 
+        43442, 
+        43471, 
+        43471, 
+        43520, 
+        43560, 
+        43584, 
+        43586, 
+        43588, 
+        43595, 
+        43616, 
+        43638, 
+        43642, 
+        43642, 
+        43648, 
+        43695, 
+        43697, 
+        43697, 
+        43701, 
+        43702, 
+        43705, 
+        43709, 
+        43712, 
+        43712, 
+        43714, 
+        43714, 
+        43739, 
+        43741, 
+        43744, 
+        43754, 
+        43762, 
+        43764, 
+        43777, 
+        43782, 
+        43785, 
+        43790, 
+        43793, 
+        43798, 
+        43808, 
+        43814, 
+        43816, 
+        43822, 
+        43968, 
+        44002, 
+        44032, 
+        44032, 
+        55203, 
+        55203, 
+        55216, 
+        55238, 
+        55243, 
+        55291, 
+        63744, 
+        64109, 
+        64112, 
+        64217, 
+        64256, 
+        64262, 
+        64275, 
+        64279, 
+        64285, 
+        64285, 
+        64287, 
+        64296, 
+        64298, 
+        64310, 
+        64312, 
+        64316, 
+        64318, 
+        64318, 
+        64320, 
+        64321, 
+        64323, 
+        64324, 
+        64326, 
+        64433, 
+        64467, 
+        64829, 
+        64848, 
+        64911, 
+        64914, 
+        64967, 
+        65008, 
+        65019, 
+        65136, 
+        65140, 
+        65142, 
+        65276, 
+        65313, 
+        65338, 
+        65345, 
+        65370, 
+        65382, 
+        65470, 
+        65474, 
+        65479, 
+        65482, 
+        65487, 
+        65490, 
+        65495, 
+        65498, 
+        65500
+    ];
+    Unicode.unicodeES5IdentifierPart = [
+        768, 
+        879, 
+        1155, 
+        1159, 
+        1425, 
+        1469, 
+        1471, 
+        1471, 
+        1473, 
+        1474, 
+        1476, 
+        1477, 
+        1479, 
+        1479, 
+        1552, 
+        1562, 
+        1611, 
+        1641, 
+        1648, 
+        1648, 
+        1750, 
+        1756, 
+        1759, 
+        1764, 
+        1767, 
+        1768, 
+        1770, 
+        1773, 
+        1776, 
+        1785, 
+        1809, 
+        1809, 
+        1840, 
+        1866, 
+        1958, 
+        1968, 
+        1984, 
+        1993, 
+        2027, 
+        2035, 
+        2070, 
+        2073, 
+        2075, 
+        2083, 
+        2085, 
+        2087, 
+        2089, 
+        2093, 
+        2137, 
+        2139, 
+        2276, 
+        2302, 
+        2304, 
+        2307, 
+        2362, 
+        2364, 
+        2366, 
+        2383, 
+        2385, 
+        2391, 
+        2402, 
+        2403, 
+        2406, 
+        2415, 
+        2433, 
+        2435, 
+        2492, 
+        2492, 
+        2494, 
+        2500, 
+        2503, 
+        2504, 
+        2507, 
+        2509, 
+        2519, 
+        2519, 
+        2530, 
+        2531, 
+        2534, 
+        2543, 
+        2561, 
+        2563, 
+        2620, 
+        2620, 
+        2622, 
+        2626, 
+        2631, 
+        2632, 
+        2635, 
+        2637, 
+        2641, 
+        2641, 
+        2662, 
+        2673, 
+        2677, 
+        2677, 
+        2689, 
+        2691, 
+        2748, 
+        2748, 
+        2750, 
+        2757, 
+        2759, 
+        2761, 
+        2763, 
+        2765, 
+        2786, 
+        2787, 
+        2790, 
+        2799, 
+        2817, 
+        2819, 
+        2876, 
+        2876, 
+        2878, 
+        2884, 
+        2887, 
+        2888, 
+        2891, 
+        2893, 
+        2902, 
+        2903, 
+        2914, 
+        2915, 
+        2918, 
+        2927, 
+        2946, 
+        2946, 
+        3006, 
+        3010, 
+        3014, 
+        3016, 
+        3018, 
+        3021, 
+        3031, 
+        3031, 
+        3046, 
+        3055, 
+        3073, 
+        3075, 
+        3134, 
+        3140, 
+        3142, 
+        3144, 
+        3146, 
+        3149, 
+        3157, 
+        3158, 
+        3170, 
+        3171, 
+        3174, 
+        3183, 
+        3202, 
+        3203, 
+        3260, 
+        3260, 
+        3262, 
+        3268, 
+        3270, 
+        3272, 
+        3274, 
+        3277, 
+        3285, 
+        3286, 
+        3298, 
+        3299, 
+        3302, 
+        3311, 
+        3330, 
+        3331, 
+        3390, 
+        3396, 
+        3398, 
+        3400, 
+        3402, 
+        3405, 
+        3415, 
+        3415, 
+        3426, 
+        3427, 
+        3430, 
+        3439, 
+        3458, 
+        3459, 
+        3530, 
+        3530, 
+        3535, 
+        3540, 
+        3542, 
+        3542, 
+        3544, 
+        3551, 
+        3570, 
+        3571, 
+        3633, 
+        3633, 
+        3636, 
+        3642, 
+        3655, 
+        3662, 
+        3664, 
+        3673, 
+        3761, 
+        3761, 
+        3764, 
+        3769, 
+        3771, 
+        3772, 
+        3784, 
+        3789, 
+        3792, 
+        3801, 
+        3864, 
+        3865, 
+        3872, 
+        3881, 
+        3893, 
+        3893, 
+        3895, 
+        3895, 
+        3897, 
+        3897, 
+        3902, 
+        3903, 
+        3953, 
+        3972, 
+        3974, 
+        3975, 
+        3981, 
+        3991, 
+        3993, 
+        4028, 
+        4038, 
+        4038, 
+        4139, 
+        4158, 
+        4160, 
+        4169, 
+        4182, 
+        4185, 
+        4190, 
+        4192, 
+        4194, 
+        4196, 
+        4199, 
+        4205, 
+        4209, 
+        4212, 
+        4226, 
+        4237, 
+        4239, 
+        4253, 
+        4957, 
+        4959, 
+        5906, 
+        5908, 
+        5938, 
+        5940, 
+        5970, 
+        5971, 
+        6002, 
+        6003, 
+        6068, 
+        6099, 
+        6109, 
+        6109, 
+        6112, 
+        6121, 
+        6155, 
+        6157, 
+        6160, 
+        6169, 
+        6313, 
+        6313, 
+        6432, 
+        6443, 
+        6448, 
+        6459, 
+        6470, 
+        6479, 
+        6576, 
+        6592, 
+        6600, 
+        6601, 
+        6608, 
+        6617, 
+        6679, 
+        6683, 
+        6741, 
+        6750, 
+        6752, 
+        6780, 
+        6783, 
+        6793, 
+        6800, 
+        6809, 
+        6912, 
+        6916, 
+        6964, 
+        6980, 
+        6992, 
+        7001, 
+        7019, 
+        7027, 
+        7040, 
+        7042, 
+        7073, 
+        7085, 
+        7088, 
+        7097, 
+        7142, 
+        7155, 
+        7204, 
+        7223, 
+        7232, 
+        7241, 
+        7248, 
+        7257, 
+        7376, 
+        7378, 
+        7380, 
+        7400, 
+        7405, 
+        7405, 
+        7410, 
+        7412, 
+        7616, 
+        7654, 
+        7676, 
+        7679, 
+        8204, 
+        8205, 
+        8255, 
+        8256, 
+        8276, 
+        8276, 
+        8400, 
+        8412, 
+        8417, 
+        8417, 
+        8421, 
+        8432, 
+        11503, 
+        11505, 
+        11647, 
+        11647, 
+        11744, 
+        11775, 
+        12330, 
+        12335, 
+        12441, 
+        12442, 
+        42528, 
+        42537, 
+        42607, 
+        42607, 
+        42612, 
+        42621, 
+        42655, 
+        42655, 
+        42736, 
+        42737, 
+        43010, 
+        43010, 
+        43014, 
+        43014, 
+        43019, 
+        43019, 
+        43043, 
+        43047, 
+        43136, 
+        43137, 
+        43188, 
+        43204, 
+        43216, 
+        43225, 
+        43232, 
+        43249, 
+        43264, 
+        43273, 
+        43302, 
+        43309, 
+        43335, 
+        43347, 
+        43392, 
+        43395, 
+        43443, 
+        43456, 
+        43472, 
+        43481, 
+        43561, 
+        43574, 
+        43587, 
+        43587, 
+        43596, 
+        43597, 
+        43600, 
+        43609, 
+        43643, 
+        43643, 
+        43696, 
+        43696, 
+        43698, 
+        43700, 
+        43703, 
+        43704, 
+        43710, 
+        43711, 
+        43713, 
+        43713, 
+        43755, 
+        43759, 
+        43765, 
+        43766, 
+        44003, 
+        44010, 
+        44012, 
+        44013, 
+        44016, 
+        44025, 
+        64286, 
+        64286, 
+        65024, 
+        65039, 
+        65056, 
+        65062, 
+        65075, 
+        65076, 
+        65101, 
+        65103, 
+        65296, 
+        65305, 
+        65343, 
+        65343
+    ];
+    Unicode.lookupInUnicodeMap = function lookupInUnicodeMap(code, map) {
+        if(code < map[0]) {
+            return false;
+        }
+        var lo = 0;
+        var hi = map.length;
+        var mid;
+        while(lo + 1 < hi) {
+            mid = lo + (hi - lo) / 2;
+            mid -= mid % 2;
+            if(map[mid] <= code && code <= map[mid + 1]) {
+                return true;
+            }
+            if(code < map[mid]) {
+                hi = mid;
+            } else {
+                lo = mid + 2;
+            }
+        }
+        return false;
+    };
+    Unicode.isIdentifierStart = function isIdentifierStart(code, languageVersion) {
+        if(languageVersion === 0 /* EcmaScript3 */ ) {
+            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierStart);
+        } else if(languageVersion === 1 /* EcmaScript5 */ ) {
+            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierStart);
+        } else {
+            throw Errors.argumentOutOfRange("languageVersion");
+        }
+    };
+    Unicode.isIdentifierPart = function isIdentifierPart(code, languageVersion) {
+        if(languageVersion === 0 /* EcmaScript3 */ ) {
+            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierPart);
+        } else if(languageVersion === 1 /* EcmaScript5 */ ) {
+            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierPart);
+        } else {
+            throw Errors.argumentOutOfRange("languageVersion");
+        }
+    };
+    return Unicode;
+})();
+var Scanner = (function () {
+    function Scanner(text, languageVersion, stringTable) {
+        Scanner.initializeStaticData();
+        this.slidingWindow = new SlidingWindow(this, 2048, 0, text.length());
+        this.text = text;
+        this.stringTable = stringTable;
+        this.languageVersion = languageVersion;
+    }
+    Scanner.isKeywordStartCharacter = [];
+    Scanner.isIdentifierStartCharacter = [];
+    Scanner.isIdentifierPartCharacter = [];
+    Scanner.isNumericLiteralStart = [];
+    Scanner.initializeStaticData = function initializeStaticData() {
+        if(Scanner.isKeywordStartCharacter.length === 0) {
+            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
+            for(var character = 0; character < 127 /* maxAsciiCharacter */ ; character++) {
+                if(character >= 97 /* a */  && character <= 122 /* z */ ) {
+                    Scanner.isIdentifierStartCharacter[character] = true;
+                    Scanner.isIdentifierPartCharacter[character] = true;
+                } else if((character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
+                    Scanner.isIdentifierStartCharacter[character] = true;
+                    Scanner.isIdentifierPartCharacter[character] = true;
+                } else if(character >= 48 /* _0 */  && character <= 57 /* _9 */ ) {
+                    Scanner.isIdentifierPartCharacter[character] = true;
+                    Scanner.isNumericLiteralStart[character] = true;
+                }
+            }
+            Scanner.isNumericLiteralStart[46 /* dot */ ] = true;
+            for(var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
+                var keyword = SyntaxFacts.getText(keywordKind);
+                Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
+            }
+        }
+    };
+    Scanner.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
+        var charactersRemaining = this.text.length() - sourceIndex;
+        var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
+        this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
+        return amountToRead;
+    };
+    Scanner.prototype.currentCharCode = function () {
+        return this.slidingWindow.currentItem(null);
+    };
+    Scanner.prototype.setAbsoluteIndex = function (index) {
+        this.slidingWindow.setAbsoluteIndex(index);
+    };
+    Scanner.prototype.scan = function (diagnostics, allowRegularExpression) {
+        var fullStart = this.slidingWindow.absoluteIndex();
+        var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
+        var start = this.slidingWindow.absoluteIndex();
+        var kind = this.scanSyntaxToken(diagnostics, allowRegularExpression);
+        var end = this.slidingWindow.absoluteIndex();
+        var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
+        if(kind >= SyntaxKind.FirstFixedWidth) {
+            if(leadingTriviaInfo === 0) {
+                if(trailingTriviaInfo === 0) {
+                    return new Syntax.FixedWidthTokenWithNoTrivia(kind);
+                } else {
+                    return new Syntax.FixedWidthTokenWithTrailingTrivia(this.text, fullStart, kind, trailingTriviaInfo);
+                }
+            } else if(trailingTriviaInfo === 0) {
+                return new Syntax.FixedWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo);
+            } else {
+                return new Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+            }
+        } else {
+            var width = end - start;
+            if(leadingTriviaInfo === 0) {
+                if(trailingTriviaInfo === 0) {
+                    return new Syntax.VariableWidthTokenWithNoTrivia(this.text, fullStart, kind, width);
+                } else {
+                    return new Syntax.VariableWidthTokenWithTrailingTrivia(this.text, fullStart, kind, width, trailingTriviaInfo);
+                }
+            } else if(trailingTriviaInfo === 0) {
+                return new Syntax.VariableWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width);
+            } else {
+                return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
+            }
+        }
+    };
+    Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
+        Debug.assert(length > 0);
+        var scanner = new Scanner(text.subText(new TextSpan(start, length)), 1 /* EcmaScript5 */ , null);
+        return scanner.scanTrivia(isTrailing);
+    };
+    Scanner.prototype.scanTrivia = function (isTrailing) {
+        var trivia = [];
+        while(true) {
+            if(!this.slidingWindow.isAtEndOfSource()) {
+                var ch = this.currentCharCode();
+                switch(ch) {
+                    case 32 /* space */ :
+                    case 9 /* tab */ :
+                    case 11 /* verticalTab */ :
+                    case 12 /* formFeed */ :
+                    case 160 /* nonBreakingSpace */ :
+                    case 65279 /* byteOrderMark */ :
+                        trivia.push(this.scanWhitespaceTrivia());
+                        continue;
+                    case 47 /* slash */ :
+                        var ch2 = this.slidingWindow.peekItemN(1);
+                        if(ch2 === 47 /* slash */ ) {
+                            trivia.push(this.scanSingleLineCommentTrivia());
+                            continue;
+                        }
+                        if(ch2 === 42 /* asterisk */ ) {
+                            trivia.push(this.scanMultiLineCommentTrivia());
+                            continue;
+                        }
+                        throw Errors.invalidOperation();
+                    case 13 /* carriageReturn */ :
+                    case 10 /* lineFeed */ :
+                    case 8233 /* paragraphSeparator */ :
+                    case 8232 /* lineSeparator */ :
+                        trivia.push(this.scanLineTerminatorSequenceTrivia(ch));
+                        if(!isTrailing) {
+                            continue;
+                        }
+                        break;
+                    default:
+                        throw Errors.invalidOperation();
+                }
+            }
+            Debug.assert(trivia.length > 0);
+            return Syntax.triviaList(trivia);
+        }
+    };
+    Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
+        var width = 0;
+        var hasCommentOrNewLine = 0;
+        while(true) {
+            var ch = this.currentCharCode();
+            switch(ch) {
+                case 32 /* space */ :
+                case 9 /* tab */ :
+                case 11 /* verticalTab */ :
+                case 12 /* formFeed */ :
+                case 160 /* nonBreakingSpace */ :
+                case 65279 /* byteOrderMark */ :
+                    this.slidingWindow.moveToNextItem();
+                    width++;
+                    continue;
+                case 47 /* slash */ :
+                    var ch2 = this.slidingWindow.peekItemN(1);
+                    if(ch2 === 47 /* slash */ ) {
+                        hasCommentOrNewLine |= 2 /* TriviaCommentMask */ ;
+                        width += this.scanSingleLineCommentTriviaLength();
+                        continue;
+                    }
+                    if(ch2 === 42 /* asterisk */ ) {
+                        hasCommentOrNewLine |= 2 /* TriviaCommentMask */ ;
+                        width += this.scanMultiLineCommentTriviaLength(diagnostics);
+                        continue;
+                    }
+                    break;
+                case 13 /* carriageReturn */ :
+                case 10 /* lineFeed */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ :
+                    hasCommentOrNewLine |= 1 /* TriviaNewLineMask */ ;
+                    width += this.scanLineTerminatorSequenceLength(ch);
+                    if(!isTrailing) {
+                        continue;
+                    }
+                    break;
+            }
+            return (width << 2 /* TriviaFullWidthShift */ ) | hasCommentOrNewLine;
+        }
+    };
+    Scanner.prototype.isNewLineCharacter = function (ch) {
+        switch(ch) {
+            case 13 /* carriageReturn */ :
+            case 10 /* lineFeed */ :
+            case 8233 /* paragraphSeparator */ :
+            case 8232 /* lineSeparator */ :
+                return true;
+            default:
+                return false;
+        }
+    };
+    Scanner.prototype.scanWhitespaceTrivia = function () {
+        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        var width = 0;
+        while(true) {
+            var ch = this.currentCharCode();
+            switch(ch) {
+                case 32 /* space */ :
+                case 9 /* tab */ :
+                case 11 /* verticalTab */ :
+                case 12 /* formFeed */ :
+                case 160 /* nonBreakingSpace */ :
+                case 65279 /* byteOrderMark */ :
+                    this.slidingWindow.moveToNextItem();
+                    width++;
+                    continue;
+            }
+            break;
+        }
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return Syntax.whitespace(text);
+    };
+    Scanner.prototype.scanSingleLineCommentTrivia = function () {
+        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        var width = this.scanSingleLineCommentTriviaLength();
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return Syntax.singleLineComment(text);
+    };
+    Scanner.prototype.scanSingleLineCommentTriviaLength = function () {
+        this.slidingWindow.moveToNextItem();
+        this.slidingWindow.moveToNextItem();
+        var width = 2;
+        while(true) {
+            if(this.slidingWindow.isAtEndOfSource() || this.isNewLineCharacter(this.currentCharCode())) {
+                return width;
+            }
+            this.slidingWindow.moveToNextItem();
+            width++;
+        }
+    };
+    Scanner.prototype.scanMultiLineCommentTrivia = function () {
+        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        var width = this.scanMultiLineCommentTriviaLength(null);
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return Syntax.multiLineComment(text);
+    };
+    Scanner.prototype.scanMultiLineCommentTriviaLength = function (diagnostics) {
+        this.slidingWindow.moveToNextItem();
+        this.slidingWindow.moveToNextItem();
+        var width = 2;
+        while(true) {
+            if(this.slidingWindow.isAtEndOfSource()) {
+                if(diagnostics !== null) {
+                    diagnostics.push(new SyntaxDiagnostic(this.slidingWindow.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
+                }
+                return width;
+            }
+            var ch = this.currentCharCode();
+            if(ch === 42 /* asterisk */  && this.slidingWindow.peekItemN(1) === 47 /* slash */ ) {
+                this.slidingWindow.moveToNextItem();
+                this.slidingWindow.moveToNextItem();
+                width += 2;
+                return width;
+            }
+            this.slidingWindow.moveToNextItem();
+            width++;
+        }
+    };
+    Scanner.prototype.scanLineTerminatorSequenceTrivia = function (ch) {
+        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        var width = this.scanLineTerminatorSequenceLength(ch);
+        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
+        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
+        return Syntax.trivia(5 /* NewLineTrivia */ , text);
+    };
+    Scanner.prototype.scanLineTerminatorSequenceLength = function (ch) {
+        this.slidingWindow.moveToNextItem();
+        if(ch === 13 /* carriageReturn */  && this.currentCharCode() === 10 /* lineFeed */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 2;
+        } else {
+            return 1;
+        }
+    };
+    Scanner.prototype.scanSyntaxToken = function (diagnostics, allowRegularExpression) {
+        if(this.slidingWindow.isAtEndOfSource()) {
+            return 10 /* EndOfFileToken */ ;
+        }
+        var character = this.currentCharCode();
+        switch(character) {
+            case 34 /* doubleQuote */ :
+            case 39 /* singleQuote */ :
+                return this.scanStringLiteral(diagnostics);
+            case 47 /* slash */ :
+                return this.scanSlashToken(allowRegularExpression);
+            case 46 /* dot */ :
+                return this.scanDotToken();
+            case 45 /* minus */ :
+                return this.scanMinusToken();
+            case 33 /* exclamation */ :
+                return this.scanExclamationToken();
+            case 61 /* equals */ :
+                return this.scanEqualsToken();
+            case 124 /* bar */ :
+                return this.scanBarToken();
+            case 42 /* asterisk */ :
+                return this.scanAsteriskToken();
+            case 43 /* plus */ :
+                return this.scanPlusToken();
+            case 37 /* percent */ :
+                return this.scanPercentToken();
+            case 38 /* ampersand */ :
+                return this.scanAmpersandToken();
+            case 94 /* caret */ :
+                return this.scanCaretToken();
+            case 60 /* lessThan */ :
+                return this.scanLessThanToken();
+            case 62 /* greaterThan */ :
+                return this.advanceAndSetTokenKind(81 /* GreaterThanToken */ );
+            case 44 /* comma */ :
+                return this.advanceAndSetTokenKind(79 /* CommaToken */ );
+            case 58 /* colon */ :
+                return this.advanceAndSetTokenKind(106 /* ColonToken */ );
+            case 59 /* semicolon */ :
+                return this.advanceAndSetTokenKind(78 /* SemicolonToken */ );
+            case 126 /* tilde */ :
+                return this.advanceAndSetTokenKind(102 /* TildeToken */ );
+            case 40 /* openParen */ :
+                return this.advanceAndSetTokenKind(72 /* OpenParenToken */ );
+            case 41 /* closeParen */ :
+                return this.advanceAndSetTokenKind(73 /* CloseParenToken */ );
+            case 123 /* openBrace */ :
+                return this.advanceAndSetTokenKind(70 /* OpenBraceToken */ );
+            case 125 /* closeBrace */ :
+                return this.advanceAndSetTokenKind(71 /* CloseBraceToken */ );
+            case 91 /* openBracket */ :
+                return this.advanceAndSetTokenKind(74 /* OpenBracketToken */ );
+            case 93 /* closeBracket */ :
+                return this.advanceAndSetTokenKind(75 /* CloseBracketToken */ );
+            case 63 /* question */ :
+                return this.advanceAndSetTokenKind(105 /* QuestionToken */ );
+        }
+        if(Scanner.isNumericLiteralStart[character]) {
+            return this.scanNumericLiteral();
+        }
+        if(Scanner.isIdentifierStartCharacter[character]) {
+            var result = this.tryFastScanIdentifierOrKeyword(character);
+            if(result !== 0 /* None */ ) {
+                return result;
+            }
+        }
+        if(this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
+            return this.slowScanIdentifier(diagnostics);
+        }
+        return this.scanDefaultCharacter(character, diagnostics);
+    };
+    Scanner.prototype.isIdentifierStart = function (interpretedChar) {
+        if(Scanner.isIdentifierStartCharacter[interpretedChar]) {
+            return true;
+        }
+        return interpretedChar > 127 /* maxAsciiCharacter */  && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
+    };
+    Scanner.prototype.isIdentifierPart = function (interpretedChar) {
+        if(Scanner.isIdentifierPartCharacter[interpretedChar]) {
+            return true;
+        }
+        return interpretedChar > 127 /* maxAsciiCharacter */  && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
+    };
+    Scanner.prototype.tryFastScanIdentifierOrKeyword = function (firstCharacter) {
+        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        while(true) {
+            var character = this.currentCharCode();
+            if(Scanner.isIdentifierPartCharacter[character]) {
+                this.slidingWindow.moveToNextItem();
+            } else if(character === 92 /* backslash */  || character > 127 /* maxAsciiCharacter */ ) {
+                this.slidingWindow.rewindToPinnedIndex(startIndex);
+                this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+                return 0 /* None */ ;
+            } else {
+                var endIndex = this.slidingWindow.absoluteIndex();
+                var kind;
+                if(Scanner.isKeywordStartCharacter[firstCharacter]) {
+                    var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
+                    kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
+                } else {
+                    kind = 11 /* IdentifierName */ ;
+                }
+                this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+                return kind;
+            }
+        }
+    };
+    Scanner.prototype.slowScanIdentifier = function (diagnostics) {
+        var startIndex = this.slidingWindow.absoluteIndex();
+        do {
+            this.scanCharOrUnicodeEscape(diagnostics);
+        }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
+        return 11 /* IdentifierName */ ;
+    };
+    Scanner.prototype.scanNumericLiteral = function () {
+        if(this.isHexNumericLiteral()) {
+            return this.scanHexNumericLiteral();
+        } else {
+            return this.scanDecimalNumericLiteral();
+        }
+    };
+    Scanner.prototype.scanDecimalNumericLiteral = function () {
+        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
+            this.slidingWindow.moveToNextItem();
+        }
+        if(this.currentCharCode() === 46 /* dot */ ) {
+            this.slidingWindow.moveToNextItem();
+        }
+        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
+            this.slidingWindow.moveToNextItem();
+        }
+        var ch = this.currentCharCode();
+        if(ch === 101 /* e */  || ch === 69 /* E */ ) {
+            this.slidingWindow.moveToNextItem();
+            ch = this.currentCharCode();
+            if(ch === 45 /* minus */  || ch === 43 /* plus */ ) {
+                if(CharacterInfo.isDecimalDigit(this.slidingWindow.peekItemN(1))) {
+                    this.slidingWindow.moveToNextItem();
+                }
+            }
+        }
+        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
+            this.slidingWindow.moveToNextItem();
+        }
+        return 13 /* NumericLiteral */ ;
+    };
+    Scanner.prototype.scanHexNumericLiteral = function () {
+        Debug.assert(this.isHexNumericLiteral());
+        this.slidingWindow.moveToNextItem();
+        this.slidingWindow.moveToNextItem();
+        while(CharacterInfo.isHexDigit(this.currentCharCode())) {
+            this.slidingWindow.moveToNextItem();
+        }
+        return 13 /* NumericLiteral */ ;
+    };
+    Scanner.prototype.isHexNumericLiteral = function () {
+        if(this.currentCharCode() === 48 /* _0 */ ) {
+            var ch = this.slidingWindow.peekItemN(1);
+            if(ch === 120 /* x */  || ch === 88 /* X */ ) {
+                ch = this.slidingWindow.peekItemN(2);
+                return CharacterInfo.isHexDigit(ch);
+            }
+        }
+        return false;
+    };
+    Scanner.prototype.advanceAndSetTokenKind = function (kind) {
+        this.slidingWindow.moveToNextItem();
+        return kind;
+    };
+    Scanner.prototype.scanLessThanToken = function () {
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 82 /* LessThanEqualsToken */ ;
+        } else if(this.currentCharCode() === 60 /* lessThan */ ) {
+            this.slidingWindow.moveToNextItem();
+            if(this.currentCharCode() === 61 /* equals */ ) {
+                this.slidingWindow.moveToNextItem();
+                return 112 /* LessThanLessThanEqualsToken */ ;
+            } else {
+                return 95 /* LessThanLessThanToken */ ;
+            }
+        } else {
+            return 80 /* LessThanToken */ ;
+        }
+    };
+    Scanner.prototype.scanBarToken = function () {
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 116 /* BarEqualsToken */ ;
+        } else if(this.currentCharCode() === 124 /* bar */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 104 /* BarBarToken */ ;
+        } else {
+            return 99 /* BarToken */ ;
+        }
+    };
+    Scanner.prototype.scanCaretToken = function () {
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 117 /* CaretEqualsToken */ ;
+        } else {
+            return 100 /* CaretToken */ ;
+        }
+    };
+    Scanner.prototype.scanAmpersandToken = function () {
+        this.slidingWindow.moveToNextItem();
+        var character = this.currentCharCode();
+        if(character === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 115 /* AmpersandEqualsToken */ ;
+        } else if(this.currentCharCode() === 38 /* ampersand */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 103 /* AmpersandAmpersandToken */ ;
+        } else {
+            return 98 /* AmpersandToken */ ;
+        }
+    };
+    Scanner.prototype.scanPercentToken = function () {
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 111 /* PercentEqualsToken */ ;
+        } else {
+            return 92 /* PercentToken */ ;
+        }
+    };
+    Scanner.prototype.scanMinusToken = function () {
+        this.slidingWindow.moveToNextItem();
+        var character = this.currentCharCode();
+        if(character === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 109 /* MinusEqualsToken */ ;
+        } else if(character === 45 /* minus */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 94 /* MinusMinusToken */ ;
+        } else {
+            return 90 /* MinusToken */ ;
+        }
+    };
+    Scanner.prototype.scanPlusToken = function () {
+        this.slidingWindow.moveToNextItem();
+        var character = this.currentCharCode();
+        if(character === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 108 /* PlusEqualsToken */ ;
+        } else if(character === 43 /* plus */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 93 /* PlusPlusToken */ ;
+        } else {
+            return 89 /* PlusToken */ ;
+        }
+    };
+    Scanner.prototype.scanAsteriskToken = function () {
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 110 /* AsteriskEqualsToken */ ;
+        } else {
+            return 91 /* AsteriskToken */ ;
+        }
+    };
+    Scanner.prototype.scanEqualsToken = function () {
+        this.slidingWindow.moveToNextItem();
+        var character = this.currentCharCode();
+        if(character === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            if(this.currentCharCode() === 61 /* equals */ ) {
+                this.slidingWindow.moveToNextItem();
+                return 87 /* EqualsEqualsEqualsToken */ ;
+            } else {
+                return 84 /* EqualsEqualsToken */ ;
+            }
+        } else if(character === 62 /* greaterThan */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 85 /* EqualsGreaterThanToken */ ;
+        } else {
+            return 107 /* EqualsToken */ ;
+        }
+    };
+    Scanner.prototype.isDotPrefixedNumericLiteral = function () {
+        if(this.currentCharCode() === 46 /* dot */ ) {
+            var ch = this.slidingWindow.peekItemN(1);
+            return CharacterInfo.isDecimalDigit(ch);
+        }
+        return false;
+    };
+    Scanner.prototype.scanDotToken = function () {
+        if(this.isDotPrefixedNumericLiteral()) {
+            return this.scanNumericLiteral();
+        }
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 46 /* dot */  && this.slidingWindow.peekItemN(1) === 46 /* dot */ ) {
+            this.slidingWindow.moveToNextItem();
+            this.slidingWindow.moveToNextItem();
+            return 77 /* DotDotDotToken */ ;
+        } else {
+            return 76 /* DotToken */ ;
+        }
+    };
+    Scanner.prototype.scanSlashToken = function (allowRegularExpression) {
+        if(allowRegularExpression) {
+            var result = this.tryScanRegularExpressionToken();
+            if(result !== 0 /* None */ ) {
+                return result;
+            }
+        }
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            return 119 /* SlashEqualsToken */ ;
+        } else {
+            return 118 /* SlashToken */ ;
+        }
+    };
+    Scanner.prototype.tryScanRegularExpressionToken = function () {
+        Debug.assert(this.currentCharCode() === 47 /* slash */ );
+        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        try  {
+            this.slidingWindow.moveToNextItem();
+            var inEscape = false;
+            var inCharacterClass = false;
+            while(true) {
+                var ch = this.currentCharCode();
+                if(this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
+                    this.slidingWindow.rewindToPinnedIndex(startIndex);
+                    return 0 /* None */ ;
+                }
+                this.slidingWindow.moveToNextItem();
+                if(inEscape) {
+                    inEscape = false;
+                    continue;
+                }
+                switch(ch) {
+                    case 92 /* backslash */ :
+                        inEscape = true;
+                        continue;
+                    case 91 /* openBracket */ :
+                        inCharacterClass = true;
+                        continue;
+                    case 93 /* closeBracket */ :
+                        inCharacterClass = false;
+                        continue;
+                    case 47 /* slash */ :
+                        if(inCharacterClass) {
+                            continue;
+                        }
+                        break;
+                    default:
+                        continue;
+                }
+                break;
+            }
+            while(Scanner.isIdentifierPartCharacter[this.currentCharCode()]) {
+                this.slidingWindow.moveToNextItem();
+            }
+            return 12 /* RegularExpressionLiteral */ ;
+        }finally {
+            this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+        }
+    };
+    Scanner.prototype.scanExclamationToken = function () {
+        this.slidingWindow.moveToNextItem();
+        if(this.currentCharCode() === 61 /* equals */ ) {
+            this.slidingWindow.moveToNextItem();
+            if(this.currentCharCode() === 61 /* equals */ ) {
+                this.slidingWindow.moveToNextItem();
+                return 88 /* ExclamationEqualsEqualsToken */ ;
+            } else {
+                return 86 /* ExclamationEqualsToken */ ;
+            }
+        } else {
+            return 101 /* ExclamationToken */ ;
+        }
+    };
+    Scanner.prototype.scanDefaultCharacter = function (character, diagnostics) {
+        var position = this.slidingWindow.absoluteIndex();
+        this.slidingWindow.moveToNextItem();
+        var text = String.fromCharCode(character);
+        var messageText = this.getErrorMessageText(text);
+        diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
+            messageText
+        ]));
+        return 9 /* ErrorToken */ ;
+    };
+    Scanner.prototype.getErrorMessageText = function (text) {
+        if(text === "\\") {
+            return '"\\"';
+        }
+        return JSON2.stringify(text);
+    };
+    Scanner.prototype.skipEscapeSequence = function (diagnostics) {
+        Debug.assert(this.currentCharCode() === 92 /* backslash */ );
+        var rewindPoint = this.slidingWindow.getAndPinAbsoluteIndex();
+        try  {
+            this.slidingWindow.moveToNextItem();
+            var ch = this.currentCharCode();
+            this.slidingWindow.moveToNextItem();
+            switch(ch) {
+                case 120 /* x */ :
+                case 117 /* u */ :
+                    this.slidingWindow.rewindToPinnedIndex(rewindPoint);
+                    var value = this.scanUnicodeOrHexEscape(diagnostics);
+                    return;
+                case 13 /* carriageReturn */ :
+                    if(this.currentCharCode() === 10 /* lineFeed */ ) {
+                        this.slidingWindow.moveToNextItem();
+                    }
+                    return;
+                default:
+                    return;
+            }
+        }finally {
+            this.slidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint);
+        }
+    };
+    Scanner.prototype.scanStringLiteral = function (diagnostics) {
+        var quoteCharacter = this.currentCharCode();
+        Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
+        this.slidingWindow.moveToNextItem();
+        while(true) {
+            var ch = this.currentCharCode();
+            if(ch === 92 /* backslash */ ) {
+                this.skipEscapeSequence(diagnostics);
+            } else if(ch === quoteCharacter) {
+                this.slidingWindow.moveToNextItem();
+                break;
+            } else if(this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
+                diagnostics.push(new SyntaxDiagnostic(this.slidingWindow.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ , null));
+                break;
+            } else {
+                this.slidingWindow.moveToNextItem();
+            }
+        }
+        return 14 /* StringLiteral */ ;
+    };
+    Scanner.prototype.isUnicodeOrHexEscape = function (character) {
+        return this.isUnicodeEscape(character) || this.isHexEscape(character);
+    };
+    Scanner.prototype.isUnicodeEscape = function (character) {
+        if(character === 92 /* backslash */ ) {
+            var ch2 = this.slidingWindow.peekItemN(1);
+            if(ch2 === 117 /* u */ ) {
+                return true;
+            }
+        }
+        return false;
+    };
+    Scanner.prototype.isHexEscape = function (character) {
+        if(character === 92 /* backslash */ ) {
+            var ch2 = this.slidingWindow.peekItemN(1);
+            if(ch2 === 120 /* x */ ) {
+                return true;
+            }
+        }
+        return false;
+    };
+    Scanner.prototype.peekCharOrUnicodeOrHexEscape = function () {
+        var character = this.currentCharCode();
+        if(this.isUnicodeOrHexEscape(character)) {
+            return this.peekUnicodeOrHexEscape();
+        } else {
+            return character;
+        }
+    };
+    Scanner.prototype.peekCharOrUnicodeEscape = function () {
+        var character = this.currentCharCode();
+        if(this.isUnicodeEscape(character)) {
+            return this.peekUnicodeOrHexEscape();
+        } else {
+            return character;
+        }
+    };
+    Scanner.prototype.peekUnicodeOrHexEscape = function () {
+        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+        var ch = this.scanUnicodeOrHexEscape(null);
+        this.slidingWindow.rewindToPinnedIndex(startIndex);
+        this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+        return ch;
+    };
+    Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
+        var ch = this.currentCharCode();
+        if(ch === 92 /* backslash */ ) {
+            var ch2 = this.slidingWindow.peekItemN(1);
+            if(ch2 === 117 /* u */ ) {
+                return this.scanUnicodeOrHexEscape(errors);
+            }
+        }
+        this.slidingWindow.moveToNextItem();
+        return ch;
+    };
+    Scanner.prototype.scanCharOrUnicodeOrHexEscape = function (errors) {
+        var ch = this.currentCharCode();
+        if(ch === 92 /* backslash */ ) {
+            var ch2 = this.slidingWindow.peekItemN(1);
+            if(ch2 === 117 /* u */  || ch2 === 120 /* x */ ) {
+                return this.scanUnicodeOrHexEscape(errors);
+            }
+        }
+        this.slidingWindow.moveToNextItem();
+        return ch;
+    };
+    Scanner.prototype.scanUnicodeOrHexEscape = function (errors) {
+        var start = this.slidingWindow.absoluteIndex();
+        var character = this.currentCharCode();
+        Debug.assert(character === 92 /* backslash */ );
+        this.slidingWindow.moveToNextItem();
+        character = this.currentCharCode();
+        Debug.assert(character === 117 /* u */  || character === 120 /* x */ );
+        var intChar = 0;
+        this.slidingWindow.moveToNextItem();
+        var count = character === 117 /* u */  ? 4 : 2;
+        for(var i = 0; i < count; i++) {
+            var ch2 = this.currentCharCode();
+            if(!CharacterInfo.isHexDigit(ch2)) {
+                if(errors !== null) {
+                    var end = this.slidingWindow.absoluteIndex();
+                    var info = this.createIllegalEscapeDiagnostic(start, end);
+                    errors.push(info);
+                }
+                break;
+            }
+            intChar = (intChar << 4) + CharacterInfo.hexValue(ch2);
+            this.slidingWindow.moveToNextItem();
+        }
+        return intChar;
+    };
+    Scanner.prototype.substring = function (start, end, intern) {
+        var length = end - start;
+        var offset = start - this.slidingWindow.windowAbsoluteStartIndex;
+        Debug.assert(offset >= 0);
+        if(intern) {
+            return this.stringTable.addCharArray(this.slidingWindow.window, offset, length);
+        } else {
+            return StringUtilities.fromCharCodeArray(this.slidingWindow.window.slice(offset, offset + length));
+        }
+    };
+    Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
+        return new SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ , null);
+    };
+    return Scanner;
+})();
 var Syntax;
 (function (Syntax) {
     function realize(token) {
@@ -22579,7 +27264,7 @@ var Syntax;
             return true;
         };
         EmptyToken.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
+            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
         };
         EmptyToken.prototype.fullWidth = function () {
             return 0;
@@ -30810,4697 +35495,15 @@ var SyntaxVisitor = (function () {
     };
     return SyntaxVisitor;
 })();
-var Contract = (function () {
-    function Contract() { }
-    Contract.requires = function requires(expression) {
-        if(!expression) {
-            throw new Error("Contract violated. False expression.");
-        }
-    };
-    Contract.throwIfFalse = function throwIfFalse(expression) {
-        if(!expression) {
-            throw new Error("Contract violated. False expression.");
-        }
-    };
-    Contract.throwIfNull = function throwIfNull(value) {
-        if(value === null) {
-            throw new Error("Contract violated. Null value.");
-        }
-    };
-    return Contract;
-})();
-var MathPrototype = (function () {
-    function MathPrototype() { }
-    MathPrototype.max = function max(a, b) {
-        return a >= b ? a : b;
-    };
-    MathPrototype.min = function min(a, b) {
-        return a <= b ? a : b;
-    };
-    return MathPrototype;
-})();
-var TextSpan = (function () {
-    function TextSpan(start, length) {
-        if(start < 0) {
-            Errors.argument("start");
-        }
-        if(start + length < start) {
-            throw new Error("length");
-        }
-        this._start = start;
-        this._length = length;
+var ParseOptions = (function () {
+    function ParseOptions(allowAutomaticSemicolonInsertion) {
+        if (typeof allowAutomaticSemicolonInsertion === "undefined") { allowAutomaticSemicolonInsertion = true; }
+        this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
     }
-    TextSpan.prototype.start = function () {
-        return this._start;
+    ParseOptions.prototype.allowAutomaticSemicolonInsertion = function () {
+        return this._allowAutomaticSemicolonInsertion;
     };
-    TextSpan.prototype.length = function () {
-        return this._length;
-    };
-    TextSpan.prototype.end = function () {
-        return this._start + this._length;
-    };
-    TextSpan.prototype.isEmpty = function () {
-        return this._length === 0;
-    };
-    TextSpan.prototype.containsPosition = function (position) {
-        return position >= this._start && position < this.end();
-    };
-    TextSpan.prototype.containsTextSpan = function (span) {
-        return span._start >= this._start && span.end() <= this.end();
-    };
-    TextSpan.prototype.overlapsWith = function (span) {
-        var overlapStart = MathPrototype.max(this._start, span._start);
-        var overlapEnd = MathPrototype.min(this.end(), span.end());
-        return overlapStart < overlapEnd;
-    };
-    TextSpan.prototype.overlap = function (span) {
-        var overlapStart = MathPrototype.max(this._start, span._start);
-        var overlapEnd = MathPrototype.min(this.end(), span.end());
-        if(overlapStart < overlapEnd) {
-            return TextSpan.fromBounds(overlapStart, overlapEnd);
-        }
-        return null;
-    };
-    TextSpan.prototype.intersectsWithTextSpan = function (span) {
-        return span._start <= this.end() && span.end() >= this._start;
-    };
-    TextSpan.prototype.intersectsWith = function (start, length) {
-        var end = start + length;
-        return start <= this.end() && end >= this._start;
-    };
-    TextSpan.prototype.intersectsWithPosition = function (position) {
-        return position <= this.end() && position >= this._start;
-    };
-    TextSpan.prototype.intersection = function (span) {
-        var intersectStart = MathPrototype.max(this._start, span._start);
-        var intersectEnd = MathPrototype.min(this.end(), span.end());
-        if(intersectStart <= intersectEnd) {
-            return TextSpan.fromBounds(intersectStart, intersectEnd);
-        }
-        return null;
-    };
-    TextSpan.fromBounds = function fromBounds(start, end) {
-        Contract.requires(start >= 0);
-        Contract.requires(end - start >= 0);
-        return new TextSpan(start, end - start);
-    };
-    return TextSpan;
-})();
-var LinePosition = (function () {
-    function LinePosition(line, character) {
-        this._line = 0;
-        this._character = 0;
-        if(line < 0) {
-            throw Errors.argumentOutOfRange("line");
-        }
-        if(character < 0) {
-            throw Errors.argumentOutOfRange("character");
-        }
-        this._line = line;
-        this._character = character;
-    }
-    LinePosition.prototype.line = function () {
-        return this._line;
-    };
-    LinePosition.prototype.character = function () {
-        return this._character;
-    };
-    return LinePosition;
-})();
-var ScannerUtilities = (function () {
-    function ScannerUtilities() { }
-    ScannerUtilities.identifierKind = function identifierKind(array, startIndex, length) {
-        switch(length) {
-            case 2:
-                switch(array[startIndex]) {
-                    case 100 /* d */ :
-                        return (array[startIndex + 1] === 111 /* o */ ) ? 22 /* DoKeyword */  : 11 /* IdentifierName */ ;
-                    case 105 /* i */ :
-                        switch(array[startIndex + 1]) {
-                            case 102 /* f */ :
-                                return 28 /* IfKeyword */ ;
-                            case 110 /* n */ :
-                                return 29 /* InKeyword */ ;
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 3:
-                switch(array[startIndex]) {
-                    case 102 /* f */ :
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 114 /* r */ ) ? 26 /* ForKeyword */  : 11 /* IdentifierName */ ;
-                    case 110 /* n */ :
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 119 /* w */ ) ? 31 /* NewKeyword */  : 11 /* IdentifierName */ ;
-                    case 116 /* t */ :
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 121 /* y */ ) ? 38 /* TryKeyword */  : 11 /* IdentifierName */ ;
-                    case 118 /* v */ :
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 114 /* r */ ) ? 40 /* VarKeyword */  : 11 /* IdentifierName */ ;
-                    case 108 /* l */ :
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 53 /* LetKeyword */  : 11 /* IdentifierName */ ;
-                    case 97 /* a */ :
-                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 121 /* y */ ) ? 60 /* AnyKeyword */  : 11 /* IdentifierName */ ;
-                    case 103 /* g */ :
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 65 /* GetKeyword */  : 11 /* IdentifierName */ ;
-                    case 115 /* s */ :
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */ ) ? 68 /* SetKeyword */  : 11 /* IdentifierName */ ;
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 4:
-                switch(array[startIndex]) {
-                    case 99 /* c */ :
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 16 /* CaseKeyword */  : 11 /* IdentifierName */ ;
-                    case 101 /* e */ :
-                        switch(array[startIndex + 1]) {
-                            case 108 /* l */ :
-                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 101 /* e */ ) ? 23 /* ElseKeyword */  : 11 /* IdentifierName */ ;
-                            case 110 /* n */ :
-                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 109 /* m */ ) ? 46 /* EnumKeyword */  : 11 /* IdentifierName */ ;
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    case 110 /* n */ :
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 108 /* l */ ) ? 32 /* NullKeyword */  : 11 /* IdentifierName */ ;
-                    case 116 /* t */ :
-                        switch(array[startIndex + 1]) {
-                            case 104 /* h */ :
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 115 /* s */ ) ? 35 /* ThisKeyword */  : 11 /* IdentifierName */ ;
-                            case 114 /* r */ :
-                                return (array[startIndex + 2] === 117 /* u */  && array[startIndex + 3] === 101 /* e */ ) ? 37 /* TrueKeyword */  : 11 /* IdentifierName */ ;
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    case 118 /* v */ :
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 100 /* d */ ) ? 41 /* VoidKeyword */  : 11 /* IdentifierName */ ;
-                    case 119 /* w */ :
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 104 /* h */ ) ? 43 /* WithKeyword */  : 11 /* IdentifierName */ ;
-                    case 98 /* b */ :
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */ ) ? 62 /* BoolKeyword */  : 11 /* IdentifierName */ ;
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 5:
-                switch(array[startIndex]) {
-                    case 98 /* b */ :
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 107 /* k */ ) ? 15 /* BreakKeyword */  : 11 /* IdentifierName */ ;
-                    case 99 /* c */ :
-                        switch(array[startIndex + 1]) {
-                            case 97 /* a */ :
-                                return (array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 104 /* h */ ) ? 17 /* CatchKeyword */  : 11 /* IdentifierName */ ;
-                            case 108 /* l */ :
-                                return (array[startIndex + 2] === 97 /* a */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 115 /* s */ ) ? 44 /* ClassKeyword */  : 11 /* IdentifierName */ ;
-                            case 111 /* o */ :
-                                return (array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */ ) ? 45 /* ConstKeyword */  : 11 /* IdentifierName */ ;
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    case 102 /* f */ :
-                        return (array[startIndex + 1] === 97 /* a */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 101 /* e */ ) ? 24 /* FalseKeyword */  : 11 /* IdentifierName */ ;
-                    case 116 /* t */ :
-                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 114 /* r */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 119 /* w */ ) ? 36 /* ThrowKeyword */  : 11 /* IdentifierName */ ;
-                    case 119 /* w */ :
-                        return (array[startIndex + 1] === 104 /* h */  && array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */ ) ? 42 /* WhileKeyword */  : 11 /* IdentifierName */ ;
-                    case 115 /* s */ :
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */ ) ? 50 /* SuperKeyword */  : 11 /* IdentifierName */ ;
-                    case 121 /* y */ :
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 101 /* e */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 100 /* d */ ) ? 59 /* YieldKeyword */  : 11 /* IdentifierName */ ;
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 6:
-                switch(array[startIndex]) {
-                    case 100 /* d */ :
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 108 /* l */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 101 /* e */ ) ? 21 /* DeleteKeyword */  : 11 /* IdentifierName */ ;
-                    case 114 /* r */ :
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 110 /* n */ ) ? 33 /* ReturnKeyword */  : 11 /* IdentifierName */ ;
-                    case 115 /* s */ :
-                        switch(array[startIndex + 1]) {
-                            case 119 /* w */ :
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 99 /* c */  && array[startIndex + 5] === 104 /* h */ ) ? 34 /* SwitchKeyword */  : 11 /* IdentifierName */ ;
-                            case 116 /* t */ :
-                                switch(array[startIndex + 2]) {
-                                    case 97 /* a */ :
-                                        return (array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 58 /* StaticKeyword */  : 11 /* IdentifierName */ ;
-                                    case 114 /* r */ :
-                                        return (array[startIndex + 3] === 105 /* i */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 103 /* g */ ) ? 69 /* StringKeyword */  : 11 /* IdentifierName */ ;
-                                    default:
-                                        return 11 /* IdentifierName */ ;
-                                }
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    case 116 /* t */ :
-                        return (array[startIndex + 1] === 121 /* y */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 111 /* o */  && array[startIndex + 5] === 102 /* f */ ) ? 39 /* TypeOfKeyword */  : 11 /* IdentifierName */ ;
-                    case 101 /* e */ :
-                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 47 /* ExportKeyword */  : 11 /* IdentifierName */ ;
-                    case 105 /* i */ :
-                        return (array[startIndex + 1] === 109 /* m */  && array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 111 /* o */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 116 /* t */ ) ? 49 /* ImportKeyword */  : 11 /* IdentifierName */ ;
-                    case 112 /* p */ :
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 99 /* c */ ) ? 57 /* PublicKeyword */  : 11 /* IdentifierName */ ;
-                    case 109 /* m */ :
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 100 /* d */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 101 /* e */ ) ? 66 /* ModuleKeyword */  : 11 /* IdentifierName */ ;
-                    case 110 /* n */ :
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 109 /* m */  && array[startIndex + 3] === 98 /* b */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 114 /* r */ ) ? 67 /* NumberKeyword */  : 11 /* IdentifierName */ ;
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 7:
-                switch(array[startIndex]) {
-                    case 100 /* d */ :
-                        switch(array[startIndex + 1]) {
-                            case 101 /* e */ :
-                                switch(array[startIndex + 2]) {
-                                    case 102 /* f */ :
-                                        return (array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 117 /* u */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 116 /* t */ ) ? 20 /* DefaultKeyword */  : 11 /* IdentifierName */ ;
-                                    case 99 /* c */ :
-                                        return (array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 101 /* e */ ) ? 64 /* DeclareKeyword */  : 11 /* IdentifierName */ ;
-                                    default:
-                                        return 11 /* IdentifierName */ ;
-                                }
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    case 102 /* f */ :
-                        return (array[startIndex + 1] === 105 /* i */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 97 /* a */  && array[startIndex + 4] === 108 /* l */  && array[startIndex + 5] === 108 /* l */  && array[startIndex + 6] === 121 /* y */ ) ? 25 /* FinallyKeyword */  : 11 /* IdentifierName */ ;
-                    case 101 /* e */ :
-                        return (array[startIndex + 1] === 120 /* x */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 110 /* n */  && array[startIndex + 5] === 100 /* d */  && array[startIndex + 6] === 115 /* s */ ) ? 48 /* ExtendsKeyword */  : 11 /* IdentifierName */ ;
-                    case 112 /* p */ :
-                        switch(array[startIndex + 1]) {
-                            case 97 /* a */ :
-                                return (array[startIndex + 2] === 99 /* c */  && array[startIndex + 3] === 107 /* k */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */ ) ? 54 /* PackageKeyword */  : 11 /* IdentifierName */ ;
-                            case 114 /* r */ :
-                                return (array[startIndex + 2] === 105 /* i */  && array[startIndex + 3] === 118 /* v */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 116 /* t */  && array[startIndex + 6] === 101 /* e */ ) ? 55 /* PrivateKeyword */  : 11 /* IdentifierName */ ;
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    case 98 /* b */ :
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 97 /* a */  && array[startIndex + 6] === 110 /* n */ ) ? 61 /* BooleanKeyword */  : 11 /* IdentifierName */ ;
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 8:
-                switch(array[startIndex]) {
-                    case 99 /* c */ :
-                        return (array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 105 /* i */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 101 /* e */ ) ? 18 /* ContinueKeyword */  : 11 /* IdentifierName */ ;
-                    case 100 /* d */ :
-                        return (array[startIndex + 1] === 101 /* e */  && array[startIndex + 2] === 98 /* b */  && array[startIndex + 3] === 117 /* u */  && array[startIndex + 4] === 103 /* g */  && array[startIndex + 5] === 103 /* g */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 114 /* r */ ) ? 19 /* DebuggerKeyword */  : 11 /* IdentifierName */ ;
-                    case 102 /* f */ :
-                        return (array[startIndex + 1] === 117 /* u */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 99 /* c */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 105 /* i */  && array[startIndex + 6] === 111 /* o */  && array[startIndex + 7] === 110 /* n */ ) ? 27 /* FunctionKeyword */  : 11 /* IdentifierName */ ;
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 9:
-                switch(array[startIndex]) {
-                    case 105 /* i */ :
-                        return (array[startIndex + 1] === 110 /* n */  && array[startIndex + 2] === 116 /* t */  && array[startIndex + 3] === 101 /* e */  && array[startIndex + 4] === 114 /* r */  && array[startIndex + 5] === 102 /* f */  && array[startIndex + 6] === 97 /* a */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 101 /* e */ ) ? 52 /* InterfaceKeyword */  : 11 /* IdentifierName */ ;
-                    case 112 /* p */ :
-                        return (array[startIndex + 1] === 114 /* r */  && array[startIndex + 2] === 111 /* o */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 99 /* c */  && array[startIndex + 6] === 116 /* t */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 100 /* d */ ) ? 56 /* ProtectedKeyword */  : 11 /* IdentifierName */ ;
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 10:
-                switch(array[startIndex]) {
-                    case 105 /* i */ :
-                        switch(array[startIndex + 1]) {
-                            case 110 /* n */ :
-                                return (array[startIndex + 2] === 115 /* s */  && array[startIndex + 3] === 116 /* t */  && array[startIndex + 4] === 97 /* a */  && array[startIndex + 5] === 110 /* n */  && array[startIndex + 6] === 99 /* c */  && array[startIndex + 7] === 101 /* e */  && array[startIndex + 8] === 111 /* o */  && array[startIndex + 9] === 102 /* f */ ) ? 30 /* InstanceOfKeyword */  : 11 /* IdentifierName */ ;
-                            case 109 /* m */ :
-                                return (array[startIndex + 2] === 112 /* p */  && array[startIndex + 3] === 108 /* l */  && array[startIndex + 4] === 101 /* e */  && array[startIndex + 5] === 109 /* m */  && array[startIndex + 6] === 101 /* e */  && array[startIndex + 7] === 110 /* n */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 115 /* s */ ) ? 51 /* ImplementsKeyword */  : 11 /* IdentifierName */ ;
-                            default:
-                                return 11 /* IdentifierName */ ;
-                        }
-                    default:
-                        return 11 /* IdentifierName */ ;
-                }
-            case 11:
-                return (array[startIndex] === 99 /* c */  && array[startIndex + 1] === 111 /* o */  && array[startIndex + 2] === 110 /* n */  && array[startIndex + 3] === 115 /* s */  && array[startIndex + 4] === 116 /* t */  && array[startIndex + 5] === 114 /* r */  && array[startIndex + 6] === 117 /* u */  && array[startIndex + 7] === 99 /* c */  && array[startIndex + 8] === 116 /* t */  && array[startIndex + 9] === 111 /* o */  && array[startIndex + 10] === 114 /* r */ ) ? 63 /* ConstructorKeyword */  : 11 /* IdentifierName */ ;
-            default:
-                return 11 /* IdentifierName */ ;
-        }
-    };
-    return ScannerUtilities;
-})();
-var StringUtilities = (function () {
-    function StringUtilities() { }
-    StringUtilities.fromCharCodeArray = function fromCharCodeArray(array) {
-        return String.fromCharCode.apply(null, array);
-    };
-    StringUtilities.endsWith = function endsWith(string, value) {
-        return string.substring(string.length - value.length, string.length) === value;
-    };
-    StringUtilities.startsWith = function startsWith(string, value) {
-        return string.substr(0, value.length) === value;
-    };
-    StringUtilities.copyTo = function copyTo(source, sourceIndex, destination, destinationIndex, count) {
-        for(var i = 0; i < count; i++) {
-            destination[destinationIndex + i] = source.charCodeAt(sourceIndex + i);
-        }
-    };
-    StringUtilities.repeat = function repeat(value, count) {
-        return Array(count + 1).join(value);
-    };
-    return StringUtilities;
-})();
-var Collections;
-(function (Collections) {
-    Collections.DefaultStringTableCapacity = 256;
-    var StringTableEntry = (function () {
-        function StringTableEntry(Text, HashCode, Next) {
-            this.Text = Text;
-            this.HashCode = HashCode;
-            this.Next = Next;
-        }
-        return StringTableEntry;
-    })();    
-    var StringTable = (function () {
-        function StringTable(capacity) {
-            this.entries = [];
-            this.count = 0;
-            var size = Hash.getPrime(capacity);
-            this.entries = ArrayUtilities.createArray(size);
-        }
-        StringTable.prototype.addCharArray = function (key, start, len) {
-            var hashCode = Hash.computeSimple31BitCharArrayHashCode(key, start, len) & 2147483647;
-            Debug.assert(hashCode > 0);
-            var entry = this.findCharArrayEntry(key, start, len, hashCode);
-            if(entry !== null) {
-                return entry.Text;
-            }
-            var slice = key.slice(start, start + len);
-            return this.addEntry(StringUtilities.fromCharCodeArray(slice), hashCode);
-        };
-        StringTable.prototype.findCharArrayEntry = function (key, start, len, hashCode) {
-            for(var e = this.entries[hashCode % this.entries.length]; e !== null; e = e.Next) {
-                if(e.HashCode === hashCode && StringTable.textCharArrayEquals(e.Text, key, start, len)) {
-                    return e;
-                }
-            }
-            return null;
-        };
-        StringTable.prototype.addEntry = function (text, hashCode) {
-            var index = hashCode % this.entries.length;
-            var e = new StringTableEntry(text, hashCode, this.entries[index]);
-            this.entries[index] = e;
-            if(this.count === this.entries.length) {
-                this.grow();
-            }
-            this.count++;
-            return e.Text;
-        };
-        StringTable.prototype.grow = function () {
-            var newSize = Hash.expandPrime(this.entries.length);
-            var oldEntries = this.entries;
-            var newEntries = ArrayUtilities.createArray(newSize);
-            this.entries = newEntries;
-            for(var i = 0; i < oldEntries.length; i++) {
-                var e = oldEntries[i];
-                while(e !== null) {
-                    var newIndex = e.HashCode % newSize;
-                    var tmp = e.Next;
-                    e.Next = newEntries[newIndex];
-                    newEntries[newIndex] = e;
-                    e = tmp;
-                }
-            }
-        };
-        StringTable.textCharArrayEquals = function textCharArrayEquals(text, array, start, length) {
-            if(text.length !== length) {
-                return false;
-            }
-            var s = start;
-            for(var i = 0; i < length; i++) {
-                if(text.charCodeAt(i) !== array[s]) {
-                    return false;
-                }
-                s++;
-            }
-            return true;
-        };
-        return StringTable;
-    })();
-    Collections.StringTable = StringTable;    
-    function createStringTable(capacity) {
-        if (typeof capacity === "undefined") { capacity = Collections.DefaultStringTableCapacity; }
-        return new StringTable(capacity);
-    }
-    Collections.createStringTable = createStringTable;
-})(Collections || (Collections = {}));
-var DiagnosticCode;
-(function (DiagnosticCode) {
-    DiagnosticCode._map = [];
-    DiagnosticCode._map[0] = "Unrecognized_escape_sequence";
-    DiagnosticCode.Unrecognized_escape_sequence = 0;
-    DiagnosticCode._map[1] = "Unexpected_character_0";
-    DiagnosticCode.Unexpected_character_0 = 1;
-    DiagnosticCode._map[2] = "Missing_closing_quote_character";
-    DiagnosticCode.Missing_closing_quote_character = 2;
-    DiagnosticCode._map[3] = "Identifier_expected";
-    DiagnosticCode.Identifier_expected = 3;
-    DiagnosticCode._map[4] = "_0_keyword_expected";
-    DiagnosticCode._0_keyword_expected = 4;
-    DiagnosticCode._map[5] = "_0_expected";
-    DiagnosticCode._0_expected = 5;
-    DiagnosticCode._map[6] = "Identifier_expected__0_is_a_keyword";
-    DiagnosticCode.Identifier_expected__0_is_a_keyword = 6;
-    DiagnosticCode._map[7] = "Automatic_semicolon_insertion_not_allowed";
-    DiagnosticCode.Automatic_semicolon_insertion_not_allowed = 7;
-    DiagnosticCode._map[8] = "Unexpected_token__0_expected";
-    DiagnosticCode.Unexpected_token__0_expected = 8;
-    DiagnosticCode._map[9] = "Trailing_separator_not_allowed";
-    DiagnosticCode.Trailing_separator_not_allowed = 9;
-    DiagnosticCode._map[10] = "_StarSlash__expected";
-    DiagnosticCode._StarSlash__expected = 10;
-})(DiagnosticCode || (DiagnosticCode = {}));
-var DiagnosticMessages = (function () {
-    function DiagnosticMessages() { }
-    DiagnosticMessages.codeToFormatString = [];
-    DiagnosticMessages.initializeStaticData = function initializeStaticData() {
-        if(DiagnosticMessages.codeToFormatString.length === 0) {
-            DiagnosticMessages.codeToFormatString[0 /* Unrecognized_escape_sequence */ ] = "Unrecognized escape sequence.";
-            DiagnosticMessages.codeToFormatString[1 /* Unexpected_character_0 */ ] = "Unexpected character {0}.";
-            DiagnosticMessages.codeToFormatString[2 /* Missing_closing_quote_character */ ] = "Missing close quote character.";
-            DiagnosticMessages.codeToFormatString[3 /* Identifier_expected */ ] = "Identifier expected.";
-            DiagnosticMessages.codeToFormatString[4 /* _0_keyword_expected */ ] = "'{0}' keyword expected.";
-            DiagnosticMessages.codeToFormatString[5 /* _0_expected */ ] = "'{0}' expected.";
-            DiagnosticMessages.codeToFormatString[6 /* Identifier_expected__0_is_a_keyword */ ] = "Identifier expected; '{0}' is a keyword.";
-            DiagnosticMessages.codeToFormatString[7 /* Automatic_semicolon_insertion_not_allowed */ ] = "Automatic semicolon insertion not allowed.";
-            DiagnosticMessages.codeToFormatString[8 /* Unexpected_token__0_expected */ ] = "Unexpected token; '{0}' expected.";
-            DiagnosticMessages.codeToFormatString[9 /* Trailing_separator_not_allowed */ ] = "Trailing separator not allowed.";
-            DiagnosticMessages.codeToFormatString[10 /* _StarSlash__expected */ ] = "'*/' expected.";
-        }
-    };
-    DiagnosticMessages.getFormatString = function getFormatString(code) {
-        DiagnosticMessages.initializeStaticData();
-        return DiagnosticMessages.codeToFormatString[code];
-    };
-    DiagnosticMessages.getDiagnosticMessage = function getDiagnosticMessage(code, args) {
-        var formatString = DiagnosticMessages.getFormatString(code);
-        var result = formatString.replace(/{(\d+)}/g, function (match, num) {
-            return typeof args[num] !== 'undefined' ? args[num] : match;
-        });
-        return result;
-    };
-    return DiagnosticMessages;
-})();
-var Diagnostic = (function () {
-    function Diagnostic(diagnosticCode, arguments) {
-        this._diagnosticCode = diagnosticCode;
-        this._arguments = (arguments && arguments.length > 0) ? arguments : null;
-    }
-    Diagnostic.prototype.diagnosticCode = function () {
-        return this._diagnosticCode;
-    };
-    Diagnostic.prototype.additionalLocations = function () {
-        return [];
-    };
-    Diagnostic.prototype.message = function () {
-        return DiagnosticMessages.getDiagnosticMessage(this._diagnosticCode, this._arguments);
-    };
-    Diagnostic.equals = function equals(diagnostic1, diagnostic2) {
-        return diagnostic1._diagnosticCode === diagnostic2._diagnosticCode && ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, function (v1, v2) {
-            return v1 === v2;
-        });
-    };
-    return Diagnostic;
-})();
-var SyntaxDiagnostic = (function (_super) {
-    __extends(SyntaxDiagnostic, _super);
-    function SyntaxDiagnostic(position, width, code, args) {
-        _super.call(this, code, args);
-        if(width < 0) {
-            throw Errors.argumentOutOfRange("width");
-        }
-        this._position = position;
-        this._width = width;
-    }
-    SyntaxDiagnostic.prototype.toJSON = function (key) {
-        var result = {
-        };
-        result._position = this._position;
-        result._width = this._width;
-        result._diagnosticCode = (DiagnosticCode)._map[this.diagnosticCode()];
-        var arguments = (this)._arguments;
-        if(arguments && arguments.length > 0) {
-            result._arguments = arguments;
-        }
-        return result;
-    };
-    SyntaxDiagnostic.prototype.position = function () {
-        return this._position;
-    };
-    SyntaxDiagnostic.prototype.width = function () {
-        return this._width;
-    };
-    SyntaxDiagnostic.equals = function equals(diagnostic1, diagnostic2) {
-        return diagnostic1._position === diagnostic2._position && diagnostic1._width === diagnostic2._width && Diagnostic.equals(diagnostic1, diagnostic2);
-    };
-    return SyntaxDiagnostic;
-})(Diagnostic);
-var Syntax;
-(function (Syntax) {
-    var VariableWidthTokenWithNoTrivia = (function () {
-        function VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, textOrWidth) {
-            this._value = null;
-            this._sourceText = sourceText;
-            this._fullStart = fullStart;
-            this.tokenKind = kind;
-            this._textOrWidth = textOrWidth;
-        }
-        VariableWidthTokenWithNoTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithNoTrivia(this._sourceText, this._fullStart, this.tokenKind, this._textOrWidth);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.isNode = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.isToken = function () {
-            return true;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.isList = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.fullWidth = function () {
-            return this.width();
-        };
-        VariableWidthTokenWithNoTrivia.prototype.start = function () {
-            return this._fullStart;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.end = function () {
-            return this.start() + this.width();
-        };
-        VariableWidthTokenWithNoTrivia.prototype.width = function () {
-            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.text = function () {
-            if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
-            }
-            return this._textOrWidth;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.value = function () {
-            return this._value || (this._value = Syntax.value(this));
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasLeadingComment = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasLeadingNewLine = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.leadingTriviaWidth = function () {
-            return 0;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasTrailingComment = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasTrailingNewLine = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.trailingTriviaWidth = function () {
-            return 0;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        VariableWidthTokenWithNoTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        VariableWidthTokenWithNoTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        VariableWidthTokenWithNoTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return VariableWidthTokenWithNoTrivia;
-    })();
-    Syntax.VariableWidthTokenWithNoTrivia = VariableWidthTokenWithNoTrivia;    
-    var VariableWidthTokenWithLeadingTrivia = (function () {
-        function VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth) {
-            this._value = null;
-            this._sourceText = sourceText;
-            this._fullStart = fullStart;
-            this.tokenKind = kind;
-            this._leadingTriviaInfo = leadingTriviaInfo;
-            this._textOrWidth = textOrWidth;
-        }
-        VariableWidthTokenWithLeadingTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithLeadingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo, this._textOrWidth);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.isNode = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.isToken = function () {
-            return true;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.isList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.fullWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo) + this.width();
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.start = function () {
-            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.end = function () {
-            return this.start() + this.width();
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.width = function () {
-            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.text = function () {
-            if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
-            }
-            return this._textOrWidth;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
-            return this._value || (this._value = Syntax.value(this));
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
-            return true;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingComment = function () {
-            return hasTriviaComment(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingNewLine = function () {
-            return hasTriviaNewLine(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.leadingTriviaWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.leadingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingComment = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingNewLine = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.trailingTriviaWidth = function () {
-            return 0;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        VariableWidthTokenWithLeadingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return VariableWidthTokenWithLeadingTrivia;
-    })();
-    Syntax.VariableWidthTokenWithLeadingTrivia = VariableWidthTokenWithLeadingTrivia;    
-    var VariableWidthTokenWithTrailingTrivia = (function () {
-        function VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, textOrWidth, trailingTriviaInfo) {
-            this._value = null;
-            this._sourceText = sourceText;
-            this._fullStart = fullStart;
-            this.tokenKind = kind;
-            this._textOrWidth = textOrWidth;
-            this._trailingTriviaInfo = trailingTriviaInfo;
-        }
-        VariableWidthTokenWithTrailingTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._textOrWidth, this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.isNode = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.isToken = function () {
-            return true;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.isList = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.fullWidth = function () {
-            return this.width() + getTriviaWidth(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.start = function () {
-            return this._fullStart;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.end = function () {
-            return this.start() + this.width();
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.width = function () {
-            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.text = function () {
-            if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
-            }
-            return this._textOrWidth;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
-            return this._value || (this._value = Syntax.value(this));
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingComment = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingNewLine = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.leadingTriviaWidth = function () {
-            return 0;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
-            return true;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingComment = function () {
-            return hasTriviaComment(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingNewLine = function () {
-            return hasTriviaNewLine(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.trailingTriviaWidth = function () {
-            return getTriviaWidth(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        VariableWidthTokenWithTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return VariableWidthTokenWithTrailingTrivia;
-    })();
-    Syntax.VariableWidthTokenWithTrailingTrivia = VariableWidthTokenWithTrailingTrivia;    
-    var VariableWidthTokenWithLeadingAndTrailingTrivia = (function () {
-        function VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, textOrWidth, trailingTriviaInfo) {
-            this._value = null;
-            this._sourceText = sourceText;
-            this._fullStart = fullStart;
-            this.tokenKind = kind;
-            this._leadingTriviaInfo = leadingTriviaInfo;
-            this._textOrWidth = textOrWidth;
-            this._trailingTriviaInfo = trailingTriviaInfo;
-        }
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
-            return new VariableWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo, this._textOrWidth, this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
-            return true;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.start = function () {
-            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.end = function () {
-            return this.start() + this.width();
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.width = function () {
-            return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.text = function () {
-            if(typeof this._textOrWidth === 'number') {
-                this._textOrWidth = this._sourceText.substr(this.start(), this._textOrWidth, this.tokenKind === 11 /* IdentifierName */ );
-            }
-            return this._textOrWidth;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-            return this._value || (this._value = Syntax.value(this));
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
-            return true;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingComment = function () {
-            return hasTriviaComment(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingNewLine = function () {
-            return hasTriviaNewLine(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTriviaWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
-            return true;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingComment = function () {
-            return hasTriviaComment(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingNewLine = function () {
-            return hasTriviaNewLine(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTriviaWidth = function () {
-            return getTriviaWidth(this._trailingTriviaInfo);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return VariableWidthTokenWithLeadingAndTrailingTrivia;
-    })();
-    Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia = VariableWidthTokenWithLeadingAndTrailingTrivia;    
-    var FixedWidthTokenWithNoTrivia = (function () {
-        function FixedWidthTokenWithNoTrivia(kind) {
-            this.tokenKind = kind;
-        }
-        FixedWidthTokenWithNoTrivia.prototype.clone = function () {
-            return new FixedWidthTokenWithNoTrivia(this.tokenKind);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.isNode = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.isToken = function () {
-            return true;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.isList = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.fullWidth = function () {
-            return this.width();
-        };
-        FixedWidthTokenWithNoTrivia.prototype.width = function () {
-            return this.text().length;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.text = function () {
-            return SyntaxFacts.getText(this.tokenKind);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.fullText = function () {
-            return this.text();
-        };
-        FixedWidthTokenWithNoTrivia.prototype.value = function () {
-            return null;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasLeadingComment = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasLeadingNewLine = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.leadingTriviaWidth = function () {
-            return 0;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasTrailingComment = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasTrailingNewLine = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.trailingTriviaWidth = function () {
-            return 0;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        FixedWidthTokenWithNoTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        FixedWidthTokenWithNoTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        FixedWidthTokenWithNoTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return FixedWidthTokenWithNoTrivia;
-    })();
-    Syntax.FixedWidthTokenWithNoTrivia = FixedWidthTokenWithNoTrivia;    
-    var FixedWidthTokenWithLeadingTrivia = (function () {
-        function FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo) {
-            this._sourceText = sourceText;
-            this._fullStart = fullStart;
-            this.tokenKind = kind;
-            this._leadingTriviaInfo = leadingTriviaInfo;
-        }
-        FixedWidthTokenWithLeadingTrivia.prototype.clone = function () {
-            return new FixedWidthTokenWithLeadingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.isNode = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.isToken = function () {
-            return true;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.isList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.fullWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo) + this.width();
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.start = function () {
-            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.end = function () {
-            return this.start() + this.width();
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.width = function () {
-            return this.text().length;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.text = function () {
-            return SyntaxFacts.getText(this.tokenKind);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
-            return null;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
-            return true;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingComment = function () {
-            return hasTriviaComment(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingNewLine = function () {
-            return hasTriviaNewLine(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.leadingTriviaWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.leadingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingTrivia = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingComment = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingNewLine = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.trailingTriviaWidth = function () {
-            return 0;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        FixedWidthTokenWithLeadingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return FixedWidthTokenWithLeadingTrivia;
-    })();
-    Syntax.FixedWidthTokenWithLeadingTrivia = FixedWidthTokenWithLeadingTrivia;    
-    var FixedWidthTokenWithTrailingTrivia = (function () {
-        function FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo) {
-            this._sourceText = sourceText;
-            this._fullStart = fullStart;
-            this.tokenKind = kind;
-            this._trailingTriviaInfo = trailingTriviaInfo;
-        }
-        FixedWidthTokenWithTrailingTrivia.prototype.clone = function () {
-            return new FixedWidthTokenWithTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.isNode = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.isToken = function () {
-            return true;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.isList = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.fullWidth = function () {
-            return this.width() + getTriviaWidth(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.start = function () {
-            return this._fullStart;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.end = function () {
-            return this.start() + this.width();
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.width = function () {
-            return this.text().length;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.text = function () {
-            return SyntaxFacts.getText(this.tokenKind);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
-            return null;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingComment = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingNewLine = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.leadingTriviaWidth = function () {
-            return 0;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
-            return Syntax.emptyTriviaList;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
-            return true;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingComment = function () {
-            return hasTriviaComment(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingNewLine = function () {
-            return hasTriviaNewLine(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.trailingTriviaWidth = function () {
-            return getTriviaWidth(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.trailingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        FixedWidthTokenWithTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return FixedWidthTokenWithTrailingTrivia;
-    })();
-    Syntax.FixedWidthTokenWithTrailingTrivia = FixedWidthTokenWithTrailingTrivia;    
-    var FixedWidthTokenWithLeadingAndTrailingTrivia = (function () {
-        function FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo) {
-            this._sourceText = sourceText;
-            this._fullStart = fullStart;
-            this.tokenKind = kind;
-            this._leadingTriviaInfo = leadingTriviaInfo;
-            this._trailingTriviaInfo = trailingTriviaInfo;
-        }
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.clone = function () {
-            return new FixedWidthTokenWithLeadingAndTrailingTrivia(this._sourceText, this._fullStart, this.tokenKind, this._leadingTriviaInfo, this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isNode = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isToken = function () {
-            return true;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isSeparatedList = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
-            return this.tokenKind;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.start = function () {
-            return this._fullStart + getTriviaWidth(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.end = function () {
-            return this.start() + this.width();
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.width = function () {
-            return this.text().length;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.text = function () {
-            return SyntaxFacts.getText(this.tokenKind);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullText = function () {
-            return this._sourceText.substr(this._fullStart, this.fullWidth(), false);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-            return null;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
-            return true;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingComment = function () {
-            return hasTriviaComment(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingNewLine = function () {
-            return hasTriviaNewLine(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTriviaWidth = function () {
-            return getTriviaWidth(this._leadingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.leadingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), false);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingTrivia = function () {
-            return true;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingComment = function () {
-            return hasTriviaComment(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingNewLine = function () {
-            return hasTriviaNewLine(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasTrailingSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTriviaWidth = function () {
-            return getTriviaWidth(this._trailingTriviaInfo);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.trailingTrivia = function () {
-            return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), true);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasSkippedText = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-            return Syntax.tokenToJSON(this);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.lastToken = function () {
-            return this;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isTypeScriptSpecific = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasZeroWidthToken = function () {
-            return false;
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.accept = function (visitor) {
-            return visitor.visitToken(this);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasRegularExpressionToken = function () {
-            return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind());
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-            return Syntax.realize(this);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
-            collectTokenTextElements(this, elements);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.findTokenInternal = function (parent, position, fullStart) {
-            return new PositionedToken(parent, this, fullStart);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withLeadingTrivia = function (leadingTrivia) {
-            return this.realize().withLeadingTrivia(leadingTrivia);
-        };
-        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.withTrailingTrivia = function (trailingTrivia) {
-            return this.realize().withTrailingTrivia(trailingTrivia);
-        };
-        return FixedWidthTokenWithLeadingAndTrailingTrivia;
-    })();
-    Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia = FixedWidthTokenWithLeadingAndTrailingTrivia;    
-    function collectTokenTextElements(token, elements) {
-        (token.leadingTrivia()).collectTextElements(elements);
-        elements.push(token.text());
-        (token.trailingTrivia()).collectTextElements(elements);
-    }
-    function fixedWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo) {
-        if(leadingTriviaInfo === 0) {
-            if(trailingTriviaInfo === 0) {
-                return new FixedWidthTokenWithNoTrivia(kind);
-            } else {
-                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);
-            }
-        } else if(trailingTriviaInfo === 0) {
-            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);
-        } else {
-            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
-        }
-    }
-    Syntax.fixedWidthToken = fixedWidthToken;
-    function variableWidthToken(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo) {
-        if(leadingTriviaInfo === 0) {
-            if(trailingTriviaInfo === 0) {
-                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);
-            } else {
-                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);
-            }
-        } else if(trailingTriviaInfo === 0) {
-            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);
-        } else {
-            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
-        }
-    }
-    Syntax.variableWidthToken = variableWidthToken;
-    function getTriviaWidth(value) {
-        return value >>> 2 /* TriviaFullWidthShift */ ;
-    }
-    function hasTriviaComment(value) {
-        return (value & 2 /* TriviaCommentMask */ ) !== 0;
-    }
-    function hasTriviaNewLine(value) {
-        return (value & 1 /* TriviaNewLineMask */ ) !== 0;
-    }
-})(Syntax || (Syntax = {}));
-var Syntax;
-(function (Syntax) {
-    var SyntaxTrivia = (function () {
-        function SyntaxTrivia(kind, text) {
-            this._kind = kind;
-            this._text = text;
-        }
-        SyntaxTrivia.prototype.toJSON = function (key) {
-            var result = {
-            };
-            result.kind = (SyntaxKind)._map[this._kind];
-            result.text = this._text;
-            return result;
-        };
-        SyntaxTrivia.prototype.kind = function () {
-            return this._kind;
-        };
-        SyntaxTrivia.prototype.fullWidth = function () {
-            return this._text.length;
-        };
-        SyntaxTrivia.prototype.fullText = function () {
-            return this._text;
-        };
-        SyntaxTrivia.prototype.isComment = function () {
-            return this.kind() === 7 /* SingleLineCommentTrivia */  || this.kind() === 6 /* MultiLineCommentTrivia */ ;
-        };
-        SyntaxTrivia.prototype.isNewLine = function () {
-            return this.kind() === 5 /* NewLineTrivia */ ;
-        };
-        SyntaxTrivia.prototype.isSkippedText = function () {
-            return this.kind() === 8 /* SkippedTextTrivia */ ;
-        };
-        SyntaxTrivia.prototype.collectTextElements = function (elements) {
-            elements.push(this.fullText());
-        };
-        return SyntaxTrivia;
-    })();    
-    function trivia(kind, text) {
-        Debug.assert(kind === 6 /* MultiLineCommentTrivia */  || kind === 5 /* NewLineTrivia */  || kind === 7 /* SingleLineCommentTrivia */  || kind === 4 /* WhitespaceTrivia */  || kind === 8 /* SkippedTextTrivia */ );
-        Debug.assert(text.length > 0);
-        return new SyntaxTrivia(kind, text);
-    }
-    Syntax.trivia = trivia;
-    function spaces(count) {
-        return trivia(4 /* WhitespaceTrivia */ , StringUtilities.repeat(" ", count));
-    }
-    Syntax.spaces = spaces;
-    function whitespace(text) {
-        return trivia(4 /* WhitespaceTrivia */ , text);
-    }
-    Syntax.whitespace = whitespace;
-    function multiLineComment(text) {
-        return trivia(6 /* MultiLineCommentTrivia */ , text);
-    }
-    Syntax.multiLineComment = multiLineComment;
-    function singleLineComment(text) {
-        return trivia(7 /* SingleLineCommentTrivia */ , text);
-    }
-    Syntax.singleLineComment = singleLineComment;
-    Syntax.spaceTrivia = spaces(1);
-    Syntax.lineFeedTrivia = trivia(5 /* NewLineTrivia */ , "\n");
-    Syntax.carriageReturnTrivia = trivia(5 /* NewLineTrivia */ , "\r");
-    Syntax.carriageReturnLineFeedTrivia = trivia(5 /* NewLineTrivia */ , "\r\n");
-    function splitMultiLineCommentTriviaIntoMultipleLines(trivia) {
-        Debug.assert(trivia.kind() === 6 /* MultiLineCommentTrivia */ );
-        var result = [];
-        var triviaText = trivia.fullText();
-        var currentIndex = 0;
-        for(var i = 0; i < triviaText.length; i++) {
-            var ch = triviaText.charCodeAt(i);
-            var isCarriageReturnLineFeed = false;
-            switch(ch) {
-                case 13 /* carriageReturn */ :
-                    if(i < triviaText.length - 1 && triviaText.charCodeAt(i + 1) === 10 /* lineFeed */ ) {
-                        i++;
-                    }
-                case 10 /* lineFeed */ :
-                case 8233 /* paragraphSeparator */ :
-                case 8232 /* lineSeparator */ :
-                    result.push(triviaText.substring(currentIndex, i + 1));
-                    currentIndex = i + 1;
-                    continue;
-            }
-        }
-        result.push(triviaText.substring(currentIndex));
-        return result;
-    }
-    Syntax.splitMultiLineCommentTriviaIntoMultipleLines = splitMultiLineCommentTriviaIntoMultipleLines;
-})(Syntax || (Syntax = {}));
-var Syntax;
-(function (Syntax) {
-    Syntax.emptyTriviaList = {
-        kind: function () {
-            return 3 /* TriviaList */ ;
-        },
-        count: function () {
-            return 0;
-        },
-        syntaxTriviaAt: function (index) {
-            throw Errors.argumentOutOfRange("index");
-        },
-        last: function () {
-            throw Errors.argumentOutOfRange("index");
-        },
-        fullWidth: function () {
-            return 0;
-        },
-        fullText: function () {
-            return "";
-        },
-        hasComment: function () {
-            return false;
-        },
-        hasNewLine: function () {
-            return false;
-        },
-        hasSkippedText: function () {
-            return false;
-        },
-        toJSON: function (key) {
-            return [];
-        },
-        collectTextElements: function (elements) {
-        },
-        toArray: function () {
-            return [];
-        },
-        concat: function (trivia) {
-            return trivia;
-        }
-    };
-    function concatTrivia(list1, list2) {
-        if(list1.count() === 0) {
-            return list2;
-        }
-        if(list2.count() === 0) {
-            return list1;
-        }
-        var trivia = list1.toArray();
-        trivia.push.apply(trivia, list2.toArray());
-        return triviaList(trivia);
-    }
-    function isComment(trivia) {
-        return trivia.kind() === 6 /* MultiLineCommentTrivia */  || trivia.kind() === 7 /* SingleLineCommentTrivia */ ;
-    }
-    var SingletonSyntaxTriviaList = (function () {
-        function SingletonSyntaxTriviaList(item) {
-            this.item = item;
-        }
-        SingletonSyntaxTriviaList.prototype.kind = function () {
-            return 3 /* TriviaList */ ;
-        };
-        SingletonSyntaxTriviaList.prototype.count = function () {
-            return 1;
-        };
-        SingletonSyntaxTriviaList.prototype.syntaxTriviaAt = function (index) {
-            if(index !== 0) {
-                throw Errors.argumentOutOfRange("index");
-            }
-            return this.item;
-        };
-        SingletonSyntaxTriviaList.prototype.last = function () {
-            return this.item;
-        };
-        SingletonSyntaxTriviaList.prototype.fullWidth = function () {
-            return this.item.fullWidth();
-        };
-        SingletonSyntaxTriviaList.prototype.fullText = function () {
-            return this.item.fullText();
-        };
-        SingletonSyntaxTriviaList.prototype.hasComment = function () {
-            return isComment(this.item);
-        };
-        SingletonSyntaxTriviaList.prototype.hasNewLine = function () {
-            return this.item.kind() === 5 /* NewLineTrivia */ ;
-        };
-        SingletonSyntaxTriviaList.prototype.hasSkippedText = function () {
-            return this.item.kind() === 8 /* SkippedTextTrivia */ ;
-        };
-        SingletonSyntaxTriviaList.prototype.toJSON = function (key) {
-            return [
-                this.item
-            ];
-        };
-        SingletonSyntaxTriviaList.prototype.collectTextElements = function (elements) {
-            (this.item).collectTextElements(elements);
-        };
-        SingletonSyntaxTriviaList.prototype.toArray = function () {
-            return [
-                this.item
-            ];
-        };
-        SingletonSyntaxTriviaList.prototype.concat = function (trivia) {
-            return concatTrivia(this, trivia);
-        };
-        return SingletonSyntaxTriviaList;
-    })();    
-    var NormalSyntaxTriviaList = (function () {
-        function NormalSyntaxTriviaList(trivia) {
-            this.trivia = trivia;
-        }
-        NormalSyntaxTriviaList.prototype.kind = function () {
-            return 3 /* TriviaList */ ;
-        };
-        NormalSyntaxTriviaList.prototype.count = function () {
-            return this.trivia.length;
-        };
-        NormalSyntaxTriviaList.prototype.syntaxTriviaAt = function (index) {
-            if(index < 0 || index >= this.trivia.length) {
-                throw Errors.argumentOutOfRange("index");
-            }
-            return this.trivia[index];
-        };
-        NormalSyntaxTriviaList.prototype.last = function () {
-            return this.trivia[this.trivia.length - 1];
-        };
-        NormalSyntaxTriviaList.prototype.fullWidth = function () {
-            return ArrayUtilities.sum(this.trivia, function (t) {
-                return t.fullWidth();
-            });
-        };
-        NormalSyntaxTriviaList.prototype.fullText = function () {
-            var result = "";
-            for(var i = 0, n = this.trivia.length; i < n; i++) {
-                result += this.trivia[i].fullText();
-            }
-            return result;
-        };
-        NormalSyntaxTriviaList.prototype.hasComment = function () {
-            for(var i = 0; i < this.trivia.length; i++) {
-                if(isComment(this.trivia[i])) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        NormalSyntaxTriviaList.prototype.hasNewLine = function () {
-            for(var i = 0; i < this.trivia.length; i++) {
-                if(this.trivia[i].kind() === 5 /* NewLineTrivia */ ) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        NormalSyntaxTriviaList.prototype.hasSkippedText = function () {
-            for(var i = 0; i < this.trivia.length; i++) {
-                if(this.trivia[i].kind() === 8 /* SkippedTextTrivia */ ) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        NormalSyntaxTriviaList.prototype.toJSON = function (key) {
-            return this.trivia;
-        };
-        NormalSyntaxTriviaList.prototype.collectTextElements = function (elements) {
-            for(var i = 0; i < this.trivia.length; i++) {
-                (this.trivia[i]).collectTextElements(elements);
-            }
-        };
-        NormalSyntaxTriviaList.prototype.toArray = function () {
-            return this.trivia.slice(0);
-        };
-        NormalSyntaxTriviaList.prototype.concat = function (trivia) {
-            return concatTrivia(this, trivia);
-        };
-        return NormalSyntaxTriviaList;
-    })();    
-    function triviaList(trivia) {
-        if(trivia === undefined || trivia === null || trivia.length === 0) {
-            return Syntax.emptyTriviaList;
-        }
-        if(trivia.length === 1) {
-            return new SingletonSyntaxTriviaList(trivia[0]);
-        }
-        return new NormalSyntaxTriviaList(trivia);
-    }
-    Syntax.triviaList = triviaList;
-    Syntax.spaceTriviaList = triviaList([
-        Syntax.spaceTrivia
-    ]);
-})(Syntax || (Syntax = {}));
-var Unicode = (function () {
-    function Unicode() { }
-    Unicode.unicodeES3IdentifierStart = [
-        170, 
-        170, 
-        181, 
-        181, 
-        186, 
-        186, 
-        192, 
-        214, 
-        216, 
-        246, 
-        248, 
-        543, 
-        546, 
-        563, 
-        592, 
-        685, 
-        688, 
-        696, 
-        699, 
-        705, 
-        720, 
-        721, 
-        736, 
-        740, 
-        750, 
-        750, 
-        890, 
-        890, 
-        902, 
-        902, 
-        904, 
-        906, 
-        908, 
-        908, 
-        910, 
-        929, 
-        931, 
-        974, 
-        976, 
-        983, 
-        986, 
-        1011, 
-        1024, 
-        1153, 
-        1164, 
-        1220, 
-        1223, 
-        1224, 
-        1227, 
-        1228, 
-        1232, 
-        1269, 
-        1272, 
-        1273, 
-        1329, 
-        1366, 
-        1369, 
-        1369, 
-        1377, 
-        1415, 
-        1488, 
-        1514, 
-        1520, 
-        1522, 
-        1569, 
-        1594, 
-        1600, 
-        1610, 
-        1649, 
-        1747, 
-        1749, 
-        1749, 
-        1765, 
-        1766, 
-        1786, 
-        1788, 
-        1808, 
-        1808, 
-        1810, 
-        1836, 
-        1920, 
-        1957, 
-        2309, 
-        2361, 
-        2365, 
-        2365, 
-        2384, 
-        2384, 
-        2392, 
-        2401, 
-        2437, 
-        2444, 
-        2447, 
-        2448, 
-        2451, 
-        2472, 
-        2474, 
-        2480, 
-        2482, 
-        2482, 
-        2486, 
-        2489, 
-        2524, 
-        2525, 
-        2527, 
-        2529, 
-        2544, 
-        2545, 
-        2565, 
-        2570, 
-        2575, 
-        2576, 
-        2579, 
-        2600, 
-        2602, 
-        2608, 
-        2610, 
-        2611, 
-        2613, 
-        2614, 
-        2616, 
-        2617, 
-        2649, 
-        2652, 
-        2654, 
-        2654, 
-        2674, 
-        2676, 
-        2693, 
-        2699, 
-        2701, 
-        2701, 
-        2703, 
-        2705, 
-        2707, 
-        2728, 
-        2730, 
-        2736, 
-        2738, 
-        2739, 
-        2741, 
-        2745, 
-        2749, 
-        2749, 
-        2768, 
-        2768, 
-        2784, 
-        2784, 
-        2821, 
-        2828, 
-        2831, 
-        2832, 
-        2835, 
-        2856, 
-        2858, 
-        2864, 
-        2866, 
-        2867, 
-        2870, 
-        2873, 
-        2877, 
-        2877, 
-        2908, 
-        2909, 
-        2911, 
-        2913, 
-        2949, 
-        2954, 
-        2958, 
-        2960, 
-        2962, 
-        2965, 
-        2969, 
-        2970, 
-        2972, 
-        2972, 
-        2974, 
-        2975, 
-        2979, 
-        2980, 
-        2984, 
-        2986, 
-        2990, 
-        2997, 
-        2999, 
-        3001, 
-        3077, 
-        3084, 
-        3086, 
-        3088, 
-        3090, 
-        3112, 
-        3114, 
-        3123, 
-        3125, 
-        3129, 
-        3168, 
-        3169, 
-        3205, 
-        3212, 
-        3214, 
-        3216, 
-        3218, 
-        3240, 
-        3242, 
-        3251, 
-        3253, 
-        3257, 
-        3294, 
-        3294, 
-        3296, 
-        3297, 
-        3333, 
-        3340, 
-        3342, 
-        3344, 
-        3346, 
-        3368, 
-        3370, 
-        3385, 
-        3424, 
-        3425, 
-        3461, 
-        3478, 
-        3482, 
-        3505, 
-        3507, 
-        3515, 
-        3517, 
-        3517, 
-        3520, 
-        3526, 
-        3585, 
-        3632, 
-        3634, 
-        3635, 
-        3648, 
-        3654, 
-        3713, 
-        3714, 
-        3716, 
-        3716, 
-        3719, 
-        3720, 
-        3722, 
-        3722, 
-        3725, 
-        3725, 
-        3732, 
-        3735, 
-        3737, 
-        3743, 
-        3745, 
-        3747, 
-        3749, 
-        3749, 
-        3751, 
-        3751, 
-        3754, 
-        3755, 
-        3757, 
-        3760, 
-        3762, 
-        3763, 
-        3773, 
-        3773, 
-        3776, 
-        3780, 
-        3782, 
-        3782, 
-        3804, 
-        3805, 
-        3840, 
-        3840, 
-        3904, 
-        3911, 
-        3913, 
-        3946, 
-        3976, 
-        3979, 
-        4096, 
-        4129, 
-        4131, 
-        4135, 
-        4137, 
-        4138, 
-        4176, 
-        4181, 
-        4256, 
-        4293, 
-        4304, 
-        4342, 
-        4352, 
-        4441, 
-        4447, 
-        4514, 
-        4520, 
-        4601, 
-        4608, 
-        4614, 
-        4616, 
-        4678, 
-        4680, 
-        4680, 
-        4682, 
-        4685, 
-        4688, 
-        4694, 
-        4696, 
-        4696, 
-        4698, 
-        4701, 
-        4704, 
-        4742, 
-        4744, 
-        4744, 
-        4746, 
-        4749, 
-        4752, 
-        4782, 
-        4784, 
-        4784, 
-        4786, 
-        4789, 
-        4792, 
-        4798, 
-        4800, 
-        4800, 
-        4802, 
-        4805, 
-        4808, 
-        4814, 
-        4816, 
-        4822, 
-        4824, 
-        4846, 
-        4848, 
-        4878, 
-        4880, 
-        4880, 
-        4882, 
-        4885, 
-        4888, 
-        4894, 
-        4896, 
-        4934, 
-        4936, 
-        4954, 
-        5024, 
-        5108, 
-        5121, 
-        5740, 
-        5743, 
-        5750, 
-        5761, 
-        5786, 
-        5792, 
-        5866, 
-        6016, 
-        6067, 
-        6176, 
-        6263, 
-        6272, 
-        6312, 
-        7680, 
-        7835, 
-        7840, 
-        7929, 
-        7936, 
-        7957, 
-        7960, 
-        7965, 
-        7968, 
-        8005, 
-        8008, 
-        8013, 
-        8016, 
-        8023, 
-        8025, 
-        8025, 
-        8027, 
-        8027, 
-        8029, 
-        8029, 
-        8031, 
-        8061, 
-        8064, 
-        8116, 
-        8118, 
-        8124, 
-        8126, 
-        8126, 
-        8130, 
-        8132, 
-        8134, 
-        8140, 
-        8144, 
-        8147, 
-        8150, 
-        8155, 
-        8160, 
-        8172, 
-        8178, 
-        8180, 
-        8182, 
-        8188, 
-        8319, 
-        8319, 
-        8450, 
-        8450, 
-        8455, 
-        8455, 
-        8458, 
-        8467, 
-        8469, 
-        8469, 
-        8473, 
-        8477, 
-        8484, 
-        8484, 
-        8486, 
-        8486, 
-        8488, 
-        8488, 
-        8490, 
-        8493, 
-        8495, 
-        8497, 
-        8499, 
-        8505, 
-        8544, 
-        8579, 
-        12293, 
-        12295, 
-        12321, 
-        12329, 
-        12337, 
-        12341, 
-        12344, 
-        12346, 
-        12353, 
-        12436, 
-        12445, 
-        12446, 
-        12449, 
-        12538, 
-        12540, 
-        12542, 
-        12549, 
-        12588, 
-        12593, 
-        12686, 
-        12704, 
-        12727, 
-        13312, 
-        13312, 
-        19893, 
-        19893, 
-        19968, 
-        19968, 
-        40869, 
-        40869, 
-        40960, 
-        42124, 
-        44032, 
-        44032, 
-        55203, 
-        55203, 
-        63744, 
-        64045, 
-        64256, 
-        64262, 
-        64275, 
-        64279, 
-        64285, 
-        64285, 
-        64287, 
-        64296, 
-        64298, 
-        64310, 
-        64312, 
-        64316, 
-        64318, 
-        64318, 
-        64320, 
-        64321, 
-        64323, 
-        64324, 
-        64326, 
-        64433, 
-        64467, 
-        64829, 
-        64848, 
-        64911, 
-        64914, 
-        64967, 
-        65008, 
-        65019, 
-        65136, 
-        65138, 
-        65140, 
-        65140, 
-        65142, 
-        65276, 
-        65313, 
-        65338, 
-        65345, 
-        65370, 
-        65382, 
-        65470, 
-        65474, 
-        65479, 
-        65482, 
-        65487, 
-        65490, 
-        65495, 
-        65498, 
-        65500
-    ];
-    Unicode.unicodeES3IdentifierPart = [
-        768, 
-        846, 
-        864, 
-        866, 
-        1155, 
-        1158, 
-        1425, 
-        1441, 
-        1443, 
-        1465, 
-        1467, 
-        1469, 
-        1471, 
-        1471, 
-        1473, 
-        1474, 
-        1476, 
-        1476, 
-        1611, 
-        1621, 
-        1632, 
-        1641, 
-        1648, 
-        1648, 
-        1750, 
-        1756, 
-        1759, 
-        1764, 
-        1767, 
-        1768, 
-        1770, 
-        1773, 
-        1776, 
-        1785, 
-        1809, 
-        1809, 
-        1840, 
-        1866, 
-        1958, 
-        1968, 
-        2305, 
-        2307, 
-        2364, 
-        2364, 
-        2366, 
-        2381, 
-        2385, 
-        2388, 
-        2402, 
-        2403, 
-        2406, 
-        2415, 
-        2433, 
-        2435, 
-        2492, 
-        2492, 
-        2494, 
-        2500, 
-        2503, 
-        2504, 
-        2507, 
-        2509, 
-        2519, 
-        2519, 
-        2530, 
-        2531, 
-        2534, 
-        2543, 
-        2562, 
-        2562, 
-        2620, 
-        2620, 
-        2622, 
-        2626, 
-        2631, 
-        2632, 
-        2635, 
-        2637, 
-        2662, 
-        2673, 
-        2689, 
-        2691, 
-        2748, 
-        2748, 
-        2750, 
-        2757, 
-        2759, 
-        2761, 
-        2763, 
-        2765, 
-        2790, 
-        2799, 
-        2817, 
-        2819, 
-        2876, 
-        2876, 
-        2878, 
-        2883, 
-        2887, 
-        2888, 
-        2891, 
-        2893, 
-        2902, 
-        2903, 
-        2918, 
-        2927, 
-        2946, 
-        2947, 
-        3006, 
-        3010, 
-        3014, 
-        3016, 
-        3018, 
-        3021, 
-        3031, 
-        3031, 
-        3047, 
-        3055, 
-        3073, 
-        3075, 
-        3134, 
-        3140, 
-        3142, 
-        3144, 
-        3146, 
-        3149, 
-        3157, 
-        3158, 
-        3174, 
-        3183, 
-        3202, 
-        3203, 
-        3262, 
-        3268, 
-        3270, 
-        3272, 
-        3274, 
-        3277, 
-        3285, 
-        3286, 
-        3302, 
-        3311, 
-        3330, 
-        3331, 
-        3390, 
-        3395, 
-        3398, 
-        3400, 
-        3402, 
-        3405, 
-        3415, 
-        3415, 
-        3430, 
-        3439, 
-        3458, 
-        3459, 
-        3530, 
-        3530, 
-        3535, 
-        3540, 
-        3542, 
-        3542, 
-        3544, 
-        3551, 
-        3570, 
-        3571, 
-        3633, 
-        3633, 
-        3636, 
-        3642, 
-        3655, 
-        3662, 
-        3664, 
-        3673, 
-        3761, 
-        3761, 
-        3764, 
-        3769, 
-        3771, 
-        3772, 
-        3784, 
-        3789, 
-        3792, 
-        3801, 
-        3864, 
-        3865, 
-        3872, 
-        3881, 
-        3893, 
-        3893, 
-        3895, 
-        3895, 
-        3897, 
-        3897, 
-        3902, 
-        3903, 
-        3953, 
-        3972, 
-        3974, 
-        3975, 
-        3984, 
-        3991, 
-        3993, 
-        4028, 
-        4038, 
-        4038, 
-        4140, 
-        4146, 
-        4150, 
-        4153, 
-        4160, 
-        4169, 
-        4182, 
-        4185, 
-        4969, 
-        4977, 
-        6068, 
-        6099, 
-        6112, 
-        6121, 
-        6160, 
-        6169, 
-        6313, 
-        6313, 
-        8255, 
-        8256, 
-        8400, 
-        8412, 
-        8417, 
-        8417, 
-        12330, 
-        12335, 
-        12441, 
-        12442, 
-        12539, 
-        12539, 
-        64286, 
-        64286, 
-        65056, 
-        65059, 
-        65075, 
-        65076, 
-        65101, 
-        65103, 
-        65296, 
-        65305, 
-        65343, 
-        65343, 
-        65381, 
-        65381
-    ];
-    Unicode.unicodeES5IdentifierStart = [
-        170, 
-        170, 
-        181, 
-        181, 
-        186, 
-        186, 
-        192, 
-        214, 
-        216, 
-        246, 
-        248, 
-        705, 
-        710, 
-        721, 
-        736, 
-        740, 
-        748, 
-        748, 
-        750, 
-        750, 
-        880, 
-        884, 
-        886, 
-        887, 
-        890, 
-        893, 
-        902, 
-        902, 
-        904, 
-        906, 
-        908, 
-        908, 
-        910, 
-        929, 
-        931, 
-        1013, 
-        1015, 
-        1153, 
-        1162, 
-        1319, 
-        1329, 
-        1366, 
-        1369, 
-        1369, 
-        1377, 
-        1415, 
-        1488, 
-        1514, 
-        1520, 
-        1522, 
-        1568, 
-        1610, 
-        1646, 
-        1647, 
-        1649, 
-        1747, 
-        1749, 
-        1749, 
-        1765, 
-        1766, 
-        1774, 
-        1775, 
-        1786, 
-        1788, 
-        1791, 
-        1791, 
-        1808, 
-        1808, 
-        1810, 
-        1839, 
-        1869, 
-        1957, 
-        1969, 
-        1969, 
-        1994, 
-        2026, 
-        2036, 
-        2037, 
-        2042, 
-        2042, 
-        2048, 
-        2069, 
-        2074, 
-        2074, 
-        2084, 
-        2084, 
-        2088, 
-        2088, 
-        2112, 
-        2136, 
-        2208, 
-        2208, 
-        2210, 
-        2220, 
-        2308, 
-        2361, 
-        2365, 
-        2365, 
-        2384, 
-        2384, 
-        2392, 
-        2401, 
-        2417, 
-        2423, 
-        2425, 
-        2431, 
-        2437, 
-        2444, 
-        2447, 
-        2448, 
-        2451, 
-        2472, 
-        2474, 
-        2480, 
-        2482, 
-        2482, 
-        2486, 
-        2489, 
-        2493, 
-        2493, 
-        2510, 
-        2510, 
-        2524, 
-        2525, 
-        2527, 
-        2529, 
-        2544, 
-        2545, 
-        2565, 
-        2570, 
-        2575, 
-        2576, 
-        2579, 
-        2600, 
-        2602, 
-        2608, 
-        2610, 
-        2611, 
-        2613, 
-        2614, 
-        2616, 
-        2617, 
-        2649, 
-        2652, 
-        2654, 
-        2654, 
-        2674, 
-        2676, 
-        2693, 
-        2701, 
-        2703, 
-        2705, 
-        2707, 
-        2728, 
-        2730, 
-        2736, 
-        2738, 
-        2739, 
-        2741, 
-        2745, 
-        2749, 
-        2749, 
-        2768, 
-        2768, 
-        2784, 
-        2785, 
-        2821, 
-        2828, 
-        2831, 
-        2832, 
-        2835, 
-        2856, 
-        2858, 
-        2864, 
-        2866, 
-        2867, 
-        2869, 
-        2873, 
-        2877, 
-        2877, 
-        2908, 
-        2909, 
-        2911, 
-        2913, 
-        2929, 
-        2929, 
-        2947, 
-        2947, 
-        2949, 
-        2954, 
-        2958, 
-        2960, 
-        2962, 
-        2965, 
-        2969, 
-        2970, 
-        2972, 
-        2972, 
-        2974, 
-        2975, 
-        2979, 
-        2980, 
-        2984, 
-        2986, 
-        2990, 
-        3001, 
-        3024, 
-        3024, 
-        3077, 
-        3084, 
-        3086, 
-        3088, 
-        3090, 
-        3112, 
-        3114, 
-        3123, 
-        3125, 
-        3129, 
-        3133, 
-        3133, 
-        3160, 
-        3161, 
-        3168, 
-        3169, 
-        3205, 
-        3212, 
-        3214, 
-        3216, 
-        3218, 
-        3240, 
-        3242, 
-        3251, 
-        3253, 
-        3257, 
-        3261, 
-        3261, 
-        3294, 
-        3294, 
-        3296, 
-        3297, 
-        3313, 
-        3314, 
-        3333, 
-        3340, 
-        3342, 
-        3344, 
-        3346, 
-        3386, 
-        3389, 
-        3389, 
-        3406, 
-        3406, 
-        3424, 
-        3425, 
-        3450, 
-        3455, 
-        3461, 
-        3478, 
-        3482, 
-        3505, 
-        3507, 
-        3515, 
-        3517, 
-        3517, 
-        3520, 
-        3526, 
-        3585, 
-        3632, 
-        3634, 
-        3635, 
-        3648, 
-        3654, 
-        3713, 
-        3714, 
-        3716, 
-        3716, 
-        3719, 
-        3720, 
-        3722, 
-        3722, 
-        3725, 
-        3725, 
-        3732, 
-        3735, 
-        3737, 
-        3743, 
-        3745, 
-        3747, 
-        3749, 
-        3749, 
-        3751, 
-        3751, 
-        3754, 
-        3755, 
-        3757, 
-        3760, 
-        3762, 
-        3763, 
-        3773, 
-        3773, 
-        3776, 
-        3780, 
-        3782, 
-        3782, 
-        3804, 
-        3807, 
-        3840, 
-        3840, 
-        3904, 
-        3911, 
-        3913, 
-        3948, 
-        3976, 
-        3980, 
-        4096, 
-        4138, 
-        4159, 
-        4159, 
-        4176, 
-        4181, 
-        4186, 
-        4189, 
-        4193, 
-        4193, 
-        4197, 
-        4198, 
-        4206, 
-        4208, 
-        4213, 
-        4225, 
-        4238, 
-        4238, 
-        4256, 
-        4293, 
-        4295, 
-        4295, 
-        4301, 
-        4301, 
-        4304, 
-        4346, 
-        4348, 
-        4680, 
-        4682, 
-        4685, 
-        4688, 
-        4694, 
-        4696, 
-        4696, 
-        4698, 
-        4701, 
-        4704, 
-        4744, 
-        4746, 
-        4749, 
-        4752, 
-        4784, 
-        4786, 
-        4789, 
-        4792, 
-        4798, 
-        4800, 
-        4800, 
-        4802, 
-        4805, 
-        4808, 
-        4822, 
-        4824, 
-        4880, 
-        4882, 
-        4885, 
-        4888, 
-        4954, 
-        4992, 
-        5007, 
-        5024, 
-        5108, 
-        5121, 
-        5740, 
-        5743, 
-        5759, 
-        5761, 
-        5786, 
-        5792, 
-        5866, 
-        5870, 
-        5872, 
-        5888, 
-        5900, 
-        5902, 
-        5905, 
-        5920, 
-        5937, 
-        5952, 
-        5969, 
-        5984, 
-        5996, 
-        5998, 
-        6000, 
-        6016, 
-        6067, 
-        6103, 
-        6103, 
-        6108, 
-        6108, 
-        6176, 
-        6263, 
-        6272, 
-        6312, 
-        6314, 
-        6314, 
-        6320, 
-        6389, 
-        6400, 
-        6428, 
-        6480, 
-        6509, 
-        6512, 
-        6516, 
-        6528, 
-        6571, 
-        6593, 
-        6599, 
-        6656, 
-        6678, 
-        6688, 
-        6740, 
-        6823, 
-        6823, 
-        6917, 
-        6963, 
-        6981, 
-        6987, 
-        7043, 
-        7072, 
-        7086, 
-        7087, 
-        7098, 
-        7141, 
-        7168, 
-        7203, 
-        7245, 
-        7247, 
-        7258, 
-        7293, 
-        7401, 
-        7404, 
-        7406, 
-        7409, 
-        7413, 
-        7414, 
-        7424, 
-        7615, 
-        7680, 
-        7957, 
-        7960, 
-        7965, 
-        7968, 
-        8005, 
-        8008, 
-        8013, 
-        8016, 
-        8023, 
-        8025, 
-        8025, 
-        8027, 
-        8027, 
-        8029, 
-        8029, 
-        8031, 
-        8061, 
-        8064, 
-        8116, 
-        8118, 
-        8124, 
-        8126, 
-        8126, 
-        8130, 
-        8132, 
-        8134, 
-        8140, 
-        8144, 
-        8147, 
-        8150, 
-        8155, 
-        8160, 
-        8172, 
-        8178, 
-        8180, 
-        8182, 
-        8188, 
-        8305, 
-        8305, 
-        8319, 
-        8319, 
-        8336, 
-        8348, 
-        8450, 
-        8450, 
-        8455, 
-        8455, 
-        8458, 
-        8467, 
-        8469, 
-        8469, 
-        8473, 
-        8477, 
-        8484, 
-        8484, 
-        8486, 
-        8486, 
-        8488, 
-        8488, 
-        8490, 
-        8493, 
-        8495, 
-        8505, 
-        8508, 
-        8511, 
-        8517, 
-        8521, 
-        8526, 
-        8526, 
-        8544, 
-        8584, 
-        11264, 
-        11310, 
-        11312, 
-        11358, 
-        11360, 
-        11492, 
-        11499, 
-        11502, 
-        11506, 
-        11507, 
-        11520, 
-        11557, 
-        11559, 
-        11559, 
-        11565, 
-        11565, 
-        11568, 
-        11623, 
-        11631, 
-        11631, 
-        11648, 
-        11670, 
-        11680, 
-        11686, 
-        11688, 
-        11694, 
-        11696, 
-        11702, 
-        11704, 
-        11710, 
-        11712, 
-        11718, 
-        11720, 
-        11726, 
-        11728, 
-        11734, 
-        11736, 
-        11742, 
-        11823, 
-        11823, 
-        12293, 
-        12295, 
-        12321, 
-        12329, 
-        12337, 
-        12341, 
-        12344, 
-        12348, 
-        12353, 
-        12438, 
-        12445, 
-        12447, 
-        12449, 
-        12538, 
-        12540, 
-        12543, 
-        12549, 
-        12589, 
-        12593, 
-        12686, 
-        12704, 
-        12730, 
-        12784, 
-        12799, 
-        13312, 
-        13312, 
-        19893, 
-        19893, 
-        19968, 
-        19968, 
-        40908, 
-        40908, 
-        40960, 
-        42124, 
-        42192, 
-        42237, 
-        42240, 
-        42508, 
-        42512, 
-        42527, 
-        42538, 
-        42539, 
-        42560, 
-        42606, 
-        42623, 
-        42647, 
-        42656, 
-        42735, 
-        42775, 
-        42783, 
-        42786, 
-        42888, 
-        42891, 
-        42894, 
-        42896, 
-        42899, 
-        42912, 
-        42922, 
-        43000, 
-        43009, 
-        43011, 
-        43013, 
-        43015, 
-        43018, 
-        43020, 
-        43042, 
-        43072, 
-        43123, 
-        43138, 
-        43187, 
-        43250, 
-        43255, 
-        43259, 
-        43259, 
-        43274, 
-        43301, 
-        43312, 
-        43334, 
-        43360, 
-        43388, 
-        43396, 
-        43442, 
-        43471, 
-        43471, 
-        43520, 
-        43560, 
-        43584, 
-        43586, 
-        43588, 
-        43595, 
-        43616, 
-        43638, 
-        43642, 
-        43642, 
-        43648, 
-        43695, 
-        43697, 
-        43697, 
-        43701, 
-        43702, 
-        43705, 
-        43709, 
-        43712, 
-        43712, 
-        43714, 
-        43714, 
-        43739, 
-        43741, 
-        43744, 
-        43754, 
-        43762, 
-        43764, 
-        43777, 
-        43782, 
-        43785, 
-        43790, 
-        43793, 
-        43798, 
-        43808, 
-        43814, 
-        43816, 
-        43822, 
-        43968, 
-        44002, 
-        44032, 
-        44032, 
-        55203, 
-        55203, 
-        55216, 
-        55238, 
-        55243, 
-        55291, 
-        63744, 
-        64109, 
-        64112, 
-        64217, 
-        64256, 
-        64262, 
-        64275, 
-        64279, 
-        64285, 
-        64285, 
-        64287, 
-        64296, 
-        64298, 
-        64310, 
-        64312, 
-        64316, 
-        64318, 
-        64318, 
-        64320, 
-        64321, 
-        64323, 
-        64324, 
-        64326, 
-        64433, 
-        64467, 
-        64829, 
-        64848, 
-        64911, 
-        64914, 
-        64967, 
-        65008, 
-        65019, 
-        65136, 
-        65140, 
-        65142, 
-        65276, 
-        65313, 
-        65338, 
-        65345, 
-        65370, 
-        65382, 
-        65470, 
-        65474, 
-        65479, 
-        65482, 
-        65487, 
-        65490, 
-        65495, 
-        65498, 
-        65500
-    ];
-    Unicode.unicodeES5IdentifierPart = [
-        768, 
-        879, 
-        1155, 
-        1159, 
-        1425, 
-        1469, 
-        1471, 
-        1471, 
-        1473, 
-        1474, 
-        1476, 
-        1477, 
-        1479, 
-        1479, 
-        1552, 
-        1562, 
-        1611, 
-        1641, 
-        1648, 
-        1648, 
-        1750, 
-        1756, 
-        1759, 
-        1764, 
-        1767, 
-        1768, 
-        1770, 
-        1773, 
-        1776, 
-        1785, 
-        1809, 
-        1809, 
-        1840, 
-        1866, 
-        1958, 
-        1968, 
-        1984, 
-        1993, 
-        2027, 
-        2035, 
-        2070, 
-        2073, 
-        2075, 
-        2083, 
-        2085, 
-        2087, 
-        2089, 
-        2093, 
-        2137, 
-        2139, 
-        2276, 
-        2302, 
-        2304, 
-        2307, 
-        2362, 
-        2364, 
-        2366, 
-        2383, 
-        2385, 
-        2391, 
-        2402, 
-        2403, 
-        2406, 
-        2415, 
-        2433, 
-        2435, 
-        2492, 
-        2492, 
-        2494, 
-        2500, 
-        2503, 
-        2504, 
-        2507, 
-        2509, 
-        2519, 
-        2519, 
-        2530, 
-        2531, 
-        2534, 
-        2543, 
-        2561, 
-        2563, 
-        2620, 
-        2620, 
-        2622, 
-        2626, 
-        2631, 
-        2632, 
-        2635, 
-        2637, 
-        2641, 
-        2641, 
-        2662, 
-        2673, 
-        2677, 
-        2677, 
-        2689, 
-        2691, 
-        2748, 
-        2748, 
-        2750, 
-        2757, 
-        2759, 
-        2761, 
-        2763, 
-        2765, 
-        2786, 
-        2787, 
-        2790, 
-        2799, 
-        2817, 
-        2819, 
-        2876, 
-        2876, 
-        2878, 
-        2884, 
-        2887, 
-        2888, 
-        2891, 
-        2893, 
-        2902, 
-        2903, 
-        2914, 
-        2915, 
-        2918, 
-        2927, 
-        2946, 
-        2946, 
-        3006, 
-        3010, 
-        3014, 
-        3016, 
-        3018, 
-        3021, 
-        3031, 
-        3031, 
-        3046, 
-        3055, 
-        3073, 
-        3075, 
-        3134, 
-        3140, 
-        3142, 
-        3144, 
-        3146, 
-        3149, 
-        3157, 
-        3158, 
-        3170, 
-        3171, 
-        3174, 
-        3183, 
-        3202, 
-        3203, 
-        3260, 
-        3260, 
-        3262, 
-        3268, 
-        3270, 
-        3272, 
-        3274, 
-        3277, 
-        3285, 
-        3286, 
-        3298, 
-        3299, 
-        3302, 
-        3311, 
-        3330, 
-        3331, 
-        3390, 
-        3396, 
-        3398, 
-        3400, 
-        3402, 
-        3405, 
-        3415, 
-        3415, 
-        3426, 
-        3427, 
-        3430, 
-        3439, 
-        3458, 
-        3459, 
-        3530, 
-        3530, 
-        3535, 
-        3540, 
-        3542, 
-        3542, 
-        3544, 
-        3551, 
-        3570, 
-        3571, 
-        3633, 
-        3633, 
-        3636, 
-        3642, 
-        3655, 
-        3662, 
-        3664, 
-        3673, 
-        3761, 
-        3761, 
-        3764, 
-        3769, 
-        3771, 
-        3772, 
-        3784, 
-        3789, 
-        3792, 
-        3801, 
-        3864, 
-        3865, 
-        3872, 
-        3881, 
-        3893, 
-        3893, 
-        3895, 
-        3895, 
-        3897, 
-        3897, 
-        3902, 
-        3903, 
-        3953, 
-        3972, 
-        3974, 
-        3975, 
-        3981, 
-        3991, 
-        3993, 
-        4028, 
-        4038, 
-        4038, 
-        4139, 
-        4158, 
-        4160, 
-        4169, 
-        4182, 
-        4185, 
-        4190, 
-        4192, 
-        4194, 
-        4196, 
-        4199, 
-        4205, 
-        4209, 
-        4212, 
-        4226, 
-        4237, 
-        4239, 
-        4253, 
-        4957, 
-        4959, 
-        5906, 
-        5908, 
-        5938, 
-        5940, 
-        5970, 
-        5971, 
-        6002, 
-        6003, 
-        6068, 
-        6099, 
-        6109, 
-        6109, 
-        6112, 
-        6121, 
-        6155, 
-        6157, 
-        6160, 
-        6169, 
-        6313, 
-        6313, 
-        6432, 
-        6443, 
-        6448, 
-        6459, 
-        6470, 
-        6479, 
-        6576, 
-        6592, 
-        6600, 
-        6601, 
-        6608, 
-        6617, 
-        6679, 
-        6683, 
-        6741, 
-        6750, 
-        6752, 
-        6780, 
-        6783, 
-        6793, 
-        6800, 
-        6809, 
-        6912, 
-        6916, 
-        6964, 
-        6980, 
-        6992, 
-        7001, 
-        7019, 
-        7027, 
-        7040, 
-        7042, 
-        7073, 
-        7085, 
-        7088, 
-        7097, 
-        7142, 
-        7155, 
-        7204, 
-        7223, 
-        7232, 
-        7241, 
-        7248, 
-        7257, 
-        7376, 
-        7378, 
-        7380, 
-        7400, 
-        7405, 
-        7405, 
-        7410, 
-        7412, 
-        7616, 
-        7654, 
-        7676, 
-        7679, 
-        8204, 
-        8205, 
-        8255, 
-        8256, 
-        8276, 
-        8276, 
-        8400, 
-        8412, 
-        8417, 
-        8417, 
-        8421, 
-        8432, 
-        11503, 
-        11505, 
-        11647, 
-        11647, 
-        11744, 
-        11775, 
-        12330, 
-        12335, 
-        12441, 
-        12442, 
-        42528, 
-        42537, 
-        42607, 
-        42607, 
-        42612, 
-        42621, 
-        42655, 
-        42655, 
-        42736, 
-        42737, 
-        43010, 
-        43010, 
-        43014, 
-        43014, 
-        43019, 
-        43019, 
-        43043, 
-        43047, 
-        43136, 
-        43137, 
-        43188, 
-        43204, 
-        43216, 
-        43225, 
-        43232, 
-        43249, 
-        43264, 
-        43273, 
-        43302, 
-        43309, 
-        43335, 
-        43347, 
-        43392, 
-        43395, 
-        43443, 
-        43456, 
-        43472, 
-        43481, 
-        43561, 
-        43574, 
-        43587, 
-        43587, 
-        43596, 
-        43597, 
-        43600, 
-        43609, 
-        43643, 
-        43643, 
-        43696, 
-        43696, 
-        43698, 
-        43700, 
-        43703, 
-        43704, 
-        43710, 
-        43711, 
-        43713, 
-        43713, 
-        43755, 
-        43759, 
-        43765, 
-        43766, 
-        44003, 
-        44010, 
-        44012, 
-        44013, 
-        44016, 
-        44025, 
-        64286, 
-        64286, 
-        65024, 
-        65039, 
-        65056, 
-        65062, 
-        65075, 
-        65076, 
-        65101, 
-        65103, 
-        65296, 
-        65305, 
-        65343, 
-        65343
-    ];
-    Unicode.lookupInUnicodeMap = function lookupInUnicodeMap(code, map) {
-        if(code < map[0]) {
-            return false;
-        }
-        var lo = 0;
-        var hi = map.length;
-        var mid;
-        while(lo + 1 < hi) {
-            mid = lo + (hi - lo) / 2;
-            mid -= mid % 2;
-            if(map[mid] <= code && code <= map[mid + 1]) {
-                return true;
-            }
-            if(code < map[mid]) {
-                hi = mid;
-            } else {
-                lo = mid + 2;
-            }
-        }
-        return false;
-    };
-    Unicode.isIdentifierStart = function isIdentifierStart(code, languageVersion) {
-        if(languageVersion === 0 /* EcmaScript3 */ ) {
-            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierStart);
-        } else if(languageVersion === 1 /* EcmaScript5 */ ) {
-            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierStart);
-        } else {
-            throw Errors.argumentOutOfRange("languageVersion");
-        }
-    };
-    Unicode.isIdentifierPart = function isIdentifierPart(code, languageVersion) {
-        if(languageVersion === 0 /* EcmaScript3 */ ) {
-            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES3IdentifierPart);
-        } else if(languageVersion === 1 /* EcmaScript5 */ ) {
-            return Unicode.lookupInUnicodeMap(code, Unicode.unicodeES5IdentifierPart);
-        } else {
-            throw Errors.argumentOutOfRange("languageVersion");
-        }
-    };
-    return Unicode;
-})();
-var Scanner = (function () {
-    function Scanner(text, languageVersion, stringTable) {
-        Scanner.initializeStaticData();
-        this.slidingWindow = new SlidingWindow(this, 2048, 0, text.length());
-        this.text = text;
-        this.stringTable = stringTable;
-        this.languageVersion = languageVersion;
-    }
-    Scanner.isKeywordStartCharacter = [];
-    Scanner.isIdentifierStartCharacter = [];
-    Scanner.isIdentifierPartCharacter = [];
-    Scanner.isNumericLiteralStart = [];
-    Scanner.initializeStaticData = function initializeStaticData() {
-        if(Scanner.isKeywordStartCharacter.length === 0) {
-            Scanner.isKeywordStartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
-            Scanner.isIdentifierStartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
-            Scanner.isIdentifierPartCharacter = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
-            Scanner.isNumericLiteralStart = ArrayUtilities.createArray(127 /* maxAsciiCharacter */ , false);
-            for(var character = 0; character < 127 /* maxAsciiCharacter */ ; character++) {
-                if(character >= 97 /* a */  && character <= 122 /* z */ ) {
-                    Scanner.isIdentifierStartCharacter[character] = true;
-                    Scanner.isIdentifierPartCharacter[character] = true;
-                } else if((character >= 65 /* A */  && character <= 90 /* Z */ ) || character === 95 /* _ */  || character === 36 /* $ */ ) {
-                    Scanner.isIdentifierStartCharacter[character] = true;
-                    Scanner.isIdentifierPartCharacter[character] = true;
-                } else if(character >= 48 /* _0 */  && character <= 57 /* _9 */ ) {
-                    Scanner.isIdentifierPartCharacter[character] = true;
-                    Scanner.isNumericLiteralStart[character] = true;
-                }
-            }
-            Scanner.isNumericLiteralStart[46 /* dot */ ] = true;
-            for(var keywordKind = SyntaxKind.FirstKeyword; keywordKind <= SyntaxKind.LastKeyword; keywordKind++) {
-                var keyword = SyntaxFacts.getText(keywordKind);
-                Scanner.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
-            }
-        }
-    };
-    Scanner.prototype.fetchMoreItems = function (argument, sourceIndex, window, destinationIndex, spaceAvailable) {
-        var charactersRemaining = this.text.length() - sourceIndex;
-        var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
-        this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
-        return amountToRead;
-    };
-    Scanner.prototype.currentCharCode = function () {
-        return this.slidingWindow.currentItem(null);
-    };
-    Scanner.prototype.setAbsoluteIndex = function (index) {
-        this.slidingWindow.setAbsoluteIndex(index);
-    };
-    Scanner.prototype.scan = function (diagnostics, allowRegularExpression) {
-        var fullStart = this.slidingWindow.absoluteIndex();
-        var leadingTriviaInfo = this.scanTriviaInfo(diagnostics, false);
-        var start = this.slidingWindow.absoluteIndex();
-        var kind = this.scanSyntaxToken(diagnostics, allowRegularExpression);
-        var end = this.slidingWindow.absoluteIndex();
-        var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-        if(kind >= SyntaxKind.FirstFixedWidth) {
-            if(leadingTriviaInfo === 0) {
-                if(trailingTriviaInfo === 0) {
-                    return new Syntax.FixedWidthTokenWithNoTrivia(kind);
-                } else {
-                    return new Syntax.FixedWidthTokenWithTrailingTrivia(this.text, fullStart, kind, trailingTriviaInfo);
-                }
-            } else if(trailingTriviaInfo === 0) {
-                return new Syntax.FixedWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo);
-            } else {
-                return new Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
-            }
-        } else {
-            var width = end - start;
-            if(leadingTriviaInfo === 0) {
-                if(trailingTriviaInfo === 0) {
-                    return new Syntax.VariableWidthTokenWithNoTrivia(this.text, fullStart, kind, width);
-                } else {
-                    return new Syntax.VariableWidthTokenWithTrailingTrivia(this.text, fullStart, kind, width, trailingTriviaInfo);
-                }
-            } else if(trailingTriviaInfo === 0) {
-                return new Syntax.VariableWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width);
-            } else {
-                return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
-            }
-        }
-    };
-    Scanner.scanTrivia = function scanTrivia(text, start, length, isTrailing) {
-        Debug.assert(length > 0);
-        var scanner = new Scanner(text.subText(new TextSpan(start, length)), 1 /* EcmaScript5 */ , null);
-        return scanner.scanTrivia(isTrailing);
-    };
-    Scanner.prototype.scanTrivia = function (isTrailing) {
-        var trivia = [];
-        while(true) {
-            if(!this.slidingWindow.isAtEndOfSource()) {
-                var ch = this.currentCharCode();
-                switch(ch) {
-                    case 32 /* space */ :
-                    case 9 /* tab */ :
-                    case 11 /* verticalTab */ :
-                    case 12 /* formFeed */ :
-                    case 160 /* nonBreakingSpace */ :
-                    case 65279 /* byteOrderMark */ :
-                        trivia.push(this.scanWhitespaceTrivia());
-                        continue;
-                    case 47 /* slash */ :
-                        var ch2 = this.slidingWindow.peekItemN(1);
-                        if(ch2 === 47 /* slash */ ) {
-                            trivia.push(this.scanSingleLineCommentTrivia());
-                            continue;
-                        }
-                        if(ch2 === 42 /* asterisk */ ) {
-                            trivia.push(this.scanMultiLineCommentTrivia());
-                            continue;
-                        }
-                        throw Errors.invalidOperation();
-                    case 13 /* carriageReturn */ :
-                    case 10 /* lineFeed */ :
-                    case 8233 /* paragraphSeparator */ :
-                    case 8232 /* lineSeparator */ :
-                        trivia.push(this.scanLineTerminatorSequenceTrivia(ch));
-                        if(!isTrailing) {
-                            continue;
-                        }
-                        break;
-                    default:
-                        throw Errors.invalidOperation();
-                }
-            }
-            Debug.assert(trivia.length > 0);
-            return Syntax.triviaList(trivia);
-        }
-    };
-    Scanner.prototype.scanTriviaInfo = function (diagnostics, isTrailing) {
-        var width = 0;
-        var hasCommentOrNewLine = 0;
-        while(true) {
-            var ch = this.currentCharCode();
-            switch(ch) {
-                case 32 /* space */ :
-                case 9 /* tab */ :
-                case 11 /* verticalTab */ :
-                case 12 /* formFeed */ :
-                case 160 /* nonBreakingSpace */ :
-                case 65279 /* byteOrderMark */ :
-                    this.slidingWindow.moveToNextItem();
-                    width++;
-                    continue;
-                case 47 /* slash */ :
-                    var ch2 = this.slidingWindow.peekItemN(1);
-                    if(ch2 === 47 /* slash */ ) {
-                        hasCommentOrNewLine |= 2 /* TriviaCommentMask */ ;
-                        width += this.scanSingleLineCommentTriviaLength();
-                        continue;
-                    }
-                    if(ch2 === 42 /* asterisk */ ) {
-                        hasCommentOrNewLine |= 2 /* TriviaCommentMask */ ;
-                        width += this.scanMultiLineCommentTriviaLength(diagnostics);
-                        continue;
-                    }
-                    break;
-                case 13 /* carriageReturn */ :
-                case 10 /* lineFeed */ :
-                case 8233 /* paragraphSeparator */ :
-                case 8232 /* lineSeparator */ :
-                    hasCommentOrNewLine |= 1 /* TriviaNewLineMask */ ;
-                    width += this.scanLineTerminatorSequenceLength(ch);
-                    if(!isTrailing) {
-                        continue;
-                    }
-                    break;
-            }
-            return (width << 2 /* TriviaFullWidthShift */ ) | hasCommentOrNewLine;
-        }
-    };
-    Scanner.prototype.isNewLineCharacter = function (ch) {
-        switch(ch) {
-            case 13 /* carriageReturn */ :
-            case 10 /* lineFeed */ :
-            case 8233 /* paragraphSeparator */ :
-            case 8232 /* lineSeparator */ :
-                return true;
-            default:
-                return false;
-        }
-    };
-    Scanner.prototype.scanWhitespaceTrivia = function () {
-        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-        var width = 0;
-        while(true) {
-            var ch = this.currentCharCode();
-            switch(ch) {
-                case 32 /* space */ :
-                case 9 /* tab */ :
-                case 11 /* verticalTab */ :
-                case 12 /* formFeed */ :
-                case 160 /* nonBreakingSpace */ :
-                case 65279 /* byteOrderMark */ :
-                    this.slidingWindow.moveToNextItem();
-                    width++;
-                    continue;
-            }
-            break;
-        }
-        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return Syntax.whitespace(text);
-    };
-    Scanner.prototype.scanSingleLineCommentTrivia = function () {
-        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-        var width = this.scanSingleLineCommentTriviaLength();
-        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return Syntax.singleLineComment(text);
-    };
-    Scanner.prototype.scanSingleLineCommentTriviaLength = function () {
-        this.slidingWindow.moveToNextItem();
-        this.slidingWindow.moveToNextItem();
-        var width = 2;
-        while(true) {
-            if(this.slidingWindow.isAtEndOfSource() || this.isNewLineCharacter(this.currentCharCode())) {
-                return width;
-            }
-            this.slidingWindow.moveToNextItem();
-            width++;
-        }
-    };
-    Scanner.prototype.scanMultiLineCommentTrivia = function () {
-        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-        var width = this.scanMultiLineCommentTriviaLength(null);
-        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return Syntax.multiLineComment(text);
-    };
-    Scanner.prototype.scanMultiLineCommentTriviaLength = function (diagnostics) {
-        this.slidingWindow.moveToNextItem();
-        this.slidingWindow.moveToNextItem();
-        var width = 2;
-        while(true) {
-            if(this.slidingWindow.isAtEndOfSource()) {
-                if(diagnostics !== null) {
-                    diagnostics.push(new SyntaxDiagnostic(this.slidingWindow.absoluteIndex(), 0, 10 /* _StarSlash__expected */ , null));
-                }
-                return width;
-            }
-            var ch = this.currentCharCode();
-            if(ch === 42 /* asterisk */  && this.slidingWindow.peekItemN(1) === 47 /* slash */ ) {
-                this.slidingWindow.moveToNextItem();
-                this.slidingWindow.moveToNextItem();
-                width += 2;
-                return width;
-            }
-            this.slidingWindow.moveToNextItem();
-            width++;
-        }
-    };
-    Scanner.prototype.scanLineTerminatorSequenceTrivia = function (ch) {
-        var absoluteStartIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-        var width = this.scanLineTerminatorSequenceLength(ch);
-        var text = this.substring(absoluteStartIndex, absoluteStartIndex + width, false);
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(absoluteStartIndex);
-        return Syntax.trivia(5 /* NewLineTrivia */ , text);
-    };
-    Scanner.prototype.scanLineTerminatorSequenceLength = function (ch) {
-        this.slidingWindow.moveToNextItem();
-        if(ch === 13 /* carriageReturn */  && this.currentCharCode() === 10 /* lineFeed */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 2;
-        } else {
-            return 1;
-        }
-    };
-    Scanner.prototype.scanSyntaxToken = function (diagnostics, allowRegularExpression) {
-        if(this.slidingWindow.isAtEndOfSource()) {
-            return 10 /* EndOfFileToken */ ;
-        }
-        var character = this.currentCharCode();
-        switch(character) {
-            case 34 /* doubleQuote */ :
-            case 39 /* singleQuote */ :
-                return this.scanStringLiteral(diagnostics);
-            case 47 /* slash */ :
-                return this.scanSlashToken(allowRegularExpression);
-            case 46 /* dot */ :
-                return this.scanDotToken();
-            case 45 /* minus */ :
-                return this.scanMinusToken();
-            case 33 /* exclamation */ :
-                return this.scanExclamationToken();
-            case 61 /* equals */ :
-                return this.scanEqualsToken();
-            case 124 /* bar */ :
-                return this.scanBarToken();
-            case 42 /* asterisk */ :
-                return this.scanAsteriskToken();
-            case 43 /* plus */ :
-                return this.scanPlusToken();
-            case 37 /* percent */ :
-                return this.scanPercentToken();
-            case 38 /* ampersand */ :
-                return this.scanAmpersandToken();
-            case 94 /* caret */ :
-                return this.scanCaretToken();
-            case 60 /* lessThan */ :
-                return this.scanLessThanToken();
-            case 62 /* greaterThan */ :
-                return this.advanceAndSetTokenKind(81 /* GreaterThanToken */ );
-            case 44 /* comma */ :
-                return this.advanceAndSetTokenKind(79 /* CommaToken */ );
-            case 58 /* colon */ :
-                return this.advanceAndSetTokenKind(106 /* ColonToken */ );
-            case 59 /* semicolon */ :
-                return this.advanceAndSetTokenKind(78 /* SemicolonToken */ );
-            case 126 /* tilde */ :
-                return this.advanceAndSetTokenKind(102 /* TildeToken */ );
-            case 40 /* openParen */ :
-                return this.advanceAndSetTokenKind(72 /* OpenParenToken */ );
-            case 41 /* closeParen */ :
-                return this.advanceAndSetTokenKind(73 /* CloseParenToken */ );
-            case 123 /* openBrace */ :
-                return this.advanceAndSetTokenKind(70 /* OpenBraceToken */ );
-            case 125 /* closeBrace */ :
-                return this.advanceAndSetTokenKind(71 /* CloseBraceToken */ );
-            case 91 /* openBracket */ :
-                return this.advanceAndSetTokenKind(74 /* OpenBracketToken */ );
-            case 93 /* closeBracket */ :
-                return this.advanceAndSetTokenKind(75 /* CloseBracketToken */ );
-            case 63 /* question */ :
-                return this.advanceAndSetTokenKind(105 /* QuestionToken */ );
-        }
-        if(Scanner.isNumericLiteralStart[character]) {
-            return this.scanNumericLiteral();
-        }
-        if(Scanner.isIdentifierStartCharacter[character]) {
-            var result = this.tryFastScanIdentifierOrKeyword(character);
-            if(result !== 0 /* None */ ) {
-                return result;
-            }
-        }
-        if(this.isIdentifierStart(this.peekCharOrUnicodeEscape())) {
-            return this.slowScanIdentifier(diagnostics);
-        }
-        return this.scanDefaultCharacter(character, diagnostics);
-    };
-    Scanner.prototype.isIdentifierStart = function (interpretedChar) {
-        if(Scanner.isIdentifierStartCharacter[interpretedChar]) {
-            return true;
-        }
-        return interpretedChar > 127 /* maxAsciiCharacter */  && Unicode.isIdentifierStart(interpretedChar, this.languageVersion);
-    };
-    Scanner.prototype.isIdentifierPart = function (interpretedChar) {
-        if(Scanner.isIdentifierPartCharacter[interpretedChar]) {
-            return true;
-        }
-        return interpretedChar > 127 /* maxAsciiCharacter */  && Unicode.isIdentifierPart(interpretedChar, this.languageVersion);
-    };
-    Scanner.prototype.tryFastScanIdentifierOrKeyword = function (firstCharacter) {
-        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-        while(true) {
-            var character = this.currentCharCode();
-            if(Scanner.isIdentifierPartCharacter[character]) {
-                this.slidingWindow.moveToNextItem();
-            } else if(character === 92 /* backslash */  || character > 127 /* maxAsciiCharacter */ ) {
-                this.slidingWindow.rewindToPinnedIndex(startIndex);
-                this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                return 0 /* None */ ;
-            } else {
-                var endIndex = this.slidingWindow.absoluteIndex();
-                var kind;
-                if(Scanner.isKeywordStartCharacter[firstCharacter]) {
-                    var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
-                    kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
-                } else {
-                    kind = 11 /* IdentifierName */ ;
-                }
-                this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                return kind;
-            }
-        }
-    };
-    Scanner.prototype.slowScanIdentifier = function (diagnostics) {
-        var startIndex = this.slidingWindow.absoluteIndex();
-        do {
-            this.scanCharOrUnicodeEscape(diagnostics);
-        }while(this.isIdentifierPart(this.peekCharOrUnicodeEscape()));
-        return 11 /* IdentifierName */ ;
-    };
-    Scanner.prototype.scanNumericLiteral = function () {
-        if(this.isHexNumericLiteral()) {
-            return this.scanHexNumericLiteral();
-        } else {
-            return this.scanDecimalNumericLiteral();
-        }
-    };
-    Scanner.prototype.scanDecimalNumericLiteral = function () {
-        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
-            this.slidingWindow.moveToNextItem();
-        }
-        if(this.currentCharCode() === 46 /* dot */ ) {
-            this.slidingWindow.moveToNextItem();
-        }
-        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
-            this.slidingWindow.moveToNextItem();
-        }
-        var ch = this.currentCharCode();
-        if(ch === 101 /* e */  || ch === 69 /* E */ ) {
-            this.slidingWindow.moveToNextItem();
-            ch = this.currentCharCode();
-            if(ch === 45 /* minus */  || ch === 43 /* plus */ ) {
-                if(CharacterInfo.isDecimalDigit(this.slidingWindow.peekItemN(1))) {
-                    this.slidingWindow.moveToNextItem();
-                }
-            }
-        }
-        while(CharacterInfo.isDecimalDigit(this.currentCharCode())) {
-            this.slidingWindow.moveToNextItem();
-        }
-        return 13 /* NumericLiteral */ ;
-    };
-    Scanner.prototype.scanHexNumericLiteral = function () {
-        Debug.assert(this.isHexNumericLiteral());
-        this.slidingWindow.moveToNextItem();
-        this.slidingWindow.moveToNextItem();
-        while(CharacterInfo.isHexDigit(this.currentCharCode())) {
-            this.slidingWindow.moveToNextItem();
-        }
-        return 13 /* NumericLiteral */ ;
-    };
-    Scanner.prototype.isHexNumericLiteral = function () {
-        if(this.currentCharCode() === 48 /* _0 */ ) {
-            var ch = this.slidingWindow.peekItemN(1);
-            if(ch === 120 /* x */  || ch === 88 /* X */ ) {
-                ch = this.slidingWindow.peekItemN(2);
-                return CharacterInfo.isHexDigit(ch);
-            }
-        }
-        return false;
-    };
-    Scanner.prototype.advanceAndSetTokenKind = function (kind) {
-        this.slidingWindow.moveToNextItem();
-        return kind;
-    };
-    Scanner.prototype.scanLessThanToken = function () {
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 82 /* LessThanEqualsToken */ ;
-        } else if(this.currentCharCode() === 60 /* lessThan */ ) {
-            this.slidingWindow.moveToNextItem();
-            if(this.currentCharCode() === 61 /* equals */ ) {
-                this.slidingWindow.moveToNextItem();
-                return 112 /* LessThanLessThanEqualsToken */ ;
-            } else {
-                return 95 /* LessThanLessThanToken */ ;
-            }
-        } else {
-            return 80 /* LessThanToken */ ;
-        }
-    };
-    Scanner.prototype.scanBarToken = function () {
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 116 /* BarEqualsToken */ ;
-        } else if(this.currentCharCode() === 124 /* bar */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 104 /* BarBarToken */ ;
-        } else {
-            return 99 /* BarToken */ ;
-        }
-    };
-    Scanner.prototype.scanCaretToken = function () {
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 117 /* CaretEqualsToken */ ;
-        } else {
-            return 100 /* CaretToken */ ;
-        }
-    };
-    Scanner.prototype.scanAmpersandToken = function () {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if(character === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 115 /* AmpersandEqualsToken */ ;
-        } else if(this.currentCharCode() === 38 /* ampersand */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 103 /* AmpersandAmpersandToken */ ;
-        } else {
-            return 98 /* AmpersandToken */ ;
-        }
-    };
-    Scanner.prototype.scanPercentToken = function () {
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 111 /* PercentEqualsToken */ ;
-        } else {
-            return 92 /* PercentToken */ ;
-        }
-    };
-    Scanner.prototype.scanMinusToken = function () {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if(character === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 109 /* MinusEqualsToken */ ;
-        } else if(character === 45 /* minus */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 94 /* MinusMinusToken */ ;
-        } else {
-            return 90 /* MinusToken */ ;
-        }
-    };
-    Scanner.prototype.scanPlusToken = function () {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if(character === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 108 /* PlusEqualsToken */ ;
-        } else if(character === 43 /* plus */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 93 /* PlusPlusToken */ ;
-        } else {
-            return 89 /* PlusToken */ ;
-        }
-    };
-    Scanner.prototype.scanAsteriskToken = function () {
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 110 /* AsteriskEqualsToken */ ;
-        } else {
-            return 91 /* AsteriskToken */ ;
-        }
-    };
-    Scanner.prototype.scanEqualsToken = function () {
-        this.slidingWindow.moveToNextItem();
-        var character = this.currentCharCode();
-        if(character === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            if(this.currentCharCode() === 61 /* equals */ ) {
-                this.slidingWindow.moveToNextItem();
-                return 87 /* EqualsEqualsEqualsToken */ ;
-            } else {
-                return 84 /* EqualsEqualsToken */ ;
-            }
-        } else if(character === 62 /* greaterThan */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 85 /* EqualsGreaterThanToken */ ;
-        } else {
-            return 107 /* EqualsToken */ ;
-        }
-    };
-    Scanner.prototype.isDotPrefixedNumericLiteral = function () {
-        if(this.currentCharCode() === 46 /* dot */ ) {
-            var ch = this.slidingWindow.peekItemN(1);
-            return CharacterInfo.isDecimalDigit(ch);
-        }
-        return false;
-    };
-    Scanner.prototype.scanDotToken = function () {
-        if(this.isDotPrefixedNumericLiteral()) {
-            return this.scanNumericLiteral();
-        }
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 46 /* dot */  && this.slidingWindow.peekItemN(1) === 46 /* dot */ ) {
-            this.slidingWindow.moveToNextItem();
-            this.slidingWindow.moveToNextItem();
-            return 77 /* DotDotDotToken */ ;
-        } else {
-            return 76 /* DotToken */ ;
-        }
-    };
-    Scanner.prototype.scanSlashToken = function (allowRegularExpression) {
-        if(allowRegularExpression) {
-            var result = this.tryScanRegularExpressionToken();
-            if(result !== 0 /* None */ ) {
-                return result;
-            }
-        }
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            return 119 /* SlashEqualsToken */ ;
-        } else {
-            return 118 /* SlashToken */ ;
-        }
-    };
-    Scanner.prototype.tryScanRegularExpressionToken = function () {
-        Debug.assert(this.currentCharCode() === 47 /* slash */ );
-        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-        try  {
-            this.slidingWindow.moveToNextItem();
-            var inEscape = false;
-            var inCharacterClass = false;
-            while(true) {
-                var ch = this.currentCharCode();
-                if(this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
-                    this.slidingWindow.rewindToPinnedIndex(startIndex);
-                    return 0 /* None */ ;
-                }
-                this.slidingWindow.moveToNextItem();
-                if(inEscape) {
-                    inEscape = false;
-                    continue;
-                }
-                switch(ch) {
-                    case 92 /* backslash */ :
-                        inEscape = true;
-                        continue;
-                    case 91 /* openBracket */ :
-                        inCharacterClass = true;
-                        continue;
-                    case 93 /* closeBracket */ :
-                        inCharacterClass = false;
-                        continue;
-                    case 47 /* slash */ :
-                        if(inCharacterClass) {
-                            continue;
-                        }
-                        break;
-                    default:
-                        continue;
-                }
-                break;
-            }
-            while(Scanner.isIdentifierPartCharacter[this.currentCharCode()]) {
-                this.slidingWindow.moveToNextItem();
-            }
-            return 12 /* RegularExpressionLiteral */ ;
-        }finally {
-            this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-        }
-    };
-    Scanner.prototype.scanExclamationToken = function () {
-        this.slidingWindow.moveToNextItem();
-        if(this.currentCharCode() === 61 /* equals */ ) {
-            this.slidingWindow.moveToNextItem();
-            if(this.currentCharCode() === 61 /* equals */ ) {
-                this.slidingWindow.moveToNextItem();
-                return 88 /* ExclamationEqualsEqualsToken */ ;
-            } else {
-                return 86 /* ExclamationEqualsToken */ ;
-            }
-        } else {
-            return 101 /* ExclamationToken */ ;
-        }
-    };
-    Scanner.prototype.scanDefaultCharacter = function (character, diagnostics) {
-        var position = this.slidingWindow.absoluteIndex();
-        this.slidingWindow.moveToNextItem();
-        var text = String.fromCharCode(character);
-        var messageText = this.getErrorMessageText(text);
-        diagnostics.push(new SyntaxDiagnostic(position, 1, 1 /* Unexpected_character_0 */ , [
-            messageText
-        ]));
-        return 9 /* ErrorToken */ ;
-    };
-    Scanner.prototype.getErrorMessageText = function (text) {
-        if(text === "\\") {
-            return '"\\"';
-        }
-        return JSON2.stringify(text);
-    };
-    Scanner.prototype.skipEscapeSequence = function (diagnostics) {
-        Debug.assert(this.currentCharCode() === 92 /* backslash */ );
-        var rewindPoint = this.slidingWindow.getAndPinAbsoluteIndex();
-        try  {
-            this.slidingWindow.moveToNextItem();
-            var ch = this.currentCharCode();
-            this.slidingWindow.moveToNextItem();
-            switch(ch) {
-                case 120 /* x */ :
-                case 117 /* u */ :
-                    this.slidingWindow.rewindToPinnedIndex(rewindPoint);
-                    var value = this.scanUnicodeOrHexEscape(diagnostics);
-                    return;
-                case 13 /* carriageReturn */ :
-                    if(this.currentCharCode() === 10 /* lineFeed */ ) {
-                        this.slidingWindow.moveToNextItem();
-                    }
-                    return;
-                default:
-                    return;
-            }
-        }finally {
-            this.slidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint);
-        }
-    };
-    Scanner.prototype.scanStringLiteral = function (diagnostics) {
-        var quoteCharacter = this.currentCharCode();
-        Debug.assert(quoteCharacter === 39 /* singleQuote */  || quoteCharacter === 34 /* doubleQuote */ );
-        this.slidingWindow.moveToNextItem();
-        while(true) {
-            var ch = this.currentCharCode();
-            if(ch === 92 /* backslash */ ) {
-                this.skipEscapeSequence(diagnostics);
-            } else if(ch === quoteCharacter) {
-                this.slidingWindow.moveToNextItem();
-                break;
-            } else if(this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
-                diagnostics.push(new SyntaxDiagnostic(this.slidingWindow.absoluteIndex(), 1, 2 /* Missing_closing_quote_character */ , null));
-                break;
-            } else {
-                this.slidingWindow.moveToNextItem();
-            }
-        }
-        return 14 /* StringLiteral */ ;
-    };
-    Scanner.prototype.isUnicodeOrHexEscape = function (character) {
-        return this.isUnicodeEscape(character) || this.isHexEscape(character);
-    };
-    Scanner.prototype.isUnicodeEscape = function (character) {
-        if(character === 92 /* backslash */ ) {
-            var ch2 = this.slidingWindow.peekItemN(1);
-            if(ch2 === 117 /* u */ ) {
-                return true;
-            }
-        }
-        return false;
-    };
-    Scanner.prototype.isHexEscape = function (character) {
-        if(character === 92 /* backslash */ ) {
-            var ch2 = this.slidingWindow.peekItemN(1);
-            if(ch2 === 120 /* x */ ) {
-                return true;
-            }
-        }
-        return false;
-    };
-    Scanner.prototype.peekCharOrUnicodeOrHexEscape = function () {
-        var character = this.currentCharCode();
-        if(this.isUnicodeOrHexEscape(character)) {
-            return this.peekUnicodeOrHexEscape();
-        } else {
-            return character;
-        }
-    };
-    Scanner.prototype.peekCharOrUnicodeEscape = function () {
-        var character = this.currentCharCode();
-        if(this.isUnicodeEscape(character)) {
-            return this.peekUnicodeOrHexEscape();
-        } else {
-            return character;
-        }
-    };
-    Scanner.prototype.peekUnicodeOrHexEscape = function () {
-        var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-        var ch = this.scanUnicodeOrHexEscape(null);
-        this.slidingWindow.rewindToPinnedIndex(startIndex);
-        this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-        return ch;
-    };
-    Scanner.prototype.scanCharOrUnicodeEscape = function (errors) {
-        var ch = this.currentCharCode();
-        if(ch === 92 /* backslash */ ) {
-            var ch2 = this.slidingWindow.peekItemN(1);
-            if(ch2 === 117 /* u */ ) {
-                return this.scanUnicodeOrHexEscape(errors);
-            }
-        }
-        this.slidingWindow.moveToNextItem();
-        return ch;
-    };
-    Scanner.prototype.scanCharOrUnicodeOrHexEscape = function (errors) {
-        var ch = this.currentCharCode();
-        if(ch === 92 /* backslash */ ) {
-            var ch2 = this.slidingWindow.peekItemN(1);
-            if(ch2 === 117 /* u */  || ch2 === 120 /* x */ ) {
-                return this.scanUnicodeOrHexEscape(errors);
-            }
-        }
-        this.slidingWindow.moveToNextItem();
-        return ch;
-    };
-    Scanner.prototype.scanUnicodeOrHexEscape = function (errors) {
-        var start = this.slidingWindow.absoluteIndex();
-        var character = this.currentCharCode();
-        Debug.assert(character === 92 /* backslash */ );
-        this.slidingWindow.moveToNextItem();
-        character = this.currentCharCode();
-        Debug.assert(character === 117 /* u */  || character === 120 /* x */ );
-        var intChar = 0;
-        this.slidingWindow.moveToNextItem();
-        var count = character === 117 /* u */  ? 4 : 2;
-        for(var i = 0; i < count; i++) {
-            var ch2 = this.currentCharCode();
-            if(!CharacterInfo.isHexDigit(ch2)) {
-                if(errors !== null) {
-                    var end = this.slidingWindow.absoluteIndex();
-                    var info = this.createIllegalEscapeDiagnostic(start, end);
-                    errors.push(info);
-                }
-                break;
-            }
-            intChar = (intChar << 4) + CharacterInfo.hexValue(ch2);
-            this.slidingWindow.moveToNextItem();
-        }
-        return intChar;
-    };
-    Scanner.prototype.substring = function (start, end, intern) {
-        var length = end - start;
-        var offset = start - this.slidingWindow.windowAbsoluteStartIndex;
-        Debug.assert(offset >= 0);
-        if(intern) {
-            return this.stringTable.addCharArray(this.slidingWindow.window, offset, length);
-        } else {
-            return StringUtilities.fromCharCodeArray(this.slidingWindow.window.slice(offset, offset + length));
-        }
-    };
-    Scanner.prototype.createIllegalEscapeDiagnostic = function (start, end) {
-        return new SyntaxDiagnostic(start, end - start, 0 /* Unrecognized_escape_sequence */ , null);
-    };
-    return Scanner;
+    return ParseOptions;
 })();
 var Strings = (function () {
     function Strings() { }
