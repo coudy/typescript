@@ -4,7 +4,7 @@ module Mankala {
     export class Rectangle {
 
         constructor (public x: number, public y: number,
-                           public width: number, public height: number) { };
+                           public width: number, public height: number) { }
 
         public square() {
             var len = this.width;
