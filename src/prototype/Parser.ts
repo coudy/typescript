@@ -179,7 +179,7 @@ module Parser1 {
             super();
         }
 
-        private skippedElement(element: ISyntaxElement): bool {
+        private trySkipElement(element: ISyntaxElement): bool {
             var elementWidth = 0;
             if (this.skippedTokens.length !== 0) {
                 var skippedToken = this.skippedTokens[0];
@@ -197,7 +197,7 @@ module Parser1 {
         }
 
         private visitNode(node: SyntaxNode): SyntaxNode {
-            if (this.skippedElement(node)) {
+            if (this.trySkipElement(node)) {
                 return node;
             }
 
@@ -205,7 +205,7 @@ module Parser1 {
         }
 
         private visitList(list: ISyntaxList): ISyntaxList {
-            if (this.skippedElement(list)) {
+            if (this.trySkipElement(list)) {
                 return list;
             }
 
@@ -213,7 +213,7 @@ module Parser1 {
         }
 
         private visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
-            if (this.skippedElement(list)) {
+            if (this.trySkipElement(list)) {
                 return list;
             }
 

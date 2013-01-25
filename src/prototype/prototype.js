@@ -35629,7 +35629,7 @@ var Parser1;
             this.skippedTokens = skippedTokens;
             this.position = 0;
         }
-        SkippedTokensAdder.prototype.skippedElement = function (element) {
+        SkippedTokensAdder.prototype.trySkipElement = function (element) {
             var elementWidth = 0;
             if(this.skippedTokens.length !== 0) {
                 var skippedToken = this.skippedTokens[0];
@@ -35642,19 +35642,19 @@ var Parser1;
             return true;
         };
         SkippedTokensAdder.prototype.visitNode = function (node) {
-            if(this.skippedElement(node)) {
+            if(this.trySkipElement(node)) {
                 return node;
             }
             return _super.prototype.visitNode.call(this, node);
         };
         SkippedTokensAdder.prototype.visitList = function (list) {
-            if(this.skippedElement(list)) {
+            if(this.trySkipElement(list)) {
                 return list;
             }
             return _super.prototype.visitList.call(this, list);
         };
         SkippedTokensAdder.prototype.visitSeparatedList = function (list) {
-            if(this.skippedElement(list)) {
+            if(this.trySkipElement(list)) {
                 return list;
             }
             return _super.prototype.visitSeparatedList.call(this, list);
@@ -52025,6 +52025,13 @@ var Program = (function () {
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
+        Environment.standardOut.WriteLine("Testing against fuzz.");
+        this.runTests("C:\\temp\\fuzz", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
+        }, 2000);
+        if(true) {
+            return;
+        }
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
@@ -52451,7 +52458,7 @@ if(true) {
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }
-if(false) {
+if(true) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);
