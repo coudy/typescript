@@ -20450,7 +20450,31 @@ var SyntaxTokenReplacer = (function (_super) {
         this.token2 = token2;
     }
     SyntaxTokenReplacer.prototype.visitToken = function (token) {
-        return token === this.token1 ? this.token2 : token;
+        if(token === this.token1) {
+            var result = this.token2;
+            this.token1 = null;
+            this.token2 = null;
+            return result;
+        }
+        return token;
+    };
+    SyntaxTokenReplacer.prototype.visitNode = function (node) {
+        if(this.token1 === null) {
+            return node;
+        }
+        return _super.prototype.visitNode.call(this, node);
+    };
+    SyntaxTokenReplacer.prototype.visitList = function (list) {
+        if(this.token1 === null) {
+            return list;
+        }
+        return _super.prototype.visitList.call(this, list);
+    };
+    SyntaxTokenReplacer.prototype.visitSeparatedList = function (list) {
+        if(this.token1 === null) {
+            return list;
+        }
+        return _super.prototype.visitSeparatedList.call(this, list);
     };
     return SyntaxTokenReplacer;
 })(SyntaxRewriter);
@@ -20482,8 +20506,10 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.firstToken = function () {
         for(var i = 0, n = this.slotCount(); i < n; i++) {
             var element = this.elementAtSlot(i);
-            if(element != null && element.fullWidth() > 0) {
-                return element.firstToken();
+            if(element != null) {
+                if(element.fullWidth() > 0 || element.kind() === 10 /* EndOfFileToken */ ) {
+                    return element.firstToken();
+                }
             }
         }
         return null;
@@ -20491,8 +20517,10 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.lastToken = function () {
         for(var i = this.slotCount() - 1; i >= 0; i--) {
             var element = this.elementAtSlot(i);
-            if(element != null && element.fullWidth() > 0) {
-                return element.lastToken();
+            if(element != null) {
+                if(element.fullWidth() > 0 || element.kind() === 10 /* EndOfFileToken */ ) {
+                    return element.lastToken();
+                }
             }
         }
         return null;
@@ -20576,6 +20604,9 @@ var SyntaxNode = (function () {
         }
     };
     SyntaxNode.prototype.replaceToken = function (token1, token2) {
+        if(token1 === token2) {
+            return this;
+        }
         return this.accept(new SyntaxTokenReplacer(token1, token2));
     };
     SyntaxNode.prototype.withLeadingTrivia = function (trivia) {
@@ -52025,13 +52056,6 @@ var Program = (function () {
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
-        Environment.standardOut.WriteLine("Testing against fuzz.");
-        this.runTests("C:\\temp\\fuzz", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
-        }, 2000);
-        if(true) {
-            return;
-        }
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);

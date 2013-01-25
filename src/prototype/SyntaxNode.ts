@@ -34,8 +34,10 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         for (var i = 0, n = this.slotCount(); i < n; i++) {
             var element = this.elementAtSlot(i);
 
-            if (element != null && element.fullWidth() > 0) {
-                return element.firstToken();
+            if (element != null) {
+                if (element.fullWidth() > 0 || element.kind() === SyntaxKind.EndOfFileToken) {
+                    return element.firstToken();
+                }
             }
         }
 
@@ -47,8 +49,10 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         for (var i = this.slotCount() - 1; i >= 0; i--) {
             var element = this.elementAtSlot(i);
 
-            if (element != null && element.fullWidth() > 0) {
-                return element.lastToken();
+            if (element != null) {
+                if (element.fullWidth() > 0 || element.kind() === SyntaxKind.EndOfFileToken) {
+                    return element.lastToken();
+                }
             }
         }
 
@@ -155,6 +159,10 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     public replaceToken(token1: ISyntaxToken, token2: ISyntaxToken): SyntaxNode {
+        if (token1 === token2) {
+            return this;
+        }
+
         return this.accept(new SyntaxTokenReplacer(token1, token2));
     }
 
