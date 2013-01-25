@@ -653,7 +653,7 @@ module Parser1 {
 
         private fetchMoreItems(allowRegularExpression: bool, sourceIndex: number, window: any[], destinationIndex: number, spaceAvailable: number): number {
             // Assert disabled because it is actually expensive enugh to affect perf.
-            Debug.assert(spaceAvailable > 0);
+            // Debug.assert(spaceAvailable > 0);
             window[destinationIndex] = this.scanner.scan(this._tokenDiagnostics, allowRegularExpression);
             return 1;
         }
