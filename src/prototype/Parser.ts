@@ -24,13 +24,11 @@ module Parser1 {
 
         // Information used by the parser itself.
 
-        // As we speculatively parser, we may build up diagnostics and skipped tokens.  When we    
-        // rewind we want to 'forget' that information.  In order to do that we store the count
-        // of diagnostics and skipped tokens when we start speculating, and we reset to that
-        // count when we're done.  That way the speculative parse does not affect any further
-        // results.
+        // As we speculatively parser, we may build up diagnostics.  When we rewind we want to 
+        // 'forget' that information.In order to do that we store the count of diagnostics and 
+        // when we start speculating, and we reset to that count when we're done.  That way the
+        // speculative parse does not affect any further results.
         diagnosticsCount: number;
-        skippedTokensCount: number;
 
         // For debug purposes only, we also track the following information. They help us assert 
         // that we're not doing anything unexpected.
@@ -158,147 +156,6 @@ module Parser1 {
 
         FirstListParsingState = SourceUnit_ModuleElements,
         LastListParsingState = TypeArgumentList_Types,
-    }
-
-    // Information we collect in the parser when we skip a token.
-    interface SkippedToken {
-        // The token we skipped.
-        skippedToken: ISyntaxToken;
-
-        // The position of the skipped token
-        position: number;
-    }
-
-    // Helper class to take the tokens that we've skipped over and attach them as 'SkippedText' 
-    // trivia to the token that preceded them (or to the first token in the file if no token 
-    // preceded them).
-    class SkippedTokensAdder extends SyntaxRewriter {
-        private position: number = 0;
-
-        constructor(private skippedTokens: SkippedToken[]) {
-            super();
-        }
-
-        private trySkipElement(element: ISyntaxElement): bool {
-            var elementWidth = 0;
-            if (this.skippedTokens.length !== 0) {
-                var skippedToken = this.skippedTokens[0];
-
-                var elementWidth = element.fullWidth();
-                if (this.position + elementWidth >= skippedToken.position) {
-                    // No need to do anything with this node if it falls entirely befre the first 
-                    // skipped token.
-                    return false;
-                }
-            }
-
-            this.position += elementWidth;
-            return true;
-        }
-
-        private visitNode(node: SyntaxNode): SyntaxNode {
-            if (this.trySkipElement(node)) {
-                return node;
-            }
-
-            return super.visitNode(node);
-        }
-
-        private visitList(list: ISyntaxList): ISyntaxList {
-            if (this.trySkipElement(list)) {
-                return list;
-            }
-
-            return super.visitList(list);
-        }
-
-        private visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
-            if (this.trySkipElement(list)) {
-                return list;
-            }
-
-            return super.visitSeparatedList(list);
-        }
-
-        private visitToken(token: ISyntaxToken): ISyntaxToken {
-            if (this.skippedTokens.length === 0) {
-                return token;
-            }
-
-            // Don't add skipped tokens to a 0-width token (unless it is the EOF token).
-            if (token.fullWidth() === 0 && token.tokenKind !== SyntaxKind.EndOfFileToken) {
-                return token;
-            }
-
-            var relativePosition = 0;
-
-            // First check for skipped tokens at the beginning the document.  These will get attached
-            // to the first token we run into.
-            var leadingTrivia: ISyntaxTrivia[] = null;
-            while (this.skippedTokens.length > 0 &&
-                   this.skippedTokens[0].position === relativePosition) {
-                leadingTrivia = leadingTrivia || [];
-
-                var skippedToken = this.skippedTokens.shift().skippedToken;
-                this.addSkippedTokenTo(skippedToken, leadingTrivia);
-
-                relativePosition += skippedToken.fullWidth();
-                this.position += skippedToken.fullWidth();
-            }
-
-            if (leadingTrivia !== null) {
-                // Note: add the existing trivia *after* the skipped tokens.
-                this.addTriviaTo(token.leadingTrivia(), leadingTrivia);
-            }
-
-            // Now find the skipped tokens that were assigned to this token.  Consume skipped tokens
-            // as long as they belong to this token (or to a skipped token that follows it).
-            this.position += token.fullWidth();
-
-            var trailingTrivia: ISyntaxTrivia[] = null;
-            while (this.skippedTokens.length > 0 &&
-                   this.skippedTokens[0].position === this.position) {
-                // Initialize the list of trailing trivia to the trailing trivia of the token if it
-                // has any.  This way any skipped tokens will go after the existing trivia.
-                trailingTrivia = trailingTrivia || token.trailingTrivia().toArray();
-
-                var skippedToken = this.skippedTokens.shift().skippedToken;
-                this.addSkippedTokenTo(skippedToken, trailingTrivia);
-
-                this.position += skippedToken.fullWidth();
-            }
-
-            var result = token;
-
-            if (leadingTrivia !== null) {
-                result = result.withLeadingTrivia(Syntax.triviaList(leadingTrivia));
-            }
-
-            if (trailingTrivia !== null) {
-                result = result.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
-            }
-
-            return result;
-        }
-
-        private addTriviaTo(list: ISyntaxTriviaList, array: ISyntaxTrivia[]): void {
-            for (var i = 0, n = list.count(); i < n; i++) {
-                array.push(list.syntaxTriviaAt(i));
-            }
-        }
-
-        private addSkippedTokenTo(skippedToken: ISyntaxToken, array: ISyntaxTrivia[]): void {
-            Debug.assert(skippedToken.text().length > 0);
-
-            // first, add the leading trivia of the skipped token to the array
-            this.addTriviaTo(skippedToken.leadingTrivia(), array);
-
-            // now, add the text of the token as skipped text to the trivia array.
-            array.push(Syntax.trivia(SyntaxKind.SkippedTextTrivia, skippedToken.text()));
-
-            // Finally, add the trailing trivia of the skipped token to the trivia array.
-            this.addTriviaTo(skippedToken.trailingTrivia(), array);
-        }
     }
 
     // Allows one to easily move over a syntax tree.  Used during incremental parsing to move over
@@ -1225,12 +1082,6 @@ module Parser1 {
         // Current state of the parser.  If we need to rewind we will store and reset these values as
         // appropriate.
 
-        // Tokens we've decided to skip because they couldn't fit into the current production.  Any
-        // tokens that are skipped when speculative parsing need to removed when rewinding.  To do this
-        // we store the count of skipped tokens when we start speculative parsing.  And if we rewind,
-        // we restore this to the same count that we started at.
-        private skippedTokens: SkippedToken[] = [];
-
         // Diagnostics created when parsing invalid code.  Any diagnosics created when speculative 
         // parsing need to removed when rewinding.  To do this we store the count of diagnostics when 
         // we start speculative parsing.  And if we rewind, we restore this to the same count that we 
@@ -1248,7 +1099,6 @@ module Parser1 {
             var rewindPoint = this.source.getRewindPoint();
 
             rewindPoint.diagnosticsCount = this.diagnostics.length;
-            rewindPoint.skippedTokensCount = this.skippedTokens.length;
 
             // Values we keep around for debug asserting purposes.
             rewindPoint.isInStrictMode = this.isInStrictMode;
@@ -1261,7 +1111,6 @@ module Parser1 {
             this.source.rewind(rewindPoint);
 
             this.diagnostics.length = rewindPoint.diagnosticsCount;
-            this.skippedTokens.length = rewindPoint.skippedTokensCount;
         }
 
         private releaseRewindPoint(rewindPoint: IParserRewindPoint): void {
@@ -1662,6 +1511,98 @@ module Parser1 {
             var text = stringLiteral.text();
             return text === '"use strict"' || text === "'use strict'";
         }
+        
+        private addSkippedTokenAfterNodeOrToken(nodeOrToken: ISyntaxNodeOrToken, skippedToken: ISyntaxToken): ISyntaxNodeOrToken {
+            if (nodeOrToken.isToken()) {
+                return this.addSkippedTokenAfterToken(<ISyntaxToken>nodeOrToken, skippedToken);
+            }
+            else if (nodeOrToken.isNode()) {
+                return this.addSkippedTokenAfterNode(<SyntaxNode>nodeOrToken, skippedToken);
+            }
+            else {
+                throw Errors.invalidOperation();
+            }
+        }
+
+        private addSkippedTokenAfterNode(node: SyntaxNode, skippedToken: ISyntaxToken): SyntaxNode {
+            var oldToken = node.lastToken();
+            var newToken = this.addSkippedTokenAfterToken(oldToken, skippedToken);
+
+            return node.replaceToken(oldToken, newToken);
+        }
+
+        private addSkippedTokensBeforeNode(node: SyntaxNode, skippedTokens: ISyntaxToken[]): SyntaxNode {
+            if (skippedTokens.length > 0) {
+                var oldToken = node.firstToken();
+                var newToken = this.addSkippedTokensBeforeToken(oldToken, skippedTokens);
+
+                return node.replaceToken(oldToken, newToken);
+            }
+
+            return node;
+        }
+
+        private addSkippedTokensBeforeToken(token: ISyntaxToken, skippedTokens: ISyntaxToken[]): ISyntaxToken {
+            Debug.assert(token.fullWidth() > 0 || token.tokenKind === SyntaxKind.EndOfFileToken);
+            Debug.assert(skippedTokens.length > 0);
+
+            var leadingTrivia: ISyntaxTrivia[] = [];
+            for (var i = 0, n = skippedTokens.length; i < n; i++) {
+                this.addSkippedTokenToTriviaArray(leadingTrivia, skippedTokens[i]);
+            }
+
+            this.addTriviaTo(token.leadingTrivia(), leadingTrivia);
+
+            // Don't need this array anymore.  Give it back so we can reuse it.
+            this.returnArray(skippedTokens);
+            return token.withLeadingTrivia(Syntax.triviaList(leadingTrivia));
+        }
+
+        private addSkippedTokensAfterToken(token: ISyntaxToken, skippedTokens: ISyntaxToken[]): ISyntaxToken {
+            Debug.assert(token.fullWidth() > 0);
+            if (skippedTokens.length === 0) {
+                this.returnArray(skippedTokens);
+                return token;
+            }
+
+            var trailingTrivia = token.trailingTrivia().toArray();
+
+            for (var i = 0, n = skippedTokens.length; i < n; i++) {
+                this.addSkippedTokenToTriviaArray(trailingTrivia, skippedTokens[i]);
+            }
+
+            // Don't need this array anymore.  Give it back so we can reuse it.
+            this.returnArray(skippedTokens);
+            return token.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
+        }
+
+        private addSkippedTokenAfterToken(token: ISyntaxToken, skippedToken: ISyntaxToken): ISyntaxToken {
+            Debug.assert(token.fullWidth() > 0);
+
+            var trailingTrivia = token.trailingTrivia().toArray();
+            this.addSkippedTokenToTriviaArray(trailingTrivia, skippedToken);
+
+            return token.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
+        }
+
+        private addSkippedTokenToTriviaArray(array: ISyntaxTrivia[], skippedToken: ISyntaxToken, ): void {
+            Debug.assert(skippedToken.text().length > 0);
+            
+            // first, add the leading trivia of the skipped token to the array
+            this.addTriviaTo(skippedToken.leadingTrivia(), array);
+
+            // now, add the text of the token as skipped text to the trivia array.
+            array.push(Syntax.trivia(SyntaxKind.SkippedTextTrivia, skippedToken.text()));
+
+            // Finally, add the trailing trivia of the skipped token to the trivia array.
+            this.addTriviaTo(skippedToken.trailingTrivia(), array);
+        }
+
+        private addTriviaTo(list: ISyntaxTriviaList, array: ISyntaxTrivia[]): void {
+            for (var i = 0, n = list.count(); i < n; i++) {
+                array.push(list.syntaxTriviaAt(i));
+            }
+        }
 
         public parseSyntaxTree(): SyntaxTree {
             var sourceUnit = this.parseSourceUnit();
@@ -1669,21 +1610,7 @@ module Parser1 {
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.position() - b.position());
 
-            sourceUnit = this.addSkippedTokensTo(sourceUnit);
-
             return new SyntaxTree(sourceUnit, allDiagnostics);
-        }
-
-        private addSkippedTokensTo(sourceUnit: SourceUnitSyntax): SourceUnitSyntax {
-            if (this.skippedTokens.length === 0) {
-                // No skipped tokens, nothing to do.
-                return sourceUnit;
-            }
-
-            var result = sourceUnit.accept(new SkippedTokensAdder(this.skippedTokens));
-            Debug.assert(this.skippedTokens.length === 0);
-
-            return result;
         }
 
         private setStrictMode(isInStrictMode: bool) {
@@ -1696,10 +1623,16 @@ module Parser1 {
             // level parsing entrypoint.  So it will always start as false and be reset to false when the
             // loop ends.  However, for sake of symmetry and consistancy we do this.
             var savedIsInStrictMode = this.isInStrictMode;
-            var moduleElements = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, ParserImpl.updateStrictModeState);
+
+            var result = this.parseSyntaxList(ListParsingState.SourceUnit_ModuleElements, ParserImpl.updateStrictModeState);
+            var moduleElements = result.list;
+
             this.setStrictMode(savedIsInStrictMode);
 
-            return this.factory.sourceUnit(moduleElements, this.currentToken());
+            var sourceUnit = this.factory.sourceUnit(moduleElements, this.currentToken());
+            sourceUnit = <SourceUnitSyntax>this.addSkippedTokensBeforeNode(sourceUnit, result.skippedTokens);
+
+            return sourceUnit;
         }
 
         private static updateStrictModeState(parser: ParserImpl, items: any[]): void {
@@ -1828,7 +1761,12 @@ module Parser1 {
                 // if we're not in an expression, this must be a type argument list.  Just parse
                 // it out as such.
                 var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-                var typeArguments = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                Debug.assert(lessThanToken.fullWidth() > 0);
+
+                var result = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                var typeArguments = result.list;
+                lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
+
                 var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
 
                 return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
@@ -1841,7 +1779,12 @@ module Parser1 {
             try {
                 // We've seen a '<'.  Try to parse it out as a type argument list.
                 var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-                var typeArguments = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                Debug.assert(lessThanToken.fullWidth() > 0);
+
+                var result = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                var typeArguments = result.list;
+                lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
+
                 var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
 
                 // We're in a context where '<' could be the start of a type argument list, or part
@@ -1931,7 +1874,9 @@ module Parser1 {
             var variableDeclarators: ISeparatedSyntaxList = Syntax.emptySeparatedList;
 
             if (openBraceToken.width() > 0) {
-                variableDeclarators = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
+                var result = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
+                variableDeclarators = result.list;
+                openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -1981,7 +1926,10 @@ module Parser1 {
             var classElements: ISyntaxList = Syntax.emptyList;
 
             if (openBraceToken.width() > 0) {
-                classElements = this.parseSyntaxList(ListParsingState.ClassDeclaration_ClassElements);
+                var result = this.parseSyntaxList(ListParsingState.ClassDeclaration_ClassElements);
+
+                classElements = result.list;
+                openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -2307,7 +2255,9 @@ module Parser1 {
 
             var moduleElements: ISyntaxList = Syntax.emptyList;
             if (openBraceToken.width() > 0) {
-                moduleElements = this.parseSyntaxList(ListParsingState.ModuleDeclaration_ModuleElements);
+                var result = this.parseSyntaxList(ListParsingState.ModuleDeclaration_ModuleElements);
+                moduleElements = result.list;
+                openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -2352,7 +2302,9 @@ module Parser1 {
 
             var typeMembers: ISeparatedSyntaxList = Syntax.emptySeparatedList;
             if (openBraceToken.width() > 0) {
-                typeMembers = this.parseSeparatedSyntaxList(ListParsingState.ObjectType_TypeMembers);
+                var result = this.parseSeparatedSyntaxList(ListParsingState.ObjectType_TypeMembers);
+                typeMembers = result.list;
+                openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -2480,7 +2432,11 @@ module Parser1 {
             Debug.assert(this.isExtendsClause());
 
             var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
-            var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
+            Debug.assert(extendsKeyword.fullWidth() > 0);
+
+            var result = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
+            var typeNames = result.list;
+            extendsKeyword = this.addSkippedTokensAfterToken(extendsKeyword, result.skippedTokens);
 
             return this.factory.extendsClause(extendsKeyword, typeNames);
         }
@@ -2493,7 +2449,11 @@ module Parser1 {
             Debug.assert(this.isImplementsClause());
 
             var implementsKeyword = this.eatKeyword(SyntaxKind.ImplementsKeyword);
-            var typeNames = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
+            Debug.assert(implementsKeyword.fullWidth() > 0);
+
+            var result = this.parseSeparatedSyntaxList(ListParsingState.ExtendsOrImplementsClause_TypeNameList);
+            var typeNames = result.list;
+            implementsKeyword = this.addSkippedTokensAfterToken(implementsKeyword, result.skippedTokens);
 
             return this.factory.implementsClause(implementsKeyword, typeNames);
         }
@@ -2928,7 +2888,9 @@ module Parser1 {
 
             var switchClauses: ISyntaxList = Syntax.emptyList;
             if (openBraceToken.width() > 0) {
-                switchClauses = this.parseSyntaxList(ListParsingState.SwitchStatement_SwitchClauses);
+                var result = this.parseSyntaxList(ListParsingState.SwitchStatement_SwitchClauses);
+                switchClauses = result.list;
+                openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
@@ -2975,7 +2937,15 @@ module Parser1 {
             var caseKeyword = this.eatKeyword(SyntaxKind.CaseKeyword);
             var expression = this.parseExpression(/*allowIn:*/ true);
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
+            var statements = Syntax.emptyList;
+
+            // TODO: allow parsing of the list evne if there's no colon.  However, we have to make 
+            // sure we add any skipped tokens to the right previous node or token.
+            if (colonToken.fullWidth() > 0) {
+                var result = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
+                statements = result.list;
+                colonToken = this.addSkippedTokensAfterToken(colonToken, result.skippedTokens);
+            }
 
             return this.factory.caseSwitchClause(caseKeyword, expression, colonToken, statements);
         }
@@ -2985,7 +2955,15 @@ module Parser1 {
 
             var defaultKeyword = this.eatKeyword(SyntaxKind.DefaultKeyword);
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var statements = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
+            var statements = Syntax.emptyList;
+
+            // TODO: Allow parsing witha colon here.  However, ensure that we attach any skipped 
+            // tokens to the defaultKeyword.
+            if (colonToken.fullWidth() > 0) {
+                var result = this.parseSyntaxList(ListParsingState.SwitchClause_Statements);
+                statements = result.list;
+                colonToken = this.addSkippedTokensAfterToken(colonToken, result.skippedTokens);
+            }
 
             return this.factory.defaultSwitchClause(defaultKeyword, colonToken, statements);
         }
@@ -3212,13 +3190,18 @@ module Parser1 {
 
         private parseVariableDeclaration(allowIn: bool): VariableDeclarationSyntax {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.VarKeyword);
+
             var varKeyword = this.eatKeyword(SyntaxKind.VarKeyword);
+            Debug.assert(varKeyword.fullWidth() > 0);
 
             var listParsingState = allowIn
                 ? ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn
                 : ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn;
 
-            var variableDeclarators = this.parseSeparatedSyntaxList(listParsingState);
+            var result = this.parseSeparatedSyntaxList(listParsingState);
+            var variableDeclarators = result.list;
+            varKeyword = this.addSkippedTokensAfterToken(varKeyword, result.skippedTokens);
+
             return this.factory.variableDeclaration(varKeyword, variableDeclarators);
         }
 
@@ -3550,7 +3533,14 @@ module Parser1 {
 
         private parseArgumentList(typeArgumentList: TypeArgumentListSyntax): ArgumentListSyntax {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-            var arguments = this.parseSeparatedSyntaxList(ListParsingState.ArgumentList_AssignmentExpressions);
+            var arguments = Syntax.emptySeparatedList;
+
+            if (openParenToken.fullWidth() > 0) {
+                var result = this.parseSeparatedSyntaxList(ListParsingState.ArgumentList_AssignmentExpressions);
+                arguments = result.list;
+                openParenToken = this.addSkippedTokensAfterToken(openParenToken, result.skippedTokens);
+            }
+
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
             return this.factory.argumentList(typeArgumentList, openParenToken, arguments, closeParenToken);
@@ -4090,7 +4080,12 @@ module Parser1 {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBraceToken);
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-            var propertyAssignments = this.parseSeparatedSyntaxList(ListParsingState.ObjectLiteralExpression_PropertyAssignments);
+            Debug.assert(openBraceToken.fullWidth() > 0);
+
+            var result = this.parseSeparatedSyntaxList(ListParsingState.ObjectLiteralExpression_PropertyAssignments);
+            var propertyAssignments = result.list;
+            openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
+
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
             return this.factory.objectLiteralExpression(
@@ -4201,7 +4196,12 @@ module Parser1 {
             Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenBracketToken);
 
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
-            var expressions = this.parseSeparatedSyntaxList(ListParsingState.ArrayLiteralExpression_AssignmentExpressions);
+            Debug.assert(openBracketToken.fullWidth() > 0);
+
+            var result = this.parseSeparatedSyntaxList(ListParsingState.ArrayLiteralExpression_AssignmentExpressions);
+            var expressions = result.list;
+            openBracketToken = this.addSkippedTokensAfterToken(openBracketToken, result.skippedTokens);
+
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
             return this.factory.arrayLiteralExpression(openBracketToken, expressions, closeBracketToken);
@@ -4225,7 +4225,11 @@ module Parser1 {
 
             if (openBraceToken.width() > 0) {
                 var savedIsInStrictMode = this.isInStrictMode;
-                statements = this.parseSyntaxList(ListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
+
+                var result = this.parseSyntaxList(ListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
+                statements = result.list;
+                openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
+
                 this.setStrictMode(savedIsInStrictMode);
             }
 
@@ -4250,7 +4254,12 @@ module Parser1 {
             var rewindPoint = this.getRewindPoint();
             try {
                 var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-                var typeParameterList = this.parseSeparatedSyntaxList(ListParsingState.TypeParameterList_TypeParameters);
+                Debug.assert(lessThanToken.fullWidth() > 0);
+                
+                var result = this.parseSeparatedSyntaxList(ListParsingState.TypeParameterList_TypeParameters);
+                var typeParameterList = result.list;
+                lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
+
                 var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
 
                 // return null if we were required to have a '>' token and we did not  have one.
@@ -4294,7 +4303,9 @@ module Parser1 {
             var parameters: ISeparatedSyntaxList = Syntax.emptySeparatedList;
 
             if (openParenToken.width() > 0) {
-                parameters = this.parseSeparatedSyntaxList(ListParsingState.ParameterList_Parameters);
+                var result = this.parseSeparatedSyntaxList(ListParsingState.ParameterList_Parameters);
+                parameters = result.list;
+                openParenToken = this.addSkippedTokensAfterToken(openParenToken, result.skippedTokens);
             }
 
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
@@ -4496,7 +4507,7 @@ module Parser1 {
         }
 
         private parseSyntaxList(currentListType: ListParsingState,
-                                processItems: (parser: ParserImpl, items: any[]) => void = null): ISyntaxList {
+                                processItems: (parser: ParserImpl, items: any[]) => void = null): { skippedTokens: ISyntaxToken[]; list: ISyntaxList; } {
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= currentListType;
 
@@ -4507,7 +4518,7 @@ module Parser1 {
             return result;
         }
 
-        private parseSeparatedSyntaxList(currentListType: ListParsingState): ISeparatedSyntaxList {
+        private parseSeparatedSyntaxList(currentListType: ListParsingState): { skippedTokens: ISyntaxToken[]; list: ISeparatedSyntaxList; } {
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= currentListType;
 
@@ -4518,8 +4529,11 @@ module Parser1 {
             return result;
         }
 
-        // Returns true if we should abort parsing the list.
-        private abortParsingListOrMoveToNextToken(currentListType: ListParsingState, itemCount: number): bool {
+        // Returns true if we should abort parsing.
+        private abortParsingListOrMoveToNextToken(currentListType: ListParsingState,
+                                                  itemCount: number,
+                                                  items: ISyntaxNodeOrToken[],
+                                                  skippedTokens: ISyntaxToken[]): bool {
             // Ok.  We're at a token that is not a terminator for the list and wasn't the start of 
             // an item in the list. Definitely report an error for this token.
             this.reportUnexpectedTokenDiagnostic(currentListType);
@@ -4542,14 +4556,32 @@ module Parser1 {
 
             // Otherwise, if none of the lists we're in can capture this token, then we need to 
             // unilaterally skip it.  Note: we've already reported an error above.
-            var token = this.currentToken();
-            this.skippedTokens.push({ skippedToken: token, position: this.source.absolutePosition() });
+            var skippedToken = this.currentToken();
 
             // Consume this token and move onto the next item in the list.
             this.moveToNextToken();
 
-            // Continue parsing this list.
+            this.addSkippedTokenToList(items, skippedTokens, skippedToken);
+
+            // Continue parsing this list.  Attach this token to whatever we've seen already.
             return false;
+        }
+        
+        private addSkippedTokenToList(items: ISyntaxNodeOrToken[], skippedTokens: ISyntaxToken[], skippedToken: ISyntaxToken): void {
+            // Now, add this skipped token to the last item we successfully parsed in the list.  Or
+            // add it to the list of skipped tokens if we haven't parsed anything.  Our caller will
+            // have to deal with them.
+            for (var i = items.length - 1; i >= 0; i--) {
+                var item = items[i];
+                if (item.fullWidth() > 0) {
+                    items[i] = this.addSkippedTokenAfterNodeOrToken(item, skippedToken);
+                    return;
+                }
+            }
+            
+            // Didn't have anything in the list we could add to.  Add to the skipped items array
+            // for our caller to handle.
+            skippedTokens.push(skippedToken);
         }
 
         private tryParseExpectedListItem(currentListType: ListParsingState,
@@ -4573,27 +4605,24 @@ module Parser1 {
                    this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
         }
 
-        private syntaxArrayPool: any[][] = [];
-        private getSyntaxArray(): any[] {
-            if (this.syntaxArrayPool.length > 0) {
-                return this.syntaxArrayPool.pop();
+        private arrayPool: any[][] = [];
+        private getArray(): any[] {
+            if (this.arrayPool.length > 0) {
+                return this.arrayPool.pop();
             }
 
             return [];
         }
 
-        private returnSyntaxArray(array: any[]) {
-            // Can't return if it has more then 1 element.  In that case, the list will have been
-            // copied into the SyntaxList.
-            if (array.length <= 1) {
-                array.length = 0;
-                this.syntaxArrayPool.push(array);
-            }
+        private returnArray(array: any[]) {
+            array .length = 0;
+            this.arrayPool.push(array);
         }
 
         private parseSyntaxListWorker(currentListType: ListParsingState,
-                                      processItems: (parser: ParserImpl, items: any[]) => void ): ISyntaxList {
-            var items: SyntaxNode[] = this.getSyntaxArray();
+                                      processItems: (parser: ParserImpl, items: any[]) => void ): { skippedTokens: ISyntaxToken[]; list: ISyntaxList; } {
+            var items: SyntaxNode[] = this.getArray();
+            var skippedTokens: ISyntaxToken[] = this.getArray();
 
             while (true) {
                 // Try to parse an item of the list.  If we fail then decide if we need to abort or 
@@ -4613,7 +4642,7 @@ module Parser1 {
 
                     // List wasn't complete and we didn't get an item.  Figure out if we should bail out
                     // or skip a token and continue.
-                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, newItemsCount);
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, newItemsCount, items, skippedTokens);
                     if (abort) {
                         break;
                     }
@@ -4624,13 +4653,19 @@ module Parser1 {
             }
 
             var result = Syntax.list(items);
-            this.returnSyntaxArray(items);
 
-            return result;
+            // Can't return if it has more then 1 element.  In that case, the list will have been
+            // copied into the SyntaxList.
+            if (items.length <= 1) {
+                this.returnArray(items);
+            }
+
+            return { skippedTokens: skippedTokens, list: result };
         }
 
-        private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): ISeparatedSyntaxList {
-            var items: ISyntaxNodeOrToken[] = this.getSyntaxArray();
+        private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): { skippedTokens: ISyntaxToken[]; list: ISeparatedSyntaxList; } {
+            var items: ISyntaxNodeOrToken[] = this.getArray();
+            var skippedTokens: ISyntaxToken[] = this.getArray();
 
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var separatorKind = this.separatorKind(currentListType);
@@ -4658,7 +4693,7 @@ module Parser1 {
                     
                     // List wasn't complete and we didn't get an item.  Figure out if we should bail out
                     // or skip a token and continue.
-                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount);
+                    var abort = this.abortParsingListOrMoveToNextToken(currentListType, oldItemsCount, items, skippedTokens);
                     if (abort) {
                         break;
                     }
@@ -4759,9 +4794,14 @@ module Parser1 {
             }
             
             var result = Syntax.separatedList(items);
-            this.returnSyntaxArray(items);
 
-            return result;
+            // Can't return if it has more then 1 element.  In that case, the list will have been
+            // copied into the SyntaxList.
+            if (items.length <= 1) {
+                this.returnArray(items);
+            }
+
+            return { skippedTokens: skippedTokens, list: result };
         }
 
         private allowsTrailingSeparator(currentListType: ListParsingState): bool {

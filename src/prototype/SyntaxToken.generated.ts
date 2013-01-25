@@ -639,9 +639,9 @@ module Syntax {
     }
 
     function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {
-        (<any>token.leadingTrivia()).collectTextElements(elements);
+        token.leadingTrivia().collectTextElements(elements);
         elements.push(token.text());
-        (<any>token.trailingTrivia()).collectTextElements(elements);
+        token.trailingTrivia().collectTextElements(elements);
     }
 
     export function fixedWidthToken(sourceText: ISimpleText, fullStart: number,

@@ -12,7 +12,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    // "FindToken11.ts";
+    // "10.1.1-8gs.ts";
     undefined;
 
 var generate = false;
@@ -594,7 +594,7 @@ if (true) {
 }
 
 // Existing parser.
-if (true) {
+if (false) {
     totalTime = 0;
     totalSize = 0;
     program.runAllTests(true, true);

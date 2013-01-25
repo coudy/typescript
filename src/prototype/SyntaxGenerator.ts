@@ -1876,7 +1876,7 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
             result += ", ";
         }
 
-        result += "/*parsedInStrictMode:*/ false);\r\n";
+        result += "/*parsedInStrictMode:*/ this.parsedInStrictMode());\r\n";
     }
 
     result += "    }\r\n";

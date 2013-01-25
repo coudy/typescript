@@ -61,7 +61,7 @@ class SourceUnitSyntax extends SyntaxNode {
             return this;
         }
 
-        return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ false);
+        return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SourceUnitSyntax {
@@ -181,7 +181,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
             return this;
         }
 
-        return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken, /*parsedInStrictMode:*/ false);
+        return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExternalModuleReferenceSyntax {
@@ -251,7 +251,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
             return this;
         }
 
-        return new ModuleNameModuleReferenceSyntax(moduleName, /*parsedInStrictMode:*/ false);
+        return new ModuleNameModuleReferenceSyntax(moduleName, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleNameModuleReferenceSyntax {
@@ -354,7 +354,7 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
             return this;
         }
 
-        return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ImportDeclarationSyntax {
@@ -524,7 +524,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
             return this;
         }
 
-        return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassDeclarationSyntax {
@@ -681,7 +681,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
             return this;
         }
 
-        return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, /*parsedInStrictMode:*/ false);
+        return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): InterfaceDeclarationSyntax {
@@ -772,7 +772,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
             return this;
         }
 
-        return new ExtendsClauseSyntax(extendsKeyword, typeNames, /*parsedInStrictMode:*/ false);
+        return new ExtendsClauseSyntax(extendsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExtendsClauseSyntax {
@@ -851,7 +851,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
             return this;
         }
 
-        return new ImplementsClauseSyntax(implementsKeyword, typeNames, /*parsedInStrictMode:*/ false);
+        return new ImplementsClauseSyntax(implementsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ImplementsClauseSyntax {
@@ -994,7 +994,7 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
             return this;
         }
 
-        return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleDeclarationSyntax {
@@ -1146,7 +1146,7 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionDeclarationSyntax {
@@ -1272,7 +1272,7 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableStatementSyntax {
@@ -1358,7 +1358,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
             return this;
         }
 
-        return new VariableDeclarationSyntax(varKeyword, variableDeclarators, /*parsedInStrictMode:*/ false);
+        return new VariableDeclarationSyntax(varKeyword, variableDeclarators, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableDeclarationSyntax {
@@ -1451,7 +1451,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
             return this;
         }
 
-        return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ false);
+        return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableDeclaratorSyntax {
@@ -1532,7 +1532,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
             return this;
         }
 
-        return new EqualsValueClauseSyntax(equalsToken, value, /*parsedInStrictMode:*/ false);
+        return new EqualsValueClauseSyntax(equalsToken, value, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): EqualsValueClauseSyntax {
@@ -1616,7 +1616,7 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
             return this;
         }
 
-        return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand, /*parsedInStrictMode:*/ false);
+        return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): PrefixUnaryExpressionSyntax {
@@ -1718,7 +1718,7 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
             return this;
         }
 
-        return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken, /*parsedInStrictMode:*/ false);
+        return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrayLiteralExpressionSyntax {
@@ -1861,7 +1861,7 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
             return this;
         }
 
-        return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken, /*parsedInStrictMode:*/ false);
+        return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParenthesizedExpressionSyntax {
@@ -1985,7 +1985,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
             return this;
         }
 
-        return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ false);
+        return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SimpleArrowFunctionExpressionSyntax {
@@ -2073,7 +2073,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
             return this;
         }
 
-        return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ false);
+        return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParenthesizedArrowFunctionExpressionSyntax {
@@ -2178,7 +2178,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
             return this;
         }
 
-        return new QualifiedNameSyntax(left, dotToken, right, /*parsedInStrictMode:*/ false);
+        return new QualifiedNameSyntax(left, dotToken, right, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): QualifiedNameSyntax {
@@ -2271,7 +2271,7 @@ class TypeArgumentListSyntax extends SyntaxNode {
             return this;
         }
 
-        return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ false);
+        return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeArgumentListSyntax {
@@ -2400,7 +2400,7 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
             return this;
         }
 
-        return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+        return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructorTypeSyntax {
@@ -2523,7 +2523,7 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
             return this;
         }
 
-        return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+        return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionTypeSyntax {
@@ -2632,7 +2632,7 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
             return this;
         }
 
-        return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectTypeSyntax {
@@ -2736,7 +2736,7 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
             return this;
         }
 
-        return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken, /*parsedInStrictMode:*/ false);
+        return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrayTypeSyntax {
@@ -2827,7 +2827,7 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
             return this;
         }
 
-        return new GenericTypeSyntax(name, typeArgumentList, /*parsedInStrictMode:*/ false);
+        return new GenericTypeSyntax(name, typeArgumentList, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GenericTypeSyntax {
@@ -2902,7 +2902,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
             return this;
         }
 
-        return new TypeAnnotationSyntax(colonToken, type, /*parsedInStrictMode:*/ false);
+        return new TypeAnnotationSyntax(colonToken, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeAnnotationSyntax {
@@ -2999,7 +2999,7 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new BlockSyntax(openBraceToken, statements, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new BlockSyntax(openBraceToken, statements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): BlockSyntax {
@@ -3123,7 +3123,7 @@ class ParameterSyntax extends SyntaxNode {
             return this;
         }
 
-        return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ false);
+        return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParameterSyntax {
@@ -3237,7 +3237,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
             return this;
         }
 
-        return new MemberAccessExpressionSyntax(expression, dotToken, name, /*parsedInStrictMode:*/ false);
+        return new MemberAccessExpressionSyntax(expression, dotToken, name, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberAccessExpressionSyntax {
@@ -3325,7 +3325,7 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
             return this;
         }
 
-        return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken, /*parsedInStrictMode:*/ false);
+        return new PostfixUnaryExpressionSyntax(kind, operand, operatorToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): PostfixUnaryExpressionSyntax {
@@ -3432,7 +3432,7 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
             return this;
         }
 
-        return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken, /*parsedInStrictMode:*/ false);
+        return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ElementAccessExpressionSyntax {
@@ -3525,7 +3525,7 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
             return this;
         }
 
-        return new InvocationExpressionSyntax(expression, argumentList, /*parsedInStrictMode:*/ false);
+        return new InvocationExpressionSyntax(expression, argumentList, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): InvocationExpressionSyntax {
@@ -3625,7 +3625,7 @@ class ArgumentListSyntax extends SyntaxNode {
             return this;
         }
 
-        return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ false);
+        return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArgumentListSyntax {
@@ -3727,7 +3727,7 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
             return this;
         }
 
-        return new BinaryExpressionSyntax(kind, left, operatorToken, right, /*parsedInStrictMode:*/ false);
+        return new BinaryExpressionSyntax(kind, left, operatorToken, right, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): BinaryExpressionSyntax {
@@ -3845,7 +3845,7 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
             return this;
         }
 
-        return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse, /*parsedInStrictMode:*/ false);
+        return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConditionalExpressionSyntax {
@@ -3957,7 +3957,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
             return this;
         }
 
-        return new ConstructSignatureSyntax(newKeyword, callSignature, /*parsedInStrictMode:*/ false);
+        return new ConstructSignatureSyntax(newKeyword, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructSignatureSyntax {
@@ -4046,7 +4046,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
             return this;
         }
 
-        return new FunctionSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ false);
+        return new FunctionSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionSignatureSyntax {
@@ -4150,7 +4150,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
             return this;
         }
 
-        return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ false);
+        return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IndexSignatureSyntax {
@@ -4246,7 +4246,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
             return this;
         }
 
-        return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation, /*parsedInStrictMode:*/ false);
+        return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertySignatureSyntax {
@@ -4339,7 +4339,7 @@ class ParameterListSyntax extends SyntaxNode {
             return this;
         }
 
-        return new ParameterListSyntax(openParenToken, parameters, closeParenToken, /*parsedInStrictMode:*/ false);
+        return new ParameterListSyntax(openParenToken, parameters, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParameterListSyntax {
@@ -4436,7 +4436,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
             return this;
         }
 
-        return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ false);
+        return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
@@ -4532,7 +4532,7 @@ class TypeParameterListSyntax extends SyntaxNode {
             return this;
         }
 
-        return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, /*parsedInStrictMode:*/ false);
+        return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeParameterListSyntax {
@@ -4619,7 +4619,7 @@ class TypeParameterSyntax extends SyntaxNode {
             return this;
         }
 
-        return new TypeParameterSyntax(identifier, constraint, /*parsedInStrictMode:*/ false);
+        return new TypeParameterSyntax(identifier, constraint, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeParameterSyntax {
@@ -4694,7 +4694,7 @@ class ConstraintSyntax extends SyntaxNode {
             return this;
         }
 
-        return new ConstraintSyntax(extendsKeyword, type, /*parsedInStrictMode:*/ false);
+        return new ConstraintSyntax(extendsKeyword, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstraintSyntax {
@@ -4769,7 +4769,7 @@ class ElseClauseSyntax extends SyntaxNode {
             return this;
         }
 
-        return new ElseClauseSyntax(elseKeyword, statement, /*parsedInStrictMode:*/ false);
+        return new ElseClauseSyntax(elseKeyword, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ElseClauseSyntax {
@@ -4898,7 +4898,7 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause, /*parsedInStrictMode:*/ false);
+        return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IfStatementSyntax {
@@ -5000,7 +5000,7 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new ExpressionStatementSyntax(expression, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new ExpressionStatementSyntax(expression, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExpressionStatementSyntax {
@@ -5103,7 +5103,7 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
             return this;
         }
 
-        return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructorDeclarationSyntax {
@@ -5225,7 +5225,7 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
             return this;
         }
 
-        return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberFunctionDeclarationSyntax {
@@ -5410,7 +5410,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
             return this;
         }
 
-        return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ false);
+        return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GetMemberAccessorDeclarationSyntax {
@@ -5548,7 +5548,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
             return this;
         }
 
-        return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ false);
+        return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SetMemberAccessorDeclarationSyntax {
@@ -5670,7 +5670,7 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
             return this;
         }
 
-        return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberVariableDeclarationSyntax {
@@ -5770,7 +5770,7 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ThrowStatementSyntax {
@@ -5872,7 +5872,7 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ReturnStatementSyntax {
@@ -5974,7 +5974,7 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
             return this;
         }
 
-        return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList, /*parsedInStrictMode:*/ false);
+        return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectCreationExpressionSyntax {
@@ -6117,7 +6117,7 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SwitchStatementSyntax {
@@ -6272,7 +6272,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
             return this;
         }
 
-        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements, /*parsedInStrictMode:*/ false);
+        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CaseSwitchClauseSyntax {
@@ -6375,7 +6375,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
             return this;
         }
 
-        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements, /*parsedInStrictMode:*/ false);
+        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DefaultSwitchClauseSyntax {
@@ -6481,7 +6481,7 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): BreakStatementSyntax {
@@ -6582,7 +6582,7 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ContinueStatementSyntax {
@@ -6818,7 +6818,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
             return this;
         }
 
-        return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement, /*parsedInStrictMode:*/ false);
+        return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ForStatementSyntax {
@@ -6994,7 +6994,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
             return this;
         }
 
-        return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement, /*parsedInStrictMode:*/ false);
+        return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ForInStatementSyntax {
@@ -7125,7 +7125,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
             return this;
         }
 
-        return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement, /*parsedInStrictMode:*/ false);
+        return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): WhileStatementSyntax {
@@ -7250,7 +7250,7 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement, /*parsedInStrictMode:*/ false);
+        return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): WithStatementSyntax {
@@ -7386,7 +7386,7 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
             return this;
         }
 
-        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): EnumDeclarationSyntax {
@@ -7508,7 +7508,7 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
             return this;
         }
 
-        return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, /*parsedInStrictMode:*/ false);
+        return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CastExpressionSyntax {
@@ -7613,7 +7613,7 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
             return this;
         }
 
-        return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken, /*parsedInStrictMode:*/ false);
+        return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectLiteralExpressionSyntax {
@@ -7729,7 +7729,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
             return this;
         }
 
-        return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, /*parsedInStrictMode:*/ false);
+        return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SimplePropertyAssignmentSyntax {
@@ -7870,7 +7870,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
             return this;
         }
 
-        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block, /*parsedInStrictMode:*/ false);
+        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GetAccessorPropertyAssignmentSyntax {
@@ -7995,7 +7995,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
             return this;
         }
 
-        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block, /*parsedInStrictMode:*/ false);
+        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SetAccessorPropertyAssignmentSyntax {
@@ -8119,7 +8119,7 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
             return this;
         }
 
-        return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block, /*parsedInStrictMode:*/ false);
+        return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionExpressionSyntax {
@@ -8203,7 +8203,7 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new EmptyStatementSyntax(semicolonToken, /*parsedInStrictMode:*/ false);
+        return new EmptyStatementSyntax(semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): EmptyStatementSyntax {
@@ -8305,7 +8305,7 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause, /*parsedInStrictMode:*/ false);
+        return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TryStatementSyntax {
@@ -8418,7 +8418,7 @@ class CatchClauseSyntax extends SyntaxNode {
             return this;
         }
 
-        return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, /*parsedInStrictMode:*/ false);
+        return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CatchClauseSyntax {
@@ -8506,7 +8506,7 @@ class FinallyClauseSyntax extends SyntaxNode {
             return this;
         }
 
-        return new FinallyClauseSyntax(finallyKeyword, block, /*parsedInStrictMode:*/ false);
+        return new FinallyClauseSyntax(finallyKeyword, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FinallyClauseSyntax {
@@ -8600,7 +8600,7 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new LabeledStatementSyntax(identifier, colonToken, statement, /*parsedInStrictMode:*/ false);
+        return new LabeledStatementSyntax(identifier, colonToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): LabeledStatementSyntax {
@@ -8726,7 +8726,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
             return this;
         }
 
-        return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DoStatementSyntax {
@@ -8831,7 +8831,7 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
             return this;
         }
 
-        return new TypeOfExpressionSyntax(typeOfKeyword, expression, /*parsedInStrictMode:*/ false);
+        return new TypeOfExpressionSyntax(typeOfKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeOfExpressionSyntax {
@@ -8915,7 +8915,7 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
             return this;
         }
 
-        return new DeleteExpressionSyntax(deleteKeyword, expression, /*parsedInStrictMode:*/ false);
+        return new DeleteExpressionSyntax(deleteKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DeleteExpressionSyntax {
@@ -8999,7 +8999,7 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
             return this;
         }
 
-        return new VoidExpressionSyntax(voidKeyword, expression, /*parsedInStrictMode:*/ false);
+        return new VoidExpressionSyntax(voidKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VoidExpressionSyntax {
@@ -9083,7 +9083,7 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
             return this;
         }
 
-        return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken, /*parsedInStrictMode:*/ false);
+        return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DebuggerStatementSyntax {
