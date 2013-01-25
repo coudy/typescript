@@ -292,6 +292,8 @@ module TypeScript {
         }
 
         private stringTable: Collections.StringTable = Collections.createStringTable();
+        
+        private typeCollectionTime = 0;
 
         public addSourceUnit(sourceText: ISourceText, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + filename + ", " + keepResident + ")", () => {
@@ -301,7 +303,11 @@ module TypeScript {
                 this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
+                
+                var typeCollectionStart = new Date().getTime();
                 this.typeChecker.collectTypes(script);
+                this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
+                
                 this.scripts.append(script);
                 
                 if (this.settings.useFidelity) {
@@ -359,6 +365,8 @@ module TypeScript {
                     if (script.isResident) { continue; }
                     this.typeFlow.typeCheck(script);
                 }
+
+                this.logger.log("Total type collection time: " + this.typeCollectionTime);
 
                 return null;
             });
@@ -914,7 +922,7 @@ module TypeScript {
                                     lambdaAST = <FuncDecl>cur;
                                 }
                                 else if (cur.nodeType == NodeType.VarDecl) {
-                                    assigningASTs[assigningASTs.length] = cur;
+                                    assigningASTs[assigningASTs.length] = <VarDecl>cur;
                                 }
                                 else if (cur.nodeType == NodeType.ObjectLit) {
                                     objectLitAST = <UnaryExpression>cur;

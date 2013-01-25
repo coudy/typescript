@@ -208,6 +208,7 @@ module TypeScript {
         if (hasFlag(varDecl.varFlags, VarFlags.Static)) {
             isProperty = true;
             isStatic = true;
+            declFlags |= PullDeclFlags.Static;
         }
 
         if (hasFlag(varDecl.varFlags, VarFlags.Private)) {
