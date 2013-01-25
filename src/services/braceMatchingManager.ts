@@ -99,10 +99,10 @@ module Services {
 
             // Check if the current token is an open brace
             var findTokenResult = this.syntaxTree.sourceUnit().findToken(position);
-            if (findTokenResult.token.fullWidth() > 0) {
-                var openBraceKindIndex = openBraceKinds.indexOf(findTokenResult.token.kind());
+            if (findTokenResult.token().fullWidth() > 0) {
+                var openBraceKindIndex = openBraceKinds.indexOf(findTokenResult.token().kind());
                 if (openBraceKindIndex >= 0) {
-                    var bracePosition = findTokenResult.fullStart + findTokenResult.token.leadingTriviaWidth();
+                    var bracePosition = findTokenResult.fullStart() + findTokenResult.token().leadingTriviaWidth();
                     if (bracePosition == position) {
                         var closeBracePosition = ForwardBranceMatchingWalker.getMatchingCloseBrace(this.syntaxTree.sourceUnit(), position, openBraceKinds[openBraceKindIndex], closeBraceKinds[openBraceKindIndex]);
                         if (closeBracePosition) {
@@ -115,13 +115,13 @@ module Services {
             }
 
             // Check if the current token to the left is a close brace
-            if (findTokenResult.fullStart > position - 1) {
+            if (findTokenResult.fullStart() > position - 1) {
                 findTokenResult = this.syntaxTree.sourceUnit().findTokenOnLeft(position);
             }
-            if (findTokenResult.token.fullWidth() > 0) {
-                var closeBraceKindIndex = closeBraceKinds.indexOf(findTokenResult.token.kind());
+            if (findTokenResult.token().fullWidth() > 0) {
+                var closeBraceKindIndex = closeBraceKinds.indexOf(findTokenResult.token().kind());
                 if (closeBraceKindIndex >= 0) {
-                    var bracePosition = findTokenResult.fullStart + findTokenResult.token.leadingTriviaWidth();
+                    var bracePosition = findTokenResult.fullStart() + findTokenResult.token().leadingTriviaWidth();
                     if (bracePosition == (position - 1)) {
                         var openBracePosition = BackwardBranceMatchingWalker.getMatchingOpenBrace(this.syntaxTree.sourceUnit(), position - 1, openBraceKinds[closeBraceKindIndex], closeBraceKinds[closeBraceKindIndex]);
                         if (openBracePosition) {
