@@ -52221,12 +52221,7 @@ var Program = (function () {
     Program.prototype.runAllTests = function (useTypeScript, verify) {
         var _this = this;
         Environment.standardOut.WriteLine("");
-        Environment.standardOut.WriteLine("Testing against fuzz.");
-        this.runTests("C:\\temp\\fuzz", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
-        }, 2000);
         if(true) {
-            return;
         }
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {

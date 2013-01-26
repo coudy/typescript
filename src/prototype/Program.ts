@@ -21,12 +21,12 @@ class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
         Environment.standardOut.WriteLine("");
 
-        Environment.standardOut.WriteLine("Testing against fuzz.");
-        this.runTests("C:\\temp\\fuzz",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 2000);
+        // Environment.standardOut.WriteLine("Testing against fuzz.");
+        // this.runTests("C:\\temp\\fuzz",
+        //    filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 2000);
 
         if (true) {
-            return;
+            // return;
         }
 
         Environment.standardOut.WriteLine("Testing findToken.");
