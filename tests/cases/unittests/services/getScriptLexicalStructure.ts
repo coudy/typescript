@@ -450,7 +450,7 @@ describe('getScriptLexicalStructure', function () {
  {
   "name": "constructor",
   "kind": "constructor",
-  "kindModifiers": "export",
+  "kindModifiers": "",
   "matchKind": "exact",
   "unitIndex": 1,
   "minChar": 2070,

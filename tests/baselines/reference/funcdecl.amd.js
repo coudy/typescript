@@ -83,6 +83,6 @@ var withOverloadSignature: {
 };
 function f(n: () => void): void;
 module m2 {
-    function foo(n: () => void): void;
+    export function foo(n: () => void): void;
 }
 var f2: () => string;

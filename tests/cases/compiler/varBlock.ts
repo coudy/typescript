@@ -4,8 +4,8 @@ module m2 {
 }
 
 declare module m3 {
-    var a, b, c;
-    var a1, b1 = 10;
+    export var a, b, c;
+    export var a1, b1 = 10;
 
     class C {
         constructor (public c = 10);
