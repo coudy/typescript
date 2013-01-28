@@ -20527,19 +20527,6 @@ var SyntaxNode = (function () {
         }
         return null;
     };
-    SyntaxNode.prototype.getRelativeChildOffset = function (element) {
-        var offset = 0;
-        for(var i = 0, n = this.childCount(); i < n; i++) {
-            var child = this.childAt(i);
-            if(child === element) {
-                return offset;
-            }
-            if(child !== null) {
-                offset += child.fullWidth();
-            }
-        }
-        throw Errors.invalidOperation();
-    };
     SyntaxNode.prototype.insertChildrenInto = function (array, index) {
         for(var i = this.childCount() - 1; i >= 0; i--) {
             var element = this.childAt(i);
@@ -20796,11 +20783,44 @@ var PositionedElement = (function () {
         this._element = element;
         this._fullStart = fullStart;
     }
+    PositionedElement.create = function create(parent, element, fullStart) {
+        if(element === null) {
+            return null;
+        }
+        if(element.isNode()) {
+            return new PositionedNode(parent, element, fullStart);
+        } else if(element.isToken()) {
+            return new PositionedToken(parent, element, fullStart);
+        } else if(element.isList()) {
+            return new PositionedList(parent, element, fullStart);
+        } else if(element.isSeparatedList()) {
+            return new PositionedSeparatedList(parent, element, fullStart);
+        } else {
+            throw Errors.invalidOperation();
+        }
+    };
     PositionedElement.prototype.parent = function () {
         return this._parent;
     };
     PositionedElement.prototype.element = function () {
         return this._element;
+    };
+    PositionedElement.prototype.kind = function () {
+        return this.element().kind();
+    };
+    PositionedElement.prototype.childCount = function () {
+        return this.element().childCount();
+    };
+    PositionedElement.prototype.childAt = function (index) {
+        var offset = 0;
+        for(var i = 0; i < index; i++) {
+            offset += this.element().childAt(i).fullWidth();
+        }
+        return PositionedElement.create(this, this.element().childAt(index), offset);
+    };
+    PositionedElement.prototype.getPositionedChild = function (child) {
+        var offset = Syntax.childOffset(this.element(), child);
+        return PositionedElement.create(this, child, offset);
     };
     PositionedElement.prototype.fullStart = function () {
         return this._fullStart;
@@ -28159,6 +28179,20 @@ var Syntax;
         }));
     }
     Syntax.emptySourceUnit = emptySourceUnit;
+    function childOffset(parent, child) {
+        var offset = 0;
+        for(var i = 0, n = parent.childCount(); i < n; i++) {
+            var current = parent.childAt(i);
+            if(current === child) {
+                return offset;
+            }
+            if(current !== null) {
+                offset += current.fullWidth();
+            }
+        }
+        throw Errors.invalidOperation();
+    }
+    Syntax.childOffset = childOffset;
     function nodeStructuralEquals(node1, node2) {
         if(node1 === null) {
             return node2 === null;

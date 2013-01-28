@@ -59,22 +59,6 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         return null;
     }
 
-    public getRelativeChildOffset(element: ISyntaxElement): number {
-        var offset = 0;
-        for (var i = 0, n = this.childCount(); i < n; i++) {
-            var child = this.childAt(i);
-            if (child === element) {
-                return offset;
-            }
-
-            if (child !== null) {
-                offset += child.fullWidth();
-            }
-        }
-
-        throw Errors.invalidOperation();
-    }
-
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
         for (var i = this.childCount() - 1; i >= 0; i--) {
             var element = this.childAt(i);

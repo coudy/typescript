@@ -11,12 +11,58 @@ class PositionedElement {
         this._fullStart = fullStart;
     }
 
+    public static create(parent: PositionedElement, element: ISyntaxElement, fullStart: number): PositionedElement {
+        if (element === null) {
+            return null;
+        }
+
+        if (element.isNode()) {
+            return new PositionedNode(parent, <SyntaxNode>element, fullStart);
+        }
+        else if (element.isToken()) {
+            return new PositionedToken(parent, <ISyntaxToken>element, fullStart);
+        }
+        else if (element.isList()) {
+            return new PositionedList(parent, <ISyntaxList>element, fullStart);
+        }
+        else if (element.isSeparatedList()) {
+            return new PositionedSeparatedList(parent, <ISeparatedSyntaxList>element, fullStart);
+        }
+        else {
+            throw Errors.invalidOperation();
+        }
+    }
+
     public parent(): PositionedElement {
         return this._parent;
     }
 
     public element(): ISyntaxElement {
         return this._element;
+    }
+
+    public kind(): SyntaxKind {
+        return this.element().kind();
+    }
+
+    public childCount(): number {
+        return this.element().childCount();
+    }
+
+    public childAt(index: number): PositionedElement {
+        var offset = 0;
+
+        for (var i = 0; i < index; i++) {
+            offset += this.element().childAt(i).fullWidth();
+        }
+
+        return PositionedElement.create(this, this.element().childAt(index), offset);
+    }
+
+    public getPositionedChild(child: ISyntaxElement) {
+        var offset = Syntax.childOffset(this.element(), child);
+
+        return PositionedElement.create(this, child, offset);
     }
 
     public fullStart(): number {

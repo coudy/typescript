@@ -5,6 +5,22 @@ module Syntax {
         return Syntax.normalModeFactory.sourceUnit(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
     }
 
+    export function childOffset(parent: ISyntaxElement, child: ISyntaxElement): number {
+        var offset = 0;
+        for (var i = 0, n = parent.childCount(); i < n; i++) {
+            var current = parent.childAt(i);
+            if (current === child) {
+                return offset;
+            }
+
+            if (current !== null) {
+                offset += current.fullWidth();
+            }
+        }
+
+        throw Errors.invalidOperation();
+    }
+
     export function nodeStructuralEquals(node1: SyntaxNode, node2: SyntaxNode): bool {
         if (node1 === null) {
             return node2 === null;

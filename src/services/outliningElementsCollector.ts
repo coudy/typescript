@@ -84,8 +84,8 @@ module Services {
         private addOutlineRange(node: SyntaxNode, startElement: ISyntaxNodeOrToken, endElement: ISyntaxNodeOrToken) {
             if (startElement && endElement) {
                 // Compute the position
-                var start = this.position + node.getRelativeChildOffset(startElement);
-                var end = this.position + node.getRelativeChildOffset(endElement) + endElement.leadingTriviaWidth() + endElement.width();
+                var start = this.position + Syntax.childOffset(node, startElement);
+                var end = this.position + Syntax.childOffset(node, endElement) + endElement.leadingTriviaWidth() + endElement.width();
 
                 // Create the new range
                 var navigateToItem = new NavigateToItem();
