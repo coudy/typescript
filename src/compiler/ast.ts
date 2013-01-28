@@ -1248,7 +1248,7 @@ module TypeScript {
             }
         }
 
-        private externallyVisibleImportedSymbols: Symbol[] = [];
+        public externallyVisibleImportedSymbols: Symbol[] = [];
 
         public AddExternallyVisibleImportedSymbol(symbol: Symbol, checker: TypeChecker) {
             if (this.isExternallyVisibleSymbol(symbol)) {
