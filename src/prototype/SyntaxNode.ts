@@ -21,19 +21,19 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         throw Errors.abstract();
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         throw Errors.abstract();
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         throw Errors.abstract();
     }
 
     // Returns the first non-missing token inside this node (or null if there are no such token).
     public firstToken(): ISyntaxToken {
-        for (var i = 0, n = this.slotCount(); i < n; i++) {
-            var element = this.elementAtSlot(i);
-
+        for (var i = 0, n = this.childCount(); i < n; i++) {
+            var element = this.childAt(i);
+            
             if (element != null) {
                 if (element.fullWidth() > 0 || element.kind() === SyntaxKind.EndOfFileToken) {
                     return element.firstToken();
@@ -46,8 +46,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
     // Returns the last non-missing token inside this node (or null if there are no such token).
     public lastToken(): ISyntaxToken {
-        for (var i = this.slotCount() - 1; i >= 0; i--) {
-            var element = this.elementAtSlot(i);
+        for (var i = this.childCount() - 1; i >= 0; i--) {
+            var element = this.childAt(i);
 
             if (element != null) {
                 if (element.fullWidth() > 0 || element.kind() === SyntaxKind.EndOfFileToken) {
@@ -61,8 +61,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
 
     public getRelativeChildOffset(element: ISyntaxElement): number {
         var offset = 0;
-        for (var i = 0, n = this.slotCount(); i < n; i++) {
-            var child = this.elementAtSlot(i);
+        for (var i = 0, n = this.childCount(); i < n; i++) {
+            var child = this.childAt(i);
             if (child === element) {
                 return offset;
             }
@@ -76,8 +76,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     public insertChildrenInto(array: ISyntaxElement[], index: number) {
-        for (var i = this.slotCount() - 1; i >= 0; i--) {
-            var element = this.elementAtSlot(i);
+        for (var i = this.childCount() - 1; i >= 0; i--) {
+            var element = this.childAt(i);
 
             if (element !== null) {
                 if (element.isNode() || element.isToken()) {
@@ -149,8 +149,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     public collectTextElements(elements: string[]): void {
-        for (var i = 0, n = this.slotCount(); i < n; i++) {
-            var element = this.elementAtSlot(i);
+        for (var i = 0, n = this.childCount(); i < n; i++) {
+            var element = this.childAt(i);
 
             if (element !== null) {
                 element.collectTextElements(elements)
@@ -227,7 +227,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     private computeData(): number {
-        var slotCount = this.slotCount();
+        var slotCount = this.childCount();
 
         var fullWidth = 0;
         var childWidth = 0;
@@ -239,7 +239,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         var hasRegularExpressionToken = false;
 
         for (var i = 0, n = slotCount; i < n; i++) {
-            var element = this.elementAtSlot(i);
+            var element = this.childAt(i);
 
             if (element !== null) {
                 var childWidth = element.fullWidth();
@@ -314,8 +314,8 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         Debug.assert(position >= 0 && position < this.fullWidth());
 
         parent = new PositionedNode(parent, this, fullStart);
-        for (var i = 0, n = this.slotCount(); i < n; i++) {
-            var element = this.elementAtSlot(i);
+        for (var i = 0, n = this.childCount(); i < n; i++) {
+            var element = this.childAt(i);
 
             if (element !== null) {
                 var childWidth = element.fullWidth();
@@ -384,9 +384,9 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         if (node === null) { return false; }
         if (this.kind() !== node.kind()) { return false; }
 
-        for (var i = 0, n = this.slotCount(); i < n; i++) {
-            var element1 = this.elementAtSlot(i);
-            var element2 = node.elementAtSlot(i);
+        for (var i = 0, n = this.childCount(); i < n; i++) {
+            var element1 = this.childAt(i);
+            var element2 = node.childAt(i);
 
             if (!Syntax.elementStructuralEquals(element1, element2)) {
                 return false;

@@ -13,19 +13,19 @@ module Syntax {
             return [];
         }
 
-        public count(): number {
+        public childCount(): number {
             return 0;
         }
 
-        public itemAt(index: number): SyntaxNode {
+        public childAt(index: number): ISyntaxNodeOrToken {
             throw Errors.argumentOutOfRange("index");
         }
 
-        private collectTextElements(elements: string[]): void {
+        public toArray(): ISyntaxNodeOrToken[] {
+            return [];
         }
 
-        public toArray(): SyntaxNode[] {
-            return [];
+        private collectTextElements(elements: string[]): void {
         }
 
         public firstToken(): ISyntaxToken {
@@ -102,11 +102,11 @@ module Syntax {
             return [this.item];
         }
 
-        public count() {
+        public childCount() {
             return 1;
         }
 
-        public itemAt(index: number): ISyntaxNodeOrToken {
+        public childAt(index: number): ISyntaxNodeOrToken {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -114,12 +114,12 @@ module Syntax {
             return this.item;
         }
 
-        private collectTextElements(elements: string[]): void {
-            this.item.collectTextElements(elements);
-        }
-
         public toArray(): ISyntaxNodeOrToken[] {
             return [this.item];
+        }
+
+        private collectTextElements(elements: string[]): void {
+            this.item.collectTextElements(elements);
         }
 
         public firstToken(): ISyntaxToken {
@@ -196,11 +196,11 @@ module Syntax {
             return this.nodeOrTokens;
         }
 
-        public count() {
+        public childCount() {
             return this.nodeOrTokens.length;
         }
 
-        public itemAt(index: number): ISyntaxNodeOrToken {
+        public childAt(index: number): ISyntaxNodeOrToken {
             if (index < 0 || index >= this.nodeOrTokens.length) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -208,15 +208,15 @@ module Syntax {
             return this.nodeOrTokens[index];
         }
 
+        public toArray(): ISyntaxNodeOrToken[] {
+            return this.nodeOrTokens.slice(0);
+        }
+
         private collectTextElements(elements: string[]): void {
             for (var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
                 var element = this.nodeOrTokens[i];
                 element.collectTextElements(elements);
             }
-        }
-
-        public toArray(): ISyntaxNodeOrToken[] {
-            return this.nodeOrTokens.slice(0);
         }
 
         public firstToken(): ISyntaxToken {

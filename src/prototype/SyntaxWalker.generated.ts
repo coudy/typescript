@@ -42,14 +42,14 @@ class SyntaxWalker implements ISyntaxVisitor {
     }
 
     public visitList(list: ISyntaxList): void {
-        for (var i = 0, n = list.count(); i < n; i++) {
-           this.visitNodeOrToken(list.itemAt(i));
+        for (var i = 0, n = list.childCount(); i < n; i++) {
+           this.visitNodeOrToken(list.childAt(i));
         }
     }
 
     public visitSeparatedList(list: ISeparatedSyntaxList): void {
-        for (var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {
-            var item = list.itemOrSeparatorAt(i);
+        for (var i = 0, n = list.childCount(); i < n; i++) {
+            var item = list.childAt(i);
             this.visitNodeOrToken(item);
         }
     }

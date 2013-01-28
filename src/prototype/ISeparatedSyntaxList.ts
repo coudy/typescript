@@ -2,17 +2,16 @@
 ///<reference path='SyntaxNode.ts' />
 
 interface ISeparatedSyntaxList extends ISyntaxElement {
-    itemAndSeparatorCount();
-    itemOrSeparatorAt(index: number): ISyntaxNodeOrToken;
+    childAt(index: number): ISyntaxNodeOrToken;
 
-    toItemAndSeparatorArray(): ISyntaxNodeOrToken[];
-    toItemArray(): ISyntaxNodeOrToken[];
-
-    itemCount();
-    itemAt(index: number): ISyntaxNodeOrToken;
+    toArray(): ISyntaxNodeOrToken[];
+    toNonSeparatorArray(): ISyntaxNodeOrToken[];
 
     separatorCount();
     separatorAt(index: number): ISyntaxToken;
+
+    nonSeparatorCount();
+    nonSeparatorAt(index: number): ISyntaxNodeOrToken;
 
     insertChildrenInto(array: ISyntaxElement[], index: number): void;
 }

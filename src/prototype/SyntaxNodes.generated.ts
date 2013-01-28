@@ -35,11 +35,11 @@ class SourceUnitSyntax extends SyntaxNode {
         return SyntaxKind.SourceUnit;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._moduleElements;
             case 1: return this._endOfFileToken;
@@ -143,11 +143,11 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ExternalModuleReference;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._moduleKeyword;
             case 1: return this._openParenToken;
@@ -231,11 +231,11 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ModuleNameModuleReference;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 1;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._moduleName;
             default: throw Errors.invalidOperation();
@@ -306,11 +306,11 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ImportDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._importKeyword;
             case 1: return this._identifier;
@@ -446,11 +446,11 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         return SyntaxKind.ClassDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 10;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._exportKeyword;
             case 1: return this._declareKeyword;
@@ -627,11 +627,11 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return SyntaxKind.InterfaceDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 6;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._exportKeyword;
             case 1: return this._interfaceKeyword;
@@ -746,11 +746,11 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ExtendsClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._extendsKeyword;
             case 1: return this._typeNames;
@@ -825,11 +825,11 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ImplementsClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._implementsKeyword;
             case 1: return this._typeNames;
@@ -928,11 +928,11 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ModuleDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 8;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._exportKeyword;
             case 1: return this._declareKeyword;
@@ -1088,11 +1088,11 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.FunctionDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 6;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._exportKeyword;
             case 1: return this._declareKeyword;
@@ -1226,11 +1226,11 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.VariableStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._exportKeyword;
             case 1: return this._declareKeyword;
@@ -1332,11 +1332,11 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._varKeyword;
             case 1: return this._variableDeclarators;
@@ -1419,11 +1419,11 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclarator;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._identifier;
             case 1: return this._typeAnnotation;
@@ -1506,11 +1506,11 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return SyntaxKind.EqualsValueClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._equalsToken;
             case 1: return this._value;
@@ -1577,11 +1577,11 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         return visitor.visitPrefixUnaryExpression(this);
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._operatorToken;
             case 1: return this._operand;
@@ -1678,11 +1678,11 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.ArrayLiteralExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._openBracketToken;
             case 1: return this._expressions;
@@ -1764,11 +1764,11 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return SyntaxKind.OmittedExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 0;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         throw Errors.invalidOperation();
     }
 
@@ -1821,11 +1821,11 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ParenthesizedExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._openParenToken;
             case 1: return this._expression;
@@ -1953,11 +1953,11 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return SyntaxKind.SimpleArrowFunctionExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._identifier;
             case 1: return this._equalsGreaterThanToken;
@@ -2041,11 +2041,11 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return SyntaxKind.ParenthesizedArrowFunctionExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._callSignature;
             case 1: return this._equalsGreaterThanToken;
@@ -2130,11 +2130,11 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return SyntaxKind.QualifiedName;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._left;
             case 1: return this._dotToken;
@@ -2239,11 +2239,11 @@ class TypeArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.TypeArgumentList;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._lessThanToken;
             case 1: return this._typeArguments;
@@ -2344,11 +2344,11 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ConstructorType;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._newKeyword;
             case 1: return this._typeParameterList;
@@ -2473,11 +2473,11 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.FunctionType;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._typeParameterList;
             case 1: return this._parameterList;
@@ -2588,11 +2588,11 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ObjectType;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._openBraceToken;
             case 1: return this._typeMembers;
@@ -2692,11 +2692,11 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ArrayType;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._type;
             case 1: return this._openBracketToken;
@@ -2789,11 +2789,11 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.GenericType;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._name;
             case 1: return this._typeArgumentList;
@@ -2876,11 +2876,11 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return SyntaxKind.TypeAnnotation;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._colonToken;
             case 1: return this._type;
@@ -2959,11 +2959,11 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.Block;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._openBraceToken;
             case 1: return this._statements;
@@ -3073,11 +3073,11 @@ class ParameterSyntax extends SyntaxNode {
         return SyntaxKind.Parameter;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 6;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._dotDotDotToken;
             case 1: return this._publicOrPrivateKeyword;
@@ -3197,11 +3197,11 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.MemberAccessExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._expression;
             case 1: return this._dotToken;
@@ -3286,11 +3286,11 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return visitor.visitPostfixUnaryExpression(this);
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._operand;
             case 1: return this._operatorToken;
@@ -3386,11 +3386,11 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ElementAccessExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._expression;
             case 1: return this._openBracketToken;
@@ -3491,11 +3491,11 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return SyntaxKind.InvocationExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._expression;
             case 1: return this._argumentList;
@@ -3587,11 +3587,11 @@ class ArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.ArgumentList;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._typeArgumentList;
             case 1: return this._openParenToken;
@@ -3686,11 +3686,11 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return visitor.visitBinaryExpression(this);
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._left;
             case 1: return this._operatorToken;
@@ -3797,11 +3797,11 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return SyntaxKind.ConditionalExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._condition;
             case 1: return this._questionToken;
@@ -3931,11 +3931,11 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.ConstructSignature;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._newKeyword;
             case 1: return this._callSignature;
@@ -4014,11 +4014,11 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.FunctionSignature;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._identifier;
             case 1: return this._questionToken;
@@ -4112,11 +4112,11 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.IndexSignature;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._openBracketToken;
             case 1: return this._parameter;
@@ -4214,11 +4214,11 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.PropertySignature;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._identifier;
             case 1: return this._questionToken;
@@ -4307,11 +4307,11 @@ class ParameterListSyntax extends SyntaxNode {
         return SyntaxKind.ParameterList;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._openParenToken;
             case 1: return this._parameters;
@@ -4404,11 +4404,11 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.CallSignature;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._typeParameterList;
             case 1: return this._parameterList;
@@ -4500,11 +4500,11 @@ class TypeParameterListSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameterList;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._lessThanToken;
             case 1: return this._typeParameters;
@@ -4593,11 +4593,11 @@ class TypeParameterSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameter;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._identifier;
             case 1: return this._constraint;
@@ -4668,11 +4668,11 @@ class ConstraintSyntax extends SyntaxNode {
         return SyntaxKind.Constraint;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._extendsKeyword;
             case 1: return this._type;
@@ -4743,11 +4743,11 @@ class ElseClauseSyntax extends SyntaxNode {
         return SyntaxKind.ElseClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._elseKeyword;
             case 1: return this._statement;
@@ -4840,11 +4840,11 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.IfStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 6;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._ifKeyword;
             case 1: return this._openParenToken;
@@ -4966,11 +4966,11 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ExpressionStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._expression;
             case 1: return this._semicolonToken;
@@ -5061,11 +5061,11 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         return SyntaxKind.ConstructorDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._constructorKeyword;
             case 1: return this._parameterList;
@@ -5173,11 +5173,11 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberFunctionDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._publicOrPrivateKeyword;
             case 1: return this._staticKeyword;
@@ -5354,11 +5354,11 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.GetMemberAccessorDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 7;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._publicOrPrivateKeyword;
             case 1: return this._staticKeyword;
@@ -5498,11 +5498,11 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.SetMemberAccessorDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 6;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._publicOrPrivateKeyword;
             case 1: return this._staticKeyword;
@@ -5624,11 +5624,11 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberVariableDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._publicOrPrivateKeyword;
             case 1: return this._staticKeyword;
@@ -5730,11 +5730,11 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ThrowStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._throwKeyword;
             case 1: return this._expression;
@@ -5832,11 +5832,11 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ReturnStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._returnKeyword;
             case 1: return this._expression;
@@ -5934,11 +5934,11 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return SyntaxKind.ObjectCreationExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._newKeyword;
             case 1: return this._expression;
@@ -6053,11 +6053,11 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.SwitchStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 7;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._switchKeyword;
             case 1: return this._openParenToken;
@@ -6234,11 +6234,11 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.CaseSwitchClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._caseKeyword;
             case 1: return this._expression;
@@ -6343,11 +6343,11 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.DefaultSwitchClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._defaultKeyword;
             case 1: return this._colonToken;
@@ -6441,11 +6441,11 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.BreakStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._breakKeyword;
             case 1: return this._identifier;
@@ -6542,11 +6542,11 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ContinueStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._continueKeyword;
             case 1: return this._identifier;
@@ -6744,11 +6744,11 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 10;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._forKeyword;
             case 1: return this._openParenToken;
@@ -6932,11 +6932,11 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForInStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 8;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._forKeyword;
             case 1: return this._openParenToken;
@@ -7081,11 +7081,11 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.WhileStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._whileKeyword;
             case 1: return this._openParenToken;
@@ -7198,11 +7198,11 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.WithStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._withKeyword;
             case 1: return this._openParenToken;
@@ -7332,11 +7332,11 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return SyntaxKind.EnumDeclaration;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 6;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._exportKeyword;
             case 1: return this._enumKeyword;
@@ -7462,11 +7462,11 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.CastExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._lessThanToken;
             case 1: return this._type;
@@ -7573,11 +7573,11 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ObjectLiteralExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._openBraceToken;
             case 1: return this._propertyAssignments;
@@ -7697,11 +7697,11 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return SyntaxKind.SimplePropertyAssignment;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._propertyName;
             case 1: return this._colonToken;
@@ -7826,11 +7826,11 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.GetAccessorPropertyAssignment;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._getKeyword;
             case 1: return this._propertyName;
@@ -7945,11 +7945,11 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.SetAccessorPropertyAssignment;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 6;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._setKeyword;
             case 1: return this._propertyName;
@@ -8073,11 +8073,11 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return SyntaxKind.FunctionExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._functionKeyword;
             case 1: return this._identifier;
@@ -8175,11 +8175,11 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.EmptyStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 1;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._semicolonToken;
             default: throw Errors.invalidOperation();
@@ -8259,11 +8259,11 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.TryStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 4;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._tryKeyword;
             case 1: return this._block;
@@ -8374,11 +8374,11 @@ class CatchClauseSyntax extends SyntaxNode {
         return SyntaxKind.CatchClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 5;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._catchKeyword;
             case 1: return this._openParenToken;
@@ -8480,11 +8480,11 @@ class FinallyClauseSyntax extends SyntaxNode {
         return SyntaxKind.FinallyClause;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._finallyKeyword;
             case 1: return this._block;
@@ -8560,11 +8560,11 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.LabeledStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 3;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._identifier;
             case 1: return this._colonToken;
@@ -8670,11 +8670,11 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.DoStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 7;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._doKeyword;
             case 1: return this._statement;
@@ -8797,11 +8797,11 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.TypeOfExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._typeOfKeyword;
             case 1: return this._expression;
@@ -8881,11 +8881,11 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.DeleteExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._deleteKeyword;
             case 1: return this._expression;
@@ -8965,11 +8965,11 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.VoidExpression;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._voidKeyword;
             case 1: return this._expression;
@@ -9049,11 +9049,11 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.DebuggerStatement;
     }
 
-    private slotCount(): number {
+    private childCount(): number {
         return 2;
     }
 
-    private elementAtSlot(slot: number): ISyntaxElement {
+    private childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this._debuggerKeyword;
             case 1: return this._semicolonToken;

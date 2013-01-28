@@ -1510,13 +1510,13 @@ function generateSlotMethods(definition: ITypeDefinition): string {
 
     if (!definition.isAbstract) {
         result += "\r\n";
-        result += "    private slotCount(): number {\r\n";
+        result += "    private childCount(): number {\r\n";
         var slotCount = hasKind ? (definition.children.length - 1) : definition.children.length;
 
         result += "        return " + slotCount + ";\r\n";
         result += "    }\r\n\r\n";
 
-        result += "    private elementAtSlot(slot: number): ISyntaxElement {\r\n";
+        result += "    private childAt(slot: number): ISyntaxElement {\r\n";
 
         if (slotCount === 0) {
             result += "        throw Errors.invalidOperation();\r\n";
@@ -2118,14 +2118,14 @@ function generateRewriter(): string {
 "    public visitList(list: ISyntaxList): ISyntaxList {\r\n" +
 "        var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
 "\r\n" +
-"        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +
-"            var item = list.itemAt(i);\r\n" +
+"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"            var item = list.childAt(i);\r\n" +
 "            var newItem = this.visitNodeOrToken(item);\r\n" +
 "\r\n" +
 "            if (item !== newItem && newItems === null) {\r\n" +
 "                newItems = [];\r\n" +
 "                for (var j = 0; j < i; j++) {\r\n" +
-"                    newItems.push(list.itemAt(j));\r\n" +
+"                    newItems.push(list.childAt(j));\r\n" +
 "                }\r\n" +
 "            }\r\n" +
 "\r\n" +
@@ -2134,21 +2134,21 @@ function generateRewriter(): string {
 "            }\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        Debug.assert(newItems === null || newItems.length === list.count());\r\n" +
+"        Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
 "        return newItems === null ? list : Syntax.list(newItems);\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" +
 "        var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
 "\r\n" +
-"        for (var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {\r\n" +
-"            var item = list.itemOrSeparatorAt(i);\r\n" +
+"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"            var item = list.childAt(i);\r\n" +
 "            var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" +
 "\r\n" +
 "            if (item !== newItem && newItems === null) {\r\n" +
 "                newItems = [];\r\n" +
 "                for (var j = 0; j < i; j++) {\r\n" +
-"                    newItems.push(list.itemOrSeparatorAt(j));\r\n" +
+"                    newItems.push(list.childAt(j));\r\n" +
 "                }\r\n" +
 "            }\r\n" +
 "\r\n" +
@@ -2157,7 +2157,7 @@ function generateRewriter(): string {
 "            }\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        Debug.assert(newItems === null || newItems.length === list.itemAndSeparatorCount());\r\n" +
+"        Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
 "        return newItems === null ? list : Syntax.separatedList(newItems);\r\n" +
 "    }\r\n";
 
@@ -2342,7 +2342,10 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 "        public isList(): bool { return false; }\r\n" +
 "        public isSeparatedList(): bool { return false; }\r\n\r\n";
 
-    result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n";
+    result += "        public kind(): SyntaxKind { return this.tokenKind; }\r\n\r\n";
+
+    result += "        public childCount(): number { return 0; }\r\n";
+    result += "        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }\r\n\r\n";
 
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
@@ -2614,14 +2617,14 @@ function generateWalker(): string {
 "    }\r\n" +
 "\r\n" +
 "    public visitList(list: ISyntaxList): void {\r\n" +
-"        for (var i = 0, n = list.count(); i < n; i++) {\r\n" +
-"           this.visitNodeOrToken(list.itemAt(i));\r\n" +
+"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"           this.visitNodeOrToken(list.childAt(i));\r\n" +
 "        }\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" +
-"        for (var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {\r\n" +
-"            var item = list.itemOrSeparatorAt(i);\r\n" +
+"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"            var item = list.childAt(i);\r\n" +
 "            this.visitNodeOrToken(item);\r\n" + 
 "        }\r\n" +
 "    }\r\n";

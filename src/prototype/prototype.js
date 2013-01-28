@@ -20137,38 +20137,38 @@ var SyntaxRewriter = (function () {
     };
     SyntaxRewriter.prototype.visitList = function (list) {
         var newItems = null;
-        for(var i = 0, n = list.count(); i < n; i++) {
-            var item = list.itemAt(i);
+        for(var i = 0, n = list.childCount(); i < n; i++) {
+            var item = list.childAt(i);
             var newItem = this.visitNodeOrToken(item);
             if(item !== newItem && newItems === null) {
                 newItems = [];
                 for(var j = 0; j < i; j++) {
-                    newItems.push(list.itemAt(j));
+                    newItems.push(list.childAt(j));
                 }
             }
             if(newItems) {
                 newItems.push(newItem);
             }
         }
-        Debug.assert(newItems === null || newItems.length === list.count());
+        Debug.assert(newItems === null || newItems.length === list.childCount());
         return newItems === null ? list : Syntax.list(newItems);
     };
     SyntaxRewriter.prototype.visitSeparatedList = function (list) {
         var newItems = null;
-        for(var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {
-            var item = list.itemOrSeparatorAt(i);
+        for(var i = 0, n = list.childCount(); i < n; i++) {
+            var item = list.childAt(i);
             var newItem = item.isToken() ? this.visitToken(item) : this.visitNode(item);
             if(item !== newItem && newItems === null) {
                 newItems = [];
                 for(var j = 0; j < i; j++) {
-                    newItems.push(list.itemOrSeparatorAt(j));
+                    newItems.push(list.childAt(j));
                 }
             }
             if(newItems) {
                 newItems.push(newItem);
             }
         }
-        Debug.assert(newItems === null || newItems.length === list.itemAndSeparatorCount());
+        Debug.assert(newItems === null || newItems.length === list.childCount());
         return newItems === null ? list : Syntax.separatedList(newItems);
     };
     SyntaxRewriter.prototype.visitSourceUnit = function (node) {
@@ -20499,15 +20499,15 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.kind = function () {
         throw Errors.abstract();
     };
-    SyntaxNode.prototype.slotCount = function () {
+    SyntaxNode.prototype.childCount = function () {
         throw Errors.abstract();
     };
-    SyntaxNode.prototype.elementAtSlot = function (slot) {
+    SyntaxNode.prototype.childAt = function (slot) {
         throw Errors.abstract();
     };
     SyntaxNode.prototype.firstToken = function () {
-        for(var i = 0, n = this.slotCount(); i < n; i++) {
-            var element = this.elementAtSlot(i);
+        for(var i = 0, n = this.childCount(); i < n; i++) {
+            var element = this.childAt(i);
             if(element != null) {
                 if(element.fullWidth() > 0 || element.kind() === 10 /* EndOfFileToken */ ) {
                     return element.firstToken();
@@ -20517,8 +20517,8 @@ var SyntaxNode = (function () {
         return null;
     };
     SyntaxNode.prototype.lastToken = function () {
-        for(var i = this.slotCount() - 1; i >= 0; i--) {
-            var element = this.elementAtSlot(i);
+        for(var i = this.childCount() - 1; i >= 0; i--) {
+            var element = this.childAt(i);
             if(element != null) {
                 if(element.fullWidth() > 0 || element.kind() === 10 /* EndOfFileToken */ ) {
                     return element.lastToken();
@@ -20529,8 +20529,8 @@ var SyntaxNode = (function () {
     };
     SyntaxNode.prototype.getRelativeChildOffset = function (element) {
         var offset = 0;
-        for(var i = 0, n = this.slotCount(); i < n; i++) {
-            var child = this.elementAtSlot(i);
+        for(var i = 0, n = this.childCount(); i < n; i++) {
+            var child = this.childAt(i);
             if(child === element) {
                 return offset;
             }
@@ -20541,8 +20541,8 @@ var SyntaxNode = (function () {
         throw Errors.invalidOperation();
     };
     SyntaxNode.prototype.insertChildrenInto = function (array, index) {
-        for(var i = this.slotCount() - 1; i >= 0; i--) {
-            var element = this.elementAtSlot(i);
+        for(var i = this.childCount() - 1; i >= 0; i--) {
+            var element = this.childAt(i);
             if(element !== null) {
                 if(element.isNode() || element.isToken()) {
                     array.splice(index, 0, element);
@@ -20598,8 +20598,8 @@ var SyntaxNode = (function () {
         return elements.join("");
     };
     SyntaxNode.prototype.collectTextElements = function (elements) {
-        for(var i = 0, n = this.slotCount(); i < n; i++) {
-            var element = this.elementAtSlot(i);
+        for(var i = 0, n = this.childCount(); i < n; i++) {
+            var element = this.childAt(i);
             if(element !== null) {
                 element.collectTextElements(elements);
             }
@@ -20642,14 +20642,14 @@ var SyntaxNode = (function () {
         return this.data() >>> 4 /* NodeFullWidthShift */ ;
     };
     SyntaxNode.prototype.computeData = function () {
-        var slotCount = this.slotCount();
+        var slotCount = this.childCount();
         var fullWidth = 0;
         var childWidth = 0;
         var hasSkippedText = false;
         var hasZeroWidthToken = slotCount === 0;
         var hasRegularExpressionToken = false;
         for(var i = 0, n = slotCount; i < n; i++) {
-            var element = this.elementAtSlot(i);
+            var element = this.childAt(i);
             if(element !== null) {
                 var childWidth = element.fullWidth();
                 fullWidth += childWidth;
@@ -20692,8 +20692,8 @@ var SyntaxNode = (function () {
     SyntaxNode.prototype.findTokenInternal = function (parent, position, fullStart) {
         Debug.assert(position >= 0 && position < this.fullWidth());
         parent = new PositionedNode(parent, this, fullStart);
-        for(var i = 0, n = this.slotCount(); i < n; i++) {
-            var element = this.elementAtSlot(i);
+        for(var i = 0, n = this.childCount(); i < n; i++) {
+            var element = this.childAt(i);
             if(element !== null) {
                 var childWidth = element.fullWidth();
                 if(position < childWidth) {
@@ -20745,9 +20745,9 @@ var SyntaxNode = (function () {
         if(this.kind() !== node.kind()) {
             return false;
         }
-        for(var i = 0, n = this.slotCount(); i < n; i++) {
-            var element1 = this.elementAtSlot(i);
-            var element2 = node.elementAtSlot(i);
+        for(var i = 0, n = this.childCount(); i < n; i++) {
+            var element1 = this.childAt(i);
+            var element2 = node.childAt(i);
             if(!Syntax.elementStructuralEquals(element1, element2)) {
                 return false;
             }
@@ -21215,19 +21215,25 @@ var Syntax;
         toJSON: function (key) {
             return [];
         },
-        itemAndSeparatorCount: function () {
+        childCount: function () {
             return 0;
         },
-        itemCount: function () {
+        nonSeparatorCount: function () {
             return 0;
         },
         separatorCount: function () {
             return 0;
         },
-        itemOrSeparatorAt: function (index) {
+        toArray: function () {
+            return [];
+        },
+        toNonSeparatorArray: function () {
+            return [];
+        },
+        childAt: function (index) {
             throw Errors.argumentOutOfRange("index");
         },
-        itemAt: function (index) {
+        nonSeparatorAt: function (index) {
             throw Errors.argumentOutOfRange("index");
         },
         separatorAt: function (index) {
@@ -21249,12 +21255,6 @@ var Syntax;
         },
         width: function () {
             return 0;
-        },
-        toItemAndSeparatorArray: function () {
-            return [];
-        },
-        toItemArray: function () {
-            return [];
         },
         isTypeScriptSpecific: function () {
             return false;
@@ -21304,22 +21304,32 @@ var Syntax;
         SingletonSeparatedSyntaxList.prototype.isSeparatedList = function () {
             return true;
         };
-        SingletonSeparatedSyntaxList.prototype.itemAndSeparatorCount = function () {
+        SingletonSeparatedSyntaxList.prototype.childCount = function () {
             return 1;
         };
-        SingletonSeparatedSyntaxList.prototype.itemCount = function () {
+        SingletonSeparatedSyntaxList.prototype.nonSeparatorCount = function () {
             return 1;
         };
         SingletonSeparatedSyntaxList.prototype.separatorCount = function () {
             return 0;
         };
-        SingletonSeparatedSyntaxList.prototype.itemOrSeparatorAt = function (index) {
+        SingletonSeparatedSyntaxList.prototype.toArray = function () {
+            return [
+                this.item
+            ];
+        };
+        SingletonSeparatedSyntaxList.prototype.toNonSeparatorArray = function () {
+            return [
+                this.item
+            ];
+        };
+        SingletonSeparatedSyntaxList.prototype.childAt = function (index) {
             if(index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
             return this.item;
         };
-        SingletonSeparatedSyntaxList.prototype.itemAt = function (index) {
+        SingletonSeparatedSyntaxList.prototype.nonSeparatorAt = function (index) {
             if(index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -21351,21 +21361,6 @@ var Syntax;
         };
         SingletonSeparatedSyntaxList.prototype.trailingTriviaWidth = function () {
             return this.item.trailingTriviaWidth();
-        };
-        SingletonSeparatedSyntaxList.prototype.toArray = function () {
-            return [
-                this.item
-            ];
-        };
-        SingletonSeparatedSyntaxList.prototype.toItemAndSeparatorArray = function () {
-            return [
-                this.item
-            ];
-        };
-        SingletonSeparatedSyntaxList.prototype.toItemArray = function () {
-            return [
-                this.item
-            ];
         };
         SingletonSeparatedSyntaxList.prototype.isTypeScriptSpecific = function () {
             return this.item.isTypeScriptSpecific();
@@ -21411,22 +21406,32 @@ var Syntax;
         NormalSeparatedSyntaxList.prototype.toJSON = function (key) {
             return this.elements;
         };
-        NormalSeparatedSyntaxList.prototype.itemAndSeparatorCount = function () {
+        NormalSeparatedSyntaxList.prototype.childCount = function () {
             return this.elements.length;
         };
-        NormalSeparatedSyntaxList.prototype.itemCount = function () {
+        NormalSeparatedSyntaxList.prototype.nonSeparatorCount = function () {
             return IntegerUtilities.integerDivide(this.elements.length + 1, 2);
         };
         NormalSeparatedSyntaxList.prototype.separatorCount = function () {
             return IntegerUtilities.integerDivide(this.elements.length, 2);
         };
-        NormalSeparatedSyntaxList.prototype.itemOrSeparatorAt = function (index) {
+        NormalSeparatedSyntaxList.prototype.toArray = function () {
+            return this.elements.slice(0);
+        };
+        NormalSeparatedSyntaxList.prototype.toNonSeparatorArray = function () {
+            var result = [];
+            for(var i = 0, n = this.nonSeparatorCount(); i < n; i++) {
+                result.push(this.nonSeparatorAt(i));
+            }
+            return result;
+        };
+        NormalSeparatedSyntaxList.prototype.childAt = function (index) {
             if(index < 0 || index >= this.elements.length) {
                 throw Errors.argumentOutOfRange("index");
             }
             return this.elements[index];
         };
-        NormalSeparatedSyntaxList.prototype.itemAt = function (index) {
+        NormalSeparatedSyntaxList.prototype.nonSeparatorAt = function (index) {
             var value = index * 2;
             if(value < 0 || value >= this.elements.length) {
                 throw Errors.argumentOutOfRange("index");
@@ -21481,19 +21486,9 @@ var Syntax;
             this.collectTextElements(elements);
             return elements.join("");
         };
-        NormalSeparatedSyntaxList.prototype.toItemAndSeparatorArray = function () {
-            return this.elements.slice(0);
-        };
-        NormalSeparatedSyntaxList.prototype.toItemArray = function () {
-            var result = [];
-            for(var i = 0, n = this.itemCount(); i < n; i++) {
-                result.push(this.itemAt(i));
-            }
-            return result;
-        };
         NormalSeparatedSyntaxList.prototype.isTypeScriptSpecific = function () {
-            for(var i = 0, n = this.itemCount(); i < n; i++) {
-                if(this.itemAt(i).isTypeScriptSpecific()) {
+            for(var i = 0, n = this.nonSeparatorCount(); i < n; i++) {
+                if(this.nonSeparatorAt(i).isTypeScriptSpecific()) {
                     return true;
                 }
             }
@@ -21624,16 +21619,16 @@ var Syntax;
         EmptySyntaxList.prototype.toJSON = function (key) {
             return [];
         };
-        EmptySyntaxList.prototype.count = function () {
+        EmptySyntaxList.prototype.childCount = function () {
             return 0;
         };
-        EmptySyntaxList.prototype.itemAt = function (index) {
+        EmptySyntaxList.prototype.childAt = function (index) {
             throw Errors.argumentOutOfRange("index");
-        };
-        EmptySyntaxList.prototype.collectTextElements = function (elements) {
         };
         EmptySyntaxList.prototype.toArray = function () {
             return [];
+        };
+        EmptySyntaxList.prototype.collectTextElements = function (elements) {
         };
         EmptySyntaxList.prototype.firstToken = function () {
             return null;
@@ -21700,22 +21695,22 @@ var Syntax;
                 this.item
             ];
         };
-        SingletonSyntaxList.prototype.count = function () {
+        SingletonSyntaxList.prototype.childCount = function () {
             return 1;
         };
-        SingletonSyntaxList.prototype.itemAt = function (index) {
+        SingletonSyntaxList.prototype.childAt = function (index) {
             if(index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
             return this.item;
         };
-        SingletonSyntaxList.prototype.collectTextElements = function (elements) {
-            this.item.collectTextElements(elements);
-        };
         SingletonSyntaxList.prototype.toArray = function () {
             return [
                 this.item
             ];
+        };
+        SingletonSyntaxList.prototype.collectTextElements = function (elements) {
+            this.item.collectTextElements(elements);
         };
         SingletonSyntaxList.prototype.firstToken = function () {
             return this.item.firstToken();
@@ -21782,23 +21777,23 @@ var Syntax;
         NormalSyntaxList.prototype.toJSON = function (key) {
             return this.nodeOrTokens;
         };
-        NormalSyntaxList.prototype.count = function () {
+        NormalSyntaxList.prototype.childCount = function () {
             return this.nodeOrTokens.length;
         };
-        NormalSyntaxList.prototype.itemAt = function (index) {
+        NormalSyntaxList.prototype.childAt = function (index) {
             if(index < 0 || index >= this.nodeOrTokens.length) {
                 throw Errors.argumentOutOfRange("index");
             }
             return this.nodeOrTokens[index];
+        };
+        NormalSyntaxList.prototype.toArray = function () {
+            return this.nodeOrTokens.slice(0);
         };
         NormalSyntaxList.prototype.collectTextElements = function (elements) {
             for(var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
                 var element = this.nodeOrTokens[i];
                 element.collectTextElements(elements);
             }
-        };
-        NormalSyntaxList.prototype.toArray = function () {
-            return this.nodeOrTokens.slice(0);
         };
         NormalSyntaxList.prototype.firstToken = function () {
             for(var i = 0, n = this.nodeOrTokens.length; i < n; i++) {
@@ -23082,6 +23077,12 @@ var Syntax;
         VariableWidthTokenWithNoTrivia.prototype.kind = function () {
             return this.tokenKind;
         };
+        VariableWidthTokenWithNoTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        VariableWidthTokenWithNoTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
+        };
         VariableWidthTokenWithNoTrivia.prototype.fullWidth = function () {
             return this.width();
         };
@@ -23211,6 +23212,12 @@ var Syntax;
         VariableWidthTokenWithLeadingTrivia.prototype.kind = function () {
             return this.tokenKind;
         };
+        VariableWidthTokenWithLeadingTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        VariableWidthTokenWithLeadingTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
+        };
         VariableWidthTokenWithLeadingTrivia.prototype.fullWidth = function () {
             return getTriviaWidth(this._leadingTriviaInfo) + this.width();
         };
@@ -23339,6 +23346,12 @@ var Syntax;
         };
         VariableWidthTokenWithTrailingTrivia.prototype.kind = function () {
             return this.tokenKind;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        VariableWidthTokenWithTrailingTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
         };
         VariableWidthTokenWithTrailingTrivia.prototype.fullWidth = function () {
             return this.width() + getTriviaWidth(this._trailingTriviaInfo);
@@ -23470,6 +23483,12 @@ var Syntax;
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
             return this.tokenKind;
         };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
+        };
         VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.fullWidth = function () {
             return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo);
         };
@@ -23594,6 +23613,12 @@ var Syntax;
         FixedWidthTokenWithNoTrivia.prototype.kind = function () {
             return this.tokenKind;
         };
+        FixedWidthTokenWithNoTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        FixedWidthTokenWithNoTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
+        };
         FixedWidthTokenWithNoTrivia.prototype.fullWidth = function () {
             return this.width();
         };
@@ -23711,6 +23736,12 @@ var Syntax;
         };
         FixedWidthTokenWithLeadingTrivia.prototype.kind = function () {
             return this.tokenKind;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        FixedWidthTokenWithLeadingTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
         };
         FixedWidthTokenWithLeadingTrivia.prototype.fullWidth = function () {
             return getTriviaWidth(this._leadingTriviaInfo) + this.width();
@@ -23836,6 +23867,12 @@ var Syntax;
         FixedWidthTokenWithTrailingTrivia.prototype.kind = function () {
             return this.tokenKind;
         };
+        FixedWidthTokenWithTrailingTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        FixedWidthTokenWithTrailingTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
+        };
         FixedWidthTokenWithTrailingTrivia.prototype.fullWidth = function () {
             return this.width() + getTriviaWidth(this._trailingTriviaInfo);
         };
@@ -23960,6 +23997,12 @@ var Syntax;
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.kind = function () {
             return this.tokenKind;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.childCount = function () {
+            return 0;
+        };
+        FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange('index');
         };
         FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.fullWidth = function () {
             return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo);
@@ -27282,6 +27325,9 @@ var Syntax;
         EmptyToken.prototype.clone = function () {
             return new EmptyToken(this.tokenKind);
         };
+        EmptyToken.prototype.kind = function () {
+            return this.tokenKind;
+        };
         EmptyToken.prototype.isToken = function () {
             return true;
         };
@@ -27294,8 +27340,11 @@ var Syntax;
         EmptyToken.prototype.isSeparatedList = function () {
             return false;
         };
-        EmptyToken.prototype.kind = function () {
-            return this.tokenKind;
+        EmptyToken.prototype.childCount = function () {
+            return 0;
+        };
+        EmptyToken.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange("index");
         };
         EmptyToken.prototype.toJSON = function (key) {
             return tokenToJSON(this);
@@ -27426,6 +27475,12 @@ var Syntax;
         };
         RealizedToken.prototype.accept = function (visitor) {
             return visitor.visitToken(this);
+        };
+        RealizedToken.prototype.childCount = function () {
+            return 0;
+        };
+        RealizedToken.prototype.childAt = function (index) {
+            throw Errors.argumentOutOfRange("index");
         };
         RealizedToken.prototype.isToken = function () {
             return true;
@@ -28151,11 +28206,11 @@ var Syntax;
     }
     Syntax.triviaStructuralEquals = triviaStructuralEquals;
     function listStructuralEquals(list1, list2) {
-        if(list1.count() !== list2.count()) {
+        if(list1.childCount() !== list2.childCount()) {
             return false;
         }
-        for(var i = 0, n = list1.count(); i < n; i++) {
-            if(!Syntax.nodeOrTokenStructuralEquals(list1.itemAt(i), list2.itemAt(i))) {
+        for(var i = 0, n = list1.childCount(); i < n; i++) {
+            if(!Syntax.nodeOrTokenStructuralEquals(list1.childAt(i), list2.childAt(i))) {
                 return false;
             }
         }
@@ -28163,12 +28218,12 @@ var Syntax;
     }
     Syntax.listStructuralEquals = listStructuralEquals;
     function separatedListStructuralEquals(list1, list2) {
-        if(list1.itemAndSeparatorCount() !== list2.itemAndSeparatorCount()) {
+        if(list1.childCount() !== list2.childCount()) {
             return false;
         }
-        for(var i = 0, n = list1.itemAndSeparatorCount(); i < n; i++) {
-            var element1 = list1.itemOrSeparatorAt(i);
-            var element2 = list2.itemOrSeparatorAt(i);
+        for(var i = 0, n = list1.childCount(); i < n; i++) {
+            var element1 = list1.childAt(i);
+            var element2 = list2.childAt(i);
             if(!Syntax.nodeOrTokenStructuralEquals(element1, element2)) {
                 return false;
             }
@@ -28267,10 +28322,10 @@ var SourceUnitSyntax = (function (_super) {
     SourceUnitSyntax.prototype.kind = function () {
         return 120 /* SourceUnit */ ;
     };
-    SourceUnitSyntax.prototype.slotCount = function () {
+    SourceUnitSyntax.prototype.childCount = function () {
         return 2;
     };
-    SourceUnitSyntax.prototype.elementAtSlot = function (slot) {
+    SourceUnitSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._moduleElements;
@@ -28354,10 +28409,10 @@ var ExternalModuleReferenceSyntax = (function (_super) {
     ExternalModuleReferenceSyntax.prototype.kind = function () {
         return 240 /* ExternalModuleReference */ ;
     };
-    ExternalModuleReferenceSyntax.prototype.slotCount = function () {
+    ExternalModuleReferenceSyntax.prototype.childCount = function () {
         return 4;
     };
-    ExternalModuleReferenceSyntax.prototype.elementAtSlot = function (slot) {
+    ExternalModuleReferenceSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._moduleKeyword;
@@ -28424,10 +28479,10 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
     ModuleNameModuleReferenceSyntax.prototype.kind = function () {
         return 241 /* ModuleNameModuleReference */ ;
     };
-    ModuleNameModuleReferenceSyntax.prototype.slotCount = function () {
+    ModuleNameModuleReferenceSyntax.prototype.childCount = function () {
         return 1;
     };
-    ModuleNameModuleReferenceSyntax.prototype.elementAtSlot = function (slot) {
+    ModuleNameModuleReferenceSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._moduleName;
@@ -28477,10 +28532,10 @@ var ImportDeclarationSyntax = (function (_super) {
     ImportDeclarationSyntax.prototype.kind = function () {
         return 132 /* ImportDeclaration */ ;
     };
-    ImportDeclarationSyntax.prototype.slotCount = function () {
+    ImportDeclarationSyntax.prototype.childCount = function () {
         return 5;
     };
-    ImportDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    ImportDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._importKeyword;
@@ -28573,10 +28628,10 @@ var ClassDeclarationSyntax = (function (_super) {
     ClassDeclarationSyntax.prototype.kind = function () {
         return 130 /* ClassDeclaration */ ;
     };
-    ClassDeclarationSyntax.prototype.slotCount = function () {
+    ClassDeclarationSyntax.prototype.childCount = function () {
         return 10;
     };
-    ClassDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    ClassDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._exportKeyword;
@@ -28710,10 +28765,10 @@ var InterfaceDeclarationSyntax = (function (_super) {
     InterfaceDeclarationSyntax.prototype.kind = function () {
         return 127 /* InterfaceDeclaration */ ;
     };
-    InterfaceDeclarationSyntax.prototype.slotCount = function () {
+    InterfaceDeclarationSyntax.prototype.childCount = function () {
         return 6;
     };
-    InterfaceDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    InterfaceDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._exportKeyword;
@@ -28803,10 +28858,10 @@ var ExtendsClauseSyntax = (function (_super) {
     ExtendsClauseSyntax.prototype.kind = function () {
         return 228 /* ExtendsClause */ ;
     };
-    ExtendsClauseSyntax.prototype.slotCount = function () {
+    ExtendsClauseSyntax.prototype.childCount = function () {
         return 2;
     };
-    ExtendsClauseSyntax.prototype.elementAtSlot = function (slot) {
+    ExtendsClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._extendsKeyword;
@@ -28866,10 +28921,10 @@ var ImplementsClauseSyntax = (function (_super) {
     ImplementsClauseSyntax.prototype.kind = function () {
         return 227 /* ImplementsClause */ ;
     };
-    ImplementsClauseSyntax.prototype.slotCount = function () {
+    ImplementsClauseSyntax.prototype.childCount = function () {
         return 2;
     };
-    ImplementsClauseSyntax.prototype.elementAtSlot = function (slot) {
+    ImplementsClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._implementsKeyword;
@@ -28938,10 +28993,10 @@ var ModuleDeclarationSyntax = (function (_super) {
     ModuleDeclarationSyntax.prototype.kind = function () {
         return 129 /* ModuleDeclaration */ ;
     };
-    ModuleDeclarationSyntax.prototype.slotCount = function () {
+    ModuleDeclarationSyntax.prototype.childCount = function () {
         return 8;
     };
-    ModuleDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    ModuleDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._exportKeyword;
@@ -29059,10 +29114,10 @@ var FunctionDeclarationSyntax = (function (_super) {
     FunctionDeclarationSyntax.prototype.kind = function () {
         return 128 /* FunctionDeclaration */ ;
     };
-    FunctionDeclarationSyntax.prototype.slotCount = function () {
+    FunctionDeclarationSyntax.prototype.childCount = function () {
         return 6;
     };
-    FunctionDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    FunctionDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._exportKeyword;
@@ -29172,10 +29227,10 @@ var VariableStatementSyntax = (function (_super) {
     VariableStatementSyntax.prototype.kind = function () {
         return 145 /* VariableStatement */ ;
     };
-    VariableStatementSyntax.prototype.slotCount = function () {
+    VariableStatementSyntax.prototype.childCount = function () {
         return 4;
     };
-    VariableStatementSyntax.prototype.elementAtSlot = function (slot) {
+    VariableStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._exportKeyword;
@@ -29261,10 +29316,10 @@ var VariableDeclarationSyntax = (function (_super) {
     VariableDeclarationSyntax.prototype.kind = function () {
         return 221 /* VariableDeclaration */ ;
     };
-    VariableDeclarationSyntax.prototype.slotCount = function () {
+    VariableDeclarationSyntax.prototype.childCount = function () {
         return 2;
     };
-    VariableDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    VariableDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._varKeyword;
@@ -29331,10 +29386,10 @@ var VariableDeclaratorSyntax = (function (_super) {
     VariableDeclaratorSyntax.prototype.kind = function () {
         return 222 /* VariableDeclarator */ ;
     };
-    VariableDeclaratorSyntax.prototype.slotCount = function () {
+    VariableDeclaratorSyntax.prototype.childCount = function () {
         return 3;
     };
-    VariableDeclaratorSyntax.prototype.elementAtSlot = function (slot) {
+    VariableDeclaratorSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._identifier;
@@ -29403,10 +29458,10 @@ var EqualsValueClauseSyntax = (function (_super) {
     EqualsValueClauseSyntax.prototype.kind = function () {
         return 229 /* EqualsValueClause */ ;
     };
-    EqualsValueClauseSyntax.prototype.slotCount = function () {
+    EqualsValueClauseSyntax.prototype.childCount = function () {
         return 2;
     };
-    EqualsValueClauseSyntax.prototype.elementAtSlot = function (slot) {
+    EqualsValueClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._equalsToken;
@@ -29459,10 +29514,10 @@ var PrefixUnaryExpressionSyntax = (function (_super) {
     PrefixUnaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitPrefixUnaryExpression(this);
     };
-    PrefixUnaryExpressionSyntax.prototype.slotCount = function () {
+    PrefixUnaryExpressionSyntax.prototype.childCount = function () {
         return 2;
     };
-    PrefixUnaryExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    PrefixUnaryExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._operatorToken;
@@ -29536,10 +29591,10 @@ var ArrayLiteralExpressionSyntax = (function (_super) {
     ArrayLiteralExpressionSyntax.prototype.kind = function () {
         return 211 /* ArrayLiteralExpression */ ;
     };
-    ArrayLiteralExpressionSyntax.prototype.slotCount = function () {
+    ArrayLiteralExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    ArrayLiteralExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    ArrayLiteralExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._openBracketToken;
@@ -29611,10 +29666,10 @@ var OmittedExpressionSyntax = (function (_super) {
     OmittedExpressionSyntax.prototype.kind = function () {
         return 220 /* OmittedExpression */ ;
     };
-    OmittedExpressionSyntax.prototype.slotCount = function () {
+    OmittedExpressionSyntax.prototype.childCount = function () {
         return 0;
     };
-    OmittedExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    OmittedExpressionSyntax.prototype.childAt = function (slot) {
         throw Errors.invalidOperation();
     };
     OmittedExpressionSyntax.prototype.isExpression = function () {
@@ -29651,10 +29706,10 @@ var ParenthesizedExpressionSyntax = (function (_super) {
     ParenthesizedExpressionSyntax.prototype.kind = function () {
         return 214 /* ParenthesizedExpression */ ;
     };
-    ParenthesizedExpressionSyntax.prototype.slotCount = function () {
+    ParenthesizedExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    ParenthesizedExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    ParenthesizedExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._openParenToken;
@@ -29755,10 +29810,10 @@ var SimpleArrowFunctionExpressionSyntax = (function (_super) {
     SimpleArrowFunctionExpressionSyntax.prototype.kind = function () {
         return 216 /* SimpleArrowFunctionExpression */ ;
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.slotCount = function () {
+    SimpleArrowFunctionExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    SimpleArrowFunctionExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    SimpleArrowFunctionExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._identifier;
@@ -29822,10 +29877,10 @@ var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
     ParenthesizedArrowFunctionExpressionSyntax.prototype.kind = function () {
         return 215 /* ParenthesizedArrowFunctionExpression */ ;
     };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.slotCount = function () {
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    ParenthesizedArrowFunctionExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    ParenthesizedArrowFunctionExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._callSignature;
@@ -29889,10 +29944,10 @@ var QualifiedNameSyntax = (function (_super) {
     QualifiedNameSyntax.prototype.kind = function () {
         return 121 /* QualifiedName */ ;
     };
-    QualifiedNameSyntax.prototype.slotCount = function () {
+    QualifiedNameSyntax.prototype.childCount = function () {
         return 3;
     };
-    QualifiedNameSyntax.prototype.elementAtSlot = function (slot) {
+    QualifiedNameSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._left;
@@ -29971,10 +30026,10 @@ var TypeArgumentListSyntax = (function (_super) {
     TypeArgumentListSyntax.prototype.kind = function () {
         return 225 /* TypeArgumentList */ ;
     };
-    TypeArgumentListSyntax.prototype.slotCount = function () {
+    TypeArgumentListSyntax.prototype.childCount = function () {
         return 3;
     };
-    TypeArgumentListSyntax.prototype.elementAtSlot = function (slot) {
+    TypeArgumentListSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._lessThanToken;
@@ -30048,10 +30103,10 @@ var ConstructorTypeSyntax = (function (_super) {
     ConstructorTypeSyntax.prototype.kind = function () {
         return 125 /* ConstructorType */ ;
     };
-    ConstructorTypeSyntax.prototype.slotCount = function () {
+    ConstructorTypeSyntax.prototype.childCount = function () {
         return 5;
     };
-    ConstructorTypeSyntax.prototype.elementAtSlot = function (slot) {
+    ConstructorTypeSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._newKeyword;
@@ -30144,10 +30199,10 @@ var FunctionTypeSyntax = (function (_super) {
     FunctionTypeSyntax.prototype.kind = function () {
         return 123 /* FunctionType */ ;
     };
-    FunctionTypeSyntax.prototype.slotCount = function () {
+    FunctionTypeSyntax.prototype.childCount = function () {
         return 4;
     };
-    FunctionTypeSyntax.prototype.elementAtSlot = function (slot) {
+    FunctionTypeSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._typeParameterList;
@@ -30231,10 +30286,10 @@ var ObjectTypeSyntax = (function (_super) {
     ObjectTypeSyntax.prototype.kind = function () {
         return 122 /* ObjectType */ ;
     };
-    ObjectTypeSyntax.prototype.slotCount = function () {
+    ObjectTypeSyntax.prototype.childCount = function () {
         return 3;
     };
-    ObjectTypeSyntax.prototype.elementAtSlot = function (slot) {
+    ObjectTypeSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._openBraceToken;
@@ -30312,10 +30367,10 @@ var ArrayTypeSyntax = (function (_super) {
     ArrayTypeSyntax.prototype.kind = function () {
         return 124 /* ArrayType */ ;
     };
-    ArrayTypeSyntax.prototype.slotCount = function () {
+    ArrayTypeSyntax.prototype.childCount = function () {
         return 3;
     };
-    ArrayTypeSyntax.prototype.elementAtSlot = function (slot) {
+    ArrayTypeSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._type;
@@ -30387,10 +30442,10 @@ var GenericTypeSyntax = (function (_super) {
     GenericTypeSyntax.prototype.kind = function () {
         return 126 /* GenericType */ ;
     };
-    GenericTypeSyntax.prototype.slotCount = function () {
+    GenericTypeSyntax.prototype.childCount = function () {
         return 2;
     };
-    GenericTypeSyntax.prototype.elementAtSlot = function (slot) {
+    GenericTypeSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._name;
@@ -30454,10 +30509,10 @@ var TypeAnnotationSyntax = (function (_super) {
     TypeAnnotationSyntax.prototype.kind = function () {
         return 238 /* TypeAnnotation */ ;
     };
-    TypeAnnotationSyntax.prototype.slotCount = function () {
+    TypeAnnotationSyntax.prototype.childCount = function () {
         return 2;
     };
-    TypeAnnotationSyntax.prototype.elementAtSlot = function (slot) {
+    TypeAnnotationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._colonToken;
@@ -30516,10 +30571,10 @@ var BlockSyntax = (function (_super) {
     BlockSyntax.prototype.kind = function () {
         return 143 /* Block */ ;
     };
-    BlockSyntax.prototype.slotCount = function () {
+    BlockSyntax.prototype.childCount = function () {
         return 3;
     };
-    BlockSyntax.prototype.elementAtSlot = function (slot) {
+    BlockSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._openBraceToken;
@@ -30603,10 +30658,10 @@ var ParameterSyntax = (function (_super) {
     ParameterSyntax.prototype.kind = function () {
         return 237 /* Parameter */ ;
     };
-    ParameterSyntax.prototype.slotCount = function () {
+    ParameterSyntax.prototype.childCount = function () {
         return 6;
     };
-    ParameterSyntax.prototype.elementAtSlot = function (slot) {
+    ParameterSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._dotDotDotToken;
@@ -30709,10 +30764,10 @@ var MemberAccessExpressionSyntax = (function (_super) {
     MemberAccessExpressionSyntax.prototype.kind = function () {
         return 209 /* MemberAccessExpression */ ;
     };
-    MemberAccessExpressionSyntax.prototype.slotCount = function () {
+    MemberAccessExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    MemberAccessExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    MemberAccessExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._expression;
@@ -30779,10 +30834,10 @@ var PostfixUnaryExpressionSyntax = (function (_super) {
     PostfixUnaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitPostfixUnaryExpression(this);
     };
-    PostfixUnaryExpressionSyntax.prototype.slotCount = function () {
+    PostfixUnaryExpressionSyntax.prototype.childCount = function () {
         return 2;
     };
-    PostfixUnaryExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    PostfixUnaryExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._operand;
@@ -30854,10 +30909,10 @@ var ElementAccessExpressionSyntax = (function (_super) {
     ElementAccessExpressionSyntax.prototype.kind = function () {
         return 218 /* ElementAccessExpression */ ;
     };
-    ElementAccessExpressionSyntax.prototype.slotCount = function () {
+    ElementAccessExpressionSyntax.prototype.childCount = function () {
         return 4;
     };
-    ElementAccessExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    ElementAccessExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._expression;
@@ -30940,10 +30995,10 @@ var InvocationExpressionSyntax = (function (_super) {
     InvocationExpressionSyntax.prototype.kind = function () {
         return 210 /* InvocationExpression */ ;
     };
-    InvocationExpressionSyntax.prototype.slotCount = function () {
+    InvocationExpressionSyntax.prototype.childCount = function () {
         return 2;
     };
-    InvocationExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    InvocationExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._expression;
@@ -31015,10 +31070,10 @@ var ArgumentListSyntax = (function (_super) {
     ArgumentListSyntax.prototype.kind = function () {
         return 223 /* ArgumentList */ ;
     };
-    ArgumentListSyntax.prototype.slotCount = function () {
+    ArgumentListSyntax.prototype.childCount = function () {
         return 4;
     };
-    ArgumentListSyntax.prototype.elementAtSlot = function (slot) {
+    ArgumentListSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._typeArgumentList;
@@ -31096,10 +31151,10 @@ var BinaryExpressionSyntax = (function (_super) {
     BinaryExpressionSyntax.prototype.accept = function (visitor) {
         return visitor.visitBinaryExpression(this);
     };
-    BinaryExpressionSyntax.prototype.slotCount = function () {
+    BinaryExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    BinaryExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    BinaryExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._left;
@@ -31180,10 +31235,10 @@ var ConditionalExpressionSyntax = (function (_super) {
     ConditionalExpressionSyntax.prototype.kind = function () {
         return 183 /* ConditionalExpression */ ;
     };
-    ConditionalExpressionSyntax.prototype.slotCount = function () {
+    ConditionalExpressionSyntax.prototype.childCount = function () {
         return 5;
     };
-    ConditionalExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    ConditionalExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._condition;
@@ -31293,10 +31348,10 @@ var ConstructSignatureSyntax = (function (_super) {
     ConstructSignatureSyntax.prototype.kind = function () {
         return 140 /* ConstructSignature */ ;
     };
-    ConstructSignatureSyntax.prototype.slotCount = function () {
+    ConstructSignatureSyntax.prototype.childCount = function () {
         return 2;
     };
-    ConstructSignatureSyntax.prototype.elementAtSlot = function (slot) {
+    ConstructSignatureSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._newKeyword;
@@ -31355,10 +31410,10 @@ var FunctionSignatureSyntax = (function (_super) {
     FunctionSignatureSyntax.prototype.kind = function () {
         return 142 /* FunctionSignature */ ;
     };
-    FunctionSignatureSyntax.prototype.slotCount = function () {
+    FunctionSignatureSyntax.prototype.childCount = function () {
         return 3;
     };
-    FunctionSignatureSyntax.prototype.elementAtSlot = function (slot) {
+    FunctionSignatureSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._identifier;
@@ -31429,10 +31484,10 @@ var IndexSignatureSyntax = (function (_super) {
     IndexSignatureSyntax.prototype.kind = function () {
         return 141 /* IndexSignature */ ;
     };
-    IndexSignatureSyntax.prototype.slotCount = function () {
+    IndexSignatureSyntax.prototype.childCount = function () {
         return 4;
     };
-    IndexSignatureSyntax.prototype.elementAtSlot = function (slot) {
+    IndexSignatureSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._openBracketToken;
@@ -31507,10 +31562,10 @@ var PropertySignatureSyntax = (function (_super) {
     PropertySignatureSyntax.prototype.kind = function () {
         return 138 /* PropertySignature */ ;
     };
-    PropertySignatureSyntax.prototype.slotCount = function () {
+    PropertySignatureSyntax.prototype.childCount = function () {
         return 3;
     };
-    PropertySignatureSyntax.prototype.elementAtSlot = function (slot) {
+    PropertySignatureSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._identifier;
@@ -31577,10 +31632,10 @@ var ParameterListSyntax = (function (_super) {
     ParameterListSyntax.prototype.kind = function () {
         return 224 /* ParameterList */ ;
     };
-    ParameterListSyntax.prototype.slotCount = function () {
+    ParameterListSyntax.prototype.childCount = function () {
         return 3;
     };
-    ParameterListSyntax.prototype.elementAtSlot = function (slot) {
+    ParameterListSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._openParenToken;
@@ -31655,10 +31710,10 @@ var CallSignatureSyntax = (function (_super) {
     CallSignatureSyntax.prototype.kind = function () {
         return 139 /* CallSignature */ ;
     };
-    CallSignatureSyntax.prototype.slotCount = function () {
+    CallSignatureSyntax.prototype.childCount = function () {
         return 3;
     };
-    CallSignatureSyntax.prototype.elementAtSlot = function (slot) {
+    CallSignatureSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._typeParameterList;
@@ -31734,10 +31789,10 @@ var TypeParameterListSyntax = (function (_super) {
     TypeParameterListSyntax.prototype.kind = function () {
         return 226 /* TypeParameterList */ ;
     };
-    TypeParameterListSyntax.prototype.slotCount = function () {
+    TypeParameterListSyntax.prototype.childCount = function () {
         return 3;
     };
-    TypeParameterListSyntax.prototype.elementAtSlot = function (slot) {
+    TypeParameterListSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._lessThanToken;
@@ -31808,10 +31863,10 @@ var TypeParameterSyntax = (function (_super) {
     TypeParameterSyntax.prototype.kind = function () {
         return 235 /* TypeParameter */ ;
     };
-    TypeParameterSyntax.prototype.slotCount = function () {
+    TypeParameterSyntax.prototype.childCount = function () {
         return 2;
     };
-    TypeParameterSyntax.prototype.elementAtSlot = function (slot) {
+    TypeParameterSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._identifier;
@@ -31866,10 +31921,10 @@ var ConstraintSyntax = (function (_super) {
     ConstraintSyntax.prototype.kind = function () {
         return 236 /* Constraint */ ;
     };
-    ConstraintSyntax.prototype.slotCount = function () {
+    ConstraintSyntax.prototype.childCount = function () {
         return 2;
     };
-    ConstraintSyntax.prototype.elementAtSlot = function (slot) {
+    ConstraintSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._extendsKeyword;
@@ -31924,10 +31979,10 @@ var ElseClauseSyntax = (function (_super) {
     ElseClauseSyntax.prototype.kind = function () {
         return 232 /* ElseClause */ ;
     };
-    ElseClauseSyntax.prototype.slotCount = function () {
+    ElseClauseSyntax.prototype.childCount = function () {
         return 2;
     };
-    ElseClauseSyntax.prototype.elementAtSlot = function (slot) {
+    ElseClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._elseKeyword;
@@ -31992,10 +32047,10 @@ var IfStatementSyntax = (function (_super) {
     IfStatementSyntax.prototype.kind = function () {
         return 144 /* IfStatement */ ;
     };
-    IfStatementSyntax.prototype.slotCount = function () {
+    IfStatementSyntax.prototype.childCount = function () {
         return 6;
     };
-    IfStatementSyntax.prototype.elementAtSlot = function (slot) {
+    IfStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._ifKeyword;
@@ -32097,10 +32152,10 @@ var ExpressionStatementSyntax = (function (_super) {
     ExpressionStatementSyntax.prototype.kind = function () {
         return 146 /* ExpressionStatement */ ;
     };
-    ExpressionStatementSyntax.prototype.slotCount = function () {
+    ExpressionStatementSyntax.prototype.childCount = function () {
         return 2;
     };
-    ExpressionStatementSyntax.prototype.elementAtSlot = function (slot) {
+    ExpressionStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._expression;
@@ -32169,10 +32224,10 @@ var ConstructorDeclarationSyntax = (function (_super) {
     ConstructorDeclarationSyntax.prototype.kind = function () {
         return 135 /* ConstructorDeclaration */ ;
     };
-    ConstructorDeclarationSyntax.prototype.slotCount = function () {
+    ConstructorDeclarationSyntax.prototype.childCount = function () {
         return 4;
     };
-    ConstructorDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    ConstructorDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._constructorKeyword;
@@ -32252,10 +32307,10 @@ var MemberFunctionDeclarationSyntax = (function (_super) {
     MemberFunctionDeclarationSyntax.prototype.kind = function () {
         return 133 /* MemberFunctionDeclaration */ ;
     };
-    MemberFunctionDeclarationSyntax.prototype.slotCount = function () {
+    MemberFunctionDeclarationSyntax.prototype.childCount = function () {
         return 5;
     };
-    MemberFunctionDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    MemberFunctionDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._publicOrPrivateKeyword;
@@ -32385,10 +32440,10 @@ var GetMemberAccessorDeclarationSyntax = (function (_super) {
     GetMemberAccessorDeclarationSyntax.prototype.kind = function () {
         return 136 /* GetMemberAccessorDeclaration */ ;
     };
-    GetMemberAccessorDeclarationSyntax.prototype.slotCount = function () {
+    GetMemberAccessorDeclarationSyntax.prototype.childCount = function () {
         return 7;
     };
-    GetMemberAccessorDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    GetMemberAccessorDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._publicOrPrivateKeyword;
@@ -32490,10 +32545,10 @@ var SetMemberAccessorDeclarationSyntax = (function (_super) {
     SetMemberAccessorDeclarationSyntax.prototype.kind = function () {
         return 137 /* SetMemberAccessorDeclaration */ ;
     };
-    SetMemberAccessorDeclarationSyntax.prototype.slotCount = function () {
+    SetMemberAccessorDeclarationSyntax.prototype.childCount = function () {
         return 6;
     };
-    SetMemberAccessorDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    SetMemberAccessorDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._publicOrPrivateKeyword;
@@ -32585,10 +32640,10 @@ var MemberVariableDeclarationSyntax = (function (_super) {
     MemberVariableDeclarationSyntax.prototype.kind = function () {
         return 134 /* MemberVariableDeclaration */ ;
     };
-    MemberVariableDeclarationSyntax.prototype.slotCount = function () {
+    MemberVariableDeclarationSyntax.prototype.childCount = function () {
         return 4;
     };
-    MemberVariableDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    MemberVariableDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._publicOrPrivateKeyword;
@@ -32666,10 +32721,10 @@ var ThrowStatementSyntax = (function (_super) {
     ThrowStatementSyntax.prototype.kind = function () {
         return 154 /* ThrowStatement */ ;
     };
-    ThrowStatementSyntax.prototype.slotCount = function () {
+    ThrowStatementSyntax.prototype.childCount = function () {
         return 3;
     };
-    ThrowStatementSyntax.prototype.elementAtSlot = function (slot) {
+    ThrowStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._throwKeyword;
@@ -32745,10 +32800,10 @@ var ReturnStatementSyntax = (function (_super) {
     ReturnStatementSyntax.prototype.kind = function () {
         return 147 /* ReturnStatement */ ;
     };
-    ReturnStatementSyntax.prototype.slotCount = function () {
+    ReturnStatementSyntax.prototype.childCount = function () {
         return 3;
     };
-    ReturnStatementSyntax.prototype.elementAtSlot = function (slot) {
+    ReturnStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._returnKeyword;
@@ -32824,10 +32879,10 @@ var ObjectCreationExpressionSyntax = (function (_super) {
     ObjectCreationExpressionSyntax.prototype.kind = function () {
         return 213 /* ObjectCreationExpression */ ;
     };
-    ObjectCreationExpressionSyntax.prototype.slotCount = function () {
+    ObjectCreationExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    ObjectCreationExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    ObjectCreationExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._newKeyword;
@@ -32910,10 +32965,10 @@ var SwitchStatementSyntax = (function (_super) {
     SwitchStatementSyntax.prototype.kind = function () {
         return 148 /* SwitchStatement */ ;
     };
-    SwitchStatementSyntax.prototype.slotCount = function () {
+    SwitchStatementSyntax.prototype.childCount = function () {
         return 7;
     };
-    SwitchStatementSyntax.prototype.elementAtSlot = function (slot) {
+    SwitchStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._switchKeyword;
@@ -33055,10 +33110,10 @@ var CaseSwitchClauseSyntax = (function (_super) {
     CaseSwitchClauseSyntax.prototype.kind = function () {
         return 230 /* CaseSwitchClause */ ;
     };
-    CaseSwitchClauseSyntax.prototype.slotCount = function () {
+    CaseSwitchClauseSyntax.prototype.childCount = function () {
         return 4;
     };
-    CaseSwitchClauseSyntax.prototype.elementAtSlot = function (slot) {
+    CaseSwitchClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._caseKeyword;
@@ -33144,10 +33199,10 @@ var DefaultSwitchClauseSyntax = (function (_super) {
     DefaultSwitchClauseSyntax.prototype.kind = function () {
         return 231 /* DefaultSwitchClause */ ;
     };
-    DefaultSwitchClauseSyntax.prototype.slotCount = function () {
+    DefaultSwitchClauseSyntax.prototype.childCount = function () {
         return 3;
     };
-    DefaultSwitchClauseSyntax.prototype.elementAtSlot = function (slot) {
+    DefaultSwitchClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._defaultKeyword;
@@ -33222,10 +33277,10 @@ var BreakStatementSyntax = (function (_super) {
     BreakStatementSyntax.prototype.kind = function () {
         return 149 /* BreakStatement */ ;
     };
-    BreakStatementSyntax.prototype.slotCount = function () {
+    BreakStatementSyntax.prototype.childCount = function () {
         return 3;
     };
-    BreakStatementSyntax.prototype.elementAtSlot = function (slot) {
+    BreakStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._breakKeyword;
@@ -33298,10 +33353,10 @@ var ContinueStatementSyntax = (function (_super) {
     ContinueStatementSyntax.prototype.kind = function () {
         return 150 /* ContinueStatement */ ;
     };
-    ContinueStatementSyntax.prototype.slotCount = function () {
+    ContinueStatementSyntax.prototype.childCount = function () {
         return 3;
     };
-    ContinueStatementSyntax.prototype.elementAtSlot = function (slot) {
+    ContinueStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._continueKeyword;
@@ -33443,10 +33498,10 @@ var ForStatementSyntax = (function (_super) {
     ForStatementSyntax.prototype.kind = function () {
         return 151 /* ForStatement */ ;
     };
-    ForStatementSyntax.prototype.slotCount = function () {
+    ForStatementSyntax.prototype.childCount = function () {
         return 10;
     };
-    ForStatementSyntax.prototype.elementAtSlot = function (slot) {
+    ForStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._forKeyword;
@@ -33589,10 +33644,10 @@ var ForInStatementSyntax = (function (_super) {
     ForInStatementSyntax.prototype.kind = function () {
         return 152 /* ForInStatement */ ;
     };
-    ForInStatementSyntax.prototype.slotCount = function () {
+    ForInStatementSyntax.prototype.childCount = function () {
         return 8;
     };
-    ForInStatementSyntax.prototype.elementAtSlot = function (slot) {
+    ForInStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._forKeyword;
@@ -33710,10 +33765,10 @@ var WhileStatementSyntax = (function (_super) {
     WhileStatementSyntax.prototype.kind = function () {
         return 155 /* WhileStatement */ ;
     };
-    WhileStatementSyntax.prototype.slotCount = function () {
+    WhileStatementSyntax.prototype.childCount = function () {
         return 5;
     };
-    WhileStatementSyntax.prototype.elementAtSlot = function (slot) {
+    WhileStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._whileKeyword;
@@ -33801,10 +33856,10 @@ var WithStatementSyntax = (function (_super) {
     WithStatementSyntax.prototype.kind = function () {
         return 160 /* WithStatement */ ;
     };
-    WithStatementSyntax.prototype.slotCount = function () {
+    WithStatementSyntax.prototype.childCount = function () {
         return 5;
     };
-    WithStatementSyntax.prototype.elementAtSlot = function (slot) {
+    WithStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._withKeyword;
@@ -33902,10 +33957,10 @@ var EnumDeclarationSyntax = (function (_super) {
     EnumDeclarationSyntax.prototype.kind = function () {
         return 131 /* EnumDeclaration */ ;
     };
-    EnumDeclarationSyntax.prototype.slotCount = function () {
+    EnumDeclarationSyntax.prototype.childCount = function () {
         return 6;
     };
-    EnumDeclarationSyntax.prototype.elementAtSlot = function (slot) {
+    EnumDeclarationSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._exportKeyword;
@@ -34002,10 +34057,10 @@ var CastExpressionSyntax = (function (_super) {
     CastExpressionSyntax.prototype.kind = function () {
         return 217 /* CastExpression */ ;
     };
-    CastExpressionSyntax.prototype.slotCount = function () {
+    CastExpressionSyntax.prototype.childCount = function () {
         return 4;
     };
-    CastExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    CastExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._lessThanToken;
@@ -34086,10 +34141,10 @@ var ObjectLiteralExpressionSyntax = (function (_super) {
     ObjectLiteralExpressionSyntax.prototype.kind = function () {
         return 212 /* ObjectLiteralExpression */ ;
     };
-    ObjectLiteralExpressionSyntax.prototype.slotCount = function () {
+    ObjectLiteralExpressionSyntax.prototype.childCount = function () {
         return 3;
     };
-    ObjectLiteralExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    ObjectLiteralExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._openBraceToken;
@@ -34186,10 +34241,10 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
     SimplePropertyAssignmentSyntax.prototype.kind = function () {
         return 239 /* SimplePropertyAssignment */ ;
     };
-    SimplePropertyAssignmentSyntax.prototype.slotCount = function () {
+    SimplePropertyAssignmentSyntax.prototype.childCount = function () {
         return 3;
     };
-    SimplePropertyAssignmentSyntax.prototype.elementAtSlot = function (slot) {
+    SimplePropertyAssignmentSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._propertyName;
@@ -34286,10 +34341,10 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
     GetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
         return 242 /* GetAccessorPropertyAssignment */ ;
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.slotCount = function () {
+    GetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
         return 5;
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.elementAtSlot = function (slot) {
+    GetAccessorPropertyAssignmentSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._getKeyword;
@@ -34375,10 +34430,10 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
     SetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
         return 243 /* SetAccessorPropertyAssignment */ ;
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.slotCount = function () {
+    SetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
         return 6;
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.elementAtSlot = function (slot) {
+    SetAccessorPropertyAssignmentSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._setKeyword;
@@ -34473,10 +34528,10 @@ var FunctionExpressionSyntax = (function (_super) {
     FunctionExpressionSyntax.prototype.kind = function () {
         return 219 /* FunctionExpression */ ;
     };
-    FunctionExpressionSyntax.prototype.slotCount = function () {
+    FunctionExpressionSyntax.prototype.childCount = function () {
         return 4;
     };
-    FunctionExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    FunctionExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._functionKeyword;
@@ -34558,10 +34613,10 @@ var EmptyStatementSyntax = (function (_super) {
     EmptyStatementSyntax.prototype.kind = function () {
         return 153 /* EmptyStatement */ ;
     };
-    EmptyStatementSyntax.prototype.slotCount = function () {
+    EmptyStatementSyntax.prototype.childCount = function () {
         return 1;
     };
-    EmptyStatementSyntax.prototype.elementAtSlot = function (slot) {
+    EmptyStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._semicolonToken;
@@ -34619,10 +34674,10 @@ var TryStatementSyntax = (function (_super) {
     TryStatementSyntax.prototype.kind = function () {
         return 156 /* TryStatement */ ;
     };
-    TryStatementSyntax.prototype.slotCount = function () {
+    TryStatementSyntax.prototype.childCount = function () {
         return 4;
     };
-    TryStatementSyntax.prototype.elementAtSlot = function (slot) {
+    TryStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._tryKeyword;
@@ -34711,10 +34766,10 @@ var CatchClauseSyntax = (function (_super) {
     CatchClauseSyntax.prototype.kind = function () {
         return 233 /* CatchClause */ ;
     };
-    CatchClauseSyntax.prototype.slotCount = function () {
+    CatchClauseSyntax.prototype.childCount = function () {
         return 5;
     };
-    CatchClauseSyntax.prototype.elementAtSlot = function (slot) {
+    CatchClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._catchKeyword;
@@ -34796,10 +34851,10 @@ var FinallyClauseSyntax = (function (_super) {
     FinallyClauseSyntax.prototype.kind = function () {
         return 234 /* FinallyClause */ ;
     };
-    FinallyClauseSyntax.prototype.slotCount = function () {
+    FinallyClauseSyntax.prototype.childCount = function () {
         return 2;
     };
-    FinallyClauseSyntax.prototype.elementAtSlot = function (slot) {
+    FinallyClauseSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._finallyKeyword;
@@ -34858,10 +34913,10 @@ var LabeledStatementSyntax = (function (_super) {
     LabeledStatementSyntax.prototype.kind = function () {
         return 157 /* LabeledStatement */ ;
     };
-    LabeledStatementSyntax.prototype.slotCount = function () {
+    LabeledStatementSyntax.prototype.childCount = function () {
         return 3;
     };
-    LabeledStatementSyntax.prototype.elementAtSlot = function (slot) {
+    LabeledStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._identifier;
@@ -34938,10 +34993,10 @@ var DoStatementSyntax = (function (_super) {
     DoStatementSyntax.prototype.kind = function () {
         return 158 /* DoStatement */ ;
     };
-    DoStatementSyntax.prototype.slotCount = function () {
+    DoStatementSyntax.prototype.childCount = function () {
         return 7;
     };
-    DoStatementSyntax.prototype.elementAtSlot = function (slot) {
+    DoStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._doKeyword;
@@ -35042,10 +35097,10 @@ var TypeOfExpressionSyntax = (function (_super) {
     TypeOfExpressionSyntax.prototype.kind = function () {
         return 168 /* TypeOfExpression */ ;
     };
-    TypeOfExpressionSyntax.prototype.slotCount = function () {
+    TypeOfExpressionSyntax.prototype.childCount = function () {
         return 2;
     };
-    TypeOfExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    TypeOfExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._typeOfKeyword;
@@ -35109,10 +35164,10 @@ var DeleteExpressionSyntax = (function (_super) {
     DeleteExpressionSyntax.prototype.kind = function () {
         return 167 /* DeleteExpression */ ;
     };
-    DeleteExpressionSyntax.prototype.slotCount = function () {
+    DeleteExpressionSyntax.prototype.childCount = function () {
         return 2;
     };
-    DeleteExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    DeleteExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._deleteKeyword;
@@ -35176,10 +35231,10 @@ var VoidExpressionSyntax = (function (_super) {
     VoidExpressionSyntax.prototype.kind = function () {
         return 169 /* VoidExpression */ ;
     };
-    VoidExpressionSyntax.prototype.slotCount = function () {
+    VoidExpressionSyntax.prototype.childCount = function () {
         return 2;
     };
-    VoidExpressionSyntax.prototype.elementAtSlot = function (slot) {
+    VoidExpressionSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._voidKeyword;
@@ -35243,10 +35298,10 @@ var DebuggerStatementSyntax = (function (_super) {
     DebuggerStatementSyntax.prototype.kind = function () {
         return 159 /* DebuggerStatement */ ;
     };
-    DebuggerStatementSyntax.prototype.slotCount = function () {
+    DebuggerStatementSyntax.prototype.childCount = function () {
         return 2;
     };
-    DebuggerStatementSyntax.prototype.elementAtSlot = function (slot) {
+    DebuggerStatementSyntax.prototype.childAt = function (slot) {
         switch(slot) {
             case 0:
                 return this._debuggerKeyword;
@@ -48342,13 +48397,13 @@ var SyntaxWalker = (function () {
         this.visitNodeOrToken(nodeOrToken);
     };
     SyntaxWalker.prototype.visitList = function (list) {
-        for(var i = 0, n = list.count(); i < n; i++) {
-            this.visitNodeOrToken(list.itemAt(i));
+        for(var i = 0, n = list.childCount(); i < n; i++) {
+            this.visitNodeOrToken(list.childAt(i));
         }
     };
     SyntaxWalker.prototype.visitSeparatedList = function (list) {
-        for(var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {
-            var item = list.itemOrSeparatorAt(i);
+        for(var i = 0, n = list.childCount(); i < n; i++) {
+            var item = list.childAt(i);
             this.visitNodeOrToken(item);
         }
     };
@@ -49399,8 +49454,8 @@ var Emitter;
         };
         EmitterImpl.prototype.convertModuleElements = function (list) {
             var moduleElements = [];
-            for(var i = 0, n = list.count(); i < n; i++) {
-                var moduleElement = list.itemAt(i);
+            for(var i = 0, n = list.childCount(); i < n; i++) {
+                var moduleElement = list.childAt(i);
                 var converted = this.visitNode(moduleElement);
                 if(converted !== null) {
                     if(ArrayUtilities.isArray(converted)) {
@@ -49448,8 +49503,8 @@ var Emitter;
                 var variableStatement = moduleElement;
                 if(variableStatement.exportKeyword() !== null) {
                     var declarators = variableStatement.variableDeclaration().variableDeclarators();
-                    for(var i = 0, n = declarators.itemCount(); i < n; i++) {
-                        var declarator = declarators.itemAt(i);
+                    for(var i = 0, n = declarators.nonSeparatorCount(); i < n; i++) {
+                        var declarator = declarators.nonSeparatorAt(i);
                         elements.push(this.exportModuleElement(parentModule, moduleElement, declarator.identifier()));
                     }
                 }
@@ -49477,8 +49532,8 @@ var Emitter;
                 moduleElements.unshift(this.generateThisCaptureStatement(0));
             }
             var parentModule = this.rightmostName(node.moduleName());
-            for(var i = 0, n = node.moduleElements().count(); i < n; i++) {
-                this.handleExportedModuleElement(parentModule, node.moduleElements().itemAt(i), moduleElements);
+            for(var i = 0, n = node.moduleElements().childCount(); i < n; i++) {
+                this.handleExportedModuleElement(parentModule, node.moduleElements().childAt(i), moduleElements);
             }
             var names = EmitterImpl.splitModuleName(node.moduleName());
             for(var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
@@ -49556,7 +49611,7 @@ var Emitter;
             return EmitterImpl.parameterListDefaultParameters(signature.callSignature().parameterList());
         };
         EmitterImpl.parameterListDefaultParameters = function parameterListDefaultParameters(parameterList) {
-            return ArrayUtilities.where(parameterList.parameters().toItemArray(), function (p) {
+            return ArrayUtilities.where(parameterList.parameters().toNonSeparatorArray(), function (p) {
                 return p.equalsValueClause() !== null;
             });
         };
@@ -49610,8 +49665,8 @@ var Emitter;
         };
         EmitterImpl.prototype.generatePropertyAssignments = function (classDeclaration, static) {
             var result = [];
-            for(var i = 0, n = classDeclaration.classElements().count(); i < n; i++) {
-                var classElement = classDeclaration.classElements().itemAt(i);
+            for(var i = 0, n = classDeclaration.classElements().childCount(); i < n; i++) {
+                var classElement = classDeclaration.classElements().childAt(i);
                 if(classElement.kind() === 134 /* MemberVariableDeclaration */ ) {
                     var statement = this.generatePropertyAssignment(classDeclaration, static, classElement);
                     if(statement !== null) {
@@ -49663,7 +49718,7 @@ var Emitter;
             for(var i = instanceAssignments.length - 1; i >= 0; i--) {
                 normalStatements.unshift(this.changeIndentation(instanceAssignments[i], true, this.options.indentSpaces));
             }
-            var parameterPropertyAssignments = ArrayUtilities.select(ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toItemArray(), function (p) {
+            var parameterPropertyAssignments = ArrayUtilities.select(ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toNonSeparatorArray(), function (p) {
                 return p.publicOrPrivateKeyword() !== null;
             }), function (p) {
                 return _this.generatePropertyAssignmentStatement(p);
@@ -49806,8 +49861,8 @@ var Emitter;
             }
             var callSignature = CallSignatureSyntax.create(ParameterListSyntax.create1().withParameters(Syntax.separatedList(callParameters))).withTrailingTrivia(this.space);
             var invocationParameters = [];
-            if(node.extendsClause() !== null && node.extendsClause().typeNames().itemCount() > 0) {
-                invocationParameters.push(node.extendsClause().typeNames().itemAt(0).withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList));
+            if(node.extendsClause() !== null && node.extendsClause().typeNames().nonSeparatorCount() > 0) {
+                invocationParameters.push(node.extendsClause().typeNames().nonSeparatorAt(0).withLeadingTrivia(Syntax.emptyTriviaList).withTrailingTrivia(Syntax.emptyTriviaList));
             }
             var invocationExpression = this.factory.invocationExpression(ParenthesizedExpressionSyntax.create1(FunctionExpressionSyntax.create1().withCallSignature(callSignature).withBlock(block)), ArgumentListSyntax.create1().withArguments(Syntax.separatedList(invocationParameters)));
             var variableDeclarator = VariableDeclaratorSyntax.create(identifier.withTrailingTrivia(Syntax.spaceTriviaList)).withEqualsValueClause(this.factory.equalsValueClause(Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), invocationExpression));
@@ -49848,7 +49903,7 @@ var Emitter;
                 return Syntax.numericLiteralExpression(index.toString());
             }
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
-            var previousVariable = enumDeclaration.variableDeclarators().itemAt(index - 1);
+            var previousVariable = enumDeclaration.variableDeclarators().nonSeparatorAt(index - 1);
             var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
             var receiver = MemberAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList));
             return this.factory.binaryExpression(161 /* PlusExpression */ , receiver, Syntax.token(89 /* PlusToken */ ).withTrailingTrivia(this.space), Syntax.numericLiteralExpression("1"));
@@ -49859,7 +49914,7 @@ var Emitter;
             var statements = [];
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
-            if(node.variableDeclarators().itemCount() > 0) {
+            if(node.variableDeclarators().nonSeparatorCount() > 0) {
                 statements.push(VariableStatementSyntax.create1(this.factory.variableDeclaration(Syntax.token(40 /* VarKeyword */ ).withTrailingTrivia(this.space), Syntax.separatedList([
                     this.factory.variableDeclarator(Syntax.identifier("_").withTrailingTrivia(this.space), null, this.factory.equalsValueClause(Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), identifier))
                 ]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
@@ -49867,8 +49922,8 @@ var Emitter;
                 var assignDefaultValues = {
                     value: true
                 };
-                for(var i = 0, n = node.variableDeclarators().itemCount(); i < n; i++) {
-                    var variableDeclarator = node.variableDeclarators().itemAt(i);
+                for(var i = 0, n = node.variableDeclarators().nonSeparatorCount(); i < n; i++) {
+                    var variableDeclarator = node.variableDeclarators().nonSeparatorAt(i);
                     var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
                     assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
                     var innerAssign = Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), variableIdentifier).withTrailingTrivia(Syntax.spaceTriviaList), Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
@@ -49897,7 +49952,7 @@ var Emitter;
         EmitterImpl.prototype.convertSuperInvocationExpression = function (node) {
             var result = _super.prototype.visitInvocationExpression.call(this, node);
             var expression = MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("call"));
-            var arguments = result.argumentList().arguments().toItemAndSeparatorArray();
+            var arguments = result.argumentList().arguments().toArray();
             if(arguments.length > 0) {
                 arguments.unshift(Syntax.token(79 /* CommaToken */ ).withTrailingTrivia(this.space));
             }
@@ -49906,7 +49961,7 @@ var Emitter;
         };
         EmitterImpl.prototype.convertSuperMemberAccessInvocationExpression = function (node) {
             var result = _super.prototype.visitInvocationExpression.call(this, node);
-            var arguments = result.argumentList().arguments().toItemAndSeparatorArray();
+            var arguments = result.argumentList().arguments().toArray();
             if(arguments.length > 0) {
                 arguments.unshift(Syntax.token(79 /* CommaToken */ ).withTrailingTrivia(this.space));
             }

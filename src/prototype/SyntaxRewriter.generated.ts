@@ -16,14 +16,14 @@ class SyntaxRewriter implements ISyntaxVisitor {
     public visitList(list: ISyntaxList): ISyntaxList {
         var newItems: ISyntaxNodeOrToken[] = null;
 
-        for (var i = 0, n = list.count(); i < n; i++) {
-            var item = list.itemAt(i);
+        for (var i = 0, n = list.childCount(); i < n; i++) {
+            var item = list.childAt(i);
             var newItem = this.visitNodeOrToken(item);
 
             if (item !== newItem && newItems === null) {
                 newItems = [];
                 for (var j = 0; j < i; j++) {
-                    newItems.push(list.itemAt(j));
+                    newItems.push(list.childAt(j));
                 }
             }
 
@@ -32,21 +32,21 @@ class SyntaxRewriter implements ISyntaxVisitor {
             }
         }
 
-        Debug.assert(newItems === null || newItems.length === list.count());
+        Debug.assert(newItems === null || newItems.length === list.childCount());
         return newItems === null ? list : Syntax.list(newItems);
     }
 
     public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {
         var newItems: ISyntaxNodeOrToken[] = null;
 
-        for (var i = 0, n = list.itemAndSeparatorCount(); i < n; i++) {
-            var item = list.itemOrSeparatorAt(i);
+        for (var i = 0, n = list.childCount(); i < n; i++) {
+            var item = list.childAt(i);
             var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);
 
             if (item !== newItem && newItems === null) {
                 newItems = [];
                 for (var j = 0; j < i; j++) {
-                    newItems.push(list.itemOrSeparatorAt(j));
+                    newItems.push(list.childAt(j));
                 }
             }
 
@@ -55,7 +55,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             }
         }
 
-        Debug.assert(newItems === null || newItems.length === list.itemAndSeparatorCount());
+        Debug.assert(newItems === null || newItems.length === list.childCount());
         return newItems === null ? list : Syntax.separatedList(newItems);
     }
 

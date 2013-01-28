@@ -15,15 +15,18 @@ module Syntax {
 
         toJSON: (key) => [],
 
-        itemAndSeparatorCount: () => 0,
-        itemCount: () => 0,
+        childCount: () => 0,
+        nonSeparatorCount: () => 0,
         separatorCount: () => 0,
 
-        itemOrSeparatorAt: (index: number): ISyntaxNodeOrToken => {
+        toArray: () => [],
+        toNonSeparatorArray: () => [],
+
+        childAt: (index: number): ISyntaxNodeOrToken => {
             throw Errors.argumentOutOfRange("index");
         },
 
-        itemAt: (index: number): ISyntaxNodeOrToken => {
+        nonSeparatorAt: (index: number): ISyntaxNodeOrToken => {
             throw Errors.argumentOutOfRange("index");
         },
 
@@ -40,9 +43,6 @@ module Syntax {
         fullText: () => "",
 
         width: () => 0,
-
-        toItemAndSeparatorArray: (): ISyntaxNodeOrToken[] => [],
-        toItemArray: (): ISyntaxNodeOrToken[] => [],
 
         isTypeScriptSpecific: () => false,
         hasSkippedText: () => false,
@@ -80,11 +80,14 @@ module Syntax {
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return true; }
 
-        public itemAndSeparatorCount() { return 1; }
-        public itemCount() { return 1; }
+        public childCount() { return 1; }
+        public nonSeparatorCount() { return 1; }
         public separatorCount() { return 0; }
 
-        public itemOrSeparatorAt(index: number): ISyntaxNodeOrToken {
+        public toArray() { return [this.item]; }
+        public toNonSeparatorArray() { return [this.item]; }
+
+        public childAt(index: number): ISyntaxNodeOrToken {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -92,7 +95,7 @@ module Syntax {
             return this.item;
         }
 
-        public itemAt(index: number): ISyntaxNodeOrToken {
+        public nonSeparatorAt(index: number): ISyntaxNodeOrToken {
             if (index !== 0) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -134,18 +137,6 @@ module Syntax {
 
         public trailingTriviaWidth(): number {
             return this.item.trailingTriviaWidth();
-        }
-
-        public toArray(): ISyntaxElement[] {
-            return [this.item];
-        }
-
-        public toItemAndSeparatorArray(): ISyntaxNodeOrToken[] {
-            return [this.item];
-        }
-
-        public toItemArray(): ISyntaxNodeOrToken[] {
-            return [this.item];
         }
 
         public isTypeScriptSpecific(): bool {
@@ -191,11 +182,22 @@ module Syntax {
         public isSeparatedList(): bool { return true; }
         public toJSON(key) { return this.elements; }
 
-        public itemAndSeparatorCount() { return this.elements.length; }
-        public itemCount() { return IntegerUtilities.integerDivide(this.elements.length + 1, 2); }
+        public childCount() { return this.elements.length; }
+        public nonSeparatorCount() { return IntegerUtilities.integerDivide(this.elements.length + 1, 2); }
         public separatorCount() { return IntegerUtilities.integerDivide(this.elements.length, 2); }
 
-        public itemOrSeparatorAt(index: number): ISyntaxNodeOrToken {
+        public toArray(): ISyntaxNodeOrToken[] { return this.elements.slice(0); }
+
+        public toNonSeparatorArray(): ISyntaxNodeOrToken[] {
+            var result: ISyntaxNodeOrToken[] = [];
+            for (var i = 0, n = this.nonSeparatorCount(); i < n; i++) {
+                result.push(this.nonSeparatorAt(i));
+            }
+
+            return result;
+        }
+        
+        public childAt(index: number): ISyntaxNodeOrToken {
             if (index < 0 || index >= this.elements.length) {
                 throw Errors.argumentOutOfRange("index");
             }
@@ -203,7 +205,7 @@ module Syntax {
             return this.elements[index];
         }
 
-        public itemAt(index: number): ISyntaxNodeOrToken {
+        public nonSeparatorAt(index: number): ISyntaxNodeOrToken {
             var value = index * 2;
             if (value < 0 || value >= this.elements.length) {
                 throw Errors.argumentOutOfRange("index");
@@ -269,22 +271,9 @@ module Syntax {
             return elements.join("");
         }
 
-        public toItemAndSeparatorArray(): ISyntaxNodeOrToken[] {
-            return this.elements.slice(0);
-        }
-
-        public toItemArray(): ISyntaxNodeOrToken[] {
-            var result: ISyntaxNodeOrToken[] = [];
-            for (var i = 0, n = this.itemCount(); i < n; i++) {
-                result.push(this.itemAt(i));
-            }
-
-            return result;
-        }
-
         public isTypeScriptSpecific(): bool {
-            for (var i = 0, n = this.itemCount(); i < n; i++) {
-                if (this.itemAt(i).isTypeScriptSpecific()) {
+            for (var i = 0, n = this.nonSeparatorCount(); i < n; i++) {
+                if (this.nonSeparatorAt(i).isTypeScriptSpecific()) {
                     return true;
                 }
             }

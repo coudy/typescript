@@ -9,6 +9,9 @@ interface ISyntaxElement {
     isList(): bool;
     isSeparatedList(): bool;
 
+    childCount(): number;
+    childAt(index: number): ISyntaxElement;
+
     // True if this element is typescript specific and would not be legal in pure javascript.
     isTypeScriptSpecific(): bool;
 

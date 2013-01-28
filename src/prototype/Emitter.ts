@@ -90,8 +90,8 @@ module Emitter {
         private convertModuleElements(list: ISyntaxList): IModuleElementSyntax[] {
             var moduleElements: IModuleElementSyntax[] = [];
 
-            for (var i = 0, n = list.count(); i < n; i++) {
-                var moduleElement = list.itemAt(i);
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                var moduleElement = list.childAt(i);
 
                 var converted = this.visitNode(<SyntaxNode>moduleElement);
                 if (converted !== null) {
@@ -166,8 +166,8 @@ module Emitter {
                 var variableStatement = <VariableStatementSyntax>moduleElement;
                 if (variableStatement.exportKeyword() !== null) {
                     var declarators = variableStatement.variableDeclaration().variableDeclarators();
-                    for (var i = 0, n = declarators.itemCount(); i < n; i++) {
-                        var declarator = <VariableDeclaratorSyntax>declarators.itemAt(i);
+                    for (var i = 0, n = declarators.nonSeparatorCount(); i < n; i++) {
+                        var declarator = <VariableDeclaratorSyntax>declarators.nonSeparatorAt(i);
                         elements.push(this.exportModuleElement(parentModule, moduleElement, declarator.identifier()));
                     }
                 }
@@ -205,9 +205,9 @@ module Emitter {
 
             // Handle the case where the child is an export.
             var parentModule = this.rightmostName(node.moduleName());
-            for (var i = 0, n = node.moduleElements().count(); i < n; i++) {
+            for (var i = 0, n = node.moduleElements().childCount(); i < n; i++) {
                 this.handleExportedModuleElement(
-                    parentModule, <IModuleElementSyntax>node.moduleElements().itemAt(i), moduleElements);
+                    parentModule, <IModuleElementSyntax>node.moduleElements().childAt(i), moduleElements);
             }
 
             // Break up the dotted name into pieces.
@@ -422,7 +422,7 @@ module Emitter {
         }
 
         private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
-            return ArrayUtilities.where(parameterList.parameters().toItemArray(), p => p.equalsValueClause() !== null);
+            return ArrayUtilities.where(parameterList.parameters().toNonSeparatorArray(), p => p.equalsValueClause() !== null);
         }
 
         private generatePropertyAssignmentStatement(parameter: ParameterSyntax): ExpressionStatementSyntax {
@@ -539,8 +539,8 @@ module Emitter {
             var result: ExpressionStatementSyntax[] = [];
 
             // TODO: handle alignment here.
-            for (var i = 0, n = classDeclaration.classElements().count(); i < n; i++) {
-                var classElement = classDeclaration.classElements().itemAt(i);
+            for (var i = 0, n = classDeclaration.classElements().childCount(); i < n; i++) {
+                var classElement = classDeclaration.classElements().childAt(i);
 
                 if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
                     var statement = this.generatePropertyAssignment(
@@ -628,7 +628,7 @@ module Emitter {
             }
 
             var parameterPropertyAssignments = <ExpressionStatementSyntax[]>ArrayUtilities.select(
-                ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toItemArray(), p => p.publicOrPrivateKeyword() !== null),
+                ArrayUtilities.where(constructorDeclaration.parameterList().parameters().toNonSeparatorArray(), p => p.publicOrPrivateKeyword() !== null),
                 p => this.generatePropertyAssignmentStatement(p));
 
             for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
@@ -877,8 +877,8 @@ module Emitter {
                     Syntax.separatedList(callParameters))).withTrailingTrivia(this.space);
 
             var invocationParameters = [];
-            if (node.extendsClause() !== null && node.extendsClause().typeNames().itemCount() > 0) {
-                invocationParameters.push(node.extendsClause().typeNames().itemAt(0)
+            if (node.extendsClause() !== null && node.extendsClause().typeNames().nonSeparatorCount() > 0) {
+                invocationParameters.push(node.extendsClause().typeNames().nonSeparatorAt(0)
                     .withLeadingTrivia(Syntax.emptyTriviaList)
                     .withTrailingTrivia(Syntax.emptyTriviaList));
             }
@@ -960,7 +960,7 @@ module Emitter {
 
             // Add one to the previous value.
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier());
-            var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().itemAt(index - 1);
+            var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().nonSeparatorAt(index - 1);
             var variableIdentifier = this.withNoTrivia(previousVariable.identifier());
 
             var receiver = MemberAccessExpressionSyntax.create1(
@@ -982,7 +982,7 @@ module Emitter {
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
 
-            if (node.variableDeclarators().itemCount() > 0) {
+            if (node.variableDeclarators().nonSeparatorCount() > 0) {
                 // var _ = E;
                 statements.push(VariableStatementSyntax.create1(
                     this.factory.variableDeclaration(
@@ -1001,8 +1001,8 @@ module Emitter {
                         ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
 
                 var assignDefaultValues = { value: true };
-                for (var i = 0, n = node.variableDeclarators().itemCount(); i < n; i++) {
-                    var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().itemAt(i)
+                for (var i = 0, n = node.variableDeclarators().nonSeparatorCount(); i < n; i++) {
+                    var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators().nonSeparatorAt(i)
                     var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier());
 
                     assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause() === null;
@@ -1071,7 +1071,7 @@ module Emitter {
 
             var expression = MemberAccessExpressionSyntax.create1(Syntax.identifierName("_super"), Syntax.identifierName("call"));
 
-            var arguments = result.argumentList().arguments().toItemAndSeparatorArray();
+            var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
                 arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
             }
@@ -1086,7 +1086,7 @@ module Emitter {
         private convertSuperMemberAccessInvocationExpression(node: InvocationExpressionSyntax): InvocationExpressionSyntax {
             var result: InvocationExpressionSyntax = super.visitInvocationExpression(node);
 
-            var arguments = result.argumentList().arguments().toItemAndSeparatorArray();
+            var arguments = result.argumentList().arguments().toArray();
             if (arguments.length > 0) {
                 arguments.unshift(Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space));
             }

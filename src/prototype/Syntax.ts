@@ -67,12 +67,12 @@ module Syntax {
     }
 
     export function listStructuralEquals(list1: ISyntaxList, list2: ISyntaxList): bool {
-        if (list1.count() !== list2.count()) {
+        if (list1.childCount() !== list2.childCount()) {
             return false;
         }
 
-        for (var i = 0, n = list1.count(); i < n; i++) {
-            if (!Syntax.nodeOrTokenStructuralEquals(list1.itemAt(i), list2.itemAt(i))) {
+        for (var i = 0, n = list1.childCount(); i < n; i++) {
+            if (!Syntax.nodeOrTokenStructuralEquals(list1.childAt(i), list2.childAt(i))) {
                 return false;
             }
         }
@@ -81,13 +81,13 @@ module Syntax {
     }
 
     export function separatedListStructuralEquals(list1: ISeparatedSyntaxList, list2: ISeparatedSyntaxList): bool {
-        if (list1.itemAndSeparatorCount() !== list2.itemAndSeparatorCount()) {
+        if (list1.childCount() !== list2.childCount()) {
             return false;
         }
 
-        for (var i = 0, n = list1.itemAndSeparatorCount(); i < n; i++) {
-            var element1 = list1.itemOrSeparatorAt(i);
-            var element2 = list2.itemOrSeparatorAt(i);
+        for (var i = 0, n = list1.childCount(); i < n; i++) {
+            var element1 = list1.childAt(i);
+            var element2 = list2.childAt(i);
             if (!Syntax.nodeOrTokenStructuralEquals(element1, element2)) {
                 return false;
             }

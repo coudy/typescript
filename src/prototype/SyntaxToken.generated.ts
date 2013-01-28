@@ -31,6 +31,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return this.width(); }
         private start(): number { return this._fullStart; }
         private end(): number { return this.start() + this.width(); }
@@ -118,6 +122,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
         private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
@@ -205,6 +213,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
         private start(): number { return this._fullStart; }
         private end(): number { return this.start() + this.width(); }
@@ -295,6 +307,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
         private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
@@ -369,6 +385,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return this.width(); }
         public width(): number { return this.text().length; }
         public text(): string { return SyntaxFacts.getText(this.tokenKind); }
@@ -440,6 +460,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width(); }
         private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }
@@ -514,6 +538,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return this.width() + getTriviaWidth(this._trailingTriviaInfo); }
         private start(): number { return this._fullStart; }
         private end(): number { return this.start() + this.width(); }
@@ -591,6 +619,10 @@ module Syntax {
         public isSeparatedList(): bool { return false; }
 
         public kind(): SyntaxKind { return this.tokenKind; }
+
+        public childCount(): number { return 0; }
+        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }
+
         public fullWidth(): number { return getTriviaWidth(this._leadingTriviaInfo) + this.width() + getTriviaWidth(this._trailingTriviaInfo); }
         private start(): number { return this._fullStart + getTriviaWidth(this._leadingTriviaInfo); }
         private end(): number { return this.start() + this.width(); }

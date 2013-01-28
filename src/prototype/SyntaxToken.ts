@@ -112,11 +112,20 @@ module Syntax {
             return new EmptyToken(this.tokenKind);
         }
 
+        public kind() { return this.tokenKind; }
+
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
         public isList(): bool { return false; }
         public isSeparatedList(): bool { return false; }
-        public kind() { return this.tokenKind; }
+
+        public childCount(): number {
+            return 0;
+        }
+
+        public childAt(index: number): ISyntaxElement {
+            throw Errors.argumentOutOfRange("index");
+        }
 
         public toJSON(key) { return tokenToJSON(this); }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
@@ -200,6 +209,14 @@ module Syntax {
         private hasZeroWidthToken() { return this.fullWidth() === 0; }
         private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.kind()); }
         private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+
+        public childCount(): number {
+            return 0;
+        }
+
+        public childAt(index: number): ISyntaxElement {
+            throw Errors.argumentOutOfRange("index");
+        }
 
         public isToken(): bool { return true; }
         public isNode(): bool { return false; }
