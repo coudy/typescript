@@ -617,7 +617,7 @@ interface JQuery {
     /*************
      MISCELLANEOUS
     **************/
-    each(func: (index: any, elem: Element) => JQuery);
+    each(func: (index: any, elem: Element) => any): JQuery;
     
     get(index?: number): any;
     
