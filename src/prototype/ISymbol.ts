@@ -151,10 +151,13 @@ interface ISymbol {
     toSymbolDisplayParts(format: SymbolDisplayFormat): SymbolDisplayPart[];
 }
 
-interface IModuleSymbol extends ISymbol {
+interface IModuleOrTypeSymbol extends ISymbol {
 }
 
-interface ITypeSymbol extends ISymbol {
+interface IModuleSymbol extends IModuleOrTypeSymbol {
+}
+
+interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// <summary>
     /// An enumerated value that identifies what kind of type this is.
     /// </summary>

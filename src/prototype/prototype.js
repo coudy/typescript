@@ -14178,6 +14178,11 @@ var TypeScript;
         var symbol = scopeChain.scope.findLocal(modName, false, false);
         var typeSymbol = null;
         var modType = null;
+        if(symbol && symbol.declAST && symbol.declAST.nodeType != 96 /* ModuleDeclaration */ ) {
+            context.checker.errorReporter.simpleError(moduleDecl, "Conflicting symbol name for module '" + modName + "'");
+            symbol = null;
+            modName = "";
+        }
         if((symbol == null) || (symbol.kind() != 1 /* Type */ )) {
             if(modType == null) {
                 var enclosedTypes = new TypeScript.ScopedMembers(new TypeScript.DualStringHashTable(new TypeScript.StringHashTable(), new TypeScript.StringHashTable()));
@@ -14201,9 +14206,6 @@ var TypeScript;
             scopeChain.scope.enter(scopeChain.container, ast, typeSymbol, context.checker.errorReporter, isExported || isGlobal, false, isAmbient);
             modType.symbol = typeSymbol;
         } else {
-            if(symbol && symbol.declAST && symbol.declAST.nodeType != 96 /* ModuleDeclaration */ ) {
-                context.checker.errorReporter.simpleError(moduleDecl, "Conflicting symbol name for module '" + modName + "'");
-            }
             typeSymbol = symbol;
             var publicEnclosedTypes = typeSymbol.type.getAllEnclosedTypes().publicMembers;
             var publicEnclosedTypesTable = (publicEnclosedTypes == null) ? new TypeScript.StringHashTable() : publicEnclosedTypes;
@@ -18453,6 +18455,7 @@ var TypeScript;
                         this.visited[absoluteModuleID] = true;
                     } catch (err) {
                         TypeScript.CompilerDiagnostics.debugPrint("   Did not find code for " + referencePath);
+                        return false;
                     }
                 } else {
                     resolvedFile = ioHost.findFile(parentPath, normalizedPath);
@@ -18485,23 +18488,32 @@ var TypeScript;
                     var rootDir = ioHost.dirName(resolvedFile.path);
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
                     var preProcessedFileInfo = TypeScript.preProcessFile(sourceUnit, this.environment.compilationSettings);
+                    var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
                     sourceUnit.referencedFiles = preProcessedFileInfo.referencedFiles;
                     for(var i = 0; i < preProcessedFileInfo.referencedFiles.length; i++) {
-                        var referencedFile = preProcessedFileInfo.referencedFiles[i];
-                        var normalizedPath = TypeScript.isRooted(referencedFile.path) ? referencedFile.path : rootDir + "/" + referencedFile.path;
+                        var fileReference = preProcessedFileInfo.referencedFiles[i];
+                        var normalizedPath = TypeScript.isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
-                        if(referencePath == normalizedPath) {
-                            resolutionDispatcher.postResolutionError(normalizedPath, "File contains reference to itself", null);
+                        if(resolvedFilePath == normalizedPath) {
+                            resolutionDispatcher.postResolutionError(normalizedPath, fileReference.startLine, fileReference.startCol, "Incorrect reference: File contains reference to itself.");
                             continue;
                         }
-                        this.resolveCode(referencedFile.path, rootDir, false, resolutionDispatcher);
+                        var resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
+                        if(!resolutionResult) {
+                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileReference.startLine, fileReference.startCol, "Incorrect reference: referenced file: \"" + fileReference.path + "\" cannot be resolved.");
+                        }
                     }
                     for(var i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
-                        this.resolveCode(preProcessedFileInfo.importedFiles[i].path, rootDir, true, resolutionDispatcher);
+                        var fileImport = preProcessedFileInfo.importedFiles[i];
+                        var resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
+                        if(!resolutionResult) {
+                            resolutionDispatcher.postResolutionError(resolvedFilePath, fileImport.startLine, fileImport.startCol, "Incorrect reference: imported file: \"" + fileImport.path + "\" cannot be resolved.");
+                        }
                     }
                     resolutionDispatcher.postResolution(sourceUnit.path, sourceUnit);
                 }
             }
+            return true;
         };
         return CodeResolver;
     })();
@@ -18606,6 +18618,8 @@ var TypeScript;
             return {
                 minChar: 0,
                 limChar: 0,
+                startLine: 0,
+                startCol: 0,
                 path: TypeScript.switchToForwardSlashes(adjustedPath),
                 isResident: isResident
             };
@@ -18726,6 +18740,8 @@ var TypeScript;
                                     var ref = {
                                         minChar: scanner.startPos,
                                         limChar: scanner.pos,
+                                        startLine: scanner.line,
+                                        startCol: scanner.col,
                                         path: TypeScript.stripQuotes(TypeScript.switchToForwardSlashes(tok.getText())),
                                         isResident: false
                                     };
@@ -18752,6 +18768,16 @@ var TypeScript;
                 if(referencedCode) {
                     referencedCode.minChar = comment.startPos;
                     referencedCode.limChar = referencedCode.minChar + comment.value.length;
+                    var result = {
+                        line: -1,
+                        col: -1
+                    };
+                    TypeScript.getSourceLineColFromMap(result, comment.startPos, scanner.lineMap);
+                    if(result.col >= 0) {
+                        result.col++;
+                    }
+                    referencedCode.startLine = result.line;
+                    referencedCode.startCol = result.col;
                     referencedFiles.push(referencedCode);
                 }
                 if(settings) {
@@ -19082,7 +19108,7 @@ var TypeScript;
                 accessorString = "set ";
             }
             var container = this.getAstDeclarationContainer();
-            if(container.nodeType == 96 /* ModuleDeclaration */  && TypeScript.hasFlag((container).modFlags, 1024 /* IsWholeFile */ ) && TypeScript.hasFlag(declFlags, 1 /* Exported */ )) {
+            if(TypeScript.hasFlag(declFlags, 1 /* Exported */ )) {
                 result += "export ";
             }
             if(TypeScript.hasFlag(declFlags, 32 /* LocalStatic */ ) || TypeScript.hasFlag(declFlags, 16 /* Static */ )) {
@@ -44314,6 +44340,8 @@ var TypeScript;
                     (ast).withSym = null;
                 } else if(ast.nodeType == 91 /* Catch */ ) {
                     (ast).containedScope = null;
+                } else if(ast.nodeType === 93 /* Script */ ) {
+                    (ast).externallyVisibleImportedSymbols = [];
                 }
                 return ast;
             }
@@ -45414,6 +45442,9 @@ var TypeScript;
             importDecl.limChar = limChar;
             return importDecl;
         };
+        Parser.prototype.reportAmbientElementNotExported = function (name) {
+            this.reportParseError("Element of an ambient module must specify export", name.minChar, name.limChar);
+        };
         Parser.prototype.parseModuleDecl = function (errorRecoverySet, modifiers, preComments) {
             var leftCurlyCount = this.scanner.leftCurlyCount;
             var rightCurlyCount = this.scanner.rightCurlyCount;
@@ -45513,8 +45544,10 @@ var TypeScript;
             if(this.parsingDeclareFile || svAmbient || TypeScript.hasFlag(modifiers, 8 /* Ambient */ )) {
                 moduleDecl.modFlags |= 8 /* Ambient */ ;
             }
-            if(svAmbient || TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
+            if(TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
                 moduleDecl.modFlags |= 1 /* Exported */ ;
+            } else if(svAmbient) {
+                this.reportAmbientElementNotExported(name);
             }
             if(isDynamicMod) {
                 moduleDecl.modFlags |= 2048 /* IsDynamic */ ;
@@ -46137,7 +46170,6 @@ var TypeScript;
             }
             if(this.parsingDeclareFile || this.ambientModule) {
                 modifiers |= 8 /* Ambient */ ;
-                modifiers |= 16 /* Exported */ ;
             }
             var classIsMarkedAsAmbient = this.parsingDeclareFile || (modifiers & 8 /* Ambient */ ) != 0 /* None */ ;
             var svAmbientClass = this.ambientClass;
@@ -46158,6 +46190,9 @@ var TypeScript;
                     name.flags |= 8 /* Error */ ;
                 }
             }
+            if(this.ambientModule && !TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
+                this.reportAmbientElementNotExported(name);
+            }
             var extendsList = null;
             var implementsList = null;
             var requiresSignature = false;
@@ -46169,7 +46204,7 @@ var TypeScript;
             var classDecl = new TypeScript.ClassDeclaration(name, new TypeScript.ASTList(), extendsList, implementsList);
             this.currentClassDefinition = classDecl;
             this.parseClassElements(classDecl, errorRecoverySet, modifiers);
-            if(this.ambientModule || this.parsingDeclareFile || TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
+            if(TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
                 classDecl.varFlags |= 1 /* Exported */ ;
             }
             if(this.ambientModule || TypeScript.hasFlag(modifiers, 8 /* Ambient */ )) {
@@ -46335,9 +46370,6 @@ var TypeScript;
             }
             if(requiresSignature) {
                 constructorFuncDecl.fncFlags |= 512 /* Signature */ ;
-            }
-            if(this.ambientModule || TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
-                constructorFuncDecl.fncFlags |= 1 /* Exported */ ;
             }
             if(this.currentClassDefinition.constructorDecl) {
                 if(!isAmbient && !this.currentClassDefinition.constructorDecl.isSignature() && !constructorFuncDecl.isSignature()) {
@@ -46526,8 +46558,10 @@ var TypeScript;
             if(TypeScript.hasFlag(modifiers, 2 /* Public */ )) {
                 interfaceDecl.varFlags |= 4 /* Public */ ;
             }
-            if(this.parsingDeclareFile || this.ambientModule || TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
+            if(TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
                 interfaceDecl.varFlags |= 1 /* Exported */ ;
+            } else if(this.ambientModule) {
+                this.reportAmbientElementNotExported(name);
             }
             interfaceDecl.limChar = members.limChar;
             interfaceDecl.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
@@ -46766,8 +46800,10 @@ var TypeScript;
                 if(this.parsingDeclareFile || this.ambientModule || TypeScript.hasFlag(modifiers, 8 /* Ambient */ )) {
                     varDecl.varFlags |= 8 /* Ambient */ ;
                 }
-                if(this.parsingDeclareFile || this.ambientModule || TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
+                if(TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
                     varDecl.varFlags |= 1 /* Exported */ ;
+                } else if(this.ambientModule) {
+                    this.reportAmbientElementNotExported(varDecl.id);
                 }
                 varDecl.minChar = minChar;
                 if(declList) {
@@ -47334,7 +47370,9 @@ var TypeScript;
             if(!exprIsAnonLambda) {
                 ast.minChar = minChar;
                 ast.limChar = TypeScript.max(ast.limChar, this.scanner.lastTokenLimChar());
-                ast.preComments = preComments;
+                if(preComments) {
+                    ast.preComments = ast.preComments ? preComments.concat(ast.preComments) : preComments;
+                }
                 ast.postComments = this.parseCommentsForLine(this.scanner.line);
             }
             return ast;
@@ -48144,8 +48182,10 @@ var TypeScript;
                         if(this.parsingDeclareFile || this.ambientModule || TypeScript.hasFlag(modifiers, 8 /* Ambient */ )) {
                             (ast).modFlags |= 8 /* Ambient */ ;
                         }
-                        if(this.parsingDeclareFile || this.ambientModule || TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
+                        if(TypeScript.hasFlag(modifiers, 16 /* Exported */ )) {
                             (ast).modFlags |= 1 /* Exported */ ;
+                        } else if(this.ambientModule) {
+                            this.reportAmbientElementNotExported((ast).name);
                         }
                         break;
                     case 8 /* Debugger */ :
@@ -48218,7 +48258,7 @@ var TypeScript;
             ast.minChar = minChar;
             ast.limChar = TypeScript.max(ast.limChar, this.scanner.lastTokenLimChar());
             if(preComments) {
-                ast.preComments = preComments;
+                ast.preComments = ast.preComments ? preComments.concat(ast.preComments) : preComments;
             }
             if(this.ambientModule && (!this.okAmbientModuleMember(ast))) {
                 this.reportParseError("statement not permitted within ambient module");
