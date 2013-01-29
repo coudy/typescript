@@ -148,7 +148,7 @@ interface ISymbol {
 
     accept(visitor: ISymbolVisitor): any;
 
-    toSymbolDisplayParts(format: SymbolDisplayFormat): SymbolDisplayPart[];
+    toSymbolDisplayParts(format: SymbolDisplay.Format): SymbolDisplay.Part[];
 }
 
 interface IModuleOrTypeSymbol extends ISymbol {
@@ -191,6 +191,8 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
 }
 
 interface INamedTypeSymbol extends ITypeSymbol {
+    isAnonymous(): bool;
+
     /// <summary>
     /// Returns the arity of this type, or the number of type parameters it takes.
     /// A non-generic type has zero arity.
@@ -226,6 +228,12 @@ interface INamedTypeSymbol extends ITypeSymbol {
     /// Get the constructor for this type.
     /// </summary>
     constructor(): IMethodSymbol;
+}
+
+interface IFunctionTypeSymbol extends ITypeSymbol {
+}
+
+interface IConstructorTypeSymbol extends ITypeSymbol {
 }
 
 interface ITypeParameterSymbol extends ITypeSymbol {
