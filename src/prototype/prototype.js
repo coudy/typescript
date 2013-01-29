@@ -20867,8 +20867,25 @@ var PositionedElement = (function () {
         }
         return current;
     };
+    PositionedElement.prototype.containingNode = function () {
+        var current = this.parent();
+        while(current !== null && !current.element().isNode()) {
+            current = current.parent();
+        }
+        return current;
+    };
     return PositionedElement;
 })();
+var PositionedNodeOrToken = (function (_super) {
+    __extends(PositionedNodeOrToken, _super);
+    function PositionedNodeOrToken(parent, nodeOrToken, fullStart) {
+        _super.call(this, parent, nodeOrToken, fullStart);
+    }
+    PositionedNodeOrToken.prototype.nodeOrToken = function () {
+        return this.element();
+    };
+    return PositionedNodeOrToken;
+})(PositionedElement);
 var PositionedNode = (function (_super) {
     __extends(PositionedNode, _super);
     function PositionedNode(parent, node, fullStart) {
@@ -20878,7 +20895,7 @@ var PositionedNode = (function (_super) {
         return this.element();
     };
     return PositionedNode;
-})(PositionedElement);
+})(PositionedNodeOrToken);
 var PositionedToken = (function (_super) {
     __extends(PositionedToken, _super);
     function PositionedToken(parent, token, fullStart) {
@@ -20901,7 +20918,7 @@ var PositionedToken = (function (_super) {
         return this.root().node().findToken(this.fullEnd());
     };
     return PositionedToken;
-})(PositionedElement);
+})(PositionedNodeOrToken);
 var PositionedList = (function (_super) {
     __extends(PositionedList, _super);
     function PositionedList(parent, list, fullStart) {
@@ -21239,6 +21256,45 @@ var SyntaxFacts;
         return kind === 11 /* IdentifierName */  || isAnyKeyword(kind);
     }
     SyntaxFacts.isIdentifierName = isIdentifierName;
+    function isInModuleOrTypeContext(positionedToken) {
+        if(positionedToken !== null) {
+            var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
+            var parent = positionedNodeOrToken.containingNode();
+            if(parent !== null) {
+                switch(parent.kind()) {
+                    case 241 /* ModuleNameModuleReference */ :
+                        return true;
+                    case 121 /* QualifiedName */ :
+                        return true;
+                    default:
+                        return isInTypeOnlyContext(positionedToken);
+                }
+            }
+        }
+        return false;
+    }
+    SyntaxFacts.isInModuleOrTypeContext = isInModuleOrTypeContext;
+    function isInTypeOnlyContext(positionedToken) {
+        var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
+        var positionedParent = positionedNodeOrToken.containingNode();
+        var parent = positionedParent.node();
+        var nodeOrToken = positionedNodeOrToken.nodeOrToken();
+        if(parent !== null) {
+            switch(parent.kind()) {
+                case 124 /* ArrayType */ :
+                    return (parent).type() === nodeOrToken;
+                case 217 /* CastExpression */ :
+                    return (parent).type() === nodeOrToken;
+                case 238 /* TypeAnnotation */ :
+                case 228 /* ExtendsClause */ :
+                case 227 /* ImplementsClause */ :
+                case 225 /* TypeArgumentList */ :
+                    return true;
+            }
+        }
+        return false;
+    }
+    SyntaxFacts.isInTypeOnlyContext = isInTypeOnlyContext;
 })(SyntaxFacts || (SyntaxFacts = {}));
 var Syntax;
 (function (Syntax) {
@@ -28205,6 +28261,20 @@ var Syntax;
         }));
     }
     Syntax.emptySourceUnit = emptySourceUnit;
+    function getStandaloneExpression(positionedToken) {
+        var token = positionedToken.token();
+        if(positionedToken !== null && positionedToken.kind() === 11 /* IdentifierName */ ) {
+            var parentPositionedNode = positionedToken.containingNode();
+            var parentNode = parentPositionedNode.node();
+            if(parentNode.kind() === 121 /* QualifiedName */  && (parentNode).right() === token) {
+                return parentPositionedNode;
+            } else if(parentNode.kind() === 209 /* MemberAccessExpression */  && (parentNode).name() === token) {
+                return parentPositionedNode;
+            }
+        }
+        return positionedToken;
+    }
+    Syntax.getStandaloneExpression = getStandaloneExpression;
     function childOffset(parent, child) {
         var offset = 0;
         for(var i = 0, n = parent.childCount(); i < n; i++) {

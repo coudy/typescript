@@ -1,3 +1,4 @@
+///<reference path='EnumUtilities.ts' />
 ///<reference path='ISemanticModel.ts' />
 ///<reference path='Location.ts' />
 
@@ -15,6 +16,11 @@ module SymbolDisplay {
         /// ParentClass.NestedClass
         /// </summary>
         NameAndContainingModules,
+    }
+
+    export enum TypeOptions {
+        None = 0,
+        InlineAnonymousTypes = 1 << 0,
     }
 
     export enum GenericsOptions {
@@ -161,6 +167,8 @@ module SymbolDisplay {
         /// </summary>
         private _typeQualificationStyle: TypeQualificationStyle;
 
+        private _typeOptions: TypeOptions;
+
         /// <summary>
         /// Determines how generics (on types and methods) should be described (i.e. level of detail).
         /// </summary>
@@ -192,6 +200,7 @@ module SymbolDisplay {
         private _kindOptions: KindOptions;
 
         constructor(typeQualificationStyle: TypeQualificationStyle = TypeQualificationStyle.NameOnly,
+                    typeOptions: TypeOptions = TypeOptions.None,
                     genericsOptions: GenericsOptions = GenericsOptions.None,
                     memberOptions: MemberOptions = MemberOptions.None,
                     parameterOptions: ParameterOptions = ParameterOptions.None,
@@ -199,12 +208,25 @@ module SymbolDisplay {
                     localOptions: LocalOptions = LocalOptions.None,
                     kindOptions: KindOptions = KindOptions.None) {
             this._typeQualificationStyle = typeQualificationStyle;
+            this._typeOptions = typeOptions;
             this._genericsOptions = genericsOptions;
             this._memberOptions = memberOptions;
             this._parameterOptions = parameterOptions;
             this._accessorStyle = accessorStyle;
             this._localOptions = localOptions;
             this._kindOptions = kindOptions;
+        }
+
+        public typeQualificationStyle(): TypeQualificationStyle {
+            return this._typeQualificationStyle;
+        }
+
+        public typeOptions(): TypeOptions {
+            return this._typeOptions;
+        }
+
+        public genericsOptions(): GenericsOptions {
+            return this._genericsOptions;
         }
     }
 
@@ -257,6 +279,7 @@ module SymbolDisplay {
     export var errorMessageFormat: Format =
         new Format(
             TypeQualificationStyle.NameAndContainingModules,
+            TypeOptions.InlineAnonymousTypes,
             GenericsOptions.IncludeTypeParameters,
             MemberOptions.IncludeParameters | MemberOptions.IncludeContainingType,
             ParameterOptions.IncludeModifiers | ParameterOptions.IncludeType,
@@ -265,10 +288,10 @@ module SymbolDisplay {
     /// <summary>
     /// Fully qualified name format.
     /// </summary>
-    export var fullyQualifiedFormat: Format =
-        new Format(
-            TypeQualificationStyle.NameAndContainingModules,
-            GenericsOptions.IncludeTypeParameters);
+    //export var fullyQualifiedFormat: Format =
+    //    new Format(
+    //        TypeQualificationStyle.NameAndContainingModules,
+    //        GenericsOptions.IncludeTypeParameters);
 
     /// <summary>
     /// Format used by default when asking to minimally qualify a symbol.
@@ -276,6 +299,7 @@ module SymbolDisplay {
     export var minimallyQualifiedFormat: Format =
         new Format(
             TypeQualificationStyle.NameOnly,
+            TypeOptions.None,
             GenericsOptions.IncludeTypeParameters,
             MemberOptions.IncludeParameters | MemberOptions.IncludeType | MemberOptions.IncludeContainingType,
             ParameterOptions.IncludeName | ParameterOptions.IncludeType | ParameterOptions.IncludeModifiers | ParameterOptions.IncludeDefaultValue,
@@ -333,6 +357,254 @@ module SymbolDisplay {
             }
         }
 
-        return null;
+        var result: Part[] = [];
+        symbol.accept(new Visitor(format, location, semanticModel, minimal, result));
+        return result;
+    }
+
+    class Visitor implements ISymbolVisitor {
+        private location: ILocation;
+        private semanticModel: ISemanticModel;
+        private format: Format;
+        private builder: Part[];
+        private isFirstSymbolVisited: bool;
+        private minimal: bool;
+
+        private notFirstVisitor: Visitor;
+
+        constructor(format: Format,
+            location: ILocation,
+            semanticModel: ISemanticModel,
+            minimal: bool,
+            builder: Part[],
+            isFirstSymbolVisited: bool = true) {
+            this.location = location;
+            this.semanticModel = semanticModel;
+
+            this.format = format;
+            this.minimal = minimal;
+            this.builder = builder;
+            this.isFirstSymbolVisited = isFirstSymbolVisited;
+
+            if (isFirstSymbolVisited) {
+                this.notFirstVisitor = new Visitor(format, location, semanticModel, minimal, builder, !isFirstSymbolVisited);
+            }
+            else {
+                this.notFirstVisitor = this;
+            }
+        }
+
+        private addKeyword(kind: SyntaxKind): void {
+            this.builder.push(new Part(PartKind.Keyword, SyntaxFacts.getText(kind), null));
+        }
+
+        private addPunctuation(kind: SyntaxKind): void {
+            this.builder.push(new Part(PartKind.Punctuation, SyntaxFacts.getText(kind), null));
+        }
+
+        private addSpace(): void {
+            this.builder.push(new Part(PartKind.Keyword, " ", null));
+        }
+
+        private visitArrayType(symbol: IArrayTypeSymbol): void {
+            var underlyingNonArrayType = symbol.elementType();
+            while (underlyingNonArrayType.kind() === SymbolKind.ArrayType) {
+                underlyingNonArrayType = (<IArrayTypeSymbol>underlyingNonArrayType).elementType();
+            }
+
+            underlyingNonArrayType.accept(this.notFirstVisitor);
+
+            var arrayType = symbol;
+            while (arrayType != null) {
+                this.addArrayRank(arrayType);
+
+                if (arrayType.elementType().kind() !== SymbolKind.ArrayType) {
+                    break;
+                }
+
+                arrayType = <IArrayTypeSymbol>arrayType.elementType();
+            }
+        }
+
+        private addArrayRank(symbol: IArrayTypeSymbol): void {
+            this.addPunctuation(SyntaxKind.OpenBracketToken);
+
+            for (var i = 0; i < symbol.rank() - 1; i++) {
+                this.addPunctuation(SyntaxKind.CommaToken);
+            }
+
+            this.addPunctuation(SyntaxKind.CloseBracketToken);
+        }
+
+        private visitTypeParameter(symbol: ITypeParameterSymbol): void {
+            this.builder.push(new Part(PartKind.TypeParameterName, symbol.name(), symbol));
+        }
+
+        private visitNamedType(symbol: IObjectType): void {
+            if (this.minimal) {
+                this.minimallyQualify(symbol);
+                return;
+            }
+
+            this.addTypeKind(symbol);
+
+            var containingModule = symbol.containingModule();
+            if (this.shouldVisitModule(containingModule)) {
+                containingModule.accept(this.notFirstVisitor);
+                this.addPunctuation(SyntaxKind.DotToken);
+            }
+
+            this.addNameAndTypeArgumentsOrParameters(symbol);
+        }
+
+        private addTypeKind(symbol: ITypeSymbol): void {
+            var kindKeyword = this.getKindKeyword(symbol.typeKind());
+            if (kindKeyword !== SyntaxKind.None) {
+                this.addKeyword(kindKeyword);
+                this.addSpace();
+            }
+        }
+
+        private getKindKeyword(typeKind: TypeKind): SyntaxKind {
+            switch (typeKind) {
+                case TypeKind.Class:
+                    return SyntaxKind.ClassKeyword;
+                case TypeKind.Enum:
+                    return SyntaxKind.EnumKeyword;
+                case TypeKind.Interface:
+                    return SyntaxKind.InterfaceKeyword;
+                default:
+                    return SyntaxKind.None;
+            }
+        }
+
+        private shouldVisitModule(moduleSymbol: IModuleSymbol): bool {
+            if (this.format.typeQualificationStyle() !== TypeQualificationStyle.NameAndContainingModules) {
+                return false;
+            }
+
+            return !moduleSymbol.isGlobalModule();
+        }
+
+        private addNameAndTypeArgumentsOrParameters(symbol: IObjectType): void {
+            if (symbol.isAnonymous()) {
+                this.addAnonymousTypeName(symbol);
+                return;
+            }
+
+            var symbolName = symbol.name();
+            var partKind = this.getPartKind(symbol);
+
+            this.builder.push(new Part(partKind, symbolName, symbol));
+
+            if (symbol.arity() > 0 && EnumUtilities.hasFlag(this.format.genericsOptions(), GenericsOptions.IncludeTypeParameters)) {
+                this.addTypeArguments(symbol.typeArguments());
+            }
+        }
+
+        private addAnonymousTypeName(symbol: IObjectType): void {
+            if (EnumUtilities.hasFlag(this.format.typeOptions(), TypeOptions.InlineAnonymousTypes)) {
+                // TODO: actually inline the entire object type here.
+                throw Errors.notYetImplemented();
+            }
+            else {
+                // Note: higher up level services will determine how to display this.
+
+                var name = "<anonymous type>";
+                this.builder.push(new Part(PartKind.ClassName, name, symbol));
+            }
+        }
+
+        private getPartKind(symbol: IObjectType): PartKind {
+            switch (symbol.typeKind()) {
+                case TypeKind.Class:
+                    return PartKind.ClassName;
+                case TypeKind.Enum:
+                    return PartKind.EnumName;
+                case TypeKind.Interface:
+                    return PartKind.InterfaceName;
+                default:
+                    throw Errors.invalidOperation();
+            }
+        }
+
+        private addTypeArguments(typeArguments: ITypeSymbol[]): void {
+            if (typeArguments.length > 0 && EnumUtilities.hasFlag(this.format.genericsOptions(), GenericsOptions.IncludeTypeParameters)) {
+                this.addPunctuation(SyntaxKind.LessThanToken);
+
+                for (var i = 0, n = typeArguments.length; i < n; i++) {
+                    var typeArg = typeArguments[i];
+
+                    if (i > 0) {
+                        this.addPunctuation(SyntaxKind.CommaToken);
+                        this.addSpace();
+                    }
+
+                    typeArg.accept(this.notFirstVisitor);
+
+                    if (typeArg.kind() === SymbolKind.TypeParameter) {
+                        var typeParam = <ITypeParameterSymbol>typeArg;
+                        this.addTypeParameterConstraint(typeParam);
+                    }
+                }
+
+                this.addPunctuation(SyntaxKind.GreaterThanToken);
+            }
+        }
+
+        private addTypeParameterConstraint(typeParameter: ITypeParameterSymbol): void {
+            if (this.isFirstSymbolVisited && typeParameter.constraintType() !== null &&
+                EnumUtilities.hasFlag(this.format.genericsOptions(), GenericsOptions.IncludeTypeConstraints)) {
+                this.addSpace();
+                this.addKeyword(SyntaxKind.ExtendsKeyword);
+                this.addSpace();
+                typeParameter.constraintType().accept(this.notFirstVisitor);
+            }
+        }
+
+        private minimallyQualify(symbol: IObjectType): void {
+            // We first start by trying to bind just our name and type arguments.  If they bind to
+            // the symbol that we were constructed from, then we have our minimal name. Otherwise,
+            // we get the minimal name of our parent, add a dot, and then add ourselves.
+            if (!symbol.isAnonymous()) {
+                if (!this.nameBoundSuccessfullyToSameSymbol(symbol)) {
+                    // Just the name alone didn't bind properly.  Add our minimally qualified parent (if
+                    // we have one), a dot, and then our name.
+                    if (this.shouldVisitModule(symbol.containingModule())) {
+                        symbol.containingModule().accept(this.notFirstVisitor);
+                        this.addPunctuation(SyntaxKind.DotToken);
+                    }
+                }
+            }
+
+            this.addNameAndTypeArgumentsOrParameters(symbol);
+        }
+
+        private nameBoundSuccessfullyToSameSymbol(symbol: IObjectType): bool {
+            var normalSymbols = this.semanticModel.lookupSymbols(
+                this.location.textSpan().start(),
+                /*container:*/ null,
+                /*name:*/ symbol.name(),
+                /*arity: */symbol.arity(),
+                /*options: */ this.getMinimallyQualifyLookupOptions());
+
+            if (normalSymbols.length === 1) {
+                // Binding normally ended up with the right symbol.  We can definitely use hte
+                // simplified name.
+                if (normalSymbols[0].Equals(symbol.originalDefinition())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private getMinimallyQualifyLookupOptions(): LookupOptions {
+            var token = this.location.syntaxTree().sourceUnit().findToken(this.location.textSpan().start());
+
+            return SyntaxFacts.isInModuleOrTypeContext(token)
+                ? LookupOptions.ModulesOrTypesOnly
+                : LookupOptions.Default;
+        }
     }
 }

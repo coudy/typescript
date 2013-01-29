@@ -2,6 +2,17 @@
 ///<reference path='SymbolDisplay.ts' />
 
 enum SymbolKind {
+    ArrayType = 1,
+    ErrorType = 4,
+    Variable = 6,
+    Local = 8,
+    Method = 9,
+    ObjectType = 11,
+    Module = 12,
+    Parameter = 13,
+    TypeParameter = 17,
+    FunctionType = 18,
+    ConstructorType = 19,
 }
 
 /// <summary>
@@ -16,7 +27,7 @@ enum TypeKind {
     /// <summary>
     /// Type is an array type.
     /// </summary>
-    ArrayType = 1,
+    Array = 1,
 
     /// <summary>
     /// Type is a class.
@@ -42,6 +53,16 @@ enum TypeKind {
     /// Type is a type parameter.
     /// </summary>
     TypeParameter = 11,
+
+    /// <summary>
+    /// Type is a type parameter.
+    /// </summary>
+    Constructor = 12,
+
+    /// <summary>
+    /// Type is a type parameter.
+    /// </summary>
+    Function = 13,
 }
 
 /// <summary>
@@ -96,6 +117,9 @@ enum Accessibility {
 }
 
 interface ISymbolVisitor {
+    visitArrayType(symbol: IArrayTypeSymbol): any;
+    visitTypeParameter(symbol: ITypeParameterSymbol): any;
+    visitNamedType(symbol: IObjectType): any;
 }
 
 interface ISymbol {
@@ -117,7 +141,7 @@ interface ISymbol {
     /// <summary>
     /// Gets the containing type. Returns null if the symbol is not contained within a type.
     /// </summary>
-    containingType(): INamedTypeSymbol;
+    containingType(): IObjectType;
 
     /// <summary>
     /// Gets the nearest enclosing module. Returns null if the symbol isn't contained in a module.
@@ -155,6 +179,7 @@ interface IModuleOrTypeSymbol extends ISymbol {
 }
 
 interface IModuleSymbol extends IModuleOrTypeSymbol {
+    isGlobalModule(): bool;
 }
 
 interface ITypeSymbol extends IModuleOrTypeSymbol {
@@ -166,13 +191,13 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// <summary>
     /// The declared base type of this type, or null.
     /// </summary>
-    baseType(): INamedTypeSymbol;
+    baseType(): IObjectType;
 
     /// <summary>
     /// Gets the set of interfaces that this type directly implements. This set does not include
     /// interfaces that are base interfaces of directly implemented interfaces.
     /// </summary>
-    interfaces(): INamedTypeSymbol[];
+    interfaces(): IObjectType[];
 
     /// <summary>
     /// The list of all interfaces of which this type is a declared subtype, excluding this type
@@ -185,12 +210,13 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// subtype" because it does not take into account variance: AllInterfaces for
     /// IEnumerable&lt;string&gt; will not include IEnumerble&lt;object&gt;
     /// </summary>
-    allInterfaces(): INamedTypeSymbol[];
+    allInterfaces(): IObjectType[];
 
     originalDefinition(): ITypeSymbol;
 }
 
-interface INamedTypeSymbol extends ITypeSymbol {
+interface IObjectType extends ITypeSymbol {
+    /// True if this object type has no name.
     isAnonymous(): bool;
 
     /// <summary>
@@ -222,7 +248,7 @@ interface INamedTypeSymbol extends ITypeSymbol {
     /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
     /// source.
     /// </summary>
-    originalDefinition(): INamedTypeSymbol;
+    originalDefinition(): IObjectType;
 
     /// <summary>
     /// Get the constructor for this type.
@@ -256,12 +282,12 @@ interface ITypeParameterSymbol extends ITypeSymbol {
     /// <summary>
     /// The type that declares the type parameter, or null.
     /// </summary>
-    declaringType(): INamedTypeSymbol;
+    declaringType(): IObjectType;
 
     /// <summary>
-    /// The types that were directly specified as constraints on the type parameter.
+    /// The type that were directly specified as a constraint on the type parameter.
     /// </summary>
-    constraintTypes(): ITypeSymbol[];
+    constraintType(): ITypeSymbol;
 }
 
 interface IArrayTypeSymbol extends ITypeSymbol {

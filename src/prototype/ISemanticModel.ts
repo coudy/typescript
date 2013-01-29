@@ -35,9 +35,9 @@ interface ISemanticModel {
     getDeclaredSymbol(declaration: SyntaxNode, cancellationToken: ICancellationToken): ISymbol;
     getDeclaredSymbol(declaration: ModuleDeclarationSyntax, cancellationToken: ICancellationToken): IModuleSymbol;
     getDeclaredSymbol(declaration: SourceUnitSyntax, cancellationToken: ICancellationToken): IModuleSymbol;
-    getDeclaredSymbol(declaration: ClassDeclarationSyntax, cancellationToken: ICancellationToken): INamedTypeSymbol;
-    getDeclaredSymbol(declaration: InterfaceDeclarationSyntax, cancellationToken: ICancellationToken): INamedTypeSymbol;
-    getDeclaredSymbol(declaration: EnumDeclarationSyntax, cancellationToken: ICancellationToken): INamedTypeSymbol;
+    getDeclaredSymbol(declaration: ClassDeclarationSyntax, cancellationToken: ICancellationToken): IObjectType;
+    getDeclaredSymbol(declaration: InterfaceDeclarationSyntax, cancellationToken: ICancellationToken): IObjectType;
+    getDeclaredSymbol(declaration: EnumDeclarationSyntax, cancellationToken: ICancellationToken): IObjectType;
     getDeclaredSymbol(declarator: VariableDeclaratorSyntax, cancellationToken: ICancellationToken): IVariableSymbol;
     
     // TODO: add more getDeclaredSymbol overloads.
@@ -62,13 +62,10 @@ interface ISemanticModel {
     /// accessible. 
     /// </remarks>
     lookupSymbols(position: number);
-    lookupSymbols(position: number, options: LookupOptions);
     lookupSymbols(position: number, container: IModuleOrTypeSymbol);
-    lookupSymbols(position: number, container: IModuleOrTypeSymbol, options: LookupOptions);
-    //lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string);
-    //lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, options: LookupOptions);
-    //lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number);
-    //lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number, options: LookupOptions);
+    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string);
+    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number);
+    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number, options: LookupOptions);
 
     getMethodGroup(node: SyntaxNode, cancellationToken: ICancellationToken): ISymbol[];
 

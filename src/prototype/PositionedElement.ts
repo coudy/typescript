@@ -89,9 +89,29 @@ class PositionedElement {
 
         return <PositionedNode>current;
     }
+
+    public containingNode(): PositionedNode {
+        var current = this.parent();
+
+        while (current !== null && !current.element().isNode()) {
+            current = current.parent();
+        }
+        
+        return <PositionedNode>current;
+    }
 }
 
-class PositionedNode extends PositionedElement {
+class PositionedNodeOrToken extends PositionedElement {
+    constructor(parent: PositionedElement, nodeOrToken: ISyntaxNodeOrToken, fullStart: number) {
+        super(parent, nodeOrToken, fullStart);
+    }
+
+    public nodeOrToken(): ISyntaxNodeOrToken {
+        return <ISyntaxNodeOrToken>this.element();
+    }
+}
+
+class PositionedNode extends PositionedNodeOrToken {
     constructor(parent: PositionedElement, node: SyntaxNode, fullStart: number) {
         super(parent, node, fullStart);
     }
@@ -101,7 +121,7 @@ class PositionedNode extends PositionedElement {
     }
 }
 
-class PositionedToken extends PositionedElement {
+class PositionedToken extends PositionedNodeOrToken {
     constructor(parent: PositionedElement, token: ISyntaxToken, fullStart: number) {
         super(parent, token, fullStart);
     }

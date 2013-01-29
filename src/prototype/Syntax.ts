@@ -5,6 +5,24 @@ module Syntax {
         return Syntax.normalModeFactory.sourceUnit(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
     }
 
+    export function getStandaloneExpression(positionedToken: PositionedToken): PositionedNodeOrToken
+    {
+        var token = positionedToken.token();
+        if (positionedToken !== null && positionedToken.kind() === SyntaxKind.IdentifierName) {
+            var parentPositionedNode = positionedToken.containingNode();
+            var parentNode = parentPositionedNode.node();
+
+            if (parentNode.kind() === SyntaxKind.QualifiedName && (<QualifiedNameSyntax>parentNode).right() === token) {
+                return parentPositionedNode;
+            }
+            else if (parentNode.kind() === SyntaxKind.MemberAccessExpression && (<MemberAccessExpressionSyntax>parentNode).name() === token) {
+                return parentPositionedNode;
+            }
+        }
+
+        return positionedToken;
+    }
+
     export function childOffset(parent: ISyntaxElement, child: ISyntaxElement): number {
         var offset = 0;
         for (var i = 0, n = parent.childCount(); i < n; i++) {
