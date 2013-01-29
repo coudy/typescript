@@ -163,63 +163,63 @@ new m7.m8.m9.c();
 /** Module comment*/
 module m1 {
     /** b's comment*/
-    var b: number;
+    export var b: number;
     /** m2 comments*/
-    module m2 {
+    export module m2 {
         /** class comment;*/
-        class c {
+        export class c {
         }
         /** i*/
-        var i: c;
+        export var i: c;
     }
     /** exported function*/
-    function fooExport(): number;
-    function foo2Export(/**hm*/ a: string): void;
+    export function fooExport(): number;
+    export function foo2Export(/**hm*/ a: string): void;
     /** foo3Export
     * comment
     */
-    function foo3Export(): void;
+    export function foo3Export(): void;
 }
 var myvar: m1.m2.c;
 /** module comment of m2.m3*/
 module m2.m3 {
     /** Exported class comment*/
-    class c {
+    export class c {
     }
 }
 /** module comment of m3.m4.m5*/
 module m3.m4.m5 {
     /** Exported class comment*/
-    class c {
+    export class c {
     }
 }
 /** module comment of m4.m5.m6*/
 module m4.m5.m6 {
-    module m7 {
+    export module m7 {
         /** Exported class comment*/
-        class c {
+        export class c {
         }
     }
 }
 /** module comment of m5.m6.m7*/
 module m5.m6.m7 {
     /** module m8 comment*/
-    module m8 {
+    export module m8 {
         /** Exported class comment*/
-        class c {
+        export class c {
         }
     }
 }
 module m6.m7.m8 {
     /** Exported class comment*/
-    class c {
+    export class c {
     }
 }
 /** module m9 comment*/
 module m7.m8.m9 {
     /** Exported class comment*/
-    class c {
+    export class c {
     }
-    class e {
+    export class e {
     }
 }

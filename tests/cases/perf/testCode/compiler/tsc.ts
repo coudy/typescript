@@ -136,7 +136,7 @@ class BatchCompiler {
     
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
-    public compile(): bool {
+    public compile() {
         var compiler: TypeScript.TypeScriptCompiler;
 
         compiler = new TypeScript.TypeScriptCompiler(this.ioHost.stderr, new TypeScript.NullLogger(), this.compilationSettings);
@@ -229,8 +229,6 @@ class BatchCompiler {
                 throw err;
             }
         }
-
-        return compiler.errorReporter.hasErrors;
     }
 
     // Execute the provided inputs

@@ -4,7 +4,5 @@
 ////( // f/**/
 
 goTo.marker();
-// Bug 17185: Completion list is available within comments
-// verify.not.completionListContains('foo');
-
-verify.completionListContains('foo');
+// Completion list should not be available within comments
+verify.not.completionListContains('foo');

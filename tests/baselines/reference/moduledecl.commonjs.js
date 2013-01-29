@@ -188,9 +188,9 @@ module mImport {
 module m0 {
 }
 module m1 {
-    function f1(): void;
-    function f2(s: string);
-    class c1 {
+    export function f1(): void;
+    export function f2(s: string);
+    export class c1 {
         public n;
         public n2: number;
         private n3;
@@ -207,49 +207,49 @@ module m1 {
         constructor(n, n2: number, n3, n4: string);
         public f: c.a.b;
     }
-    interface i1 {
+    export interface i1 {
         (): Object;
         [n: number]: c1;
     }
 }
 module m {
-    module m2 {
-        var b: number;
+    export module m2 {
+        export var b: number;
     }
-    module m3 {
-        var c: number;
+    export module m3 {
+        export var c: number;
     }
 }
 module m.m25.m5 {
-    var c: number;
+    export var c: number;
 }
 module m13.m4 {
-    module m2.m3 {
-        var c: number;
+    export module m2.m3 {
+        export var c: number;
     }
-    function f(): number;
+    export function f(): number;
 }
 module m4 {
-    var b;
+    export var b;
 }
 module m5 {
-    var c;
+    export var c;
 }
 module m43 {
-    var b;
+    export var b;
 }
 module m55 {
-    var c;
+    export var c;
 }
 module "m3" {
-    var b: number;
+    export var b: number;
 }
 module exportTests {
-    class C1_public {
+    export class C1_public {
         private f2();
         public f3(): string;
     }
-    class C3_public {
+    export class C3_public {
         private getC2_private();
         private setC2_private(arg);
         private c2;
@@ -259,31 +259,31 @@ module exportTests {
     }
 }
 module mAmbient {
-    class C {
+    export class C {
         public myProp: number;
     }
-    function foo(): C;
-    var aVar: C;
-    interface B {
+    export function foo(): C;
+    export var aVar: C;
+    export interface B {
         x: number;
         y: C;
     }
-    enum e {
+    export enum e {
         x,
         y,
         z,
     }
-    module m3 {
-        class C {
+    export module m3 {
+        export class C {
             public myProp: number;
         }
-        function foo(): C;
-        var aVar: C;
-        interface B {
+        export function foo(): C;
+        export var aVar: C;
+        export interface B {
             x: number;
             y: C;
         }
-        enum e {
+        export enum e {
             x,
             y,
             z,

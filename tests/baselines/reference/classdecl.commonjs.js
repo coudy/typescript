@@ -127,15 +127,15 @@ class a {
 class b extends a {
 }
 module m1 {
-    class b {
+    export class b {
     }
-    interface ib {
+    export interface ib {
     }
 }
 module m2.m3 {
-    class c extends b {
+    export class c extends b {
     }
-    class ib2 implements m1.ib {
+    export class ib2 implements m1.ib {
     }
 }
 class c extends m1.b {

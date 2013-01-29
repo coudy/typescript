@@ -1282,6 +1282,8 @@ module Harness {
                         var ref = {
                             minChar: 0,
                             limChar: 0,
+                            startLine:0,
+                            startCol:0,
                             path: isRef[1],
                             isResident: false
                         };

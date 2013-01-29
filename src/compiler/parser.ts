@@ -624,6 +624,10 @@ module TypeScript {
             return importDecl;
         }
 
+        private reportAmbientElementNotExported(name: Identifier) {
+            this.reportParseError("Element of an ambient module must specify export", name.minChar, name.limChar);
+        }
+
         private parseModuleDecl(errorRecoverySet: ErrorRecoverySet, modifiers: Modifiers, preComments: Comment[]): ModuleDeclaration {
             var leftCurlyCount = this.scanner.leftCurlyCount;
             var rightCurlyCount = this.scanner.rightCurlyCount;
@@ -636,7 +640,7 @@ module TypeScript {
             }
 
             this.currentToken = this.scanner.scan();
-            var name: AST = null;
+            var name: Identifier = null;
             var enclosedList: AST[] = null;
             this.pushDeclLists();
             var minChar = this.scanner.startPos;
@@ -754,9 +758,12 @@ module TypeScript {
             if (this.parsingDeclareFile || svAmbient || hasFlag(modifiers, Modifiers.Ambient)) {
                 moduleDecl.modFlags |= ModuleFlags.Ambient;
             }
-            if (svAmbient || hasFlag(modifiers, Modifiers.Exported)) {
+            if (hasFlag(modifiers, Modifiers.Exported)) {
                 moduleDecl.modFlags |= ModuleFlags.Exported;
+            } else if (svAmbient) {
+                this.reportAmbientElementNotExported(name);
             }
+
             if (isDynamicMod) {
                 moduleDecl.modFlags |= ModuleFlags.IsDynamic;
             }
@@ -1599,8 +1606,8 @@ module TypeScript {
             // mark the class as ambient, as necessary
             if (this.parsingDeclareFile || this.ambientModule) {
                 modifiers |= Modifiers.Ambient;
-                modifiers |= Modifiers.Exported;
             }
+
             var classIsMarkedAsAmbient = this.parsingDeclareFile || (modifiers & Modifiers.Ambient) != Modifiers.None;
             var svAmbientClass = this.ambientClass;
             this.ambientClass = classIsMarkedAsAmbient;
@@ -1624,6 +1631,10 @@ module TypeScript {
                 }
             }
 
+            if (this.ambientModule && !hasFlag(modifiers, Modifiers.Exported)) {
+                this.reportAmbientElementNotExported(name);
+            }
+
             var extendsList: ASTList = null;
             var implementsList: ASTList = null;
             var requiresSignature = false;
@@ -1643,7 +1654,7 @@ module TypeScript {
             // parse the classes members
             this.parseClassElements(classDecl, errorRecoverySet, modifiers);
 
-            if (this.ambientModule || this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Exported)) {
+            if (hasFlag(modifiers, Modifiers.Exported)) {
                 classDecl.varFlags |= VarFlags.Exported;
             }
 
@@ -1873,11 +1884,6 @@ module TypeScript {
             if (requiresSignature) {
                 constructorFuncDecl.fncFlags |= FncFlags.Signature;
             }
-
-            if (this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
-                constructorFuncDecl.fncFlags |= FncFlags.Exported;
-            }
-
 
             if (this.currentClassDefinition.constructorDecl) {
                 if (!isAmbient && !this.currentClassDefinition.constructorDecl.isSignature() && !constructorFuncDecl.isSignature()) {
@@ -2132,8 +2138,10 @@ module TypeScript {
             if (hasFlag(modifiers, Modifiers.Public)) {
                 interfaceDecl.varFlags |= VarFlags.Public;
             }
-            if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
+            if (hasFlag(modifiers, Modifiers.Exported)) {
                 interfaceDecl.varFlags |= VarFlags.Exported;
+            } else if (this.ambientModule) {
+                this.reportAmbientElementNotExported(name);
             }
 
             interfaceDecl.limChar = members.limChar;
@@ -2430,9 +2438,12 @@ module TypeScript {
                 if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Ambient)) {
                     varDecl.varFlags |= VarFlags.Ambient;
                 }
-                if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
+                if (hasFlag(modifiers, Modifiers.Exported)) {
                     varDecl.varFlags |= VarFlags.Exported;
+                } else if (this.ambientModule) {
+                    this.reportAmbientElementNotExported(varDecl.id);
                 }
+
                 varDecl.minChar = minChar;
                 if (declList) {
                     declList.append(varDecl);
@@ -3169,7 +3180,9 @@ module TypeScript {
                 ast.limChar = max(ast.limChar, this.scanner.lastTokenLimChar());
                 //
                 ///////////////////////////////////////////////////////////
-                ast.preComments = preComments;
+                if (preComments) {
+                    ast.preComments = ast.preComments ? preComments.concat(ast.preComments) : preComments;
+                }
                 ast.postComments = this.parseCommentsForLine(this.scanner.line);
             }
             return ast;
@@ -4111,8 +4124,10 @@ module TypeScript {
                         if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Ambient)) {
                             (<ModuleDeclaration>ast).modFlags |= ModuleFlags.Ambient;
                         }
-                        if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
+                        if (hasFlag(modifiers, Modifiers.Exported)) {
                             (<ModuleDeclaration>ast).modFlags |= ModuleFlags.Exported;
+                        } else if (this.ambientModule) {
+                            this.reportAmbientElementNotExported((<ModuleDeclaration>ast).name);
                         }
                         break;
                     case TokenID.Debugger:
@@ -4206,7 +4221,7 @@ module TypeScript {
             ///////////////////////////////////////////////////////////
 
             if (preComments) {
-                ast.preComments = preComments;
+                ast.preComments = ast.preComments ? preComments.concat(ast.preComments) : preComments;
             }
             if (this.ambientModule && (!this.okAmbientModuleMember(ast))) {
                 this.reportParseError("statement not permitted within ambient module");

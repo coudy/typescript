@@ -48,23 +48,23 @@ new multiM.d();
 ////[comments_MultiModule_MultiFile_0.d.ts]
 /** this is multi declare module*/
 module multiM {
-    class b {
+    export class b {
     }
 }
 /** thi is multi module 2*/
 module multiM {
     /** class c comment*/
-    class c {
+    export class c {
     }
-    class e {
+    export class e {
     }
 }
 ////[comments_MultiModule_MultiFile_1.d.ts]
 /** this is multi module 3 comment*/
 module multiM {
     /** class d comment*/
-    class d {
+    export class d {
     }
-    class f {
+    export class f {
     }
 }

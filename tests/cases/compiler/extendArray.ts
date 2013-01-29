@@ -3,7 +3,7 @@ a.forEach(function (v,i,a) {});
 
 
 declare module _Core {
-  interface Array {
+  export interface Array {
     collect(fn:(e:_element) => _element[]) : any[];
   }
 }

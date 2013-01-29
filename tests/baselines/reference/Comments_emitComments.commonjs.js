@@ -95,10 +95,10 @@ var i1_i: i1;
 /** this is module comment*/
 module m1 {
     /** class b */
-    class b {
+    export class b {
         public x: number;
         constructor(x: number);
     }
-    module m2 {
+    export module m2 {
     }
 }
