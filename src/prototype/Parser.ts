@@ -5343,7 +5343,7 @@ module Parser1 {
 
     export function incrementalParse(oldSourceUnit: SourceUnitSyntax,
                                      textChangeRanges: TextChangeRange[],
-                                         newText: ISimpleText,
+                                     newText: ISimpleText,
                                      languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                                      stringTable: Collections.StringTable = null,
                                      options?: ParseOptions = null): SyntaxTree {
