@@ -21256,45 +21256,6 @@ var SyntaxFacts;
         return kind === 11 /* IdentifierName */  || isAnyKeyword(kind);
     }
     SyntaxFacts.isIdentifierName = isIdentifierName;
-    function isInModuleOrTypeContext(positionedToken) {
-        if(positionedToken !== null) {
-            var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
-            var parent = positionedNodeOrToken.containingNode();
-            if(parent !== null) {
-                switch(parent.kind()) {
-                    case 241 /* ModuleNameModuleReference */ :
-                        return true;
-                    case 121 /* QualifiedName */ :
-                        return true;
-                    default:
-                        return isInTypeOnlyContext(positionedToken);
-                }
-            }
-        }
-        return false;
-    }
-    SyntaxFacts.isInModuleOrTypeContext = isInModuleOrTypeContext;
-    function isInTypeOnlyContext(positionedToken) {
-        var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
-        var positionedParent = positionedNodeOrToken.containingNode();
-        var parent = positionedParent.node();
-        var nodeOrToken = positionedNodeOrToken.nodeOrToken();
-        if(parent !== null) {
-            switch(parent.kind()) {
-                case 124 /* ArrayType */ :
-                    return (parent).type() === nodeOrToken;
-                case 217 /* CastExpression */ :
-                    return (parent).type() === nodeOrToken;
-                case 238 /* TypeAnnotation */ :
-                case 228 /* ExtendsClause */ :
-                case 227 /* ImplementsClause */ :
-                case 225 /* TypeArgumentList */ :
-                    return true;
-            }
-        }
-        return false;
-    }
-    SyntaxFacts.isInTypeOnlyContext = isInTypeOnlyContext;
 })(SyntaxFacts || (SyntaxFacts = {}));
 var Syntax;
 (function (Syntax) {
@@ -28275,6 +28236,45 @@ var Syntax;
         return positionedToken;
     }
     Syntax.getStandaloneExpression = getStandaloneExpression;
+    function isInModuleOrTypeContext(positionedToken) {
+        if(positionedToken !== null) {
+            var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
+            var parent = positionedNodeOrToken.containingNode();
+            if(parent !== null) {
+                switch(parent.kind()) {
+                    case 241 /* ModuleNameModuleReference */ :
+                        return true;
+                    case 121 /* QualifiedName */ :
+                        return true;
+                    default:
+                        return isInTypeOnlyContext(positionedToken);
+                }
+            }
+        }
+        return false;
+    }
+    Syntax.isInModuleOrTypeContext = isInModuleOrTypeContext;
+    function isInTypeOnlyContext(positionedToken) {
+        var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
+        var positionedParent = positionedNodeOrToken.containingNode();
+        var parent = positionedParent.node();
+        var nodeOrToken = positionedNodeOrToken.nodeOrToken();
+        if(parent !== null) {
+            switch(parent.kind()) {
+                case 124 /* ArrayType */ :
+                    return (parent).type() === nodeOrToken;
+                case 217 /* CastExpression */ :
+                    return (parent).type() === nodeOrToken;
+                case 238 /* TypeAnnotation */ :
+                case 228 /* ExtendsClause */ :
+                case 227 /* ImplementsClause */ :
+                case 225 /* TypeArgumentList */ :
+                    return true;
+            }
+        }
+        return false;
+    }
+    Syntax.isInTypeOnlyContext = isInTypeOnlyContext;
     function childOffset(parent, child) {
         var offset = 0;
         for(var i = 0, n = parent.childCount(); i < n; i++) {
@@ -50213,6 +50213,9 @@ var Environment = (function () {
             args[i] = WScript.Arguments.Item(i);
         }
         return {
+            currentDirectory: function () {
+                return (WScript).CreateObject("WScript.Shell").CurrentDirectory;
+            },
             readFile: function (path, useUTF8) {
                 if (typeof useUTF8 === "undefined") { useUTF8 = false; }
                 try  {
@@ -50313,6 +50316,9 @@ var Environment = (function () {
         var _path = require('path');
         var _module = require('module');
         return {
+            currentDirectory: function () {
+                return (process).cwd();
+            },
             readFile: function (file, useUTF8) {
                 var buffer = _fs.readFileSync(file);
                 switch(buffer[0]) {
@@ -52423,13 +52429,13 @@ var Program = (function () {
         if(true) {
         }
         Environment.standardOut.WriteLine("Testing findToken.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\findToken\\ecmascript5", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
-        this.testIncrementalSpeed("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts");
+        this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
         Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
@@ -52437,7 +52443,7 @@ var Program = (function () {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter\\ecmascript5", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
         });
         Environment.standardOut.WriteLine("Testing Incremental 2.");
@@ -52445,23 +52451,23 @@ var Program = (function () {
             IncrementalParserTests.runAllTests();
         }
         Environment.standardOut.WriteLine("Testing trivia.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\trivia\\ecmascript5", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5", function (filePath) {
             return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\scanner\\ecmascript5", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\scanner\\ecmascript5", function (filePath) {
             return _this.runScanner(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental 1.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\parser\\ecmascript5", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runIncremental(filePath, 1 /* EcmaScript5 */ );
         });
         Environment.standardOut.WriteLine("Testing emitter 2.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\emitter2\\ecmascript5", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter2\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, true);
         });
         Environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests("C:\\typescript\\public\\src\\prototype\\tests\\test262", function (filePath) {
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, false);
         });
     };

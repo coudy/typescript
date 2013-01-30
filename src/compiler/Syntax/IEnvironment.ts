@@ -8,4 +8,6 @@ interface IEnvironment {
 
     arguments: string[];
     standardOut: ITextWriter;
+
+    currentDirectory(): string;
 }

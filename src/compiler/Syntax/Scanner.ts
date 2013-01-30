@@ -6,7 +6,7 @@
 ///<reference path='LanguageVersion.ts' />
 ///<reference path='ISyntaxToken.ts' />
 ///<reference path='IText.ts' />
-///<reference path='..\harness\external\json2.ts' />
+///<reference path='..\..\harness\external\json2.ts' />
 ///<reference path='ScannerUtilities.generated.ts' />
 ///<reference path='StringTable.ts' />
 ///<reference path='SyntaxDiagnostic.ts' />

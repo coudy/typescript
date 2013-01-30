@@ -22,8 +22,6 @@ TSRC=$(BASE)test
 # harness source location
 HSRC=$(BASE)src\harness
 
-PSRC=$(BASE)src\prototype
-
 RSRC=$(BASE)tests\runners
 
 STRC_LOCAL=$(HOST) $(BUILT_LOCAL)\tsc.js -cflowu 
@@ -118,10 +116,7 @@ SERVICES_SOURCES= \
   $(SERVICES_SOURCES_BASE)
 
 PROTOTYPE_SOURCES_PROGRAM= \
-  $(PSRC)\Program.ts
-
-PROTOTYPE_SOURCES_TSC= \
-  $(PSRC)\Tsc.ts
+  $(CSRC)\Syntax\Program.ts
 
 prebuild-local:
 	if not exist $(BUILT) mkdir $(BUILT)
@@ -158,22 +153,19 @@ local: prebuild-local $(BUILT_LOCAL)\typescript.js $(BUILT_LOCAL)\tsc.js $(BUILT
 compiler: local
 
 prototype: $(PROTOTYPE_SOURCES_PROGRAM)
-	$(STRC_LKG) $(PROTOTYPE_SOURCES_PROGRAM) -const -out $(PSRC)\prototype.js
+	$(STRC_LKG) $(PROTOTYPE_SOURCES_PROGRAM) -const -out $(CSRC)\Syntax\prototype.js
 
-syntaxgenerator: $(PSRC)\SyntaxGenerator.ts
-	$(STRC_LKG) $(PSRC)\SyntaxGenerator.ts -const -out $(PSRC)\SyntaxGenerator.js
+syntaxgenerator: $(CSRC)\Syntax\SyntaxGenerator.ts
+	$(STRC_LKG) $(CSRC)\Syntax\SyntaxGenerator.ts -const -out $(CSRC)\Syntax\SyntaxGenerator.js
 
 runsyntaxgenerator: syntaxgenerator
-	$(DEBUG_HOST) $(PSRC)\SyntaxGenerator.js 
+	$(DEBUG_HOST) $(CSRC)\Syntax\SyntaxGenerator.js 
 
 runprototype: prototype
-	$(DEBUG_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
+	$(DEBUG_HOST) $(CSRC)\Syntax\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
 
 runprototype_node: prototype
-	$(NODE_HOST) $(PSRC)\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
-
-prototype_tsc: $(PROTOTYPE_SOURCES_TSC)
-	$(STRC_LKG) $(PROTOTYPE_SOURCES_TSC) -const -out $(PSRC)\tsc.js
+	$(NODE_HOST) $(CSRC)\Syntax\prototype.js $(FRONTEND_SOURCES) $(SERVICES_SOURCES) $(BUILT_LOCALTEST)\typescriptServices.js $(HSRC)\harness.ts $(HSRC)\diff.ts $(HSRC)\exec.ts $(HSRC)\baselining.ts $(HSRC)\fourslash.ts $(HSRC)\dumpAST-baselining.ts $(HSRC)\external\json2.ts $(HSRC)\runner.ts
 
 COMPILER_TESTS=--compiler
 PROJECT_TESTS=--project

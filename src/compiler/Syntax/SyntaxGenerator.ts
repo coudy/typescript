@@ -2912,10 +2912,10 @@ var scannerUtilities = generateScannerUtilities();
 var visitor = generateVisitor();
 var factory = generateFactory();
 
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxNodes.generated.ts", syntaxNodes, true);
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxRewriter.generated.ts", rewriter, true);
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxToken.generated.ts", tokens, true);
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxWalker.generated.ts", walker, true);
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\ScannerUtilities.generated.ts", scannerUtilities, true);
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxVisitor.generated.ts", visitor, true);
-Environment.writeFile("C:\\typescript\\public\\src\\prototype\\SyntaxFactory.generated.ts", factory, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts", syntaxNodes, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxRewriter.generated.ts", rewriter, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxToken.generated.ts", tokens, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxWalker.generated.ts", walker, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\ScannerUtilities.generated.ts", scannerUtilities, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxVisitor.generated.ts", visitor, true);
+Environment.writeFile(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxFactory.generated.ts", factory, true);

@@ -23,6 +23,55 @@ module Syntax {
         return positionedToken;
     }
 
+    export function isInModuleOrTypeContext(positionedToken: PositionedToken): bool {
+        if (positionedToken !== null) {
+            var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
+            var parent = positionedNodeOrToken.containingNode();
+
+            if (parent !== null) {
+                switch (parent.kind()) {
+                    case SyntaxKind.ModuleNameModuleReference:
+                        return true;
+                    case SyntaxKind.QualifiedName:
+                        // left of QN is namespace or type.  Note: when you have "a.b.c()", then
+                        // "a.b" is not a qualified name, it is a member access expression.
+                        // Qualified names are only parsed when the parser knows it's a type only
+                        // context.
+                        return true;
+                    default:
+                        return isInTypeOnlyContext(positionedToken);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    export function isInTypeOnlyContext(positionedToken: PositionedToken): bool {
+        var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
+        var positionedParent = positionedNodeOrToken.containingNode();
+
+        var parent = positionedParent.node();
+        var nodeOrToken = positionedNodeOrToken.nodeOrToken();
+
+        if (parent !== null) {
+            switch (parent.kind()) {
+                case SyntaxKind.ArrayType:
+                    return (<ArrayTypeSyntax>parent).type() === nodeOrToken;
+                case SyntaxKind.CastExpression:
+                    return (<CastExpressionSyntax>parent).type() === nodeOrToken;
+                case SyntaxKind.TypeAnnotation:
+                case SyntaxKind.ExtendsClause:
+                case SyntaxKind.ImplementsClause:
+                case SyntaxKind.TypeArgumentList:
+                    return true;
+                // TODO: add more cases if necessary.  This list may not be complete.
+            }
+        }
+
+        return false;
+    }
+
     export function childOffset(parent: ISyntaxElement, child: ISyntaxElement): number {
         var offset = 0;
         for (var i = 0, n = parent.childCount(); i < n; i++) {

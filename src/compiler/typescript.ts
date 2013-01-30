@@ -45,9 +45,9 @@
 ///<reference path='precompile.ts' />
 ///<reference path='incrementalParser.ts' />
 ///<reference path='declarationEmitter.ts' />
-///<reference path='..\prototype\ISyntaxNodeOrToken.ts' />
-///<reference path='..\prototype\Parser.ts' />
-///<reference path='..\prototype\TextFactory.ts' />
+///<reference path='Syntax\\ISyntaxNodeOrToken.ts' />
+///<reference path='Syntax\\Parser.ts' />
+///<reference path='Syntax\\TextFactory.ts' />
 ///<reference path='typecheck\dataMap.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
 ///<reference path='typecheck\pullSymbols.ts' />

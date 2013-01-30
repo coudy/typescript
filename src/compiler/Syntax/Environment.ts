@@ -1,6 +1,6 @@
 ///<reference path='IEnvironment.ts' />
-///<reference path='..\compiler\Enumerator.ts' />
-///<reference path='..\compiler\process.ts' />
+///<reference path='..\Enumerator.ts' />
+///<reference path='..\process.ts' />
 
 declare var require: any;
 
@@ -35,6 +35,10 @@ var Environment = (function () {
         }
 
         return {
+            currentDirectory: (): string => {
+                return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
+            },
+
             readFile: function (path, useUTF8?: bool = false) {
                 try {
                     var streamObj = getStreamObject();
@@ -148,6 +152,10 @@ var Environment = (function () {
         var _module = require('module');
 
         return {
+            currentDirectory: (): string => {
+                return (<any>process).cwd();
+            },
+
             readFile: function (file: string, useUTF8?: bool) {
                 var buffer = _fs.readFileSync(file);
                 switch (buffer[0]) {
