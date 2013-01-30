@@ -7713,9 +7713,15 @@ interface Blob {
     slice(start?: number, end?: number, contentType?: string): Blob;
     msClose(): void;
 }
+interface BlobPropertyBag {
+    /** Corresponds to the 'type' property of the Blob object */
+    type?: string;
+    /** Either 'transparent' or 'native' */
+    endings?: string;
+}
 declare var Blob: {
     prototype: Blob;
-    new (): Blob;
+    new (parts?: any[], properties?: any): Blob;
 }
 
 interface ApplicationCache extends EventTarget {
