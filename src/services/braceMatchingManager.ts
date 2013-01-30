@@ -14,7 +14,7 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\prototype\TextSpanWalker.ts' />
+///<reference path='..\compiler\Syntax\TextSpanWalker.ts' />
 
 module Services {
 

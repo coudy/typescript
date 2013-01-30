@@ -14,7 +14,7 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\prototype\SyntaxWalker.generated.ts' />
+///<reference path='..\compiler\Syntax\SyntaxWalker.generated.ts' />
 
 module Services {
     
