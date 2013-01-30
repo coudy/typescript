@@ -1,6 +1,6 @@
-///<reference path='EnumUtilities.ts' />
+///<reference path='..\Core\EnumUtilities.ts' />
 ///<reference path='ISemanticModel.ts' />
-///<reference path='Location.ts' />
+///<reference path='..\Syntax\Location.ts' />
 
 module SymbolDisplay {
     /// <summary>
@@ -602,7 +602,7 @@ module SymbolDisplay {
         private getMinimallyQualifyLookupOptions(): LookupOptions {
             var token = this.location.syntaxTree().sourceUnit().findToken(this.location.textSpan().start());
 
-            return SyntaxFacts.isInModuleOrTypeContext(token)
+            return Syntax.isInModuleOrTypeContext(token)
                 ? LookupOptions.ModulesOrTypesOnly
                 : LookupOptions.Default;
         }

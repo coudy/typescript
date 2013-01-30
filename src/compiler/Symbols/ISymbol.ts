@@ -1,4 +1,4 @@
-///<reference path='SyntaxNode.ts' />
+///<reference path='..\Syntax\SyntaxNode.ts' />
 ///<reference path='SymbolDisplay.ts' />
 
 enum SymbolKind {

@@ -1,5 +1,5 @@
-///<reference path='SyntaxTree.ts' />
-///<reference path='ICancellationToken.ts' />
+///<reference path='..\Syntax\SyntaxTree.ts' />
+///<reference path='..\Core\ICancellationToken.ts' />
 ///<reference path='ISemanticModel.ts' />
 ///<reference path='ISymbol.ts' />
 
