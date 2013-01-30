@@ -1,6 +1,6 @@
-///<reference path='ArrayUtilities.ts' />
-///<reference path='Environment.ts' />
-///<reference path='StringUtilities.ts' />
+///<reference path='..\Core\ArrayUtilities.ts' />
+///<reference path='..\Core\Environment.ts' />
+///<reference path='..\Core\StringUtilities.ts' />
 ///<reference path='SyntaxFacts.ts' />
 ///<reference path='SyntaxKind.ts' />
 
@@ -2465,7 +2465,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 function generateTokens(): string {
     var result = 
         "///<reference path='ISyntaxToken.ts' />\r\n" +
-        "///<reference path='IText.ts' />\r\n" +
+        "///<reference path='..\\Text\\IText.ts' />\r\n" +
         "///<reference path='SyntaxToken.ts' />\r\n" +
         "\r\n" +
         "module Syntax {\r\n";
@@ -2553,15 +2553,15 @@ function generateTokens(): string {
 
     result += 
 "    function getTriviaWidth(value: number): number {\r\n" +
-"        return value >>> Constants.TriviaFullWidthShift;\r\n" +
+"        return value >>> SyntaxConstants.TriviaFullWidthShift;\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    function hasTriviaComment(value: number): bool {\r\n" +
-"        return (value & Constants.TriviaCommentMask) !== 0;\r\n" +
+"        return (value & SyntaxConstants.TriviaCommentMask) !== 0;\r\n" +
 "    }\r\n" +
 "\r\n" +
 "    function hasTriviaNewLine(value: number): bool {\r\n" +
-"        return (value & Constants.TriviaNewLineMask) !== 0;\r\n" +
+"        return (value & SyntaxConstants.TriviaNewLineMask) !== 0;\r\n" +
 "    }\r\n";
 
     result += "}";
@@ -2727,7 +2727,7 @@ function generateKeywordCondition(keywords: { text: string; kind: SyntaxKind; }[
 }
 
 function generateScannerUtilities(): string {
-    var result = "///<reference path='CharacterCodes.ts' />\r\n" +
+    var result = "///<reference path='..\\Text\\CharacterCodes.ts' />\r\n" +
         "///<reference path='SyntaxKind.ts' />\r\n" +
         "\r\n" +
         "class ScannerUtilities {\r\n";

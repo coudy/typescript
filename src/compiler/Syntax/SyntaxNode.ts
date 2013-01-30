@@ -1,5 +1,5 @@
 ///<reference path='SyntaxRewriter.generated.ts' />
-///<reference path='Errors.ts' />
+///<reference path='..\Core\Errors.ts' />
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxToken.ts' />
 ///<reference path='SyntaxVisitor.generated.ts' />
@@ -9,7 +9,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     private _data: number;
 
     constructor(parsedInStrictMode: bool) {
-        this._data = parsedInStrictMode ? Constants.NodeParsedInStrictModeMask : 0;
+        this._data = parsedInStrictMode ? SyntaxConstants.NodeParsedInStrictModeMask : 0;
     }
 
     public isNode(): bool{ return true; }
@@ -171,11 +171,11 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     }
 
     public hasSkippedText(): bool {
-        return (this.data() & Constants.NodeSkippedTextMask) !== 0;
+        return (this.data() & SyntaxConstants.NodeSkippedTextMask) !== 0;
     }
 
     public hasZeroWidthToken(): bool {
-        return (this.data() & Constants.NodeZeroWidthTokenMask) !== 0;
+        return (this.data() & SyntaxConstants.NodeZeroWidthTokenMask) !== 0;
     }
 
     // True if this node contains a regex token somewhere under it.  A regex token is either a 
@@ -195,7 +195,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     // Then even though only the 'return' and ';' colons were touched, we'd want to rescan the '/'
     // token which we would then realize was a regex.
     public hasRegularExpressionToken(): bool {
-        return (this.data() & Constants.NodeRegularExpressionTokenMask) !== 0;
+        return (this.data() & SyntaxConstants.NodeRegularExpressionTokenMask) !== 0;
     }
 
     // True if this node was parsed while the parser was in 'strict' mode.  A node parsed in strict
@@ -203,11 +203,11 @@ class SyntaxNode implements ISyntaxNodeOrToken {
     // the parser parses things differently in strict mode and thus the tokens may be interpretted
     // differently if the mode is changed. 
     public parsedInStrictMode(): bool {
-        return (this.data() & Constants.NodeParsedInStrictModeMask) !== 0;
+        return (this.data() & SyntaxConstants.NodeParsedInStrictModeMask) !== 0;
     }
 
     public fullWidth(): number {
-        return this.data() >>> Constants.NodeFullWidthShift;
+        return this.data() >>> SyntaxConstants.NodeFullWidthShift;
     }
 
     private computeData(): number {
@@ -243,14 +243,14 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             }
         }
 
-        return (fullWidth << Constants.NodeFullWidthShift)
-             | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-             | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-             | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+        return (fullWidth << SyntaxConstants.NodeFullWidthShift)
+             | (hasSkippedText ? SyntaxConstants.NodeSkippedTextMask : 0)
+             | (hasZeroWidthToken ? SyntaxConstants.NodeZeroWidthTokenMask : 0)
+             | (hasRegularExpressionToken ? SyntaxConstants.NodeRegularExpressionTokenMask : 0);
     }
     
     private data(): number {
-        if (this._data === 0 || this._data === Constants.NodeParsedInStrictModeMask) {
+        if (this._data === 0 || this._data === SyntaxConstants.NodeParsedInStrictModeMask) {
             this._data |= this.computeData();
         }
 

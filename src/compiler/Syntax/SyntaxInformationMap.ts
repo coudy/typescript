@@ -1,6 +1,6 @@
 ///<reference path='SyntaxWalker.generated.ts' />
 
-///<reference path='HashTable.ts' />
+///<reference path='..\Core\HashTable.ts' />
 ///<reference path='SyntaxToken.ts' />
 
 interface ITokenInformation {

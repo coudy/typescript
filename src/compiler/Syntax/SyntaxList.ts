@@ -258,19 +258,19 @@ module Syntax {
         }
 
         public hasSkippedText(): bool {
-            return (this.data() & Constants.NodeSkippedTextMask) !== 0;
+            return (this.data() & SyntaxConstants.NodeSkippedTextMask) !== 0;
         }
 
         public hasZeroWidthToken(): bool {
-            return (this.data() & Constants.NodeZeroWidthTokenMask) !== 0;
+            return (this.data() & SyntaxConstants.NodeZeroWidthTokenMask) !== 0;
         }
 
         public hasRegularExpressionToken(): bool {
-            return (this.data() & Constants.NodeRegularExpressionTokenMask) !== 0;
+            return (this.data() & SyntaxConstants.NodeRegularExpressionTokenMask) !== 0;
         }
 
         public fullWidth(): number {
-            return this.data() >>> Constants.NodeFullWidthShift;
+            return this.data() >>> SyntaxConstants.NodeFullWidthShift;
         }
 
         public width(): number {
@@ -300,10 +300,10 @@ module Syntax {
                 hasRegularExpressionToken = hasRegularExpressionToken || node.hasRegularExpressionToken();
             }
 
-            return (fullWidth << Constants.NodeFullWidthShift)
-                 | (hasSkippedText ? Constants.NodeSkippedTextMask : 0)
-                 | (hasZeroWidthToken ? Constants.NodeZeroWidthTokenMask : 0)
-                 | (hasRegularExpressionToken ? Constants.NodeRegularExpressionTokenMask : 0);
+            return (fullWidth << SyntaxConstants.NodeFullWidthShift)
+                 | (hasSkippedText ? SyntaxConstants.NodeSkippedTextMask : 0)
+                 | (hasZeroWidthToken ? SyntaxConstants.NodeZeroWidthTokenMask : 0)
+                 | (hasRegularExpressionToken ? SyntaxConstants.NodeRegularExpressionTokenMask : 0);
         }
 
         private data(): number {

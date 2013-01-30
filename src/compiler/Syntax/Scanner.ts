@@ -1,14 +1,14 @@
 ﻿///<reference path='SlidingWindow.ts' />
 
-///<reference path='CharacterCodes.ts' />
+///<reference path='..\Text\CharacterCodes.ts' />
 ///<reference path='CharacterInfo.ts' />
 ///<reference path='Constants.ts' />
 ///<reference path='LanguageVersion.ts' />
 ///<reference path='ISyntaxToken.ts' />
-///<reference path='IText.ts' />
+///<reference path='..\Text\IText.ts' />
 ///<reference path='..\..\harness\external\json2.ts' />
 ///<reference path='ScannerUtilities.generated.ts' />
-///<reference path='StringTable.ts' />
+///<reference path='..\Core\StringTable.ts' />
 ///<reference path='SyntaxDiagnostic.ts' />
 ///<reference path='SyntaxFacts.ts' />
 ///<reference path='SyntaxKind.ts' />
@@ -230,13 +230,13 @@ class Scanner implements ISlidingWindowSource {
                     // Potential comment.  Consume if so.  Otherwise, break out and return.
                     var ch2 = this.slidingWindow.peekItemN(1);
                     if (ch2 === CharacterCodes.slash) {
-                        hasCommentOrNewLine |= Constants.TriviaCommentMask;
+                        hasCommentOrNewLine |= SyntaxConstants.TriviaCommentMask;
                         width += this.scanSingleLineCommentTriviaLength();
                         continue;
                     }
 
                     if (ch2 === CharacterCodes.asterisk) {
-                        hasCommentOrNewLine |= Constants.TriviaCommentMask;
+                        hasCommentOrNewLine |= SyntaxConstants.TriviaCommentMask;
                         width += this.scanMultiLineCommentTriviaLength(diagnostics);
                         continue;
                     }
@@ -248,7 +248,7 @@ class Scanner implements ISlidingWindowSource {
                 case CharacterCodes.lineFeed:
                 case CharacterCodes.paragraphSeparator:
                 case CharacterCodes.lineSeparator:
-                    hasCommentOrNewLine |= Constants.TriviaNewLineMask;
+                    hasCommentOrNewLine |= SyntaxConstants.TriviaNewLineMask;
                     width += this.scanLineTerminatorSequenceLength(ch);
 
                     // If we're consuming leading trivia, then we will continue consuming more 
@@ -261,7 +261,7 @@ class Scanner implements ISlidingWindowSource {
                     break;
             }
 
-            return (width << Constants.TriviaFullWidthShift) | hasCommentOrNewLine;
+            return (width << SyntaxConstants.TriviaFullWidthShift) | hasCommentOrNewLine;
         }
     }
 

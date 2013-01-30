@@ -1,9 +1,9 @@
-///<reference path='..\ArrayUtilities.ts' />
+///<reference path='..\..\Core\ArrayUtilities.ts' />
 ///<reference path='..\Parser.ts' />
-///<reference path='..\StringTable.ts' />
-///<reference path='..\StringUtilities.ts' />
-///<reference path='..\TextChangeRange.ts' />
-///<reference path='..\TextFactory.ts' />
+///<reference path='..\..\Core\StringTable.ts' />
+///<reference path='..\..\Core\StringUtilities.ts' />
+///<reference path='..\..\Text\TextChangeRange.ts' />
+///<reference path='..\..\Text\TextFactory.ts' />
 
 class SyntaxElementsCollector extends SyntaxWalker {
     private elements: ISyntaxElement[] = [];

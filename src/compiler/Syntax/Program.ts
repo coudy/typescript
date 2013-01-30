@@ -1,10 +1,10 @@
 ///<reference path='..\parser.ts' />
 ///<reference path='Emitter.ts' />
 ///<reference path='Parser.ts' />
-///<reference path='Environment.ts' />
-///<reference path='TextFactory.ts' />
+///<reference path='..\Core\Environment.ts' />
+///<reference path='..\Text\TextFactory.ts' />
 ///<reference path='Test262.ts' />
-///<reference path='Timer.ts' />
+///<reference path='..\Core\Timer.ts' />
 ///<reference path='Top1000.ts' />
 ///<reference path='tests\IncrementalParserTests.ts' />
 

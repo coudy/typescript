@@ -1,5 +1,5 @@
 ///<reference path='Diagnostic.ts' />
-///<reference path='Errors.ts' />
+///<reference path='..\Core\Errors.ts' />
 
 class SyntaxDiagnostic extends Diagnostic {
     private _position: number;

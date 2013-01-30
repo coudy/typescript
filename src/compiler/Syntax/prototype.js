@@ -22542,20 +22542,18 @@ var CharacterInfo = (function () {
     };
     return CharacterInfo;
 })();
-var Constants;
-(function (Constants) {
-    Constants._map = [];
-    Constants.Max31BitInteger = 1073741823;
-    Constants.Min31BitInteger = -1073741824;
-    Constants.TriviaNewLineMask = 1;
-    Constants.TriviaCommentMask = 2;
-    Constants.TriviaFullWidthShift = 2;
-    Constants.NodeSkippedTextMask = 1;
-    Constants.NodeZeroWidthTokenMask = 2;
-    Constants.NodeRegularExpressionTokenMask = 4;
-    Constants.NodeParsedInStrictModeMask = 8;
-    Constants.NodeFullWidthShift = 4;
-})(Constants || (Constants = {}));
+var SyntaxConstants;
+(function (SyntaxConstants) {
+    SyntaxConstants._map = [];
+    SyntaxConstants.TriviaNewLineMask = 1;
+    SyntaxConstants.TriviaCommentMask = 2;
+    SyntaxConstants.TriviaFullWidthShift = 2;
+    SyntaxConstants.NodeSkippedTextMask = 1;
+    SyntaxConstants.NodeZeroWidthTokenMask = 2;
+    SyntaxConstants.NodeRegularExpressionTokenMask = 4;
+    SyntaxConstants.NodeParsedInStrictModeMask = 8;
+    SyntaxConstants.NodeFullWidthShift = 4;
+})(SyntaxConstants || (SyntaxConstants = {}));
 var LanguageVersion;
 (function (LanguageVersion) {
     LanguageVersion._map = [];
@@ -35786,6 +35784,12 @@ var SyntaxTree = (function () {
     };
     return SyntaxTree;
 })();
+var Constants;
+(function (Constants) {
+    Constants._map = [];
+    Constants.Max31BitInteger = 1073741823;
+    Constants.Min31BitInteger = -1073741824;
+})(Constants || (Constants = {}));
 var TextChangeRange = (function () {
     function TextChangeRange(span, newLength) {
         if(newLength < 0) {

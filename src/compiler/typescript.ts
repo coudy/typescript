@@ -47,7 +47,7 @@
 ///<reference path='declarationEmitter.ts' />
 ///<reference path='Syntax\\ISyntaxNodeOrToken.ts' />
 ///<reference path='Syntax\\Parser.ts' />
-///<reference path='Syntax\\TextFactory.ts' />
+///<reference path='Text\\TextFactory.ts' />
 ///<reference path='typecheck\dataMap.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
 ///<reference path='typecheck\pullSymbols.ts' />

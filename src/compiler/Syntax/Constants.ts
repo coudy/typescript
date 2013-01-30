@@ -1,8 +1,4 @@
-enum Constants {
-    // 2^30-1
-    Max31BitInteger = 1073741823,
-    Min31BitInteger = -1073741824,
-
+enum SyntaxConstants {
     // Masks that we use to place information about trivia into a single int. The first two flags 
     // mark bools that tell us if the trivia contains a comment or a newline. The width of the 
     // trivia is then stored in the rest of the int.  This allows trivia of nearly any length.

@@ -1,4 +1,4 @@
-///<reference path='Errors.ts' />
+///<reference path='..\Core\Errors.ts' />
 ///<reference path='LanguageVersion.ts' />
 
 class Unicode {

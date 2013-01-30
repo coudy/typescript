@@ -1,4 +1,4 @@
-///<reference path='Constants.ts' />
+///<reference path='..\Core\Constants.ts' />
 ///<reference path='TextSpan.ts' />
 
 class TextChangeRange {

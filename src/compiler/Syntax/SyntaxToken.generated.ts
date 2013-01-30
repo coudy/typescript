@@ -1,5 +1,5 @@
 ﻿///<reference path='ISyntaxToken.ts' />
-///<reference path='IText.ts' />
+///<reference path='..\Text\IText.ts' />
 ///<reference path='SyntaxToken.ts' />
 
 module Syntax {
@@ -720,14 +720,14 @@ module Syntax {
     }
 
     function getTriviaWidth(value: number): number {
-        return value >>> Constants.TriviaFullWidthShift;
+        return value >>> SyntaxConstants.TriviaFullWidthShift;
     }
 
     function hasTriviaComment(value: number): bool {
-        return (value & Constants.TriviaCommentMask) !== 0;
+        return (value & SyntaxConstants.TriviaCommentMask) !== 0;
     }
 
     function hasTriviaNewLine(value: number): bool {
-        return (value & Constants.TriviaNewLineMask) !== 0;
+        return (value & SyntaxConstants.TriviaNewLineMask) !== 0;
     }
 }

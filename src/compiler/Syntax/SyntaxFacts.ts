@@ -1,4 +1,4 @@
-///<reference path='Debug.ts' />
+///<reference path='..\Core\Debug.ts' />
 ///<reference path='SyntaxKind.ts' />
 
 module SyntaxFacts {

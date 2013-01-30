@@ -1,5 +1,5 @@
-///<reference path='ArrayUtilities.ts' />
-///<reference path='Errors.ts' />
+///<reference path='..\Core\ArrayUtilities.ts' />
+///<reference path='..\Core\Errors.ts' />
 ///<reference path='ISyntaxTriviaList.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 

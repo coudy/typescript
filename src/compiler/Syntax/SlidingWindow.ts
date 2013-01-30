@@ -1,4 +1,4 @@
-///<reference path='ArrayUtilities.ts' />
+///<reference path='..\Core\ArrayUtilities.ts' />
 
 interface ISlidingWindowSource {
     // Asks the source to copy items starting at sourceIndex into the window at 'destinationIndex'

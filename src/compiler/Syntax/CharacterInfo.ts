@@ -1,5 +1,5 @@
-///<reference path='CharacterCodes.ts' />
-///<reference path='Debug.ts' />
+///<reference path='..\Text\CharacterCodes.ts' />
+///<reference path='..\Core\Debug.ts' />
 
 class CharacterInfo {
     public static isDecimalDigit(c: number): bool {

@@ -7,7 +7,7 @@
 /// <reference path='SyntaxFactory.generated.ts' />
 /// <reference path='SyntaxTree.ts' />
 /// <reference path='SyntaxTriviaList.ts' />
-/// <reference path='TextChangeRange.ts' />
+/// <reference path='..\Text\TextChangeRange.ts' />
 
 module Parser1 {
     // Information the parser needs to effectively rewind.

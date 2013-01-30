@@ -1,4 +1,4 @@
-///<reference path='ArrayUtilities.ts' />
+///<reference path='..\Core\ArrayUtilities.ts' />
 ///<reference path='DiagnosticCode.ts' />
 
 class Diagnostic {

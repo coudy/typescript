@@ -1,8 +1,8 @@
-///<reference path='ArrayUtilities.ts' />
+///<reference path='..\Core\ArrayUtilities.ts' />
 ///<reference path='CharacterCodes.ts' />
 ///<reference path='IText.ts' />
-///<reference path='StringUtilities.ts' />
-///<reference path='StringTable.ts' />
+///<reference path='..\Core\StringUtilities.ts' />
+///<reference path='..\Core\StringTable.ts' />
 
 module TextFactory {
     function getLengthOfLineBreakSlow(text: IText, index: number, c: number): number {
