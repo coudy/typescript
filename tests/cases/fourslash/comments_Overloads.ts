@@ -198,7 +198,24 @@
 ////var c4_i_2 = new c4(/*62*/"hello");
 ////var c/*70*/5_i_1 = new c5(/*63*/10);
 ////var c5_i_2 = new c5(/*64*/"hello");
+/////** This is multiOverload F1 1*/
+////function multiOverload(a: number): string;
+/////** This is multiOverload F1 2*/
+////function multiOverload(b: string): string;
+/////** This is multiOverload F1 3*/
+////function multiOverload(c: bool): string;
+/////** This is multiOverload Implementation */
+////function multiOverload(d): string {
+////    return "Hello";
+////}
+/////** This is ambient F1 1*/
+////declare function ambientF1(a: number): string;
+/////** This is ambient F1 2*/
+////declare function ambientF1(b: string): string;
+/////** This is ambient F1 3*/
+////declare function ambientF1(c: bool): bool;
 /////*65*/
+
 
 goTo.marker('1');
 verify.quickInfoIs("{ (a: number): number; (b: string): number; }");
@@ -261,10 +278,10 @@ verify.currentSignatureHelpDocCommentIs("this is signature 4 - with number param
 verify.currentParameterHelpArgumentDocCommentIs("param a");
 
 goTo.marker('17');
-verify.completionListContains('f1', '{ (a: number): number; (b: string): number; }', 'this is signature 1');
-verify.completionListContains('f2', '{ (a: number): number; (b: string): number; }', 'this is signature 2\nthis is f2 var comment');
-verify.completionListContains('f3', '{ (a: number): number; (b: string): number; }', '');
-verify.completionListContains('f4', '{ (a: number): number; (b: string): number; }', 'this is signature 4 - with number parameter\nthis is signature 4 - with string parameter');
+verify.completionListContains('f1', '(a: number) => number (+ 1 overload(s))', 'this is signature 1');
+verify.completionListContains('f2', '(a: number) => number (+ 1 overload(s))', '');
+verify.completionListContains('f3', '(a: number) => number (+ 1 overload(s))', '');
+verify.completionListContains('f4', '(a: number) => number (+ 1 overload(s))', 'this is signature 4 - with number parameter');
 
 goTo.marker('18');
 verify.completionListContains('i1', 'i1', '');
@@ -293,10 +310,10 @@ verify.currentSignatureHelpDocCommentIs("this is signature 2");
 verify.currentParameterHelpArgumentDocCommentIs("");
 
 goTo.marker('23');
-verify.memberListContains('foo', '{ (a: number): number; (b: string): number; }', 'foo 1\nfoo 2');
-verify.memberListContains('foo2', '{ (a: number): number; (b: string): number; }', 'foo2 2');
-verify.memberListContains('foo3', '{ (a: number): number; (b: string): number; }', '');
-verify.memberListContains('foo4', '{ (a: number): number; (b: string): number; }', 'foo4 1');
+verify.memberListContains('foo', '(a: number) => number (+ 1 overload(s))', 'foo 1');
+verify.memberListContains('foo2', '(a: number) => number (+ 1 overload(s))', '');
+verify.memberListContains('foo3', '(a: number) => number (+ 1 overload(s))', '');
+verify.memberListContains('foo4', '(a: number) => number (+ 1 overload(s))', 'foo4 1');
 
 goTo.marker('24');
 verify.currentSignatureHelpDocCommentIs("foo 1");
@@ -379,11 +396,11 @@ verify.currentSignatureHelpDocCommentIs("");
 verify.currentParameterHelpArgumentDocCommentIs("");
 
 goTo.marker('44');
-verify.memberListContains('prop1', '{ (a: number): number; (b: string): number; }', '');
-verify.memberListContains('prop2', '{ (a: number): number; (b: string): number; }', 'prop2 1');
-verify.memberListContains('prop3', '{ (a: number): number; (b: string): number; }', 'prop3 2');
-verify.memberListContains('prop4', '{ (a: number): number; (b: string): number; }', 'prop4 1\nprop4 2');
-verify.memberListContains('prop5', '{ (a: number): number; (b: string): number; }', 'prop5 1\nprop5 2\nProp5 implementaion');
+verify.memberListContains('prop1', '(a: number) => number (+ 1 overload(s))', '');
+verify.memberListContains('prop2', '(a: number) => number (+ 1 overload(s))', 'prop2 1');
+verify.memberListContains('prop3', '(a: number) => number (+ 1 overload(s))', '');
+verify.memberListContains('prop4', '(a: number) => number (+ 1 overload(s))', 'prop4 1');
+verify.memberListContains('prop5', '(a: number) => number (+ 1 overload(s))', 'prop5 1');
 
 goTo.marker('45');
 verify.currentSignatureHelpDocCommentIs("");
@@ -483,6 +500,8 @@ verify.completionListContains("c2_i_2", "c2", "");
 verify.completionListContains("c3_i_2", "c3", "");
 verify.completionListContains("c4_i_2", "c4", "");
 verify.completionListContains("c5_i_2", "c5", "");
+verify.completionListContains('multiOverload', '(a: number) => string (+ 2 overload(s))', 'This is multiOverload F1 1');
+verify.completionListContains('ambientF1', '(a: number) => string (+ 2 overload(s))', 'This is ambient F1 1');
 
 goTo.marker('66');
 verify.quickInfoIs("c1");

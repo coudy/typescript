@@ -765,7 +765,7 @@ module TypeScript {
             }
         }
 
-        public getScopeEntries(enclosingScopeContext: EnclosingScopeContext): ScopeEntry[] {
+        public getScopeEntries(enclosingScopeContext: EnclosingScopeContext, getPrettyTypeName?: bool): ScopeEntry[] {
             var scope = this.getScope(enclosingScopeContext);
             if (scope == null) {
                 return [];
@@ -790,13 +790,13 @@ module TypeScript {
             var svModuleDecl = this.compiler.typeChecker.currentModDecl;
             this.compiler.typeChecker.currentModDecl = enclosingScopeContext.deepestModuleDecl;
 
-            var result = this.getTypeNamesForNames(enclosingScopeContext, inScopeNames.getAllKeys(), scope);
+            var result = this.getTypeNamesForNames(enclosingScopeContext, inScopeNames.getAllKeys(), scope, getPrettyTypeName);
 
             this.compiler.typeChecker.currentModDecl = svModuleDecl;
             return result;
         }
 
-        private getTypeNamesForNames(enclosingScopeContext: EnclosingScopeContext, allNames: string[], scope: SymbolScope): ScopeEntry[] {
+        private getTypeNamesForNames(enclosingScopeContext: EnclosingScopeContext, allNames: string[], scope: SymbolScope, getPrettyTypeName? : bool): ScopeEntry[] {
             var result: ScopeEntry[] = [];
 
             var enclosingScope = enclosingScopeContext.getScope();
@@ -818,7 +818,8 @@ module TypeScript {
                 if (symbol) {
                     // Do not add dynamic module names to the list, since they're not legal as identifiers
                     if (displayThisMember && !isQuoted(symbol.name) && !isRelative(symbol.name)) {
-                        var typeName = symbol.getType().getScopedTypeName(enclosingScope);
+                        var getPrettyOverload = getPrettyTypeName && symbol.declAST && symbol.declAST.nodeType == NodeType.FuncDecl;
+                        var typeName = symbol.getType().getScopedTypeName(enclosingScope, getPrettyOverload);
                         result.push(new ScopeEntry(name, typeName, symbol));
                     }
                 }

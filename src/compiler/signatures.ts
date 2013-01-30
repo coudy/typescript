@@ -75,7 +75,7 @@ module TypeScript {
             return this.toStringHelperEx(shortform, brackets, scope).toString();
         }
 
-        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix? : string = "") : MemberName {
+        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix?: string = ""): MemberNameArray {
             var builder = new MemberNameArray();
             if (brackets) {
                 builder.prefix =  prefix + "[";
@@ -150,10 +150,10 @@ module TypeScript {
         }
 
         public toString() { return this.signatures.toString(); }
-        public toStrings(prefix: string, shortform: bool, scope: SymbolScope) {
+        public toStrings(prefix: string, shortform: bool, scope: SymbolScope, getPrettyTypeName? : bool) {
             var result : MemberName[] = [];  
             var len = this.signatures.length;
-            if (len > 1) {
+            if (!getPrettyTypeName && len > 1) {
                 shortform = false;
             }
             for (var i = 0; i < len; i++) {
@@ -161,11 +161,19 @@ module TypeScript {
                 if (len > 1 && this.signatures[i] == this.definitionSignature) {
                     continue;
                 }
+                var currentSignature: MemberNameArray;
                 if (this.flags & SignatureFlags.IsIndexer) {
-                    result.push(this.signatures[i].toStringHelperEx(shortform, true, scope));
+                    currentSignature = this.signatures[i].toStringHelperEx(shortform, true, scope);
                 }
                 else {
-                    result.push(this.signatures[i].toStringHelperEx(shortform, false, scope, prefix));
+                    currentSignature = this.signatures[i].toStringHelperEx(shortform, false, scope, prefix);
+                }
+                result.push(currentSignature);
+
+                if (getPrettyTypeName) {
+                    var overloadString = " (+ " + ((this.definitionSignature != null) ? len - 2 : len - 1) + " overload(s))";
+                    currentSignature.add(MemberName.create(overloadString));
+                    break;
                 }
             }
             

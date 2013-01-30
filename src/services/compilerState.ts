@@ -667,8 +667,8 @@ module Services {
             return this.compiler.units[unitIndex].lineMap;
         }
 
-        public getScopeEntries(enclosingScopeContext: TypeScript.EnclosingScopeContext) {
-            return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext);
+        public getScopeEntries(enclosingScopeContext: TypeScript.EnclosingScopeContext, getPrettyTypeName?: bool) {
+            return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext, getPrettyTypeName);
         }
 
         public getErrorEntries(maxCount: number, filter: (unitIndex: number, error: TypeScript.ErrorEntry) =>bool): TypeScript.ErrorEntry[] {

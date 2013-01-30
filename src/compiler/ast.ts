@@ -2686,16 +2686,17 @@ module TypeScript {
             return "";
         }
 
-        static getDocCommentTextOfSignatures(signatures: Signature[]) {
-            var comments: string[] = [];
-            for (var i = 0; i < signatures.length; i++) {
-                var signatureDocComment = TypeScript.Comment.getDocCommentText(signatures[i].declAST.getDocComments());
-                if (signatureDocComment != "") {
-                    comments.push(signatureDocComment);
+        static getDocCommentFirstOverloadSignature(signatureGroup: SignatureGroup) {
+            for (var i = 0; i < signatureGroup.signatures.length; i++) {
+                var signature = signatureGroup.signatures[i];
+                if (signature == signatureGroup.definitionSignature) {
+                    continue;
                 }
+
+                return TypeScript.Comment.getDocCommentText(signature.declAST.getDocComments());
             }
 
-            return comments.join("\n");
+            return "";
         }
     }
 

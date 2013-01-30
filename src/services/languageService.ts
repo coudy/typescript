@@ -1409,7 +1409,7 @@ module Services {
                 result.isMemberCompletion = isMemberCompletion;
                 enclosingScopeContext.isMemberCompletion = isMemberCompletion;
 
-                var entries = this.compilerState.getScopeEntries(enclosingScopeContext);
+                var entries = this.compilerState.getScopeEntries(enclosingScopeContext, true);
                 entries.forEach(x => {
                     var entry = new CompletionEntry();
                     entry.name = x.name;
@@ -1421,7 +1421,7 @@ module Services {
                     } else if (x.sym.declAST && x.sym.declAST.nodeType == TypeScript.NodeType.FuncDecl &&
                         type.call && type.call.signatures.length > 1) {
                         // Overload method - combine docComments from all the signatures
-                        entry.docComment = TypeScript.Comment.getDocCommentTextOfSignatures(type.call.signatures);
+                        entry.docComment = TypeScript.Comment.getDocCommentFirstOverloadSignature(type.call);
                     } else {
                         if (x.sym.kind() == TypeScript.SymbolKind.Parameter) {
                             entry.docComment = (<TypeScript.ParameterSymbol>x.sym).getParameterDocComments();
