@@ -924,6 +924,7 @@ interface Array {
     toString(): string;
     toLocaleString(): string;
     concat(...items: _element[][]): _element[];
+    concat(...items: _element[]): _element[];
     join(seperator?: string): string;
     pop(): _element;
     push(...items: _element[]): number;
