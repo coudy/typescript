@@ -151,3 +151,7 @@ function divide(a: number, b: number) {
 function jsDocParamTest(/** this is inline comment for a */a: number, /** this is inline comment for b*/ b: number, c: number, d: number) {
     return a + b + c + d;
 }
+
+/**/
+class NoQuickInfoClass {
+}

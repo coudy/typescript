@@ -127,6 +127,11 @@ function divide(a, b) {
 function jsDocParamTest(/** this is inline comment for a */ a, /** this is inline comment for b*/ b, c, d) {
     return a + b + c + d;
 }
+/**/
+var NoQuickInfoClass = (function () {
+    function NoQuickInfoClass() { }
+    return NoQuickInfoClass;
+})();
 ////[0.d.ts]
 function simple(): void;
 function multiLine(): void;
@@ -198,3 +203,5 @@ function divide(a: number, b: number): void;
 *@param c it is third parameter
 */
 function jsDocParamTest(/** this is inline comment for a */ a: number, /** this is inline comment for b*/ b: number, c: number, d: number): number;
+class NoQuickInfoClass {
+}
