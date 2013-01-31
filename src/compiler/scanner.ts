@@ -192,6 +192,7 @@ module TypeScript {
             return LexLookUpUnicodeMap(code, unicodeES5IdStart);
         }
     }
+
     export function LexInitialize() {
         initializeStaticTokens();
         autoToken[LexCodeLPR] = staticTokens[TokenID.OpenParen];
