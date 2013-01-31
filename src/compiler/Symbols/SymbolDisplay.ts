@@ -438,36 +438,6 @@ module SymbolDisplay {
             this.builder.push(new Part(PartKind.Text, "undefined", symbol));
         }
 
-        private visitArrayType(symbol: IArrayTypeSymbol): void {
-            var underlyingNonArrayType = symbol.elementType();
-            while (underlyingNonArrayType.kind() === SymbolKind.ArrayType) {
-                underlyingNonArrayType = (<IArrayTypeSymbol>underlyingNonArrayType).elementType();
-            }
-
-            underlyingNonArrayType.accept(this.notFirstVisitor);
-
-            var arrayType = symbol;
-            while (arrayType != null) {
-                this.addArrayRank(arrayType);
-
-                if (arrayType.elementType().kind() !== SymbolKind.ArrayType) {
-                    break;
-                }
-
-                arrayType = <IArrayTypeSymbol>arrayType.elementType();
-            }
-        }
-
-        private addArrayRank(symbol: IArrayTypeSymbol): void {
-            this.addPunctuation(SyntaxKind.OpenBracketToken);
-
-            for (var i = 0; i < symbol.rank() - 1; i++) {
-                this.addPunctuation(SyntaxKind.CommaToken);
-            }
-
-            this.addPunctuation(SyntaxKind.CloseBracketToken);
-        }
-
         private visitTypeParameter(symbol: ITypeParameterSymbol): void {
             this.builder.push(new Part(PartKind.TypeParameterName, symbol.name(), symbol));
         }
@@ -480,7 +450,29 @@ module SymbolDisplay {
             }
         }
 
+        private visitArrayType(symbol: IClassTypeSymbol): void {
+            var brackets = 1;
+
+            var elementType = symbol.typeArguments()[0];
+            while (elementType.isArrayType()) {
+                elementType = (<IClassTypeSymbol>elementType).typeArguments()[0];
+                brackets++;
+            }
+
+            elementType.accept(this.notFirstVisitor);
+
+            for (var i = 0; i < brackets; i++) {
+                this.addPunctuation(SyntaxKind.OpenBracketToken);
+                this.addPunctuation(SyntaxKind.CloseBracketToken);
+            }
+        }
+
         private visitClassType(symbol: IClassTypeSymbol): void {
+            if (symbol.isArrayType()) {
+                this.visitArrayType(symbol);
+                return;
+            }
+
             if (this.minimal) {
                 this.minimallyQualify(symbol, symbol.typeParameters().length);
                 return;
@@ -557,7 +549,7 @@ module SymbolDisplay {
                 var signature = symbol.signatureAt(0);
 
                 if (signature.kind() === SymbolKind.ConstructSignature ||
-                    signature.kind() === SymbolKind.FunctionSignature) {
+                    signature.kind() === SymbolKind.CallSignature) {
 
                     signature.accept(this);
                     return;

@@ -32,6 +32,12 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     allInterfaces(): IInterfaceTypeSymbol[];
 
     originalDefinition(): ITypeSymbol;
+
+    // isSubTypeOf(type: ITypeSymbol): bool;
+    // isSuperTypeOf(type: ITypeSymbol): bool;
+    // isIdenticalTo(type: ITypeSymbol): bool;
+    // isAssignableTo(type: ITypeSymbol): bool;
+    // isAssignableFrom(type: ITypeSymbol): bool;
 }
 
 interface IAnyTypeSymbol extends ITypeSymbol {
@@ -59,6 +65,11 @@ interface IUndefinedTypeSymbol extends IPrimitiveTypeSymbol {
 }
 
 interface IObjectTypeSymbol extends ITypeSymbol {
+    /// An object type containing call signatures is said to be a function type.
+    isFunctionType(): bool;
+
+    /// A type containing construct signatures is said to be a constructor type.
+    isConstructorType(): bool;
 }
 
 interface IClassTypeSymbol extends IMemberSymbol, IObjectTypeSymbol, IGenericSymbol {
@@ -90,45 +101,28 @@ interface IInterfaceTypeSymbol extends IMemberSymbol, IObjectTypeSymbol, IGeneri
     originalDefinition(): IInterfaceTypeSymbol;
 }
 
-interface IArrayTypeSymbol extends IObjectTypeSymbol {
-    /// <summary>
-    /// Gets the number of dimensions of this array. A regular single-dimensional array
-    /// has rank 1, a two-dimensional array has rank 2, etc.
-    /// </summary>
-    rank(): number;
+//interface IArrayTypeSymbol extends IObjectTypeSymbol {
+//    /// <summary>
+//    /// Gets the number of dimensions of this array. A regular single-dimensional array
+//    /// has rank 1, a two-dimensional array has rank 2, etc.
+//    /// </summary>
+//    rank(): number;
 
-    /// <summary>
-    /// Gets the type of the elements stored in the array.
-    /// </summary>
-    elementType(): ITypeSymbol;
-}
-
-interface IEnumTypeSymbol extends IMemberSymbol, IObjectTypeSymbol {
-    variableCount(): number;
-    variableAt(index: number): IVariableSymbol;
-}
+//    /// <summary>
+//    /// Gets the type of the elements stored in the array.
+//    /// </summary>
+//    elementType(): ITypeSymbol;
+//}
 
 interface IAnonymousTypeSymbol extends IObjectTypeSymbol {
     signatureCount(): number;
     signatureAt(index: number): ISignatureSymbol;
 }
 
-//interface IMemberTypeSymbol extends ITypeSymbol, IGenericSymbol, IParameterizedSymbol {
-//    /// <summary>
-//    /// Get the original definition of this type symbol. If this symbol is derived from another
-//    /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
-//    /// source.
-//    /// </summary>
-//    originalDefinition(): IMemberTypeSymbol;
-
-//    returnType(): ITypeSymbol;
-//}
-
-//interface IFunctionTypeSymbol extends IMemberTypeSymbol {
-//}
-
-//interface IConstructorTypeSymbol extends IMemberTypeSymbol {
-//}
+interface IEnumTypeSymbol extends IMemberSymbol, IObjectTypeSymbol {
+    variableCount(): number;
+    variableAt(index: number): IVariableSymbol;
+}
 
 interface ITypeParameterSymbol extends ITypeSymbol {
     /// <summary>

@@ -57,6 +57,13 @@ interface ISymbol {
     toSymbolDisplayParts(format: SymbolDisplay.Format): SymbolDisplay.Part[];
 
     isStatic(): bool;
+
+    isType(): bool;
+    isSignature(): bool;
+    isMember(): bool;
+    isPrimitiveType(): bool;
+    isObjectType(): bool;
+    isArrayType(): bool;
 }
 
 interface IGenericSymbol extends ISymbol {

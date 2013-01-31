@@ -2,18 +2,17 @@
 /// Enumeration for possible kinds of type symbols.
 /// </summary>
 enum TypeKind {
-    Object,
-    Class,
-    Interface,
-    Enum,
-    TypeParameter,
-    Function,
-    Constructor,
-    Array,
     Any,
     Number,
     Boolean,
     String,
+    Void,
     Null,
     Undefined,
+    Class,
+    Interface,
+    // Array,
+    Anonymous,
+    Enum,
+    TypeParameter,
 }
