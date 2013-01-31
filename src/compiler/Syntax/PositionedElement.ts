@@ -73,6 +73,10 @@ class PositionedElement {
         return this.fullStart() + this.element().fullWidth();
     }
 
+    public fullWidth(): number {
+        return this.element().fullWidth();
+    }
+
     public start(): number {
         return this.fullStart() + this.element().leadingTriviaWidth();
     }
