@@ -6,7 +6,6 @@
 ///<reference path='SymbolDisplay.ts' />
 ///<reference path='SymbolKind.ts' />
 ///<reference path='TypeKind.ts' />
-///<reference path='TypeParameterKind.ts' />
 
 interface ISymbol {
     kind(): SymbolKind;
@@ -85,11 +84,11 @@ interface IGenericSymbol extends ISymbol {
 interface IModuleOrTypeSymbol extends ISymbol {
 }
 
-interface IModuleSymbol extends IModuleOrTypeSymbol {
+interface IModuleSymbol extends IMemberSymbol, IModuleOrTypeSymbol {
     isGlobalModule(): bool;
 
-    childCount(): number;
-    childAt(index: number): IMemberSymbol;
+    memberCount(): number;
+    memberAt(index: number): IMemberSymbol;
 }
 
 /// <summary>

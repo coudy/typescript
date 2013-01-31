@@ -1,4 +1,5 @@
 ///<reference path='ISymbol.ts' />
+///<reference path='ISignatureSymbol.ts' />
 
 interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// <summary>
@@ -9,13 +10,13 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// <summary>
     /// The declared base type of this type, or null.
     /// </summary>
-    baseType(): IObjectTypeSymbol;
+    baseType(): IClassTypeSymbol;
 
     /// <summary>
     /// Gets the set of interfaces that this type directly implements. This set does not include
     /// interfaces that are base interfaces of directly implemented interfaces.
     /// </summary>
-    interfaces(): IObjectTypeSymbol[];
+    interfaces(): IInterfaceTypeSymbol[];
 
     /// <summary>
     /// The list of all interfaces of which this type is a declared subtype, excluding this type
@@ -28,19 +29,19 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// subtype" because it does not take into account variance: AllInterfaces for
     /// IEnumerable&lt;string&gt; will not include IEnumerble&lt;object&gt;
     /// </summary>
-    allInterfaces(): IObjectTypeSymbol[];
+    allInterfaces(): IInterfaceTypeSymbol[];
 
     originalDefinition(): ITypeSymbol;
 }
 
 interface IObjectTypeSymbol extends ITypeSymbol {
-    childCount(): number;
-    childAt(index: number): ISignatureSymbol;
+    signatureCount(): number;
+    signatureAt(index: number): ISignatureSymbol;
 }
 
-interface IClassTypeSymbol extends ITypeSymbol, IGenericSymbol {
-    childCount(): number;
-    childAt(index: number): IMemberSymbol;
+interface IClassTypeSymbol extends IMemberSymbol, ITypeSymbol, IGenericSymbol {
+    memberCount(): number;
+    memberAt(index: number): IMemberSymbol;
 
     /// <summary>
     /// Get the original definition of this type symbol. If this symbol is derived from another
@@ -55,9 +56,9 @@ interface IClassTypeSymbol extends ITypeSymbol, IGenericSymbol {
     constructorSymbol(): IConstructorSymbol;
 }
 
-interface IInterfaceTypeSymbol extends ITypeSymbol, IGenericSymbol {
-    childCount(): number;
-    childAt(index: number): ISignatureSymbol;
+interface IInterfaceTypeSymbol extends IMemberSymbol, ITypeSymbol, IGenericSymbol {
+    signatureCount(): number;
+    signatureAt(index: number): ISignatureSymbol;
 
     /// <summary>
     /// Get the original definition of this type symbol. If this symbol is derived from another
@@ -67,9 +68,22 @@ interface IInterfaceTypeSymbol extends ITypeSymbol, IGenericSymbol {
     originalDefinition(): IInterfaceTypeSymbol;
 }
 
-interface IEnumTypeSymbol extends ITypeSymbol {
-    childCount(): number;
-    childAt(index: number): IVariableSymbol;
+interface IEnumTypeSymbol extends IMemberSymbol, ITypeSymbol {
+    variableCount(): number;
+    variableAt(index: number): IVariableSymbol;
+}
+
+interface ITypeParameterSymbol extends ITypeSymbol {
+    /// <summary>
+    /// The ordinal position of the type parameter in the parameter list which declares
+    /// it. The first type parameter has ordinal zero.
+    /// </summary>
+    ordinal(): number;
+
+    /// <summary>
+    /// The type that were directly specified as a constraint on the type parameter.
+    /// </summary>
+    constraintType(): ITypeSymbol;
 }
 
 interface IMethodTypeSymbol extends ITypeSymbol, IGenericSymbol, IParameterizedSymbol {
@@ -87,24 +101,6 @@ interface IFunctionTypeSymbol extends IMethodTypeSymbol {
 }
 
 interface IConstructorTypeSymbol extends IMethodTypeSymbol {
-}
-
-interface ITypeParameterSymbol extends ITypeSymbol {
-    /// <summary>
-    /// The ordinal position of the type parameter in the parameter list which declares
-    /// it. The first type parameter has ordinal zero.
-    /// </summary>
-    ordinal(): number;
-
-    /// <summary>
-    /// The type parameter kind of this type parameter.
-    /// </summary>
-    typeParameterKind(): TypeParameterKind;
-
-    /// <summary>
-    /// The type that were directly specified as a constraint on the type parameter.
-    /// </summary>
-    constraintType(): ITypeSymbol;
 }
 
 interface IArrayTypeSymbol extends ITypeSymbol {

@@ -527,13 +527,13 @@ module SymbolDisplay {
                 this.addPunctuation(SyntaxKind.OpenBraceToken);
                 this.addSpace();
 
-                for (var i = 0, n = symbol.childCount(); i < n; i++) {
+                for (var i = 0, n = symbol.signatureCount(); i < n; i++) {
                     if (i > 0) {
                         this.addPunctuation(SyntaxKind.SemicolonToken);
                         this.addSpace();
                     }
 
-                    symbol.childAt(i).accept(this.notFirstVisitor);
+                    symbol.signatureAt(i).accept(this.notFirstVisitor);
                 }
 
                 this.addPunctuation(SyntaxKind.CloseBraceToken);
