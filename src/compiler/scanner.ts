@@ -606,11 +606,7 @@ module TypeScript {
             this.scanComments = value;
         }
 
-        public getLexState(): number {
-            return this.lexState;
-        }
-
-        public tokenStart() {
+        public tokenStart(): void {
             this.startPos = this.pos;
             this.startLine = this.line;
             this.startCol = this.col;
@@ -815,7 +811,7 @@ module TypeScript {
             return this.scanDecimalNumber(NumberScanState.InFraction);
         }
 
-        public newLine() {
+        public newLine(): void {
             this.col = 0;
             if (this.mode == LexMode.File) {
                 this.line++;
@@ -898,10 +894,6 @@ module TypeScript {
             if (this.mode == LexMode.File) {
                 this.tokenStart();
             }
-        }
-
-        public tokenText(): string {
-            return this.src.substring(this.startPos, this.pos);
         }
 
         public findClosingSLH() {
@@ -991,9 +983,10 @@ module TypeScript {
         }
 
         public getLookAheadToken(): Token {
-            // REVIEW: This method is only used for parsing varargs in lambda expressions. If this functionality is needed for more common cases, 
-            //         it needs to be designed. 
-            //         Look-ahead token needs to be integrated in the scanner design to allow for an efficient lookup.
+            // REVIEW: This method is only used for parsing varargs in lambda expressions. If this 
+            //         functionality is needed for more common cases, it needs to be designed. 
+            //         Look-ahead token needs to be integrated in the scanner design to allow for 
+            //         an efficient lookup.
 
             // Store the scanner state
             var prevLine = this.prevLine;
