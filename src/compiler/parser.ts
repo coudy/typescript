@@ -26,22 +26,6 @@ module TypeScript {
         AllTypes = Primitive | Named | ArraySuffix,
     }
 
-    export enum ParseState {
-        None,
-        StartScript,
-        StartStatementList,
-        StartStatement,
-        StartFncDecl,
-        FncDeclName,
-        FncDeclArgs,
-        FncDeclReturnType,
-        ForInit,
-        ForInitAfterVar,
-        ForCondStart,
-        EndStmtList,
-        EndScript,
-    }
-
     export interface IStatementInfo {
         stmt: Statement;
         labels: ASTList;
@@ -78,7 +62,6 @@ module TypeScript {
         public errorRecovery = false;
         public outfile: ITextWriter = undefined;
         public errorCallback: (minChar: number, charLen: number, message: string, unit: number) =>void = null;
-        private state: ParseState = ParseState.StartStatementList;
         private ambientModule = false;
         private ambientClass = false;
         private topLevel = true;
@@ -942,7 +925,6 @@ module TypeScript {
                                    parentModifiers: Modifiers,
                                    bod: ASTList,
                                    bodMinChar: number): void {
-            this.state = ParseState.StartStatementList;
             this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.StmtStart);
             var savedInFunction = this.inFunction;
             this.inFunction = true;
@@ -1362,7 +1344,6 @@ module TypeScript {
             if (!isMethod && !isStatic && !indexer && !lambdaArgContext) {
                 // past function keyword
                 this.currentToken = this.scanner.scan();
-                this.state = ParseState.StartFncDecl;
                 if ((this.currentToken.tokenId != TokenID.Identifier) && (!convertTokToID(this.currentToken, this.strictMode))) {
                     if (isDecl) {
                         this.reportParseError("Function declaration must include identifier");
@@ -1384,7 +1365,6 @@ module TypeScript {
                 }
             }
 
-            this.state = ParseState.FncDeclName;
             var args: ASTList = new ASTList();
             var variableArgList = false;
             var isOverload = false;
@@ -1394,7 +1374,6 @@ module TypeScript {
                 // arg list
                 variableArgList = this.parseFormalParameterList(errorRecoverySet, args, false, requiresSignature, indexer, isGetter, isSetter, isLambda, lambdaArgContext ? lambdaArgContext.preProcessedLambdaArgs : null, expectClosingRParen);
             }
-            this.state = ParseState.FncDeclArgs;
             var returnType: AST = null;
             if (this.currentToken.tokenId == TokenID.Colon) {
                 this.currentToken = this.scanner.scan();
@@ -1407,7 +1386,6 @@ module TypeScript {
             if (indexer && args.members.length == 0) {
                 this.reportParseError("Index signatures require a parameter type to be specified");
             }
-            this.state = ParseState.FncDeclReturnType;
 
             if (isLambda && this.currentToken.tokenId != TokenID.EqualsGreaterThan) {
                 this.reportParseError("Expected '=>'");
@@ -3441,7 +3419,6 @@ module TypeScript {
             var needTerminator = false;
             var fnOrVar: AST = null;
             var preComments = this.parseComments();
-            this.state = ParseState.StartStatement;
 
             function isAmbient() {
                 return hasFlag(modifiers, Modifiers.Ambient) || hasFlag(parentModifiers, Modifiers.Ambient);
@@ -3765,7 +3742,6 @@ module TypeScript {
                         }
                         minChar = this.scanner.startPos;
                         this.checkNextToken(TokenID.OpenParen, errorRecoverySet | ErrorRecoverySet.ExprStart | ErrorRecoverySet.Var);
-                        this.state = ParseState.ForInit;
                         forInOk = true;
                         switch (this.currentToken.tokenId) {
                             case TokenID.Var:
@@ -3774,7 +3750,6 @@ module TypeScript {
                                 break;
                             case TokenID.Semicolon:
                                 temp = null;
-                                this.state = ParseState.ForCondStart;
                                 break;
                             default:
                                 temp = this.parseExpr(errorRecoverySet | ErrorRecoverySet.SColon |
@@ -3782,7 +3757,6 @@ module TypeScript {
                                                TypeContext.NoTypes);
                                 break;
                         }
-                        this.state = ParseState.ForInitAfterVar;
                         if (this.currentToken.tokenId == TokenID.In) {
                             if ((temp == null) || (!forInOk)) {
                                 this.reportParseError("malformed for statement");
@@ -4252,7 +4226,6 @@ module TypeScript {
 
             errorRecoverySet |= ErrorRecoverySet.TypeScriptS | ErrorRecoverySet.RCurly;
 
-            this.state = ParseState.StartStatementList;
             var oldStrictMode = this.strictMode;
             this.nestingLevel++;
             for (; ;) {
@@ -4261,7 +4234,6 @@ module TypeScript {
                     (innerStmts && (this.currentToken.tokenId == TokenID.Export)) ||
                     (classNope && (this.currentToken.tokenId == TokenID.Class)) ||
                     (this.currentToken.tokenId == TokenID.EndOfFile)) {
-                    this.state = ParseState.EndStmtList;
                     statements.limChar = limChar;
                     if (statements.members.length == 0) {
                         statements.preComments = this.parseComments();
@@ -4329,7 +4301,6 @@ module TypeScript {
             this.inFunction = false;
             this.inInterfaceDecl = false;
             this.inFncDecl = false;
-            this.state = ParseState.StartStatementList;
             this.ambientModule = false;
             this.ambientClass = false;
             this.topLevel = true;
@@ -4360,7 +4331,6 @@ module TypeScript {
             var bod = new ASTList();
             bod.minChar = minChar;
 
-            this.state = ParseState.StartScript;
             this.parsingDeclareFile = isDSTRFile(filename) || isDTSFile(filename);
 
             while (true) {
@@ -4380,8 +4350,6 @@ module TypeScript {
 
                 this.currentToken = this.scanner.scan();
             }
-
-            this.state = ParseState.EndScript;
 
             bod.limChar = this.scanner.pos;
 
