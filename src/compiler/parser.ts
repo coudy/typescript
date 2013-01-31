@@ -36,7 +36,7 @@ module TypeScript {
     }
 
     export class QuickParseResult {
-        constructor (public Script: Script, public endLexState: LexState) { }
+        constructor(public Script: Script, public endLexState: LexState) { }
     }
 
     export class Parser {
@@ -61,7 +61,7 @@ module TypeScript {
         private incremental = false;
         public errorRecovery = false;
         public outfile: ITextWriter = undefined;
-        public errorCallback: (minChar: number, charLen: number, message: string, unit: number) =>void = null;
+        public errorCallback: (minChar: number, charLen: number, message: string, unit: number) => void = null;
         private ambientModule = false;
         private ambientClass = false;
         private topLevel = true;
@@ -491,7 +491,7 @@ module TypeScript {
             importPath = stripQuotes(importPath);
 
             if (!importPath ||
-                importPath.indexOf(':') != -1 || 
+                importPath.indexOf(':') != -1 ||
                 importPath.indexOf('\\') != -1 ||
                 //(importPath.indexOf('.') != -1 && importPath.charAt(0) != '.') ||
                 importPath.charAt(0) == '/') {
@@ -557,14 +557,14 @@ module TypeScript {
 
                                 isDynamicImport = true;
                                 this.currentToken = this.scanner.scan();
-                                    
+
                                 alias.preComments = aliasPreComments;
                             }
                             else {
                                 alias = this.parseExpr(errorRecoverySet | ErrorRecoverySet.SColon,
                                             OperatorPrecedence.Assignment, true,
                                             TypeContext.NoTypes);
-                                    
+
                                 alias.preComments = aliasPreComments;
                             }
                         }
@@ -921,10 +921,10 @@ module TypeScript {
         }
 
         private parseFunctionBlock(errorRecoverySet: ErrorRecoverySet,
-                                   allowedElements: AllowedElements,
-                                   parentModifiers: Modifiers,
-                                   bod: ASTList,
-                                   bodMinChar: number): void {
+            allowedElements: AllowedElements,
+            parentModifiers: Modifiers,
+            bod: ASTList,
+            bodMinChar: number): void {
             this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.StmtStart);
             var savedInFunction = this.inFunction;
             this.inFunction = true;
@@ -941,14 +941,14 @@ module TypeScript {
         }
 
         private parseFunctionStatements(errorRecoverySet: ErrorRecoverySet,
-                                        name: Identifier,
-                                        isConstructor: bool,
-                                        isMethod: bool,
-                                        args: ASTList,
-                                        allowedElements: AllowedElements,
-                                        minChar: number,
-                                        requiresSignature: bool,
-                                        parentModifiers: Modifiers) {
+            name: Identifier,
+            isConstructor: bool,
+            isMethod: bool,
+            args: ASTList,
+            allowedElements: AllowedElements,
+            minChar: number,
+            requiresSignature: bool,
+            parentModifiers: Modifiers) {
 
             this.pushDeclLists();
             // start new statement stack
@@ -1049,9 +1049,9 @@ module TypeScript {
             return funcDecl;
         }
 
-        private transformAnonymousArgsIntoFormals(formals: ASTList, argList: AST) : bool {
+        private transformAnonymousArgsIntoFormals(formals: ASTList, argList: AST): bool {
 
-            var translateBinExOperand = (operand: AST) : bool => {
+            var translateBinExOperand = (operand: AST): bool => {
                 if (operand.nodeType == NodeType.Comma) {
                     return this.transformAnonymousArgsIntoFormals(formals, operand);
                 }
@@ -1085,10 +1085,10 @@ module TypeScript {
             if (argList) {
                 if (argList.nodeType == NodeType.Comma) {
                     var commaList = <BinaryExpression> argList;
-                    if (commaList.operand1.isParenthesized) { 
+                    if (commaList.operand1.isParenthesized) {
                         this.reportParseError("Invalid lambda argument", commaList.operand1.minChar, commaList.operand1.limChar);
                     }
-                    if (commaList.operand2.isParenthesized) { 
+                    if (commaList.operand2.isParenthesized) {
                         this.reportParseError("Invalid lambda argument", commaList.operand2.minChar, commaList.operand2.limChar);
                     }
                     var isOptional = translateBinExOperand(commaList.operand1);
@@ -1102,16 +1102,15 @@ module TypeScript {
         }
 
         private parseFormalParameterList(errorRecoverySet: ErrorRecoverySet,
-                                            formals: ASTList,
-                                            isClassConstr: bool,
-                                            isSig: bool,
-                                            isIndexer: bool,
-                                            isGetter: bool,
-                                            isSetter: bool,
-                                            isLambda: bool,
-                                            preProcessedLambdaArgs: AST,
-                                            expectClosingRParen: bool): bool 
-        {
+            formals: ASTList,
+            isClassConstr: bool,
+            isSig: bool,
+            isIndexer: bool,
+            isGetter: bool,
+            isSetter: bool,
+            isLambda: bool,
+            preProcessedLambdaArgs: AST,
+            expectClosingRParen: bool): bool {
 
             formals.minChar = this.scanner.startPos; // '(' or '['
             if (isIndexer) {
@@ -1173,7 +1172,7 @@ module TypeScript {
                     }
                     this.currentToken = this.scanner.scan();
 
-                    if (isModifier(this.currentToken)) { 
+                    if (isModifier(this.currentToken)) {
                         this.reportParseError("Multiple modifiers may not be applied to parameters");
                         this.currentToken = this.scanner.scan();
                     }
@@ -1314,16 +1313,16 @@ module TypeScript {
         }
 
         private parseFncDecl(errorRecoverySet: ErrorRecoverySet,
-                             isDecl: bool,
-                             requiresSignature: bool,
-                             isMethod: bool,
-                             methodName: Identifier,
-                             indexer: bool,
-                             isStatic: bool,
-                             markedAsAmbient: bool,
-                             modifiers: Modifiers,
-                             lambdaArgContext: ILambdaArgumentContext,
-                             expectClosingRParen: bool): AST {
+            isDecl: bool,
+            requiresSignature: bool,
+            isMethod: bool,
+            methodName: Identifier,
+            indexer: bool,
+            isStatic: bool,
+            markedAsAmbient: bool,
+            modifiers: Modifiers,
+            lambdaArgContext: ILambdaArgumentContext,
+            expectClosingRParen: bool): AST {
 
             var leftCurlyCount = this.scanner.leftCurlyCount;
             var rightCurlyCount = this.scanner.rightCurlyCount;
@@ -1484,7 +1483,7 @@ module TypeScript {
 
                     var arg = this.parseExpr(
                         ErrorRecoverySet.Comma | errorRecoverySet,
-                        OperatorPrecedence.Comma, 
+                        OperatorPrecedence.Comma,
                         /*allowIn:*/ true,
                         TypeContext.NoTypes);
 
@@ -1502,9 +1501,9 @@ module TypeScript {
         }
 
         private parseBaseList(extendsList: ASTList,
-                              implementsList: ASTList,
-                              errorRecoverySet: ErrorRecoverySet,
-                              isClass: bool): void {
+            implementsList: ASTList,
+            errorRecoverySet: ErrorRecoverySet,
+            isClass: bool): void {
             var keyword = true;
             var currentList = extendsList;
             for (; ;) {
@@ -1593,7 +1592,7 @@ module TypeScript {
             // grab the class's name
             this.currentToken = this.scanner.scan();
             var name: Identifier = null;
-            if ((this.currentToken.tokenId == TokenID.Identifier) || (!isPrimitiveTypeToken(this.currentToken) && convertTokToID(this.currentToken, this.strictMode)) ) {
+            if ((this.currentToken.tokenId == TokenID.Identifier) || (!isPrimitiveTypeToken(this.currentToken) && convertTokToID(this.currentToken, this.strictMode))) {
                 name = Identifier.fromToken(this.currentToken);
                 name.minChar = this.scanner.startPos;
                 name.limChar = this.scanner.pos;
@@ -1762,7 +1761,7 @@ module TypeScript {
                 else if (!wasGetOrSetId && ((modifiers & Modifiers.Getter) || (modifiers & Modifiers.Setter)) &&
                          ((this.currentToken.tokenId == TokenID.OpenParen) || (this.currentToken.tokenId == TokenID.Equals) ||
                           (this.currentToken.tokenId == TokenID.Colon) || (this.currentToken.tokenId == TokenID.Semicolon))) {
-                             // catch a 'get' or 'set' used as an identifier
+                    // catch a 'get' or 'set' used as an identifier
                     wasGetOrSetId = true;
                     scanNext = false;
 
@@ -1840,8 +1839,8 @@ module TypeScript {
             }
 
             var constructorFuncDecl = this.parseFunctionStatements(
-                errorRecoverySet | ErrorRecoverySet.RCurly, this.currentClassDefinition.name, 
-                /*isConstructor:*/ true, /*isMethod:*/ false, args, AllowedElements.Properties, 
+                errorRecoverySet | ErrorRecoverySet.RCurly, this.currentClassDefinition.name,
+                /*isConstructor:*/ true, /*isMethod:*/ false, args, AllowedElements.Properties,
                 minChar, requiresSignature, modifiers);
 
             constructorFuncDecl.preComments = preComments;
@@ -2033,7 +2032,7 @@ module TypeScript {
                 propertyDecl.minChar = minChar;
 
                 if (propertyDecl.nodeType == NodeType.VarDecl) {
-                     this.checkCurrentToken(TokenID.Semicolon, errorRecoverySet);
+                    this.checkCurrentToken(TokenID.Semicolon, errorRecoverySet);
                 }
             }
 
@@ -2776,7 +2775,7 @@ module TypeScript {
                     var idText = this.currentToken.getText();
                     ast = this.createRef(idText, (<IdentifierToken>this.currentToken).hasEscapeSequence, minChar);
                     sawId = true;
- 
+
                     ast.minChar = minChar;
                     this.currentToken = this.scanner.scan();
 
@@ -2828,7 +2827,7 @@ module TypeScript {
                             if (hasFlag(ast.flags, ASTFlags.SkipNextRParen)) {
                                 // REVIEW: parseExpr resulted in a lambda node, the LParen scanned earlier, is the beginning of that node, and not of a parenthesized expression;
                                 //         do not look for a matching RParen for this node, but make sure to remove the flag, so that any enclosing parenthesis are matched correctly.
-                                ast.flags = ast.flags & (~(ASTFlags.SkipNextRParen)); 
+                                ast.flags = ast.flags & (~(ASTFlags.SkipNextRParen));
                                 break;
                             }
                             this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet);
@@ -2867,7 +2866,7 @@ module TypeScript {
                         this.checkCurrentToken(TokenID.CloseBracket, errorRecoverySet);
                         break;
                     // TODO: rescan regex for TokenID.Div and AsgDiv
-                        case TokenID.OpenBrace:
+                    case TokenID.OpenBrace:
                         minChar = this.scanner.startPos;
                         this.currentToken = this.scanner.scan();
                         var members = this.parseMemberList(ErrorRecoverySet.RCurly | errorRecoverySet)
@@ -2926,8 +2925,8 @@ module TypeScript {
                     this.currentToken.tokenId == TokenID.CloseParen ||
                     this.currentToken.tokenId == TokenID.DotDotDot) {
 
-                        // We won't scan in the ':' case, since keeping the ':' simplifies argument handling in parseFormalParameterList
-                        // Note that we don't set the minchar in this case
+                    // We won't scan in the ':' case, since keeping the ':' simplifies argument handling in parseFormalParameterList
+                    // Note that we don't set the minchar in this case
                     ast = this.parseLambdaExpr(errorRecoverySet, ast, true /* skipNextRParen */, expectlambdaRParen);
                     ast.minChar = minChar;
                     limChar = this.scanner.lastTokenLimChar();
@@ -3035,7 +3034,7 @@ module TypeScript {
                     // transform the dotted expression into a member declaration
                     var subsumedExpr = false;
 
-                    if (this.inferPropertiesFromThisAssignment && 
+                    if (this.inferPropertiesFromThisAssignment &&
                         (this.currentToken.tokenId == TokenID.Colon || this.currentToken.tokenId == TokenID.Equals) &&
                          this.parsingClassConstructorDefinition &&
                          this.nestingLevel == this.currentClassDefinition.constructorNestingLevel && // this nesting level means we're at the top-level in the constructor
@@ -3058,7 +3057,7 @@ module TypeScript {
                             temp = binExpr.operand2;
                         }
                         if (temp.nodeType == NodeType.Name) {
-                             id = <Identifier>temp;
+                            id = <Identifier>temp;
                             idHint = id.actualText;
                         }
                     }
@@ -3106,8 +3105,8 @@ module TypeScript {
                 this.currentToken = this.scanner.scan();
                 canAssign = false;
                 if (tokenInfo.binopNodeType == NodeType.ConditionalExpression) {
-                    if (possiblyInLambda && 
-                        ( this.currentToken.tokenId == TokenID.Equals || this.currentToken.tokenId == TokenID.Colon || this.currentToken.tokenId == TokenID.CloseParen || this.currentToken.tokenId == TokenID.Comma)) {
+                    if (possiblyInLambda &&
+                        (this.currentToken.tokenId == TokenID.Equals || this.currentToken.tokenId == TokenID.Colon || this.currentToken.tokenId == TokenID.CloseParen || this.currentToken.tokenId == TokenID.Comma)) {
                         // The QMark is not a ternary expression, it is a marker for optional parameter in a lambda expression.
                         exprIsAnonLambda = true;
                         canAssign = true;
@@ -3580,7 +3579,7 @@ module TypeScript {
                                 this.reportParseError("Property declarations are not permitted within constructor bodies");
                             }
 
-                            this.currentToken = this.scanner.scan(); 
+                            this.currentToken = this.scanner.scan();
                             minChar = this.scanner.pos;
                             modifiers |= Modifiers.Public;
                             if (this.inferPropertiesFromThisAssignment && (this.currentToken.tokenId != TokenID.This || (this.currentToken = this.scanner.scan()).tokenId != TokenID.Dot)) {
@@ -3866,7 +3865,7 @@ module TypeScript {
                         switchStmt.statement.limChar = this.scanner.pos;
                         this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet | ErrorRecoverySet.LCurly);
                         var caseListMinChar = this.scanner.startPos;
-                         this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.SCase);
+                        this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.SCase);
                         switchStmt.defaultCase = null;
                         switchStmt.caseList = new ASTList();
                         var caseStmt: CaseStatement = null;
@@ -4109,7 +4108,7 @@ module TypeScript {
                         if (modifiers != Modifiers.None) {
                             this.reportParseError("modifiers can not appear before debugger statement");
                         }
-                        
+
                         minChar = this.scanner.startPos;
                         this.currentToken = this.scanner.scan();
                         var debuggerStmt = new DebuggerStatement();
@@ -4134,7 +4133,7 @@ module TypeScript {
                         }
                         else if ((this.currentToken.tokenId == TokenID.Colon) && (!this.scanner.lastTokenHadNewline()) &&
                                         temp && (temp.nodeType == NodeType.Name)) {
-                                            // It's a label
+                            // It's a label
                             if (labelList == null) {
                                 labelList = new ASTList();
                             }
@@ -4161,7 +4160,7 @@ module TypeScript {
                         // Extend any incomplete statements to include EOF token. This makes sure that this node is in the path 
                         // when completion or parameter help is requested.
                         ast.limChar = this.scanner.pos;
-                        // IntentionaCloseBracethrough
+                    // IntentionaCloseBracethrough
                     case TokenID.CloseBrace:
                         ast.flags |= ASTFlags.AutomaticSemicolon;
                         if (this.style_requireSemi) {
@@ -4207,17 +4206,17 @@ module TypeScript {
         private okAmbientModuleMember(ast: AST) {
             var nt = ast.nodeType;
             return (nt == NodeType.ClassDeclaration) || (nt == NodeType.ImportDeclaration) || (nt == NodeType.InterfaceDeclaration) || (nt == NodeType.ModuleDeclaration) ||
-                (nt == NodeType.Empty) || (nt == NodeType.VarDecl) || 
+                (nt == NodeType.Empty) || (nt == NodeType.VarDecl) ||
                 ((nt == NodeType.Block) && !(<Block>ast).isStatementBlock) ||
                 ((nt == NodeType.FuncDecl) && ((<FuncDecl>ast).isMethod()));
         }
 
         private parseStatementList(errorRecoverySet: ErrorRecoverySet,
-                                   statements: ASTList,
-                                   sourceElms: bool,
-                                   noLeadingCase: bool,
-                                   allowedElements: AllowedElements,
-                                   parentModifiers: Modifiers): void {
+            statements: ASTList,
+            sourceElms: bool,
+            noLeadingCase: bool,
+            allowedElements: AllowedElements,
+            parentModifiers: Modifiers): void {
             var directivePrologue = sourceElms;
             statements.minChar = this.scanner.startPos;
             var limChar = this.scanner.pos;
@@ -4319,7 +4318,7 @@ module TypeScript {
             this.requiresExtendsBlock = false;
 
             this.scanner.resetComments();
-            this.scanner.setErrorHandler((message) =>this.reportParseError(message));
+            this.scanner.setErrorHandler((message) => this.reportParseError(message));
             this.scanner.setSourceText(sourceText, LexMode.File);
 
             var leftCurlyCount = this.scanner.leftCurlyCount;
