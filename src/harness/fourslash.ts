@@ -206,11 +206,11 @@ module FourSlash {
             }
         }
 
-        public verifyMemberListContains(symbol: string, type?: string, docComment?: string) {
+        public verifyMemberListContains(symbol: string, type?: string, docComment?: string, kind?: string) {
             var members = this.getMemberListAtCaret();
-            this.assertItemInCompletionList(members.entries, symbol, type, docComment);
+            this.assertItemInCompletionList(members.entries, symbol, type, docComment, kind);
         }
-
+        
         public verifyMemberListDoesNotContain(symbol: string) {
             var members = this.getMemberListAtCaret();
             if (members.entries.filter(e => e.name == symbol).length !== 0) {
@@ -258,9 +258,9 @@ module FourSlash {
             }
         }
 
-        public verifyCompletionListContains(symbol: string, type?: string, docComment?: string) {
+        public verifyCompletionListContains(symbol: string, type?: string, docComment?: string, kind?: string) {
             var completions = this.getCompletionListAtCaret();
-            this.assertItemInCompletionList(completions.entries, symbol, type, docComment);
+            this.assertItemInCompletionList(completions.entries, symbol, type, docComment, kind);
         }
 
         public verifyCompletionListDoesNotContain(symbol: string) {
@@ -617,12 +617,13 @@ module FourSlash {
             return this.langSvc.positionToLineCol(this.activeFile.name, this.currentCaretPosition);
         }
 
-        private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string) {
-            var items: { name: string; type: string; docComment: string; }[] = completionList.map(element => {
+        private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string, kind?: string) {
+            var items: { name: string; type: string; docComment: string; kind: string; }[] = completionList.map(element => {
                 return {
                     name: element.name,
                     type: element.type,
-                    docComment: element.docComment
+                    docComment: element.docComment,
+                    kind: element.kind
                 };
             });
 
@@ -634,6 +635,9 @@ module FourSlash {
                     }
                     if (type != undefined) {
                         assert.equal(item.type, type);
+                    }
+                    if (kind != undefined) {
+                        assert.equal(item.kind, kind);
                     }
                     return;
                 }

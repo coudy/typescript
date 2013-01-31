@@ -394,7 +394,7 @@ module Services {
 
         // Inside module and script only
         // var v = ..
-        static variableElement = "variable";
+        static variableElement = "var";
 
         // Inside module and script only
         // function f() { }
@@ -422,6 +422,9 @@ module Services {
 
         // interface Y { new():Y; }
         static constructSignatureElement = "construct";
+
+        // function foo(*Y*: string)
+        static parameterElement = "(parameter)";
     }
 
     export class ScriptElementKindModifier {
@@ -1147,7 +1150,67 @@ module Services {
             if (sym.declAST == null) {
                 return ScriptElementKind.keyword; // Predefined type (void, etc.)
             }
-            return this.getDeclNodeElementKind(sym.declAST);
+            var ast = sym.declAST;
+            //var isMember = symbol.isMember() || symbol.container && 
+            switch (ast.nodeType) {
+                case TypeScript.NodeType.InterfaceDeclaration:
+                    return ScriptElementKind.interfaceElement;
+
+                case TypeScript.NodeType.ClassDeclaration:
+                    return ScriptElementKind.classElement;
+
+                case TypeScript.NodeType.ModuleDeclaration:
+                    var moduleDecl = <TypeScript.ModuleDeclaration>ast;
+                    var isEnum = moduleDecl.isEnum();
+                    return isEnum ? ScriptElementKind.enumElement : ScriptElementKind.moduleElement;
+
+                case TypeScript.NodeType.ImportDeclaration:
+                    return ScriptElementKind.moduleElement;
+
+                case TypeScript.NodeType.VarDecl:
+                    var varDecl = <TypeScript.VarDecl>ast;
+                    return (varDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
+
+                case TypeScript.NodeType.ArgDecl:
+                    var argDecl = <TypeScript.ArgDecl>ast;
+                    if (sym.kind() == TypeScript.SymbolKind.Parameter) {
+                        return ScriptElementKind.parameterElement;
+                    }
+                    return (argDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
+
+                case TypeScript.NodeType.FuncDecl:
+                    var funcDecl = <TypeScript.FuncDecl>ast;
+                    if (funcDecl.isGetAccessor()) {
+                        return ScriptElementKind.memberGetAccessorElement;
+                    }
+                    else if (funcDecl.isSetAccessor()) {
+                        return ScriptElementKind.memberSetAccessorElement;
+                    }
+                    else if (funcDecl.isCallMember()) {
+                        return ScriptElementKind.callSignatureElement;
+                    }
+                    else if (funcDecl.isIndexerMember()) {
+                        return ScriptElementKind.indexSignatureElement;
+                    }
+                    else if (funcDecl.isConstructMember()) {
+                        return ScriptElementKind.constructSignatureElement;
+                    }
+                    else if (funcDecl.isConstructor) {
+                        return ScriptElementKind.constructorImplementationElement;
+                    }
+                    else if (funcDecl.isMethod()) {
+                        return ScriptElementKind.memberFunctionElement;
+                    }
+                    else {
+                        return ScriptElementKind.functionElement;
+                    }
+
+                default:
+                    if (this.logger.warning()) {
+                        this.logger.log("Warning: unrecognized AST node type: " + (<any>TypeScript.NodeType)._map[ast.nodeType]);
+                    }
+                    return ScriptElementKind.unknown;
+            }
         }
 
         private getSymbolElementKindModifiers(sym: TypeScript.Symbol): string {
@@ -1424,7 +1487,12 @@ module Services {
                         entry.docComment = TypeScript.Comment.getDocCommentFirstOverloadSignature(type.call);
                     } else {
                         if (x.sym.kind() == TypeScript.SymbolKind.Parameter) {
+                            // Its a parameter
                             entry.docComment = (<TypeScript.ParameterSymbol>x.sym).getParameterDocComments();
+                        } else if (x.sym.declAST && x.sym.declAST.nodeType == TypeScript.NodeType.ArgDecl &&
+                            (<TypeScript.ArgDecl>x.sym.declAST).isProperty()) {
+                            // Its a property that was defined as parameter to constructor
+                            entry.docComment = (<TypeScript.ParameterSymbol>(<TypeScript.ArgDecl>x.sym.declAST).sym).getParameterDocComments();
                         } else {
                             entry.docComment = TypeScript.Comment.getDocCommentText(x.sym.getDocComments());
                         }
@@ -1996,66 +2064,6 @@ module Services {
 
             for (var i = 0, len = context.scope.length; i < len; i++) {
                 processScript(context.scope[i]);
-            }
-        }
-
-        //
-        // Return the comma separated list of modifers (from the ScriptElementKindModifier list of constants) 
-        // of an AST node referencing a known declaration kind.
-        //
-        private getDeclNodeElementKind(ast: TypeScript.AST): string {
-            switch (ast.nodeType) {
-                case TypeScript.NodeType.InterfaceDeclaration:
-                    return ScriptElementKind.interfaceElement;
-
-                case TypeScript.NodeType.ClassDeclaration:
-                    return ScriptElementKind.classElement;
-
-                case TypeScript.NodeType.ModuleDeclaration:
-                    var moduleDecl = <TypeScript.ModuleDeclaration>ast;
-                    var isEnum = moduleDecl.isEnum();
-                    return isEnum ? ScriptElementKind.enumElement : ScriptElementKind.moduleElement;
-
-                case TypeScript.NodeType.VarDecl:
-                    var varDecl = <TypeScript.VarDecl>ast;
-                    return (varDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
-
-                case TypeScript.NodeType.ArgDecl:
-                    var argDecl = <TypeScript.ArgDecl>ast;
-                    return (argDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
-
-                case TypeScript.NodeType.FuncDecl:
-                    var funcDecl = <TypeScript.FuncDecl>ast;
-                    if (funcDecl.isGetAccessor()) {
-                        return ScriptElementKind.memberGetAccessorElement;
-                    }
-                    else if (funcDecl.isSetAccessor()) {
-                        return ScriptElementKind.memberSetAccessorElement;
-                    }
-                    else if (funcDecl.isCallMember()) {
-                        return ScriptElementKind.callSignatureElement;
-                    }
-                    else if (funcDecl.isIndexerMember()) {
-                        return ScriptElementKind.indexSignatureElement;
-                    }
-                    else if (funcDecl.isConstructMember()) {
-                        return ScriptElementKind.constructSignatureElement;
-                    }
-                    else if (funcDecl.isConstructor) {
-                        return ScriptElementKind.constructorImplementationElement;
-                    }
-                    else if (funcDecl.isMethod()) {
-                        return ScriptElementKind.memberFunctionElement;
-                    }
-                    else {
-                        return ScriptElementKind.functionElement;
-                    }
-
-                default:
-                    if (this.logger.warning()) {
-                        this.logger.log("Warning: unrecognized AST node type: " + (<any>TypeScript.NodeType)._map[ast.nodeType]);
-                    }
-                    return ScriptElementKind.unknown;
             }
         }
 

@@ -36,8 +36,8 @@ goTo.marker('1');
 verify.quickInfoIs("m1\nModule comment");
 
 goTo.marker('2');
-verify.completionListContains("b", "number", "b's comment");
-verify.completionListContains("foo", "() => number", "foo's comment");
+verify.completionListContains("b", "number", "b's comment", "var");
+verify.completionListContains("foo", "() => number", "foo's comment", "function");
 
 goTo.marker('3');
 verify.currentSignatureHelpDocCommentIs("foo's comment");
@@ -46,9 +46,9 @@ goTo.marker('4');
 verify.completionListContains("m1", "m1", "Module comment");
 
 goTo.marker('5');
-verify.memberListContains("b", "number", "b's comment");
-verify.memberListContains("fooExport", "() => number", "exported function");
-verify.memberListContains("m2", "m1.m2", "m2 comments");
+verify.memberListContains("b", "number", "b's comment", "var");
+verify.memberListContains("fooExport", "() => number", "exported function", "function");
+verify.memberListContains("m2", "m1.m2", "m2 comments", "module");
 
 goTo.marker('6');
 verify.currentSignatureHelpDocCommentIs("exported function");
@@ -57,23 +57,23 @@ goTo.marker('7');
 verify.quickInfoIs("m1.m2.c\nclass comment;");
 
 goTo.marker('8');
-verify.memberListContains("c", "new() => m1.m2.c", "class comment;");
-verify.memberListContains("i", "m1.m2.c", "i");
+verify.memberListContains("c", "new() => m1.m2.c", "class comment;", "class");
+verify.memberListContains("i", "m1.m2.c", "i", "var");
 
 goTo.file("file_1.ts");
 goTo.marker('9');
 verify.quickInfoIs("extMod");
 
 goTo.marker('10');
-verify.completionListContains("extMod", "extMod", "This is on import declaration");
+verify.completionListContains("extMod", "extMod", "This is on import declaration", "module");
 
 goTo.marker('11');
-verify.memberListContains("m1", "extMod.m1", "Module comment");
+verify.memberListContains("m1", "extMod.m1", "Module comment", "module");
 
 goTo.marker('12');
-verify.memberListContains("b", "number", "b's comment");
-verify.memberListContains("fooExport", "() => number", "exported function");
-verify.memberListContains("m2", "extMod.m1.m2", "m2 comments");
+verify.memberListContains("b", "number", "b's comment", "var");
+verify.memberListContains("fooExport", "() => number", "exported function", "function");
+verify.memberListContains("m2", "extMod.m1.m2", "m2 comments", "module");
 
 goTo.marker('13');
 verify.currentSignatureHelpDocCommentIs("exported function");
@@ -82,5 +82,5 @@ goTo.marker('14');
 verify.quickInfoIs("extMod.m1.m2.c\nclass comment;");
 
 goTo.marker('15');
-verify.memberListContains("c", "new() => extMod.m1.m2.c", "class comment;");
-verify.memberListContains("i", "extMod.m1.m2.c", "i");
+verify.memberListContains("c", "new() => extMod.m1.m2.c", "class comment;", "class");
+verify.memberListContains("i", "extMod.m1.m2.c", "i", "var");

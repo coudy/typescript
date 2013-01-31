@@ -1339,7 +1339,7 @@ module TypeScript {
             if ((!this.style_funcInLoop) && this.inLoop()) {
                 this.reportParseStyleError("function declaration in loop");
             }
-            if (!isMethod && !isStatic && !indexer && !lambdaArgContext) {
+            if (!isMethod && !isStatic && !indexer && !lambdaArgContext && !methodName) {
                 // past function keyword
                 this.currentToken = this.scanner.scan();
                 if ((this.currentToken.tokenId != TokenID.Identifier) && (!convertTokToID(this.currentToken, this.strictMode))) {
@@ -1392,7 +1392,7 @@ module TypeScript {
             // REVIEW:
             // Currently, it's imperative that ambient functions *not* be marked as overloads.  At some point, we may
             // want to unify the two concepts internally
-            if (isDecl && !(this.parsingDeclareFile || markedAsAmbient) && (!isMethod || !(this.ambientModule || this.ambientClass || this.inInterfaceDecl)) && this.currentToken.tokenId == TokenID.Semicolon) {
+            if (isDecl && !(this.parsingDeclareFile || markedAsAmbient) && !this.ambientModule && !this.ambientClass && !this.inInterfaceDecl && this.currentToken.tokenId == TokenID.Semicolon) {
                 isOverload = true;
                 isDecl = false;
                 requiresSignature = true;
@@ -2250,7 +2250,7 @@ module TypeScript {
                     ers = errorRecoverySet | ErrorRecoverySet.RBrack;
                 }
                 var ast = this.parseFncDecl(ers, true, requireSignature,
-                                       !this.inFncDecl, text, isIndexer, isStatic, (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)), modifiers, null, true);
+                                       this.currentClassDefinition || this.inInterfaceDecl, text, isIndexer, isStatic, (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)), modifiers, null, true);
                 var funcDecl: FuncDecl;
                 if (ast.nodeType == NodeType.Error) {
                     return ast;
@@ -4189,7 +4189,7 @@ module TypeScript {
             return (nt == NodeType.ClassDeclaration) || (nt == NodeType.ImportDeclaration) || (nt == NodeType.InterfaceDeclaration) || (nt == NodeType.ModuleDeclaration) ||
                 (nt == NodeType.Empty) || (nt == NodeType.VarDecl) ||
                 ((nt == NodeType.Block) && !(<Block>ast).isStatementBlock) ||
-                ((nt == NodeType.FuncDecl) && ((<FuncDecl>ast).isMethod()));
+                ((nt == NodeType.FuncDecl) && ((<FuncDecl>ast).bod == null));
         }
 
         private parseStatementList(errorRecoverySet: ErrorRecoverySet,

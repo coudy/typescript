@@ -42,7 +42,7 @@ describe('getScriptLexicalStructure', function () {
  },
  {
   "name": "x",
-  "kind": "variable",
+  "kind": "var",
   "kindModifiers": "",
   "matchKind": "exact",
   "unitIndex": 1,
@@ -328,7 +328,7 @@ describe('getScriptLexicalStructure', function () {
  },
  {
   "name": "x",
-  "kind": "variable",
+  "kind": "var",
   "kindModifiers": "export",
   "matchKind": "exact",
   "unitIndex": 1,
@@ -625,7 +625,7 @@ describe('getScriptLexicalStructure', function () {
  },
  {
   "name": "x",
-  "kind": "variable",
+  "kind": "var",
   "kindModifiers": "declare",
   "matchKind": "exact",
   "unitIndex": 1,
@@ -636,7 +636,7 @@ describe('getScriptLexicalStructure', function () {
  },
  {
   "name": "f",
-  "kind": "method",
+  "kind": "function",
   "kindModifiers": "declare",
   "matchKind": "exact",
   "unitIndex": 1,
