@@ -198,6 +198,10 @@
 ////function jsDocCommentAlignmentTest3(a: string, b, c) {
 ////}
 ////jsDocCommentAlignmentTest3(/*47*/"hello",/*48*/1, /*49*/2);
+/////**/
+////class NoQuic/*50*/kInfoClass {
+////}
+
 
 goTo.marker('1');
 verify.currentSignatureHelpDocCommentIs("");
@@ -380,3 +384,6 @@ verify.currentParameterHelpArgumentDocCommentIs("this is info about b\nspanning 
 goTo.marker('49');
 verify.currentSignatureHelpDocCommentIs("This is function comment\n    And aligned with 4 space char margin");
 verify.currentParameterHelpArgumentDocCommentIs("this is info about b\nnot aligned text about parameter will eat only one space");
+
+goTo.marker('50');
+verify.quickInfoIs("new() => NoQuickInfoClass");

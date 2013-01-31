@@ -751,6 +751,11 @@ module TypeScript {
                 context.checker.errorReporter.simpleError(funcDecl, "Function or method '" + funcDecl.name.actualText + "' already declared as a property");
                 fgSym.type = context.checker.anyType;
             }
+            // If the current function is accessor and the existing symbol isnt, set the symbol to null so
+            // we could error about duplicate symbol
+            if (fgSym && !fgSym.isAccessor() && funcDecl.isAccessor()) {
+                fgSym = null;
+            }
             var sig = context.checker.createFunctionSignature(funcDecl, containerSym, containerScope, fgSym, !foundSymbol);
 
             // it's a getter or setter function                                   

@@ -2469,7 +2469,7 @@ module TypeScript {
 
         public isDocComment() {
             if (this.isBlockComment) {
-                return this.content.charAt(2) == "*";
+                return this.content.charAt(2) == "*" && this.content.charAt(3) != "/";
             }
 
             return false;

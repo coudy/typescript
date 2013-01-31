@@ -1234,7 +1234,7 @@ module TypeScript {
                 if (!name) {
                     finalName = "";
                 } else if (this.sourceMapper.currentNameIndex.length > 0) {
-                    finalName = this.sourceMapper.names[this.sourceMapper.currentNameIndex.length - 1] + "." + name;
+                    finalName = this.sourceMapper.names[this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1]] + "." + name;
                 }
 
                 // We are currently not looking for duplicate but that is possible.
