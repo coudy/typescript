@@ -1,6 +1,7 @@
 ///<reference path='..\Syntax\SyntaxNode.ts' />
 ///<reference path='Accessibility.ts' />
 ///<reference path='MethodKind.ts' />
+///<reference path='IMemberSymbol.ts' />
 ///<reference path='ISymbolVisitor.ts' />
 ///<reference path='SymbolDisplay.ts' />
 ///<reference path='SymbolKind.ts' />
@@ -14,9 +15,6 @@ interface ISymbol {
     /// Gets the symbol name. Returns the empty string if unnamed.
     /// </summary>
     name(): string;
-
-    childCount(): number;
-    childAt(index: number): ISymbol;
 
     /// <summary>
     /// Gets the immediately containing symbol.
@@ -89,33 +87,15 @@ interface IModuleOrTypeSymbol extends ISymbol {
 
 interface IModuleSymbol extends IModuleOrTypeSymbol {
     isGlobalModule(): bool;
-}
 
-/// <summary>
-/// Represents a variable in a class, module or enum.
-/// </summary>
-interface IVariableSymbol extends ISymbol {
-    /// <summary>
-    /// Gets the type of this field.
-    /// </summary>
-    type(): ITypeSymbol;
-
-    hasValue(): bool;
-
-    /// <summary>
-    /// Gets the constant value of this field
-    /// </summary>
-    value(): any;
-
-    /// The parameter this variable was created from if it was created from a parameter.
-    associatedParameter(): IParameterSymbol;
+    childCount(): number;
+    childAt(index: number): IMemberSymbol;
 }
 
 /// <summary>
 /// Represents a parameter of a method or property.
 /// </summary>
-interface IParameterSymbol extends ISymbol
-{
+interface IParameterSymbol extends ISymbol {
     /// <summary>
     /// Returns true if the parameter was declared as a parameter array. 
     /// </summary>
@@ -152,73 +132,6 @@ interface IParameterSymbol extends ISymbol
     associatedVariable(): IVariableSymbol;
 }
 
-/// <summary>
-/// Represents a method or method-like symbol (including constructor, function, or accessor).
-/// </summary>
-interface IMethodSymbol extends ISymbol
-{
-    /// <summary>
-    /// Gets what kind of method this is.
-    /// </summary>
-    methodKind(): MethodKind;
-
-    /// <summary>
-    /// Returns the arity of this method, or the number of type parameters it takes.
-    /// A non-generic method has zero arity.
-    /// </summary>
-    arity(): number;
-
-    /// <summary>
-    /// Returns whether this method is generic; i.e., does it have any type parameters?
-    /// </summary>
-    isGenericMethod(): bool;
-
-    /// <summary>
-    /// Returns true if this method has no return type; i.e., returns "void".
-    /// </summary>
-    returnsVoid(): bool;
-
-    /// <summary>
-    /// Gets the return type of the method.
-    /// </summary>
-    returnType(): ITypeSymbol;
-
-    /// <summary>
-    /// Returns the type arguments that have been substituted for the type parameters. 
-    /// If nothing has been substituted for a given type parameter,
-    /// then the type parameter itself is consider the type argument.
-    /// </summary>
-    typeArguments(): ITypeSymbol[];
-
-    /// <summary>
-    /// Get the type parameters on this method. If the method has not generic,
-    /// returns an empty list.
-    /// </summary>
-    typeParameters(): ITypeParameterSymbol[];
-
-    /// <summary>
-    /// Gets the parameters of this method. If this method has no parameters, returns
-    /// an empty list.
-    /// </summary>
+interface IParameterizedSymbol extends ISymbol {
     parameters(): IParameterSymbol[];
-
-    /// <summary>
-    /// Returns the method symbol that this method was constructed from. The resulting
-    /// method symbol
-    /// has the same containing type (if any), but has type arguments that are the same
-    /// as the type parameters (although its containing type might not).
-    /// </summary>
-    constructedFrom(): IMethodSymbol;
-
-    /// <summary>
-    /// Get the original definition of this symbol. If this symbol is derived from another
-    /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
-    /// source.
-    /// </summary>
-    originalDefinition(): IMethodSymbol;
-
-    /// <summary>
-    /// If this method overrides another method, returns the overridden method.
-    /// </summary>
-    overriddenMethod(): IMethodSymbol;
 }

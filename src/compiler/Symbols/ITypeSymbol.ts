@@ -34,9 +34,14 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
 }
 
 interface IObjectTypeSymbol extends ITypeSymbol {
+    childCount(): number;
+    childAt(index: number): ISignatureSymbol;
 }
 
 interface IClassTypeSymbol extends ITypeSymbol, IGenericSymbol {
+    childCount(): number;
+    childAt(index: number): IMemberSymbol;
+
     /// <summary>
     /// Get the original definition of this type symbol. If this symbol is derived from another
     /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
@@ -47,10 +52,13 @@ interface IClassTypeSymbol extends ITypeSymbol, IGenericSymbol {
     /// <summary>
     /// Get the constructor for this type.
     /// </summary>
-    constructor(): IMethodSymbol;
+    constructorSymbol(): IConstructorSymbol;
 }
 
 interface IInterfaceTypeSymbol extends ITypeSymbol, IGenericSymbol {
+    childCount(): number;
+    childAt(index: number): ISignatureSymbol;
+
     /// <summary>
     /// Get the original definition of this type symbol. If this symbol is derived from another
     /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
@@ -60,9 +68,11 @@ interface IInterfaceTypeSymbol extends ITypeSymbol, IGenericSymbol {
 }
 
 interface IEnumTypeSymbol extends ITypeSymbol {
+    childCount(): number;
+    childAt(index: number): IVariableSymbol;
 }
 
-interface IMethodTypeSymbol extends ITypeSymbol, IGenericSymbol {
+interface IMethodTypeSymbol extends ITypeSymbol, IGenericSymbol, IParameterizedSymbol {
     /// <summary>
     /// Get the original definition of this type symbol. If this symbol is derived from another
     /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
@@ -71,14 +81,12 @@ interface IMethodTypeSymbol extends ITypeSymbol, IGenericSymbol {
     originalDefinition(): IMethodTypeSymbol;
 
     returnType(): ITypeSymbol;
-    parameters(): IParameterSymbol[];
 }
 
 interface IFunctionTypeSymbol extends IMethodTypeSymbol {
 }
 
 interface IConstructorTypeSymbol extends IMethodTypeSymbol {
-
 }
 
 interface ITypeParameterSymbol extends ITypeSymbol {
@@ -92,16 +100,6 @@ interface ITypeParameterSymbol extends ITypeSymbol {
     /// The type parameter kind of this type parameter.
     /// </summary>
     typeParameterKind(): TypeParameterKind;
-
-    /// <summary>
-    /// The method that declares the type parameter, or null.
-    /// </summary>
-    declaringMethod(): IMethodSymbol;
-
-    /// <summary>
-    /// The type that declares the type parameter, or null.
-    /// </summary>
-    declaringType(): IObjectTypeSymbol;
 
     /// <summary>
     /// The type that were directly specified as a constraint on the type parameter.
