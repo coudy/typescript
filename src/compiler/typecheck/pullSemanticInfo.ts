@@ -2,6 +2,10 @@
 // See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='..\typescript.ts' />
+///<reference path='..\..\prototype\HashTable.ts' />
+///<reference path='..\..\prototype\ISyntaxElement.ts' />
+
+
 
 module TypeScript {
     
@@ -23,9 +27,17 @@ module TypeScript {
         
         private astDeclMap: DataMap = new DataMap();
         private declASTMap: DataMap = new DataMap();
+
+        private syntaxElementDeclMap: DataMap = new DataMap();
+        private declSyntaxElementMap: DataMap = new DataMap();
+        
         private declSymbolMap: DataMap = new DataMap();
+        
         private astSymbolMap: DataMap = new DataMap();
         private symbolASTMap: DataMap = new DataMap();
+
+        private syntaxElementSymbolMap: DataMap = new DataMap();
+        private symbolSyntaxElementMap: DataMap = new DataMap();
 
         constructor (compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
@@ -41,25 +53,75 @@ module TypeScript {
         //}
         //public getTopLevelSymbols() { return this.symbols; }
 
-        public getPath() { return this.compilationUnitPath; }
+        public getPath(): string { 
+            return this.compilationUnitPath; 
+        }
 
-        public getDeclForAST(ast: AST) { return <PullDecl>this.astDeclMap.read(ast.getID().toString()); }
+        public getDeclForAST(ast: AST): PullDecl { 
+            return <PullDecl>this.astDeclMap.read(ast.getID().toString()); 
+        }
 
-        public setDeclForAST(ast: AST, decl: PullDecl) { this.astDeclMap.link(ast.getID().toString(), decl); }
+        public setDeclForAST(ast: AST, decl: PullDecl): void {
+            this.astDeclMap.link(ast.getID().toString(), decl);
+        }
 
-        public getASTForDecl(decl: PullDecl) { return <AST>this.declASTMap.read(decl.getDeclID().toString() + decl.getKind().toString()); }
+        public getASTForDecl(decl: PullDecl): AST {
+            return <AST>this.declASTMap.read(decl.getDeclID().toString() + decl.getKind().toString());
+        }
 
-        public setASTForDecl(decl: PullDecl, ast: AST) { this.declASTMap.link(decl.getDeclID().toString() + decl.getKind().toString(), ast); }
+        public setASTForDecl(decl: PullDecl, ast: AST): void {
+            this.declASTMap.link(decl.getDeclID().toString() + decl.getKind().toString(), ast);
+        }
 
-        public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol) { this.declSymbolMap.link(decl.getDeclID().toString() + decl.getKind().toString(), symbol); }
+        public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {
+            this.declSymbolMap.link(decl.getDeclID().toString() + decl.getKind().toString(), symbol);
+        }
 
-        public getSymbolForDecl(decl: PullDecl) { return <PullSymbol>this.declSymbolMap.read(decl.getDeclID().toString() + decl.getKind().toString()); }
+        public getSymbolForDecl(decl: PullDecl): PullSymbol {
+            return <PullSymbol>this.declSymbolMap.read(decl.getDeclID().toString() + decl.getKind().toString());
+        }
 
-        public setSymbolForAST(ast: AST, symbol: PullSymbol) { this.astSymbolMap.link(ast.getID().toString(), symbol);  this.symbolASTMap.link(symbol.getSymbolID().toString(), ast) }
+        public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
+            this.astSymbolMap.link(ast.getID().toString(), symbol);
+            this.symbolASTMap.link(symbol.getSymbolID().toString(), ast) 
+        }
         
-        public getSymbolForAST(ast: AST) { return <PullSymbol>this.astSymbolMap.read(ast.getID().toString()); }
+        public getSymbolForAST(ast: AST): PullSymbol {
+            return <PullSymbol>this.astSymbolMap.read(ast.getID().toString());
+        }
 
-        public getASTForSymbol(symbol: PullSymbol) { return <AST>this.symbolASTMap.read(symbol.getSymbolID().toString()); }
+        public getASTForSymbol(symbol: PullSymbol): AST {
+            return <AST>this.symbolASTMap.read(symbol.getSymbolID().toString());
+        }
+
+        public getSyntaxElementForDecl(decl: PullDecl): ISyntaxElement {
+            return <ISyntaxElement>this.declSyntaxElementMap.read(decl.getDeclID().toString() + decl.getKind().toString());
+        }
+
+        public setSyntaxElementForDecl(decl: PullDecl, syntaxElement: ISyntaxElement): void {
+            this.declSyntaxElementMap.link(decl.getDeclID().toString() + decl.getKind().toString(), syntaxElement);
+        }
+
+        public getDeclForSyntaxElement(syntaxElement: ISyntaxElement): PullDecl {
+            return <PullDecl>this.syntaxElementDeclMap.read(Collections.identityHashCode(syntaxElement).toString());
+        }
+
+        public setDeclForSyntaxElement(syntaxElement: ISyntaxElement, decl: PullDecl): void {
+            this.syntaxElementDeclMap.link(Collections.identityHashCode(syntaxElement).toString(), decl);
+        }
+
+        public getSyntaxElementForSymbol(symbol: PullSymbol): ISyntaxElement {
+            return <ISyntaxElement> this.symbolSyntaxElementMap.read(symbol.getSymbolID().toString());
+        }
+
+        public getSymbolForSyntaxElement(syntaxElement: ISyntaxElement): PullSymbol {
+            return <PullSymbol>this.syntaxElementSymbolMap.read(Collections.identityHashCode(syntaxElement).toString());
+        }
+
+        public setSymbolForSyntaxElement(syntaxElement: ISyntaxElement, symbol: PullSymbol) {
+            this.syntaxElementSymbolMap.link(Collections.identityHashCode(syntaxElement).toString(), symbol);
+            this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
+        }
 
         public update() { }
     }
@@ -80,8 +142,8 @@ module TypeScript {
         public voidTypeSymbol: PullTypeSymbol = null;
 
         public addPrimitive(name: string, globalDecl: PullDecl) {
-            var span = new ASTSpan();
-            var decl = new PullDecl(name, DeclKind.Primitive, PullDeclFlags.None, span, "");
+            var span = new DeclSpan();
+            var decl = new PullDecl(name, PullElementKind.Primitive, PullElementFlags.None, span, "");
             var symbol = new PullPrimitiveTypeSymbol(name);
             symbol.addDeclaration(decl);
             decl.setSymbol(symbol);
@@ -93,8 +155,8 @@ module TypeScript {
         }
 
         constructor () {
-            var span = new ASTSpan();
-            var globalDecl = new PullDecl("", DeclKind.Global, PullDeclFlags.None, span, "");
+            var span = new DeclSpan();
+            var globalDecl = new PullDecl("", PullElementKind.Global, PullElementFlags.None, span, "");
             var globalInfo = this.units[0];
             globalInfo.addTopLevelDecl(globalDecl);
             
@@ -149,7 +211,7 @@ module TypeScript {
             return decls;
         }
 
-        private getDeclPathCacheID(declPath: string[], declKind: DeclKind) {
+        private getDeclPathCacheID(declPath: string[], declKind: PullElementKind) {
             var cacheID = "";
             
             for (var i = 0; i < declPath.length; i++) {
@@ -161,7 +223,7 @@ module TypeScript {
 
         // a decl path is a list of decls that reference the components of a declaration from the global scope down
         // E.g., string would be "['string']" and "A.B.C" would be "['A','B','C']"
-        public findDecls(declPath: string[], declKind: DeclKind): PullDecl[] {
+        public findDecls(declPath: string[], declKind: PullElementKind): PullDecl[] {
 
             var cacheID = this.getDeclPathCacheID(declPath, declKind);
 
@@ -181,14 +243,14 @@ module TypeScript {
             var decls: PullDecl[] = [];
             var path: string;
             var foundDecls: PullDecl[] = [];
-            var keepSearching = (declKind & DeclKind.Module) || (declKind & DeclKind.Interface);
+            var keepSearching = (declKind & PullElementKind.Module) || (declKind & PullElementKind.Interface);
 
             for (var i = 0; i < declPath.length; i++) {
                 path = declPath[i];
                 decls = [];
 
                 for (var j = 0; j < declsToSearch.length; j++) {
-                    foundDecls = declsToSearch[j].findChildDecls(path, (i == declPath.length - 1) ? declKind : DeclKind.SomeType);
+                    foundDecls = declsToSearch[j].findChildDecls(path, (i == declPath.length - 1) ? declKind : PullElementKind.SomeType);
 
                     for (var k = 0; k < foundDecls.length; k++) {
                         decls[decls.length] = foundDecls[k];
@@ -215,7 +277,7 @@ module TypeScript {
             return decls;
         }
 
-        public findSymbol(declPath: string[], declType: DeclKind): PullSymbol {
+        public findSymbol(declPath: string[], declType: PullElementKind): PullSymbol {
 
             var cacheID = this.getDeclPathCacheID(declPath, declType);
 

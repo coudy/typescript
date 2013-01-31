@@ -3,74 +3,17 @@
 
 ///<reference path='..\typescript.ts' />
 
-module TypeScript {
-
-    export enum PullDeclFlags {
-        None = 0,
-        Exported = 1,
-        Private = 1 << 1,
-        Public = 1 << 2,
-        Ambient = 1 << 3,
-        Static = 1 << 4,
-        LocalStatic = 1 << 5,
-        GetAccessor = 1 << 6,
-        SetAccessor = 1 << 7,
-        Optional = 1 << 8,
-        Call = 1 << 9,
-        Constructor = 1 << 10,
-        Index = 1 << 11,
-        Signature = 1 << 12,
-        Enum = 1 << 13,
-    }
-
-    //PULLTODO - this needs work
-    export enum DeclKind {
-        None = 0,  // Implicit for globals only
-
-        Module = 1,
-        Function = 1 << 1,
-        Class = 1 << 2,
-        Interface = 1 << 3,
-
-        Variable = 1 << 4,
-        Argument = 1 << 5,
-        Import = 1 << 7,
-
-        CallSignature = 1 << 8,
-        ConstructSignature = 1 << 9,
-        IndexSignature = 1 << 10,
-
-        Property = 1 << 12,
-        StaticProperty = 1 << 13,
-
-        Dynamic = 1 << 14,
-
-        Script = 1 << 15,
-        Global = 1 << 16,
-        Primitive = 1 << 17,
-
-        ClassInstanceDecl = 1 << 18,
-
-        Array = 1 << 19,
-
-        Enum = 1 << 20,
-        
-        SomeType = Module | Function | Class | ClassInstanceDecl | Interface | Primitive | Enum | Global,
-        SomeSignature = CallSignature | ConstructSignature | IndexSignature,
-        SomeValue = Variable | Argument | Field | StaticField,
-
-        DynamicModule = Module | Dynamic,
-
-        Method = Function | Property,
-        Field = Variable | Property,
-        StaticMethod = Method | StaticProperty,
-        StaticField = Field | StaticProperty,
-    }    
+module TypeScript { 
 
     export var pullDeclId = 0;
 
+    export class DeclSpan {
+        public minChar = 0;
+        public limChar = 0;
+    }
+
     export class PullDecl {
-        private declType: DeclKind;
+        private declType: PullElementKind;
         
         private declName: string;
 
@@ -90,9 +33,9 @@ module TypeScript {
         
         private declID = pullDeclId++;
         
-        private declFlags: PullDeclFlags = PullDeclFlags.None;
+        private declFlags: PullElementFlags = PullElementFlags.None;
         
-        private span: ASTSpan;
+        private span: DeclSpan;
         
         private scriptName: string;
         
@@ -102,7 +45,7 @@ module TypeScript {
         
         private dependencies: PullDecl[] = []; // decls that this decl depends on to know its type
 
-        constructor (declName: string, declType: DeclKind, declFlags: PullDeclFlags, span: ASTSpan, scriptName: string) {
+        constructor (declName: string, declType: PullElementKind, declFlags: PullElementFlags, span: DeclSpan, scriptName: string) {
             this.declName = declName;
             this.declType = declType;
             this.declFlags = declFlags;
@@ -127,6 +70,7 @@ module TypeScript {
         public getDeclFlags() { return this.declFlags; }
         
         public getSpan() { return this.span; }
+        public setSpan(span: DeclSpan) { this.span = span; }
         
         public getScriptName() { return this.scriptName; }
         
@@ -157,7 +101,7 @@ module TypeScript {
             this.childDecls[this.childDecls.length] = childDecl;
 
             // add to the appropriate cache
-            var cache = (childDecl.getKind() & DeclKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
+            var cache = (childDecl.getKind() & PullElementKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
             var cacheVal = <PullDecl[]>cache[declName];
             if (!cacheVal) {
                 cacheVal = [];
@@ -170,11 +114,11 @@ module TypeScript {
             return true;
         }
 
-        public findChildDecls(declName: string, declKind: DeclKind): PullDecl[] {
+        public findChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
             // find the decl with the optional type
             // if necessary, cache the decl
             // may be wise to return a chain of decls, or take a parent decl as a parameter
-            var cache = (declKind & DeclKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
+            var cache = (declKind & PullElementKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
             var cacheVal = <PullDecl[]>cache[declName];
 
             if (cacheVal) {

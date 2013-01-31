@@ -13,7 +13,7 @@ module TypeScript {
         public reBindingAfterChange = false;
         public startingDeclForRebind = pullDeclId; // note that this gets set on creation
 
-        constructor (public semanticInfoChain: SemanticInfoChain, public scriptName: string) {
+        constructor (public semanticInfoChain: SemanticInfoChain, public scriptName: string, public useFidelity = false) {
             this.semanticInfo = this.semanticInfoChain.getUnit(this.scriptName);
         }
 
@@ -37,7 +37,7 @@ module TypeScript {
 
     export var time_in_findSymbol = 0;
 
-    export function findSymbolInContext(name: string, declKind: DeclKind, context: PullSymbolBindingContext, typeLookupPath: string[]): PullSymbol {
+    export function findSymbolInContext(name: string, declKind: PullElementKind, context: PullSymbolBindingContext, typeLookupPath: string[]): PullSymbol {
         var startTime = new Date().getTime();
         var contextSymbolPath: string[] = context.getDeclPath();
         var nestedSymbolPath: string[] = [];
