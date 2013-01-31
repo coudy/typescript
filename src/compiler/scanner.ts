@@ -442,6 +442,8 @@ module TypeScript {
         public lexState = LexState.Start;
         public commentStack: CommentToken[] = new CommentToken[];
 
+        public lineMap: number[] = [];
+
         public addToken(tok: Token, scanner: IScanner) {
             this.tokens[this.currentToken++] = new SavedToken(tok, scanner.startPos, scanner.pos);
         }
@@ -491,10 +493,6 @@ module TypeScript {
             return this.prevLine != this.startLine;
         }
 
-        public pushComment(comment: CommentToken) {
-            this.commentStack.push(comment);
-        }
-
         public getComments() {
             var stack = this.commentStack;
             this.commentStack = [];
@@ -519,11 +517,12 @@ module TypeScript {
             this.commentStack = [];
         }
 
-        public lineMap: number[] = [];
         public setSourceText(newSrc: ISourceText, textMode: number) {
         }
+
         public setErrorHandler(reportError: (message: string) => void ) { 
         }
+
         public getLookAheadToken(): Token {
             throw new Error("Invalid operation.");
         }
@@ -531,8 +530,8 @@ module TypeScript {
 
     export class Scanner implements IScanner {
         // REVIEW: When adding new variables make sure to handle storing them in getLookAheadToken. 
-        //         The method works by storing the state before scanning and restoring it later on, missing a member variable 
-        //         could result in an inconsistent state.
+        //         The method works by storing the state before scanning and restoring it later on,
+        //         missing a member variable could result in an inconsistent state.
         public prevLine = 1;
         public line = 1;
         public col = 0;
@@ -559,17 +558,18 @@ module TypeScript {
 
         private reportError: (message: string) =>void;
 
-        constructor () {
+        private prevTok = staticTokens[TokenID.EndOfFile];
+
+        constructor() {
             this.startCol = this.col;
-            this.startLine = this.line;            
+            this.startLine = this.line;
             this.lineMap[1] = 0;
-            
+
             if (!LexKeywordTable) {
                 LexInitialize();
-            }            
+            }
         }
 
-        private prevTok = staticTokens[TokenID.EndOfFile];
         public previousToken() { return this.prevTok; }
 
         public setSourceText(newSrc: ISourceText, textMode: number) {
@@ -594,12 +594,8 @@ module TypeScript {
             this.seenUnicodeCharInComment = false;
         }
 
-        public setErrorHandler(reportError: (message: string) => void ) { 
+        public setErrorHandler(reportError: (message: string) => void ) {
             this.reportError = reportError;
-        }
-
-        public setSaveScan(savedTokens: SavedTokens) {
-            this.saveScan = savedTokens;
         }
 
         public setText(newSrc: string, textMode: number) {
