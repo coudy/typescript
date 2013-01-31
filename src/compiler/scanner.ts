@@ -432,6 +432,16 @@ module TypeScript {
         public seenUnicodeChar: bool = false;
         seenUnicodeCharInComment: bool = false;
 
+        public startLine: number;
+        public prevLine = 1;
+        public line = 1;
+        public col = 0;
+        public leftCurlyCount: number;
+        public rightCurlyCount: number;
+
+        public lexState = LexState.Start;
+        public commentStack: CommentToken[] = new CommentToken[];
+
         public addToken(tok: Token, scanner: IScanner) {
             this.tokens[this.currentToken++] = new SavedToken(tok, scanner.startPos, scanner.pos);
         }
@@ -451,6 +461,7 @@ module TypeScript {
                     return staticTokens[TokenID.EndOfFile];
                 }
             }
+
             if (this.currentTokenIndex < this.currentTokens.length) {
                 this.prevToken = this.curSavedToken.tok;
                 this.prevSavedToken = this.curSavedToken;
@@ -466,40 +477,6 @@ module TypeScript {
                 return staticTokens[TokenID.EndOfFile];
             }
         }
-        public startLine: number;
-        public prevLine = 1;
-        public line = 1;
-        public col = 0;
-        public leftCurlyCount: number;
-        public rightCurlyCount: number;
-
-        public syncToTok(offset: number): number {
-            this.line = getLineNumberFromPosition(this.lineMap, offset);
-            this.currentTokenIndex = 0;
-            var tmpCol = offset - this.lineMap[this.line];
-            while ((this.lexStateByLine[this.line] == LexState.InMultilineComment) && (this.line > 0)) {
-                this.line--;
-                tmpCol = 0;
-            }
-            var lenMin1 = this.lineMap.length - 1;
-            this.currentTokens = this.tokensByLine[this.line];
-            while ((this.currentTokens.length == 0) && (this.line < lenMin1)) {
-                this.line++;
-                this.currentTokens = this.tokensByLine[this.line];
-                tmpCol = 0;
-            }
-            if (this.line <= lenMin1) {
-                while ((this.currentTokenIndex < this.currentTokens.length) &&
-                       (tmpCol > this.currentTokens[this.currentTokenIndex].limChar)) {
-                    this.currentTokenIndex++;
-                }
-                if (this.currentTokenIndex < this.currentTokens.length) {
-                    this.col = this.currentTokens[this.currentTokenIndex].minChar;
-                    return this.col + this.lineMap[this.line];
-                }
-            }
-            return -1;
-        }
 
         public lastTokenLimChar(): number {
             if (this.prevSavedToken !== null) {
@@ -513,10 +490,6 @@ module TypeScript {
         public lastTokenHadNewline(): bool {
             return this.prevLine != this.startLine;
         }
-
-        public lexState = LexState.Start;
-
-        public commentStack: CommentToken[] = new CommentToken[];
 
         public pushComment(comment: CommentToken) {
             this.commentStack.push(comment);
