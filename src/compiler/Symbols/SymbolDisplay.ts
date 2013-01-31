@@ -410,6 +410,34 @@ module SymbolDisplay {
             this.builder.push(new Part(PartKind.Keyword, " ", null));
         }
 
+        private visitAnyType(symbol: IAnyTypeSymbol): void {
+            this.addKeyword(SyntaxKind.AnyKeyword);
+        }
+
+        private visitNumberType(symbol: INumberTypeSymbol): void {
+            this.addKeyword(SyntaxKind.NumberKeyword);
+        }
+
+        private visitBooleanType(symbol: IBooleanTypeSymbol): void {
+            this.addKeyword(SyntaxKind.BooleanKeyword);
+        }
+
+        private visitStringType(symbol: IStringTypeSymbol): void {
+            this.addKeyword(SyntaxKind.StringKeyword);
+        }
+
+        private visitVoidType(symbol: IVoidTypeSymbol): void {
+            this.addKeyword(SyntaxKind.VoidKeyword);
+        }
+
+        private visitNullType(symbol: INullTypeSymbol): void {
+            this.addKeyword(SyntaxKind.NullKeyword);
+        }
+
+        private visitUndefinedType(symbol: IUndefinedTypeSymbol): void {
+            this.builder.push(new Part(PartKind.Text, "undefined", symbol));
+        }
+
         private visitArrayType(symbol: IArrayTypeSymbol): void {
             var underlyingNonArrayType = symbol.elementType();
             while (underlyingNonArrayType.kind() === SymbolKind.ArrayType) {
@@ -522,7 +550,20 @@ module SymbolDisplay {
             this.addTypeArguments(typeArguments);
         }
 
-        private visitObjectType(symbol: IObjectTypeSymbol): void {
+        private visitAnonymousType(symbol: IAnonymousTypeSymbol): void {
+            // If there's only one signature in the anonymous type, and it's a construct or function
+            // signature, then just display that single member.
+            if (symbol.signatureCount() === 1) {
+                var signature = symbol.signatureAt(0);
+
+                if (signature.kind() === SymbolKind.ConstructSignature ||
+                    signature.kind() === SymbolKind.FunctionSignature) {
+
+                    signature.accept(this);
+                    return;
+                }
+            }
+
             if (EnumUtilities.hasFlag(this.format.typeOptions(), TypeOptions.InlineAnonymousTypes)) {
                 this.addPunctuation(SyntaxKind.OpenBraceToken);
                 this.addSpace();

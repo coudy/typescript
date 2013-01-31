@@ -3,14 +3,20 @@ enum SymbolKind {
     Parameter,
 
     // Types
+    AnyType,
+    NumberType,
+    BooleanType,
+    StringType,
+    VoidType,
+    NullType,
+    UndefinedType,
     ObjectType,
     ClassType,
     InterfaceType,
-    EnumType,
-    FunctionType,
-    ConstructorType,
-    TypeParameter,
     ArrayType,
+    AnonymousType,
+    EnumType,
+    TypeParameter,
 
     // Members
     Constructor,

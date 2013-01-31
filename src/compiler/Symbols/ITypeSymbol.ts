@@ -34,12 +34,34 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     originalDefinition(): ITypeSymbol;
 }
 
-interface IObjectTypeSymbol extends ITypeSymbol {
-    signatureCount(): number;
-    signatureAt(index: number): ISignatureSymbol;
+interface IAnyTypeSymbol extends ITypeSymbol {
 }
 
-interface IClassTypeSymbol extends IMemberSymbol, ITypeSymbol, IGenericSymbol {
+interface IPrimitiveTypeSymbol extends ITypeSymbol {
+}
+
+interface INumberTypeSymbol extends IPrimitiveTypeSymbol {
+}
+
+interface IBooleanTypeSymbol extends IPrimitiveTypeSymbol {
+}
+
+interface IStringTypeSymbol extends IPrimitiveTypeSymbol {
+}
+
+interface IVoidTypeSymbol extends IPrimitiveTypeSymbol {
+}
+
+interface INullTypeSymbol extends IPrimitiveTypeSymbol {
+}
+
+interface IUndefinedTypeSymbol extends IPrimitiveTypeSymbol {
+}
+
+interface IObjectTypeSymbol extends ITypeSymbol {
+}
+
+interface IClassTypeSymbol extends IMemberSymbol, IObjectTypeSymbol, IGenericSymbol {
     memberCount(): number;
     memberAt(index: number): IMemberSymbol;
 
@@ -56,7 +78,7 @@ interface IClassTypeSymbol extends IMemberSymbol, ITypeSymbol, IGenericSymbol {
     constructorSymbol(): IConstructorSymbol;
 }
 
-interface IInterfaceTypeSymbol extends IMemberSymbol, ITypeSymbol, IGenericSymbol {
+interface IInterfaceTypeSymbol extends IMemberSymbol, IObjectTypeSymbol, IGenericSymbol {
     signatureCount(): number;
     signatureAt(index: number): ISignatureSymbol;
 
@@ -68,10 +90,45 @@ interface IInterfaceTypeSymbol extends IMemberSymbol, ITypeSymbol, IGenericSymbo
     originalDefinition(): IInterfaceTypeSymbol;
 }
 
-interface IEnumTypeSymbol extends IMemberSymbol, ITypeSymbol {
+interface IArrayTypeSymbol extends IObjectTypeSymbol {
+    /// <summary>
+    /// Gets the number of dimensions of this array. A regular single-dimensional array
+    /// has rank 1, a two-dimensional array has rank 2, etc.
+    /// </summary>
+    rank(): number;
+
+    /// <summary>
+    /// Gets the type of the elements stored in the array.
+    /// </summary>
+    elementType(): ITypeSymbol;
+}
+
+interface IEnumTypeSymbol extends IMemberSymbol, IObjectTypeSymbol {
     variableCount(): number;
     variableAt(index: number): IVariableSymbol;
 }
+
+interface IAnonymousTypeSymbol extends IObjectTypeSymbol {
+    signatureCount(): number;
+    signatureAt(index: number): ISignatureSymbol;
+}
+
+//interface IMemberTypeSymbol extends ITypeSymbol, IGenericSymbol, IParameterizedSymbol {
+//    /// <summary>
+//    /// Get the original definition of this type symbol. If this symbol is derived from another
+//    /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
+//    /// source.
+//    /// </summary>
+//    originalDefinition(): IMemberTypeSymbol;
+
+//    returnType(): ITypeSymbol;
+//}
+
+//interface IFunctionTypeSymbol extends IMemberTypeSymbol {
+//}
+
+//interface IConstructorTypeSymbol extends IMemberTypeSymbol {
+//}
 
 interface ITypeParameterSymbol extends ITypeSymbol {
     /// <summary>
@@ -84,34 +141,4 @@ interface ITypeParameterSymbol extends ITypeSymbol {
     /// The type that were directly specified as a constraint on the type parameter.
     /// </summary>
     constraintType(): ITypeSymbol;
-}
-
-interface IMethodTypeSymbol extends ITypeSymbol, IGenericSymbol, IParameterizedSymbol {
-    /// <summary>
-    /// Get the original definition of this type symbol. If this symbol is derived from another
-    /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
-    /// source.
-    /// </summary>
-    originalDefinition(): IMethodTypeSymbol;
-
-    returnType(): ITypeSymbol;
-}
-
-interface IFunctionTypeSymbol extends IMethodTypeSymbol {
-}
-
-interface IConstructorTypeSymbol extends IMethodTypeSymbol {
-}
-
-interface IArrayTypeSymbol extends ITypeSymbol {
-    /// <summary>
-    /// Gets the number of dimensions of this array. A regular single-dimensional array
-    /// has rank 1, a two-dimensional array has rank 2, etc.
-    /// </summary>
-    rank(): number;
-
-    /// <summary>
-    /// Gets the type of the elements stored in the array.
-    /// </summary>
-    elementType(): ITypeSymbol;
 }
