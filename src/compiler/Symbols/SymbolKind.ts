@@ -1,0 +1,16 @@
+enum SymbolKind {
+    ArrayType = 1,
+    ClassType = 2,
+    EnumType = 3,
+    ErrorType = 4,
+    InterfaceType = 5,
+    Variable = 6,
+    Local = 8,
+    Method = 9,
+    ObjectType = 11,
+    Module = 12,
+    Parameter = 13,
+    TypeParameter = 17,
+    FunctionType = 18,
+    ConstructorType = 19,
+}

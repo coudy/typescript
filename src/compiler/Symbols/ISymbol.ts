@@ -1,120 +1,11 @@
 ///<reference path='..\Syntax\SyntaxNode.ts' />
+///<reference path='Accessibility.ts' />
+///<reference path='MethodKind.ts' />
+///<reference path='ISymbolVisitor.ts' />
 ///<reference path='SymbolDisplay.ts' />
-
-enum SymbolKind {
-    ArrayType = 1,
-    ErrorType = 4,
-    Variable = 6,
-    Local = 8,
-    Method = 9,
-    ObjectType = 11,
-    Module = 12,
-    Parameter = 13,
-    TypeParameter = 17,
-    FunctionType = 18,
-    ConstructorType = 19,
-}
-
-/// <summary>
-/// Enumeration for possible kinds of type symbols.
-/// </summary>
-enum TypeKind {
-    /// <summary>
-    /// Type's kind is undefined.
-    /// </summary>
-    Unknown = 0,
-
-    /// <summary>
-    /// Type is an array type.
-    /// </summary>
-    Array = 1,
-
-    /// <summary>
-    /// Type is a class.
-    /// </summary>
-    Class = 2,
-
-    /// <summary>
-    /// Type is an enumeration.
-    /// </summary>
-    Enum = 5,
-
-    /// <summary>
-    /// Type is an error type.
-    /// </summary>
-    Error = 6,
-
-    /// <summary>
-    /// Type is an interface.
-    /// </summary>
-    Interface = 7,
-
-    /// <summary>
-    /// Type is a type parameter.
-    /// </summary>
-    TypeParameter = 11,
-
-    /// <summary>
-    /// Type is a type parameter.
-    /// </summary>
-    Constructor = 12,
-
-    /// <summary>
-    /// Type is a type parameter.
-    /// </summary>
-    Function = 13,
-}
-
-/// <summary>
-/// Represents the different kinds of type parameters.
-/// </summary>
-enum TypeParameterKind {
-    /// <summary>
-    /// Type parameter of a named type.  For example: T in List&lt;T&gt;.
-    /// </summary>
-    Type,
-
-    /// <summary>
-    /// Type parameter of a method.  For example: T in "void M&lt;T&gt;()".
-    /// </summary>
-    Method,
-}
-/// <summary>
-/// Enumeration for possible kinds of method symbols.
-/// </summary>
-enum MethodKind
-{
-    /// <summary>
-    /// An anonymous method or lambda expression
-    /// </summary>
-    ArrowFunction = 0,
-
-    /// <summary>
-    /// Method is a constructor.
-    /// </summary>
-    Constructor = 1,
-
-    /// <summary>
-    /// Method is an ordinary method.
-    /// </summary>
-    Ordinary = 10,
-
-    /// <summary>
-    /// Method is a property get.
-    /// </summary>
-    GetAccessor = 11,
-
-    /// <summary>
-    /// Method is a property set.
-    /// </summary>
-    SetAccessor = 12,
-}
-
-enum Accessibility {
-    NotApplicable,
-    Private,
-    Public
-}
+///<reference path='SymbolKind.ts' />
+///<reference path='TypeKind.ts' />
+///<reference path='TypeParameterKind.ts' />
 
 interface ISymbol {
     kind(): SymbolKind;
@@ -171,132 +62,33 @@ interface ISymbol {
     isStatic(): bool;
 }
 
-interface IModuleOrTypeSymbol extends ISymbol {
-}
-
-interface IModuleSymbol extends IModuleOrTypeSymbol {
-    isGlobalModule(): bool;
-}
-
-interface ITypeSymbol extends IModuleOrTypeSymbol {
-    /// <summary>
-    /// An enumerated value that identifies what kind of type this is.
-    /// </summary>
-    typeKind(): TypeKind;
-
-    /// <summary>
-    /// The declared base type of this type, or null.
-    /// </summary>
-    baseType(): IObjectTypeSymbol;
-
-    /// <summary>
-    /// Gets the set of interfaces that this type directly implements. This set does not include
-    /// interfaces that are base interfaces of directly implemented interfaces.
-    /// </summary>
-    interfaces(): IObjectTypeSymbol[];
-
-    /// <summary>
-    /// The list of all interfaces of which this type is a declared subtype, excluding this type
-    /// itself. This includes all declared base interfaces, all declared base interfaces of base
-    /// types, and all declared base interfaces of those results (recursively).  This also is the effective
-    /// interface set of a type parameter. Each result
-    /// appears exactly once in the list. This list is topologically sorted by the inheritance
-    /// relationship: if interface type A extends interface type B, then A precedes B in the
-    /// list. This is not quite the same as "all interfaces of which this type is a proper
-    /// subtype" because it does not take into account variance: AllInterfaces for
-    /// IEnumerable&lt;string&gt; will not include IEnumerble&lt;object&gt;
-    /// </summary>
-    allInterfaces(): IObjectTypeSymbol[];
-
-    originalDefinition(): ITypeSymbol;
-}
-
-interface IObjectTypeSymbol extends ITypeSymbol {
-    /// True if this object type has no name.
-    isAnonymous(): bool;
-
-    /// <summary>
-    /// Returns the arity of this type, or the number of type parameters it takes.
-    /// A non-generic type has zero arity.
-    /// </summary>
-    arity(): number;
-
-    /// <summary>
-    /// True if this type or some containing type has type parameters.
-    /// </summary>
-    isGenericType(): bool;
-
+interface IGenericSymbol extends ISymbol {
     /// <summary>
     /// Returns the type parameters that this type has. If this is a non-generic type,
     /// returns an empty ReadOnlyArray.  
     /// </summary>
-     typeParameters(): ITypeParameterSymbol[];
+    typeParameters(): ITypeParameterSymbol[];
 
     /// <summary>
     /// Returns the type arguments that have been substituted for the type parameters. 
     /// If nothing has been substituted for a give type parameters,
     /// then the type parameter itself is consider the type argument.
     /// </summary>
-     typeArguments(): ITypeSymbol[];
+    typeArguments(): ITypeSymbol[];
 
     /// <summary>
     /// Get the original definition of this type symbol. If this symbol is derived from another
     /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
     /// source.
     /// </summary>
-    originalDefinition(): IObjectTypeSymbol;
-
-    /// <summary>
-    /// Get the constructor for this type.
-    /// </summary>
-    constructor(): IMethodSymbol;
+    originalDefinition(): IGenericSymbol;
 }
 
-interface IFunctionTypeSymbol extends ITypeSymbol {
+interface IModuleOrTypeSymbol extends ISymbol {
 }
 
-interface IConstructorTypeSymbol extends ITypeSymbol {
-}
-
-interface ITypeParameterSymbol extends ITypeSymbol {
-    /// <summary>
-    /// The ordinal position of the type parameter in the parameter list which declares
-    /// it. The first type parameter has ordinal zero.
-    /// </summary>
-    ordinal(): number;
-    
-    /// <summary>
-    /// The type parameter kind of this type parameter.
-    /// </summary>
-    typeParameterKind(): TypeParameterKind;
-
-    /// <summary>
-    /// The method that declares the type parameter, or null.
-    /// </summary>
-    declaringMethod(): IMethodSymbol;
-
-    /// <summary>
-    /// The type that declares the type parameter, or null.
-    /// </summary>
-    declaringType(): IObjectTypeSymbol;
-
-    /// <summary>
-    /// The type that were directly specified as a constraint on the type parameter.
-    /// </summary>
-    constraintType(): ITypeSymbol;
-}
-
-interface IArrayTypeSymbol extends ITypeSymbol {
-    /// <summary>
-    /// Gets the number of dimensions of this array. A regular single-dimensional array
-    /// has rank 1, a two-dimensional array has rank 2, etc.
-    /// </summary>
-    rank(): number;
-
-    /// <summary>
-    /// Gets the type of the elements stored in the array.
-    /// </summary>
-    elementType(): ITypeSymbol;
+interface IModuleSymbol extends IModuleOrTypeSymbol {
+    isGlobalModule(): bool;
 }
 
 /// <summary>

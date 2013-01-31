@@ -61,11 +61,11 @@ interface ISemanticModel {
     /// specified, the "position" location is significant for determining which members of "containing" are
     /// accessible. 
     /// </remarks>
-    lookupSymbols(position: number);
-    lookupSymbols(position: number, container: IModuleOrTypeSymbol);
-    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string);
-    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number);
-    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number, options: LookupOptions);
+    lookupSymbols(position: number): ISymbol[];
+    lookupSymbols(position: number, container: IModuleOrTypeSymbol): ISymbol[];
+    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string): ISymbol[];
+    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number): ISymbol[];
+    lookupSymbols(position: number, container: IModuleOrTypeSymbol, name: string, arity: number, options: LookupOptions): ISymbol[];
 
     getMethodGroup(node: SyntaxNode, cancellationToken: ICancellationToken): ISymbol[];
 
