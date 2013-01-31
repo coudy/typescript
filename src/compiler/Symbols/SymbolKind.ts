@@ -27,5 +27,4 @@ enum SymbolKind {
     ConstructSignature,
     IndexSignature,
     PropertySignature,
-    FunctionSignature,
 }

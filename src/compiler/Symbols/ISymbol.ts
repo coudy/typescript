@@ -4,6 +4,7 @@
 ///<reference path='IMemberSymbol.ts' />
 ///<reference path='ISymbolVisitor.ts' />
 ///<reference path='SymbolDisplay.ts' />
+///<reference path='SymbolDisplay.Format.ts' />
 ///<reference path='SymbolKind.ts' />
 ///<reference path='TypeKind.ts' />
 
@@ -66,6 +67,7 @@ interface ISymbol {
     isArrayType(): bool;
 }
 
+/// Represents any symbol that has type parameters.
 interface IGenericSymbol extends ISymbol {
     /// <summary>
     /// Returns the type parameters that this type has. If this is a non-generic type,
@@ -86,16 +88,6 @@ interface IGenericSymbol extends ISymbol {
     /// source.
     /// </summary>
     originalDefinition(): IGenericSymbol;
-}
-
-interface IModuleOrTypeSymbol extends ISymbol {
-}
-
-interface IModuleSymbol extends IMemberSymbol, IModuleOrTypeSymbol {
-    isGlobalModule(): bool;
-
-    memberCount(): number;
-    memberAt(index: number): IMemberSymbol;
 }
 
 /// <summary>
@@ -138,6 +130,17 @@ interface IParameterSymbol extends ISymbol {
     associatedVariable(): IVariableSymbol;
 }
 
+/// Represents any symbol that takes parameters.
 interface IParameterizedSymbol extends ISymbol {
     parameters(): IParameterSymbol[];
+}
+
+interface IModuleOrTypeSymbol extends ISymbol {
+}
+
+interface IModuleSymbol extends IMemberSymbol, IModuleOrTypeSymbol {
+    isGlobalModule(): bool;
+
+    memberCount(): number;
+    memberAt(index: number): IMemberSymbol;
 }

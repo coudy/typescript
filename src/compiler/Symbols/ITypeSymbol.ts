@@ -25,9 +25,7 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// interface set of a type parameter. Each result
     /// appears exactly once in the list. This list is topologically sorted by the inheritance
     /// relationship: if interface type A extends interface type B, then A precedes B in the
-    /// list. This is not quite the same as "all interfaces of which this type is a proper
-    /// subtype" because it does not take into account variance: AllInterfaces for
-    /// IEnumerable&lt;string&gt; will not include IEnumerble&lt;object&gt;
+    /// list.
     /// </summary>
     allInterfaces(): IInterfaceTypeSymbol[];
 
@@ -100,19 +98,6 @@ interface IInterfaceTypeSymbol extends IMemberSymbol, IObjectTypeSymbol, IGeneri
     /// </summary>
     originalDefinition(): IInterfaceTypeSymbol;
 }
-
-//interface IArrayTypeSymbol extends IObjectTypeSymbol {
-//    /// <summary>
-//    /// Gets the number of dimensions of this array. A regular single-dimensional array
-//    /// has rank 1, a two-dimensional array has rank 2, etc.
-//    /// </summary>
-//    rank(): number;
-
-//    /// <summary>
-//    /// Gets the type of the elements stored in the array.
-//    /// </summary>
-//    elementType(): ITypeSymbol;
-//}
 
 interface IAnonymousTypeSymbol extends IObjectTypeSymbol {
     signatureCount(): number;
