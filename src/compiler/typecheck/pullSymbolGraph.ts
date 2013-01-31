@@ -13,9 +13,11 @@ module TypeScript {
         InstanceType,
         ArrayOf,
 
-        PublicProperty,
-        PrivateProperty,
-        StaticProperty,
+        PublicMember,
+        PrivateMember,
+        StaticMember,
+
+        ConstructorMethod,
 
         Aliases,
 
@@ -254,13 +256,16 @@ module TypeScript {
             // shouldn't affect the other type - we'd remove the parent type as an
             // incoming link
         }
-        else if (link.kind == SymbolLinkKind.PublicProperty) {
+        else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.removeSymbol(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateProperty) {
+        else if (link.kind == SymbolLinkKind.PrivateMember) {
             update.updater.removeSymbol(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.StaticProperty) {
+        else if (link.kind == SymbolLinkKind.StaticMember) {
+            update.updater.removeSymbol(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.removeSymbol(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Aliases) {
@@ -317,13 +322,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ArrayOf) {
             update.updater.removeSymbol(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PublicProperty) {
+        else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateProperty) {
+        else if (link.kind == SymbolLinkKind.PrivateMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.StaticProperty) {
+        else if (link.kind == SymbolLinkKind.StaticMember) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Aliases) {
@@ -377,14 +385,17 @@ module TypeScript {
             // how could this happen?
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PublicProperty) {
+        else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateProperty) {
+        else if (link.kind == SymbolLinkKind.PrivateMember) {
             // Don't invalidate the type in this case - we only care about
             // public properties
         }
-        else if (link.kind == SymbolLinkKind.StaticProperty) {
+        else if (link.kind == SymbolLinkKind.StaticMember) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Aliases) {
@@ -437,13 +448,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ArrayOf) {
             // shouldn't change anything...
         }
-        else if (link.kind == SymbolLinkKind.PublicProperty) {
+        else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateProperty) {
+        else if (link.kind == SymbolLinkKind.PrivateMember) {
             // do nothing...
         }
-        else if (link.kind == SymbolLinkKind.StaticProperty) {
+        else if (link.kind == SymbolLinkKind.StaticMember) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Aliases) {
@@ -495,13 +509,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ArrayOf) {
             // do nothing...
         }
-        else if (link.kind == SymbolLinkKind.PublicProperty) {
+        else if (link.kind == SymbolLinkKind.PublicMember) {
             // do nothing...
         }
-        else if (link.kind == SymbolLinkKind.PrivateProperty) {
+        else if (link.kind == SymbolLinkKind.PrivateMember) {
             // do nothing...
         }
-        else if (link.kind == SymbolLinkKind.StaticProperty) {
+        else if (link.kind == SymbolLinkKind.StaticMember) {
+            // do nothing...
+        }
+        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             // do nothing...
         }
         else if (link.kind == SymbolLinkKind.Aliases) {
@@ -556,13 +573,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ArrayOf) {
             // do nothing...
         }
-        else if (link.kind == SymbolLinkKind.PublicProperty) {
+        else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.PrivateProperty) {
+        else if (link.kind == SymbolLinkKind.PrivateMember) {
             // do nothing...
         }
-        else if (link.kind == SymbolLinkKind.StaticProperty) {
+        else if (link.kind == SymbolLinkKind.StaticMember) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Aliases) {

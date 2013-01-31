@@ -45,10 +45,11 @@
 ///<reference path='precompile.ts' />
 ///<reference path='incrementalParser.ts' />
 ///<reference path='declarationEmitter.ts' />
-///<reference path='Syntax\\ISyntaxNodeOrToken.ts' />
-///<reference path='Syntax\\Parser.ts' />
-///<reference path='Text\\TextFactory.ts' />
+///<reference path='Syntax\ISyntaxNodeOrToken.ts' />
+///<reference path='Syntax\Parser.ts' />
+///<reference path='Text\TextFactory.ts' />
 ///<reference path='typecheck\dataMap.ts' />
+///<reference path='typecheck\pullFlags.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
 ///<reference path='typecheck\pullSymbols.ts' />
 ///<reference path='typecheck\pullSymbolBindingContext.ts' />
@@ -59,6 +60,8 @@
 ///<reference path='typecheck\pullSemanticInfo.ts' />
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullBinder.ts' />
+///<reference path='typecheck\pullSymbolBinder.ts' />
+///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 
 module TypeScript {
@@ -797,6 +800,78 @@ module TypeScript {
                 this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
             });
         }
+
+        public pullTypeCheckWithFidelity(refresh = false) {
+            return this.timeFunction("pullTypeCheck()", () => {
+
+                if (!this.pullTypeChecker || refresh) {
+
+                    this.semanticInfoChain = new SemanticInfoChain();
+
+                    this.pullTypeChecker = new PullTypeChecker(this.semanticInfoChain);
+
+                }
+
+                var semanticInfo: SemanticInfo = null;
+
+                var declCollectionStartTime = new Date().getTime();
+
+                for (var i = 0; i < this.scripts.members.length; i++) {
+
+                    semanticInfo = new SemanticInfo(this.units[i].filename);
+
+                    PullDeclCollector.collectDecls(this.syntaxTrees[i].sourceUnit(), semanticInfo);
+
+                    this.semanticInfoChain.addUnit(semanticInfo);
+                }
+
+                var declCollectionEndTime = new Date().getTime();
+
+                this.logger.log("Decl collection: " + (declCollectionEndTime - declCollectionStartTime));
+
+                // bind declaration symbols
+                var bindStartTime = new Date().getTime();
+
+                var topLevelDecls: PullDecl[] = null;
+
+                var pullBindingContext: PullSymbolBindingContext;
+                
+                // start at '1', so as to skip binding for global primitives such as 'any'
+                for (i = 1; i < this.semanticInfoChain.units.length; i++) {
+
+                    topLevelDecls = this.semanticInfoChain.units[i].getTopLevelDecls();
+
+                    pullBindingContext = new PullSymbolBindingContext(this.semanticInfoChain, this.semanticInfoChain.units[i].getPath(), true);
+
+                    for (var j = 0; j < topLevelDecls.length; j++) {
+
+                        bindDeclSymbol(topLevelDecls[j], pullBindingContext);
+
+                    }
+                }
+
+                var bindEndTime = new Date().getTime();
+
+                this.logger.log("Binding: " + (bindEndTime - bindStartTime));
+
+                //var typeCheckStartTime = new Date().getTime();
+
+                //// typecheck
+                //for (i = 0; i < this.scripts.members.length; i++) {
+
+                //    this.pullTypeChecker.setUnit(this.units[i].filename, this.logger);
+                //    this.pullTypeChecker.resolver.resolveBoundDecls(this.semanticInfoChain.units[i + 1].getTopLevelDecls()[0], new PullTypeResolutionContext());
+                //}
+
+                //var typeCheckEndTime = new Date().getTime();
+
+                //this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
+                //this.logger.log("Binding: " + (bindEndTime - bindStartTime));
+                //this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
+                //this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
+                //this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
+            });
+        }
         
         // returns 'true' if diffs were detected
         public pullUpdateScript(oldScript: Script, newScript: Script): bool {
@@ -964,7 +1039,7 @@ module TypeScript {
                         var enclosingDecl: PullDecl = null;
 
                         for (var i = declStack.length - 1; i >= 0; i--) {
-                            if (!(declStack[i].getKind() & (DeclKind.Variable | DeclKind.Argument))) {
+                            if (!(declStack[i].getKind() & (PullElementKind.Variable | PullElementKind.Argument))) {
                                 enclosingDecl = declStack[i];
                                 break;
                             }

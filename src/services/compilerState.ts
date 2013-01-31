@@ -702,7 +702,7 @@ module Services {
             if (unitIndex < 0) {
                 throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
             }
-
+            
             this.compiler.syntaxTrees[unitIndex] = syntaxTree;
         }
 
@@ -711,7 +711,7 @@ module Services {
             if (unitIndex < 0) {
                 throw new Error("Interal error: No AST found for file \"" + fileName + "\".");
             }
-
+            
             return this.compiler.units[unitIndex].lineMap;
         }
 

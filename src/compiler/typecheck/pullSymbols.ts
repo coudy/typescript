@@ -23,7 +23,7 @@ module TypeScript {
 
         private name: string;
 
-        private declKind: DeclKind;
+        private declKind: PullElementKind;
 
         // caches - free these on invalidate
         private cachedContainerLink: PullSymbolLink = null;
@@ -42,22 +42,22 @@ module TypeScript {
         public getSymbolID() { return this.pullSymbolID; }
 
         public isType() { 
-            return (this.declKind & DeclKind.SomeType) != 0; 
+            return (this.declKind & PullElementKind.SomeType) != 0; 
         }
 
         public isSignature() {
-            return (this.declKind & DeclKind.SomeSignature) != 0;
+            return (this.declKind & PullElementKind.SomeSignature) != 0;
         }
 
         public isArray() {
-            return (this.declKind & DeclKind.Array) != 0;
+            return (this.declKind & PullElementKind.Array) != 0;
         }
 
         public isPrimitive() {
-            return this.declKind == DeclKind.Primitive;
+            return this.declKind == PullElementKind.Primitive;
         }
 
-        constructor (name: string, declKind: DeclKind) {
+        constructor (name: string, declKind: PullElementKind) {
             this.name = name;
             this.declKind = declKind;
         }
@@ -65,7 +65,7 @@ module TypeScript {
         public getName() { return this.name; }
 
         public getKind() { return this.declKind; }        
-        public setKind(declType: DeclKind) { this.declKind = declType; }
+        public setKind(declType: PullElementKind) { this.declKind = declType; }
 
         public setIsOptional() { this.isOptional = true; }
         public getIsOptional() { return this.isOptional; }
@@ -243,6 +243,10 @@ module TypeScript {
         private returnTypeLink: PullSymbolLink = null;
         private hasOptionalParam = false;
         private nonOptionalParamCount = 0;
+
+        constructor (kind: PullElementKind) {
+            super("", kind);
+        }
 
         public isDefinition() { return false; }
         public hasVariableParamList() { return this.hasOptionalParam; }
@@ -576,7 +580,7 @@ module TypeScript {
             
 			// PULLTODO: Restrict member list to public properties only
             for (var i = 0; i < parentMembers.length; i++) {
-                this.addMember(parentMembers[i], SymbolLinkKind.PublicProperty);
+                this.addMember(parentMembers[i], SymbolLinkKind.PublicMember);
             }
         }
 
@@ -649,9 +653,9 @@ module TypeScript {
         public invalidate() {
             this.memberCache = null;
 
-            this.memberLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.StaticProperty ||
-                                                              psl.kind == SymbolLinkKind.PrivateProperty ||
-                                                              psl.kind == SymbolLinkKind.PublicProperty);
+            this.memberLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.StaticMember ||
+                                                              psl.kind == SymbolLinkKind.PrivateMember ||
+                                                              psl.kind == SymbolLinkKind.PublicMember);
 
             this.callSignatureLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.CallSignature);
 
@@ -700,7 +704,7 @@ module TypeScript {
 
     export class PullPrimitiveTypeSymbol extends PullTypeSymbol {
         constructor (name: string) {
-            super(name, DeclKind.Primitive);
+            super(name, PullElementKind.Primitive);
         }
 
         public isResolved() { return true; }
@@ -709,28 +713,29 @@ module TypeScript {
 
     export class PullClassSymbol extends PullTypeSymbol {
         private instanceType: PullTypeSymbol = null;
-        private staticMembers: PullSymbol[] = []; // constructor and static members
 
-        public hasBrand() { return true; }
+        constructor (name: string) {
+            super(name, PullElementKind.Class);
+        }
+
+        public hasBrand() {
+            return true;
+        }
 
         public setInstanceType(instanceType: PullTypeSymbol) {
             this.addOutgoingLink(instanceType, SymbolLinkKind.InstanceType);
             this.instanceType = instanceType; 
         }
-        public getInstanceType() { return this.instanceType; }
+
+        public getInstanceType() {
+            return this.instanceType;
+        }
 
         public addInstanceMember(instanceMember: PullSymbol, linkKind: SymbolLinkKind) {
             this.instanceType.addMember(instanceMember, linkKind);
         }
 
-        public addStaticMember(staticMember: PullSymbol) {
-            this.addOutgoingLink(staticMember, SymbolLinkKind.StaticProperty);
-            this.staticMembers[this.staticMembers.length] = staticMember;
-        }
-        public getStaticMembers() { return this.staticMembers; }
-
         public invalidate() {
-            this.staticMembers = [];
 
             if (this.instanceType) {
                 this.instanceType.invalidate();
@@ -740,6 +745,11 @@ module TypeScript {
     }
 
     export class PullClassInstanceSymbol extends PullClassSymbol {
+        
+        constructor (name: string) {
+            super(name);
+        }
+
         public isInstanceType() { return true; }
     }
     
@@ -775,7 +785,7 @@ module TypeScript {
 
         // For the time-being, only specialize interface types
         // this way we can assume only public members and non-static methods
-        if (!arrayInterfaceType || (arrayInterfaceType.getKind() & DeclKind.Interface) == 0) {
+        if (!arrayInterfaceType || (arrayInterfaceType.getKind() & PullElementKind.Interface) == 0) {
             return null;
         }
 
@@ -784,7 +794,7 @@ module TypeScript {
         }
 
         // PULLTODO: Recursive reference bug
-        var newArrayType: PullTypeSymbol = new PullTypeSymbol(arrayInterfaceType.getName(), arrayInterfaceType.getKind() | DeclKind.Array);
+        var newArrayType: PullTypeSymbol = new PullTypeSymbol(arrayInterfaceType.getName(), arrayInterfaceType.getKind() | PullElementKind.Array);
         newArrayType.addDeclaration(arrayInterfaceType.getDeclarations()[0]);
 
         typeToSpecializeTo.setArrayType(newArrayType);
@@ -825,7 +835,7 @@ module TypeScript {
                 // specialize each signature
                 for (var j = 0; j < signatures.length; j++) {
 
-                    newSignature = new PullSignatureSymbol("", DeclKind.CallSignature);
+                    newSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
                     newSignature.addDeclaration(signatures[j].getDeclarations[0]);
 
                     parameters = signatures[j].getParameters();
@@ -856,7 +866,7 @@ module TypeScript {
                     newMethod.addSignature(newSignature);
                 }
 
-                newArrayType.addMember(newMethod, SymbolLinkKind.PublicProperty);
+                newArrayType.addMember(newMethod, SymbolLinkKind.PublicMember);
             }
 
             else { // must be a field
@@ -874,7 +884,7 @@ module TypeScript {
                     newField.setType(fieldType);
                 }
 
-                newArrayType.addMember(newField, SymbolLinkKind.PublicProperty);
+                newArrayType.addMember(newField, SymbolLinkKind.PublicMember);
             }
         }
         newArrayType.addOutgoingLink(arrayInterfaceType, SymbolLinkKind.ArrayType);

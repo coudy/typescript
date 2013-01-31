@@ -2,15 +2,15 @@
 // See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='..\typescript.ts' />
+///<reference path='..\Syntax\SyntaxWalker.generated.ts' />
 
 module TypeScript {
 
     export class DeclCollectionContext {
 
         public parentChain: PullDecl[] = [];
-        public scriptName: string = "";
 
-        constructor (public semanticInfo: SemanticInfo) {
+        constructor (public semanticInfo: SemanticInfo, public scriptName = "") {
         }
 
         public getParent() { return this.parentChain ? this.parentChain[this.parentChain.length - 1] : null; }
@@ -23,14 +23,14 @@ module TypeScript {
     export function preCollectImportDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var importDecl = <ImportDeclaration>ast;
         var isExported = hasFlag(importDecl.varFlags, VarFlags.Exported);
-        var declFlags = isExported ? PullDeclFlags.Exported : PullDeclFlags.None;
-        var span = new ASTSpan();
+        var declFlags = isExported ? PullElementFlags.Exported : PullElementFlags.None;
+        var span = new DeclSpan();
 
         span.minChar = importDecl.minChar;
 
         span.limChar = importDecl.limChar
 
-        var decl = new PullDecl(importDecl.id.actualText, DeclKind.Import, declFlags, span, context.scriptName);
+        var decl = new PullDecl(importDecl.id.actualText, PullElementKind.TypeAlias, declFlags, span, context.scriptName);
 
         context.getParent().addChildDecl(decl);
 
@@ -43,29 +43,29 @@ module TypeScript {
 
     export function preCollectModuleDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>ast;
-        var declFlags = PullDeclFlags.None;
+        var declFlags = PullElementFlags.None;
 
         if (hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {
-            declFlags |= PullDeclFlags.Ambient;
+            declFlags |= PullElementFlags.Ambient;
         }
 
         if (hasFlag(moduleDecl.modFlags, ModuleFlags.IsEnum)) {
-            declFlags |= PullDeclFlags.Enum;
+            declFlags |= PullElementFlags.Enum;
         }
 
         if (hasFlag(moduleDecl.modFlags, ModuleFlags.Exported)) {
-            declFlags |= PullDeclFlags.Exported;
+            declFlags |= PullElementFlags.Exported;
         }
 
         var modName = (<Identifier>moduleDecl.name).text;
-        var span = new ASTSpan();
+        var span = new DeclSpan();
 
         span.minChar = moduleDecl.minChar;
 
         span.limChar = moduleDecl.limChar;
 
         var isDynamic = isQuoted(modName);
-        var decl = new PullDecl(modName, isDynamic ? DeclKind.DynamicModule : DeclKind.Module, declFlags, span, context.scriptName);
+        var decl = new PullDecl(modName, isDynamic ? PullElementKind.DynamicModule : PullElementKind.Module, declFlags, span, context.scriptName);
 
         context.getParent().addChildDecl(decl);
 
@@ -80,23 +80,23 @@ module TypeScript {
 
     export function preCollectClassDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var classDecl = <ClassDeclaration>ast;
-        var declFlags = PullDeclFlags.None;
+        var declFlags = PullElementFlags.None;
 
         if (hasFlag(classDecl.varFlags, VarFlags.Ambient)) {
-            declFlags |= PullDeclFlags.Ambient;
+            declFlags |= PullElementFlags.Ambient;
         }
 
         if (hasFlag(classDecl.varFlags, VarFlags.Exported)) {
-            declFlags |= PullDeclFlags.Exported;
+            declFlags |= PullElementFlags.Exported;
         }
 
-        var span = new ASTSpan();
+        var span = new DeclSpan();
 
         span.minChar = classDecl.minChar;
 
         span.limChar = classDecl.limChar;
 
-        var decl = new PullDecl(classDecl.name.text, DeclKind.Class, declFlags, span, context.scriptName);
+        var decl = new PullDecl(classDecl.name.text, PullElementKind.Class, declFlags, span, context.scriptName);
 
         context.getParent().addChildDecl(decl);
 
@@ -111,19 +111,19 @@ module TypeScript {
 
     export function preCollectInterfaceDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var interfaceDecl = <InterfaceDeclaration>ast;
-        var declFlags = PullDeclFlags.None;
+        var declFlags = PullElementFlags.None;
 
         if (hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
-            declFlags |= PullDeclFlags.Exported;
+            declFlags |= PullElementFlags.Exported;
         }
 
-        var span = new ASTSpan();
+        var span = new DeclSpan();
 
         span.minChar = interfaceDecl.minChar;
 
         span.limChar = interfaceDecl.limChar;
 
-        var decl = new PullDecl(interfaceDecl.name.text, DeclKind.Interface, declFlags, span, context.scriptName);
+        var decl = new PullDecl(interfaceDecl.name.text, PullElementKind.Interface, declFlags, span, context.scriptName);
 
         var parent = context.getParent();
 
@@ -143,25 +143,25 @@ module TypeScript {
 
     export function preCollectArgDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var argDecl = <BoundDecl>ast;
-        var declFlags = PullDeclFlags.None;
+        var declFlags = PullElementFlags.None;
 
         if (hasFlag(argDecl.varFlags, VarFlags.Private)) {
-            declFlags |= PullDeclFlags.Private;
+            declFlags |= PullElementFlags.Private;
         }
 
-        var span = new ASTSpan();
+        var span = new DeclSpan();
 
         span.minChar = argDecl.minChar;
 
         span.limChar = argDecl.limChar;
 
-        var decl = new PullDecl(argDecl.id.text, DeclKind.Argument, declFlags, span, context.scriptName);
+        var decl = new PullDecl(argDecl.id.text, PullElementKind.Argument, declFlags, span, context.scriptName);
 
         context.getParent().addChildDecl(decl);
 
         // if it's a property type, we'll need to add it to the parent's parent as well
         if (hasFlag(argDecl.varFlags, VarFlags.Property)) {
-            var propDecl = new PullDecl(argDecl.id.text, DeclKind.Field, declFlags, span, context.scriptName);
+            var propDecl = new PullDecl(argDecl.id.text, PullElementKind.Property, declFlags, span, context.scriptName);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             context.semanticInfo.setASTForDecl(propDecl, ast);
             context.semanticInfo.setDeclForAST(ast, propDecl);
@@ -187,47 +187,44 @@ module TypeScript {
 
     export function preCollectVarDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var varDecl = <VarDecl>ast;
-        var declFlags = PullDeclFlags.None;
-        var declType = DeclKind.Variable;
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.Variable;
         var isProperty = false;
         var isStatic = false;
 
         if (hasFlag(varDecl.varFlags, VarFlags.Ambient)) {
-            declFlags |= PullDeclFlags.Ambient;
+            declFlags |= PullElementFlags.Ambient;
         }
 
         if (hasFlag(varDecl.varFlags, VarFlags.Exported)) {
-            declFlags |= PullDeclFlags.Exported;
+            declFlags |= PullElementFlags.Exported;
         }
 
         if (hasFlag(varDecl.varFlags, VarFlags.Property)) {
             isProperty = true;
-            declFlags |= PullDeclFlags.Public;
+            declFlags |= PullElementFlags.Public;
         }
 
         if (hasFlag(varDecl.varFlags, VarFlags.Static)) {
             isProperty = true;
             isStatic = true;
-            declFlags |= PullDeclFlags.Static;
+            declFlags |= PullElementFlags.Static;
         }
 
         if (hasFlag(varDecl.varFlags, VarFlags.Private)) {
             isProperty = true;
-            declFlags |= PullDeclFlags.Private;
+            declFlags |= PullElementFlags.Private;
         }
 
         if (hasFlag(varDecl.id.flags, ASTFlags.OptionalName)) {
-            declFlags |= PullDeclFlags.Optional;
+            declFlags |= PullElementFlags.Optional;
         }
 
-        if (isStatic) {
-            declType = DeclKind.StaticField;
-        }
-        else if (isProperty) {
-            declType = DeclKind.Field;
+        if (isProperty) {
+            declType = PullElementKind.Property;
         }
         
-        var span = new ASTSpan();
+        var span = new DeclSpan();
 
         span.minChar = varDecl.minChar;
 
@@ -258,17 +255,17 @@ module TypeScript {
     export function preCollectFuncDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
 
         var funcDecl = <FuncDecl>ast;
-        var declFlags = PullDeclFlags.None;
-        var declType = DeclKind.Function;
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.Function;
         var isProperty = false;
         var isStatic = false;
 
         if (hasFlag(funcDecl.fncFlags, FncFlags.Ambient)) {
-            declFlags |= PullDeclFlags.Ambient;
+            declFlags |= PullElementFlags.Ambient;
         }
 
         if (hasFlag(funcDecl.fncFlags, FncFlags.Exported)) {
-            declFlags |= PullDeclFlags.Exported;
+            declFlags |= PullElementFlags.Exported;
         }
 
         if (hasFlag(funcDecl.fncFlags, FncFlags.Method)) {
@@ -278,49 +275,47 @@ module TypeScript {
         if (hasFlag(funcDecl.fncFlags, FncFlags.Static)) {
             isProperty = true;
             isStatic = true;
+            declFlags |= PullElementFlags.Static;
         }
 
         if (hasFlag(funcDecl.fncFlags, FncFlags.Private)) {
             isProperty = true;
-            declFlags |= PullDeclFlags.Private;
+            declFlags |= PullElementFlags.Private;
         }
 
         if (hasFlag(funcDecl.fncFlags, FncFlags.ConstructMember) || funcDecl.isConstructor) {
-            declFlags |= PullDeclFlags.Constructor;
+            declFlags |= PullElementFlags.Constructor;
         }
 
         if (hasFlag(funcDecl.fncFlags, FncFlags.CallMember)) {
-            declFlags |= PullDeclFlags.Call;
+            declFlags |= PullElementFlags.Call;
         }
 
         if (hasFlag(funcDecl.fncFlags, FncFlags.IndexerMember)) {
-            declFlags |= PullDeclFlags.Index;
+            declFlags |= PullElementFlags.Index;
         }
 
         if (funcDecl.isSignature()) {
-            declFlags |= PullDeclFlags.Signature;
+            declFlags |= PullElementFlags.Signature;
         }
 
         if (funcDecl.isGetAccessor()) {
-            declFlags |= PullDeclFlags.GetAccessor;
+            declFlags |= PullElementFlags.GetAccessor;
         }
 
         if (funcDecl.isSetAccessor()) {
-            declFlags |= PullDeclFlags.SetAccessor;
+            declFlags |= PullElementFlags.SetAccessor;
         }
 
         if (funcDecl.name && hasFlag(funcDecl.name.flags, ASTFlags.OptionalName)) {
-            declFlags |= PullDeclFlags.Optional;
+            declFlags |= PullElementFlags.Optional;
         }
 
-        if (isStatic) {
-            declType = DeclKind.StaticMethod;
-        }
-        else if (isProperty) {
-            declType = DeclKind.Method;
+        if (isProperty) {
+            declType = PullElementKind.Method;
         }
 
-        var span = new ASTSpan();
+        var span = new DeclSpan();
 
         span.minChar = funcDecl.minChar;
 
@@ -362,13 +357,13 @@ module TypeScript {
 
         if (ast.nodeType == NodeType.Script) {
             var script: Script = <Script>ast;
-            var span = new ASTSpan();
+            var span = new DeclSpan();
 
             span.minChar = script.minChar;
 
             span.limChar = script.limChar;
 
-            var decl = new PullDecl(context.scriptName, DeclKind.Script, PullDeclFlags.None, span, context.scriptName);
+            var decl = new PullDecl(context.scriptName, PullElementKind.Script, PullElementFlags.None, span, context.scriptName);
 
             context.pushParent(decl);
 
@@ -436,21 +431,6 @@ module TypeScript {
             // want to be able to bind lambdas in return positions
             go = true;
         }
-        //// go into blocks, if necessary...
-        //else if (ast.nodeType == NodeType.Block ||
-        //         ast.nodeType == NodeType.For ||
-        //         ast.nodeType == NodeType.ForIn ||
-        //         ast.nodeType == NodeType.While ||
-        //         ast.nodeType == NodeType.If ||
-        //         ast.nodeType == NodeType.Try ||
-        //         ast.nodeType == NodeType.TryCatch ||
-        //         ast.nodeType == NodeType.TryFinally ||
-        //         ast.nodeType == NodeType.Catch ||
-        //         ast.nodeType == NodeType.Finally) {
-
-        //    go = true;
-
-        //}
 
         walker.options.goChildren = go;
 
