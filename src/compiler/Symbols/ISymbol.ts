@@ -116,12 +116,6 @@ enum Accessibility {
     Public
 }
 
-interface ISymbolVisitor {
-    visitArrayType(symbol: IArrayTypeSymbol): any;
-    visitTypeParameter(symbol: ITypeParameterSymbol): any;
-    visitNamedType(symbol: IObjectType): any;
-}
-
 interface ISymbol {
     kind(): SymbolKind;
 
@@ -141,7 +135,7 @@ interface ISymbol {
     /// <summary>
     /// Gets the containing type. Returns null if the symbol is not contained within a type.
     /// </summary>
-    containingType(): IObjectType;
+    containingType(): IObjectTypeSymbol;
 
     /// <summary>
     /// Gets the nearest enclosing module. Returns null if the symbol isn't contained in a module.
@@ -173,6 +167,8 @@ interface ISymbol {
     accept(visitor: ISymbolVisitor): any;
 
     toSymbolDisplayParts(format: SymbolDisplay.Format): SymbolDisplay.Part[];
+
+    isStatic(): bool;
 }
 
 interface IModuleOrTypeSymbol extends ISymbol {
@@ -191,13 +187,13 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// <summary>
     /// The declared base type of this type, or null.
     /// </summary>
-    baseType(): IObjectType;
+    baseType(): IObjectTypeSymbol;
 
     /// <summary>
     /// Gets the set of interfaces that this type directly implements. This set does not include
     /// interfaces that are base interfaces of directly implemented interfaces.
     /// </summary>
-    interfaces(): IObjectType[];
+    interfaces(): IObjectTypeSymbol[];
 
     /// <summary>
     /// The list of all interfaces of which this type is a declared subtype, excluding this type
@@ -210,12 +206,12 @@ interface ITypeSymbol extends IModuleOrTypeSymbol {
     /// subtype" because it does not take into account variance: AllInterfaces for
     /// IEnumerable&lt;string&gt; will not include IEnumerble&lt;object&gt;
     /// </summary>
-    allInterfaces(): IObjectType[];
+    allInterfaces(): IObjectTypeSymbol[];
 
     originalDefinition(): ITypeSymbol;
 }
 
-interface IObjectType extends ITypeSymbol {
+interface IObjectTypeSymbol extends ITypeSymbol {
     /// True if this object type has no name.
     isAnonymous(): bool;
 
@@ -248,7 +244,7 @@ interface IObjectType extends ITypeSymbol {
     /// symbol by (say) type substitution, this gets the original symbol, as it was defined in
     /// source.
     /// </summary>
-    originalDefinition(): IObjectType;
+    originalDefinition(): IObjectTypeSymbol;
 
     /// <summary>
     /// Get the constructor for this type.
@@ -282,7 +278,7 @@ interface ITypeParameterSymbol extends ITypeSymbol {
     /// <summary>
     /// The type that declares the type parameter, or null.
     /// </summary>
-    declaringType(): IObjectType;
+    declaringType(): IObjectTypeSymbol;
 
     /// <summary>
     /// The type that were directly specified as a constraint on the type parameter.

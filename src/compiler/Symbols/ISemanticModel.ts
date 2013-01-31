@@ -35,9 +35,9 @@ interface ISemanticModel {
     getDeclaredSymbol(declaration: SyntaxNode, cancellationToken: ICancellationToken): ISymbol;
     getDeclaredSymbol(declaration: ModuleDeclarationSyntax, cancellationToken: ICancellationToken): IModuleSymbol;
     getDeclaredSymbol(declaration: SourceUnitSyntax, cancellationToken: ICancellationToken): IModuleSymbol;
-    getDeclaredSymbol(declaration: ClassDeclarationSyntax, cancellationToken: ICancellationToken): IObjectType;
-    getDeclaredSymbol(declaration: InterfaceDeclarationSyntax, cancellationToken: ICancellationToken): IObjectType;
-    getDeclaredSymbol(declaration: EnumDeclarationSyntax, cancellationToken: ICancellationToken): IObjectType;
+    getDeclaredSymbol(declaration: ClassDeclarationSyntax, cancellationToken: ICancellationToken): IObjectTypeSymbol;
+    getDeclaredSymbol(declaration: InterfaceDeclarationSyntax, cancellationToken: ICancellationToken): IObjectTypeSymbol;
+    getDeclaredSymbol(declaration: EnumDeclarationSyntax, cancellationToken: ICancellationToken): IObjectTypeSymbol;
     getDeclaredSymbol(declarator: VariableDeclaratorSyntax, cancellationToken: ICancellationToken): IVariableSymbol;
     
     // TODO: add more getDeclaredSymbol overloads.

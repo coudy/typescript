@@ -228,6 +228,10 @@ module SymbolDisplay {
         public genericsOptions(): GenericsOptions {
             return this._genericsOptions;
         }
+
+        public memberOptions(): MemberOptions {
+            return this._memberOptions;
+        }
     }
 
     export enum PartKind {
@@ -440,7 +444,7 @@ module SymbolDisplay {
             this.builder.push(new Part(PartKind.TypeParameterName, symbol.name(), symbol));
         }
 
-        private visitNamedType(symbol: IObjectType): void {
+        private visitObjectType(symbol: IObjectTypeSymbol): void {
             if (this.minimal) {
                 this.minimallyQualify(symbol);
                 return;
@@ -458,10 +462,12 @@ module SymbolDisplay {
         }
 
         private addTypeKind(symbol: ITypeSymbol): void {
-            var kindKeyword = this.getKindKeyword(symbol.typeKind());
-            if (kindKeyword !== SyntaxKind.None) {
-                this.addKeyword(kindKeyword);
-                this.addSpace();
+            if (this.isFirstSymbolVisited) {
+                var kindKeyword = this.getKindKeyword(symbol.typeKind());
+                if (kindKeyword !== SyntaxKind.None) {
+                    this.addKeyword(kindKeyword);
+                    this.addSpace();
+                }
             }
         }
 
@@ -486,7 +492,7 @@ module SymbolDisplay {
             return !moduleSymbol.isGlobalModule();
         }
 
-        private addNameAndTypeArgumentsOrParameters(symbol: IObjectType): void {
+        private addNameAndTypeArgumentsOrParameters(symbol: IObjectTypeSymbol): void {
             if (symbol.isAnonymous()) {
                 this.addAnonymousTypeName(symbol);
                 return;
@@ -502,10 +508,21 @@ module SymbolDisplay {
             }
         }
 
-        private addAnonymousTypeName(symbol: IObjectType): void {
+        private addAnonymousTypeName(symbol: IObjectTypeSymbol): void {
             if (EnumUtilities.hasFlag(this.format.typeOptions(), TypeOptions.InlineAnonymousTypes)) {
-                // TODO: actually inline the entire object type here.
-                throw Errors.notYetImplemented();
+                this.addPunctuation(SyntaxKind.OpenBraceToken);
+                this.addSpace();
+
+                for (var i = 0, n = symbol.childCount(); i < n; i++) {
+                    if (i > 0) {
+                        this.addPunctuation(SyntaxKind.SemicolonToken);
+                        this.addSpace();
+                    }
+
+                    symbol.childAt(i).accept(this.notFirstVisitor);
+                }
+
+                this.addPunctuation(SyntaxKind.CloseBraceToken);
             }
             else {
                 // Note: higher up level services will determine how to display this.
@@ -515,7 +532,7 @@ module SymbolDisplay {
             }
         }
 
-        private getPartKind(symbol: IObjectType): PartKind {
+        private getPartKind(symbol: IObjectTypeSymbol): PartKind {
             switch (symbol.typeKind()) {
                 case TypeKind.Class:
                     return PartKind.ClassName;
@@ -562,7 +579,7 @@ module SymbolDisplay {
             }
         }
 
-        private minimallyQualify(symbol: IObjectType): void {
+        private minimallyQualify(symbol: IObjectTypeSymbol): void {
             // We first start by trying to bind just our name and type arguments.  If they bind to
             // the symbol that we were constructed from, then we have our minimal name. Otherwise,
             // we get the minimal name of our parent, add a dot, and then add ourselves.
@@ -580,7 +597,7 @@ module SymbolDisplay {
             this.addNameAndTypeArgumentsOrParameters(symbol);
         }
 
-        private nameBoundSuccessfullyToSameSymbol(symbol: IObjectType): bool {
+        private nameBoundSuccessfullyToSameSymbol(symbol: IObjectTypeSymbol): bool {
             var normalSymbols = this.semanticModel.lookupSymbols(
                 this.location.textSpan().start(),
                 /*container:*/ null,
@@ -605,6 +622,107 @@ module SymbolDisplay {
             return Syntax.isInModuleOrTypeContext(token)
                 ? LookupOptions.ModulesOrTypesOnly
                 : LookupOptions.Default;
+        }
+
+        private visitVariable(symbol: IVariableSymbol): void {
+            this.addAccessibilityIfRequired(symbol);
+            this.addMemberModifiersIfRequired(symbol);
+
+            if (EnumUtilities.hasFlag(this.format.memberOptions(), MemberOptions.IncludeContainingType)) {
+                symbol.containingType().accept(this.notFirstVisitor);
+                this.addPunctuation(SyntaxKind.DotToken);
+            }
+
+            this.builder.push(new Part(PartKind.FieldName, symbol.name(), symbol));
+
+            if (EnumUtilities.hasFlag(this.format.memberOptions(), MemberOptions.IncludeType) && this.isFirstSymbolVisited) {
+                this.addPunctuation(SyntaxKind.ColonToken);
+                this.addSpace();
+                symbol.type().accept(this.notFirstVisitor);
+            }
+
+
+            if (this.isFirstSymbolVisited &&
+                EnumUtilities.hasFlag(this.format.memberOptions(), MemberOptions.IncludeConstantValue) &&
+                symbol.hasValue() &&
+                this.canAddConstant(symbol.type(), symbol.value())) {
+                this.addSpace();
+                this.addPunctuation(SyntaxKind.EqualsToken);
+                this.addSpace();
+                this.addValue(symbol.type(), symbol.value());
+            }
+        }
+
+        private canAddConstant(type: ITypeSymbol, value: any): bool {
+            if (type.typeKind() === TypeKind.Enum) {
+                return true;
+            }
+
+            if (value === null) {
+                return true;
+            }
+
+            return typeof value === 'number' ||
+                   typeof value === 'string';
+        }
+
+        private addAccessibilityIfRequired(symbol: ISymbol): void {
+            var containingType = symbol.containingType();
+
+            if (EnumUtilities.hasFlag(this.format.memberOptions(), MemberOptions.IncludeAccessibility) &&
+                (containingType === null || containingType.typeKind() !== TypeKind.Interface)) {
+                switch (symbol.accessibility()) {
+                    case Accessibility.Private:
+                        this.addKeyword(SyntaxKind.PrivateKeyword);
+                        this.addSpace();
+                        break;
+                    case Accessibility.Public:
+                        this.addKeyword(SyntaxKind.PublicKeyword);
+                        this.addSpace();
+                        break;
+                }
+            }
+        }
+
+        private addMemberModifiersIfRequired(symbol: ISymbol): void {
+            var containingType = symbol.containingType();
+            if (EnumUtilities.hasFlag(this.format.memberOptions(), MemberOptions.IncludeModifiers) &&
+                (containingType == null || containingType.typeKind() !== TypeKind.Interface)) {
+
+                if (symbol.isStatic()) {
+                    this.addKeyword(SyntaxKind.StaticKeyword);
+                    this.addSpace();
+                }
+            }
+        }
+
+        private addValue(type: ITypeSymbol, value: any): void {
+            if (value != null) {
+                this.addNonNullValue(type, value);
+            }
+            else {
+                this.addKeyword(SyntaxKind.NullKeyword);
+            }
+        }
+
+        private addNonNullValue(type: ITypeSymbol, value: any): void {
+            if (type.typeKind() === TypeKind.Enum) {
+                this.addEnumConstantValue(<IObjectTypeSymbol> type, value);
+            }
+            else {
+                this.addLiteralValue(value);
+            }
+        }
+
+        private addEnumConstantValue(enumType: IObjectTypeSymbol, value: any): void {
+            // TODO: better enum presentation.
+            this.addLiteralValue(value);
+        }
+
+        private addLiteralValue(value: any): void {
+            var stringified = JSON2.stringify(value);
+            this.builder.push(new Part(typeof value === 'number' ? PartKind.NumericLiteral : PartKind.StringLiteral,
+                stringified, null));
         }
     }
 }

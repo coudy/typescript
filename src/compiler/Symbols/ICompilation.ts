@@ -21,11 +21,11 @@ interface ICompilation {
 
     globalModule(): IModuleSymbol;
 
-    anyType(): IObjectType;
+    anyType(): IObjectTypeSymbol;
 
-    numberType(): IObjectType;
+    numberType(): IObjectTypeSymbol;
 
-    stringType(): IObjectType;
+    stringType(): IObjectTypeSymbol;
 
     /// <summary>
     /// Gets all the diagnostics for the compilation, including syntax, declaration, and
