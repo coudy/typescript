@@ -45,9 +45,9 @@
 ///<reference path='precompile.ts' />
 ///<reference path='incrementalParser.ts' />
 ///<reference path='declarationEmitter.ts' />
-///<reference path='Syntax\\ISyntaxNodeOrToken.ts' />
-///<reference path='Syntax\\Parser.ts' />
-///<reference path='Text\\TextFactory.ts' />
+///<reference path='Syntax\ISyntaxNodeOrToken.ts' />
+///<reference path='Syntax\Parser.ts' />
+///<reference path='Text\TextFactory.ts' />
 ///<reference path='typecheck\dataMap.ts' />
 ///<reference path='typecheck\pullFlags.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
@@ -61,6 +61,7 @@
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullBinder.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
+///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 
 module TypeScript {
