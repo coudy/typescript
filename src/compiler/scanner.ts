@@ -193,6 +193,7 @@ module TypeScript {
             return LexLookUpUnicodeMap(code, unicodeES5IdStart);
         }
     }
+
     export function LexInitialize() {
         initializeStaticTokens();
         autoToken[LexCodeLPR] = staticTokens[TokenID.OpenParen];
@@ -317,8 +318,8 @@ module TypeScript {
     }
 
     export class AggerateSourceTextSegment implements ISourceTextSegment {
-
-        constructor (public seg1: SourceTextSegment, public seg2: SourceTextSegment) { }
+        constructor(public seg1: SourceTextSegment, public seg2: SourceTextSegment) {
+        }
 
         public charCodeAt(index: number): number {
             if (this.seg1.segmentStart <= index && index < this.seg1.segmentEnd)
@@ -430,10 +431,6 @@ module TypeScript {
         public pos: number;
         public seenUnicodeChar: bool = false;
         seenUnicodeCharInComment: bool = false;
-
-        public close() {
-            this.currentToken = 0;
-        }
 
         public addToken(tok: Token, scanner: IScanner) {
             this.tokens[this.currentToken++] = new SavedToken(tok, scanner.startPos, scanner.pos);
