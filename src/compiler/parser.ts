@@ -278,7 +278,7 @@ module TypeScript {
             }
         }
 
-        private parseCommentsInner(comments: CommentToken[]) {
+        private parseCommentsInner(comments: CommentToken[]): Comment[] {
             if (comments) {
                 var commentASTs: Comment[] = new Comment[];
                 for (var i = 0; i < comments.length; i++) {
@@ -290,7 +290,7 @@ module TypeScript {
             }
         }
 
-        private parseComments() {
+        private parseComments(): Comment[] {
             var comments = this.scanner.getComments();
             return this.parseCommentsInner(comments);
         }

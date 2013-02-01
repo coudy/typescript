@@ -4,14 +4,13 @@
 ///<reference path='SyntaxToken.ts' />
 
 interface ITokenInformation {
-    fullStart: number;
     previousToken: ISyntaxToken;
     nextToken: ISyntaxToken;
 }
 
 class SyntaxInformationMap extends SyntaxWalker {
-    // TODO: in the future we could also track the position of syntax nodes.
     private tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
+    private elementToPosition = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
     private _previousToken = null;
     private _previousTokenInformation: ITokenInformation = null;
@@ -33,6 +32,7 @@ class SyntaxInformationMap extends SyntaxWalker {
 
     private visitNode(node: SyntaxNode): void {
         this._elementToParent.add(node, ArrayUtilities.last(this._nodeStack));
+        this.elementToPosition.add(node, this._currentPosition);
         
         this._nodeStack.push(node);
         super.visitNode(node);
@@ -41,9 +41,9 @@ class SyntaxInformationMap extends SyntaxWalker {
 
     private visitToken(token: ISyntaxToken): void {
         this._elementToParent.add(token, ArrayUtilities.last(this._nodeStack));
+        this.elementToPosition.add(token, this._currentPosition);
 
         var tokenInformation: ITokenInformation = {
-            fullStart: this._currentPosition,
             previousToken: this._previousToken,
             nextToken: null
         };
@@ -63,12 +63,16 @@ class SyntaxInformationMap extends SyntaxWalker {
         return this._elementToParent.get(nodeOrToken);
     }
 
-    public fullStart(token: ISyntaxToken): number {
-        return this.tokenInformation(token).fullStart;
+    public fullStart(element: ISyntaxElement): number {
+        return this.elementToPosition.get(element);
     }
 
-    public start(token: ISyntaxToken): number {
-        return this.fullStart(token) + token.leadingTriviaWidth();
+    public start(element: ISyntaxElement): number {
+        return this.fullStart(element) + element.leadingTriviaWidth();
+    }
+
+    public end(element: ISyntaxElement): number {
+        return this.start(element) + element.width();
     }
 
     public previousToken(token: ISyntaxToken): ISyntaxToken {
