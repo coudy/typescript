@@ -13,28 +13,33 @@ module TypeScript {
 
         private syntaxInformationMap: SyntaxInformationMap = null;
 
+        private start(element: ISyntaxElement): number {
+            return this.syntaxInformationMap.start(element);
+        }
+
+        private end(element: ISyntaxElement): number {
+            return this.syntaxInformationMap.end(element);
+        }
+        
         private hasEscapeSequence(token: ISyntaxToken): bool {
             // TODO: implement this.
             return false;
         }
 
         private identifierFromToken(token: ISyntaxToken): Identifier {
+            var result: Identifier = null;
             if (token.fullWidth() === 0) {
-                var result: Identifier = new MissingIdentifier();
-                //memberName.minChar = this.scanner.startPos;
-                //memberName.limChar = this.scanner.startPos;
+                result = new MissingIdentifier();
                 result.flags |= ASTFlags.Error;
-
-                return result;
             }
             else {
-                var result = new Identifier(token.text(), this.hasEscapeSequence(token));
-
-                result.minChar = this.syntaxInformationMap.start(token);
-                result.limChar = this.syntaxInformationMap.end(token);
-
-                return result;
+                result = new Identifier(token.text(), this.hasEscapeSequence(token));
             }
+
+            result.minChar = this.start(token);
+            result.limChar = this.end(token);
+
+            return result;
         }
 
         private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
@@ -104,7 +109,7 @@ module TypeScript {
         private visitEnumDeclaration(enumDeclaration: EnumDeclarationSyntax): ModuleDeclaration {
             var name = this.identifierFromToken(enumDeclaration.identifier());
 
-            var membersMinChar = this.syntaxInformationMap.start(enumDeclaration.openBraceToken());
+            var membersMinChar = this.start(enumDeclaration.openBraceToken());
             this.pushDeclLists();
 
             var members = new ASTList();
@@ -123,21 +128,21 @@ module TypeScript {
             for (var i = 0, n = enumDeclaration.variableDeclarators().nonSeparatorCount(); i < n; i++) {
                 var variableDeclarator = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().nonSeparatorAt(i);
 
-                var minChar = this.syntaxInformationMap.start(variableDeclarator);
+                var minChar = this.start(variableDeclarator);
                 var limChar;
                 var memberName: Identifier = this.identifierFromToken(variableDeclarator.identifier());
                 var memberValue: AST = null;
                 var preComments = null;
                 var postComments = null;
 
-                limChar = this.syntaxInformationMap.start(variableDeclarator.identifier());
+                limChar = this.start(variableDeclarator.identifier());
                 preComments = this.convertComments(variableDeclarator.identifier().trailingTrivia());
                 
                 if (variableDeclarator.equalsValueClause() !== null) {
                     postComments = this.convertComments(variableDeclarator.equalsValueClause().equalsToken().trailingTrivia());
                     memberValue = variableDeclarator.equalsValueClause().value().accept(this);
                     lastValue = <NumberLiteral>memberValue;
-                    limChar = this.syntaxInformationMap.end(variableDeclarator.equalsValueClause());
+                    limChar = this.end(variableDeclarator.equalsValueClause());
                 }
                 else {
                     if (lastValue == null) {
@@ -196,8 +201,8 @@ module TypeScript {
             }
 
             var endingToken = new ASTSpan();
-            endingToken.minChar = this.syntaxInformationMap.start(enumDeclaration.closeBraceToken());
-            endingToken.limChar = this.syntaxInformationMap.end(enumDeclaration.closeBraceToken());
+            endingToken.minChar = this.start(enumDeclaration.closeBraceToken());
+            endingToken.limChar = this.end(enumDeclaration.closeBraceToken());
 
             members.limChar = endingToken.limChar;
             var modDecl = new ModuleDeclaration(name, members, this.topVarList(), this.topScopeList(), endingToken);
@@ -231,7 +236,35 @@ module TypeScript {
         }
 
         private visitImportDeclaration(importDeclaration: ImportDeclarationSyntax): ImportDeclaration {
-            return null;
+            var name: Identifier = null;
+            var alias: AST = null;
+            var importDecl: ImportDeclaration = null;
+            var minChar = this.start(importDeclaration);
+            var isDynamicImport = false;
+
+            name = this.identifierFromToken(importDeclaration.identifier());
+
+            var aliasPreComments = this.convertTrailingComments(importDeclaration.equalsToken());
+
+            var moduleReference = importDeclaration.moduleReference();
+            var limChar = this.start(moduleReference);
+            if (moduleReference.kind() === SyntaxKind.ExternalModuleReference) {
+                alias = this.identifierFromToken((<ExternalModuleReferenceSyntax>moduleReference).stringLiteral());
+                isDynamicImport = true;
+                alias.preComments = aliasPreComments;
+            }
+            else {
+                alias = (<ModuleNameModuleReferenceSyntax>moduleReference).moduleName().accept(this);
+                limChar = this.end(moduleReference);
+            }
+
+            importDecl = new ImportDeclaration(name, alias);
+            importDecl.isDynamicImport = isDynamicImport;
+
+            importDecl.minChar = minChar;
+            importDecl.limChar = limChar;
+
+            return importDecl;
         }
     }
 }
