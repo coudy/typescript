@@ -1169,7 +1169,6 @@ module TypeScript {
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
         public vars: ASTList;
-        public scopes: ASTList;
         // Remember if the script contains Unicode chars, that is needed when generating code for this script object to decide the output file correct encoding.
         public containsUnicodeChar = false;
         public containsUnicodeCharInComment = false;
@@ -1183,7 +1182,6 @@ module TypeScript {
         constructor (vars: ASTList, scopes: ASTList) {
             super(new Identifier("script"), null, false, null, vars, scopes, null, NodeType.Script);
             this.vars = vars;
-            this.scopes = scopes;
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1296,16 +1294,14 @@ module TypeScript {
         public prettyName: string;
         public amdDependencies: string[] = [];
         public vars: ASTList;
-        public scopes: ASTList;
         // Remember if the module contains Unicode chars, that is needed for dynamic module as we will generate a file for each.
         public containsUnicodeChar = false;
         public containsUnicodeCharInComment = false;
 
-        constructor (name: Identifier, members: ASTList, vars: ASTList, scopes: ASTList, public endingToken: ASTSpan) {
+        constructor (name: Identifier, members: ASTList, vars: ASTList, public endingToken: ASTSpan) {
             super(NodeType.ModuleDeclaration, name, members);
 
             this.vars = vars;
-            this.scopes = scopes;
             this.prettyName = this.name.actualText;
         }
 
