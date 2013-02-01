@@ -1282,6 +1282,7 @@ module TypeScript {
         public isExported() { return hasFlag(this.modFlags, ModuleFlags.Exported); }
         public isAmbient() { return hasFlag(this.modFlags, ModuleFlags.Ambient); }
         public isEnum() { return hasFlag(this.modFlags, ModuleFlags.IsEnum); }
+        public isWholeFile() { return hasFlag(this.modFlags, ModuleFlags.IsWholeFile); }
 
         public recordNonInterface() {
             this.modFlags &= ~ModuleFlags.ShouldEmitModuleDecl;

@@ -206,9 +206,9 @@ module FourSlash {
             }
         }
 
-        public verifyMemberListContains(symbol: string, type?: string, docComment?: string, kind?: string) {
+        public verifyMemberListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             var members = this.getMemberListAtCaret();
-            this.assertItemInCompletionList(members.entries, symbol, type, docComment, kind);
+            this.assertItemInCompletionList(members.entries, symbol, type, docComment, fullSymbolName, kind);
         }
         
         public verifyMemberListDoesNotContain(symbol: string) {
@@ -258,9 +258,9 @@ module FourSlash {
             }
         }
 
-        public verifyCompletionListContains(symbol: string, type?: string, docComment?: string, kind?: string) {
+        public verifyCompletionListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             var completions = this.getCompletionListAtCaret();
-            this.assertItemInCompletionList(completions.entries, symbol, type, docComment, kind);
+            this.assertItemInCompletionList(completions.entries, symbol, type, docComment, fullSymbolName, kind);
         }
 
         public verifyCompletionListDoesNotContain(symbol: string) {
@@ -617,12 +617,13 @@ module FourSlash {
             return this.langSvc.positionToLineCol(this.activeFile.name, this.currentCaretPosition);
         }
 
-        private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string, kind?: string) {
-            var items: { name: string; type: string; docComment: string; kind: string; }[] = completionList.map(element => {
+        private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
+            var items: { name: string; type: string; docComment: string; fullSymbolName: string;  kind: string; }[] = completionList.map(element => {
                 return {
                     name: element.name,
                     type: element.type,
                     docComment: element.docComment,
+                    fullSymbolName: element.fullSymbolName,
                     kind: element.kind
                 };
             });
@@ -636,6 +637,9 @@ module FourSlash {
                     if (type != undefined) {
                         assert.equal(item.type, type);
                     }
+                    if (fullSymbolName != undefined) {
+                        assert.equal(item.fullSymbolName, fullSymbolName);
+                    }
                     if (kind != undefined) {
                         assert.equal(item.kind, kind);
                     }
@@ -643,8 +647,8 @@ module FourSlash {
                 }
             }
 
-            var getItemString = (item: { name: string; type: string; docComment: string; }) => {
-                if (docComment == undefined && type == undefined) {
+            var getItemString = (item: { name: string; type: string; docComment: string; fullSymbolName: string; kind: string; }) => {
+                if (docComment == undefined && type == undefined && fullSymbolName == undefined && kind == undefined) {
                     return item.name;
                 }
 
@@ -654,6 +658,12 @@ module FourSlash {
                 }
                 if (docComment != undefined) {
                     returnString += ",docComment: " + item.docComment;
+                }
+                if (fullSymbolName != undefined) {
+                    returnString += ",fullSymbolName: " + item.fullSymbolName;
+                }
+                if (kind != undefined) {
+                    returnString += ",kind: " + item.kind;
                 }
                 returnString += " }"
 
@@ -665,7 +675,7 @@ module FourSlash {
             if (items.length > 10) {
                 itemsString += ', ...';
             }
-            throw new Error('Expected "' + getItemString({ name: name, type: type, docComment: docComment }) + '" to be in list [' + itemsString + ']');
+            throw new Error('Expected "' + getItemString({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
         }
 
         private getScriptIndex(file: FourSlashFile) {

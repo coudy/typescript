@@ -73,21 +73,21 @@ module FourSlashInterface {
 
         // Verifies the member list contains the specified symbol. The
         // member list is brought up if necessary
-        public memberListContains(symbol: string, type?: string, docComment?: string, kind?: string) {
+        public memberListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             if (this.negative) {
                 FourSlash.currentTestState.verifyMemberListDoesNotContain(symbol);
             } else {
-                FourSlash.currentTestState.verifyMemberListContains(symbol, type, docComment, kind);
+                FourSlash.currentTestState.verifyMemberListContains(symbol, type, docComment, fullSymbolName, kind);
             }
         }
 
         // Verifies the completion list contains the specified symbol. The
         // completion list is brought up if necessary
-        public completionListContains(symbol: string, type?: string, docComment?: string, kind?: string) {
+        public completionListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             if (this.negative) {
                 FourSlash.currentTestState.verifyCompletionListDoesNotContain(symbol);
             } else {
-                FourSlash.currentTestState.verifyCompletionListContains(symbol, type, docComment, kind);
+                FourSlash.currentTestState.verifyCompletionListContains(symbol, type, docComment, fullSymbolName, kind);
             }
         }
 

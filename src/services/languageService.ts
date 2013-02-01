@@ -368,6 +368,7 @@ module Services {
         public type = "";
         public kind = "";            // see ScriptElementKind
         public kindModifiers = "";   // see ScriptElementKindModifier, comma separated
+        public fullSymbolName = "";
         public docComment = "";
     }
 
@@ -1478,6 +1479,7 @@ module Services {
                     entry.name = x.name;
                     entry.type = x.type;
                     entry.kind = this.getSymbolElementKind(x.sym);
+                    entry.fullSymbolName = x.sym.fullName(enclosingScopeContext.getScope());
                     var type = x.sym.getType();
                     if (type && type.isClass() && type.symbol.name == x.name) {
                         entry.docComment = TypeScript.Comment.getDocCommentText(type.getDocComments());
