@@ -2621,13 +2621,12 @@ module Parser1 {
                 catchClause = this.parseCatchClause();
             }
 
+            // If we don't have a catch clause, then we must have a finally clause.  Try to parse
+            // one out no matter what.
             var finallyClause: FinallyClauseSyntax = null;
-            if (this.isFinallyClause()) {
+            if (catchClause === null || this.isFinallyClause()) {
                 finallyClause = this.parseFinallyClause();
             }
-
-            // TODO: Report error if both catch and finally clauses are missing.
-            // (Alternatively, report that at semantic checking time).
 
             return this.factory.tryStatement(tryKeyword, block, catchClause, finallyClause);
         }
@@ -2653,8 +2652,6 @@ module Parser1 {
         }
 
         private parseFinallyClause(): FinallyClauseSyntax {
-            Debug.assert(this.isFinallyClause());
-
             var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
             var block = this.parseBlock();
 

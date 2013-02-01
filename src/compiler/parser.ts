@@ -909,7 +909,7 @@ module TypeScript {
 
             // REVIEW: We're parsing an ObjectType, but we give a NodeType of Interface here.
             var interfaceDecl = new InterfaceDeclaration(
-                this.anonId, members, /*extends:*/ null, /*implementsL*/ null);
+                this.anonId, members, /*extends:*/ null, /*implements:*/ null);
 
             interfaceDecl.minChar = minChar;
             interfaceDecl.limChar = members.limChar;    // "}"

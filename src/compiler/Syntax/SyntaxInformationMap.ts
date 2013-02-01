@@ -17,7 +17,7 @@ class SyntaxInformationMap extends SyntaxWalker {
     private _currentPosition = 0;
     private _elementToParent = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
-    private _nodeStack: SyntaxNode[] = [];
+    private _parentStack: ISyntaxElement[] = [];
 
     constructor() {
         super();
@@ -31,16 +31,34 @@ class SyntaxInformationMap extends SyntaxWalker {
     }
 
     private visitNode(node: SyntaxNode): void {
-        this._elementToParent.add(node, ArrayUtilities.last(this._nodeStack));
+        this._elementToParent.add(node, ArrayUtilities.last(this._parentStack));
         this.elementToPosition.add(node, this._currentPosition);
         
-        this._nodeStack.push(node);
+        this._parentStack.push(node);
         super.visitNode(node);
-        this._nodeStack.pop();
+        this._parentStack.pop();
+    }
+
+    public visitList(list: ISyntaxList): void {
+        this._elementToParent.add(list, ArrayUtilities.last(this._parentStack));
+        this.elementToPosition.add(list, this._currentPosition);
+
+        this._parentStack.push(list);
+        super.visitList(list);
+        this._parentStack.pop();
+    }
+
+    public visitSeparatedList(list: ISeparatedSyntaxList): void {
+        this._elementToParent.add(list, ArrayUtilities.last(this._parentStack));
+        this.elementToPosition.add(list, this._currentPosition);
+
+        this._parentStack.push(list);
+        super.visitSeparatedList(list);
+        this._parentStack.pop();
     }
 
     private visitToken(token: ISyntaxToken): void {
-        this._elementToParent.add(token, ArrayUtilities.last(this._nodeStack));
+        this._elementToParent.add(token, ArrayUtilities.last(this._parentStack));
         this.elementToPosition.add(token, this._currentPosition);
 
         var tokenInformation: ITokenInformation = {
@@ -59,7 +77,7 @@ class SyntaxInformationMap extends SyntaxWalker {
         this.tokenToInformation.add(token, tokenInformation);
     }
 
-    public parent(nodeOrToken: ISyntaxNodeOrToken): SyntaxNode {
+    public parent(element: ISyntaxElement): ISyntaxElement {
         return this._elementToParent.get(nodeOrToken);
     }
 
