@@ -149,14 +149,56 @@ module TypeScript {
                 result = new AST(NodeType.Super);
             }
             else if (token.kind() === SyntaxKind.TrueKeyword) {
-                result = new AST(NodeType.TrueKeyword);
+                result = new AST(NodeType.True);
             }
             else if (token.kind() === SyntaxKind.FalseKeyword) {
-                result = new AST(NodeType.FalseKeyword);
+                result = new AST(NodeType.False);
+            }
+            else if (token.kind() === SyntaxKind.NullKeyword) {
+                result = new AST(NodeType.Null);
+            }
+            else {
+                result = this.identifierFromToken(token);
             }
 
             this.setSpan(result, token);
             return result;
+        }
+
+        private visitSourceUnit(node: SourceUnitSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitClassDeclaration(node: ClassDeclarationSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitExtendsClause(node: ExtendsClauseSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitImplementsClause(node: ImplementsClauseSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
+        private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
+            throw Errors.notYetImplemented();
         }
 
         private visitEnumDeclaration(enumDeclaration: EnumDeclarationSyntax): ModuleDeclaration {
@@ -258,7 +300,7 @@ module TypeScript {
             endingToken.limChar = this.end(enumDeclaration.closeBraceToken());
 
             members.limChar = endingToken.limChar;
-            var modDecl = new ModuleDeclaration(name, members, this.topVarList(), this.topScopeList(), endingToken);
+            var modDecl = new ModuleDeclaration(name, members, new ASTList(), endingToken);
             modDecl.modFlags |= ModuleFlags.IsEnum;
             this.popDeclLists();
 
@@ -297,13 +339,9 @@ module TypeScript {
             return importDecl;
         }
 
-        private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
-        }
-
         private visitVariableStatement(node: VariableStatementSyntax): any {
-            if (node.variableDeclaration().variableDeclarators().count() === 1) {
-                return node.variableDeclaration().variableDeclarators()[0].accept(this);
+            if (node.variableDeclaration().variableDeclarators().nonSeparatorCount() === 1) {
+                return node.variableDeclaration().variableDeclarators().nonSeparatorAt(0).accept(this);
             }
             else {
                 var result = new Block(
@@ -486,7 +524,7 @@ module TypeScript {
             var expression: AST = node.expression().accept(this);
             expression.flags |= ASTFlags.DotLHS;
 
-            var result = new BinaryExpression(NodeType.Dot, expression, this.identifierFromToken(node.identifier()));
+            var result = new BinaryExpression(NodeType.Dot, expression, this.identifierFromToken(node.name()));
             this.setSpan(result, node);
 
             return result;
@@ -606,6 +644,10 @@ module TypeScript {
             return this.visitSeparatedSyntaxList(node.parameters());
         }
 
+        private visitCallSignature(node: CallSignatureSyntax): any {
+            throw Errors.notYetImplemented();
+        }
+
         private visitTypeParameterList(node: TypeParameterListSyntax): any {
             throw Errors.notYetImplemented();
         }
@@ -618,16 +660,20 @@ module TypeScript {
             throw Errors.notYetImplemented();
         }
 
-        private visitIfStatement(node: IfStatementSyntax): any {
+        private visitIfStatement(node: IfStatementSyntax): IfStatement {
             var result = new IfStatement(node.condition().accept(this));
             this.setSpan(result, node);
 
             result.thenBod = node.statement().accept(this);
             if (node.elseClause() !== null) {
-                result.elseBod = node.elseClause().statement().accept(this);
+                result.elseBod = node.elseClause().accept(this);
             }
 
             return result;
+        }
+
+        private visitElseClause(node: ElseClauseSyntax): Statement {
+            return node.statement().accept(this);
         }
 
         private visitExpressionStatement(node: ExpressionStatementSyntax): AST {
@@ -687,7 +733,7 @@ module TypeScript {
         }
 
         private visitSwitchStatement(node: SwitchStatementSyntax): SwitchStatement {
-            var result = new SwitchStatement(node.condition().accept(this));
+            var result = new SwitchStatement(node.expression().accept(this));
             this.setSpan(result, node);
 
             result.statement.minChar = this.start(node);
@@ -836,11 +882,7 @@ module TypeScript {
 
             var tryCatch: TryCatch = null;
             if (node.catchClause() !== null) {
-                var varDecl = new VarDecl(this.identifierFromToken(node.catchClause().identifier()), 0)
-                this.setSpan(varDecl, node.catchClause().identifier());
-
-                var catchBit = new Catch(varDecl, node.catchClause().block().accept(this));
-                this.setSpan(catchBit, node.catchClause());
+                var catchBit = node.catchClause().accept(this);
 
                 tryCatch = new TryCatch(<Try>tryPart, catchBit);
                 
@@ -853,8 +895,7 @@ module TypeScript {
                     tryPart = tryCatch;
                 }
 
-                var finallyBit = new Finally(node.finallyClause().block().accept(this));
-                this.setSpan(finallyBit, node.finallyClause());
+                var finallyBit = node.finallyClause().accept(this);
 
                 var result = new TryFinally(tryPart, finallyBit);
                 this.setSpan(result, node);
@@ -864,6 +905,23 @@ module TypeScript {
 
             Debug.assert(tryCatch !== null);
             return tryCatch;
+        }
+
+        private visitCatchClause(node: CatchClauseSyntax): Catch {
+            var varDecl = new VarDecl(this.identifierFromToken(node.identifier()), 0);
+            this.setSpan(varDecl, node.identifier());
+
+            var result = new Catch(varDecl, node.block().accept(this));
+            this.setSpan(result, node);
+
+            return result;
+        }
+
+        private visitFinallyClause(node: FinallyClauseSyntax): Finally {
+            var result = new Finally(node.block().accept(this));
+            this.setSpan(result, node);
+
+            return result;
         }
 
         private visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {

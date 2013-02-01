@@ -21,7 +21,7 @@ class SyntaxInformationMap extends SyntaxWalker {
 
     constructor() {
         super();
-        this._nodeStack.push(null);
+        this._parentStack.push(null);
     }
 
     public static create(node: SyntaxNode): SyntaxInformationMap {
@@ -78,7 +78,7 @@ class SyntaxInformationMap extends SyntaxWalker {
     }
 
     public parent(element: ISyntaxElement): ISyntaxElement {
-        return this._elementToParent.get(nodeOrToken);
+        return this._elementToParent.get(element);
     }
 
     public fullStart(element: ISyntaxElement): number {
