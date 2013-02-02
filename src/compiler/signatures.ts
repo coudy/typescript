@@ -144,7 +144,7 @@ module TypeScript {
                 !signature.declAST.isOverload &&
                 !signature.declAST.isSignature() && 
                 !hasFlag(signature.declAST.fncFlags, FncFlags.Ambient) &&
-                hasFlag(signature.declAST.fncFlags, FncFlags.Definition)) {
+                !hasFlag(signature.declAST.fncFlags, FncFlags.Signature)) {
                 this.definitionSignature = signature;
             }
         }
@@ -197,7 +197,7 @@ module TypeScript {
                     for (var j = i + 1; j < len; j++) {
                         // next check for equivalence between overloads - no two can be exactly the same                     
                         if (this.signatures[i].declAST && this.signatures[j].declAST &&
-                            (!hasFlag(this.signatures[i].declAST.fncFlags, FncFlags.Definition) && !hasFlag(this.signatures[j].declAST.fncFlags, FncFlags.Definition)) &&
+                            (hasFlag(this.signatures[i].declAST.fncFlags, FncFlags.Signature) && hasFlag(this.signatures[j].declAST.fncFlags, FncFlags.Signature)) &&
                             checker.signaturesAreIdentical(this.signatures[i], this.signatures[j])) {
                             checker.errorReporter.simpleError(this.signatures[i].declAST, (this.signatures[i].declAST && this.signatures[i].declAST.name) ? "Signature for '" + this.signatures[i].declAST.name.actualText + "' is duplicated" :"Signature is duplicated");
                         }

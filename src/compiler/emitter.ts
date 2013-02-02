@@ -637,7 +637,7 @@ module TypeScript {
             if (!isMember &&
                 //funcDecl.name != null &&
                 !hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) &&
-                (hasFlag(funcDecl.fncFlags, FncFlags.Definition) || funcDecl.isConstructor)) {
+                (!hasFlag(funcDecl.fncFlags, FncFlags.Signature) || funcDecl.isConstructor)) {
                 this.writeLineToOutput("");
             } else if (hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression)) {
                 if (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon)) {
@@ -923,7 +923,7 @@ module TypeScript {
             this.setContainer(temp);
             this.thisFnc = tempFnc;
 
-            if (hasFlag(funcDecl.fncFlags, FncFlags.Definition)) {
+            if (!hasFlag(funcDecl.fncFlags, FncFlags.Signature)) {
                 if (hasFlag(funcDecl.fncFlags, FncFlags.Static)) {
                     if (this.thisClassNode) {
                         if (funcDecl.isAccessor()) {
