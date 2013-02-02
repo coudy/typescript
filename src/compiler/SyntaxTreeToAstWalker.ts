@@ -766,7 +766,22 @@ module TypeScript {
         }
 
         private visitIndexSignature(node: IndexSignatureSyntax): any {
-            throw Errors.notYetImplemented();
+            var name = new Identifier("__item");
+            this.setSpan(name, node);
+
+            var parameters = new ASTList();
+            parameters.append(node.parameter().accept(this));
+            
+            var result = new FuncDecl(name, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            result.returnTypeAnnotation = node.typeAnnotation()
+                ? node.typeAnnotation().accept(this)
+                : null;
+
+            result.fncFlags |= FncFlags.IndexerMember;
+
+            return result;
         }
 
         private visitPropertySignature(node: PropertySignatureSyntax): any {
