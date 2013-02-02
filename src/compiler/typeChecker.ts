@@ -447,7 +447,7 @@ module TypeScript {
             var isExported = hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported) || container == this.gloMod;
             var isStatic = hasFlag(funcDecl.fncFlags, FncFlags.Static);
             var isPrivate = hasFlag(funcDecl.fncFlags, FncFlags.Private);
-            var isDefinition = hasFlag(funcDecl.fncFlags, FncFlags.Definition);
+            var isDefinition = !hasFlag(funcDecl.fncFlags, FncFlags.Signature);
             var isAmbient = hasFlag(funcDecl.fncFlags, FncFlags.Ambient);
             var isConstructor = funcDecl.isConstructMember() || funcDecl.isConstructor;
             var isGlobal = container == this.gloMod;

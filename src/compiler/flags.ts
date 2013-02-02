@@ -191,7 +191,6 @@ module TypeScript {
         LocalStatic = 1 << 5,
         GetAccessor = 1 << 6,
         SetAccessor = 1 << 7,
-        Definition = 1 << 8,
         Signature = 1 << 9,
         Method = 1 << 10,
         HasReturnExpression = 1 << 11,

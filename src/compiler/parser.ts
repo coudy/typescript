@@ -1038,8 +1038,8 @@ module TypeScript {
             funcDecl.minChar = minChar;
             funcDecl.limChar = limChar;
 
-            if (!requiresSignature) {
-                funcDecl.fncFlags |= FncFlags.Definition;
+            if (requiresSignature) {
+                funcDecl.fncFlags |= FncFlags.Signature;
             }
 
             this.statementInfoStack = svStmtStack;
@@ -1407,10 +1407,6 @@ module TypeScript {
             funcDecl.variableArgList = variableArgList;
             funcDecl.isOverload = isOverload;
 
-            if (!requiresSignature) { // REVIEW: What's the point of this?  Why not just use 'Signature' instead of 'Definition'?
-                funcDecl.fncFlags |= FncFlags.Definition;
-            }
-
             if (isStatic) {
                 funcDecl.fncFlags |= FncFlags.Static;
             }
@@ -1418,9 +1414,11 @@ module TypeScript {
             if (requiresSignature) {
                 funcDecl.fncFlags |= FncFlags.Signature;
             }
+
             if (indexer) {
                 funcDecl.fncFlags |= FncFlags.IndexerMember;
             }
+
             funcDecl.returnTypeAnnotation = returnType;
             if (isMethod) {
                 funcDecl.fncFlags |= FncFlags.Method;
