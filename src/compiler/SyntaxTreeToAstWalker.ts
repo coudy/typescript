@@ -747,8 +747,22 @@ module TypeScript {
             throw Errors.notYetImplemented();
         }
 
-        private visitFunctionSignature(node: FunctionSignatureSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitFunctionSignature(node: FunctionSignatureSyntax): FuncDecl {
+            var name = this.identifierFromToken(node.identifier());
+            if (node.questionToken()) {
+                name.flags |= ASTFlags.OptionalName;
+            }
+            
+            var parameters = node.callSignature().parameterList().accept(this);
+
+            var result = new FuncDecl(name, new ASTList(), false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            result.returnTypeAnnotation = node.callSignature().typeAnnotation()
+                ? node.callSignature().typeAnnotation().accept(this)
+                : null;
+
+            return result;
         }
 
         private visitIndexSignature(node: IndexSignatureSyntax): any {
