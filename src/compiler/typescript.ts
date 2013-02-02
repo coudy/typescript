@@ -63,6 +63,7 @@
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
+///<reference path='SyntaxTreeToAstWalker.ts' />
 
 module TypeScript {
 
@@ -316,6 +317,9 @@ module TypeScript {
                 if (this.settings.useFidelity) {
                     var text = new TypeScript.SourceSimpleText(sourceText);
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
+
+                    var script2 = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, this.units.length);
+
                     this.syntaxTrees.push(syntaxTree);
                 }
 

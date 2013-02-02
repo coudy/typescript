@@ -17,7 +17,7 @@ class SyntaxInformationMap extends SyntaxWalker {
     private _currentPosition = 0;
     private _elementToParent = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
-    private _parentStack: ISyntaxElement[] = [];
+    private _parentStack: SyntaxNode[] = [];
 
     constructor() {
         super();
@@ -36,24 +36,6 @@ class SyntaxInformationMap extends SyntaxWalker {
         
         this._parentStack.push(node);
         super.visitNode(node);
-        this._parentStack.pop();
-    }
-
-    public visitList(list: ISyntaxList): void {
-        this._elementToParent.add(list, ArrayUtilities.last(this._parentStack));
-        this.elementToPosition.add(list, this._currentPosition);
-
-        this._parentStack.push(list);
-        super.visitList(list);
-        this._parentStack.pop();
-    }
-
-    public visitSeparatedList(list: ISeparatedSyntaxList): void {
-        this._elementToParent.add(list, ArrayUtilities.last(this._parentStack));
-        this.elementToPosition.add(list, this._currentPosition);
-
-        this._parentStack.push(list);
-        super.visitSeparatedList(list);
         this._parentStack.pop();
     }
 
@@ -77,7 +59,7 @@ class SyntaxInformationMap extends SyntaxWalker {
         this.tokenToInformation.add(token, tokenInformation);
     }
 
-    public parent(element: ISyntaxElement): ISyntaxElement {
+    public parent(element: ISyntaxElement): SyntaxNode {
         return this._elementToParent.get(element);
     }
 

@@ -4,15 +4,23 @@
 /// <reference path='ast.ts' />
 
 module TypeScript {
-    class SyntaxTreeToAstWalker implements ISyntaxVisitor {
-        private position: number = 0;
+    export class SyntaxTreeToAstWalker implements ISyntaxVisitor {
         private nestingLevel = 0;
 
         private varLists: ASTList[] = [];
         private scopeLists: ASTList[] = [];
         private staticsLists: ASTList[] = [];
 
-        private syntaxInformationMap: SyntaxInformationMap = null;
+        constructor(private syntaxInformationMap: SyntaxInformationMap,
+                    private fileName: string,
+                    private unitIndex: number) {
+        }
+
+        public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): AST {
+            var map = SyntaxInformationMap.create(sourceUnit);
+            var visitor = new SyntaxTreeToAstWalker(map, fileName, unitIndex);
+            return sourceUnit.accept(visitor);
+        }
 
         private start(element: ISyntaxElement): number {
             return this.syntaxInformationMap.start(element);
@@ -165,8 +173,56 @@ module TypeScript {
             return result;
         }
 
-        private visitSourceUnit(node: SourceUnitSyntax): any {
-            throw Errors.notYetImplemented();
+        private hasTopLevelImportOrExport(node: SourceUnitSyntax): bool {
+            // TODO: implement this.
+            return false;
+        }
+
+        private visitSourceUnit(node: SourceUnitSyntax): Script {
+            var members;
+            this.pushDeclLists();
+
+            var isParsingDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
+
+            var bod = this.visitSyntaxList(node.moduleElements());
+
+            var topLevelMod: ModuleDeclaration = null;
+            if (moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
+                var correctedFileName = switchToForwardSlashes(this.fileName);
+                var id: Identifier = new Identifier(correctedFileName);
+                topLevelMod = new ModuleDeclaration(id, bod, this.topVarList(), null);
+                this.setSpan(topLevelMod, node);
+
+                topLevelMod.modFlags |= ModuleFlags.IsDynamic;
+                topLevelMod.modFlags |= ModuleFlags.IsWholeFile;
+                topLevelMod.modFlags |= ModuleFlags.Exported;
+
+                if (isParsingDeclareFile) {
+                    topLevelMod.modFlags |= ModuleFlags.Ambient;
+                }
+
+                topLevelMod.prettyName = getPrettyName(correctedFileName);
+                //topLevelMod.containsUnicodeChar = this.scanner.seenUnicodeChar;
+                //topLevelMod.containsUnicodeCharInComment = this.scanner.seenUnicodeCharInComment;
+
+                // topLevelMod.amdDependencies = this.amdDependencies;
+                
+                bod = new ASTList();
+                this.setSpan(bod, node);
+                bod.append(topLevelMod);
+            }
+
+            var result = new Script(this.topVarList(), this.topScopeList());
+            this.setSpan(result, node);
+
+            this.popDeclLists();
+
+            result.bod = bod;
+            result.locationInfo = new LocationInfo(this.fileName, null, this.unitIndex);
+            result.topLevelMod = topLevelMod;
+            result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
+
+            return result;
         }
 
         private visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
@@ -194,6 +250,8 @@ module TypeScript {
         }
 
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
+            this.pushDeclLists();
+            this.popDeclLists();
             throw Errors.notYetImplemented();
         }
 
@@ -209,6 +267,7 @@ module TypeScript {
 
             var members = new ASTList();
             members.minChar = membersMinChar;
+
             var mapDecl = new VarDecl(new Identifier("_map"), 0);
             mapDecl.varFlags |= VarFlags.Exported;
             mapDecl.varFlags |= VarFlags.Private;
@@ -300,7 +359,7 @@ module TypeScript {
             endingToken.limChar = this.end(enumDeclaration.closeBraceToken());
 
             members.limChar = endingToken.limChar;
-            var modDecl = new ModuleDeclaration(name, members, new ASTList(), endingToken);
+            var modDecl = new ModuleDeclaration(name, members, this.topVarList(), endingToken);
             modDecl.modFlags |= ModuleFlags.IsEnum;
             this.popDeclLists();
 
@@ -369,7 +428,10 @@ module TypeScript {
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VarDecl {
             var parent = this.syntaxInformationMap.parent(node);
-            var index = parent.isSeparatedList() ? this.indexOfNonSeparator(<ISeparatedSyntaxList>parent, node) : 0;
+            var index = 0;
+            if (parent.kind() === SyntaxKind.VariableDeclaration) {
+                index = this.indexOfNonSeparator((<VariableDeclarationSyntax>parent).variableDeclarators(), node);
+            }
 
             var result = new VarDecl(this.identifierFromToken(node.identifier()), index);
             this.setSpan(result, node);
