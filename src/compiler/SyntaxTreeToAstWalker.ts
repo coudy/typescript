@@ -256,7 +256,26 @@ module TypeScript {
         }
 
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+            var name = this.identifierFromToken(node.functionSignature().identifier());
+            var parameters = node.functionSignature().callSignature().parameterList().accept(this);
+
+            var returnType = node.functionSignature().callSignature().typeAnnotation()
+                ? node.functionSignature().callSignature().typeAnnotation().accept(this)
+                : null;
+
+            this.pushDeclLists();
+
+            var bod = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var funcDecl = new FuncDecl(name, bod, false, parameters, this.topVarList(),
+                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(funcDecl, node);
+
+            this.popDeclLists();
+
+            var scopeList = this.topScopeList();
+            scopeList.append(funcDecl);
+
+            return funcDecl;
         }
 
         private visitEnumDeclaration(enumDeclaration: EnumDeclarationSyntax): ModuleDeclaration {
@@ -707,7 +726,7 @@ module TypeScript {
         }
 
         private visitCallSignature(node: CallSignatureSyntax): any {
-            throw Errors.notYetImplemented();
+            throw Errors.invalidOperation();
         }
 
         private visitTypeParameterList(node: TypeParameterListSyntax): any {
