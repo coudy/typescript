@@ -238,15 +238,44 @@ module TypeScript {
         }
 
         private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+            var name = this.identifierFromToken(node.identifier());
+            var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : null;
+            var members = this.visitSeparatedSyntaxList(node.body().typeMembers());
+
+            var result = new InterfaceDeclaration(name, members, extendsList, null);
+            this.setSpan(result, node);
+
+            //if (node.publicOrPrivateKeyword()) {
+            //    result.varFlags |= VarFlags.Private;
+            //}
+            //if (hasFlag(modifiers, Modifiers.Public)) {
+            //    result.varFlags |= VarFlags.Public;
+            //}
+            if (node.exportKeyword()) {
+                result.varFlags |= VarFlags.Exported;
+            }
+
+            return result;
         }
 
-        private visitExtendsClause(node: ExtendsClauseSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitExtendsClause(node: ExtendsClauseSyntax): ASTList {
+            var result = new ASTList();
+
+            for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
+                result.append(this.visitType(node.typNames().nonSeparatorAt(i)));
+            }
+
+            return result;
         }
 
-        private visitImplementsClause(node: ImplementsClauseSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitImplementsClause(node: ImplementsClauseSyntax): ASTList {
+            var result = new ASTList();
+
+            for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
+                result.append(this.visitType(node.typesNames().nonSeparatorAt(i)));
+            }
+
+            return result;
         }
 
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
