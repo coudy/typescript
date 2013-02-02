@@ -2088,7 +2088,7 @@ module TypeScript {
                 extendsList.minChar = this.scanner.startPos;
                 this.parseBaseList(extendsList, implementsList, errorRecoverySet, /*isClass:*/ false);
             }
-
+ 
             var membersMinChar = this.scanner.startPos;
             this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.TypeScriptS);
             var members = new ASTList();

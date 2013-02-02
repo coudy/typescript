@@ -307,7 +307,7 @@ module TypeScript {
                 this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
-                
+
                 var typeCollectionStart = new Date().getTime();
                 this.typeChecker.collectTypes(script);
                 this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;

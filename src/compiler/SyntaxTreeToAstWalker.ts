@@ -165,6 +165,15 @@ module TypeScript {
             else if (token.kind() === SyntaxKind.NullKeyword) {
                 result = new AST(NodeType.Null);
             }
+            else if (token.kind() === SyntaxKind.StringLiteral) {
+                result = new StringLiteral(token.text());
+            }
+            else if (token.kind() === SyntaxKind.RegularExpressionLiteral) {
+                result = new RegexLiteral(token.text());
+            }
+            else if (token.kind() === SyntaxKind.NumericLiteral) {
+                result = new NumberLiteral(token.text(), false);
+            }
             else {
                 result = this.identifierFromToken(token);
             }
@@ -262,7 +271,7 @@ module TypeScript {
             var result = new ASTList();
 
             for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
-                result.append(this.visitType(node.typNames().nonSeparatorAt(i)));
+                result.append(this.visitType(node.typeNames().nonSeparatorAt(i)));
             }
 
             return result;
@@ -272,7 +281,7 @@ module TypeScript {
             var result = new ASTList();
 
             for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
-                result.append(this.visitType(node.typesNames().nonSeparatorAt(i)));
+                result.append(this.visitType(node.typeNames().nonSeparatorAt(i)));
             }
 
             return result;
@@ -747,7 +756,20 @@ module TypeScript {
         }
 
         private visitPropertySignature(node: PropertySignatureSyntax): any {
-            throw Errors.notYetImplemented();
+            var name = this.identifierFromToken(node.identifier());
+            if (node.questionToken()) {
+                name.flags |= ASTFlags.OptionalName;
+            }
+
+            var result = new VarDecl(name, 0);
+            this.setSpan(result, node);
+
+            if (node.typeAnnotation()) {
+                result.typeExpr = node.typeAnnotation().accept(this);
+            }
+
+            result.varFlags |= VarFlags.Property;
+            return result;
         }
 
         private visitParameterList(node: ParameterListSyntax): ASTList {

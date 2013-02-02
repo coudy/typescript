@@ -774,7 +774,7 @@ module TypeScript {
     }
 
     export class NumberLiteral extends Expression {
-        constructor (public value: number, public hasEmptyFraction?: bool) {
+        constructor (public value: any, public hasEmptyFraction?: bool) {
             super(NodeType.NumberLit);
         }
 
