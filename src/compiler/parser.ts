@@ -2994,24 +2994,8 @@ module TypeScript {
                                        tokenInfo.unopPrecedence, allowIn,
                                        TypeContext.NoTypes);
 
-                // fold unary +- into constants
-                if ((tokenInfo.unopNodeType == NodeType.Pos) &&
-                    (tempExpr.nodeType == NodeType.NumberLit)) {
-                    ast = tempExpr;
-                }
-                else if ((tokenInfo.unopNodeType == NodeType.Neg) &&
-                         (tempExpr.nodeType == NodeType.NumberLit)) {
-                    var numLit = <NumberLiteral>tempExpr;
-                    numLit.value = (-numLit.value);
-                    if (numLit.value == 0) {
-                        numLit.isNegativeZero = true;
-                    }
-                    ast = tempExpr;
-                }
-                else {
-                    ast = new UnaryExpression(tokenInfo.unopNodeType, tempExpr);
-                    ast.limChar = tempExpr.limChar;
-                }
+                ast = new UnaryExpression(tokenInfo.unopNodeType, tempExpr);
+                ast.limChar = tempExpr.limChar;
                 ast.minChar = minChar;
             }
             else {
