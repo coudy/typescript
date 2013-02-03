@@ -288,7 +288,12 @@ module TypeScript {
             var result = new ASTList();
 
             for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
-                result.append(this.visitType(node.typeNames().nonSeparatorAt(i)));
+                var type = this.visitType(node.typeNames().nonSeparatorAt(i));
+                if (type.nodeType === NodeType.TypeRef) {
+                    type = (<TypeReference>type).term;
+                }
+
+                result.append(type);
             }
 
             return result;
@@ -298,9 +303,14 @@ module TypeScript {
             var result = new ASTList();
 
             for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
-                result.append(this.visitType(node.typeNames().nonSeparatorAt(i)));
-            }
+                var type = this.visitType(node.typeNames().nonSeparatorAt(i));
+                if (type.nodeType === NodeType.TypeRef) {
+                    type = (<TypeReference>type).term;
+                }
 
+                result.append(type);
+            }
+            
             return result;
         }
 
@@ -403,6 +413,8 @@ module TypeScript {
 
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
+
+            funcDecl.returnTypeAnnotation = returnType;
 
             return funcDecl;
         }
@@ -574,6 +586,8 @@ module TypeScript {
             var result = new VarDecl(this.identifierFromToken(node.identifier()), 0);
             this.setSpan(result, node);
 
+            this.topVarList().append(result);
+
             if (node.equalsValueClause()) {
                 result.init = node.equalsValueClause().accept(this);
             }
@@ -659,7 +673,7 @@ module TypeScript {
             throw Errors.notYetImplemented();
         }
 
-        private visitFunctionType(node: FunctionTypeSyntax): FuncDecl {
+        private visitFunctionType(node: FunctionTypeSyntax): TypeReference {
             var parameters = node.parameterList().accept(this);
             var result = new FuncDecl(null, null, false, parameters, null, null, null, NodeType.FuncDecl);
             this.setSpan(result, node);
@@ -668,17 +682,23 @@ module TypeScript {
             // funcDecl.variableArgList = variableArgList;
             result.fncFlags |= FncFlags.Signature;
 
-            return result;
+            var typeRef = new TypeReference(result, 0);
+            this.setSpan(typeRef, node);
+
+            return typeRef;
         }
 
-        private visitObjectType(node: ObjectTypeSyntax): InterfaceDeclaration {
+        private visitObjectType(node: ObjectTypeSyntax): TypeReference {
             var result = new InterfaceDeclaration(
                 new Identifier("_anonymous"),
                 this.visitSeparatedSyntaxList(node.typeMembers()),
                 null, null);
             this.setSpan(result, node);
 
-            return result;
+            var typeRef = new TypeReference(result, 0);
+            this.setSpan(typeRef, node);
+
+            return typeRef;
         }
 
         private visitArrayType(node: ArrayTypeSyntax): TypeReference {
@@ -735,7 +755,7 @@ module TypeScript {
             }
 
             if (node.typeAnnotation()) {
-                result.type = node.typeAnnotation().accept(this);
+                result.typeExpr = node.typeAnnotation().accept(this);
             }
             
             return result;
@@ -858,6 +878,9 @@ module TypeScript {
             result.hint = "_construct";
             result.fncFlags |= FncFlags.ConstructMember;
 
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
+
             return result;
         }
 
@@ -875,6 +898,9 @@ module TypeScript {
             result.returnTypeAnnotation = node.callSignature().typeAnnotation()
                 ? node.callSignature().typeAnnotation().accept(this)
                 : null;
+
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
 
             return result;
         }
@@ -894,6 +920,9 @@ module TypeScript {
                 : null;
 
             result.fncFlags |= FncFlags.IndexerMember;
+
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
 
             return result;
         }
@@ -931,6 +960,9 @@ module TypeScript {
 
             result.hint = "_call";
             result.fncFlags |= FncFlags.CallMember;
+
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
 
             return result;
         }

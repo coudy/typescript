@@ -15,8 +15,7 @@
 
 ///<reference path='typescript.ts' />
 
-module TypeScript {
-
+module TypeScript { 
     export enum TypeContext {
         NoTypes = 0,
         ArraySuffix = 1,
@@ -809,7 +808,7 @@ module TypeScript {
                     }
                 }
             }
-            else { 
+            else {
                 if (tail) {
                     return this.parseTypeReferenceTail(errorRecoverySet, minChar, term);
                 }
@@ -859,7 +858,7 @@ module TypeScript {
                     else {
                         isConstructorMember = true;
                         // fall through...
-                    }
+                    } 
 
                 case TokenID.OpenParen: {
                     // ( formals ) => type
@@ -1521,7 +1520,7 @@ module TypeScript {
                     baseName = <Identifier>this.parseNamedType(errorRecoverySet | ErrorRecoverySet.LCurly,
                                             minChar, baseName, false);
                 }
-                else {
+                else { 
                     this.reportParseError("Expected base name");
                     if (this.errorRecovery) {
                         baseName = new MissingIdentifier();
@@ -3734,6 +3733,7 @@ module TypeScript {
                         if (modifiers != Modifiers.None) {
                             this.reportParseError("syntax error: for statement does not take modifiers");
                         }
+
                         minChar = this.scanner.startPos;
                         this.checkNextToken(TokenID.OpenParen, errorRecoverySet | ErrorRecoverySet.ExprStart | ErrorRecoverySet.Var);
                         forInOk = true;

@@ -366,7 +366,8 @@ module TypeScript {
                 if (name === "preComments" ||
                     name === "postComments" ||
                     name === "docComments" ||
-                    name === "sym") {
+                    name === "sym" ||
+                    name === "lineMap") {
                     continue;
                 }
 
