@@ -604,13 +604,19 @@ module TypeScript {
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VarDecl {
-            var result = new VarDecl(this.identifierFromToken(node.identifier()), 0);
+            var name = this.identifierFromToken(node.identifier());
+            var result = new VarDecl(name, 0);
             this.setSpan(result, node);
 
             this.topVarList().append(result);
 
             if (node.equalsValueClause()) {
                 result.init = node.equalsValueClause().accept(this);
+
+                if (result.init.nodeType == NodeType.FuncDecl) {
+                    var funcDecl = <FuncDecl>result.init;
+                    funcDecl.hint = name.actualText;
+                }
             }
 
             if (node.typeAnnotation()) {

@@ -2435,12 +2435,14 @@ module TypeScript {
                     if (hasFlag(varDecl.varFlags, VarFlags.Ambient)) {
                         this.reportParseError("Ambient variable can not have an initializer");
                     }
+
                     // TODO: note assignment for language service
                     this.currentToken = this.scanner.scan();
                     varDecl.init = this.parseExpr(ErrorRecoverySet.Comma | errorRecoverySet,
                                            OperatorPrecedence.Comma, allowIn,
                                            TypeContext.NoTypes);
-                    varDecl.limChar = varDecl.init.limChar;
+                    varDecl.limChar = varDecl.init.limChar; 
+
                     if (varDecl.init.nodeType == NodeType.FuncDecl) {
                         // TODO: use 'as' operator when can bootstrap
                         var funcDecl = <FuncDecl>varDecl.init;
