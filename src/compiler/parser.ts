@@ -946,7 +946,7 @@ module TypeScript {
             minChar: number,
             requiresSignature: bool,
             parentModifiers: Modifiers) {
-
+             
             this.pushDeclLists();
             // start new statement stack
             var svStmtStack = this.statementInfoStack;
@@ -989,7 +989,7 @@ module TypeScript {
                     wasShorthand = true;
                     this.currentToken = this.scanner.scan();
                 }
-
+             
                 if (wasShorthand && this.currentToken.tokenId != TokenID.OpenBrace) {
                     var retExpr = this.parseExpr(errorRecoverySet | ErrorRecoverySet.SColon,
                                             OperatorPrecedence.Assignment, true,
@@ -1895,7 +1895,7 @@ module TypeScript {
                     }
                 }
             }
-
+             
             if (this.currentToken.tokenId == TokenID.Equals) {
                 if (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)) {
                     this.reportParseError("context does not permit variable initializer");
@@ -2283,7 +2283,7 @@ module TypeScript {
                         funcDecl.hint = "set" + funcDecl.name.actualText;
                     }
                     funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
-
+ 
                     if (modifiers & Modifiers.Ambient) {
                         this.reportParseError("Property accessors may not be declared in ambient types");
                     }

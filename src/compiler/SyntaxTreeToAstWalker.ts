@@ -242,8 +242,23 @@ module TypeScript {
             throw Errors.notYetImplemented();
         }
 
-        private visitClassDeclaration(node: ClassDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
+            var name = this.identifierFromToken(node.identifier()); 
+
+            var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : null;
+            var implementsList = node.implementsClause() ? node.implementsClause().accept(this) : null;
+            var members = this.visitSyntaxList(node.classElements());
+
+            var result = new ClassDeclaration(name, members, extendsList, implementsList);
+            this.setSpan(result, node);
+
+            if (node.exportKeyword()) {
+                result.varFlags |= VarFlags.Exported;
+            }
+
+            result.varFlags |= VarFlags.Class;
+
+            return result;
         }
 
         private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
@@ -287,10 +302,84 @@ module TypeScript {
             return result;
         }
 
-        private visitModuleDeclaration(node: ModuleDeclarationSyntax): any {
+        private getModuleNamesInReverse(node: ModuleDeclarationSyntax): ISyntaxToken[]{
+            var result: ISyntaxToken[] = [];
+
+            if (node.stringLiteral() !== null) {
+                result.push(node.stringLiteral());
+            }
+            else {
+                var current = node.moduleName();
+                while (current.kind() === SyntaxKind.QualifiedName) {
+                    result.push((<QualifiedNameSyntax>current).right());
+                    current = (<QualifiedNameSyntax>current).left();
+                }
+
+                result.push(<ISyntaxToken>current);
+            }
+
+            return result;
+        }
+
+        private spanFromToken(token: ISyntaxToken): ASTSpan {
+            var result = new ASTSpan();
+            result.minChar = this.start(token);
+            result.limChar = this.end(token);
+            return result;
+        }
+
+        private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleDeclaration {
             this.pushDeclLists();
-            this.popDeclLists();
-            throw Errors.notYetImplemented();
+
+            var members = this.visitSyntaxList(node.moduleElements());
+            var namesInReverse = this.getModuleNamesInReverse(node);
+
+            var moduleDecl: ModuleDeclaration = null;
+            for (var i = 0; i < namesInReverse.length; i++) {
+                var innerName = this.identifierFromToken(namesInReverse[i]);
+
+                var moduleDecl = new ModuleDeclaration(innerName, members, this.topVarList(), this.spanFromToken(node.closeBraceToken()));
+                this.setSpan(moduleDecl, node);
+                //innerDecl.preComments = preComments;
+
+                //if (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)) {
+                //    innerDecl.modFlags |= ModuleFlags.Ambient;
+                //}
+
+                moduleDecl.modFlags |= ModuleFlags.Exported;
+
+                // REVIEW: will also possibly need to re-parent comments as well
+
+                if (i === 0) {
+                    this.popDeclLists();
+                }
+
+                members = new ASTList();
+                members.append(moduleDecl);
+            }
+
+            //if (this.parsingDeclareFile || svAmbient || hasFlag(modifiers, Modifiers.Ambient)) {
+            //    moduleDecl.modFlags |= ModuleFlags.Ambient;
+            //}
+
+            //if (hasFlag(modifiers, Modifiers.Exported)) {
+            //    moduleDecl.modFlags |= ModuleFlags.Exported;
+            //} else if (svAmbient) {
+            //    this.reportAmbientElementNotExported(name);
+            //}
+
+            //if (isDynamicMod) {
+            //    moduleDecl.modFlags |= ModuleFlags.IsDynamic;
+            //}
+
+            //this.ambientModule = svAmbient;
+
+            //this.topLevel = svTopLevel;
+            //moduleDecl.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
+            //moduleDecl.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
+            //moduleDecl.limChar = moduleBody.limChar;
+
+            return moduleDecl;
         }
 
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
@@ -570,8 +659,16 @@ module TypeScript {
             throw Errors.notYetImplemented();
         }
 
-        private visitFunctionType(node: FunctionTypeSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitFunctionType(node: FunctionTypeSyntax): FuncDecl {
+            var parameters = node.parameterList().accept(this);
+            var result = new FuncDecl(null, null, false, parameters, null, null, null, NodeType.FuncDecl);
+            this.setSpan(result, node);
+            
+            result.returnTypeAnnotation = node.type() ? this.visitType(node.type()) : null;
+            // funcDecl.variableArgList = variableArgList;
+            result.fncFlags |= FncFlags.Signature;
+
+            return result;
         }
 
         private visitObjectType(node: ObjectTypeSyntax): InterfaceDeclaration {
@@ -682,7 +779,7 @@ module TypeScript {
         private getBinaryExpressionNodeType(node: BinaryExpressionSyntax): NodeType {
             switch (node.kind()) {
                 case SyntaxKind.CommaExpression: return NodeType.Comma;
-                case SyntaxKind.EqualsExpression: return NodeType.Asg;
+                case SyntaxKind.AssignmentExpression: return NodeType.Asg;
                 case SyntaxKind.AddAssignmentExpression: return NodeType.AsgAdd;
                 case SyntaxKind.SubtractAssignmentExpression: return NodeType.AsgSub;
                 case SyntaxKind.MultiplyAssignmentExpression: return NodeType.AsgMul;
@@ -806,7 +903,19 @@ module TypeScript {
         }
 
         private visitCallSignature(node: CallSignatureSyntax): any {
-            throw Errors.invalidOperation();
+            var parameters = node.parameterList().accept(this);
+
+            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            result.returnTypeAnnotation = node.typeAnnotation()
+                ? node.typeAnnotation().accept(this)
+                : null;
+
+            result.hint = "_call";
+            result.fncFlags |= FncFlags.CallMember;
+
+            return result;
         }
 
         private visitTypeParameterList(node: TypeParameterListSyntax): any {
@@ -847,11 +956,95 @@ module TypeScript {
         }
 
         private visitConstructorDeclaration(node: ConstructorDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+            var parameters = node.parameterList().accept(this);
+
+            this.pushDeclLists();
+
+            var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ true, parameters, this.topVarList(),
+                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            this.popDeclLists();
+
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
+
+            // constructorFuncDecl.preComments = preComments;
+            //if (requiresSignature && !isAmbient) {
+            //    constructorFuncDecl.isOverload = true;
+            //}
+
+            // constructorFuncDecl.variableArgList = variableArgList;
+            // this.currentClassDecl = null;
+            // constructorFuncDecl.returnTypeAnnotation = this.convertToTypeReference(this.currentClassDefinition.name);
+            // constructorFuncDecl.classDecl = this.currentClassDefinition;
+
+            //if (isAmbient) {
+            //    constructorFuncDecl.fncFlags |= FncFlags.Ambient;
+            //}
+
+            if (node.semicolonToken()) {
+                result.fncFlags |= FncFlags.Signature;
+            }
+
+            //if (this.currentClassDefinition.constructorDecl) {
+            //    if (!isAmbient && !this.currentClassDefinition.constructorDecl.isSignature() && !constructorFuncDecl.isSignature()) {
+            //        this.reportParseError("Duplicate constructor definition");
+            //    }
+            //}
+
+            //if (isAmbient || !constructorFuncDecl.isSignature()) {
+            //    this.currentClassDefinition.constructorDecl = constructorFuncDecl;
+            //}
+
+            //// REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
+            //constructorFuncDecl.fncFlags |= FncFlags.ClassMethod;
+
+            //this.currentClassDefinition.members.members[this.currentClassDefinition.members.members.length] = constructorFuncDecl;
+
+            //this.parsingClassConstructorDefinition = false;
+
+            return result;
         }
 
         private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+            var parameters = node.functionSignature().callSignature().parameterList().accept(this);
+
+            this.pushDeclLists();
+
+            var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            this.popDeclLists();
+
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
+
+            result.returnTypeAnnotation = node.functionSignature().callSignature().typeAnnotation()
+                ? node.functionSignature().callSignature().typeAnnotation().accept(this)
+                : null;
+
+            if (node.semicolonToken()) {
+                result.fncFlags |= FncFlags.Signature;
+            }
+
+            if (node.publicOrPrivateKeyword()) {
+                if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PrivateKeyword) {
+                    result.fncFlags |= FncFlags.Private;
+                }
+                else {
+                    result.fncFlags |= FncFlags.Public;
+                }
+            }
+
+            if (node.staticKeyword()) {
+                result.fncFlags |= FncFlags.Static;
+            }
+
+            return result;
         }
 
         private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): any {
@@ -862,8 +1055,42 @@ module TypeScript {
             throw Errors.notYetImplemented();
         }
 
-        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VarDecl {
+            var name = this.identifierFromToken(node.variableDeclarator().identifier());
+            var varDecl = new VarDecl(name, 0);
+            this.setSpan(varDecl, node.variableDeclarator());
+
+            if (node.variableDeclarator().typeAnnotation()) {
+                varDecl.typeExpr = node.variableDeclarator().typeAnnotation().accept(this);
+            }
+
+            if (node.variableDeclarator().equalsValueClause()) {
+                varDecl.init = node.variableDeclarator().equalsValueClause().accept(this);
+            }
+
+            if (node.staticKeyword()) {
+                varDecl.varFlags |= VarFlags.Static;
+            }
+
+            if (node.publicOrPrivateKeyword()) {
+                if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PrivateKeyword) {
+                    varDecl.varFlags |= VarFlags.Private;
+                }
+                else {
+                    varDecl.varFlags |= VarFlags.Public;
+                }
+            }
+
+            varDecl.varFlags |= VarFlags.Property;
+
+            // this.currentClassDefinition.knownMemberNames[text.actualText] = true;
+
+            //if (!isDeclaredInConstructor) {
+            //    this.currentClassDefinition.members.members[this.currentClassDefinition.members.members.length] = varDecl;
+            //}
+
+            // varDecl.postComments = this.parseComments();
+            return varDecl;
         }
 
         private visitThrowStatement(node: ThrowStatementSyntax): UnaryExpression {
