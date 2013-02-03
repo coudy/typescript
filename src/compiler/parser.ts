@@ -809,7 +809,7 @@ module TypeScript {
                     }
                 }
             }
-            else {
+            else { 
                 if (tail) {
                     return this.parseTypeReferenceTail(errorRecoverySet, minChar, term);
                 }
@@ -946,7 +946,7 @@ module TypeScript {
             minChar: number,
             requiresSignature: bool,
             parentModifiers: Modifiers) {
-             
+
             this.pushDeclLists();
             // start new statement stack
             var svStmtStack = this.statementInfoStack;
@@ -989,7 +989,7 @@ module TypeScript {
                     wasShorthand = true;
                     this.currentToken = this.scanner.scan();
                 }
-             
+
                 if (wasShorthand && this.currentToken.tokenId != TokenID.OpenBrace) {
                     var retExpr = this.parseExpr(errorRecoverySet | ErrorRecoverySet.SColon,
                                             OperatorPrecedence.Assignment, true,
@@ -1895,7 +1895,7 @@ module TypeScript {
                     }
                 }
             }
-             
+
             if (this.currentToken.tokenId == TokenID.Equals) {
                 if (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)) {
                     this.reportParseError("context does not permit variable initializer");
@@ -1987,7 +1987,7 @@ module TypeScript {
             else {
                 funcDecl.fncFlags |= FncFlags.Public;
             }
-             
+
             if (isStatic) {
                 funcDecl.fncFlags |= FncFlags.Static;
             }
@@ -2088,7 +2088,7 @@ module TypeScript {
                 extendsList.minChar = this.scanner.startPos;
                 this.parseBaseList(extendsList, implementsList, errorRecoverySet, /*isClass:*/ false);
             }
- 
+
             var membersMinChar = this.scanner.startPos;
             this.checkCurrentToken(TokenID.OpenBrace, errorRecoverySet | ErrorRecoverySet.TypeScriptS);
             var members = new ASTList();
@@ -2283,7 +2283,7 @@ module TypeScript {
                         funcDecl.hint = "set" + funcDecl.name.actualText;
                     }
                     funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
- 
+
                     if (modifiers & Modifiers.Ambient) {
                         this.reportParseError("Property accessors may not be declared in ambient types");
                     }
@@ -2373,7 +2373,7 @@ module TypeScript {
             var varDecl: VarDecl = null;
             var declList: ASTList = null;
             var multivar = false;
-             
+
             this.currentToken = this.scanner.scan();
             var varDeclPreComments = this.parseComments();
 
@@ -2646,7 +2646,7 @@ module TypeScript {
             elements.minChar = minChar;
             return elements;
         }
- 
+
         private parseArrayList(errorRecoverySet: ErrorRecoverySet): ASTList {
             var elements: ASTList = null;
             if (this.currentToken.tokenId == TokenID.CloseBracket) {
@@ -2763,7 +2763,7 @@ module TypeScript {
                     ast.limChar = limChar;
                     break;
             }
-             
+
             if (ast == null) {
                 if ((this.currentToken.tokenId == TokenID.Identifier) || convertTokToID(this.currentToken, this.strictMode)) {
 

@@ -307,12 +307,6 @@ module TypeScript {
                 this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
-
-                var typeCollectionStart = new Date().getTime();
-                this.typeChecker.collectTypes(script);
-                this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
-                
-                this.scripts.append(script);
                 
                 if (this.settings.useFidelity) {
                     var text = new TypeScript.SourceSimpleText(sourceText);
@@ -325,6 +319,12 @@ module TypeScript {
                     }
                     this.syntaxTrees.push(syntaxTree);
                 }
+
+                var typeCollectionStart = new Date().getTime();
+                this.typeChecker.collectTypes(script);
+                this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
+
+                this.scripts.append(script);
 
                 return script
             });
@@ -339,6 +339,7 @@ module TypeScript {
                     name === "rightCurlyCount" ||
                     name === "flags" ||
                     name === "varFlags" ||
+                    name === "fncFlags" ||
                     name === "nestingLevel") {
                     continue;
                 }
@@ -364,7 +365,8 @@ module TypeScript {
             for (var name in obj1) {
                 if (name === "preComments" ||
                     name === "postComments" ||
-                    name === "docComments") {
+                    name === "docComments" ||
+                    name === "sym") {
                     continue;
                 }
 

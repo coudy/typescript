@@ -67,7 +67,7 @@ module TypeScript {
             var result = new ASTList();
             this.setSpan(result, list);
 
-            for (var i = 0, n = list.childCount() - 1; i < n; i++) {
+            for (var i = 0, n = list.childCount(); i < n; i++) {
                 result.append(list.childAt(i).accept(this));
             }
 
@@ -78,7 +78,7 @@ module TypeScript {
             var result = new ASTList();
             this.setSpan(result, list);
 
-            for (var i = 0, n = list.nonSeparatorCount() - 1; i < n; i++) {
+            for (var i = 0, n = list.nonSeparatorCount(); i < n; i++) {
                 result.append(list.nonSeparatorAt(i).accept(this));
             }
             
@@ -630,7 +630,7 @@ module TypeScript {
 
         private visitType(type: ITypeSyntax): AST {
             if (type.isToken()) {
-                return this.identifierFromToken(<ISyntaxToken>type);
+                return new TypeReference(this.identifierFromToken(<ISyntaxToken>type), 0);
             }
             else {
                 return type.accept(this);
@@ -638,8 +638,13 @@ module TypeScript {
         }
 
         private visitQualifiedName(node: QualifiedNameSyntax): BinaryExpression {
+            var left = this.visitType(node.left());
+            if (left.nodeType === NodeType.TypeRef) {
+                left = (<TypeReference>left).term;
+            }
+
             var result = new BinaryExpression(NodeType.Dot,
-                this.visitType(node.left()),
+                left,
                 this.identifierFromToken(node.right()));
             this.setSpan(result, node);
 
@@ -684,7 +689,12 @@ module TypeScript {
                 current = (<ArrayTypeSyntax>current).type();
             }
 
-            var result = new TypeReference(this.visitType(current), count);
+            var underlying = this.visitType(current);
+            if (underlying.nodeType === NodeType.TypeRef) {
+                underlying = (<TypeReference>underlying).term;
+            }
+
+            var result = new TypeReference(underlying, count);
             this.setSpan(result, node);
 
             return result;
