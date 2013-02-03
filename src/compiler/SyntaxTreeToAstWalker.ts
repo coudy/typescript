@@ -174,7 +174,7 @@ module TypeScript {
                 result = new RegexLiteral(token.text());
             }
             else if (token.kind() === SyntaxKind.NumericLiteral) {
-                result = new NumberLiteral(token.text(), false);
+                result = new NumberLiteral(parseInt(token.text()), false);
             }
             else {
                 result = this.identifierFromToken(token);
@@ -418,6 +418,10 @@ module TypeScript {
             this.pushDeclLists();
 
             var bod = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            if (bod) {
+                bod.append(new EndCode());
+            }
+
             var funcDecl = new FuncDecl(name, bod, false, parameters, this.topVarList(),
                 this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, node);
@@ -592,6 +596,10 @@ module TypeScript {
                 (<BoundDecl>variableDecls.members[i]).nestingLevel = i;
             }
 
+            if (variableDecls.members.length === 1) {
+                return variableDecls.members[0];
+            }
+
             return variableDecls;
         }
 
@@ -617,9 +625,22 @@ module TypeScript {
             return node.value().accept(this);
         }
 
+        private getUnaryExpressionNodeType(kind: SyntaxKind): NodeType {
+            switch (kind) {
+                case SyntaxKind.PlusExpression: return NodeType.Pos;
+                case SyntaxKind.NegateExpression: return NodeType.Neg;
+                case SyntaxKind.BitwiseNotExpression: return NodeType.Not;
+                case SyntaxKind.LogicalNotExpression: return NodeType.LogNot;
+                case SyntaxKind.PreIncrementExpression: return NodeType.IncPre;
+                case SyntaxKind.PreDecrementExpression: return NodeType.DecPre;
+                default:
+                    throw Errors.invalidOperation();
+            }
+        }
+
         private visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): UnaryExpression {
             var result = new UnaryExpression(
-                node.kind() === SyntaxKind.PreIncrementExpression ? NodeType.IncPre : NodeType.DecPre,
+                this.getUnaryExpressionNodeType(node.kind()),
                 node.operand().accept(this));
             this.setSpan(result, node);
 
@@ -1023,6 +1044,9 @@ module TypeScript {
             this.pushDeclLists();
 
             var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            if (statements) {
+                statements.append(new EndCode());
+            }
             var result = new FuncDecl(null, statements, /*isConstructor:*/ true, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
@@ -1075,6 +1099,9 @@ module TypeScript {
             this.pushDeclLists();
 
             var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            if (statements) {
+                statements.append(new EndCode());
+            }
             var result = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
@@ -1255,6 +1282,7 @@ module TypeScript {
 
             result.cond = node.condition() === null ? null : node.condition().accept(this);
             result.incr = node.incrementor() === null ? null : node.incrementor().accept(this);
+            result.body = node.statement().accept(this);
 
             return result;
         }
@@ -1308,8 +1336,16 @@ module TypeScript {
         }
 
         private visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
-            var result = new BinaryExpression(NodeType.Member, this.identifierFromToken(node.propertyName()), node.expression().accept(this));
+            var left = this.identifierFromToken(node.propertyName());
+            var right = node.expression().accept(this);
+
+            var result = new BinaryExpression(NodeType.Member, left, right);
             this.setSpan(result, node);
+
+            if (right.nodeType == NodeType.FuncDecl) {
+                var funcDecl = <FuncDecl>right;
+                funcDecl.hint = left.text;
+            }
 
             return result;
         }
@@ -1333,6 +1369,10 @@ module TypeScript {
             this.pushDeclLists();
 
             var bod = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            if (bod) {
+                bod.append(new EndCode());
+            }
+
             var funcDecl = new FuncDecl(name, bod, false, parameters, this.topVarList(),
                 this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, node);
@@ -1342,6 +1382,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
 
+            funcDecl.returnTypeAnnotation = returnType;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
 
             return funcDecl;

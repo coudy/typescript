@@ -2481,7 +2481,7 @@ module TypeScript {
             var elements = new ASTList();
             if (this.currentToken.tokenId == TokenID.CloseBrace) {
                 return elements;
-            }
+            } 
 
             var idHint: string = null;
             var memberName: AST = null;
@@ -2566,7 +2566,7 @@ module TypeScript {
                     memberName.flags |= ASTFlags.OptionalName;
                     this.currentToken = this.scanner.scan();
                 }
-
+                 
                 if (accessorPattern) {
                     var args = new ASTList();
                     this.parseFormalParameterList(errorRecoverySet | ErrorRecoverySet.RParen,
@@ -2826,7 +2826,7 @@ module TypeScript {
                             }
                             this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet);
                             ast.isParenthesized = true;
-                        }
+                        } 
 
                         break;
                     case TokenID.NumberLiteral: {
@@ -2996,7 +2996,7 @@ module TypeScript {
                 ast = new UnaryExpression(tokenInfo.unopNodeType, tempExpr);
                 ast.limChar = tempExpr.limChar;
                 ast.minChar = minChar;
-            }
+            } 
             else {
                 ast = this.parseTerm(ErrorRecoverySet.BinOp | ErrorRecoverySet.AddOp |
                               errorRecoverySet, true, typeContext, false);
@@ -3722,7 +3722,7 @@ module TypeScript {
                         this.checkNextToken(TokenID.OpenParen, errorRecoverySet | ErrorRecoverySet.ExprStart | ErrorRecoverySet.Var);
                         forInOk = true;
                         switch (this.currentToken.tokenId) {
-                            case TokenID.Var:
+                            case TokenID.Var: 
                                 temp = this.parseVariableDeclaration(errorRecoverySet | ErrorRecoverySet.SColon |
                                                   ErrorRecoverySet.In, Modifiers.None, false, false);
                                 break;
@@ -3792,6 +3792,7 @@ module TypeScript {
                                                        OperatorPrecedence.None, true,
                                                        TypeContext.NoTypes);
                             }
+
                             this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet | ErrorRecoverySet.LCurly);
                             this.pushStmt(forStmt, labelList);
                             forStmt.body = this.parseStatement(errorRecoverySet, allowedElements, parentModifiers);

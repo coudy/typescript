@@ -369,7 +369,8 @@ module TypeScript {
                     name === "postComments" ||
                     name === "docComments" ||
                     name === "sym" ||
-                    name === "lineMap") {
+                    name === "lineMap" ||
+                    name === "resolvedTarget") {
                     continue;
                 } 
 
