@@ -1987,7 +1987,7 @@ module TypeScript {
             else {
                 funcDecl.fncFlags |= FncFlags.Public;
             }
-
+             
             if (isStatic) {
                 funcDecl.fncFlags |= FncFlags.Static;
             }
@@ -2646,7 +2646,7 @@ module TypeScript {
             elements.minChar = minChar;
             return elements;
         }
-
+ 
         private parseArrayList(errorRecoverySet: ErrorRecoverySet): ASTList {
             var elements: ASTList = null;
             if (this.currentToken.tokenId == TokenID.CloseBracket) {

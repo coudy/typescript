@@ -17,17 +17,19 @@ module TypeScript {
         }
 
         public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): AST {
-            var map = SyntaxInformationMap.create(sourceUnit);
+            var map = null;// SyntaxInformationMap.create(sourceUnit);
             var visitor = new SyntaxTreeToAstWalker(map, fileName, unitIndex);
             return sourceUnit.accept(visitor);
         }
 
         private start(element: ISyntaxElement): number {
-            return this.syntaxInformationMap.start(element);
+            return 0;
+            // return this.syntaxInformationMap.start(element);
         }
 
         private end(element: ISyntaxElement): number {
-            return this.syntaxInformationMap.end(element);
+            return 0;
+            // return this.syntaxInformationMap.end(element);
         }
 
         private setSpan(span: ASTSpan, element: ISyntaxElement) {
@@ -550,7 +552,7 @@ module TypeScript {
             }
             else {
                 var result = new Block(
-                    this.visitSeparatedSyntaxList(node.variableDeclaration().variableDeclarators()),
+                    node.variableDeclaration().accept(this),
                     /*isStatementBlock:*/ false);
                 this.setSpan(result, node);
                 
@@ -558,28 +560,18 @@ module TypeScript {
             }
         }
 
-        private visitVariableDeclaration(node: VariableDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
-        }
-
-        private indexOfNonSeparator(list: ISeparatedSyntaxList, item: ISyntaxElement): number {
-            for (var i = 0, n = list.nonSeparatorCount(); i < n; i++) {
-                if (list.nonSeparatorAt(i) === item) {
-                    return i;
-                }
+        private visitVariableDeclaration(node: VariableDeclarationSyntax): AST {
+            var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators());
+            
+            for (var i = 0; i < variableDecls.members.length; i++) {
+                (<BoundDecl>variableDecls.members[i]).nestingLevel = i;
             }
 
-            throw Errors.invalidOperation();
+            return variableDecls;
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VarDecl {
-            var parent = this.syntaxInformationMap.parent(node);
-            var index = 0;
-            if (parent.kind() === SyntaxKind.VariableDeclaration) {
-                index = this.indexOfNonSeparator((<VariableDeclarationSyntax>parent).variableDeclarators(), node);
-            }
-
-            var result = new VarDecl(this.identifierFromToken(node.identifier()), index);
+            var result = new VarDecl(this.identifierFromToken(node.identifier()), 0);
             this.setSpan(result, node);
 
             if (node.equalsValueClause()) {
@@ -1242,8 +1234,11 @@ module TypeScript {
             return result;
         }
 
-        private visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
+            var result = new BinaryExpression(NodeType.Member, this.identifierFromToken(node.propertyName()), node.expression().accept(this));
+            this.setSpan(result, node);
+
+            return result;
         }
 
         private visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): any {
@@ -1255,7 +1250,28 @@ module TypeScript {
         }
 
         private visitFunctionExpression(node: FunctionExpressionSyntax): any {
-            throw Errors.notYetImplemented();
+            var name = node.identifier() === null ? null : this.identifierFromToken(node.identifier());
+            var parameters = node.callSignature().parameterList().accept(this);
+
+            var returnType = node.callSignature().typeAnnotation()
+                ? node.callSignature().typeAnnotation().accept(this)
+                : null;
+
+            this.pushDeclLists();
+
+            var bod = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var funcDecl = new FuncDecl(name, bod, false, parameters, this.topVarList(),
+                this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(funcDecl, node);
+
+            this.popDeclLists();
+
+            var scopeList = this.topScopeList();
+            scopeList.append(funcDecl);
+
+            funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
+
+            return funcDecl;
         }
 
         private visitEmptyStatement(node: EmptyStatementSyntax): AST {
