@@ -16,7 +16,7 @@ module TypeScript {
                     private unitIndex: number) {
         }
 
-        public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): AST {
+        public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): Script {
             var map = null;// SyntaxInformationMap.create(sourceUnit);
             var visitor = new SyntaxTreeToAstWalker(map, fileName, unitIndex);
             return sourceUnit.accept(visitor);

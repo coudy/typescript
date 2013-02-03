@@ -314,7 +314,9 @@ module TypeScript {
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
                     if (syntaxTree.diagnostics().length === 0) {
-                        var script2 = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                        var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                        script2.referencedFiles = referencedFiles;
+                        script2.isResident = keepResident;
                         TypeScriptCompiler.compareObjects(script, script2);
                     }
                      
