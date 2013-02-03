@@ -858,7 +858,7 @@ module TypeScript {
                     else {
                         isConstructorMember = true;
                         // fall through...
-                    } 
+                    }
 
                 case TokenID.OpenParen: {
                     // ( formals ) => type
@@ -1430,7 +1430,7 @@ module TypeScript {
             this.nestingLevel = prevNestingLevel;
             this.parsingClassConstructorDefinition = prevInConstr;
             funcDecl.preComments = preComments;
-            return funcDecl;
+            return funcDecl; 
         }
 
         private convertToTypeReference(ast: AST): TypeReference {

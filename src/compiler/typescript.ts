@@ -301,7 +301,8 @@ module TypeScript {
 
         public addSourceUnit(sourceText: ISourceText, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + filename + ", " + keepResident + ")", () => {
-                var script: Script = this.parser.parse(sourceText, filename, this.units.length, AllowedElements.Global);
+                var sharedIndex = this.units.length;
+                var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
                 script.referencedFiles = referencedFiles;
                 script.isResident = keepResident;
                 this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
@@ -313,10 +314,10 @@ module TypeScript {
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
                     if (syntaxTree.diagnostics().length === 0) {
-                        var script2 = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, this.units.length);
-
-                        this.compareObjects(script, script2);
+                        var script2 = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                        TypeScriptCompiler.compareObjects(script, script2);
                     }
+                     
                     this.syntaxTrees.push(syntaxTree);
                 }
 
@@ -330,7 +331,7 @@ module TypeScript {
             });
         }
 
-        private compareObjects(obj1: any, obj2: any): void {
+        private static compareObjects(obj1: any, obj2: any): void {
             for (var name in obj1) {
                 if (name === "limChar" ||
                     name === "minChar" ||
@@ -340,6 +341,7 @@ module TypeScript {
                     name === "flags" ||
                     name === "varFlags" ||
                     name === "fncFlags" ||
+                    name === "modFlags" ||
                     name === "nestingLevel") {
                     continue;
                 }
@@ -369,7 +371,7 @@ module TypeScript {
                     name === "sym" ||
                     name === "lineMap") {
                     continue;
-                }
+                } 
 
                 var value1 = obj1[name];
                 if (value1) {

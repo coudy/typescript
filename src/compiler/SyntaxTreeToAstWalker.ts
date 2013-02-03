@@ -260,6 +260,19 @@ module TypeScript {
 
             result.varFlags |= VarFlags.Class;
 
+            for (var i = 0; i < members.members.length; i++) {
+                var member = members.members[i];
+                if (member.nodeType === NodeType.FuncDecl) {
+                    var funcDecl = <FuncDecl>member;
+                    
+                    if (funcDecl.isConstructor) {
+                        funcDecl.name = name;
+                        funcDecl.returnTypeAnnotation = new TypeReference(name, 0);
+                        funcDecl.classDecl = result;
+                    }
+                }
+            }
+
             return result;
         }
 
@@ -1026,8 +1039,6 @@ module TypeScript {
 
             // constructorFuncDecl.variableArgList = variableArgList;
             // this.currentClassDecl = null;
-            // constructorFuncDecl.returnTypeAnnotation = this.convertToTypeReference(this.currentClassDefinition.name);
-            // constructorFuncDecl.classDecl = this.currentClassDefinition;
 
             //if (isAmbient) {
             //    constructorFuncDecl.fncFlags |= FncFlags.Ambient;
@@ -1052,18 +1063,19 @@ module TypeScript {
 
             //this.currentClassDefinition.members.members[this.currentClassDefinition.members.members.length] = constructorFuncDecl;
 
-            //this.parsingClassConstructorDefinition = false;
+            //this.parsingClasvisisConstructorDefinition = false;
 
             return result;
         }
 
-        private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): any {
+        private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FuncDecl {
+            var name = this.identifierFromToken(node.functionSignature().identifier());
             var parameters = node.functionSignature().callSignature().parameterList().accept(this);
 
             this.pushDeclLists();
 
             var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
@@ -1233,8 +1245,12 @@ module TypeScript {
         }
 
         private visitForStatement(node: ForStatementSyntax): ForStatement {
-            var result = new ForStatement(
-                node.variableDeclaration() === null ? node.initializer().accept(this) : node.variableDeclaration().accept(this));
+            var init = node.variableDeclaration() !== null
+                ? node.variableDeclaration().accept(this)
+                : node.initializer() !== null
+                    ? node.initializer().accept(this)
+                    : null;
+            var result = new ForStatement(init);
             this.setSpan(result, node);
 
             result.cond = node.condition() === null ? null : node.condition().accept(this);
