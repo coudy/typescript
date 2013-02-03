@@ -1336,6 +1336,7 @@ module TypeScript {
             if ((!this.style_funcInLoop) && this.inLoop()) {
                 this.reportParseStyleError("function declaration in loop");
             }
+
             if (!isMethod && !isStatic && !indexer && !lambdaArgContext) {
                 // past function keyword
                 this.currentToken = this.scanner.scan();
@@ -4231,7 +4232,6 @@ module TypeScript {
                                         (~(ErrorRecoverySet.Else | ErrorRecoverySet.RParen |
                                            ErrorRecoverySet.Catch | ErrorRecoverySet.Colon)),
                                         allowedElements, parentModifiers);
-
 
                 if (stmt) {
                     stmt.postComments = this.combineComments(stmt.postComments, this.parseCommentsForLine(this.scanner.prevLine));

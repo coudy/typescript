@@ -314,10 +314,20 @@ module TypeScript {
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
                     if (syntaxTree.diagnostics().length === 0) {
-                        var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
-                        script2.referencedFiles = referencedFiles;
-                        script2.isResident = keepResident;
-                        TypeScriptCompiler.compareObjects(script, script2);
+                        try {
+                            var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+
+                            script2.referencedFiles = referencedFiles;
+                            script2.isResident = keepResident;
+
+                            try {
+                                TypeScriptCompiler.compareObjects(script, script2);
+                            } catch (e1) {
+                                var e2 = e1;
+                            }
+                        } catch (e3) {
+                            var e4 = e3;
+                        }
                     }
                      
                     this.syntaxTrees.push(syntaxTree);
@@ -334,6 +344,19 @@ module TypeScript {
         }
 
         private static compareObjects(obj1: any, obj2: any): void {
+            if (obj1.alreadySeenObject) {
+                // Prevent recursion.
+                return;
+            }
+            obj1.alreadySeenObject = true;
+
+            if (obj2) {
+                if (obj2.alreadySeenObject) {
+                    return;
+                }
+                obj2.alreadySeenObject = true;
+            }
+
             for (var name in obj1) {
                 if (name === "limChar" ||
                     name === "minChar" ||
@@ -344,8 +367,9 @@ module TypeScript {
                     name === "varFlags" ||
                     name === "fncFlags" ||
                     name === "modFlags" ||
-                    name === "nestingLevel") {
-                    continue;
+                    name === "nestingLevel" ||
+                    name === "constructorNestingLevel") {
+                    continue; 
                 }
 
                 var value1 = obj1[name];
@@ -372,7 +396,8 @@ module TypeScript {
                     name === "docComments" ||
                     name === "sym" ||
                     name === "lineMap" ||
-                    name === "resolvedTarget") {
+                    name === "resolvedTarget" ||
+                    name === "regex") {
                     continue;
                 } 
 

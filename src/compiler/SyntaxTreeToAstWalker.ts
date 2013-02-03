@@ -247,8 +247,8 @@ module TypeScript {
         private visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
             var name = this.identifierFromToken(node.identifier()); 
 
-            var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : null;
-            var implementsList = node.implementsClause() ? node.implementsClause().accept(this) : null;
+            var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : new ASTList();
+            var implementsList = node.implementsClause() ? node.implementsClause().accept(this) : new ASTList();
             var members = this.visitSyntaxList(node.classElements());
 
             var result = new ClassDeclaration(name, members, extendsList, implementsList);
@@ -674,12 +674,74 @@ module TypeScript {
             return result;
         }
 
-        private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): any {
-            throw Errors.notYetImplemented();
+        private getArrowFunctionStatements(body: ISyntaxNodeOrToken): ASTList {
+            var statements: ASTList = null;
+
+            if (body.kind() === SyntaxKind.Block) {
+                var block = <BlockSyntax>body;
+
+                statements = this.visitSyntaxList(block.statements());
+            }
+            else {
+                statements = new ASTList();
+
+                var expr = body.accept(this);
+                var retStmt = new ReturnStatement();
+                retStmt.returnExpression = expr;
+
+                statements.append(retStmt);
+            }
+
+            statements.append(new EndCode());
+
+            return statements;
         }
 
-        private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FuncDecl {
+            var parameters = new ASTList();
+            parameters.append(new ArgDecl(this.identifierFromToken(node.identifier())));
+            var returnType = null;
+
+            this.pushDeclLists();
+
+            var statements = this.getArrowFunctionStatements(node.body());
+
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            this.popDeclLists();
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
+
+            result.returnTypeAnnotation = returnType;
+            result.fncFlags |= FncFlags.IsFunctionExpression;
+            result.fncFlags |= FncFlags.IsFatArrowFunction;
+
+            return result;
+        }
+
+        private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FuncDecl {
+            var parameters = node.callSignature().parameterList().accept(this);
+            var returnType = node.callSignature().typeAnnotation() ? node.callSignature().typeAnnotation().accept(this) : null;
+            
+            this.pushDeclLists();
+
+            var statements = this.getArrowFunctionStatements(node.body());
+
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            this.popDeclLists();
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
+
+            result.returnTypeAnnotation = returnType;
+            result.fncFlags |= FncFlags.IsFunctionExpression;
+            result.fncFlags |= FncFlags.IsFatArrowFunction;
+
+            return result;
         }
 
         private visitType(type: ITypeSyntax): AST {
