@@ -2373,7 +2373,7 @@ module TypeScript {
             var varDecl: VarDecl = null;
             var declList: ASTList = null;
             var multivar = false;
-
+             
             this.currentToken = this.scanner.scan();
             var varDeclPreComments = this.parseComments();
 
@@ -2763,7 +2763,7 @@ module TypeScript {
                     ast.limChar = limChar;
                     break;
             }
-
+             
             if (ast == null) {
                 if ((this.currentToken.tokenId == TokenID.Identifier) || convertTokToID(this.currentToken, this.strictMode)) {
 

@@ -578,6 +578,9 @@ module TypeScript {
                 result.init = node.equalsValueClause().accept(this);
             }
 
+            if (node.typeAnnotation()) {
+                result.typeExpr = node.typeAnnotation().accept(this);
+            }
             // TODO: more flags
 
             return result;
@@ -832,8 +835,20 @@ module TypeScript {
             return result;
         }
 
-        private visitConstructSignature(node: ConstructSignatureSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitConstructSignature(node: ConstructSignatureSyntax): FuncDecl {
+            var parameters = node.callSignature().parameterList().accept(this);
+
+            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            result.returnTypeAnnotation = node.callSignature().typeAnnotation()
+                ? node.callSignature().typeAnnotation().accept(this)
+                : null;
+
+            result.hint = "_construct";
+            result.fncFlags |= FncFlags.ConstructMember;
+
+            return result;
         }
 
         private visitFunctionSignature(node: FunctionSignatureSyntax): FuncDecl {

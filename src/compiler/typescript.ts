@@ -318,13 +318,69 @@ module TypeScript {
                     var text = new TypeScript.SourceSimpleText(sourceText);
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
-                    var script2 = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, this.units.length);
+                    if (syntaxTree.diagnostics().length === 0) {
+                        var script2 = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, this.units.length);
 
+                        this.compareObjects(script, script2);
+                    }
                     this.syntaxTrees.push(syntaxTree);
                 }
 
                 return script
             });
+        }
+
+        private compareObjects(obj1: any, obj2: any): void {
+            for (var name in obj1) {
+                if (name === "limChar" ||
+                    name === "minChar" ||
+                    name === "astID" ||
+                    name === "leftCurlyCount" ||
+                    name === "rightCurlyCount" ||
+                    name === "flags" ||
+                    name === "varFlags" ||
+                    name === "nestingLevel") {
+                    continue;
+                }
+
+                var value1 = obj1[name];
+                if (value1) {
+                    if (typeof value1 === 'number' ||
+                        typeof value1 === 'string') {
+
+                        var value2 = obj2[name];
+
+                        if (typeof value1 !== typeof value2) {
+                            throw new Error("Objects differed in type for key: " + name);
+                        }
+
+                        if (value1 !== value2) {
+                            throw new Error("Objects differed in value for key: " + name);
+                        }
+                    }
+                }
+            }
+
+            for (var name in obj1) {
+                if (name === "preComments" ||
+                    name === "postComments" ||
+                    name === "docComments") {
+                    continue;
+                }
+
+                var value1 = obj1[name];
+                if (value1) {
+                    if (typeof value1 === 'object') {
+                        var value2 = obj2[name];
+
+                        if (typeof value1 !== typeof value2) {
+                            throw new Error("Objects differed in type for key: " + name);
+                        }
+
+                        this.compareObjects(value1, value2);
+                    }
+                }
+            }
         }
 
         public typeCheck() {
