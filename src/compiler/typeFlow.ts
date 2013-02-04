@@ -2723,12 +2723,10 @@ module TypeScript {
                     }
                     else {
                         if (!(type.isClassInstance())) {
-                            this.checker.errorReporter.simpleError(baseRef,
-                                                                     "Interface base type must be interface");
+                            this.checker.errorReporter.simpleError(baseRef, "Interface base type must be interface");
                         }
                         else {
-                            this.checker.errorReporter.simpleError(baseRef,
-                                                                     "Base type must be interface or class");
+                            this.checker.errorReporter.simpleError(baseRef, "Base type must be interface or class");
                         }
                         break;
                     }

@@ -156,18 +156,20 @@ module TypeScript {
         public removeDecl(declToRemove: PullDecl) {
             var declSymbol = declToRemove.getSymbol();
 
-            declSymbol.removeDeclaration(declToRemove);
+            if (declSymbol) {
+                declSymbol.removeDeclaration(declToRemove);
 
-            var decls = declSymbol.getDeclarations();
+                var decls = declSymbol.getDeclarations();
 
-            if (!decls.length) {
-                this.removeSymbol(declSymbol);
-            }
-            else {
-                var childDecls = declToRemove.getChildDecls();
+                if (!decls.length) {
+                    this.removeSymbol(declSymbol);
+                }
+                else {
+                    var childDecls = declToRemove.getChildDecls();
 
-                for (var i = 0; i < childDecls.length; i++) {
-                    this.removeDecl(childDecls[i]);
+                    for (var i = 0; i < childDecls.length; i++) {
+                        this.removeDecl(childDecls[i]);
+                    }
                 }
             }
 
@@ -213,6 +215,9 @@ module TypeScript {
         }
 
         public invalidateType(symbolWhoseTypeChanged: PullSymbol) {
+            if (!symbolWhoseTypeChanged) {
+                return;
+            }
 
             if (symbolWhoseTypeChanged.typeChangeUpdateVersion == this.updateVersion) {
                 return;

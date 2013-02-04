@@ -40,7 +40,7 @@ module TypeScript {
         TypeAlias = 1 << 9,
 
         Variable = 1 << 10,
-        Argument = 1 << 11,
+        Parameter = 1 << 11,
         Property = 1 << 12,
 
         Function = 1 << 13,
@@ -59,12 +59,13 @@ module TypeScript {
         FunctionType = 1 << 23,
         ConstructorType = 1 << 24,
 
+        SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor,
+
+        SomeValue = Variable | Parameter | Property | SomeFunction,
+
         SomeType =  Script | Global | Primitive | Module | Class | Interface | DynamicModule | 
-                    Enum | Array | TypeAlias | Function | ConstructorMethod | Method | FunctionExpression |
-                    ObjectType | FunctionType | ConstructorType,
+                    Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType,
         
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
-        
-        SomeValue = Variable | Argument | Property | GetAccessor | SetAccessor,
     }
 }

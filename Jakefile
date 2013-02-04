@@ -48,6 +48,21 @@ var compilerSources = [
 	"incrementalParser.ts",
 	"pathUtils.ts",
 	"referenceResolution.ts",
+	"typecheck/dataMap.ts",
+	"typecheck/pullFlags.ts",
+	"typecheck/pullDecls.ts",
+	"typecheck/pullSymbols.ts",
+	"typecheck/pullSymbolBindingContext.ts",
+	"typecheck/pullTypeResolutionContext.ts",
+	"typecheck/pullTypeResolution.ts",
+	"typecheck/pullTypeChecker.ts",
+	"typecheck/pullDeclDiffer.ts",
+	"typecheck/pullSemanticInfo.ts",
+	"typecheck/pullDeclCollection.ts",
+	"typecheck/pullBinder.ts",
+	"typecheck/pullSymbolBinder.ts",
+	"typecheck/pullDeclCollector.ts",
+	"typecheck/pullSymbolGraph.ts",
 	"typescript.ts"
 ].map(function (f) {
 	return path.join(compilerDirectory, f);

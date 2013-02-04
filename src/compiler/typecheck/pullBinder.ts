@@ -39,7 +39,7 @@ module TypeScript {
             moduleDecl.setSymbol(moduleSymbol);            
         }
 
-        context.semanticInfo.setSymbolForDecl(moduleDecl, moduleSymbol);
+        //context.semanticInfo.setSymbolForDecl(moduleDecl, moduleSymbol);
         
         if (createdNewSymbol) {
             var parent = context.getParent();
@@ -125,7 +125,7 @@ module TypeScript {
 
         if (!parentHadSymbol) {
             classSymbol = new PullClassSymbol(className);
-            instanceSymbol = new PullClassInstanceSymbol(className);
+            instanceSymbol = new PullClassInstanceSymbol(className, classSymbol);
             classSymbol.setInstanceType(instanceSymbol);
         }        
         
@@ -134,7 +134,7 @@ module TypeScript {
 
         classDecl.setSymbol(classSymbol);
 
-        context.semanticInfo.setSymbolForDecl(classDecl, classSymbol);
+        //context.semanticInfo.setSymbolForDecl(classDecl, classSymbol);
 
         
         if (parent && !parentHadSymbol) {
@@ -199,7 +199,7 @@ module TypeScript {
             interfaceDecl.setSymbol(interfaceSymbol);
         }
 
-        context.semanticInfo.setSymbolForDecl(interfaceDecl, interfaceSymbol);
+        //context.semanticInfo.setSymbolForDecl(interfaceDecl, interfaceSymbol);
         
         if (createdNewSymbol) {
             var parent = context.getParent();
@@ -411,6 +411,8 @@ module TypeScript {
                     decl.setSymbol(parameterSymbol);
                 }
 
+                context.semanticInfo.setSymbolForAST(argDecl, parameterSymbol);
+
                 signatureSymbol.addParameter(parameterSymbol);
 
                 // PULLREVIEW: Shouldn't need this, since parameters are created off of decl collection
@@ -443,7 +445,7 @@ module TypeScript {
         var isStatic = false;
         var isExported = false;
 
-        if (declKind & PullElementKind.Property) {
+        if (declKind & PullElementKind.Method) {
             isProperty = true;
         }
         if (declFlags & PullElementFlags.Static) {
@@ -545,7 +547,7 @@ module TypeScript {
         if (funcDecl) {
             funcDecl.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(funcDecl);
-            context.semanticInfo.setSymbolForDecl(funcDecl, functionSymbol);
+            //context.semanticInfo.setSymbolForDecl(funcDecl, functionSymbol);
         }
         
         if (parent && !isConstructor && !parentHadSymbol) {
@@ -560,7 +562,6 @@ module TypeScript {
 
             }
             else {
-
                 if (isProperty || isExported) {
                     parent.addMember(functionSymbol, linkKind);
                 }
@@ -629,6 +630,9 @@ module TypeScript {
             else {
                 parent.addCallSignature(signature);
             }
+        }
+        else { // lambda
+            functionSymbol.addCallSignature(signature);
         }
         
         if (!isSignature) {

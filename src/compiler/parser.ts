@@ -861,7 +861,7 @@ module TypeScript {
                         isConstructorMember = true;
                         // fall through...
                     }
-
+                
                 case TokenID.OpenParen: {
                     // ( formals ) => type
                     var formals = new ASTList();
@@ -882,7 +882,10 @@ module TypeScript {
                         funcDecl.classDecl = null;
                     }
                     funcDecl.minChar = minChar;
-                    return this.parseTypeReferenceTail(errorRecoverySet, minChar, funcDecl);
+                    funcDecl.flags |= ASTFlags.TypeReference;
+                    var trt = this.parseTypeReferenceTail(errorRecoverySet, minChar, funcDecl);
+                    funcDecl.limChar = trt.limChar;
+                    return trt;
                 }
 
                 default:
@@ -915,7 +918,9 @@ module TypeScript {
             interfaceDecl.minChar = minChar;
             interfaceDecl.limChar = members.limChar;    // "}"
 
-            return this.parseTypeReferenceTail(errorRecoverySet, minChar, interfaceDecl);
+            var typeRef = this.parseTypeReferenceTail(errorRecoverySet, minChar, interfaceDecl);
+            typeRef.flags |= ASTFlags.TypeReference;
+            return typeRef;
         }
 
         private parseFunctionBlock(errorRecoverySet: ErrorRecoverySet,
@@ -1424,7 +1429,7 @@ module TypeScript {
             }
 
             funcDecl.returnTypeAnnotation = returnType;
-            if (isMethod) {
+            if (((this.inInterfaceDecl || this.currentClassDecl) && !this.inFncDecl) && isMethod) {
                 funcDecl.fncFlags |= FncFlags.Method;
                 // all class property methods are currently exported
                 funcDecl.fncFlags |= FncFlags.ClassPropertyMethodExported;
@@ -1887,6 +1892,8 @@ module TypeScript {
             varDecl.minChar = minChar;
             var isStatic = false;
             varDecl.preComments = this.parseComments();
+
+            varDecl.varFlags |= VarFlags.ClassProperty;
 
             if (this.currentToken.tokenId == TokenID.Colon) {
                 this.currentToken = this.scanner.scan();
@@ -4201,10 +4208,10 @@ module TypeScript {
 
         private okAmbientModuleMember(ast: AST) {
             var nt = ast.nodeType;
-            return (nt == NodeType.ClassDeclaration) || (nt == NodeType.ImportDeclaration) || (nt == NodeType.InterfaceDeclaration) || (nt == NodeType.ModuleDeclaration) ||
+
+            return (nt == NodeType.FuncDecl) || (nt == NodeType.ClassDeclaration) || (nt == NodeType.ImportDeclaration) || (nt == NodeType.InterfaceDeclaration) || (nt == NodeType.ModuleDeclaration) ||
                 (nt == NodeType.Empty) || (nt == NodeType.VarDecl) ||
-                ((nt == NodeType.Block) && !(<Block>ast).isStatementBlock) ||
-                ((nt == NodeType.FuncDecl) && ((<FuncDecl>ast).isMethod()));
+                ((nt == NodeType.Block) && !(<Block>ast).isStatementBlock);
         }
 
         private parseStatementList(errorRecoverySet: ErrorRecoverySet,

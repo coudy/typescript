@@ -112,6 +112,7 @@ module TypeScript {
         static unknownEdits(script1: Script, script2: Script, parseErrors: ErrorEntry[]) {
             var result = new UpdateUnitResult(UpdateUnitKind.Unknown, script1.locationInfo.unitIndex, script1, script2);
             result.parseErrors = parseErrors;
+
             return result;
         }
 
@@ -177,6 +178,7 @@ module TypeScript {
             this.parser.style_funcInLoop = this.settings.styleSettings.funcInLoop;
             this.parser.inferPropertiesFromThisAssignment = this.settings.inferPropertiesFromThisAssignment;
             this.emitSettings = new EmitOptions(this.settings);
+
             codeGenTarget = settings.codeGenTarget;
         }
 
@@ -310,7 +312,7 @@ module TypeScript {
                 var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
                 script.referencedFiles = referencedFiles;
                 script.isResident = keepResident;
-                this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
+                
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
                 
@@ -335,9 +337,12 @@ module TypeScript {
                     this.syntaxTrees.push(syntaxTree);
                 }
 
-                var typeCollectionStart = new Date().getTime();
-                this.typeChecker.collectTypes(script);
-                this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
+                if (!this.settings.usePull) {
+                    this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
+                    var typeCollectionStart = new Date().getTime();
+                    this.typeChecker.collectTypes(script);
+                    this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
+                }
 
                 this.scripts.append(script);
 
@@ -830,7 +835,6 @@ module TypeScript {
                 }
 
                 var declCollectionContext: DeclCollectionContext = null;
-                var pullSymbolCollectionContext: PullSymbolBindingContext = null;
                 var semanticInfo: SemanticInfo = null;
                 var i = 0;
 
@@ -857,20 +861,11 @@ module TypeScript {
                 // bind declaration symbols
                 var bindStartTime = new Date().getTime();
 
-                var topLevelDecls: PullDecl[] = null;
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
 
                 // start at '1', so as to skip binding for global primitives such as 'any'
                 for (i = 1; i < this.semanticInfoChain.units.length; i++) {
-
-                    topLevelDecls = this.semanticInfoChain.units[i].getTopLevelDecls();
-
-                    pullSymbolCollectionContext = new PullSymbolBindingContext(this.semanticInfoChain, this.semanticInfoChain.units[i].getPath());
-
-                    for (var j = 0; j < topLevelDecls.length; j++) {
-
-                        bindDeclSymbol(topLevelDecls[j], pullSymbolCollectionContext);
-
-                    }
+                    binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
                 }
 
                 var bindEndTime = new Date().getTime();
@@ -878,7 +873,6 @@ module TypeScript {
 
                 // typecheck
                 for (i = 0; i < this.scripts.members.length; i++) {
-
                     this.pullTypeChecker.setUnit(this.units[i].filename, this.logger);
                     this.pullTypeChecker.resolver.resolveBoundDecls(this.semanticInfoChain.units[i + 1].getTopLevelDecls()[0], new PullTypeResolutionContext());
                 }
@@ -926,42 +920,18 @@ module TypeScript {
 
                 var topLevelDecls: PullDecl[] = null;
 
-                var pullBindingContext: PullSymbolBindingContext;
-                
+                var bindStartTime = new Date().getTime();
+
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
+
                 // start at '1', so as to skip binding for global primitives such as 'any'
                 for (i = 1; i < this.semanticInfoChain.units.length; i++) {
-
-                    topLevelDecls = this.semanticInfoChain.units[i].getTopLevelDecls();
-
-                    pullBindingContext = new PullSymbolBindingContext(this.semanticInfoChain, this.semanticInfoChain.units[i].getPath(), true);
-
-                    for (var j = 0; j < topLevelDecls.length; j++) {
-
-                        bindDeclSymbol(topLevelDecls[j], pullBindingContext);
-
-                    }
+                    binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
                 }
 
                 var bindEndTime = new Date().getTime();
 
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
-
-                //var typeCheckStartTime = new Date().getTime();
-
-                //// typecheck
-                //for (i = 0; i < this.scripts.members.length; i++) {
-
-                //    this.pullTypeChecker.setUnit(this.units[i].filename, this.logger);
-                //    this.pullTypeChecker.resolver.resolveBoundDecls(this.semanticInfoChain.units[i + 1].getTopLevelDecls()[0], new PullTypeResolutionContext());
-                //}
-
-                //var typeCheckEndTime = new Date().getTime();
-
-                //this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
-                //this.logger.log("Binding: " + (bindEndTime - bindStartTime));
-                //this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
-                //this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
-                //this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
             });
         }
         
@@ -1003,16 +973,15 @@ module TypeScript {
 
                 var topLevelDecls = newScriptSemanticInfo.getTopLevelDecls();
 
-                var pullSymbolCollectionContext = new PullSymbolBindingContext(this.semanticInfoChain, newScriptSemanticInfo.getPath());
-                pullSymbolCollectionContext.reBindingAfterChange = true;
-
                 this.semanticInfoChain.update(newScript.locationInfo.filename);
 
+                var binder = new PullSymbolBinder(this.semanticInfoChain);
+                binder.setUnit(newScript.locationInfo.filename);
+
                 for (var i = 0; i < topLevelDecls.length; i++) {
-
-                    bindDeclSymbol(topLevelDecls[i], pullSymbolCollectionContext);
-
+                    binder.bindDeclToPullSymbol(topLevelDecls[i], true);
                 }
+
                 var innerBindEndTime = new Date().getTime();
 
                 this.logger.log("Update Script - Inner bind time: " + (innerBindEndTime - innerBindStartTime));
@@ -1067,7 +1036,7 @@ module TypeScript {
 
                 // these are used to track intermediate nodes so that we can properly apply contextual types
                 var lambdaAST: FuncDecl = null;
-                var assigningASTs: VarDecl[] = [];
+                var declarationInitASTs: VarDecl[] = [];
                 var objectLitAST: UnaryExpression = null;
                 var asgAST: BinaryExpression = null;
                 var typeAssertionASTs: UnaryExpression[] = [];
@@ -1092,7 +1061,7 @@ module TypeScript {
                                     lambdaAST = <FuncDecl>cur;
                                 }
                                 else if (cur.nodeType == NodeType.VarDecl) {
-                                    assigningASTs[assigningASTs.length] = <VarDecl>cur;
+                                    declarationInitASTs[declarationInitASTs.length] = <VarDecl>cur;
                                 }
                                 else if (cur.nodeType == NodeType.ObjectLit) {
                                     objectLitAST = <UnaryExpression>cur;
@@ -1131,7 +1100,7 @@ module TypeScript {
                         var enclosingDecl: PullDecl = null;
 
                         for (var i = declStack.length - 1; i >= 0; i--) {
-                            if (!(declStack[i].getKind() & (PullElementKind.Variable | PullElementKind.Argument))) {
+                            if (!(declStack[i].getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
                                 enclosingDecl = declStack[i];
                                 break;
                             }
@@ -1166,21 +1135,17 @@ module TypeScript {
                         resolutionContext.resolveAggressively = true;
                         var isTypedAssignment = false;
                         
-                        if (assigningASTs.length) {
+                        if (declarationInitASTs.length) {
                             var assigningAST: VarDecl;
                             var varSymbol: PullSymbol;
 
-                            for (var i = 0; i < assigningASTs.length; i++) {
+                            for (var i = 0; i < declarationInitASTs.length; i++) {
 
-                                assigningAST = assigningASTs[i];
+                                assigningAST = declarationInitASTs[i];
                                 isTypedAssignment = (assigningAST != null) && (assigningAST.typeExpr != null);
 
+                                this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
                                 varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
-
-                                if (!varSymbol) {
-                                    this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
-                                    varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
-                                }
 
                                 if (varSymbol && isTypedAssignment) {
                                     var contextualType = varSymbol.getType();

@@ -103,7 +103,8 @@ module TypeScript {
         // REVIEW: This flag is to mark lambda nodes to note that the LParen of an expression has already been matched in the lambda header.
         //         The flag is used to communicate this piece of information to the calling parseTerm, which intern will remove it.
         //         Once we have a better way to associate information with nodes, this flag should not be used.
-        SkipNextRParen = 1 << 11, 
+        SkipNextRParen = 1 << 11,
+        TypeReference = 1 << 12,
     }
 
     export enum DeclFlags {

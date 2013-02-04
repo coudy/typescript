@@ -22,8 +22,7 @@ module TypeScript {
 
     export function preCollectImportDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var importDecl = <ImportDeclaration>ast;
-        var isExported = hasFlag(importDecl.varFlags, VarFlags.Exported);
-        var declFlags = isExported ? PullElementFlags.Exported : PullElementFlags.None;
+        var declFlags = PullElementFlags.None;
         var span = new DeclSpan();
 
         span.minChar = importDecl.minChar;
@@ -109,6 +108,66 @@ module TypeScript {
         return true;
     }
 
+    export function createInferfaceDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+
+        if (hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
+            declFlags |= PullElementFlags.Exported;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = interfaceDecl.minChar;
+
+        span.limChar = interfaceDecl.limChar;
+
+        var decl = new PullDecl(interfaceDecl.name.text, PullElementKind.Interface, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        // if we're collecting a decl for a type annotation, we don't want to add the decl to the parent scope
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
+
+        return true;    
+    }
+
+    export function createObjectTypeDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+
+        if (hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
+            declFlags |= PullElementFlags.Exported;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = interfaceDecl.minChar;
+
+        span.limChar = interfaceDecl.limChar;
+
+        var decl = new PullDecl("", PullElementKind.ObjectType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        // if we're collecting a decl for a type annotation, we don't want to add the decl to the parent scope
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
+
+        return true;        
+    }
+
     export function preCollectInterfaceDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var interfaceDecl = <InterfaceDeclaration>ast;
         var declFlags = PullElementFlags.None;
@@ -135,13 +194,12 @@ module TypeScript {
         context.pushParent(decl);
 
         context.semanticInfo.setDeclForAST(ast, decl);
-
         context.semanticInfo.setASTForDecl(decl,ast);
 
         return true;
     }
 
-    export function preCollectArgDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
+    export function preCollectParameterDecl(ast: AST, parent: AST, context: DeclCollectionContext) {
         var argDecl = <BoundDecl>ast;
         var declFlags = PullElementFlags.None;
 
@@ -149,13 +207,17 @@ module TypeScript {
             declFlags |= PullElementFlags.Private;
         }
 
+
+        if (hasFlag(argDecl.flags, ASTFlags.OptionalName)) {
+            declFlags |= PullElementFlags.Optional;
+        }
+
         var span = new DeclSpan();
 
         span.minChar = argDecl.minChar;
-
         span.limChar = argDecl.limChar;
 
-        var decl = new PullDecl(argDecl.id.text, PullElementKind.Argument, declFlags, span, context.scriptName);
+        var decl = new PullDecl(argDecl.id.text, PullElementKind.Parameter, declFlags, span, context.scriptName);
 
         context.getParent().addChildDecl(decl);
 
@@ -185,12 +247,87 @@ module TypeScript {
         return false;
     }
 
-    export function preCollectVarDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
-        var varDecl = <VarDecl>ast;
+    // interface properties
+    export function createPropertySignature(propertyDecl: VarDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Public;
+        var declType = PullElementKind.Property;
+
+        if (hasFlag(propertyDecl.id.flags, ASTFlags.OptionalName)) {
+            declFlags |= PullElementFlags.Optional;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = propertyDecl.minChar;
+
+        span.limChar = propertyDecl.limChar;
+
+        var decl = new PullDecl(propertyDecl.id.text, declType, declFlags, span, context.scriptName);
+
+        context.getParent().addChildDecl(decl);
+
+        context.semanticInfo.setDeclForAST(propertyDecl, decl);
+
+        context.semanticInfo.setASTForDecl(decl, propertyDecl);
+
+        if (propertyDecl.typeExpr && 
+            ((<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>propertyDecl.typeExpr).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return false;
+    }
+
+    // class member variables
+    export function createMemberVariableDeclaration(memberDecl: VarDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Public;
+        var declType = PullElementKind.Property;
+
+        if (hasFlag(memberDecl.varFlags, VarFlags.Private)) {
+            declFlags = PullElementFlags.Private;
+        }
+
+        if (hasFlag(memberDecl.varFlags, VarFlags.Static)) {
+            declFlags |= PullElementFlags.Static;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = memberDecl.minChar;
+
+        span.limChar = memberDecl.limChar;
+
+        var decl = new PullDecl(memberDecl.id.text, declType, declFlags, span, context.scriptName);
+
+        context.getParent().addChildDecl(decl);
+
+        context.semanticInfo.setDeclForAST(memberDecl, decl);
+
+        context.semanticInfo.setASTForDecl(decl, memberDecl);
+
+        if (memberDecl.typeExpr && 
+            ((<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>memberDecl.typeExpr).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return false;    
+    }
+
+    export function createVariableDeclaration(varDecl: VarDecl, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
-        var isProperty = false;
-        var isStatic = false;
 
         if (hasFlag(varDecl.varFlags, VarFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
@@ -198,30 +335,6 @@ module TypeScript {
 
         if (hasFlag(varDecl.varFlags, VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
-        }
-
-        if (hasFlag(varDecl.varFlags, VarFlags.Property)) {
-            isProperty = true;
-            declFlags |= PullElementFlags.Public;
-        }
-
-        if (hasFlag(varDecl.varFlags, VarFlags.Static)) {
-            isProperty = true;
-            isStatic = true;
-            declFlags |= PullElementFlags.Static;
-        }
-
-        if (hasFlag(varDecl.varFlags, VarFlags.Private)) {
-            isProperty = true;
-            declFlags |= PullElementFlags.Private;
-        }
-
-        if (hasFlag(varDecl.id.flags, ASTFlags.OptionalName)) {
-            declFlags |= PullElementFlags.Optional;
-        }
-
-        if (isProperty) {
-            declType = PullElementKind.Property;
         }
         
         var span = new DeclSpan();
@@ -234,9 +347,9 @@ module TypeScript {
 
         context.getParent().addChildDecl(decl);
 
-        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setDeclForAST(varDecl, decl);
 
-        context.semanticInfo.setASTForDecl(decl,ast);
+        context.semanticInfo.setASTForDecl(decl, varDecl);
 
         if (varDecl.typeExpr && 
             ((<TypeReference>varDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -249,81 +362,37 @@ module TypeScript {
             getAstWalkerFactory().walk((<TypeReference>varDecl.typeExpr).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
-        return false;
+        return false;    
     }
 
-    export function preCollectFuncDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
-
-        var funcDecl = <FuncDecl>ast;
+    export function preCollectVarDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
+        var varDecl = <VarDecl>ast;
         var declFlags = PullElementFlags.None;
-        var declType = PullElementKind.Function;
+        var declType = PullElementKind.Variable;
         var isProperty = false;
         var isStatic = false;
 
-        if (hasFlag(funcDecl.fncFlags, FncFlags.Ambient)) {
-            declFlags |= PullElementFlags.Ambient;
+        if (hasFlag(varDecl.varFlags, VarFlags.ClassProperty)) {
+            return createMemberVariableDeclaration(varDecl, context);
+        }
+        else if (hasFlag(varDecl.varFlags, VarFlags.Property)) {
+            return createPropertySignature(varDecl, context);
         }
 
-        if (hasFlag(funcDecl.fncFlags, FncFlags.Exported)) {
-            declFlags |= PullElementFlags.Exported;
-        }
+        return createVariableDeclaration(varDecl, context);
+    }
 
-        if (hasFlag(funcDecl.fncFlags, FncFlags.Method)) {
-            isProperty = true;
-        }
-
-        if (hasFlag(funcDecl.fncFlags, FncFlags.Static)) {
-            isProperty = true;
-            isStatic = true;
-            declFlags |= PullElementFlags.Static;
-        }
-
-        if (hasFlag(funcDecl.fncFlags, FncFlags.Private)) {
-            isProperty = true;
-            declFlags |= PullElementFlags.Private;
-        }
-
-        if (hasFlag(funcDecl.fncFlags, FncFlags.ConstructMember) || funcDecl.isConstructor) {
-            declFlags |= PullElementFlags.Constructor;
-        }
-
-        if (hasFlag(funcDecl.fncFlags, FncFlags.CallMember)) {
-            declFlags |= PullElementFlags.Call;
-        }
-
-        if (hasFlag(funcDecl.fncFlags, FncFlags.IndexerMember)) {
-            declFlags |= PullElementFlags.Index;
-        }
-
-        if (funcDecl.isSignature()) {
-            declFlags |= PullElementFlags.Signature;
-        }
-
-        if (funcDecl.isGetAccessor()) {
-            declFlags |= PullElementFlags.GetAccessor;
-        }
-
-        if (funcDecl.isSetAccessor()) {
-            declFlags |= PullElementFlags.SetAccessor;
-        }
-
-        if (funcDecl.name && hasFlag(funcDecl.name.flags, ASTFlags.OptionalName)) {
-            declFlags |= PullElementFlags.Optional;
-        }
-
-        if (isProperty) {
-            declType = PullElementKind.Method;
-        }
+    // function type expressions
+    export function createFunctionTypeDeclaration(functionTypeDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.FunctionType;
 
         var span = new DeclSpan();
 
-        span.minChar = funcDecl.minChar;
+        span.minChar = functionTypeDeclAST.minChar;
+        span.limChar = functionTypeDeclAST.limChar;
 
-        span.limChar = funcDecl.limChar;
-
-        var funcName = funcDecl.name ? funcDecl.name.text : funcDecl.hint ? funcDecl.hint : "";
-
-        var decl = new PullDecl(funcName, declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl("", declType, declFlags, span, context.semanticInfo.getPath());
 
         // parent could be null if we're collecting decls for a lambda expression
         var parent = context.getParent();
@@ -331,24 +400,484 @@ module TypeScript {
         if (parent) {
             parent.addChildDecl(decl);
         }
+
         context.pushParent(decl);
 
-        context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setDeclForAST(functionTypeDeclAST, decl);
 
-        context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfo.setASTForDecl(decl, functionTypeDeclAST);
 
-        if (funcDecl.returnTypeAnnotation && 
-            ((<TypeReference>funcDecl.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
-            (<TypeReference>funcDecl.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+        if (functionTypeDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
 
             declCollectionContext.scriptName = context.scriptName;
 
-            getAstWalkerFactory().walk((<TypeReference>funcDecl.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+            getAstWalkerFactory().walk((<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
         return true;
+    }
+
+    // constructor types
+    export function createConstructorTypeDeclaration(constructorTypeDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.ConstructorType;
+
+        var span = new DeclSpan();
+
+        span.minChar = constructorTypeDeclAST.minChar;
+        span.limChar = constructorTypeDeclAST.limChar;
+
+        var decl = new PullDecl("{new}", declType, declFlags, span, context.semanticInfo.getPath());
+
+        // parent could be null if we're collecting decls for a lambda expression
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(constructorTypeDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
+
+        if (constructorTypeDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;
+    }
+
+    // function declaration
+    export function createFunctionDeclaration(funcDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.Function;
+
+        if (hasFlag(funcDeclAST.fncFlags, FncFlags.Ambient)) {
+            declFlags |= PullElementFlags.Ambient;
+        }
+
+        if (hasFlag(funcDeclAST.fncFlags, FncFlags.Exported)) {
+            declFlags |= PullElementFlags.Exported;
+        }
+
+        if (funcDeclAST.bod) {
+            declFlags |= PullElementFlags.Signature;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = funcDeclAST.minChar;
+        span.limChar = funcDeclAST.limChar;
+
+        var decl = new PullDecl(funcDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(funcDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, funcDeclAST);
+
+        if (funcDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>funcDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;
+    }
+
+    // function expression
+    export function createFunctionExpressionDeclaration(functionExpressionDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.FunctionExpression;
+
+        if (hasFlag(functionExpressionDeclAST.fncFlags, FncFlags.IsFatArrowFunction)) {
+            declFlags |= PullElementFlags.FatArrow;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = functionExpressionDeclAST.minChar;
+        span.limChar = functionExpressionDeclAST.limChar;
+
+        var decl = new PullDecl("", declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
+
+        if (functionExpressionDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;    
+    }
+    
+    // methods
+    export function createMemberFunctionExpressionDeclaration(memberFunctionDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.Method;
+
+        if (hasFlag(memberFunctionDeclAST.fncFlags, FncFlags.Static)) {
+            declFlags |= PullElementFlags.Static;
+        }
+
+        if (hasFlag(memberFunctionDeclAST.fncFlags, FncFlags.Private)) {
+            declFlags |= PullElementFlags.Private;
+        }
+
+        if (!memberFunctionDeclAST.bod) {
+            declFlags |= PullElementFlags.Signature;
+        }
+
+        if (hasFlag(memberFunctionDeclAST.name.flags, ASTFlags.OptionalName)) {
+            declFlags |= PullElementFlags.Optional;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = memberFunctionDeclAST.minChar;
+        span.limChar = memberFunctionDeclAST.limChar;
+
+        var decl = new PullDecl(memberFunctionDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(memberFunctionDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, memberFunctionDeclAST);
+
+        if (memberFunctionDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;
+    }
+    
+    // index signatures
+    export function createIndexSignatureDeclaration(indexSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Signature | PullElementFlags.Index;
+        var declType = PullElementKind.IndexSignature;
+
+        var span = new DeclSpan();
+
+        span.minChar = indexSignatureDeclAST.minChar;
+        span.limChar = indexSignatureDeclAST.limChar;
+
+        var decl = new PullDecl("[]", declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
+
+        if (indexSignatureDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;        
+    }
+
+    // call signatures
+    export function createCallSignatureDeclaration(callSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
+        var declType = PullElementKind.CallSignature;
+
+        var span = new DeclSpan();
+
+        span.minChar = callSignatureDeclAST.minChar;
+        span.limChar = callSignatureDeclAST.limChar;
+
+        var decl = new PullDecl("()", declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(callSignatureDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
+
+        if (callSignatureDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true; 
+    }
+
+    // construct signatures
+    export function createConstructSignatureDeclaration(constructSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
+        var declType = PullElementKind.CallSignature;
+
+        var span = new DeclSpan();
+
+        span.minChar = constructSignatureDeclAST.minChar;
+        span.limChar = constructSignatureDeclAST.limChar;
+
+        var decl = new PullDecl("new", declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(constructSignatureDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
+
+        if (constructSignatureDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;
+    }
+
+    // class constructors
+    export function createClassConstructorDeclaration(constructorDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Constructor;
+        var declType = PullElementKind.ConstructorMethod;
+
+        if (!constructorDeclAST.bod) {
+            declFlags |= PullElementFlags.Signature;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = constructorDeclAST.minChar;
+        span.limChar = constructorDeclAST.limChar;
+
+        var decl = new PullDecl("constructor", declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
+
+        if (constructorDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>constructorDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;
+    }
+
+    export function createGetAccessorDeclaration(getAccessorDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Public;
+        var declType = PullElementKind.GetAccessor;
+
+        if (hasFlag(getAccessorDeclAST.fncFlags, FncFlags.Static)) {
+            declFlags |= PullElementFlags.Static;
+        }
+
+        if (hasFlag(getAccessorDeclAST.name.flags, ASTFlags.OptionalName)) {
+            declFlags |= PullElementFlags.Optional;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = getAccessorDeclAST.minChar;
+        span.limChar = getAccessorDeclAST.limChar;
+
+        var decl = new PullDecl(getAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(getAccessorDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, getAccessorDeclAST);
+
+        if (getAccessorDeclAST.returnTypeAnnotation && 
+            ((<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;   
+    }
+
+    // set accessors
+    export function createSetAccessorDeclaration(setAccessorDeclAST: FuncDecl, context: DeclCollectionContext) {
+        var declFlags = PullElementFlags.Public;
+        var declType = PullElementKind.SetAccessor;
+
+        if (hasFlag(setAccessorDeclAST.fncFlags, FncFlags.Static)) {
+            declFlags |= PullElementFlags.Static;
+        }
+
+        if (hasFlag(setAccessorDeclAST.name.flags, ASTFlags.OptionalName)) {
+            declFlags |= PullElementFlags.Optional;
+        }
+
+        var span = new DeclSpan();
+
+        span.minChar = setAccessorDeclAST.minChar;
+        span.limChar = setAccessorDeclAST.limChar;
+
+        var decl = new PullDecl(setAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
+
+        var parent = context.getParent();
+
+        if (parent) {
+            parent.addChildDecl(decl);
+        }
+
+        context.pushParent(decl);
+
+        context.semanticInfo.setDeclForAST(setAccessorDeclAST, decl);
+
+        context.semanticInfo.setASTForDecl(decl, setAccessorDeclAST);
+
+        return true;       
+    }
+
+    export function preCollectFuncDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
+
+        var funcDecl = <FuncDecl>ast;
+
+        if (hasFlag(funcDecl.fncFlags, (FncFlags.IsFunctionExpression | FncFlags.IsFatArrowFunction))) {
+            return createFunctionExpressionDeclaration(funcDecl, context);
+        }
+        else if (funcDecl.isConstructor) {
+            return createClassConstructorDeclaration(funcDecl, context);
+        }
+        else if (funcDecl.isGetAccessor()) {
+            return createGetAccessorDeclaration(funcDecl, context);
+        }
+        else if (funcDecl.isSetAccessor()) {
+            return createSetAccessorDeclaration(funcDecl, context);
+        }
+        else if (hasFlag(funcDecl.fncFlags, FncFlags.ConstructMember)) {
+            return hasFlag(funcDecl.flags, ASTFlags.TypeReference) ? 
+                createConstructorTypeDeclaration(funcDecl, context) : 
+                createConstructSignatureDeclaration(funcDecl, context);
+        }
+        else if (hasFlag(funcDecl.fncFlags, FncFlags.CallMember)) {
+            return createCallSignatureDeclaration(funcDecl, context);
+        }
+        else if (hasFlag(funcDecl.fncFlags, FncFlags.IndexerMember)) {
+            return createIndexSignatureDeclaration(funcDecl, context);
+        }
+        else if (hasFlag(funcDecl.flags, ASTFlags.TypeReference)) {
+            return createFunctionTypeDeclaration(funcDecl, context);
+        }
+        else if (hasFlag(funcDecl.fncFlags, FncFlags.Method) ||
+                 hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
+            return createMemberFunctionExpressionDeclaration(funcDecl, context);
+        }
+
+        return createFunctionDeclaration(funcDecl, context);
     }
 
     export function preCollectDecls(ast: AST, parent: AST, walker: IAstWalker) {
@@ -385,7 +914,7 @@ module TypeScript {
             go = preCollectInterfaceDecls(ast, parent, context);
         }
         else if (ast.nodeType == NodeType.ArgDecl) {
-            go = preCollectArgDecls(ast, parent, context);
+            go = preCollectParameterDecl(ast, parent, context);
         }
         else if (ast.nodeType == NodeType.VarDecl) {
             go = preCollectVarDecls(ast, parent, context);

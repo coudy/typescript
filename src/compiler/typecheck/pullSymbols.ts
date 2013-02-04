@@ -226,7 +226,7 @@ module TypeScript {
             if (type) {
                 var typeName: string;
                 if (type.isArray()) {
-                    typeName = type.getElementType().toString() + "[]";
+                    typeName = type.getElementType().getName() + "[]";
                 }
                 else {
                     typeName = type.getName();
@@ -334,9 +334,16 @@ module TypeScript {
         public toString() {
             var sigString = "(";
             var params = this.getParameters();
+            var paramType: PullTypeSymbol;
 
             for (var i = 0; i < params.length; i++) {
-                sigString += params[i].toString();
+                sigString += params[i].getName();
+
+                paramType = params[i].getType();
+
+                if (paramType) {
+                    sigString += ": " + paramType.getName();
+                }
 
                 if (i < params.length - 1) {
                     sigString += ", ";
@@ -722,6 +729,8 @@ module TypeScript {
             return true;
         }
 
+        public getConstructorType() { return this; }
+
         public setInstanceType(instanceType: PullTypeSymbol) {
             this.addOutgoingLink(instanceType, SymbolLinkKind.InstanceType);
             this.instanceType = instanceType; 
@@ -745,12 +754,17 @@ module TypeScript {
     }
 
     export class PullClassInstanceSymbol extends PullClassSymbol {
-        
-        constructor (name: string) {
+        constructor (name: string, private constructorType: PullClassSymbol) {
             super(name);
         }
 
+        public getConstructorType() { return this.constructorType; }
+
         public isInstanceType() { return true; }
+
+        public getInstanceType() {
+            return this;
+        }
     }
     
     export class PullDefinitionSignatureSymbol extends PullSignatureSymbol {

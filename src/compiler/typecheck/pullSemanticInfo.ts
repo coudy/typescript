@@ -71,15 +71,7 @@ module TypeScript {
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
             this.declASTMap.link(decl.getDeclID().toString() + decl.getKind().toString(), ast);
-        }
-
-        public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {
-            this.declSymbolMap.link(decl.getDeclID().toString() + decl.getKind().toString(), symbol);
-        }
-
-        public getSymbolForDecl(decl: PullDecl): PullSymbol {
-            return <PullSymbol>this.declSymbolMap.read(decl.getDeclID().toString() + decl.getKind().toString());
-        }
+        }       
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
             this.astSymbolMap.link(ast.getID().toString(), symbol);
@@ -145,11 +137,13 @@ module TypeScript {
             var span = new DeclSpan();
             var decl = new PullDecl(name, PullElementKind.Primitive, PullElementFlags.None, span, "");
             var symbol = new PullPrimitiveTypeSymbol(name);
+
             symbol.addDeclaration(decl);
             decl.setSymbol(symbol);
 
+            symbol.setResolved();
+
             globalDecl.addChildDecl(decl);
-            this.units[0].setSymbolForDecl(decl, symbol);
 
             return symbol;
         }

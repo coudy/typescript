@@ -220,8 +220,6 @@ module TypeScript {
 
             var declFlags = PullElementFlags.None;
             var declType = PullElementKind.FunctionType;
-            var isProperty = false;
-            var isStatic = false;
 
             var span = new DeclSpan();
 
@@ -537,7 +535,6 @@ module TypeScript {
 
             var declFlags = PullElementFlags.Signature | PullElementFlags.Index;
             var declType = PullElementKind.IndexSignature;
-            var isStatic = false;
 
             var span = new DeclSpan();
 
@@ -668,7 +665,6 @@ module TypeScript {
 
             var declFlags = PullElementFlags.Constructor;
             var declType = PullElementKind.ConstructorMethod;
-            var isStatic = false;
 
             if (!node.block) {
                 declFlags |= PullElementFlags.Signature;
@@ -918,7 +914,7 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
             
-            var decl = new PullDecl(node.identifier().text(), PullElementKind.Argument, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier().text(), PullElementKind.Parameter, declFlags, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 

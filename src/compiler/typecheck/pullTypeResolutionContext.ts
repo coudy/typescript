@@ -27,6 +27,8 @@ module TypeScript {
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
 
+        public resolvingTypeReference = false;
+
         public resolveAggressively = false;
         
         public pushContextualType(type: PullTypeSymbol, provisional: bool) {
