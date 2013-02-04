@@ -3068,11 +3068,13 @@ module TypeScript {
                     this.currentToken = this.scanner.scan();
                 }
             }
+
             for (; ;) {
                 tokenInfo = lookupToken(this.currentToken.tokenId);
                 if ((tokenInfo == undefined) || (tokenInfo.binopNodeType == NodeType.None)) {
                     break;
                 }
+
                 if ((!allowIn) && (tokenInfo.binopNodeType == NodeType.In)) {
                     break;
                 }

@@ -312,6 +312,22 @@ module TypeScript {
                 }
             }
 
+            var knownMemberNames: any = {};
+            for (var i = 0, n = node.classElements().childCount(); i < n; i++) {
+                var classElement = <IClassElementSyntax>node.classElements().childAt(i);
+
+                if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
+                    var variableDeclaration = <MemberVariableDeclarationSyntax>classElement;
+                    knownMemberNames[this.identifierFromToken(variableDeclaration.variableDeclarator().identifier()).actualText] = true;
+                }
+                else if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
+                    var functionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
+                    knownMemberNames[this.identifierFromToken(functionDeclaration.functionSignature().identifier()).actualText] = true;
+                }
+            }
+
+            result.knownMemberNames = knownMemberNames;
+
             return result;
         }
 
