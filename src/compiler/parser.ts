@@ -389,11 +389,12 @@ module TypeScript {
                 }
                 else {
                     if (lastValue == null) {
-                        memberValue = new NumberLiteral(0);
+                        memberValue = new NumberLiteral(0, "0");
                         lastValue = <NumberLiteral>memberValue;
                     }
                     else {
-                        memberValue = new NumberLiteral(lastValue.value + 1);
+                        var nextValue = lastValue.value + 1;
+                        memberValue = new NumberLiteral(nextValue, nextValue.toString());
                         lastValue = <NumberLiteral>memberValue;
                     }
                     var map: BinaryExpression =
@@ -2835,7 +2836,7 @@ module TypeScript {
                     case TokenID.NumberLiteral: {
                         var numTok = <NumberLiteralToken>this.currentToken;
                         this.currentToken = this.scanner.scan();
-                        ast = new NumberLiteral(numTok.value, numTok.hasEmptyFraction);
+                        ast = new NumberLiteral(numTok.value, numTok.text);
                         ast.minChar = minChar;
                         limChar = this.scanner.lastTokenLimChar();
                         break;
@@ -2848,7 +2849,7 @@ module TypeScript {
                         break;
                     case TokenID.RegularExpressionLiteral: {
                         var rtok = <RegularExpressionLiteralToken>this.currentToken;
-                        ast = new RegexLiteral(rtok.regex);
+                        ast = new RegexLiteral(rtok.text);
                         this.currentToken = this.scanner.scan();
                         ast.minChar = minChar;
                         limChar = this.scanner.lastTokenLimChar();

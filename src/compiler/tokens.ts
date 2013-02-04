@@ -378,12 +378,12 @@ module TypeScript {
     }
 
     export class NumberLiteralToken extends Token {
-        constructor (public value: number, public hasEmptyFraction?: bool) {
+        constructor (public value: number, public text: string) {
             super(TokenID.NumberLiteral);
         }
 
         public getText(): string {
-            return this.hasEmptyFraction ? this.value.toString() + ".0" : this.value.toString();
+            return this.text;
         }
 
         public classification(): TokenClass {
@@ -399,7 +399,7 @@ module TypeScript {
         public getText(): string {
             return this.value;
         }
-
+        
         public classification(): TokenClass {
             return TokenClass.StringLiteral;
         }
@@ -446,12 +446,12 @@ module TypeScript {
     }
 
     export class RegularExpressionLiteralToken extends Token {
-        constructor(public regex) {
+        constructor(public text: string) {
             super(TokenID.RegularExpressionLiteral);
         }
 
         public getText(): string {
-            return this.regex.toString();
+            return this.text;
         }
 
         public classification(): TokenClass {

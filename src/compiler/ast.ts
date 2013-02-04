@@ -774,11 +774,9 @@ module TypeScript {
     }
 
     export class NumberLiteral extends Expression {
-        constructor (public value: any, public hasEmptyFraction?: bool) {
+        constructor (public value: number, public text: string) {
             super(NodeType.NumberLit);
         }
-
-        public isNegativeZero = false;
 
         public typeCheck(typeFlow: TypeFlow) {
             this.type = typeFlow.doubleType;
@@ -792,34 +790,18 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.isNegativeZero) {
-                emitter.writeToOutput("-");
-            }
-
-            emitter.writeToOutput(this.value.toString());
-
-            if (this.hasEmptyFraction)
-                emitter.writeToOutput(".0");
-
+            emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
 
-        public printLabel() {
-            if (Math.floor(this.value) != this.value) {
-                return this.value.toFixed(2).toString();
-            }
-            else if (this.hasEmptyFraction) {
-                return this.value.toString() + ".0";
-            }
-            else {
-                return this.value.toString();
-            }
+        public printLabel(): string {
+            return this.text;
         }
     }
 
     export class RegexLiteral extends Expression {
-        constructor (public regex) {
+        constructor (public text: string) {
             super(NodeType.Regex);
         }
         
@@ -831,7 +813,7 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeToOutput(this.regex.toString());
+            emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }
