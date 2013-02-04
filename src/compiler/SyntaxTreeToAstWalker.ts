@@ -187,6 +187,42 @@ module TypeScript {
 
         private hasTopLevelImportOrExport(node: SourceUnitSyntax): bool {
             // TODO: implement this.
+            for (var i = 0, n = node.moduleElements().childCount(); i < n; i++) {
+                var moduleElement = node.moduleElements().childAt(i);
+
+                var firstToken = moduleElement.firstToken();
+                if (firstToken !== null && firstToken.kind() === SyntaxKind.ExportKeyword) {
+                    return true;
+                }
+
+                if (moduleElement.kind() === SyntaxKind.ImportDeclaration) {
+                    var importDecl = <ImportDeclarationSyntax>moduleElement;
+                    if (importDecl.moduleReference().kind() === SyntaxKind.ExternalModuleReference) {
+                        return true;
+                    }
+                }
+            }
+
+            var firstToken = node.firstToken();
+            if (firstToken.hasLeadingComment()) {
+                var leadingTrivia = firstToken.leadingTrivia();
+                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
+                    var trivia = leadingTrivia.syntaxTriviaAt(i);
+
+                    if (trivia.isComment()) {
+                        // var dependencyPath = getAdditionalDependencyPath(trivia.text());
+
+                        //if (dependencyPath) {
+                        //    this.amdDependencies.push(dependencyPath);
+                        //}
+
+                        if (getImplicitImport(trivia.fullText())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
             return false;
         }
 

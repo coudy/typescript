@@ -283,6 +283,7 @@ module TypeScript {
                 for (var i = 0; i < comments.length; i++) {
                     commentASTs.push(this.parseComment(comments[i]));
                 }
+
                 return commentASTs;
             } else {
                 return null;
