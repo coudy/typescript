@@ -306,6 +306,8 @@ module TypeScript {
                         funcDecl.name = name;
                         funcDecl.returnTypeAnnotation = new TypeReference(name, 0);
                         funcDecl.classDecl = result;
+
+                        result.constructorDecl = funcDecl;
                     }
                 }
             }

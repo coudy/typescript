@@ -352,12 +352,12 @@ module TypeScript {
             }
             obj1.alreadySeenObject = true;
 
-            if (obj2) {
-                if (obj2.alreadySeenObject) {
-                    return;
-                }
-                obj2.alreadySeenObject = true;
-            }
+            //if (obj2) {
+            //    if (obj2.alreadySeenObject) {
+            //        return;
+            //    }
+            //    obj2.alreadySeenObject = true;
+            //}
 
             for (var name in obj1) {
                 if (name === "limChar" ||
@@ -416,6 +416,8 @@ module TypeScript {
                     }
                 }
             }
+
+            obj1.alreadySeenObject = false;
         }
 
         public typeCheck() {

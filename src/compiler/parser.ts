@@ -2629,6 +2629,7 @@ module TypeScript {
                         return elements;
                     }
                 }
+
                 idHint = null;
                 elements.append(member);
                 member.limChar = this.scanner.lastTokenLimChar();
