@@ -471,7 +471,7 @@ declare module "punycode" {
     export function toUnicode(domain: string): string;
     export function toASCII(domain: string): string;
     export var ucs2: ucs2;
-    interface ucs2 {
+    export interface ucs2 {
         decode(string: string): string;
         encode(codePoints: number[]): string;
     }
@@ -673,7 +673,7 @@ declare module "dgram" {
 
     export function createSocket(type: string, callback?: Function): Socket;
 
-    class Socket extends events.EventEmitter {
+    export class Socket extends events.EventEmitter {
         send(buf: NodeBuffer, offset: number, length: number, port: number, address: string, callback?: Function): void;
         bind(port: number, address?: string): void;
         close(): void;
@@ -689,7 +689,7 @@ declare module "dgram" {
 declare module "fs" {
     import stream = module("stream");
 
-    interface Stats {
+    export interface Stats {
         isFile(): bool;
         isDirectory(): bool;
         isBlockDevice(): bool;
@@ -712,7 +712,7 @@ declare module "fs" {
         ctime: Date;
     }
 
-    interface FSWatcher {
+    export interface FSWatcher {
         close(): void;
     }
 
@@ -837,8 +837,8 @@ declare module "tls" {
     import net = module("net");
     import stream = module("stream");
 
-    var CLIENT_RENEG_LIMIT: number;
-    var CLIENT_RENEG_WINDOW: number;
+    export var CLIENT_RENEG_LIMIT: number;
+    export var CLIENT_RENEG_WINDOW: number;
 
     export interface TlsOptions {
         pfx?: any;   //string or buffer
@@ -930,41 +930,41 @@ declare module "crypto" {
     export function createCredentials(details: CredentialDetails): Credentials;
     export function createHash(algorithm: string): Hash;
     export function createHmac(algorithm: string, key: string): Hmac;
-    interface Hash {
+    export interface Hash {
         update(data: any, input_encoding?: string): void;
         digest(encoding?: string): string;
     }
-    interface Hmac {
+    export interface Hmac {
         update(data: any): void;
         digest(encoding?: string): void;
     }
     export function createCipher(algorithm: string, password: any): Cipher;
     export function createCipheriv(algorithm: string, key: any, iv: any): Cipher;
-    interface Cipher {
+    export interface Cipher {
         update(data: any, input_encoding?: string, output_encoding?: string): string;
         final(output_encoding?: string): string;
         setAutoPadding(auto_padding: bool): void;
         createDecipher(algorithm: string, password: any): Decipher;
         createDecipheriv(algorithm: string, key: any, iv: any): Decipher;
     }
-    interface Decipher {
+    export interface Decipher {
         update(data: any, input_encoding?: string, output_encoding?: string): void;
         final(output_encoding?: string): string;
         setAutoPadding(auto_padding: bool): void;
     }
     export function createSign(algorithm: string): Signer;
-    interface Signer {
+    export interface Signer {
         update(data: any): void;
         sign(private_key: string, output_format: string): string;
     }
     export function createVerify(algorith: string): Verify;
-    interface Verify {
+    export interface Verify {
         update(data: any): void;
         verify(object: string, signature: string, signature_format?: string): bool;
     }
     export function createDiffieHellman(prime_length: number): DiffieHellman;
     export function createDiffieHellman(prime: number, encoding?: string): DiffieHellman;
-    interface DiffieHellman {
+    export interface DiffieHellman {
         generateKeys(encoding?: string): string;
         computeSecret(other_public_key: string, input_encoding?: string, output_encoding?: string): string;
         getPrime(encoding?: string): string;
