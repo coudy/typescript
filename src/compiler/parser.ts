@@ -3117,6 +3117,7 @@ module TypeScript {
                                                             ErrorRecoverySet.BinOp,
                                                             tokenInfo.binopPrecedence,
                                                             allowIn, TypeContext.NoTypes, possiblyInLambda));
+
                     if (binExpr2.operand2.nodeType == NodeType.FuncDecl) {
                         var funcDecl = <FuncDecl>binExpr2.operand2;
                         funcDecl.hint = idHint;
@@ -3143,6 +3144,7 @@ module TypeScript {
                 if (preComments) {
                     ast.preComments = ast.preComments ? preComments.concat(ast.preComments) : preComments;
                 }
+
                 ast.postComments = this.parseCommentsForLine(this.scanner.line);
             }
             return ast;

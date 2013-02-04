@@ -950,15 +950,23 @@ module TypeScript {
 
         private visitBinaryExpression(node: BinaryExpressionSyntax): BinaryExpression {
             var nodeType = this.getBinaryExpressionNodeType(node);
-            var result = new BinaryExpression(
-                nodeType,
-                node.left().accept(this),
-                node.right().accept(this));
+            var left = node.left().accept(this);
+            var right = node.right().accept(this);
+
+            var result = new BinaryExpression(nodeType, left, right);
             this.setSpan(result, node);
+
+            if (right.nodeType === NodeType.FuncDecl) {
+                var id = left.nodeType === NodeType.Dot ? (<BinaryExpression>left).operand2 : left;
+                var idHint: string = id.nodeType === NodeType.Name ? id.actualText : null;
+
+                var funcDecl = <FuncDecl>right;
+                funcDecl.hint = idHint;
+            }
 
             return result;
         }
-
+        
         private visitConditionalExpression(node: ConditionalExpressionSyntax): ConditionalExpression {
             var result = new ConditionalExpression(
                 node.condition().accept(this),
@@ -1419,7 +1427,7 @@ module TypeScript {
         }
 
         private visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
-            var left = this.identifierFromToken(node.propertyName());
+            var left = node.propertyName().accept(this);
             var right = node.expression().accept(this);
 
             var result = new BinaryExpression(NodeType.Member, left, right);
