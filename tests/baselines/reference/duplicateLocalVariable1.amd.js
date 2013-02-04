@@ -156,17 +156,17 @@ define(["require", "exports"], function(require, exports) {
                 chars.push(fb.readByte());
             }
             return TestRunner.arrayCompare(chars, [
-                84, 
-                195, 
-                168, 
-                225, 
-                180, 
-                163, 
-                226, 
-                128, 
-                160, 
-                13, 
-                10
+                0x54, 
+                0xC3, 
+                0xA8, 
+                0xE1, 
+                0xB4, 
+                0xA3, 
+                0xE2, 
+                0x80, 
+                0xA0, 
+                0x0D, 
+                0x0A
             ]);
         }));
         testRunner.addTest(new TestCase("Check UTF8 decoding", function () {
@@ -176,24 +176,24 @@ define(["require", "exports"], function(require, exports) {
                 chars.push(fb.readUtf8CodePoint());
             }
             return TestRunner.arrayCompare(chars, [
-                84, 
-                232, 
-                7459, 
-                8224, 
-                13, 
-                10
+                0x0054, 
+                0x00E8, 
+                0x1D23, 
+                0x2020, 
+                0x000D, 
+                0x000A
             ]);
         }));
         testRunner.addTest(new TestCase("Check UTF8 encoding", function () {
             var fb = new FileManager.FileBuffer(20);
             fb.writeUtf8Bom();
             var chars = [
-                84, 
-                232, 
-                7459, 
-                8224, 
-                13, 
-                10
+                0x0054, 
+                0x00E8, 
+                0x1D23, 
+                0x2020, 
+                0x000D, 
+                0x000A
             ];
             for(var i in chars) {
                 fb.writeUtf8CodePoint(chars[i]);
@@ -204,20 +204,20 @@ define(["require", "exports"], function(require, exports) {
                 bytes.push(fb.readByte());
             }
             var expected = [
-                239, 
-                187, 
-                191, 
-                84, 
-                195, 
-                168, 
-                225, 
-                180, 
-                163, 
-                226, 
-                128, 
-                160, 
-                13, 
-                10
+                0xEF, 
+                0xBB, 
+                0xBF, 
+                0x54, 
+                0xC3, 
+                0xA8, 
+                0xE1, 
+                0xB4, 
+                0xA3, 
+                0xE2, 
+                0x80, 
+                0xA0, 
+                0x0D, 
+                0x0A
             ];
             return TestRunner.arrayCompare(bytes, expected);
         }));
@@ -226,12 +226,12 @@ define(["require", "exports"], function(require, exports) {
             var fb = new FileManager.FileBuffer(14);
             fb.writeUtf16leBom();
             var chars = [
-                84, 
-                232, 
-                7459, 
-                8224, 
-                13, 
-                10
+                0x0054, 
+                0x00E8, 
+                0x1D23, 
+                0x2020, 
+                0x000D, 
+                0x000A
             ];
             chars.forEach(function (val) {
                 fb.writeUtf16CodePoint(val, false);
@@ -242,20 +242,20 @@ define(["require", "exports"], function(require, exports) {
                 throw Error("Incorrect encoding");
             }
             var expectedBytes = [
-                255, 
-                254, 
-                84, 
-                0, 
-                232, 
-                0, 
-                35, 
-                29, 
-                32, 
-                32, 
-                13, 
-                0, 
-                10, 
-                0
+                0xFF, 
+                0xFE, 
+                0x54, 
+                0x00, 
+                0xE8, 
+                0x00, 
+                0x23, 
+                0x1D, 
+                0x20, 
+                0x20, 
+                0x0D, 
+                0x00, 
+                0x0A, 
+                0x00
             ];
             savedFile.index = 0;
             expectedBytes.forEach(function (val) {
@@ -286,12 +286,12 @@ define(["require", "exports"], function(require, exports) {
                 codePoints.push(savedFile.readUtf16CodePoint(false));
             }
             var expectedCodePoints = [
-                66688, 
-                66689, 
-                66690, 
-                84, 
-                104, 
-                105
+                0x10480, 
+                0x10481, 
+                0x10482, 
+                0x54, 
+                0x68, 
+                0x69
             ];
             return TestRunner.arrayCompare(codePoints, expectedCodePoints);
         }));
@@ -305,12 +305,12 @@ define(["require", "exports"], function(require, exports) {
                 codePoints.push(savedFile.readUtf8CodePoint());
             }
             var expectedCodePoints = [
-                66688, 
-                66689, 
-                66690, 
-                84, 
-                104, 
-                105
+                0x10480, 
+                0x10481, 
+                0x10482, 
+                0x54, 
+                0x68, 
+                0x69
             ];
             return TestRunner.arrayCompare(codePoints, expectedCodePoints);
         }));
@@ -318,12 +318,12 @@ define(["require", "exports"], function(require, exports) {
             var filename = TestFileDir + "\\tmpUTF8nonBmp.txt";
             var fb = new FileManager.FileBuffer(15);
             var chars = [
-                66688, 
-                66689, 
-                66690, 
-                84, 
-                104, 
-                105
+                0x10480, 
+                0x10481, 
+                0x10482, 
+                0x54, 
+                0x68, 
+                0x69
             ];
             chars.forEach(function (val) {
                 fb.writeUtf8CodePoint(val);
@@ -334,21 +334,21 @@ define(["require", "exports"], function(require, exports) {
                 throw Error("Incorrect encoding");
             }
             var expectedBytes = [
-                240, 
-                144, 
-                146, 
-                128, 
-                240, 
-                144, 
-                146, 
-                129, 
-                240, 
-                144, 
-                146, 
-                130, 
-                84, 
-                104, 
-                105
+                0xF0, 
+                0x90, 
+                0x92, 
+                0x80, 
+                0xF0, 
+                0x90, 
+                0x92, 
+                0x81, 
+                0xF0, 
+                0x90, 
+                0x92, 
+                0x82, 
+                0x54, 
+                0x68, 
+                0x69
             ];
             expectedBytes.forEach(function (val) {
                 var byteVal = savedFile.readByte();
