@@ -305,7 +305,7 @@ module TypeScript {
                 //if (filename.indexOf("getCompletionsAtPosition5") < 0) {
                 //    return;
                 //}
-
+                 
                 var sharedIndex = this.units.length;
                 var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
                 script.referencedFiles = referencedFiles;

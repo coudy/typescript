@@ -1254,12 +1254,61 @@ module TypeScript {
             return result;
         }
 
-        private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax): FuncDecl {
+            var name = this.identifierFromToken(node.identifier());
+            var parameters = node.parameterList().accept(this);
+
+            this.pushDeclLists();
+
+            var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            if (statements) {
+                statements.append(new EndCode());
+            }
+            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(result, node);
+
+            this.popDeclLists();
+
+            var scopeList = this.topScopeList();
+            scopeList.append(result);
+
+            if (node.publicOrPrivateKeyword()) {
+                if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PrivateKeyword) {
+                    result.fncFlags |= FncFlags.Private;
+                }
+                else {
+                    result.fncFlags |= FncFlags.Public;
+                }
+            }
+
+            if (node.staticKeyword()) {
+                result.fncFlags |= FncFlags.Static;
+            }
+
+            return result;
         }
 
-        private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): FuncDecl {
+            var result = this.visitMemberAccessorDeclaration(node);
+
+            result.fncFlags |= FncFlags.GetAccessor;
+            result.hint = "get" + result.name.actualText;
+
+            result.returnTypeAnnotation = node.typeAnnotation()
+                ? node.typeAnnotation().accept(this)
+                : null;
+
+            return result;
+        }
+
+        private visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): FuncDecl {
+            var result = this.visitMemberAccessorDeclaration(node);
+
+            result.fncFlags |= FncFlags.SetAccessor;
+            result.hint = "set" + result.name.actualText;
+
+            return result;
         }
 
         private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VarDecl {
@@ -1478,16 +1527,72 @@ module TypeScript {
                 var funcDecl = <FuncDecl>right;
                 funcDecl.hint = left.text;
             }
+            
+            return result;
+        }
+
+        private visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
+            var parameters = new ASTList();
+
+            var idHint = "get" + node.propertyName().text();
+            var name = this.identifierFromToken(node.propertyName());
+
+            this.pushDeclLists();
+
+            var statements = this.visitSyntaxList(node.block().statements());
+            statements.append(new EndCode());
+
+            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(funcDecl, node);
+
+            this.popDeclLists();
+
+            var scopeList = this.topScopeList();
+            scopeList.append(funcDecl);
+
+            funcDecl.fncFlags |= FncFlags.GetAccessor;
+            funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
+            funcDecl.hint = idHint;
+
+            var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            this.setSpan(result, node);
 
             return result;
         }
 
-        private visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): any {
-            throw Errors.notYetImplemented();
-        }
+        private visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
+            var parameter = new ArgDecl(this.identifierFromToken(node.parameterName()));
+            this.setSpan(parameter, node.parameterName());
 
-        private visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): any {
-            throw Errors.notYetImplemented();
+            var parameters = new ASTList();
+            parameters.append(parameter);
+
+            var idHint = "set" + node.propertyName().text();
+            var name = this.identifierFromToken(node.propertyName());
+
+            this.pushDeclLists();
+
+            var statements = this.visitSyntaxList(node.block().statements());
+            statements.append(new EndCode());
+
+            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+                                        this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
+            this.setSpan(funcDecl, node);
+
+            this.popDeclLists();
+
+            var scopeList = this.topScopeList();
+            scopeList.append(funcDecl);
+
+            funcDecl.fncFlags |= FncFlags.SetAccessor;
+            funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
+            funcDecl.hint = idHint;
+
+            var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            this.setSpan(result, node);
+
+            return result;
         }
 
         private visitFunctionExpression(node: FunctionExpressionSyntax): any {

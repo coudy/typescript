@@ -2593,6 +2593,7 @@ module TypeScript {
                     memberExpr = funcDecl;
                     member = new BinaryExpression(NodeType.Member, memberName, memberExpr);
                     member.minChar = memberName.minChar;
+
                     if (memberExpr.nodeType == NodeType.FuncDecl) {
                         var funcDecl = <FuncDecl>memberExpr;
                         funcDecl.hint = idHint;
@@ -2610,6 +2611,7 @@ module TypeScript {
                     if (memberExpr.nodeType == NodeType.TypeRef) {
                         this.reportParseError("Expected 'new' on array declaration in member definition")
                     }
+
                     member = new BinaryExpression(NodeType.Member, memberName, memberExpr);
                     member.minChar = memberName.minChar;
                     if (memberExpr.nodeType == NodeType.FuncDecl) {
