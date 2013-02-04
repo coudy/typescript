@@ -1827,7 +1827,7 @@ module Harness {
             return { expected: expected, actual: actual };
         }
 
-        function writeComparison(expected: string, actual: string, relativeFilename: string, actualFilename: string, descriptionForDescribe: string, reportContentSoFar: string) {
+        function writeComparison(expected: string, actual: string, relativeFilename: string, actualFilename: string, descriptionForDescribe: string) {
             if (expected != actual) {
                 // Overwrite & issue error
                 var errMsg = 'The baseline file ' + relativeFilename + ' has changed. Please refer to baseline-report.html and ';
@@ -1840,6 +1840,8 @@ module Harness {
                 var header = '<h2>' + descriptionForDescribe + '</h2>';
                 header += '<h4>Left file: ' + actualFilename + '; Right file: ' + refFilename + '</h4>';
                 var trailer = '<hr>';
+
+                var reportContentSoFar = prepareBaselineReport();
                 reportContentSoFar = reportContentSoFar + header + '<div class="code">' + diff.mergedHtml + '</div>' + trailer + htmlTrailer;
                 IO.writeFile(reportFilename, reportContentSoFar);
 
@@ -1858,13 +1860,11 @@ module Harness {
             var actualFilename = localPath(relativeFilename);
 
             if (runImmediately) {
-                var reportContent = prepareBaselineReport();
                 var actual = generateActual(actualFilename, generateContent);
                 var comparison = compareToBaseline(actual, relativeFilename, opts);
-                writeComparison(comparison.expected, comparison.actual, relativeFilename, actualFilename, descriptionForDescribe, reportContent);
+                writeComparison(comparison.expected, comparison.actual, relativeFilename, actualFilename, descriptionForDescribe);
             } else {
                 describe(descriptionForDescribe, () => {
-                    var reportContent = prepareBaselineReport();
                     var actual: string;
 
                     it('Can generate the content without error', () => {
@@ -1873,7 +1873,7 @@ module Harness {
 
                     it('Matches the baseline file', () => {
                         var comparison = compareToBaseline(actual, relativeFilename, opts);
-                        writeComparison(comparison.expected, comparison.actual, relativeFilename, actualFilename, descriptionForDescribe, reportContent);
+                        writeComparison(comparison.expected, comparison.actual, relativeFilename, actualFilename, descriptionForDescribe);
                     });
                 });
             }
