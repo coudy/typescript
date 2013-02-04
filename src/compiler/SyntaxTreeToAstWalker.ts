@@ -11,6 +11,8 @@ module TypeScript {
         private scopeLists: ASTList[] = [];
         private staticsLists: ASTList[] = [];
 
+        private requiresExtendsBlock: bool = false;
+
         constructor(private syntaxInformationMap: SyntaxInformationMap,
                     private fileName: string,
                     private unitIndex: number) {
@@ -269,6 +271,7 @@ module TypeScript {
             result.locationInfo = new LocationInfo(this.fileName, null, this.unitIndex);
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
+            result.requiresExtendsBlock = this.requiresExtendsBlock;
 
             return result;
         }
@@ -287,6 +290,8 @@ module TypeScript {
             var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : new ASTList();
             var implementsList = node.implementsClause() ? node.implementsClause().accept(this) : new ASTList();
             var members = this.visitSyntaxList(node.classElements());
+
+            this.requiresExtendsBlock = this.requiresExtendsBlock || !!node.extendsClause();
 
             var result = new ClassDeclaration(name, members, extendsList, implementsList);
             this.setSpan(result, node);

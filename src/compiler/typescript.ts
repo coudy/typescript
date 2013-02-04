@@ -370,7 +370,8 @@ module TypeScript {
                     name === "nestingLevel" ||
                     name === "constructorNestingLevel" ||
                     name === "alreadySeenObject" ||
-                    name === "containsUnicodeCharInComment") {
+                    name === "containsUnicodeCharInComment" ||
+                    name === "isOverload") {
                     continue; 
                 }
 

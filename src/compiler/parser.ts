@@ -4232,6 +4232,7 @@ module TypeScript {
 
             var oldStrictMode = this.strictMode;
             this.nestingLevel++;
+
             for (; ;) {
                 if ((this.currentToken.tokenId == TokenID.CloseBrace) ||
                     (noLeadingCase && ((this.currentToken.tokenId == TokenID.Case) || (this.currentToken.tokenId == TokenID.Default))) ||
