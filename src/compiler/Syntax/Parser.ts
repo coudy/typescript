@@ -2239,11 +2239,12 @@ module Parser1 {
 
             var moduleName: INameSyntax = null;
             var stringLiteral: ISyntaxToken = null;
-            if (this.isName()) {
-                moduleName = this.parseName();
-            }
-            else if (this.currentToken().tokenKind === SyntaxKind.StringLiteral) {
+
+            if (this.currentToken().tokenKind === SyntaxKind.StringLiteral) {
                 stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
+            }
+            else {
+                moduleName = this.parseName();
             }
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);

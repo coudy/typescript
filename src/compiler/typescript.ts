@@ -302,6 +302,10 @@ module TypeScript {
 
         public addSourceUnit(sourceText: ISourceText, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + filename + ", " + keepResident + ")", () => {
+                //if (filename.indexOf("getCompletionsAtPosition5") < 0) {
+                //    return;
+                //}
+
                 var sharedIndex = this.units.length;
                 var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
                 script.referencedFiles = referencedFiles;
@@ -314,20 +318,19 @@ module TypeScript {
                     var text = new TypeScript.SourceSimpleText(sourceText);
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
-                    //if (syntaxTree.diagnostics().length === 0) {
-                    //    try {
-                    //        IO.stdout.WriteLine("Converting: " + filename);
-                    //        var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                    if (syntaxTree.diagnostics().length === 0) {
+                        try {
+                            var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
 
-                    //        script2.referencedFiles = referencedFiles;
-                    //        script2.isResident = keepResident;
+                            script2.referencedFiles = referencedFiles;
+                            script2.isResident = keepResident;
 
-                    //        TypeScriptCompiler.compareObjects(script, script2);
-                    //    } catch (e1) {
-                    //        IO.stdout.WriteLine("Error converting: " + filename);
-                    //        IO.stdout.WriteLine("\t" + e1.message);
-                    //    }
-                    //}
+                            TypeScriptCompiler.compareObjects(script, script2);
+                        } catch (e1) {
+                            IO.stdout.WriteLine("Error converting: " + filename);
+                            IO.stdout.WriteLine("\t" + e1.message);
+                        }
+                    }
                      
                     this.syntaxTrees.push(syntaxTree);
                 }
