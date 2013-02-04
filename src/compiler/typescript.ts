@@ -64,6 +64,7 @@
 ///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='SyntaxTreeToAstWalker.ts' />
+///<reference path='io.ts' />
 
 module TypeScript {
 
@@ -314,20 +315,18 @@ module TypeScript {
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
                     if (syntaxTree.diagnostics().length === 0) {
-                        //try {
+                        try {
+                            IO.stdout.WriteLine("Converting: " + filename);
                             var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
 
                             script2.referencedFiles = referencedFiles;
                             script2.isResident = keepResident;
-                         
-                            //try {
-                                TypeScriptCompiler.compareObjects(script, script2);
-                        //    } catch (e1) {
-                        //        var e2 = e1;
-                        //    }
-                        //} catch (e3) {
-                        //    var e4 = e3;
-                        // }
+
+                            TypeScriptCompiler.compareObjects(script, script2);
+                        } catch (e1) {
+                            IO.stdout.WriteLine("Error converting: " + filename);
+                            IO.stdout.WriteLine("\t" + e1.message);
+                        }
                     }
                      
                     this.syntaxTrees.push(syntaxTree);

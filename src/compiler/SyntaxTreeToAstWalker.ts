@@ -517,8 +517,8 @@ module TypeScript {
                     // If the initializer refers to an earlier enum value, then treat it as a constant
                     // as well.
                     var nameNode = <Identifier>memberValue;
-                    for (var i = 0; i < memberNames.length; i++) {
-                        var memberName = memberNames[i];
+                    for (var j = 0; j < memberNames.length; j++) {
+                        var memberName = memberNames[j];
                         if (memberName.text === nameNode.text) {
                             member.varFlags |= VarFlags.Constant;
                             break;
@@ -755,7 +755,7 @@ module TypeScript {
             }
         }
 
-        private visitQualifiedName(node: QualifiedNameSyntax): BinaryExpression {
+        private visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
             var left = this.visitType(node.left());
             if (left.nodeType === NodeType.TypeRef) {
                 left = (<TypeReference>left).term;
@@ -766,7 +766,7 @@ module TypeScript {
                 this.identifierFromToken(node.right()));
             this.setSpan(result, node);
 
-            return result;
+            return new TypeReference(result, 0);
         }
 
         private visitTypeArgumentList(node: TypeArgumentListSyntax): any {
@@ -1270,8 +1270,20 @@ module TypeScript {
         }
 
         private visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): CallExpression {
+            var expression = node.expression().accept(this);
+            if (expression.nodeType === NodeType.TypeRef) {
+                var typeRef = <TypeReference>expression;
+
+                if (typeRef.arrayCount === 0) {
+                    var term = typeRef.term;
+                    if (term.nodeType === NodeType.Dot || term.nodeType === NodeType.Name) {
+                        expression = term;
+                    }
+                }
+            }
+
             var result = new CallExpression(NodeType.New,
-                node.expression().accept(this),
+                expression,
                 node.argumentList() === null ? null : node.argumentList().accept(this));
             this.setSpan(result, node);
 

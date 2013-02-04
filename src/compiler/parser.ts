@@ -15,7 +15,7 @@
 
 ///<reference path='typescript.ts' />
 
-module TypeScript { 
+module TypeScript {
     export enum TypeContext {
         NoTypes = 0,
         ArraySuffix = 1,
@@ -1432,7 +1432,7 @@ module TypeScript {
             this.nestingLevel = prevNestingLevel;
             this.parsingClassConstructorDefinition = prevInConstr;
             funcDecl.preComments = preComments;
-            return funcDecl; 
+            return funcDecl;
         }
 
         private convertToTypeReference(ast: AST): TypeReference {
@@ -1522,7 +1522,7 @@ module TypeScript {
                     baseName = <Identifier>this.parseNamedType(errorRecoverySet | ErrorRecoverySet.LCurly,
                                             minChar, baseName, false);
                 }
-                else { 
+                else {
                     this.reportParseError("Expected base name");
                     if (this.errorRecovery) {
                         baseName = new MissingIdentifier();
@@ -2443,7 +2443,7 @@ module TypeScript {
                     varDecl.init = this.parseExpr(ErrorRecoverySet.Comma | errorRecoverySet,
                                            OperatorPrecedence.Comma, allowIn,
                                            TypeContext.NoTypes);
-                    varDecl.limChar = varDecl.init.limChar; 
+                    varDecl.limChar = varDecl.init.limChar;
 
                     if (varDecl.init.nodeType == NodeType.FuncDecl) {
                         // TODO: use 'as' operator when can bootstrap
@@ -2485,7 +2485,7 @@ module TypeScript {
             var elements = new ASTList();
             if (this.currentToken.tokenId == TokenID.CloseBrace) {
                 return elements;
-            } 
+            }
 
             var idHint: string = null;
             var memberName: AST = null;
@@ -2570,7 +2570,7 @@ module TypeScript {
                     memberName.flags |= ASTFlags.OptionalName;
                     this.currentToken = this.scanner.scan();
                 }
-                 
+
                 if (accessorPattern) {
                     var args = new ASTList();
                     this.parseFormalParameterList(errorRecoverySet | ErrorRecoverySet.RParen,
@@ -2801,7 +2801,6 @@ module TypeScript {
                                             prevTokId == TokenID.EqualsEquals || // var foo = ()=>{};
                                             prevTokId == TokenID.Colon;    // var x = { foo: ()=> {} };
 
-
                         if (couldBeLambda && this.currentToken.tokenId == TokenID.CloseParen) {
                             parseAsLambda = true;
                             expectlambdaRParen = false;
@@ -2828,9 +2827,10 @@ module TypeScript {
                                 ast.flags = ast.flags & (~(ASTFlags.SkipNextRParen));
                                 break;
                             }
+
                             this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet);
                             ast.isParenthesized = true;
-                        } 
+                        }
 
                         break;
                     case TokenID.NumberLiteral: {
@@ -2897,6 +2897,7 @@ module TypeScript {
                                 ident.minChar = minChar;
                                 ident.flags |= ASTFlags.Error;
                                 this.skip(errorRecoverySet | ErrorRecoverySet.Postfix);
+
                                 if ((this.currentToken.tokenId == TokenID.Identifier) || convertTokToID(this.currentToken, this.strictMode)) {
                                     ident.setText(this.currentToken.getText(), (<IdentifierToken>this.currentToken).hasEscapeSequence);
                                     this.currentToken = this.scanner.scan();
@@ -3000,7 +3001,7 @@ module TypeScript {
                 ast = new UnaryExpression(tokenInfo.unopNodeType, tempExpr);
                 ast.limChar = tempExpr.limChar;
                 ast.minChar = minChar;
-            } 
+            }
             else {
                 ast = this.parseTerm(ErrorRecoverySet.BinOp | ErrorRecoverySet.AddOp |
                               errorRecoverySet, true, typeContext, false);
@@ -3726,7 +3727,7 @@ module TypeScript {
                         this.checkNextToken(TokenID.OpenParen, errorRecoverySet | ErrorRecoverySet.ExprStart | ErrorRecoverySet.Var);
                         forInOk = true;
                         switch (this.currentToken.tokenId) {
-                            case TokenID.Var: 
+                            case TokenID.Var:
                                 temp = this.parseVariableDeclaration(errorRecoverySet | ErrorRecoverySet.SColon |
                                                   ErrorRecoverySet.In, Modifiers.None, false, false);
                                 break;
@@ -3861,6 +3862,7 @@ module TypeScript {
                                 caseStmt = new CaseStatement();
                                 caseStmt.minChar = this.scanner.startPos;
                                 this.currentToken = this.scanner.scan();
+
                                 if (isDefault) {
                                     switchStmt.defaultCase = caseStmt;
                                 }
