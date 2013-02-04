@@ -333,7 +333,7 @@ module Formatting {
                 this.SpaceAfterArrow,
                 this.NoSpaceAfterEllipsis,
                 this.NoSpaceAfterOptionalParameters,
-                this.NoSpaceBetweenEmptyInterfaceCurlyBrackets,
+                this.NoSpaceBetweenEmptyInterfaceCurlyBrackets
             ];
 
             // These rules are lower in priority than user-configurable rules.

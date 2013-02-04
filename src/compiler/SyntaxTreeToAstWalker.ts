@@ -656,7 +656,12 @@ module TypeScript {
         }
 
         private visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
-            var result = new UnaryExpression(NodeType.ArrayLit, this.visitSeparatedSyntaxList(node.expressions()));
+            var expressions = this.visitSeparatedSyntaxList(node.expressions());
+            if (node.expressions().childCount() > 0 && node.expressions().childAt(node.expressions().childCount() - 1).kind() === SyntaxKind.CommaToken) {
+                expressions.append(new AST(NodeType.EmptyExpr));
+            }
+
+            var result = new UnaryExpression(NodeType.ArrayLit, expressions);
             this.setSpan(result, node);
 
             return result;

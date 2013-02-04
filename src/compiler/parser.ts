@@ -3147,6 +3147,7 @@ module TypeScript {
 
                 ast.postComments = this.parseCommentsForLine(this.scanner.line);
             }
+
             return ast;
         }
 
