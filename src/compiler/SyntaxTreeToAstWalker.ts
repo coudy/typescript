@@ -174,7 +174,8 @@ module TypeScript {
                 result = new RegexLiteral(token.text());
             }
             else if (token.kind() === SyntaxKind.NumericLiteral) {
-                result = new NumberLiteral(parseInt(token.text()), false);
+                var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
+                result = new NumberLiteral(value, token.text());
             }
             else {
                 result = this.identifierFromToken(token);
@@ -477,11 +478,12 @@ module TypeScript {
                 }
                 else {
                     if (lastValue == null) {
-                        memberValue = new NumberLiteral(0);
+                        memberValue = new NumberLiteral(0, "0");
                         lastValue = <NumberLiteral>memberValue;
                     }
                     else {
-                        memberValue = new NumberLiteral(lastValue.value + 1);
+                        var nextValue = lastValue.value + 1;
+                        memberValue = new NumberLiteral(nextValue, nextValue.toString());
                         lastValue = <NumberLiteral>memberValue;
                     }
                     var map: BinaryExpression =
