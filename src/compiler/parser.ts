@@ -2846,7 +2846,7 @@ module TypeScript {
                         break;
                     case TokenID.RegularExpressionLiteral: {
                         var rtok = <RegularExpressionLiteralToken>this.currentToken;
-                        ast = new RegexLiteral(rtok.regex);
+                        ast = new RegexLiteral(rtok.text);
                         this.currentToken = this.scanner.scan();
                         ast.minChar = minChar;
                         limChar = this.scanner.lastTokenLimChar();

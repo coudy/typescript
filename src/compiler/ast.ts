@@ -813,7 +813,7 @@ module TypeScript {
     }
 
     export class RegexLiteral extends Expression {
-        constructor (public regex) {
+        constructor (public text: string) {
             super(NodeType.Regex);
         }
         
@@ -825,7 +825,7 @@ module TypeScript {
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeToOutput(this.regex.toString());
+            emitter.writeToOutput(this.text);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
         }

@@ -937,26 +937,31 @@ module TypeScript {
                 while ((this.ch == LexCode_i) || (this.ch == LexCode_g) || (this.ch == LexCode_m)) {
                     this.nextChar();
                 }
+
                 if ((this.pos - flagsStart) > 3) {
                     return null;
                 }
                 else {
                     flags = this.src.substring(flagsStart, this.pos);
                 }
+
                 var regex = undefined;
                 try {
                     regex = new RegExp(pattern, flags);
                 }
                 catch (regexException) {
                 }
+
                 if (regex) {
                     // no line boundary in regex string
                     this.col = svCol + (this.pos - this.startPos);
-                    return new RegularExpressionLiteralToken(regex);
+                    return new RegularExpressionLiteralToken(this.src.substring(svPos - 1, this.pos));
                 }
             }
+
             this.pos = svPos;
             this.col = svCol;
+
             return null;
         }
 

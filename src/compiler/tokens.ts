@@ -446,12 +446,12 @@ module TypeScript {
     }
 
     export class RegularExpressionLiteralToken extends Token {
-        constructor(public regex) {
+        constructor(public text: string) {
             super(TokenID.RegularExpressionLiteral);
         }
 
         public getText(): string {
-            return this.regex.toString();
+            return this.text;
         }
 
         public classification(): TokenClass {
