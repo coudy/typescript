@@ -1281,6 +1281,7 @@ module TypeScript {
                         haveFirstArgID = false;
                     }
                 }
+
                 firstArg = false;
                 if (this.currentToken.tokenId == TokenID.Comma) {
                     if ((munchedArg) && (!sawEllipsis)) {
@@ -1306,6 +1307,7 @@ module TypeScript {
             else if (expectClosingRParen) {
                 this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet | ErrorRecoverySet.LCurly | ErrorRecoverySet.SColon);
             }
+
             formals.limChar = this.scanner.lastTokenLimChar(); // ')' or ']'
             return sawEllipsis;
         }

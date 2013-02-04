@@ -352,13 +352,6 @@ module TypeScript {
             }
             obj1.alreadySeenObject = true;
 
-            //if (obj2) {
-            //    if (obj2.alreadySeenObject) {
-            //        return;
-            //    }
-            //    obj2.alreadySeenObject = true;
-            //}
-
             for (var name in obj1) {
                 if (name === "limChar" ||
                     name === "minChar" ||
@@ -370,14 +363,17 @@ module TypeScript {
                     name === "fncFlags" ||
                     name === "modFlags" ||
                     name === "nestingLevel" ||
-                    name === "constructorNestingLevel") {
+                    name === "constructorNestingLevel" ||
+                    name === "alreadySeenObject" ||
+                    name === "containsUnicodeCharInComment") {
                     continue; 
                 }
 
                 var value1 = obj1[name];
                 if (value1) {
                     if (typeof value1 === 'number' ||
-                        typeof value1 === 'string') {
+                        typeof value1 === 'string' ||
+                        typeof value1 === 'boolean') {
 
                         var value2 = obj2[name];
 
@@ -398,8 +394,7 @@ module TypeScript {
                     name === "docComments" ||
                     name === "sym" ||
                     name === "lineMap" ||
-                    name === "resolvedTarget" ||
-                    name === "regex") {
+                    name === "resolvedTarget") {
                     continue;
                 } 
 
@@ -417,7 +412,7 @@ module TypeScript {
                 }
             }
 
-            obj1.alreadySeenObject = false;
+            // obj1.alreadySeenObject = false;
         }
 
         public typeCheck() {

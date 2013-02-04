@@ -446,6 +446,16 @@ module TypeScript {
             return moduleDecl;
         }
 
+        private hasDotDotDotParameter(parameters: ISeparatedSyntaxList): bool {
+            for (var i = 0, n = parameters.nonSeparatorCount(); i < n; i++) {
+                if ((<ParameterSyntax>parameters.nonSeparatorAt(i)).dotDotDotToken()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
             var name = this.identifierFromToken(node.functionSignature().identifier());
             var parameters = node.functionSignature().callSignature().parameterList().accept(this);
@@ -470,7 +480,9 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
 
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
             funcDecl.returnTypeAnnotation = returnType;
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
 
             return funcDecl;
         }
@@ -785,6 +797,7 @@ module TypeScript {
             result.returnTypeAnnotation = returnType;
             result.fncFlags |= FncFlags.IsFunctionExpression;
             result.fncFlags |= FncFlags.IsFatArrowFunction;
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
 
             return result;
         }
@@ -828,6 +841,7 @@ module TypeScript {
             result.returnTypeAnnotation = node.type() ? this.visitType(node.type()) : null;
             // funcDecl.variableArgList = variableArgList;
             result.fncFlags |= FncFlags.Signature;
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
 
             var typeRef = new TypeReference(result, 0);
             this.setSpan(typeRef, node);
@@ -885,6 +899,8 @@ module TypeScript {
         private visitParameter(node: ParameterSyntax): ArgDecl {
             var result = new ArgDecl(this.identifierFromToken(node.identifier()));
             this.setSpan(result, node);
+
+            result.isOptional = !!node.questionToken();
 
             if (node.publicOrPrivateKeyword()) {
                 result.varFlags |= VarFlags.Property;
@@ -1032,6 +1048,7 @@ module TypeScript {
 
             result.hint = "_construct";
             result.fncFlags |= FncFlags.ConstructMember;
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
 
             var scopeList = this.topScopeList();
             scopeList.append(result);
@@ -1050,6 +1067,7 @@ module TypeScript {
             var result = new FuncDecl(name, new ASTList(), false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
             result.returnTypeAnnotation = node.callSignature().typeAnnotation()
                 ? node.callSignature().typeAnnotation().accept(this)
                 : null;
@@ -1070,6 +1088,7 @@ module TypeScript {
             var result = new FuncDecl(name, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
+            result.variableArgList = !!node.parameter().dotDotDotToken();
             result.returnTypeAnnotation = node.typeAnnotation()
                 ? node.typeAnnotation().accept(this)
                 : null;
@@ -1109,6 +1128,7 @@ module TypeScript {
             var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
             result.returnTypeAnnotation = node.typeAnnotation()
                 ? node.typeAnnotation().accept(this)
                 : null;
@@ -1177,6 +1197,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(result);
 
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
             // constructorFuncDecl.preComments = preComments;
             //if (requiresSignature && !isAmbient) {
             //    constructorFuncDecl.isOverload = true;
@@ -1232,6 +1253,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(result);
 
+            result.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
             result.returnTypeAnnotation = node.functionSignature().callSignature().typeAnnotation()
                 ? node.functionSignature().callSignature().typeAnnotation().accept(this)
                 : null;
@@ -1274,6 +1296,8 @@ module TypeScript {
 
             var scopeList = this.topScopeList();
             scopeList.append(result);
+
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
 
             if (node.publicOrPrivateKeyword()) {
                 if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PrivateKeyword) {
@@ -1621,6 +1645,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
 
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
             funcDecl.returnTypeAnnotation = returnType;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
 
