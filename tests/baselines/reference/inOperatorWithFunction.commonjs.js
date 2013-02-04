@@ -1,3 +1,6 @@
-console.log("a" in {
+var fn = function (val) {
+    return val;
+};
+fn("a" in {
     "a": true
 });
