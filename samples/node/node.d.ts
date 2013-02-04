@@ -982,7 +982,18 @@ declare module "crypto" {
 declare module "stream" {
     import events = module("events");
 
-    export class WritableStream extends events.EventEmitter {
+    export interface WriteStream {
+        writable: bool;
+        write(str: string, encoding?: string, fd?: string): bool;
+        write(buffer: NodeBuffer): bool;
+        end(): void;
+        end(str: string, enconding: string): void;
+        end(buffer: NodeBuffer): void;
+        destroy(): void;
+        destroySoon(): void;
+    }
+
+    export class WritableStream extends events.EventEmitter implements WriteStream {
         writable: bool;
         write(str: string, encoding?: string, fd?: string): bool;
         write(buffer: NodeBuffer): bool;
@@ -999,15 +1010,15 @@ declare module "stream" {
         pause(): void;
         resume(): void;
         destroy(): void;
-        pipe(destination: WritableStream, options?: { end?: bool; }): void;
+        pipe(destination: WriteStream, options?: { end?: bool; }): void;
     }
 
-    export class ReadWriteStream extends events.EventEmitter {
+    export class ReadWriteStream extends events.EventEmitter implements WriteStream {
         readable: bool;
         setEncoding(encoding: string): void;
         pause(): void;
         resume(): void;
-        pipe(destination: WritableStream, options?: { end?: bool; }): void;
+        pipe(destination: WriteStream, options?: { end?: bool; }): void;
 
         writable: bool;
         write(str: string, encoding?: string, fd?: string): bool;
