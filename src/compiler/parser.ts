@@ -3869,6 +3869,7 @@ module TypeScript {
                                                             OperatorPrecedence.None, true,
                                                             TypeContext.NoTypes);
                                 }
+
                                 this.checkCurrentToken(TokenID.Colon, errorRecoverySet | ErrorRecoverySet.StmtStart);
                                 caseStmt.body = new ASTList();
                                 this.parseStatementList(errorRecoverySet | ErrorRecoverySet.RCurly,

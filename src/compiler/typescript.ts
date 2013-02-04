@@ -314,20 +314,20 @@ module TypeScript {
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
                     if (syntaxTree.diagnostics().length === 0) {
-                        try {
+                        //try {
                             var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
 
                             script2.referencedFiles = referencedFiles;
                             script2.isResident = keepResident;
-
-                            try {
+                         
+                            //try {
                                 TypeScriptCompiler.compareObjects(script, script2);
-                            } catch (e1) {
-                                var e2 = e1;
-                            }
-                        } catch (e3) {
-                            var e4 = e3;
-                        }
+                        //    } catch (e1) {
+                        //        var e2 = e1;
+                        //    }
+                        //} catch (e3) {
+                        //    var e4 = e3;
+                        // }
                     }
                      
                     this.syntaxTrees.push(syntaxTree);

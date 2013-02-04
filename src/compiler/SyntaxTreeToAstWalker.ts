@@ -1289,12 +1289,13 @@ module TypeScript {
 
             for (var i = 0, n = node.switchClauses().childCount(); i < n; i++) {
                 var switchClause = node.switchClauses().childAt(i);
+                var translated = switchClause.accept(this);
+
                 if (switchClause.kind() === SyntaxKind.DefaultSwitchClause) {
-                    result.defaultCase = switchClause.accept(this);
+                    result.defaultCase = translated;
                 }
-                else {
-                    result.caseList.append(switchClause.accept(this));
-                }
+
+                result.caseList.append(translated);
             }
 
             return result;
