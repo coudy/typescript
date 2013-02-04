@@ -7711,6 +7711,7 @@ interface Blob {
     size: number;
     msDetachStream(): any;
     slice(start?: number, end?: number, contentType?: string): Blob;
+    close(): void;
     msClose(): void;
 }
 interface BlobPropertyBag {
@@ -7721,7 +7722,7 @@ interface BlobPropertyBag {
 }
 declare var Blob: {
     prototype: Blob;
-    new (parts?: any[], properties?: any): Blob;
+    new (blobParts?: any[], options?: BlobPropertyBag): Blob;
 }
 
 interface ApplicationCache extends EventTarget {
