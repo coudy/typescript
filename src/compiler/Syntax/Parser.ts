@@ -1854,8 +1854,7 @@ module Parser1 {
                 return true;
             }
 
-            return this.currentToken().tokenKind === SyntaxKind.EnumKeyword &&
-                   this.isIdentifier(this.peekToken(1));
+            return this.currentToken().tokenKind === SyntaxKind.EnumKeyword;
         }
 
         private parseEnumDeclaration(): EnumDeclarationSyntax {
@@ -1893,8 +1892,7 @@ module Parser1 {
                 return true;
             }
 
-            return token0.tokenKind === SyntaxKind.ClassKeyword &&
-                   this.isIdentifier(this.peekToken(1));
+            return token0.tokenKind === SyntaxKind.ClassKeyword;
         }
 
         private parseClassDeclaration(): ClassDeclarationSyntax {
