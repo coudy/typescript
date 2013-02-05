@@ -52,6 +52,7 @@ module TypeScript {
             if (!this.head) {
                 this.head = new IListItem(item);
                 this.last = this.head;
+                this.length++;
                 return;
             }
             

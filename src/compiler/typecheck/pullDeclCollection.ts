@@ -473,7 +473,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (funcDeclAST.bod) {
+        if (!funcDeclAST.bod) {
             declFlags |= PullElementFlags.Signature;
         }
 
@@ -553,7 +553,7 @@ module TypeScript {
     }
     
     // methods
-    export function createMemberFunctionExpressionDeclaration(memberFunctionDeclAST: FuncDecl, context: DeclCollectionContext) {
+    export function createMemberFunctionDeclaration(memberFunctionDeclAST: FuncDecl, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Method;
 
@@ -874,7 +874,7 @@ module TypeScript {
         }
         else if (hasFlag(funcDecl.fncFlags, FncFlags.Method) ||
                  hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
-            return createMemberFunctionExpressionDeclaration(funcDecl, context);
+            return createMemberFunctionDeclaration(funcDecl, context);
         }
 
         return createFunctionDeclaration(funcDecl, context);

@@ -64,7 +64,6 @@
 ///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='SyntaxTreeToAstWalker.ts' />
-///<reference path='io.ts' />
 
 module TypeScript {
 
@@ -904,6 +903,8 @@ module TypeScript {
 
                 var declCollectionStartTime = new Date().getTime();
 
+                lastBoundPullDeclId = pullDeclId;
+
                 for (var i = 0; i < this.scripts.members.length; i++) {
 
                     semanticInfo = new SemanticInfo(this.units[i].filename);
@@ -946,6 +947,8 @@ module TypeScript {
                 // want to name the new script semantic info the same as the old one
                 var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.filename);
                 var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldScript.locationInfo.filename);
+
+                lastBoundPullDeclId = pullDeclId;
 
                 var declCollectionContext = new DeclCollectionContext(newScriptSemanticInfo);
 

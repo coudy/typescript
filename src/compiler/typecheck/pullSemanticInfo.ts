@@ -303,7 +303,7 @@ module TypeScript {
 
             // PULLTODO: Be less aggressive about clearing the cache
             this.declCache = <any>{};
-            this.symbolCache = <any>{};
+            //this.symbolCache = <any>{};
             //this.unitCache[compilationUnitPath] = undefined;
         }
 

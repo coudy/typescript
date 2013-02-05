@@ -6,6 +6,7 @@
 module TypeScript { 
 
     export var pullDeclId = 0;
+    export var lastBoundPullDeclId = 0;
 
     export class DeclSpan {
         public minChar = 0;
