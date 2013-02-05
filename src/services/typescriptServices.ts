@@ -60,7 +60,7 @@ module Services {
     export class TypeScriptServicesFactory {
         public createLanguageService(host: Services.ILanguageServiceHost): Services.ILanguageService {
             try {
-                return new Services.PullLanguageService(host);
+                return new Services.LanguageService(host);
             }
             catch (err) {
                 Services.logInternalError(host, err);

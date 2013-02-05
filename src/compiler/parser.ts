@@ -51,7 +51,7 @@ module TypeScript {
         // TODO: consolidate these
         private inFunction = false;
         private inInterfaceDecl = false;
-        public currentClassDecl: NamedDeclaration = null;
+        public currentClassDecl: NamedDeclaration = null; // REVIEW: This should be removed in favor of currentClassDefinition
 
         private inFncDecl = false;  // this is only for FuncDecls - not constructors, like inFnc
         private anonId = new Identifier("_anonymous");
@@ -1430,7 +1430,7 @@ module TypeScript {
             }
 
             funcDecl.returnTypeAnnotation = returnType;
-            if (((this.inInterfaceDecl || this.currentClassDecl) && !this.inFncDecl) && isMethod) {
+            if (((this.inInterfaceDecl || this.currentClassDefinition) && !this.inFncDecl) && isMethod) {
                 funcDecl.fncFlags |= FncFlags.Method;
                 // all class property methods are currently exported
                 funcDecl.fncFlags |= FncFlags.ClassPropertyMethodExported;
