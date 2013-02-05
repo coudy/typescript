@@ -1135,11 +1135,10 @@ module Services {
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
         public getBraceMatchingAtPosition(fileName: string, position: number): TextRange[] {
-            this.refresh();
+            this.minimalRefresh();
 
-            var syntaxTree = this.compilerState.getSyntaxTree(fileName);
-            var manager = new BraceMatchingManager(syntaxTree);
-
+            var syntaxAST = this._getScriptSyntaxAST(fileName);
+            var manager = new BraceMatchingManager(syntaxAST);
             return manager.getBraceMatchingAtPosition(position);
         }
 
@@ -1763,8 +1762,75 @@ module Services {
         public getOutliningRegions(fileName: string): NavigateToItem[] {
             this.refresh();
 
-            var syntaxTree = this.compilerState.getSyntaxTree(fileName);
-            return OutliningElementsCollector.collectElements(syntaxTree.sourceUnit(), this.compilerState.getUnitIndex(fileName));
+            var script = this.compilerState.getScriptAST(fileName);
+
+            var maxLim = (current: number, ...asts: TypeScript.AST[]) => {
+                var maxLim1 = (current: number, asts: TypeScript.AST[]) => {
+                    var result = current;
+                    for (var i = 0; i < asts.length; i++) {
+                        var ast = asts[i];
+                        if (ast != null && ast.limChar != 0 && ast.limChar > result) {
+                            result = ast.limChar;
+                        }
+                    }
+                    return result;
+                }
+
+                var result = maxLim1(current, asts);
+                for (var i = 0; i < asts.length; i++) {
+                    var ast = asts[i];
+                    if (ast != null && ast.nodeType == TypeScript.NodeType.List) {
+                        result = maxLim1(result, (<TypeScript.ASTList>ast).members);
+                    }
+                }
+                return result;
+            }
+
+            var findMinChar = (parent: TypeScript.AST, ast: TypeScript.AST) => {
+                var result = ast.minChar;
+                switch (ast.nodeType) {
+                    case TypeScript.NodeType.FuncDecl:
+                        result = maxLim(result, (<TypeScript.FuncDecl>ast).name, (<TypeScript.FuncDecl>ast).arguments, (<TypeScript.FuncDecl>ast).returnTypeAnnotation);
+                        break
+
+                    case TypeScript.NodeType.ModuleDeclaration:
+                        result = maxLim(result, (<TypeScript.ModuleDeclaration>ast).name);
+                        break;
+
+                    case TypeScript.NodeType.ClassDeclaration:
+                        result = maxLim(result, (<TypeScript.ClassDeclaration>ast).name, (<TypeScript.ClassDeclaration>ast).extendsList, (<TypeScript.ClassDeclaration>ast).implementsList);
+                        break;
+
+                    case TypeScript.NodeType.InterfaceDeclaration:
+                        result = maxLim(result, (<TypeScript.InterfaceDeclaration>ast).name, (<TypeScript.InterfaceDeclaration>ast).extendsList, (<TypeScript.InterfaceDeclaration>ast).implementsList);
+                        break;
+                }
+
+                //logger.log("findMinChar(" + Tools.NodeType._map[ast.nodeType] + ")=" + result + " (instead of " + ast.minChar + ")");
+                return result;
+            }
+
+            var findLimChar = (parent: TypeScript.AST, ast: TypeScript.AST) => {
+                return ast.limChar;
+            }
+
+            var match = (parent: TypeScript.AST, ast: TypeScript.AST, name: string) => {
+                switch (ast.nodeType) {
+                    case TypeScript.NodeType.FuncDecl:
+                        if ((<TypeScript.FuncDecl>ast).bod == null)
+                            return MatchKind.none;
+                    //fall through
+                    case TypeScript.NodeType.ClassDeclaration:
+                    case TypeScript.NodeType.ModuleDeclaration:
+                    case TypeScript.NodeType.InterfaceDeclaration:
+                        return MatchKind.exact;
+
+                    default:
+                        return null;
+                }
+            }
+
+            return this.getASTItems(script.locationInfo.unitIndex, script, match, findMinChar, findLimChar);
         }
 
         /// LOG AST

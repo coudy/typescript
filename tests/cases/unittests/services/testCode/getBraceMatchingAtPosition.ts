@@ -15,3 +15,13 @@ module Foo {
 // {    }
 // (    )
 // [    ]
+// <    >
+
+class TemplateTest <T1, T2 extends Array> {
+    public foo(a, b) {
+        return <any> a;
+    }
+    public bar(a, b) {
+        return a < b || a > b;
+    }
+}

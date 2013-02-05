@@ -29,6 +29,8 @@
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />
 ///<reference path='outliningElementsCollector.ts' />
+///<reference path='braceMatcher.ts' />
+///<reference path='syntaxNodeSerializer.ts' />
 
 module Services {
     export function copyDataObject(dst: any, src: any): any {
@@ -68,11 +70,22 @@ module Services {
             }
         }
 
+        public createPullLanguageService(host: Services.ILanguageServiceHost): Services.IPullLanguageService {
+            try {
+                return new Services.PullLanguageService(host);
+            }
+            catch (err) {
+                Services.logInternalError(host, err);
+                throw err;
+            }
+        }
+
         public createLanguageServiceShim(host: ILanguageServiceShimHost): ILanguageServiceShim {
             try {
                 var hostAdapter = new LanguageServiceShimHostAdapter(host);
                 var languageService = this.createLanguageService(hostAdapter);
-                return new LanguageServiceShim(host, languageService);
+                var pullLanguageService = this.createPullLanguageService(hostAdapter);
+                return new LanguageServiceShim(host, languageService, pullLanguageService);
             }
             catch (err) {
                 Services.logInternalError(host, err);

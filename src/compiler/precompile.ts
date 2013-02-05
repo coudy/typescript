@@ -112,7 +112,7 @@ module TypeScript {
         public generateDeclarationFiles = false;
 
         public useCaseSensitiveFileResolution = false;
-        public useFidelity = true;
+        public useFidelity = false;
         public usePull = false;
 
         public gatherDiagnostics = false;
@@ -121,7 +121,7 @@ module TypeScript {
             this.styleSettings.parseOptions(str);
         }
     }
-
+    
     ///
     /// Preprocessing
     ///

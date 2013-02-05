@@ -37,6 +37,10 @@ class PositionedElement {
         return this._parent;
     }
 
+    public parentElement(): ISyntaxElement {
+        return this._parent && this._parent._element;
+    }
+
     public element(): ISyntaxElement {
         return this._element;
     }

@@ -107,6 +107,7 @@ module Services {
             // Set "ES5" target by default for language service
             settings = new TypeScript.CompilationSettings();
             settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
+            settings.useFidelity = true;
             settings.usePull = true;
             return settings;
         }
@@ -267,7 +268,7 @@ module Services {
             return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext);
         }
 
-        public getErrorEntries(maxCount: number, filter: (unitIndex: number, error: TypeScript.ErrorEntry) =>bool): TypeScript.ErrorEntry[] {
+        public old_getErrorEntries(maxCount: number, filter: (unitIndex: number, error: TypeScript.ErrorEntry) =>bool): TypeScript.ErrorEntry[] {
             var entries: TypeScript.ErrorEntry[] = [];
             var count = 0;
 
@@ -290,8 +291,9 @@ module Services {
                     for (var i = 0; i < errors.typeCheckErrors.length; i++) {
                         var error = errors.typeCheckErrors[i];
                         if (filter(unitIndex, error)) {
-                            if (!addError(error))
+                            if (!addError(error)) {
                                 break;
+                            }
                         }
                     }
                 }
@@ -301,11 +303,41 @@ module Services {
             var result: TypeScript.ErrorEntry[] = [];
             for (var i = 0; i < entries.length; i++) {
                 var e = entries[i];
-                var ne = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(e.unitIndex), e.minChar, e.limChar, e.message);
+                var ne = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(e.unitIndex), e.minChar, e.limChar, "OLD => " + e.message);
                 result.push(ne);
             }
             return result;
         }
+
+        public getErrorEntries(maxCount: number, filter: (unitIndex: number, error: SyntaxDiagnostic) => bool): TypeScript.ErrorEntry[] {
+            // Add errors from the old engine to the list untill type errors are available
+            var entries: TypeScript.ErrorEntry[] = this.old_getErrorEntries(maxCount, (u, e) => true);
+            var count = 0;
+
+            var addError = (unitIndex: number, error: SyntaxDiagnostic): bool => {
+                var entry = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(unitIndex), error.position(), error.width(), error.message());
+                entries.push(entry);
+                count++;
+                return (count < maxCount);
+            }
+
+            for (var unitIndex = 0, len = this.errorCollector.fileMap.length; unitIndex < len; unitIndex++) {
+                var errors = (<SyntaxTree>this.compiler.syntaxTrees[unitIndex]).diagnostics();
+                if (errors !== undefined) {
+                    for (var i = 0; i < errors.length; i++) {
+                        var error = errors[i];
+                        if (filter(unitIndex, error)) {
+                            if (!addError(unitIndex, error)) {
+                                break;
+                            }
+                        }
+                    }
+                    // TODO: Type checker errors
+                }
+            }
+
+            return entries;
+        } 
 
         public cleanASTTypesForReTypeCheck(ast: TypeScript.AST): void {
             this.compiler.cleanASTTypesForReTypeCheck(ast);

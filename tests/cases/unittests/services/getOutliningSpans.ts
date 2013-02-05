@@ -6,7 +6,9 @@ interface IOutliningTest {
     instance: number;
 }
 
-describe('getOutliningRegions', function() {
+describe('getOutliningSpans', function() {
+    debugger;
+
     var __typescriptLS = new Harness.TypeScriptLS();
 
     function runTest(test: IOutliningTest) {
@@ -41,7 +43,7 @@ describe('getOutliningRegions', function() {
         var __ls = __typescriptLS.getLanguageService();
 
         // run it
-        var result = __ls.languageService.getOutliningRegions(test.name);
+        var result = __ls.pullLanguageService.getOutliningSpans(test.name);
 
         // verify results
         assert.notNull(result);
@@ -51,11 +53,11 @@ describe('getOutliningRegions', function() {
         var closingCurlyCount = result.length - test.instance - 1;
 
         assert.is(result.length >= expectedResultsCount, "Expected to have at least " + expectedResultsCount + " results, but got " + result.length);
-        assert.equal(regionStart(test.contents, openingCurlyCount), result[test.instance].minChar);
-        assert.equal(regionEnd(test.contents, closingCurlyCount) , result[test.instance].limChar);
+        assert.equal(regionStart(test.contents, openingCurlyCount), result[test.instance].start());
+        assert.equal(regionEnd(test.contents, closingCurlyCount) , result[test.instance].end());
     }
     
-    describe("test cases for Outlining Regions", function() {
+    describe("test cases for Outlining Spans", function() {
         it("outlining for class declarionion", function() {
             runTest({
                 name: "classDeclarationFileName.ts",
