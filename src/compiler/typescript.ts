@@ -312,6 +312,7 @@ module TypeScript {
                 var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
                 script.referencedFiles = referencedFiles;
                 script.isResident = keepResident;
+                this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
                 
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
@@ -338,7 +339,6 @@ module TypeScript {
                 }
 
                 if (!this.settings.usePull) {
-                    this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
                     var typeCollectionStart = new Date().getTime();
                     this.typeChecker.collectTypes(script);
                     this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
