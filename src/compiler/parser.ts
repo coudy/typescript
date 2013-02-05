@@ -1060,6 +1060,7 @@ module TypeScript {
                 }
                 else if (operand.nodeType == NodeType.Name || operand.nodeType == NodeType.Asg) {
                     var opArg = operand.nodeType == NodeType.Asg ? (<BinaryExpression>operand).operand1 : operand;
+                    opArg.isParenthesized = false;
 
                     var arg = new ArgDecl(<Identifier>opArg);
                     arg.preComments = opArg.preComments;
