@@ -317,26 +317,26 @@ module TypeScript {
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
                 
-                if (this.settings.useFidelity) {
-                    var text = new TypeScript.SourceSimpleText(sourceText);
-                    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
+                //if (this.settings.useFidelity) {
+                //    var text = new TypeScript.SourceSimpleText(sourceText);
+                //    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
 
-                    //if (syntaxTree.diagnostics().length === 0) {
-                    //    try {
-                    //        var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                //    if (syntaxTree.diagnostics().length === 0) {
+                //        try {
+                //            var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
 
-                    //        script2.referencedFiles = referencedFiles;
-                    //        script2.isResident = keepResident;
+                //            script2.referencedFiles = referencedFiles;
+                //            script2.isResident = keepResident;
 
-                    //        TypeScriptCompiler.compareObjects(script, script2);
-                    //    } catch (e1) {
-                    //        IO.stdout.WriteLine("Error converting: " + filename);
-                    //        IO.stdout.WriteLine("\t" + e1.message);
-                    //    }
-                    //}
+                //            TypeScriptCompiler.compareObjects(script, script2);
+                //        } catch (e1) {
+                //            IO.stdout.WriteLine("Error converting: " + filename);
+                //            IO.stdout.WriteLine("\t" + e1.message);
+                //        }
+                //    }
                      
-                    this.syntaxTrees.push(syntaxTree);
-                }
+                //    this.syntaxTrees.push(syntaxTree);
+                //}
 
                 if (!this.settings.usePull) {
                     var typeCollectionStart = new Date().getTime();
@@ -371,6 +371,7 @@ module TypeScript {
                     name === "constructorNestingLevel" ||
                     name === "alreadySeenObject" ||
                     name === "containsUnicodeCharInComment" ||
+                    name === "containsUnicodeChar" ||
                     name === "isOverload") {
                     continue; 
                 }
