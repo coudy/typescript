@@ -32,52 +32,52 @@ module Services {
         }
 
         public visitClassDeclaration(node: ClassDeclarationSyntax): void {
-            this.addOutlineRange(node, node.openBraceToken(), node.closeBraceToken());
+            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
             super.visitClassDeclaration(node);
         }
 
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): void {
-            this.addOutlineRange(node, node.body(), node.body());
+            this.addOutlineRange(node, node.body, node.body);
             super.visitInterfaceDeclaration(node);
         }
 
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
-            this.addOutlineRange(node, node.openBraceToken(), node.closeBraceToken());
+            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
             super.visitModuleDeclaration(node);
         }
 
         public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
-            this.addOutlineRange(node, node.openBraceToken(), node.closeBraceToken());
+            this.addOutlineRange(node, node.openBraceToken, node.closeBraceToken);
             super.visitEnumDeclaration(node);
         }
 
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): void {
-            this.addOutlineRange(node, node.block(), node.block());
+            this.addOutlineRange(node, node.block, node.block);
             super.visitFunctionDeclaration(node);
         }
 
         public visitFunctionExpression(node: FunctionExpressionSyntax): void {
-            this.addOutlineRange(node, node.block(), node.block());
+            this.addOutlineRange(node, node.block, node.block);
             super.visitFunctionExpression(node);
         }
 
         public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {
-            this.addOutlineRange(node, node.block(), node.block());
+            this.addOutlineRange(node, node.block, node.block);
             super.visitConstructorDeclaration(node);
         }
 
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
-            this.addOutlineRange(node, node.block(), node.block());
+            this.addOutlineRange(node, node.block, node.block);
             super.visitMemberFunctionDeclaration(node);
         }
 
         public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
-            this.addOutlineRange(node, node.block(), node.block());
+            this.addOutlineRange(node, node.block, node.block);
             super.visitGetMemberAccessorDeclaration(node);
         }
 
         public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
-            this.addOutlineRange(node, node.block(), node.block());
+            this.addOutlineRange(node, node.block, node.block);
             super.visitSetMemberAccessorDeclaration(node);
         }
 
