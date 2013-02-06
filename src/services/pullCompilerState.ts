@@ -237,10 +237,25 @@ module Services {
             return <TypeScript.Script>this.compiler.scripts.members[unitIndex];
         }
 
+        public createSyntaxTree(fileName: string): SyntaxTree {
+            var unitIndex = this.compilerCache.getUnitIndex(fileName);
+            if (unitIndex < 0) {
+                throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
+            }
+
+            var sourceText = this.getSourceText2(fileName, /*cached:*/ false);
+            var text = new TypeScript.SourceSimpleText(sourceText);
+            return Parser1.parse(text);
+        }
+
         public getSyntaxTree(fileName: string): SyntaxTree {
             var unitIndex = this.compilerCache.getUnitIndex(fileName);
             if (unitIndex < 0) {
                 throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
+            }
+
+            if (!this.compiler.syntaxTrees[unitIndex]) {
+                this.compiler.syntaxTrees[unitIndex] = this.createSyntaxTree(fileName);
             }
 
             return <SyntaxTree>this.compiler.syntaxTrees[unitIndex];
@@ -409,6 +424,10 @@ module Services {
                 return false;
             }
 
+            if (this.compilationSettings.useFidelity) {
+                this.updateSyntaxTree(scriptId);
+            }
+
             //
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
@@ -416,6 +435,29 @@ module Services {
             var sourceText = this.hostCache.getSourceText(hostUnitIndex);
             this.setUnitMapping(unitIndex, hostUnitIndex);
             return compiler.pullUpdateUnit(sourceText, scriptId, true/*setRecovery*/);
+        }
+
+        private updateSyntaxTree(scriptId: string): void {
+            var previousScript = this.getScriptAST(scriptId);
+            var editRange = this.getScriptEditRange(previousScript);
+
+            var start = editRange.minChar;
+            var end = editRange.limChar;
+            var newLength = end - start + editRange.delta;
+
+            Debug.assert(newLength >= 0);
+
+            var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
+
+            var textChangeRange = new TextChangeRange(TextSpan.fromBounds(start, end), newLength);
+
+            var newText = new TypeScript.SourceSimpleText(newSourceText);
+
+            var previousSyntaxTree = this.getSyntaxTree(scriptId);
+            var nextSyntaxTree = Parser1.incrementalParse(
+                previousSyntaxTree.sourceUnit(), [textChangeRange], newText);
+
+            this.setSyntaxTree(scriptId, nextSyntaxTree);
         }
 
         // Attempt an incremental refresh of the compiler state.

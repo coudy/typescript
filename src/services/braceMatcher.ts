@@ -14,8 +14,8 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\prototype\TextSpanWalker.ts' />
-///<reference path='..\prototype\SyntaxUtilities.ts' />
+///<reference path='..\compiler\syntax\TextSpanWalker.ts' />
+///<reference path='..\compiler\syntax\SyntaxUtilities.ts' />
 
 module Services {
     export class BraceMatcher {
@@ -39,7 +39,7 @@ module Services {
                 var closingBraceKind = getMatchingCloseBraceTokenKind(currentToken);
                 if (closingBraceKind !== null) {
                     var parentElement = currentToken.parentElement();
-                    var currentPosition = currentToken.parent().start();
+                    var currentPosition = currentToken.parent().fullStart();
                     for (var i = 0, n = parentElement.childCount(); i < n; i++) {
                         var element = parentElement.childAt(i);
                         if (element !== null && element.fullWidth() > 0) {

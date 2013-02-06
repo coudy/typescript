@@ -58,6 +58,9 @@ module Syntax {
         insertChildrenInto: (array: ISyntaxElement[], index: number): void => {
         },
 
+        leadingTrivia: () => Syntax.emptyTriviaList,
+        trailingTrivia: () => Syntax.emptyTriviaList,
+
         leadingTriviaWidth: () => 0,
         trailingTriviaWidth:() => 0
     }
@@ -129,6 +132,14 @@ module Syntax {
 
         public fullText(): string {
             return this.item.fullText();
+        }
+
+        public leadingTrivia(): ISyntaxTriviaList {
+            return this.item.leadingTrivia();
+        }
+
+        public trailingTrivia(): ISyntaxTriviaList {
+            return this.item.trailingTrivia();
         }
 
         public leadingTriviaWidth(): number {
@@ -300,6 +311,14 @@ module Syntax {
         public width(): number {
             var fullWidth = this.fullWidth();
             return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+        }
+
+        public leadingTrivia(): ISyntaxTriviaList {
+            return this.firstToken().leadingTrivia();
+        }
+
+        public trailingTrivia(): ISyntaxTriviaList {
+            return this.lastToken().trailingTrivia();
         }
 
         public leadingTriviaWidth(): number {

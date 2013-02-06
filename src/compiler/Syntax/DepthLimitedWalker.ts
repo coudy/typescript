@@ -1,6 +1,6 @@
-///<reference path='SyntaxWalker.generated.ts' />
+///<reference path='PositionTrackingWalker.ts' />
 
-class DepthLimitedWalker extends SyntaxWalker {
+class DepthLimitedWalker extends PositionTrackingWalker {
     private _depth: number = 0;
     private _maximumDepth: number = 0;
 
@@ -14,6 +14,10 @@ class DepthLimitedWalker extends SyntaxWalker {
             this._depth++;
             super.visitNode(node);
             this._depth--;
+        }
+        else {
+            // update the position
+            this.skip(node);
         }
     }
 }

@@ -14,7 +14,7 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\prototype\SyntaxWalker.generated.ts' />
+///<reference path='..\compiler\syntax\SyntaxWalker.generated.ts' />
 
 module Services {
     export class SyntaxNodeSerializer extends SyntaxWalker {

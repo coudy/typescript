@@ -16,6 +16,8 @@ module Services {
 
         logAST(fileName: string): void;
 
+        getIndentation(fileName: string, position: number, options: Services.EditorOptions): number;
+
         //getScriptAST(fileName: string): TypeScript.Script;
         //getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[];
         //getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo;
@@ -451,6 +453,10 @@ module Services {
         public getMatchingBraceSpans(fileName: string, position: number): TextSpan[] {
             this.refresh();
 
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("getMatchingBraceSpans is only available when useFidelity flag is set.");
+            }
+
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             return BraceMatcher.getMatchSpans(syntaxTree, position);
         }
@@ -589,14 +595,35 @@ module Services {
         public getOutliningSpans(fileName: string): TextSpan[] {
             this.refresh();
 
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("getOutliningSpans is only available when useFidelity flag is set.");
+            }
+
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             return OutliningElementsCollector.collectElements(syntaxTree.sourceUnit());
         }
 
+
+        public getIndentation(fileName: string, position: number, options: Services.EditorOptions): number {
+            this.refresh();
+
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("getIndentation is only available when useFidelity flag is set.");
+            }
+
+            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            var sourceText = this.pullCompilerState.getSourceText2(fileName, /* cached */ true);
+            return Indenter.getIndentation(syntaxTree.sourceUnit(), sourceText, position, options);
+        }
+        
         /// LOG AST
         ///
         public logAST(fileName: string): void {
             this.refresh();
+
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("logAST is only available when useFidelity flag is set.");
+            }
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             var serializedTree = SyntaxNodeSerializer.serialize(syntaxTree.sourceUnit());

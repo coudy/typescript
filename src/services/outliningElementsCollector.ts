@@ -14,7 +14,7 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\prototype\DepthLimitedWalker.ts' />
+///<reference path='..\compiler\syntax\DepthLimitedWalker.ts' />
 
 module Services {
     export class OutliningElementsCollector extends DepthLimitedWalker {
@@ -23,14 +23,9 @@ module Services {
         private static MaximumDepth: number = 10;
 
         private elements: TextSpan[] = [];
-        private position: number = 0;
 
         constructor() {
             super(OutliningElementsCollector.MaximumDepth);
-        }
-
-        public visitToken(token: ISyntaxToken): void {
-            this.position += token.fullWidth();
         }
 
         public visitClassDeclaration(node: ClassDeclarationSyntax): void {
@@ -86,8 +81,8 @@ module Services {
         private addOutlineRange(node: SyntaxNode, startElement: ISyntaxNodeOrToken, endElement: ISyntaxNodeOrToken) {
             if (startElement && endElement) {
                 // Compute the position
-                var start = this.position + Syntax.childOffset(node, startElement);
-                var end = this.position + Syntax.childOffset(node, endElement) + endElement.leadingTriviaWidth() + endElement.width();
+                var start = this.position() + Syntax.childOffset(node, startElement);
+                var end = this.position() + Syntax.childOffset(node, endElement) + endElement.leadingTriviaWidth() + endElement.width();
 
                 // Push the new range
                 this.elements.push(TextSpan.fromBounds(start, end));

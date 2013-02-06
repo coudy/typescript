@@ -12,6 +12,7 @@ class SyntaxUtilities {
                     return true;
             }
         }
+
         return false;
     }
 }

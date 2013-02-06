@@ -636,7 +636,7 @@ describe('getScriptLexicalStructure', function () {
  },
  {
   "name": "f",
-  "kind": "method",
+  "kind": "function",
   "kindModifiers": "declare",
   "matchKind": "exact",
   "unitIndex": 1,
