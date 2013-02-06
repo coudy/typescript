@@ -61,8 +61,8 @@ interface JQueryXHR extends XMLHttpRequest {
     overrideMimeType();
 }
 
-/**
-*   Interface for the JQuery callback
+/*
+    Interface for the JQuery callback
 */
 interface JQueryCallback {
     add(...callbacks: any[]): any;
@@ -77,8 +77,8 @@ interface JQueryCallback {
     removed(...callbacks: any[]): any;
 }
 
-/**
-*   Interface for the JQuery promise, part of callbacks
+/*
+    Interface for the JQuery promise, part of callbacks
 */
 interface JQueryPromise {
     always(...alwaysCallbacks: any[]): JQueryDeferred;
@@ -88,8 +88,8 @@ interface JQueryPromise {
     then(doneCallbacks: any, failCallbacks: any, progressCallbacks?: any): JQueryDeferred;
 }
 
-/**
-*   Interface for the JQuery deferred, part of callbacks
+/*
+    Interface for the JQuery deferred, part of callbacks
 */
 interface JQueryDeferred extends JQueryPromise {
     notify(...args: any[]): JQueryDeferred;
@@ -105,8 +105,8 @@ interface JQueryDeferred extends JQueryPromise {
     then(doneCallbacks: any, failCallbacks: any, progressCallbacks?: any): JQueryDeferred;
 }
 
-/**
-*   Interface of the JQuery extension of the W3C event object
+/*
+    Interface of the JQuery extension of the W3C event object
 */
 interface JQueryEventObject extends Event {
     data: any;
@@ -126,8 +126,8 @@ interface JQueryEventObject extends Event {
     metaKey: any;
 }
 
-/**
-*   Collection of properties of the current browser
+/*
+    Collection of properties of the current browser
 */
 interface JQueryBrowserInfo {
     safari:bool;
@@ -159,8 +159,8 @@ interface JQuerySupport {
     tbody?: bool;
 }
 
-/**
-*   Static members of jQuery (those on $ and jQuery themselves)
+/*
+    Static members of jQuery (those on $ and jQuery themselves)
 */
 interface JQueryStatic {
 
@@ -282,7 +282,7 @@ interface JQueryStatic {
 
     makeArray(obj: any): any[];
 
-    map(array: any[], callback: (elementOfArray: any, indexInArray: any) =>any): JQuery;
+    map(array: any[], callback: (elementOfArray: any, indexInArray: any) =>any): any[];
     
     merge(first: any[], second: any[]): any[];
 
@@ -304,8 +304,8 @@ interface JQueryStatic {
     unique(arr: any[]): any[];
 }
 
-/**
-*   The jQuery instance members
+/*
+    The jQuery instance members
 */
 interface JQuery {
     /****
@@ -617,7 +617,7 @@ interface JQuery {
     /*************
      MISCELLANEOUS
     **************/
-    each(func: (index: any, elem: Element) => JQuery);
+    each(func: (index: any, elem: Element) => any): JQuery;
     
     get(index?: number): any;
     
@@ -668,10 +668,10 @@ interface JQuery {
     has(selector: string): JQuery;
     has(contained: Element): JQuery;
 
-    is(selector: string): JQuery;
-    is(func: (index: any) =>any): JQuery;
-    is(element: any): JQuery;
-    is(obj: JQuery): JQuery;
+    is(selector: string): bool;
+    is(func: (index: any) =>any): bool;
+    is(element: any): bool;
+    is(obj: JQuery): bool;
 
     last(): JQuery;
 
