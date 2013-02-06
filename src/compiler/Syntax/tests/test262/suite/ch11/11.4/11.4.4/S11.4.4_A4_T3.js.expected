@@ -2,14 +2,14 @@
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 658,
-        "_moduleElements": [
+        "moduleElements": [
             {
                 "kind": "VariableStatement",
                 "fullWidth": 312,
-                "_variableDeclaration": {
+                "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 310,
-                    "_varKeyword": {
+                    "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
                         "fullWidth": 303,
@@ -67,11 +67,11 @@
                             }
                         ]
                     },
-                    "_variableDeclarators": [
+                    "variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 7,
-                            "_identifier": {
+                            "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -85,10 +85,10 @@
                                     }
                                 ]
                             },
-                            "_equalsValueClause": {
+                            "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 5,
-                                "_equalsToken": {
+                                "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
                                     "fullWidth": 2,
@@ -101,7 +101,7 @@
                                         }
                                     ]
                                 },
-                                "_value": {
+                                "value": {
                                     "kind": "StringLiteral",
                                     "width": 3,
                                     "text": "\"1\""
@@ -110,7 +110,7 @@
                         }
                     ]
                 },
-                "_semicolonToken": {
+                "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -128,7 +128,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 85,
-                "_ifKeyword": {
+                "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
                     "fullWidth": 3,
@@ -141,23 +141,23 @@
                         }
                     ]
                 },
-                "_openParenToken": {
+                "openParenToken": {
                     "kind": "OpenParenToken",
                     "width": 1,
                     "text": "("
                 },
-                "_condition": {
+                "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 13,
-                    "_left": {
+                    "left": {
                         "kind": "PreIncrementExpression",
                         "fullWidth": 4,
-                        "_operatorToken": {
+                        "operatorToken": {
                             "kind": "PlusPlusToken",
                             "width": 2,
                             "text": "++"
                         },
-                        "_operand": {
+                        "operand": {
                             "kind": "IdentifierName",
                             "width": 1,
                             "fullWidth": 2,
@@ -172,7 +172,7 @@
                             ]
                         }
                     },
-                    "_operatorToken": {
+                    "operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
                         "width": 3,
                         "fullWidth": 4,
@@ -185,10 +185,10 @@
                             }
                         ]
                     },
-                    "_right": {
+                    "right": {
                         "kind": "AddExpression",
                         "fullWidth": 5,
-                        "_left": {
+                        "left": {
                             "kind": "NumericLiteral",
                             "width": 1,
                             "fullWidth": 2,
@@ -201,7 +201,7 @@
                                 }
                             ]
                         },
-                        "_operatorToken": {
+                        "operatorToken": {
                             "kind": "PlusToken",
                             "width": 1,
                             "fullWidth": 2,
@@ -214,14 +214,14 @@
                                 }
                             ]
                         },
-                        "_right": {
+                        "right": {
                             "kind": "NumericLiteral",
                             "width": 1,
                             "text": "1"
                         }
                     }
                 },
-                "_closeParenToken": {
+                "closeParenToken": {
                     "kind": "CloseParenToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -234,10 +234,10 @@
                         }
                     ]
                 },
-                "_statement": {
+                "statement": {
                     "kind": "Block",
                     "fullWidth": 66,
-                    "_openBraceToken": {
+                    "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
                         "fullWidth": 2,
@@ -251,14 +251,14 @@
                             }
                         ]
                     },
-                    "_statements": [
+                    "statements": [
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 62,
-                            "_expression": {
+                            "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 60,
-                                "_expression": {
+                                "expression": {
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "fullWidth": 8,
@@ -272,19 +272,19 @@
                                         }
                                     ]
                                 },
-                                "_argumentList": {
+                                "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 52,
-                                    "_openParenToken": {
+                                    "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
                                         "text": "("
                                     },
-                                    "_arguments": [
+                                    "arguments": [
                                         {
                                             "kind": "AddExpression",
                                             "fullWidth": 50,
-                                            "_left": {
+                                            "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 42,
                                                 "fullWidth": 43,
@@ -297,7 +297,7 @@
                                                     }
                                                 ]
                                             },
-                                            "_operatorToken": {
+                                            "operatorToken": {
                                                 "kind": "PlusToken",
                                                 "width": 1,
                                                 "fullWidth": 2,
@@ -310,30 +310,30 @@
                                                     }
                                                 ]
                                             },
-                                            "_right": {
+                                            "right": {
                                                 "kind": "ParenthesizedExpression",
                                                 "fullWidth": 5,
-                                                "_openParenToken": {
+                                                "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
                                                     "text": "("
                                                 },
-                                                "_expression": {
+                                                "expression": {
                                                     "kind": "PreIncrementExpression",
                                                     "fullWidth": 3,
-                                                    "_operatorToken": {
+                                                    "operatorToken": {
                                                         "kind": "PlusPlusToken",
                                                         "width": 2,
                                                         "text": "++"
                                                     },
-                                                    "_operand": {
+                                                    "operand": {
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
                                                         "valueText": "x"
                                                     }
                                                 },
-                                                "_closeParenToken": {
+                                                "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
                                                     "text": ")"
@@ -341,14 +341,14 @@
                                             }
                                         }
                                     ],
-                                    "_closeParenToken": {
+                                    "closeParenToken": {
                                         "kind": "CloseParenToken",
                                         "width": 1,
                                         "text": ")"
                                     }
                                 }
                             },
-                            "_semicolonToken": {
+                            "semicolonToken": {
                                 "kind": "SemicolonToken",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -364,7 +364,7 @@
                             }
                         }
                     ],
-                    "_closeBraceToken": {
+                    "closeBraceToken": {
                         "kind": "CloseBraceToken",
                         "width": 1,
                         "fullWidth": 2,
@@ -383,10 +383,10 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 25,
-                "_variableDeclaration": {
+                "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 22,
-                    "_varKeyword": {
+                    "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
                         "fullWidth": 15,
@@ -416,11 +416,11 @@
                             }
                         ]
                     },
-                    "_variableDeclarators": [
+                    "variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 7,
-                            "_identifier": {
+                            "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -434,10 +434,10 @@
                                     }
                                 ]
                             },
-                            "_equalsValueClause": {
+                            "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 5,
-                                "_equalsToken": {
+                                "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
                                     "fullWidth": 2,
@@ -450,7 +450,7 @@
                                         }
                                     ]
                                 },
-                                "_value": {
+                                "value": {
                                     "kind": "StringLiteral",
                                     "width": 3,
                                     "text": "\"x\""
@@ -459,7 +459,7 @@
                         }
                     ]
                 },
-                "_semicolonToken": {
+                "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
                     "fullWidth": 3,
@@ -481,7 +481,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 98,
-                "_ifKeyword": {
+                "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
                     "fullWidth": 3,
@@ -494,41 +494,41 @@
                         }
                     ]
                 },
-                "_openParenToken": {
+                "openParenToken": {
                     "kind": "OpenParenToken",
                     "width": 1,
                     "text": "("
                 },
-                "_condition": {
+                "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 19,
-                    "_left": {
+                    "left": {
                         "kind": "InvocationExpression",
                         "fullWidth": 11,
-                        "_expression": {
+                        "expression": {
                             "kind": "IdentifierName",
                             "width": 5,
                             "text": "isNaN",
                             "valueText": "isNaN"
                         },
-                        "_argumentList": {
+                        "argumentList": {
                             "kind": "ArgumentList",
                             "fullWidth": 6,
-                            "_openParenToken": {
+                            "openParenToken": {
                                 "kind": "OpenParenToken",
                                 "width": 1,
                                 "text": "("
                             },
-                            "_arguments": [
+                            "arguments": [
                                 {
                                     "kind": "PreIncrementExpression",
                                     "fullWidth": 3,
-                                    "_operatorToken": {
+                                    "operatorToken": {
                                         "kind": "PlusPlusToken",
                                         "width": 2,
                                         "text": "++"
                                     },
-                                    "_operand": {
+                                    "operand": {
                                         "kind": "IdentifierName",
                                         "width": 1,
                                         "text": "x",
@@ -536,7 +536,7 @@
                                     }
                                 }
                             ],
-                            "_closeParenToken": {
+                            "closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -551,7 +551,7 @@
                             }
                         }
                     },
-                    "_operatorToken": {
+                    "operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
                         "width": 3,
                         "fullWidth": 4,
@@ -564,13 +564,13 @@
                             }
                         ]
                     },
-                    "_right": {
+                    "right": {
                         "kind": "TrueKeyword",
                         "width": 4,
                         "text": "true"
                     }
                 },
-                "_closeParenToken": {
+                "closeParenToken": {
                     "kind": "CloseParenToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -583,10 +583,10 @@
                         }
                     ]
                 },
-                "_statement": {
+                "statement": {
                     "kind": "Block",
                     "fullWidth": 73,
-                    "_openBraceToken": {
+                    "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
                         "fullWidth": 2,
@@ -600,14 +600,14 @@
                             }
                         ]
                     },
-                    "_statements": [
+                    "statements": [
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 69,
-                            "_expression": {
+                            "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 67,
-                                "_expression": {
+                                "expression": {
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "fullWidth": 8,
@@ -621,19 +621,19 @@
                                         }
                                     ]
                                 },
-                                "_argumentList": {
+                                "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 59,
-                                    "_openParenToken": {
+                                    "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
                                         "text": "("
                                     },
-                                    "_arguments": [
+                                    "arguments": [
                                         {
                                             "kind": "AddExpression",
                                             "fullWidth": 57,
-                                            "_left": {
+                                            "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 49,
                                                 "fullWidth": 50,
@@ -646,7 +646,7 @@
                                                     }
                                                 ]
                                             },
-                                            "_operatorToken": {
+                                            "operatorToken": {
                                                 "kind": "PlusToken",
                                                 "width": 1,
                                                 "fullWidth": 2,
@@ -659,30 +659,30 @@
                                                     }
                                                 ]
                                             },
-                                            "_right": {
+                                            "right": {
                                                 "kind": "ParenthesizedExpression",
                                                 "fullWidth": 5,
-                                                "_openParenToken": {
+                                                "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
                                                     "text": "("
                                                 },
-                                                "_expression": {
+                                                "expression": {
                                                     "kind": "PreIncrementExpression",
                                                     "fullWidth": 3,
-                                                    "_operatorToken": {
+                                                    "operatorToken": {
                                                         "kind": "PlusPlusToken",
                                                         "width": 2,
                                                         "text": "++"
                                                     },
-                                                    "_operand": {
+                                                    "operand": {
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
                                                         "valueText": "x"
                                                     }
                                                 },
-                                                "_closeParenToken": {
+                                                "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
                                                     "text": ")"
@@ -690,14 +690,14 @@
                                             }
                                         }
                                     ],
-                                    "_closeParenToken": {
+                                    "closeParenToken": {
                                         "kind": "CloseParenToken",
                                         "width": 1,
                                         "text": ")"
                                     }
                                 }
                             },
-                            "_semicolonToken": {
+                            "semicolonToken": {
                                 "kind": "SemicolonToken",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -713,7 +713,7 @@
                             }
                         }
                     ],
-                    "_closeBraceToken": {
+                    "closeBraceToken": {
                         "kind": "CloseBraceToken",
                         "width": 1,
                         "fullWidth": 2,
@@ -732,10 +732,10 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 37,
-                "_variableDeclaration": {
+                "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 35,
-                    "_varKeyword": {
+                    "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
                         "fullWidth": 15,
@@ -765,11 +765,11 @@
                             }
                         ]
                     },
-                    "_variableDeclarators": [
+                    "variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 20,
-                            "_identifier": {
+                            "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -783,10 +783,10 @@
                                     }
                                 ]
                             },
-                            "_equalsValueClause": {
+                            "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 18,
-                                "_equalsToken": {
+                                "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
                                     "fullWidth": 2,
@@ -799,10 +799,10 @@
                                         }
                                     ]
                                 },
-                                "_value": {
+                                "value": {
                                     "kind": "ObjectCreationExpression",
                                     "fullWidth": 16,
-                                    "_newKeyword": {
+                                    "newKeyword": {
                                         "kind": "NewKeyword",
                                         "width": 3,
                                         "fullWidth": 4,
@@ -815,28 +815,28 @@
                                             }
                                         ]
                                     },
-                                    "_expression": {
+                                    "expression": {
                                         "kind": "IdentifierName",
                                         "width": 6,
                                         "text": "String",
                                         "valueText": "String"
                                     },
-                                    "_argumentList": {
+                                    "argumentList": {
                                         "kind": "ArgumentList",
                                         "fullWidth": 6,
-                                        "_openParenToken": {
+                                        "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
                                             "text": "("
                                         },
-                                        "_arguments": [
+                                        "arguments": [
                                             {
                                                 "kind": "StringLiteral",
                                                 "width": 4,
                                                 "text": "\"-1\""
                                             }
                                         ],
-                                        "_closeParenToken": {
+                                        "closeParenToken": {
                                             "kind": "CloseParenToken",
                                             "width": 1,
                                             "text": ")"
@@ -847,7 +847,7 @@
                         }
                     ]
                 },
-                "_semicolonToken": {
+                "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -865,7 +865,7 @@
             {
                 "kind": "IfStatement",
                 "fullWidth": 100,
-                "_ifKeyword": {
+                "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
                     "fullWidth": 3,
@@ -878,23 +878,23 @@
                         }
                     ]
                 },
-                "_openParenToken": {
+                "openParenToken": {
                     "kind": "OpenParenToken",
                     "width": 1,
                     "text": "("
                 },
-                "_condition": {
+                "condition": {
                     "kind": "NotEqualsExpression",
                     "fullWidth": 14,
-                    "_left": {
+                    "left": {
                         "kind": "PreIncrementExpression",
                         "fullWidth": 4,
-                        "_operatorToken": {
+                        "operatorToken": {
                             "kind": "PlusPlusToken",
                             "width": 2,
                             "text": "++"
                         },
-                        "_operand": {
+                        "operand": {
                             "kind": "IdentifierName",
                             "width": 1,
                             "fullWidth": 2,
@@ -909,7 +909,7 @@
                             ]
                         }
                     },
-                    "_operatorToken": {
+                    "operatorToken": {
                         "kind": "ExclamationEqualsEqualsToken",
                         "width": 3,
                         "fullWidth": 4,
@@ -922,18 +922,18 @@
                             }
                         ]
                     },
-                    "_right": {
+                    "right": {
                         "kind": "AddExpression",
                         "fullWidth": 6,
-                        "_left": {
+                        "left": {
                             "kind": "NegateExpression",
                             "fullWidth": 3,
-                            "_operatorToken": {
+                            "operatorToken": {
                                 "kind": "MinusToken",
                                 "width": 1,
                                 "text": "-"
                             },
-                            "_operand": {
+                            "operand": {
                                 "kind": "NumericLiteral",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -947,7 +947,7 @@
                                 ]
                             }
                         },
-                        "_operatorToken": {
+                        "operatorToken": {
                             "kind": "PlusToken",
                             "width": 1,
                             "fullWidth": 2,
@@ -960,14 +960,14 @@
                                 }
                             ]
                         },
-                        "_right": {
+                        "right": {
                             "kind": "NumericLiteral",
                             "width": 1,
                             "text": "1"
                         }
                     }
                 },
-                "_closeParenToken": {
+                "closeParenToken": {
                     "kind": "CloseParenToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -980,10 +980,10 @@
                         }
                     ]
                 },
-                "_statement": {
+                "statement": {
                     "kind": "Block",
                     "fullWidth": 80,
-                    "_openBraceToken": {
+                    "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
                         "fullWidth": 2,
@@ -997,14 +997,14 @@
                             }
                         ]
                     },
-                    "_statements": [
+                    "statements": [
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 76,
-                            "_expression": {
+                            "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 74,
-                                "_expression": {
+                                "expression": {
                                     "kind": "IdentifierName",
                                     "width": 6,
                                     "fullWidth": 8,
@@ -1018,19 +1018,19 @@
                                         }
                                     ]
                                 },
-                                "_argumentList": {
+                                "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 66,
-                                    "_openParenToken": {
+                                    "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,
                                         "text": "("
                                     },
-                                    "_arguments": [
+                                    "arguments": [
                                         {
                                             "kind": "AddExpression",
                                             "fullWidth": 64,
-                                            "_left": {
+                                            "left": {
                                                 "kind": "StringLiteral",
                                                 "width": 56,
                                                 "fullWidth": 57,
@@ -1043,7 +1043,7 @@
                                                     }
                                                 ]
                                             },
-                                            "_operatorToken": {
+                                            "operatorToken": {
                                                 "kind": "PlusToken",
                                                 "width": 1,
                                                 "fullWidth": 2,
@@ -1056,30 +1056,30 @@
                                                     }
                                                 ]
                                             },
-                                            "_right": {
+                                            "right": {
                                                 "kind": "ParenthesizedExpression",
                                                 "fullWidth": 5,
-                                                "_openParenToken": {
+                                                "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
                                                     "text": "("
                                                 },
-                                                "_expression": {
+                                                "expression": {
                                                     "kind": "PreIncrementExpression",
                                                     "fullWidth": 3,
-                                                    "_operatorToken": {
+                                                    "operatorToken": {
                                                         "kind": "PlusPlusToken",
                                                         "width": 2,
                                                         "text": "++"
                                                     },
-                                                    "_operand": {
+                                                    "operand": {
                                                         "kind": "IdentifierName",
                                                         "width": 1,
                                                         "text": "x",
                                                         "valueText": "x"
                                                     }
                                                 },
-                                                "_closeParenToken": {
+                                                "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
                                                     "text": ")"
@@ -1087,14 +1087,14 @@
                                             }
                                         }
                                     ],
-                                    "_closeParenToken": {
+                                    "closeParenToken": {
                                         "kind": "CloseParenToken",
                                         "width": 1,
                                         "text": ")"
                                     }
                                 }
                             },
-                            "_semicolonToken": {
+                            "semicolonToken": {
                                 "kind": "SemicolonToken",
                                 "width": 1,
                                 "fullWidth": 2,
@@ -1110,7 +1110,7 @@
                             }
                         }
                     ],
-                    "_closeBraceToken": {
+                    "closeBraceToken": {
                         "kind": "CloseBraceToken",
                         "width": 1,
                         "fullWidth": 2,
@@ -1127,7 +1127,7 @@
                 }
             }
         ],
-        "_endOfFileToken": {
+        "endOfFileToken": {
             "kind": "EndOfFileToken",
             "width": 0,
             "fullWidth": 1,

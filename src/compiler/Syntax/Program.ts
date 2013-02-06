@@ -71,7 +71,7 @@ class Program {
             
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ true, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify: */ false, /*generateBaselines:*/ generate));
     }
 
     private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {

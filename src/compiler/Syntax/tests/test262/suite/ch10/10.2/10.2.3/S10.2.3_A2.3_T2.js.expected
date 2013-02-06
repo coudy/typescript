@@ -2,14 +2,14 @@
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 1354,
-        "_moduleElements": [
+        "moduleElements": [
             {
                 "kind": "VariableStatement",
                 "fullWidth": 1337,
-                "_variableDeclaration": {
+                "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 1335,
-                    "_varKeyword": {
+                    "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
                         "fullWidth": 314,
@@ -59,11 +59,11 @@
                             }
                         ]
                     },
-                    "_variableDeclarators": [
+                    "variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 1021,
-                            "_identifier": {
+                            "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "fullWidth": 8,
@@ -77,10 +77,10 @@
                                     }
                                 ]
                             },
-                            "_equalsValueClause": {
+                            "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 1013,
-                                "_equalsToken": {
+                                "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
                                     "fullWidth": 3,
@@ -98,75 +98,75 @@
                                         }
                                     ]
                                 },
-                                "_value": {
+                                "value": {
                                     "kind": "AddExpression",
                                     "fullWidth": 1010,
-                                    "_left": {
+                                    "left": {
                                         "kind": "AddExpression",
                                         "fullWidth": 1003,
-                                        "_left": {
+                                        "left": {
                                             "kind": "AddExpression",
                                             "fullWidth": 994,
-                                            "_left": {
+                                            "left": {
                                                 "kind": "AddExpression",
                                                 "fullWidth": 923,
-                                                "_left": {
+                                                "left": {
                                                     "kind": "AddExpression",
                                                     "fullWidth": 871,
-                                                    "_left": {
+                                                    "left": {
                                                         "kind": "AddExpression",
                                                         "fullWidth": 809,
-                                                        "_left": {
+                                                        "left": {
                                                             "kind": "AddExpression",
                                                             "fullWidth": 766,
-                                                            "_left": {
+                                                            "left": {
                                                                 "kind": "AddExpression",
                                                                 "fullWidth": 695,
-                                                                "_left": {
+                                                                "left": {
                                                                     "kind": "AddExpression",
                                                                     "fullWidth": 643,
-                                                                    "_left": {
+                                                                    "left": {
                                                                         "kind": "AddExpression",
                                                                         "fullWidth": 581,
-                                                                        "_left": {
+                                                                        "left": {
                                                                             "kind": "AddExpression",
                                                                             "fullWidth": 538,
-                                                                            "_left": {
+                                                                            "left": {
                                                                                 "kind": "AddExpression",
                                                                                 "fullWidth": 477,
-                                                                                "_left": {
+                                                                                "left": {
                                                                                     "kind": "AddExpression",
                                                                                     "fullWidth": 435,
-                                                                                    "_left": {
+                                                                                    "left": {
                                                                                         "kind": "AddExpression",
                                                                                         "fullWidth": 377,
-                                                                                        "_left": {
+                                                                                        "left": {
                                                                                             "kind": "AddExpression",
                                                                                             "fullWidth": 338,
-                                                                                            "_left": {
+                                                                                            "left": {
                                                                                                 "kind": "AddExpression",
                                                                                                 "fullWidth": 275,
-                                                                                                "_left": {
+                                                                                                "left": {
                                                                                                     "kind": "AddExpression",
                                                                                                     "fullWidth": 231,
-                                                                                                    "_left": {
+                                                                                                    "left": {
                                                                                                         "kind": "AddExpression",
                                                                                                         "fullWidth": 170,
-                                                                                                        "_left": {
+                                                                                                        "left": {
                                                                                                             "kind": "AddExpression",
                                                                                                             "fullWidth": 128,
-                                                                                                            "_left": {
+                                                                                                            "left": {
                                                                                                                 "kind": "AddExpression",
                                                                                                                 "fullWidth": 71,
-                                                                                                                "_left": {
+                                                                                                                "left": {
                                                                                                                     "kind": "AddExpression",
                                                                                                                     "fullWidth": 40,
-                                                                                                                    "_left": {
+                                                                                                                    "left": {
                                                                                                                         "kind": "StringLiteral",
                                                                                                                         "width": 13,
                                                                                                                         "text": "'//CHECK#1\\n'"
                                                                                                                     },
-                                                                                                                    "_operatorToken": {
+                                                                                                                    "operatorToken": {
                                                                                                                         "kind": "PlusToken",
                                                                                                                         "width": 1,
                                                                                                                         "fullWidth": 2,
@@ -180,13 +180,13 @@
                                                                                                                             }
                                                                                                                         ]
                                                                                                                     },
-                                                                                                                    "_right": {
+                                                                                                                    "right": {
                                                                                                                         "kind": "StringLiteral",
                                                                                                                         "width": 25,
                                                                                                                         "text": "'for (var x in this) {\\n'"
                                                                                                                     }
                                                                                                                 },
-                                                                                                                "_operatorToken": {
+                                                                                                                "operatorToken": {
                                                                                                                     "kind": "PlusToken",
                                                                                                                     "width": 1,
                                                                                                                     "fullWidth": 2,
@@ -200,13 +200,13 @@
                                                                                                                         }
                                                                                                                     ]
                                                                                                                 },
-                                                                                                                "_right": {
+                                                                                                                "right": {
                                                                                                                     "kind": "StringLiteral",
                                                                                                                     "width": 29,
                                                                                                                     "text": "'  if ( x === \\'eval\\' ) {\\n'"
                                                                                                                 }
                                                                                                             },
-                                                                                                            "_operatorToken": {
+                                                                                                            "operatorToken": {
                                                                                                                 "kind": "PlusToken",
                                                                                                                 "width": 1,
                                                                                                                 "fullWidth": 2,
@@ -220,13 +220,13 @@
                                                                                                                     }
                                                                                                                 ]
                                                                                                             },
-                                                                                                            "_right": {
+                                                                                                            "right": {
                                                                                                                 "kind": "StringLiteral",
                                                                                                                 "width": 55,
                                                                                                                 "text": "'    $ERROR(\"#1: \\'eval\\' have attribute DontEnum\");\\n'"
                                                                                                             }
                                                                                                         },
-                                                                                                        "_operatorToken": {
+                                                                                                        "operatorToken": {
                                                                                                             "kind": "PlusToken",
                                                                                                             "width": 1,
                                                                                                             "fullWidth": 2,
@@ -240,13 +240,13 @@
                                                                                                                 }
                                                                                                             ]
                                                                                                         },
-                                                                                                        "_right": {
+                                                                                                        "right": {
                                                                                                             "kind": "StringLiteral",
                                                                                                             "width": 40,
                                                                                                             "text": "'  } else if ( x === \\'parseInt\\' ) {\\n'"
                                                                                                         }
                                                                                                     },
-                                                                                                    "_operatorToken": {
+                                                                                                    "operatorToken": {
                                                                                                         "kind": "PlusToken",
                                                                                                         "width": 1,
                                                                                                         "fullWidth": 2,
@@ -260,13 +260,13 @@
                                                                                                             }
                                                                                                         ]
                                                                                                     },
-                                                                                                    "_right": {
+                                                                                                    "right": {
                                                                                                         "kind": "StringLiteral",
                                                                                                         "width": 59,
                                                                                                         "text": "'    $ERROR(\"#1: \\'parseInt\\' have attribute DontEnum\");\\n'"
                                                                                                     }
                                                                                                 },
-                                                                                                "_operatorToken": {
+                                                                                                "operatorToken": {
                                                                                                     "kind": "PlusToken",
                                                                                                     "width": 1,
                                                                                                     "fullWidth": 2,
@@ -280,13 +280,13 @@
                                                                                                         }
                                                                                                     ]
                                                                                                 },
-                                                                                                "_right": {
+                                                                                                "right": {
                                                                                                     "kind": "StringLiteral",
                                                                                                     "width": 42,
                                                                                                     "text": "'  } else if ( x === \\'parseFloat\\' ) {\\n'"
                                                                                                 }
                                                                                             },
-                                                                                            "_operatorToken": {
+                                                                                            "operatorToken": {
                                                                                                 "kind": "PlusToken",
                                                                                                 "width": 1,
                                                                                                 "fullWidth": 2,
@@ -300,13 +300,13 @@
                                                                                                     }
                                                                                                 ]
                                                                                             },
-                                                                                            "_right": {
+                                                                                            "right": {
                                                                                                 "kind": "StringLiteral",
                                                                                                 "width": 61,
                                                                                                 "text": "'    $ERROR(\"#1: \\'parseFloat\\' have attribute DontEnum\");\\n'"
                                                                                             }
                                                                                         },
-                                                                                        "_operatorToken": {
+                                                                                        "operatorToken": {
                                                                                             "kind": "PlusToken",
                                                                                             "width": 1,
                                                                                             "fullWidth": 2,
@@ -320,13 +320,13 @@
                                                                                                 }
                                                                                             ]
                                                                                         },
-                                                                                        "_right": {
+                                                                                        "right": {
                                                                                             "kind": "StringLiteral",
                                                                                             "width": 37,
                                                                                             "text": "'  } else if ( x === \\'isNaN\\' ) {\\n'"
                                                                                         }
                                                                                     },
-                                                                                    "_operatorToken": {
+                                                                                    "operatorToken": {
                                                                                         "kind": "PlusToken",
                                                                                         "width": 1,
                                                                                         "fullWidth": 2,
@@ -340,13 +340,13 @@
                                                                                             }
                                                                                         ]
                                                                                     },
-                                                                                    "_right": {
+                                                                                    "right": {
                                                                                         "kind": "StringLiteral",
                                                                                         "width": 56,
                                                                                         "text": "'    $ERROR(\"#1: \\'isNaN\\' have attribute DontEnum\");\\n'"
                                                                                     }
                                                                                 },
-                                                                                "_operatorToken": {
+                                                                                "operatorToken": {
                                                                                     "kind": "PlusToken",
                                                                                     "width": 1,
                                                                                     "fullWidth": 2,
@@ -360,13 +360,13 @@
                                                                                         }
                                                                                     ]
                                                                                 },
-                                                                                "_right": {
+                                                                                "right": {
                                                                                     "kind": "StringLiteral",
                                                                                     "width": 40,
                                                                                     "text": "'  } else if ( x === \\'isFinite\\' ) {\\n'"
                                                                                 }
                                                                             },
-                                                                            "_operatorToken": {
+                                                                            "operatorToken": {
                                                                                 "kind": "PlusToken",
                                                                                 "width": 1,
                                                                                 "fullWidth": 2,
@@ -380,13 +380,13 @@
                                                                                     }
                                                                                 ]
                                                                             },
-                                                                            "_right": {
+                                                                            "right": {
                                                                                 "kind": "StringLiteral",
                                                                                 "width": 59,
                                                                                 "text": "'    $ERROR(\"#1: \\'isFinite\\' have attribute DontEnum\");\\n'"
                                                                             }
                                                                         },
-                                                                        "_operatorToken": {
+                                                                        "operatorToken": {
                                                                             "kind": "PlusToken",
                                                                             "width": 1,
                                                                             "fullWidth": 2,
@@ -400,13 +400,13 @@
                                                                                 }
                                                                             ]
                                                                         },
-                                                                        "_right": {
+                                                                        "right": {
                                                                             "kind": "StringLiteral",
                                                                             "width": 41,
                                                                             "text": "'  } else if ( x === \\'decodeURI\\' ) {\\n'"
                                                                         }
                                                                     },
-                                                                    "_operatorToken": {
+                                                                    "operatorToken": {
                                                                         "kind": "PlusToken",
                                                                         "width": 1,
                                                                         "fullWidth": 2,
@@ -420,13 +420,13 @@
                                                                             }
                                                                         ]
                                                                     },
-                                                                    "_right": {
+                                                                    "right": {
                                                                         "kind": "StringLiteral",
                                                                         "width": 60,
                                                                         "text": "'    $ERROR(\"#1: \\'decodeURI\\' have attribute DontEnum\");\\n'"
                                                                     }
                                                                 },
-                                                                "_operatorToken": {
+                                                                "operatorToken": {
                                                                     "kind": "PlusToken",
                                                                     "width": 1,
                                                                     "fullWidth": 2,
@@ -440,13 +440,13 @@
                                                                         }
                                                                     ]
                                                                 },
-                                                                "_right": {
+                                                                "right": {
                                                                     "kind": "StringLiteral",
                                                                     "width": 50,
                                                                     "text": "'  } else if ( x === \\'decodeURIComponent\\' ) {\\n'"
                                                                 }
                                                             },
-                                                            "_operatorToken": {
+                                                            "operatorToken": {
                                                                 "kind": "PlusToken",
                                                                 "width": 1,
                                                                 "fullWidth": 2,
@@ -460,13 +460,13 @@
                                                                     }
                                                                 ]
                                                             },
-                                                            "_right": {
+                                                            "right": {
                                                                 "kind": "StringLiteral",
                                                                 "width": 69,
                                                                 "text": "'    $ERROR(\"#1: \\'decodeURIComponent\\' have attribute DontEnum\");\\n'"
                                                             }
                                                         },
-                                                        "_operatorToken": {
+                                                        "operatorToken": {
                                                             "kind": "PlusToken",
                                                             "width": 1,
                                                             "fullWidth": 2,
@@ -480,13 +480,13 @@
                                                                 }
                                                             ]
                                                         },
-                                                        "_right": {
+                                                        "right": {
                                                             "kind": "StringLiteral",
                                                             "width": 41,
                                                             "text": "'  } else if ( x === \\'encodeURI\\' ) {\\n'"
                                                         }
                                                     },
-                                                    "_operatorToken": {
+                                                    "operatorToken": {
                                                         "kind": "PlusToken",
                                                         "width": 1,
                                                         "fullWidth": 2,
@@ -500,13 +500,13 @@
                                                             }
                                                         ]
                                                     },
-                                                    "_right": {
+                                                    "right": {
                                                         "kind": "StringLiteral",
                                                         "width": 60,
                                                         "text": "'    $ERROR(\"#1: \\'encodeURI\\' have attribute DontEnum\");\\n'"
                                                     }
                                                 },
-                                                "_operatorToken": {
+                                                "operatorToken": {
                                                     "kind": "PlusToken",
                                                     "width": 1,
                                                     "fullWidth": 2,
@@ -520,13 +520,13 @@
                                                         }
                                                     ]
                                                 },
-                                                "_right": {
+                                                "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 50,
                                                     "text": "'  } else if ( x === \\'encodeURIComponent\\' ) {\\n'"
                                                 }
                                             },
-                                            "_operatorToken": {
+                                            "operatorToken": {
                                                 "kind": "PlusToken",
                                                 "width": 1,
                                                 "fullWidth": 2,
@@ -540,13 +540,13 @@
                                                     }
                                                 ]
                                             },
-                                            "_right": {
+                                            "right": {
                                                 "kind": "StringLiteral",
                                                 "width": 69,
                                                 "text": "'    $ERROR(\"#1: \\'encodeURIComponent\\' have attribute DontEnum\");\\n'"
                                             }
                                         },
-                                        "_operatorToken": {
+                                        "operatorToken": {
                                             "kind": "PlusToken",
                                             "width": 1,
                                             "fullWidth": 2,
@@ -560,13 +560,13 @@
                                                 }
                                             ]
                                         },
-                                        "_right": {
+                                        "right": {
                                             "kind": "StringLiteral",
                                             "width": 7,
                                             "text": "'  }\\n'"
                                         }
                                     },
-                                    "_operatorToken": {
+                                    "operatorToken": {
                                         "kind": "PlusToken",
                                         "width": 1,
                                         "fullWidth": 2,
@@ -580,7 +580,7 @@
                                             }
                                         ]
                                     },
-                                    "_right": {
+                                    "right": {
                                         "kind": "StringLiteral",
                                         "width": 5,
                                         "text": "'}\\n'"
@@ -590,7 +590,7 @@
                         }
                     ]
                 },
-                "_semicolonToken": {
+                "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -608,10 +608,10 @@
             {
                 "kind": "ExpressionStatement",
                 "fullWidth": 16,
-                "_expression": {
+                "expression": {
                     "kind": "InvocationExpression",
                     "fullWidth": 14,
-                    "_expression": {
+                    "expression": {
                         "kind": "IdentifierName",
                         "width": 4,
                         "fullWidth": 5,
@@ -626,15 +626,15 @@
                             }
                         ]
                     },
-                    "_argumentList": {
+                    "argumentList": {
                         "kind": "ArgumentList",
                         "fullWidth": 9,
-                        "_openParenToken": {
+                        "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
                             "text": "("
                         },
-                        "_arguments": [
+                        "arguments": [
                             {
                                 "kind": "IdentifierName",
                                 "width": 7,
@@ -642,14 +642,14 @@
                                 "valueText": "evalStr"
                             }
                         ],
-                        "_closeParenToken": {
+                        "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
                             "text": ")"
                         }
                     }
                 },
-                "_semicolonToken": {
+                "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -665,7 +665,7 @@
                 }
             }
         ],
-        "_endOfFileToken": {
+        "endOfFileToken": {
             "kind": "EndOfFileToken",
             "width": 0,
             "fullWidth": 1,

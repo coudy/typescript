@@ -2,14 +2,14 @@
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 485,
-        "_moduleElements": [
+        "moduleElements": [
             {
                 "kind": "VariableStatement",
                 "fullWidth": 468,
-                "_variableDeclaration": {
+                "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 466,
-                    "_varKeyword": {
+                    "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
                         "fullWidth": 311,
@@ -59,11 +59,11 @@
                             }
                         ]
                     },
-                    "_variableDeclarators": [
+                    "variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 155,
-                            "_identifier": {
+                            "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 7,
                                 "fullWidth": 8,
@@ -77,10 +77,10 @@
                                     }
                                 ]
                             },
-                            "_equalsValueClause": {
+                            "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 147,
-                                "_equalsToken": {
+                                "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
                                     "fullWidth": 3,
@@ -98,27 +98,27 @@
                                         }
                                     ]
                                 },
-                                "_value": {
+                                "value": {
                                     "kind": "AddExpression",
                                     "fullWidth": 144,
-                                    "_left": {
+                                    "left": {
                                         "kind": "AddExpression",
                                         "fullWidth": 137,
-                                        "_left": {
+                                        "left": {
                                             "kind": "AddExpression",
                                             "fullWidth": 128,
-                                            "_left": {
+                                            "left": {
                                                 "kind": "AddExpression",
                                                 "fullWidth": 71,
-                                                "_left": {
+                                                "left": {
                                                     "kind": "AddExpression",
                                                     "fullWidth": 40,
-                                                    "_left": {
+                                                    "left": {
                                                         "kind": "StringLiteral",
                                                         "width": 13,
                                                         "text": "'//CHECK#1\\n'"
                                                     },
-                                                    "_operatorToken": {
+                                                    "operatorToken": {
                                                         "kind": "PlusToken",
                                                         "width": 1,
                                                         "fullWidth": 2,
@@ -132,13 +132,13 @@
                                                             }
                                                         ]
                                                     },
-                                                    "_right": {
+                                                    "right": {
                                                         "kind": "StringLiteral",
                                                         "width": 25,
                                                         "text": "'for (var x in this) {\\n'"
                                                     }
                                                 },
-                                                "_operatorToken": {
+                                                "operatorToken": {
                                                     "kind": "PlusToken",
                                                     "width": 1,
                                                     "fullWidth": 2,
@@ -152,13 +152,13 @@
                                                         }
                                                     ]
                                                 },
-                                                "_right": {
+                                                "right": {
                                                     "kind": "StringLiteral",
                                                     "width": 29,
                                                     "text": "'  if ( x === \\'Math\\' ) {\\n'"
                                                 }
                                             },
-                                            "_operatorToken": {
+                                            "operatorToken": {
                                                 "kind": "PlusToken",
                                                 "width": 1,
                                                 "fullWidth": 2,
@@ -172,13 +172,13 @@
                                                     }
                                                 ]
                                             },
-                                            "_right": {
+                                            "right": {
                                                 "kind": "StringLiteral",
                                                 "width": 55,
                                                 "text": "'    $ERROR(\"#1: \\'Math\\' have attribute DontEnum\");\\n'"
                                             }
                                         },
-                                        "_operatorToken": {
+                                        "operatorToken": {
                                             "kind": "PlusToken",
                                             "width": 1,
                                             "fullWidth": 2,
@@ -192,13 +192,13 @@
                                                 }
                                             ]
                                         },
-                                        "_right": {
+                                        "right": {
                                             "kind": "StringLiteral",
                                             "width": 7,
                                             "text": "'  }\\n'"
                                         }
                                     },
-                                    "_operatorToken": {
+                                    "operatorToken": {
                                         "kind": "PlusToken",
                                         "width": 1,
                                         "fullWidth": 2,
@@ -212,7 +212,7 @@
                                             }
                                         ]
                                     },
-                                    "_right": {
+                                    "right": {
                                         "kind": "StringLiteral",
                                         "width": 5,
                                         "text": "'}\\n'"
@@ -222,7 +222,7 @@
                         }
                     ]
                 },
-                "_semicolonToken": {
+                "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -240,10 +240,10 @@
             {
                 "kind": "ExpressionStatement",
                 "fullWidth": 16,
-                "_expression": {
+                "expression": {
                     "kind": "InvocationExpression",
                     "fullWidth": 14,
-                    "_expression": {
+                    "expression": {
                         "kind": "IdentifierName",
                         "width": 4,
                         "fullWidth": 5,
@@ -258,15 +258,15 @@
                             }
                         ]
                     },
-                    "_argumentList": {
+                    "argumentList": {
                         "kind": "ArgumentList",
                         "fullWidth": 9,
-                        "_openParenToken": {
+                        "openParenToken": {
                             "kind": "OpenParenToken",
                             "width": 1,
                             "text": "("
                         },
-                        "_arguments": [
+                        "arguments": [
                             {
                                 "kind": "IdentifierName",
                                 "width": 7,
@@ -274,14 +274,14 @@
                                 "valueText": "evalStr"
                             }
                         ],
-                        "_closeParenToken": {
+                        "closeParenToken": {
                             "kind": "CloseParenToken",
                             "width": 1,
                             "text": ")"
                         }
                     }
                 },
-                "_semicolonToken": {
+                "semicolonToken": {
                     "kind": "SemicolonToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -297,7 +297,7 @@
                 }
             }
         ],
-        "_endOfFileToken": {
+        "endOfFileToken": {
             "kind": "EndOfFileToken",
             "width": 0,
             "fullWidth": 1,

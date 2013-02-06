@@ -4,12 +4,12 @@
         "fullWidth": 23,
         "hasZeroWidthToken": true,
         "hasRegularExpressionToken": true,
-        "_moduleElements": [
+        "moduleElements": [
             {
                 "kind": "IfStatement",
                 "fullWidth": 23,
                 "hasRegularExpressionToken": true,
-                "_ifKeyword": {
+                "ifKeyword": {
                     "kind": "IfKeyword",
                     "width": 2,
                     "fullWidth": 3,
@@ -22,17 +22,17 @@
                         }
                     ]
                 },
-                "_openParenToken": {
+                "openParenToken": {
                     "kind": "OpenParenToken",
                     "width": 1,
                     "text": "("
                 },
-                "_condition": {
+                "condition": {
                     "kind": "NumericLiteral",
                     "width": 1,
                     "text": "1"
                 },
-                "_closeParenToken": {
+                "closeParenToken": {
                     "kind": "CloseParenToken",
                     "width": 1,
                     "fullWidth": 2,
@@ -45,52 +45,52 @@
                         }
                     ]
                 },
-                "_statement": {
+                "statement": {
                     "kind": "ExpressionStatement",
                     "fullWidth": 16,
                     "hasRegularExpressionToken": true,
-                    "_expression": {
+                    "expression": {
                         "kind": "InvocationExpression",
                         "fullWidth": 15,
                         "hasRegularExpressionToken": true,
-                        "_expression": {
+                        "expression": {
                             "kind": "MemberAccessExpression",
                             "fullWidth": 13,
                             "hasRegularExpressionToken": true,
-                            "_expression": {
+                            "expression": {
                                 "kind": "RegularExpressionLiteral",
                                 "width": 9,
                                 "text": "/regexp/a"
                             },
-                            "_dotToken": {
+                            "dotToken": {
                                 "kind": "DotToken",
                                 "width": 1,
                                 "text": "."
                             },
-                            "_name": {
+                            "name": {
                                 "kind": "IdentifierName",
                                 "width": 3,
                                 "text": "foo",
                                 "valueText": "foo"
                             }
                         },
-                        "_argumentList": {
+                        "argumentList": {
                             "kind": "ArgumentList",
                             "fullWidth": 2,
-                            "_openParenToken": {
+                            "openParenToken": {
                                 "kind": "OpenParenToken",
                                 "width": 1,
                                 "text": "("
                             },
-                            "_arguments": [],
-                            "_closeParenToken": {
+                            "arguments": [],
+                            "closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "width": 1,
                                 "text": ")"
                             }
                         }
                     },
-                    "_semicolonToken": {
+                    "semicolonToken": {
                         "kind": "SemicolonToken",
                         "width": 1,
                         "text": ";"
@@ -98,7 +98,7 @@
                 }
             }
         ],
-        "_endOfFileToken": {
+        "endOfFileToken": {
             "kind": "EndOfFileToken",
             "width": 0,
             "text": ""

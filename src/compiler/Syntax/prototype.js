@@ -20598,7 +20598,7 @@ var SyntaxNode = (function () {
             if(value) {
                 for(var name in this) {
                     if(value === this[name]) {
-                        result[name[0] === "_" ? name : ("_" + name)] = value;
+                        result[name] = value;
                         break;
                     }
                 }
@@ -54606,7 +54606,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, generate);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {

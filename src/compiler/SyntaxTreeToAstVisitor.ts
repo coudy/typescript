@@ -1490,8 +1490,6 @@ module TypeScript {
                 }
             }
 
-
-
             var result = new CallExpression(NodeType.New,
                 expression,
                 node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this),

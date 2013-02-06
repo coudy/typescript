@@ -116,7 +116,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             if (value) {
                 for (var name in this) {
                     if (value === this[name]) {
-                        result[name[0] === "_" ? name : ("_" +name)] = value;
+                        result[name] = value;
                         break;
                     }
                 }
