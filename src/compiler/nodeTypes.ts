@@ -44,6 +44,7 @@ module TypeScript {
         Typeof,
         NumberLit,
         Name,
+        GenericType,
         TypeRef,
         Index,
         Call,

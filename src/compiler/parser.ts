@@ -2765,7 +2765,7 @@ module TypeScript {
                     if (target.nodeType == NodeType.Error || (target.nodeType == NodeType.Index && (<BinaryExpression>target).operand1.nodeType == NodeType.TypeRef)) {
                         this.reportParseError("Cannot invoke 'new' on this expression");
                     } else {
-                        ast = new CallExpression(NodeType.New, target, null);
+                        ast = new CallExpression(NodeType.New, target, null, null);
                         ast.minChar = minChar;
                         limChar = this.scanner.lastTokenLimChar();
                         inNew = true;
@@ -3191,8 +3191,7 @@ module TypeScript {
                             if (!allowCall) {
                                 return ast;
                             }
-                            ast = new CallExpression(NodeType.Call, ast,
-                                                   this.parseArgList(errorRecoverySet));
+                            ast = new CallExpression(NodeType.Call, ast, null, this.parseArgList(errorRecoverySet));
                             ast.minChar = lhsMinChar;
                         }
                         ast.limChar = this.scanner.pos; // ')'

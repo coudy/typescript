@@ -562,6 +562,7 @@ module TypeScript {
     export class CallExpression extends Expression {
         constructor (nodeType: NodeType,
                      public target: AST,
+                     public typeArguments: ASTList,
                      public arguments: ASTList) {
             super(nodeType);
             this.minChar = this.target.minChar;
@@ -2154,6 +2155,12 @@ module TypeScript {
             }
             context.noContinuation = false;
             context.walker.options.goChildren = false;
+        }
+    }
+
+    export class GenericType extends AST {
+        constructor(public name: AST, public typeArguments: ASTList) {
+            super(NodeType.GenericType);
         }
     }
 

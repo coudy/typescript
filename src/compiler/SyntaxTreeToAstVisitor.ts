@@ -4,7 +4,7 @@
 /// <reference path='ast.ts' />
 
 module TypeScript {
-    export class SyntaxTreeToAstWalker implements ISyntaxVisitor {
+    export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
         private nestingLevel = 0;
 
         private varLists: ASTList[] = [];
@@ -20,7 +20,7 @@ module TypeScript {
 
         public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): Script {
             var map = null;// SyntaxInformationMap.create(sourceUnit);
-            var visitor = new SyntaxTreeToAstWalker(map, fileName, unitIndex);
+            var visitor = new SyntaxTreeToAstVisitor(map, fileName, unitIndex);
             return sourceUnit.accept(visitor);
         }
 
@@ -878,8 +878,14 @@ module TypeScript {
             return new TypeReference(result, 0);
         }
 
-        private visitTypeArgumentList(node: TypeArgumentListSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
+            var result = new ASTList();
+
+            for (var i = 0, n = node.typeArguments().nonSeparatorCount(); i < n; i++) {
+                result.append(this.visitType(node.typeArguments().nonSeparatorAt(i)));
+            }
+
+            return result;
         }
 
         private visitConstructorType(node: ConstructorTypeSyntax): any {
@@ -927,17 +933,23 @@ module TypeScript {
             if (underlying.nodeType === NodeType.TypeRef) {
                 underlying = (<TypeReference>underlying).term;
             }
-
+            
             var result = new TypeReference(underlying, count);
             this.setSpan(result, node);
 
             return result;
         }
 
-        private visitGenericType(node: GenericTypeSyntax): AST {
-            throw Errors.notYetImplemented();
-        }
+        private visitGenericType(node: GenericTypeSyntax): TypeReference {
+            var underlying = this.visitType(node.name());
+            if (underlying.nodeType === NodeType.TypeRef) {
+                underlying = (<TypeReference>underlying).term;
+            }
 
+            var genericType = new GenericType(underlying, node.typeArgumentList().accept(this));
+            return new TypeReference(genericType, 0);
+        }
+        
         private visitTypeAnnotation(node: TypeAnnotationSyntax): AST {
             return this.visitType(node.type());
         }
@@ -1005,8 +1017,13 @@ module TypeScript {
         }
 
         private visitInvocationExpression(node: InvocationExpressionSyntax): CallExpression {
+            var typeArguments = node.argumentList().typeArgumentList() !== null
+                ? node.argumentList().typeArgumentList().accept(this)
+                : null;
+
             var result = new CallExpression(NodeType.Call,
                 node.expression().accept(this),
+                typeArguments,
                 node.argumentList().accept(this));
             this.setSpan(result, node);
 
@@ -1454,6 +1471,7 @@ module TypeScript {
 
             var result = new CallExpression(NodeType.New,
                 expression,
+                node.argumentList().typeArgumentList() === null ? null : node.argumentList().typeArgumentList().accept(this),
                 node.argumentList() === null ? null : node.argumentList().accept(this));
             this.setSpan(result, node);
 

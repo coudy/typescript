@@ -63,7 +63,7 @@
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
-///<reference path='SyntaxTreeToAstWalker.ts' />
+///<reference path='SyntaxTreeToAstVisitor.ts' />
 
 module TypeScript {
 
@@ -322,7 +322,7 @@ module TypeScript {
 
                 //    if (syntaxTree.diagnostics().length === 0) {
                 //        try {
-                //            var script2: Script = SyntaxTreeToAstWalker.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                //            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
 
                 //            script2.referencedFiles = referencedFiles;
                 //            script2.isResident = keepResident;
