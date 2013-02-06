@@ -333,29 +333,29 @@ module TypeScript {
 
                     var newParseTime = timer.time;
 
-                    //if (syntaxTree.diagnostics().length === 0) {
-                    //    try {
-                    //        timer.start();
-                    //        var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
-                    //        timer.end();
+                    if (false && syntaxTree.diagnostics().length === 0) {
+                        try {
+                            timer.start();
+                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                            timer.end();
 
-                    //        var translateTime = timer.time;
+                            var translateTime = timer.time;
 
-                    //        if (oldParseTime > 100) {
-                    //            // IO.stdout.WriteLine("");
-                    //            // IO.stdout.WriteLine(filename + ": Old - New - Translate: " + oldParseTime + " - " + newParseTime + " - " + translateTime);
-                    //            IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
-                    //        }
+                            if (filename.indexOf("lib.d.ts") >= 0) {
+                                // IO.stdout.WriteLine("");
+                                IO.stdout.WriteLine("Old - New - Translate: " + oldParseTime + "\t" + newParseTime + "\t" + translateTime);
+                                // IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
+                            }
 
-                    //        script2.referencedFiles = referencedFiles;
-                    //        script2.isResident = keepResident; 
+                            script2.referencedFiles = referencedFiles;
+                            script2.isResident = keepResident; 
 
-                    //        // TypeScriptCompiler.compareObjects(script, script2);
-                    //    } catch (e1) {
-                    //        IO.stdout.WriteLine("Error converting: " + filename);
-                    //        IO.stdout.WriteLine("\t" + e1.message);
-                    //    }
-                    //}
+                            // TypeScriptCompiler.compareObjects(script, script2);
+                        } catch (e1) {
+                            IO.stdout.WriteLine("Error converting: " + filename);
+                            IO.stdout.WriteLine("\t" + e1.message);
+                        }
+                    }
                      
                     this.syntaxTrees.push(syntaxTree);
                 }
