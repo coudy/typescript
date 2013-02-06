@@ -307,7 +307,7 @@ module TypeScript {
                 //if (filename.indexOf("getCompletionsAtPosition5") < 0) {
                 //    return;
                 //}
-                
+
                 var timer = new Timer();
                 var sharedIndex = this.units.length;
 
@@ -320,10 +320,10 @@ module TypeScript {
                 script.referencedFiles = referencedFiles;
                 script.isResident = keepResident;
                 this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
-                
+
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
-                
+
                 if (this.settings.useFidelity) {
                     var text = new TypeScript.SourceSimpleText(sourceText);
 
@@ -346,9 +346,9 @@ module TypeScript {
                     //            // IO.stdout.WriteLine(filename + ": Old - New - Translate: " + oldParseTime + " - " + newParseTime + " - " + translateTime);
                     //            IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
                     //        }
-                            
+
                     //        script2.referencedFiles = referencedFiles;
-                    //        script2.isResident = keepResident;
+                    //        script2.isResident = keepResident; 
 
                     //        // TypeScriptCompiler.compareObjects(script, script2);
                     //    } catch (e1) {
