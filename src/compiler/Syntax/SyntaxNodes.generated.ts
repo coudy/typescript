@@ -7,16 +7,12 @@
 ///<reference path='Syntax.ts' />
 
 class SourceUnitSyntax extends SyntaxNode {
-    private _moduleElements: ISyntaxList;
-    private _endOfFileToken: ISyntaxToken;
 
-    constructor(moduleElements: ISyntaxList,
-                endOfFileToken: ISyntaxToken,
+    constructor(public moduleElements: ISyntaxList,
+                public endOfFileToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._moduleElements = moduleElements;
-        this._endOfFileToken = endOfFileToken;
     }
 
     public static create(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
@@ -41,23 +37,15 @@ class SourceUnitSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._moduleElements;
-            case 1: return this._endOfFileToken;
+            case 0: return this.moduleElements;
+            case 1: return this.endOfFileToken;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public moduleElements(): ISyntaxList {
-        return this._moduleElements;
-    }
-
-    public endOfFileToken(): ISyntaxToken {
-        return this._endOfFileToken;
-    }
-
     public update(moduleElements: ISyntaxList,
                   endOfFileToken: ISyntaxToken): SourceUnitSyntax {
-        if (this._moduleElements === moduleElements && this._endOfFileToken === endOfFileToken) {
+        if (this.moduleElements === moduleElements && this.endOfFileToken === endOfFileToken) {
             return this;
         }
 
@@ -73,7 +61,7 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 
     public withModuleElements(moduleElements: ISyntaxList): SourceUnitSyntax {
-        return this.update(moduleElements, this._endOfFileToken);
+        return this.update(moduleElements, this.endOfFileToken);
     }
 
     public withModuleElement(moduleElement: IModuleElementSyntax): SourceUnitSyntax {
@@ -81,18 +69,18 @@ class SourceUnitSyntax extends SyntaxNode {
     }
 
     public withEndOfFileToken(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
-        return this.update(this._moduleElements, endOfFileToken);
+        return this.update(this.moduleElements, endOfFileToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._moduleElements.isTypeScriptSpecific()) { return true; }
+        if (this.moduleElements.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
     constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
     }
 
     private isModuleReference(): bool {
@@ -113,22 +101,14 @@ class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax
 }
 
 class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
-    private _moduleKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _stringLiteral: ISyntaxToken;
-    private _closeParenToken: ISyntaxToken;
 
-    constructor(moduleKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                stringLiteral: ISyntaxToken,
-                closeParenToken: ISyntaxToken,
+    constructor(public moduleKeyword: ISyntaxToken,
+                public openParenToken: ISyntaxToken,
+                public stringLiteral: ISyntaxToken,
+                public closeParenToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._moduleKeyword = moduleKeyword;
-        this._openParenToken = openParenToken;
-        this._stringLiteral = stringLiteral;
-        this._closeParenToken = closeParenToken;
     }
 
     public static create1(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
@@ -149,35 +129,19 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._moduleKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._stringLiteral;
-            case 3: return this._closeParenToken;
+            case 0: return this.moduleKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.stringLiteral;
+            case 3: return this.closeParenToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public moduleKeyword(): ISyntaxToken {
-        return this._moduleKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public stringLiteral(): ISyntaxToken {
-        return this._stringLiteral;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
     }
 
     public update(moduleKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   stringLiteral: ISyntaxToken,
                   closeParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
-        if (this._moduleKeyword === moduleKeyword && this._openParenToken === openParenToken && this._stringLiteral === stringLiteral && this._closeParenToken === closeParenToken) {
+        if (this.moduleKeyword === moduleKeyword && this.openParenToken === openParenToken && this.stringLiteral === stringLiteral && this.closeParenToken === closeParenToken) {
             return this;
         }
 
@@ -193,19 +157,19 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
     }
 
     public withModuleKeyword(moduleKeyword: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(moduleKeyword, this._openParenToken, this._stringLiteral, this._closeParenToken);
+        return this.update(moduleKeyword, this.openParenToken, this.stringLiteral, this.closeParenToken);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(this._moduleKeyword, openParenToken, this._stringLiteral, this._closeParenToken);
+        return this.update(this.moduleKeyword, openParenToken, this.stringLiteral, this.closeParenToken);
     }
 
     public withStringLiteral(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(this._moduleKeyword, this._openParenToken, stringLiteral, this._closeParenToken);
+        return this.update(this.moduleKeyword, this.openParenToken, stringLiteral, this.closeParenToken);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(this._moduleKeyword, this._openParenToken, this._stringLiteral, closeParenToken);
+        return this.update(this.moduleKeyword, this.openParenToken, this.stringLiteral, closeParenToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -214,13 +178,11 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 }
 
 class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
-    private _moduleName: INameSyntax;
 
-    constructor(moduleName: INameSyntax,
+    constructor(public moduleName: INameSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._moduleName = moduleName;
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -237,17 +199,13 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._moduleName;
+            case 0: return this.moduleName;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public moduleName(): INameSyntax {
-        return this._moduleName;
-    }
-
     private update(moduleName: INameSyntax): ModuleNameModuleReferenceSyntax {
-        if (this._moduleName === moduleName) {
+        if (this.moduleName === moduleName) {
             return this;
         }
 
@@ -272,25 +230,15 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
 }
 
 class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
-    private _importKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _equalsToken: ISyntaxToken;
-    private _moduleReference: ModuleReferenceSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(importKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                equalsToken: ISyntaxToken,
-                moduleReference: ModuleReferenceSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public importKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public equalsToken: ISyntaxToken,
+                public moduleReference: ModuleReferenceSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._importKeyword = importKeyword;
-        this._identifier = identifier;
-        this._equalsToken = equalsToken;
-        this._moduleReference = moduleReference;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create1(identifier: ISyntaxToken,
@@ -312,11 +260,11 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._importKeyword;
-            case 1: return this._identifier;
-            case 2: return this._equalsToken;
-            case 3: return this._moduleReference;
-            case 4: return this._semicolonToken;
+            case 0: return this.importKeyword;
+            case 1: return this.identifier;
+            case 2: return this.equalsToken;
+            case 3: return this.moduleReference;
+            case 4: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -325,32 +273,12 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return true;
     }
 
-    public importKeyword(): ISyntaxToken {
-        return this._importKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public equalsToken(): ISyntaxToken {
-        return this._equalsToken;
-    }
-
-    public moduleReference(): ModuleReferenceSyntax {
-        return this._moduleReference;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(importKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   equalsToken: ISyntaxToken,
                   moduleReference: ModuleReferenceSyntax,
                   semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
-        if (this._importKeyword === importKeyword && this._identifier === identifier && this._equalsToken === equalsToken && this._moduleReference === moduleReference && this._semicolonToken === semicolonToken) {
+        if (this.importKeyword === importKeyword && this.identifier === identifier && this.equalsToken === equalsToken && this.moduleReference === moduleReference && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -366,23 +294,23 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
     }
 
     public withImportKeyword(importKeyword: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(importKeyword, this._identifier, this._equalsToken, this._moduleReference, this._semicolonToken);
+        return this.update(importKeyword, this.identifier, this.equalsToken, this.moduleReference, this.semicolonToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(this._importKeyword, identifier, this._equalsToken, this._moduleReference, this._semicolonToken);
+        return this.update(this.importKeyword, identifier, this.equalsToken, this.moduleReference, this.semicolonToken);
     }
 
     public withEqualsToken(equalsToken: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(this._importKeyword, this._identifier, equalsToken, this._moduleReference, this._semicolonToken);
+        return this.update(this.importKeyword, this.identifier, equalsToken, this.moduleReference, this.semicolonToken);
     }
 
     public withModuleReference(moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
-        return this.update(this._importKeyword, this._identifier, this._equalsToken, moduleReference, this._semicolonToken);
+        return this.update(this.importKeyword, this.identifier, this.equalsToken, moduleReference, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
-        return this.update(this._importKeyword, this._identifier, this._equalsToken, this._moduleReference, semicolonToken);
+        return this.update(this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -391,40 +319,20 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 }
 
 class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken;
-    private _declareKeyword: ISyntaxToken;
-    private _classKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _typeParameterList: TypeParameterListSyntax;
-    private _extendsClause: ExtendsClauseSyntax;
-    private _implementsClause: ImplementsClauseSyntax;
-    private _openBraceToken: ISyntaxToken;
-    private _classElements: ISyntaxList;
-    private _closeBraceToken: ISyntaxToken;
 
-    constructor(exportKeyword: ISyntaxToken,
-                declareKeyword: ISyntaxToken,
-                classKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                typeParameterList: TypeParameterListSyntax,
-                extendsClause: ExtendsClauseSyntax,
-                implementsClause: ImplementsClauseSyntax,
-                openBraceToken: ISyntaxToken,
-                classElements: ISyntaxList,
-                closeBraceToken: ISyntaxToken,
+    constructor(public exportKeyword: ISyntaxToken,
+                public declareKeyword: ISyntaxToken,
+                public classKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public typeParameterList: TypeParameterListSyntax,
+                public extendsClause: ExtendsClauseSyntax,
+                public implementsClause: ImplementsClauseSyntax,
+                public openBraceToken: ISyntaxToken,
+                public classElements: ISyntaxList,
+                public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._exportKeyword = exportKeyword;
-        this._declareKeyword = declareKeyword;
-        this._classKeyword = classKeyword;
-        this._identifier = identifier;
-        this._typeParameterList = typeParameterList;
-        this._extendsClause = extendsClause;
-        this._implementsClause = implementsClause;
-        this._openBraceToken = openBraceToken;
-        this._classElements = classElements;
-        this._closeBraceToken = closeBraceToken;
     }
 
     public static create(classKeyword: ISyntaxToken,
@@ -452,62 +360,22 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._exportKeyword;
-            case 1: return this._declareKeyword;
-            case 2: return this._classKeyword;
-            case 3: return this._identifier;
-            case 4: return this._typeParameterList;
-            case 5: return this._extendsClause;
-            case 6: return this._implementsClause;
-            case 7: return this._openBraceToken;
-            case 8: return this._classElements;
-            case 9: return this._closeBraceToken;
+            case 0: return this.exportKeyword;
+            case 1: return this.declareKeyword;
+            case 2: return this.classKeyword;
+            case 3: return this.identifier;
+            case 4: return this.typeParameterList;
+            case 5: return this.extendsClause;
+            case 6: return this.implementsClause;
+            case 7: return this.openBraceToken;
+            case 8: return this.classElements;
+            case 9: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public exportKeyword(): ISyntaxToken {
-        return this._exportKeyword;
-    }
-
-    public declareKeyword(): ISyntaxToken {
-        return this._declareKeyword;
-    }
-
-    public classKeyword(): ISyntaxToken {
-        return this._classKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public typeParameterList(): TypeParameterListSyntax {
-        return this._typeParameterList;
-    }
-
-    public extendsClause(): ExtendsClauseSyntax {
-        return this._extendsClause;
-    }
-
-    public implementsClause(): ImplementsClauseSyntax {
-        return this._implementsClause;
-    }
-
-    public openBraceToken(): ISyntaxToken {
-        return this._openBraceToken;
-    }
-
-    public classElements(): ISyntaxList {
-        return this._classElements;
-    }
-
-    public closeBraceToken(): ISyntaxToken {
-        return this._closeBraceToken;
     }
 
     public update(exportKeyword: ISyntaxToken,
@@ -520,7 +388,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
                   openBraceToken: ISyntaxToken,
                   classElements: ISyntaxList,
                   closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._classKeyword === classKeyword && this._identifier === identifier && this._typeParameterList === typeParameterList && this._extendsClause === extendsClause && this._implementsClause === implementsClause && this._openBraceToken === openBraceToken && this._classElements === classElements && this._closeBraceToken === closeBraceToken) {
+        if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.classKeyword === classKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.extendsClause === extendsClause && this.implementsClause === implementsClause && this.openBraceToken === openBraceToken && this.classElements === classElements && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
@@ -536,39 +404,39 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withDeclareKeyword(declareKeyword: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withClassKeyword(classKeyword: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withTypeParameterList(typeParameterList: TypeParameterListSyntax): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withExtendsClause(extendsClause: ExtendsClauseSyntax): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, extendsClause, this._implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, extendsClause, this.implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withImplementsClause(implementsClause: ImplementsClauseSyntax): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, implementsClause, this._openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, implementsClause, this.openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, openBraceToken, this._classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, openBraceToken, this.classElements, this.closeBraceToken);
     }
 
     public withClassElements(classElements: ISyntaxList): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, classElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, classElements, this.closeBraceToken);
     }
 
     public withClassElement(classElement: IClassElementSyntax): ClassDeclarationSyntax {
@@ -576,7 +444,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._classKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._implementsClause, this._openBraceToken, this._classElements, closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, closeBraceToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -585,28 +453,16 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
 }
 
 class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken;
-    private _interfaceKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _typeParameterList: TypeParameterListSyntax;
-    private _extendsClause: ExtendsClauseSyntax;
-    private _body: ObjectTypeSyntax;
 
-    constructor(exportKeyword: ISyntaxToken,
-                interfaceKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                typeParameterList: TypeParameterListSyntax,
-                extendsClause: ExtendsClauseSyntax,
-                body: ObjectTypeSyntax,
+    constructor(public exportKeyword: ISyntaxToken,
+                public interfaceKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public typeParameterList: TypeParameterListSyntax,
+                public extendsClause: ExtendsClauseSyntax,
+                public body: ObjectTypeSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._exportKeyword = exportKeyword;
-        this._interfaceKeyword = interfaceKeyword;
-        this._identifier = identifier;
-        this._typeParameterList = typeParameterList;
-        this._extendsClause = extendsClause;
-        this._body = body;
     }
 
     public static create(interfaceKeyword: ISyntaxToken,
@@ -633,12 +489,12 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._exportKeyword;
-            case 1: return this._interfaceKeyword;
-            case 2: return this._identifier;
-            case 3: return this._typeParameterList;
-            case 4: return this._extendsClause;
-            case 5: return this._body;
+            case 0: return this.exportKeyword;
+            case 1: return this.interfaceKeyword;
+            case 2: return this.identifier;
+            case 3: return this.typeParameterList;
+            case 4: return this.extendsClause;
+            case 5: return this.body;
             default: throw Errors.invalidOperation();
         }
     }
@@ -647,37 +503,13 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return true;
     }
 
-    public exportKeyword(): ISyntaxToken {
-        return this._exportKeyword;
-    }
-
-    public interfaceKeyword(): ISyntaxToken {
-        return this._interfaceKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public typeParameterList(): TypeParameterListSyntax {
-        return this._typeParameterList;
-    }
-
-    public extendsClause(): ExtendsClauseSyntax {
-        return this._extendsClause;
-    }
-
-    public body(): ObjectTypeSyntax {
-        return this._body;
-    }
-
     public update(exportKeyword: ISyntaxToken,
                   interfaceKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   typeParameterList: TypeParameterListSyntax,
                   extendsClause: ExtendsClauseSyntax,
                   body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        if (this._exportKeyword === exportKeyword && this._interfaceKeyword === interfaceKeyword && this._identifier === identifier && this._typeParameterList === typeParameterList && this._extendsClause === extendsClause && this._body === body) {
+        if (this.exportKeyword === exportKeyword && this.interfaceKeyword === interfaceKeyword && this.identifier === identifier && this.typeParameterList === typeParameterList && this.extendsClause === extendsClause && this.body === body) {
             return this;
         }
 
@@ -693,27 +525,27 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._body);
+        return this.update(exportKeyword, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.body);
     }
 
     public withInterfaceKeyword(interfaceKeyword: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, this._body);
+        return this.update(this.exportKeyword, interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.body);
     }
 
     public withIdentifier(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, this._interfaceKeyword, identifier, this._typeParameterList, this._extendsClause, this._body);
+        return this.update(this.exportKeyword, this.interfaceKeyword, identifier, this.typeParameterList, this.extendsClause, this.body);
     }
 
     public withTypeParameterList(typeParameterList: TypeParameterListSyntax): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, typeParameterList, this._extendsClause, this._body);
+        return this.update(this.exportKeyword, this.interfaceKeyword, this.identifier, typeParameterList, this.extendsClause, this.body);
     }
 
     public withExtendsClause(extendsClause: ExtendsClauseSyntax): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, extendsClause, this._body);
+        return this.update(this.exportKeyword, this.interfaceKeyword, this.identifier, this.typeParameterList, extendsClause, this.body);
     }
 
     public withBody(body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        return this.update(this._exportKeyword, this._interfaceKeyword, this._identifier, this._typeParameterList, this._extendsClause, body);
+        return this.update(this.exportKeyword, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, body);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -722,16 +554,12 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
 }
 
 class ExtendsClauseSyntax extends SyntaxNode {
-    private _extendsKeyword: ISyntaxToken;
-    private _typeNames: ISeparatedSyntaxList;
 
-    constructor(extendsKeyword: ISyntaxToken,
-                typeNames: ISeparatedSyntaxList,
+    constructor(public extendsKeyword: ISyntaxToken,
+                public typeNames: ISeparatedSyntaxList,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._extendsKeyword = extendsKeyword;
-        this._typeNames = typeNames;
     }
 
     public static create1(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
@@ -752,23 +580,15 @@ class ExtendsClauseSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._extendsKeyword;
-            case 1: return this._typeNames;
+            case 0: return this.extendsKeyword;
+            case 1: return this.typeNames;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public extendsKeyword(): ISyntaxToken {
-        return this._extendsKeyword;
-    }
-
-    public typeNames(): ISeparatedSyntaxList {
-        return this._typeNames;
-    }
-
     public update(extendsKeyword: ISyntaxToken,
                   typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
-        if (this._extendsKeyword === extendsKeyword && this._typeNames === typeNames) {
+        if (this.extendsKeyword === extendsKeyword && this.typeNames === typeNames) {
             return this;
         }
 
@@ -784,11 +604,11 @@ class ExtendsClauseSyntax extends SyntaxNode {
     }
 
     public withExtendsKeyword(extendsKeyword: ISyntaxToken): ExtendsClauseSyntax {
-        return this.update(extendsKeyword, this._typeNames);
+        return this.update(extendsKeyword, this.typeNames);
     }
 
     public withTypeNames(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
-        return this.update(this._extendsKeyword, typeNames);
+        return this.update(this.extendsKeyword, typeNames);
     }
 
     public withTypeName(typeName: INameSyntax): ExtendsClauseSyntax {
@@ -801,16 +621,12 @@ class ExtendsClauseSyntax extends SyntaxNode {
 }
 
 class ImplementsClauseSyntax extends SyntaxNode {
-    private _implementsKeyword: ISyntaxToken;
-    private _typeNames: ISeparatedSyntaxList;
 
-    constructor(implementsKeyword: ISyntaxToken,
-                typeNames: ISeparatedSyntaxList,
+    constructor(public implementsKeyword: ISyntaxToken,
+                public typeNames: ISeparatedSyntaxList,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._implementsKeyword = implementsKeyword;
-        this._typeNames = typeNames;
     }
 
     public static create1(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
@@ -831,23 +647,15 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._implementsKeyword;
-            case 1: return this._typeNames;
+            case 0: return this.implementsKeyword;
+            case 1: return this.typeNames;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public implementsKeyword(): ISyntaxToken {
-        return this._implementsKeyword;
-    }
-
-    public typeNames(): ISeparatedSyntaxList {
-        return this._typeNames;
-    }
-
     public update(implementsKeyword: ISyntaxToken,
                   typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
-        if (this._implementsKeyword === implementsKeyword && this._typeNames === typeNames) {
+        if (this.implementsKeyword === implementsKeyword && this.typeNames === typeNames) {
             return this;
         }
 
@@ -863,11 +671,11 @@ class ImplementsClauseSyntax extends SyntaxNode {
     }
 
     public withImplementsKeyword(implementsKeyword: ISyntaxToken): ImplementsClauseSyntax {
-        return this.update(implementsKeyword, this._typeNames);
+        return this.update(implementsKeyword, this.typeNames);
     }
 
     public withTypeNames(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
-        return this.update(this._implementsKeyword, typeNames);
+        return this.update(this.implementsKeyword, typeNames);
     }
 
     public withTypeName(typeName: INameSyntax): ImplementsClauseSyntax {
@@ -880,34 +688,18 @@ class ImplementsClauseSyntax extends SyntaxNode {
 }
 
 class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken;
-    private _declareKeyword: ISyntaxToken;
-    private _moduleKeyword: ISyntaxToken;
-    private _moduleName: INameSyntax;
-    private _stringLiteral: ISyntaxToken;
-    private _openBraceToken: ISyntaxToken;
-    private _moduleElements: ISyntaxList;
-    private _closeBraceToken: ISyntaxToken;
 
-    constructor(exportKeyword: ISyntaxToken,
-                declareKeyword: ISyntaxToken,
-                moduleKeyword: ISyntaxToken,
-                moduleName: INameSyntax,
-                stringLiteral: ISyntaxToken,
-                openBraceToken: ISyntaxToken,
-                moduleElements: ISyntaxList,
-                closeBraceToken: ISyntaxToken,
+    constructor(public exportKeyword: ISyntaxToken,
+                public declareKeyword: ISyntaxToken,
+                public moduleKeyword: ISyntaxToken,
+                public moduleName: INameSyntax,
+                public stringLiteral: ISyntaxToken,
+                public openBraceToken: ISyntaxToken,
+                public moduleElements: ISyntaxList,
+                public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._exportKeyword = exportKeyword;
-        this._declareKeyword = declareKeyword;
-        this._moduleKeyword = moduleKeyword;
-        this._moduleName = moduleName;
-        this._stringLiteral = stringLiteral;
-        this._openBraceToken = openBraceToken;
-        this._moduleElements = moduleElements;
-        this._closeBraceToken = closeBraceToken;
     }
 
     public static create(moduleKeyword: ISyntaxToken,
@@ -934,52 +726,20 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._exportKeyword;
-            case 1: return this._declareKeyword;
-            case 2: return this._moduleKeyword;
-            case 3: return this._moduleName;
-            case 4: return this._stringLiteral;
-            case 5: return this._openBraceToken;
-            case 6: return this._moduleElements;
-            case 7: return this._closeBraceToken;
+            case 0: return this.exportKeyword;
+            case 1: return this.declareKeyword;
+            case 2: return this.moduleKeyword;
+            case 3: return this.moduleName;
+            case 4: return this.stringLiteral;
+            case 5: return this.openBraceToken;
+            case 6: return this.moduleElements;
+            case 7: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public exportKeyword(): ISyntaxToken {
-        return this._exportKeyword;
-    }
-
-    public declareKeyword(): ISyntaxToken {
-        return this._declareKeyword;
-    }
-
-    public moduleKeyword(): ISyntaxToken {
-        return this._moduleKeyword;
-    }
-
-    public moduleName(): INameSyntax {
-        return this._moduleName;
-    }
-
-    public stringLiteral(): ISyntaxToken {
-        return this._stringLiteral;
-    }
-
-    public openBraceToken(): ISyntaxToken {
-        return this._openBraceToken;
-    }
-
-    public moduleElements(): ISyntaxList {
-        return this._moduleElements;
-    }
-
-    public closeBraceToken(): ISyntaxToken {
-        return this._closeBraceToken;
     }
 
     public update(exportKeyword: ISyntaxToken,
@@ -990,7 +750,7 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
                   openBraceToken: ISyntaxToken,
                   moduleElements: ISyntaxList,
                   closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
-        if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._moduleKeyword === moduleKeyword && this._moduleName === moduleName && this._stringLiteral === stringLiteral && this._openBraceToken === openBraceToken && this._moduleElements === moduleElements && this._closeBraceToken === closeBraceToken) {
+        if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.moduleKeyword === moduleKeyword && this.moduleName === moduleName && this.stringLiteral === stringLiteral && this.openBraceToken === openBraceToken && this.moduleElements === moduleElements && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
@@ -1006,31 +766,31 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): ModuleDeclarationSyntax {
-        return this.update(exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+        return this.update(exportKeyword, this.declareKeyword, this.moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, this.closeBraceToken);
     }
 
     public withDeclareKeyword(declareKeyword: ISyntaxToken): ModuleDeclarationSyntax {
-        return this.update(this._exportKeyword, declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, declareKeyword, this.moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, this.closeBraceToken);
     }
 
     public withModuleKeyword(moduleKeyword: ISyntaxToken): ModuleDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, this.closeBraceToken);
     }
 
     public withModuleName(moduleName: INameSyntax): ModuleDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.moduleKeyword, moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, this.closeBraceToken);
     }
 
     public withStringLiteral(stringLiteral: ISyntaxToken): ModuleDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, stringLiteral, this._openBraceToken, this._moduleElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.moduleKeyword, this.moduleName, stringLiteral, this.openBraceToken, this.moduleElements, this.closeBraceToken);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, openBraceToken, this._moduleElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.moduleKeyword, this.moduleName, this.stringLiteral, openBraceToken, this.moduleElements, this.closeBraceToken);
     }
 
     public withModuleElements(moduleElements: ISyntaxList): ModuleDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, moduleElements, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, moduleElements, this.closeBraceToken);
     }
 
     public withModuleElement(moduleElement: IModuleElementSyntax): ModuleDeclarationSyntax {
@@ -1038,7 +798,7 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._moduleKeyword, this._moduleName, this._stringLiteral, this._openBraceToken, this._moduleElements, closeBraceToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, closeBraceToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -1047,28 +807,16 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 }
 
 class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
-    private _exportKeyword: ISyntaxToken;
-    private _declareKeyword: ISyntaxToken;
-    private _functionKeyword: ISyntaxToken;
-    private _functionSignature: FunctionSignatureSyntax;
-    private _block: BlockSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(exportKeyword: ISyntaxToken,
-                declareKeyword: ISyntaxToken,
-                functionKeyword: ISyntaxToken,
-                functionSignature: FunctionSignatureSyntax,
-                block: BlockSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public exportKeyword: ISyntaxToken,
+                public declareKeyword: ISyntaxToken,
+                public functionKeyword: ISyntaxToken,
+                public functionSignature: FunctionSignatureSyntax,
+                public block: BlockSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._exportKeyword = exportKeyword;
-        this._declareKeyword = declareKeyword;
-        this._functionKeyword = functionKeyword;
-        this._functionSignature = functionSignature;
-        this._block = block;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(functionKeyword: ISyntaxToken,
@@ -1094,12 +842,12 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._exportKeyword;
-            case 1: return this._declareKeyword;
-            case 2: return this._functionKeyword;
-            case 3: return this._functionSignature;
-            case 4: return this._block;
-            case 5: return this._semicolonToken;
+            case 0: return this.exportKeyword;
+            case 1: return this.declareKeyword;
+            case 2: return this.functionKeyword;
+            case 3: return this.functionSignature;
+            case 4: return this.block;
+            case 5: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -1112,37 +860,13 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public exportKeyword(): ISyntaxToken {
-        return this._exportKeyword;
-    }
-
-    public declareKeyword(): ISyntaxToken {
-        return this._declareKeyword;
-    }
-
-    public functionKeyword(): ISyntaxToken {
-        return this._functionKeyword;
-    }
-
-    public functionSignature(): FunctionSignatureSyntax {
-        return this._functionSignature;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(exportKeyword: ISyntaxToken,
                   declareKeyword: ISyntaxToken,
                   functionKeyword: ISyntaxToken,
                   functionSignature: FunctionSignatureSyntax,
                   block: BlockSyntax,
                   semicolonToken: ISyntaxToken): FunctionDeclarationSyntax {
-        if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._functionKeyword === functionKeyword && this._functionSignature === functionSignature && this._block === block && this._semicolonToken === semicolonToken) {
+        if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.functionKeyword === functionKeyword && this.functionSignature === functionSignature && this.block === block && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -1158,55 +882,47 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+        return this.update(exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, this.semicolonToken);
     }
 
     public withDeclareKeyword(declareKeyword: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(this._exportKeyword, declareKeyword, this._functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+        return this.update(this.exportKeyword, declareKeyword, this.functionKeyword, this.functionSignature, this.block, this.semicolonToken);
     }
 
     public withFunctionKeyword(functionKeyword: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, functionKeyword, this._functionSignature, this._block, this._semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, functionKeyword, this.functionSignature, this.block, this.semicolonToken);
     }
 
     public withFunctionSignature(functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, functionSignature, this._block, this._semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, functionSignature, this.block, this.semicolonToken);
     }
 
     public withBlock(block: BlockSyntax): FunctionDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, block, this._semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, block, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._functionKeyword, this._functionSignature, this._block, semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._exportKeyword !== null) { return true; }
-        if (this._declareKeyword !== null) { return true; }
-        if (this._functionSignature.isTypeScriptSpecific()) { return true; }
-        if (this._block !== null && this._block.isTypeScriptSpecific()) { return true; }
+        if (this.exportKeyword !== null) { return true; }
+        if (this.declareKeyword !== null) { return true; }
+        if (this.functionSignature.isTypeScriptSpecific()) { return true; }
+        if (this.block !== null && this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _exportKeyword: ISyntaxToken;
-    private _declareKeyword: ISyntaxToken;
-    private _variableDeclaration: VariableDeclarationSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(exportKeyword: ISyntaxToken,
-                declareKeyword: ISyntaxToken,
-                variableDeclaration: VariableDeclarationSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public exportKeyword: ISyntaxToken,
+                public declareKeyword: ISyntaxToken,
+                public variableDeclaration: VariableDeclarationSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._exportKeyword = exportKeyword;
-        this._declareKeyword = declareKeyword;
-        this._variableDeclaration = variableDeclaration;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(variableDeclaration: VariableDeclarationSyntax,
@@ -1232,10 +948,10 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._exportKeyword;
-            case 1: return this._declareKeyword;
-            case 2: return this._variableDeclaration;
-            case 3: return this._semicolonToken;
+            case 0: return this.exportKeyword;
+            case 1: return this.declareKeyword;
+            case 2: return this.variableDeclaration;
+            case 3: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -1248,27 +964,11 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public exportKeyword(): ISyntaxToken {
-        return this._exportKeyword;
-    }
-
-    public declareKeyword(): ISyntaxToken {
-        return this._declareKeyword;
-    }
-
-    public variableDeclaration(): VariableDeclarationSyntax {
-        return this._variableDeclaration;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(exportKeyword: ISyntaxToken,
                   declareKeyword: ISyntaxToken,
                   variableDeclaration: VariableDeclarationSyntax,
                   semicolonToken: ISyntaxToken): VariableStatementSyntax {
-        if (this._exportKeyword === exportKeyword && this._declareKeyword === declareKeyword && this._variableDeclaration === variableDeclaration && this._semicolonToken === semicolonToken) {
+        if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.variableDeclaration === variableDeclaration && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -1284,40 +984,36 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): VariableStatementSyntax {
-        return this.update(exportKeyword, this._declareKeyword, this._variableDeclaration, this._semicolonToken);
+        return this.update(exportKeyword, this.declareKeyword, this.variableDeclaration, this.semicolonToken);
     }
 
     public withDeclareKeyword(declareKeyword: ISyntaxToken): VariableStatementSyntax {
-        return this.update(this._exportKeyword, declareKeyword, this._variableDeclaration, this._semicolonToken);
+        return this.update(this.exportKeyword, declareKeyword, this.variableDeclaration, this.semicolonToken);
     }
 
     public withVariableDeclaration(variableDeclaration: VariableDeclarationSyntax): VariableStatementSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, variableDeclaration, this._semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, variableDeclaration, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): VariableStatementSyntax {
-        return this.update(this._exportKeyword, this._declareKeyword, this._variableDeclaration, semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.variableDeclaration, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._exportKeyword !== null) { return true; }
-        if (this._declareKeyword !== null) { return true; }
-        if (this._variableDeclaration.isTypeScriptSpecific()) { return true; }
+        if (this.exportKeyword !== null) { return true; }
+        if (this.declareKeyword !== null) { return true; }
+        if (this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class VariableDeclarationSyntax extends SyntaxNode {
-    private _varKeyword: ISyntaxToken;
-    private _variableDeclarators: ISeparatedSyntaxList;
 
-    constructor(varKeyword: ISyntaxToken,
-                variableDeclarators: ISeparatedSyntaxList,
+    constructor(public varKeyword: ISyntaxToken,
+                public variableDeclarators: ISeparatedSyntaxList,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._varKeyword = varKeyword;
-        this._variableDeclarators = variableDeclarators;
     }
 
     public static create1(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
@@ -1338,23 +1034,15 @@ class VariableDeclarationSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._varKeyword;
-            case 1: return this._variableDeclarators;
+            case 0: return this.varKeyword;
+            case 1: return this.variableDeclarators;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public varKeyword(): ISyntaxToken {
-        return this._varKeyword;
-    }
-
-    public variableDeclarators(): ISeparatedSyntaxList {
-        return this._variableDeclarators;
-    }
-
     public update(varKeyword: ISyntaxToken,
                   variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
-        if (this._varKeyword === varKeyword && this._variableDeclarators === variableDeclarators) {
+        if (this.varKeyword === varKeyword && this.variableDeclarators === variableDeclarators) {
             return this;
         }
 
@@ -1370,11 +1058,11 @@ class VariableDeclarationSyntax extends SyntaxNode {
     }
 
     public withVarKeyword(varKeyword: ISyntaxToken): VariableDeclarationSyntax {
-        return this.update(varKeyword, this._variableDeclarators);
+        return this.update(varKeyword, this.variableDeclarators);
     }
 
     public withVariableDeclarators(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
-        return this.update(this._varKeyword, variableDeclarators);
+        return this.update(this.varKeyword, variableDeclarators);
     }
 
     public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): VariableDeclarationSyntax {
@@ -1382,25 +1070,19 @@ class VariableDeclarationSyntax extends SyntaxNode {
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._variableDeclarators.isTypeScriptSpecific()) { return true; }
+        if (this.variableDeclarators.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class VariableDeclaratorSyntax extends SyntaxNode {
-    private _identifier: ISyntaxToken;
-    private _typeAnnotation: TypeAnnotationSyntax;
-    private _equalsValueClause: EqualsValueClauseSyntax;
 
-    constructor(identifier: ISyntaxToken,
-                typeAnnotation: TypeAnnotationSyntax,
-                equalsValueClause: EqualsValueClauseSyntax,
+    constructor(public identifier: ISyntaxToken,
+                public typeAnnotation: TypeAnnotationSyntax,
+                public equalsValueClause: EqualsValueClauseSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._identifier = identifier;
-        this._typeAnnotation = typeAnnotation;
-        this._equalsValueClause = equalsValueClause;
     }
 
     public static create(identifier: ISyntaxToken): VariableDeclaratorSyntax {
@@ -1425,29 +1107,17 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._identifier;
-            case 1: return this._typeAnnotation;
-            case 2: return this._equalsValueClause;
+            case 0: return this.identifier;
+            case 1: return this.typeAnnotation;
+            case 2: return this.equalsValueClause;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
-    }
-
-    public equalsValueClause(): EqualsValueClauseSyntax {
-        return this._equalsValueClause;
     }
 
     public update(identifier: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax,
                   equalsValueClause: EqualsValueClauseSyntax): VariableDeclaratorSyntax {
-        if (this._identifier === identifier && this._typeAnnotation === typeAnnotation && this._equalsValueClause === equalsValueClause) {
+        if (this.identifier === identifier && this.typeAnnotation === typeAnnotation && this.equalsValueClause === equalsValueClause) {
             return this;
         }
 
@@ -1463,35 +1133,31 @@ class VariableDeclaratorSyntax extends SyntaxNode {
     }
 
     public withIdentifier(identifier: ISyntaxToken): VariableDeclaratorSyntax {
-        return this.update(identifier, this._typeAnnotation, this._equalsValueClause);
+        return this.update(identifier, this.typeAnnotation, this.equalsValueClause);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): VariableDeclaratorSyntax {
-        return this.update(this._identifier, typeAnnotation, this._equalsValueClause);
+        return this.update(this.identifier, typeAnnotation, this.equalsValueClause);
     }
 
     public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): VariableDeclaratorSyntax {
-        return this.update(this._identifier, this._typeAnnotation, equalsValueClause);
+        return this.update(this.identifier, this.typeAnnotation, equalsValueClause);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._typeAnnotation !== null) { return true; }
-        if (this._equalsValueClause !== null && this._equalsValueClause.isTypeScriptSpecific()) { return true; }
+        if (this.typeAnnotation !== null) { return true; }
+        if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class EqualsValueClauseSyntax extends SyntaxNode {
-    private _equalsToken: ISyntaxToken;
-    private _value: IExpressionSyntax;
 
-    constructor(equalsToken: ISyntaxToken,
-                value: IExpressionSyntax,
+    constructor(public equalsToken: ISyntaxToken,
+                public value: IExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._equalsToken = equalsToken;
-        this._value = value;
     }
 
     public static create1(value: IExpressionSyntax): EqualsValueClauseSyntax {
@@ -1512,23 +1178,15 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._equalsToken;
-            case 1: return this._value;
+            case 0: return this.equalsToken;
+            case 1: return this.value;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public equalsToken(): ISyntaxToken {
-        return this._equalsToken;
-    }
-
-    public value(): IExpressionSyntax {
-        return this._value;
-    }
-
     public update(equalsToken: ISyntaxToken,
                   value: IExpressionSyntax): EqualsValueClauseSyntax {
-        if (this._equalsToken === equalsToken && this._value === value) {
+        if (this.equalsToken === equalsToken && this.value === value) {
             return this;
         }
 
@@ -1544,33 +1202,29 @@ class EqualsValueClauseSyntax extends SyntaxNode {
     }
 
     public withEqualsToken(equalsToken: ISyntaxToken): EqualsValueClauseSyntax {
-        return this.update(equalsToken, this._value);
+        return this.update(equalsToken, this.value);
     }
 
     public withValue(value: IExpressionSyntax): EqualsValueClauseSyntax {
-        return this.update(this._equalsToken, value);
+        return this.update(this.equalsToken, value);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._value.isTypeScriptSpecific()) { return true; }
+        if (this.value.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
-    private _operatorToken: ISyntaxToken;
-    private _operand: IUnaryExpressionSyntax;
 
     constructor(kind: SyntaxKind,
-                operatorToken: ISyntaxToken,
-                operand: IUnaryExpressionSyntax,
+                public operatorToken: ISyntaxToken,
+                public operand: IUnaryExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
         this._kind = kind;
-        this._operatorToken = operatorToken;
-        this._operand = operand;
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1583,8 +1237,8 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._operatorToken;
-            case 1: return this._operand;
+            case 0: return this.operatorToken;
+            case 1: return this.operand;
             default: throw Errors.invalidOperation();
         }
     }
@@ -1601,18 +1255,10 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         return this._kind;
     }
 
-    public operatorToken(): ISyntaxToken {
-        return this._operatorToken;
-    }
-
-    public operand(): IUnaryExpressionSyntax {
-        return this._operand;
-    }
-
     public update(kind: SyntaxKind,
                   operatorToken: ISyntaxToken,
                   operand: IUnaryExpressionSyntax): PrefixUnaryExpressionSyntax {
-        if (this._kind === kind && this._operatorToken === operatorToken && this._operand === operand) {
+        if (this._kind === kind && this.operatorToken === operatorToken && this.operand === operand) {
             return this;
         }
 
@@ -1628,37 +1274,31 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
     }
 
     public withKind(kind: SyntaxKind): PrefixUnaryExpressionSyntax {
-        return this.update(kind, this._operatorToken, this._operand);
+        return this.update(kind, this.operatorToken, this.operand);
     }
 
     public withOperatorToken(operatorToken: ISyntaxToken): PrefixUnaryExpressionSyntax {
-        return this.update(this._kind, operatorToken, this._operand);
+        return this.update(this._kind, operatorToken, this.operand);
     }
 
     public withOperand(operand: IUnaryExpressionSyntax): PrefixUnaryExpressionSyntax {
-        return this.update(this._kind, this._operatorToken, operand);
+        return this.update(this._kind, this.operatorToken, operand);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._operand.isTypeScriptSpecific()) { return true; }
+        if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _openBracketToken: ISyntaxToken;
-    private _expressions: ISeparatedSyntaxList;
-    private _closeBracketToken: ISyntaxToken;
 
-    constructor(openBracketToken: ISyntaxToken,
-                expressions: ISeparatedSyntaxList,
-                closeBracketToken: ISyntaxToken,
+    constructor(public openBracketToken: ISyntaxToken,
+                public expressions: ISeparatedSyntaxList,
+                public closeBracketToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._openBracketToken = openBracketToken;
-        this._expressions = expressions;
-        this._closeBracketToken = closeBracketToken;
     }
 
     public static create(openBracketToken: ISyntaxToken,
@@ -1684,9 +1324,9 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._openBracketToken;
-            case 1: return this._expressions;
-            case 2: return this._closeBracketToken;
+            case 0: return this.openBracketToken;
+            case 1: return this.expressions;
+            case 2: return this.closeBracketToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -1699,22 +1339,10 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return true;
     }
 
-    public openBracketToken(): ISyntaxToken {
-        return this._openBracketToken;
-    }
-
-    public expressions(): ISeparatedSyntaxList {
-        return this._expressions;
-    }
-
-    public closeBracketToken(): ISyntaxToken {
-        return this._closeBracketToken;
-    }
-
     public update(openBracketToken: ISyntaxToken,
                   expressions: ISeparatedSyntaxList,
                   closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
-        if (this._openBracketToken === openBracketToken && this._expressions === expressions && this._closeBracketToken === closeBracketToken) {
+        if (this.openBracketToken === openBracketToken && this.expressions === expressions && this.closeBracketToken === closeBracketToken) {
             return this;
         }
 
@@ -1730,11 +1358,11 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     }
 
     public withOpenBracketToken(openBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
-        return this.update(openBracketToken, this._expressions, this._closeBracketToken);
+        return this.update(openBracketToken, this.expressions, this.closeBracketToken);
     }
 
     public withExpressions(expressions: ISeparatedSyntaxList): ArrayLiteralExpressionSyntax {
-        return this.update(this._openBracketToken, expressions, this._closeBracketToken);
+        return this.update(this.openBracketToken, expressions, this.closeBracketToken);
     }
 
     public withExpression(expression: IExpressionSyntax): ArrayLiteralExpressionSyntax {
@@ -1742,18 +1370,18 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     }
 
     public withCloseBracketToken(closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
-        return this.update(this._openBracketToken, this._expressions, closeBracketToken);
+        return this.update(this.openBracketToken, this.expressions, closeBracketToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expressions.isTypeScriptSpecific()) { return true; }
+        if (this.expressions.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1794,19 +1422,13 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 }
 
 class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _openParenToken: ISyntaxToken;
-    private _expression: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
 
-    constructor(openParenToken: ISyntaxToken,
-                expression: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
+    constructor(public openParenToken: ISyntaxToken,
+                public expression: IExpressionSyntax,
+                public closeParenToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._openParenToken = openParenToken;
-        this._expression = expression;
-        this._closeParenToken = closeParenToken;
     }
 
     public static create1(expression: IExpressionSyntax): ParenthesizedExpressionSyntax {
@@ -1827,9 +1449,9 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._openParenToken;
-            case 1: return this._expression;
-            case 2: return this._closeParenToken;
+            case 0: return this.openParenToken;
+            case 1: return this.expression;
+            case 2: return this.closeParenToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -1842,22 +1464,10 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return true;
     }
 
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
     public update(openParenToken: ISyntaxToken,
                   expression: IExpressionSyntax,
                   closeParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
-        if (this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken) {
+        if (this.openParenToken === openParenToken && this.expression === expression && this.closeParenToken === closeParenToken) {
             return this;
         }
 
@@ -1873,26 +1483,28 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
-        return this.update(openParenToken, this._expression, this._closeParenToken);
+        return this.update(openParenToken, this.expression, this.closeParenToken);
     }
 
     public withExpression(expression: IExpressionSyntax): ParenthesizedExpressionSyntax {
-        return this.update(this._openParenToken, expression, this._closeParenToken);
+        return this.update(this.openParenToken, expression, this.closeParenToken);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ParenthesizedExpressionSyntax {
-        return this.update(this._openParenToken, this._expression, closeParenToken);
+        return this.update(this.openParenToken, this.expression, closeParenToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+    constructor(public equalsGreaterThanToken: ISyntaxToken,
+                public body: ISyntaxNodeOrToken,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
     }
 
     private isUnaryExpression(): bool {
@@ -1901,14 +1513,6 @@ class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     private isExpression(): bool {
         return true;
-    }
-
-    public equalsGreaterThanToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public body(): ISyntaxNodeOrToken {
-        throw Errors.abstract();
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrowFunctionExpressionSyntax {
@@ -1925,19 +1529,13 @@ class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 }
 
 class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
-    private _identifier: ISyntaxToken;
-    private _equalsGreaterThanToken: ISyntaxToken;
-    private _body: ISyntaxNodeOrToken;
 
-    constructor(identifier: ISyntaxToken,
+    constructor(public identifier: ISyntaxToken,
                 equalsGreaterThanToken: ISyntaxToken,
                 body: ISyntaxNodeOrToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(equalsGreaterThanToken, body, parsedInStrictMode); 
 
-        this._identifier = identifier;
-        this._equalsGreaterThanToken = equalsGreaterThanToken;
-        this._body = body;
     }
 
     public static create1(identifier: ISyntaxToken,
@@ -1959,29 +1557,17 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._identifier;
-            case 1: return this._equalsGreaterThanToken;
-            case 2: return this._body;
+            case 0: return this.identifier;
+            case 1: return this.equalsGreaterThanToken;
+            case 2: return this.body;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public equalsGreaterThanToken(): ISyntaxToken {
-        return this._equalsGreaterThanToken;
-    }
-
-    public body(): ISyntaxNodeOrToken {
-        return this._body;
     }
 
     public update(identifier: ISyntaxToken,
                   equalsGreaterThanToken: ISyntaxToken,
                   body: ISyntaxNodeOrToken): SimpleArrowFunctionExpressionSyntax {
-        if (this._identifier === identifier && this._equalsGreaterThanToken === equalsGreaterThanToken && this._body === body) {
+        if (this.identifier === identifier && this.equalsGreaterThanToken === equalsGreaterThanToken && this.body === body) {
             return this;
         }
 
@@ -1997,15 +1583,15 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
     }
 
     public withIdentifier(identifier: ISyntaxToken): SimpleArrowFunctionExpressionSyntax {
-        return this.update(identifier, this._equalsGreaterThanToken, this._body);
+        return this.update(identifier, this.equalsGreaterThanToken, this.body);
     }
 
     public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): SimpleArrowFunctionExpressionSyntax {
-        return this.update(this._identifier, equalsGreaterThanToken, this._body);
+        return this.update(this.identifier, equalsGreaterThanToken, this.body);
     }
 
     public withBody(body: ISyntaxNodeOrToken): SimpleArrowFunctionExpressionSyntax {
-        return this.update(this._identifier, this._equalsGreaterThanToken, body);
+        return this.update(this.identifier, this.equalsGreaterThanToken, body);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2014,19 +1600,13 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
 }
 
 class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
-    private _callSignature: CallSignatureSyntax;
-    private _equalsGreaterThanToken: ISyntaxToken;
-    private _body: ISyntaxNodeOrToken;
 
-    constructor(callSignature: CallSignatureSyntax,
+    constructor(public callSignature: CallSignatureSyntax,
                 equalsGreaterThanToken: ISyntaxToken,
                 body: ISyntaxNodeOrToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(equalsGreaterThanToken, body, parsedInStrictMode); 
 
-        this._callSignature = callSignature;
-        this._equalsGreaterThanToken = equalsGreaterThanToken;
-        this._body = body;
     }
 
     public static create1(body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
@@ -2047,29 +1627,17 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._callSignature;
-            case 1: return this._equalsGreaterThanToken;
-            case 2: return this._body;
+            case 0: return this.callSignature;
+            case 1: return this.equalsGreaterThanToken;
+            case 2: return this.body;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public callSignature(): CallSignatureSyntax {
-        return this._callSignature;
-    }
-
-    public equalsGreaterThanToken(): ISyntaxToken {
-        return this._equalsGreaterThanToken;
-    }
-
-    public body(): ISyntaxNodeOrToken {
-        return this._body;
     }
 
     public update(callSignature: CallSignatureSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
                   body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
-        if (this._callSignature === callSignature && this._equalsGreaterThanToken === equalsGreaterThanToken && this._body === body) {
+        if (this.callSignature === callSignature && this.equalsGreaterThanToken === equalsGreaterThanToken && this.body === body) {
             return this;
         }
 
@@ -2085,15 +1653,15 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     }
 
     public withCallSignature(callSignature: CallSignatureSyntax): ParenthesizedArrowFunctionExpressionSyntax {
-        return this.update(callSignature, this._equalsGreaterThanToken, this._body);
+        return this.update(callSignature, this.equalsGreaterThanToken, this.body);
     }
 
     public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): ParenthesizedArrowFunctionExpressionSyntax {
-        return this.update(this._callSignature, equalsGreaterThanToken, this._body);
+        return this.update(this.callSignature, equalsGreaterThanToken, this.body);
     }
 
     public withBody(body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
-        return this.update(this._callSignature, this._equalsGreaterThanToken, body);
+        return this.update(this.callSignature, this.equalsGreaterThanToken, body);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2102,19 +1670,13 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 }
 
 class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
-    private _left: INameSyntax;
-    private _dotToken: ISyntaxToken;
-    private _right: ISyntaxToken;
 
-    constructor(left: INameSyntax,
-                dotToken: ISyntaxToken,
-                right: ISyntaxToken,
+    constructor(public left: INameSyntax,
+                public dotToken: ISyntaxToken,
+                public right: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._left = left;
-        this._dotToken = dotToken;
-        this._right = right;
     }
 
     public static create1(left: INameSyntax,
@@ -2136,9 +1698,9 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._left;
-            case 1: return this._dotToken;
-            case 2: return this._right;
+            case 0: return this.left;
+            case 1: return this.dotToken;
+            case 2: return this.right;
             default: throw Errors.invalidOperation();
         }
     }
@@ -2159,22 +1721,10 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return true;
     }
 
-    public left(): INameSyntax {
-        return this._left;
-    }
-
-    public dotToken(): ISyntaxToken {
-        return this._dotToken;
-    }
-
-    public right(): ISyntaxToken {
-        return this._right;
-    }
-
     public update(left: INameSyntax,
                   dotToken: ISyntaxToken,
                   right: ISyntaxToken): QualifiedNameSyntax {
-        if (this._left === left && this._dotToken === dotToken && this._right === right) {
+        if (this.left === left && this.dotToken === dotToken && this.right === right) {
             return this;
         }
 
@@ -2190,15 +1740,15 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     }
 
     public withLeft(left: INameSyntax): QualifiedNameSyntax {
-        return this.update(left, this._dotToken, this._right);
+        return this.update(left, this.dotToken, this.right);
     }
 
     public withDotToken(dotToken: ISyntaxToken): QualifiedNameSyntax {
-        return this.update(this._left, dotToken, this._right);
+        return this.update(this.left, dotToken, this.right);
     }
 
     public withRight(right: ISyntaxToken): QualifiedNameSyntax {
-        return this.update(this._left, this._dotToken, right);
+        return this.update(this.left, this.dotToken, right);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2207,19 +1757,13 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
 }
 
 class TypeArgumentListSyntax extends SyntaxNode {
-    private _lessThanToken: ISyntaxToken;
-    private _typeArguments: ISeparatedSyntaxList;
-    private _greaterThanToken: ISyntaxToken;
 
-    constructor(lessThanToken: ISyntaxToken,
-                typeArguments: ISeparatedSyntaxList,
-                greaterThanToken: ISyntaxToken,
+    constructor(public lessThanToken: ISyntaxToken,
+                public typeArguments: ISeparatedSyntaxList,
+                public greaterThanToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._lessThanToken = lessThanToken;
-        this._typeArguments = typeArguments;
-        this._greaterThanToken = greaterThanToken;
     }
 
     public static create(lessThanToken: ISyntaxToken,
@@ -2245,29 +1789,17 @@ class TypeArgumentListSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._lessThanToken;
-            case 1: return this._typeArguments;
-            case 2: return this._greaterThanToken;
+            case 0: return this.lessThanToken;
+            case 1: return this.typeArguments;
+            case 2: return this.greaterThanToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public lessThanToken(): ISyntaxToken {
-        return this._lessThanToken;
-    }
-
-    public typeArguments(): ISeparatedSyntaxList {
-        return this._typeArguments;
-    }
-
-    public greaterThanToken(): ISyntaxToken {
-        return this._greaterThanToken;
     }
 
     public update(lessThanToken: ISyntaxToken,
                   typeArguments: ISeparatedSyntaxList,
                   greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
-        if (this._lessThanToken === lessThanToken && this._typeArguments === typeArguments && this._greaterThanToken === greaterThanToken) {
+        if (this.lessThanToken === lessThanToken && this.typeArguments === typeArguments && this.greaterThanToken === greaterThanToken) {
             return this;
         }
 
@@ -2283,11 +1815,11 @@ class TypeArgumentListSyntax extends SyntaxNode {
     }
 
     public withLessThanToken(lessThanToken: ISyntaxToken): TypeArgumentListSyntax {
-        return this.update(lessThanToken, this._typeArguments, this._greaterThanToken);
+        return this.update(lessThanToken, this.typeArguments, this.greaterThanToken);
     }
 
     public withTypeArguments(typeArguments: ISeparatedSyntaxList): TypeArgumentListSyntax {
-        return this.update(this._lessThanToken, typeArguments, this._greaterThanToken);
+        return this.update(this.lessThanToken, typeArguments, this.greaterThanToken);
     }
 
     public withTypeArgument(typeArgument: ITypeSyntax): TypeArgumentListSyntax {
@@ -2295,7 +1827,7 @@ class TypeArgumentListSyntax extends SyntaxNode {
     }
 
     public withGreaterThanToken(greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
-        return this.update(this._lessThanToken, this._typeArguments, greaterThanToken);
+        return this.update(this.lessThanToken, this.typeArguments, greaterThanToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2304,25 +1836,15 @@ class TypeArgumentListSyntax extends SyntaxNode {
 }
 
 class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
-    private _newKeyword: ISyntaxToken;
-    private _typeParameterList: TypeParameterListSyntax;
-    private _parameterList: ParameterListSyntax;
-    private _equalsGreaterThanToken: ISyntaxToken;
-    private _type: ITypeSyntax;
 
-    constructor(newKeyword: ISyntaxToken,
-                typeParameterList: TypeParameterListSyntax,
-                parameterList: ParameterListSyntax,
-                equalsGreaterThanToken: ISyntaxToken,
-                type: ITypeSyntax,
+    constructor(public newKeyword: ISyntaxToken,
+                public typeParameterList: TypeParameterListSyntax,
+                public parameterList: ParameterListSyntax,
+                public equalsGreaterThanToken: ISyntaxToken,
+                public type: ITypeSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._newKeyword = newKeyword;
-        this._typeParameterList = typeParameterList;
-        this._parameterList = parameterList;
-        this._equalsGreaterThanToken = equalsGreaterThanToken;
-        this._type = type;
     }
 
     public static create(newKeyword: ISyntaxToken,
@@ -2350,11 +1872,11 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._newKeyword;
-            case 1: return this._typeParameterList;
-            case 2: return this._parameterList;
-            case 3: return this._equalsGreaterThanToken;
-            case 4: return this._type;
+            case 0: return this.newKeyword;
+            case 1: return this.typeParameterList;
+            case 2: return this.parameterList;
+            case 3: return this.equalsGreaterThanToken;
+            case 4: return this.type;
             default: throw Errors.invalidOperation();
         }
     }
@@ -2371,32 +1893,12 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public newKeyword(): ISyntaxToken {
-        return this._newKeyword;
-    }
-
-    public typeParameterList(): TypeParameterListSyntax {
-        return this._typeParameterList;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public equalsGreaterThanToken(): ISyntaxToken {
-        return this._equalsGreaterThanToken;
-    }
-
-    public type(): ITypeSyntax {
-        return this._type;
-    }
-
     public update(newKeyword: ISyntaxToken,
                   typeParameterList: TypeParameterListSyntax,
                   parameterList: ParameterListSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
                   type: ITypeSyntax): ConstructorTypeSyntax {
-        if (this._newKeyword === newKeyword && this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
+        if (this.newKeyword === newKeyword && this.typeParameterList === typeParameterList && this.parameterList === parameterList && this.equalsGreaterThanToken === equalsGreaterThanToken && this.type === type) {
             return this;
         }
 
@@ -2412,23 +1914,23 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ConstructorTypeSyntax {
-        return this.update(newKeyword, this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(newKeyword, this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, this.type);
     }
 
     public withTypeParameterList(typeParameterList: TypeParameterListSyntax): ConstructorTypeSyntax {
-        return this.update(this._newKeyword, typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(this.newKeyword, typeParameterList, this.parameterList, this.equalsGreaterThanToken, this.type);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): ConstructorTypeSyntax {
-        return this.update(this._newKeyword, this._typeParameterList, parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(this.newKeyword, this.typeParameterList, parameterList, this.equalsGreaterThanToken, this.type);
     }
 
     public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): ConstructorTypeSyntax {
-        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, equalsGreaterThanToken, this._type);
+        return this.update(this.newKeyword, this.typeParameterList, this.parameterList, equalsGreaterThanToken, this.type);
     }
 
     public withType(type: ITypeSyntax): ConstructorTypeSyntax {
-        return this.update(this._newKeyword, this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
+        return this.update(this.newKeyword, this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2437,22 +1939,14 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 }
 
 class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
-    private _typeParameterList: TypeParameterListSyntax;
-    private _parameterList: ParameterListSyntax;
-    private _equalsGreaterThanToken: ISyntaxToken;
-    private _type: ITypeSyntax;
 
-    constructor(typeParameterList: TypeParameterListSyntax,
-                parameterList: ParameterListSyntax,
-                equalsGreaterThanToken: ISyntaxToken,
-                type: ITypeSyntax,
+    constructor(public typeParameterList: TypeParameterListSyntax,
+                public parameterList: ParameterListSyntax,
+                public equalsGreaterThanToken: ISyntaxToken,
+                public type: ITypeSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._typeParameterList = typeParameterList;
-        this._parameterList = parameterList;
-        this._equalsGreaterThanToken = equalsGreaterThanToken;
-        this._type = type;
     }
 
     public static create(parameterList: ParameterListSyntax,
@@ -2479,10 +1973,10 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._typeParameterList;
-            case 1: return this._parameterList;
-            case 2: return this._equalsGreaterThanToken;
-            case 3: return this._type;
+            case 0: return this.typeParameterList;
+            case 1: return this.parameterList;
+            case 2: return this.equalsGreaterThanToken;
+            case 3: return this.type;
             default: throw Errors.invalidOperation();
         }
     }
@@ -2499,27 +1993,11 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public typeParameterList(): TypeParameterListSyntax {
-        return this._typeParameterList;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public equalsGreaterThanToken(): ISyntaxToken {
-        return this._equalsGreaterThanToken;
-    }
-
-    public type(): ITypeSyntax {
-        return this._type;
-    }
-
     public update(typeParameterList: TypeParameterListSyntax,
                   parameterList: ParameterListSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
                   type: ITypeSyntax): FunctionTypeSyntax {
-        if (this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._equalsGreaterThanToken === equalsGreaterThanToken && this._type === type) {
+        if (this.typeParameterList === typeParameterList && this.parameterList === parameterList && this.equalsGreaterThanToken === equalsGreaterThanToken && this.type === type) {
             return this;
         }
 
@@ -2535,19 +2013,19 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public withTypeParameterList(typeParameterList: TypeParameterListSyntax): FunctionTypeSyntax {
-        return this.update(typeParameterList, this._parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(typeParameterList, this.parameterList, this.equalsGreaterThanToken, this.type);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): FunctionTypeSyntax {
-        return this.update(this._typeParameterList, parameterList, this._equalsGreaterThanToken, this._type);
+        return this.update(this.typeParameterList, parameterList, this.equalsGreaterThanToken, this.type);
     }
 
     public withEqualsGreaterThanToken(equalsGreaterThanToken: ISyntaxToken): FunctionTypeSyntax {
-        return this.update(this._typeParameterList, this._parameterList, equalsGreaterThanToken, this._type);
+        return this.update(this.typeParameterList, this.parameterList, equalsGreaterThanToken, this.type);
     }
 
     public withType(type: ITypeSyntax): FunctionTypeSyntax {
-        return this.update(this._typeParameterList, this._parameterList, this._equalsGreaterThanToken, type);
+        return this.update(this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2556,19 +2034,13 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
 }
 
 class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
-    private _openBraceToken: ISyntaxToken;
-    private _typeMembers: ISeparatedSyntaxList;
-    private _closeBraceToken: ISyntaxToken;
 
-    constructor(openBraceToken: ISyntaxToken,
-                typeMembers: ISeparatedSyntaxList,
-                closeBraceToken: ISyntaxToken,
+    constructor(public openBraceToken: ISyntaxToken,
+                public typeMembers: ISeparatedSyntaxList,
+                public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._openBraceToken = openBraceToken;
-        this._typeMembers = typeMembers;
-        this._closeBraceToken = closeBraceToken;
     }
 
     public static create(openBraceToken: ISyntaxToken,
@@ -2594,9 +2066,9 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._openBraceToken;
-            case 1: return this._typeMembers;
-            case 2: return this._closeBraceToken;
+            case 0: return this.openBraceToken;
+            case 1: return this.typeMembers;
+            case 2: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -2613,22 +2085,10 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public openBraceToken(): ISyntaxToken {
-        return this._openBraceToken;
-    }
-
-    public typeMembers(): ISeparatedSyntaxList {
-        return this._typeMembers;
-    }
-
-    public closeBraceToken(): ISyntaxToken {
-        return this._closeBraceToken;
-    }
-
     public update(openBraceToken: ISyntaxToken,
                   typeMembers: ISeparatedSyntaxList,
                   closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
-        if (this._openBraceToken === openBraceToken && this._typeMembers === typeMembers && this._closeBraceToken === closeBraceToken) {
+        if (this.openBraceToken === openBraceToken && this.typeMembers === typeMembers && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
@@ -2644,11 +2104,11 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ObjectTypeSyntax {
-        return this.update(openBraceToken, this._typeMembers, this._closeBraceToken);
+        return this.update(openBraceToken, this.typeMembers, this.closeBraceToken);
     }
 
     public withTypeMembers(typeMembers: ISeparatedSyntaxList): ObjectTypeSyntax {
-        return this.update(this._openBraceToken, typeMembers, this._closeBraceToken);
+        return this.update(this.openBraceToken, typeMembers, this.closeBraceToken);
     }
 
     public withTypeMember(typeMember: TypeMemberSyntax): ObjectTypeSyntax {
@@ -2656,7 +2116,7 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
-        return this.update(this._openBraceToken, this._typeMembers, closeBraceToken);
+        return this.update(this.openBraceToken, this.typeMembers, closeBraceToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2665,19 +2125,13 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
 }
 
 class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
-    private _type: ITypeSyntax;
-    private _openBracketToken: ISyntaxToken;
-    private _closeBracketToken: ISyntaxToken;
 
-    constructor(type: ITypeSyntax,
-                openBracketToken: ISyntaxToken,
-                closeBracketToken: ISyntaxToken,
+    constructor(public type: ITypeSyntax,
+                public openBracketToken: ISyntaxToken,
+                public closeBracketToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._type = type;
-        this._openBracketToken = openBracketToken;
-        this._closeBracketToken = closeBracketToken;
     }
 
     public static create1(type: ITypeSyntax): ArrayTypeSyntax {
@@ -2698,9 +2152,9 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._type;
-            case 1: return this._openBracketToken;
-            case 2: return this._closeBracketToken;
+            case 0: return this.type;
+            case 1: return this.openBracketToken;
+            case 2: return this.closeBracketToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -2717,22 +2171,10 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public type(): ITypeSyntax {
-        return this._type;
-    }
-
-    public openBracketToken(): ISyntaxToken {
-        return this._openBracketToken;
-    }
-
-    public closeBracketToken(): ISyntaxToken {
-        return this._closeBracketToken;
-    }
-
     public update(type: ITypeSyntax,
                   openBracketToken: ISyntaxToken,
                   closeBracketToken: ISyntaxToken): ArrayTypeSyntax {
-        if (this._type === type && this._openBracketToken === openBracketToken && this._closeBracketToken === closeBracketToken) {
+        if (this.type === type && this.openBracketToken === openBracketToken && this.closeBracketToken === closeBracketToken) {
             return this;
         }
 
@@ -2748,15 +2190,15 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public withType(type: ITypeSyntax): ArrayTypeSyntax {
-        return this.update(type, this._openBracketToken, this._closeBracketToken);
+        return this.update(type, this.openBracketToken, this.closeBracketToken);
     }
 
     public withOpenBracketToken(openBracketToken: ISyntaxToken): ArrayTypeSyntax {
-        return this.update(this._type, openBracketToken, this._closeBracketToken);
+        return this.update(this.type, openBracketToken, this.closeBracketToken);
     }
 
     public withCloseBracketToken(closeBracketToken: ISyntaxToken): ArrayTypeSyntax {
-        return this.update(this._type, this._openBracketToken, closeBracketToken);
+        return this.update(this.type, this.openBracketToken, closeBracketToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2765,16 +2207,12 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
 }
 
 class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
-    private _name: INameSyntax;
-    private _typeArgumentList: TypeArgumentListSyntax;
 
-    constructor(name: INameSyntax,
-                typeArgumentList: TypeArgumentListSyntax,
+    constructor(public name: INameSyntax,
+                public typeArgumentList: TypeArgumentListSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._name = name;
-        this._typeArgumentList = typeArgumentList;
     }
 
     public static create1(name: INameSyntax): GenericTypeSyntax {
@@ -2795,8 +2233,8 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._name;
-            case 1: return this._typeArgumentList;
+            case 0: return this.name;
+            case 1: return this.typeArgumentList;
             default: throw Errors.invalidOperation();
         }
     }
@@ -2813,17 +2251,9 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return true;
     }
 
-    public name(): INameSyntax {
-        return this._name;
-    }
-
-    public typeArgumentList(): TypeArgumentListSyntax {
-        return this._typeArgumentList;
-    }
-
     public update(name: INameSyntax,
                   typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
-        if (this._name === name && this._typeArgumentList === typeArgumentList) {
+        if (this.name === name && this.typeArgumentList === typeArgumentList) {
             return this;
         }
 
@@ -2839,11 +2269,11 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
     }
 
     public withName(name: INameSyntax): GenericTypeSyntax {
-        return this.update(name, this._typeArgumentList);
+        return this.update(name, this.typeArgumentList);
     }
 
     public withTypeArgumentList(typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
-        return this.update(this._name, typeArgumentList);
+        return this.update(this.name, typeArgumentList);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2852,16 +2282,12 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
 }
 
 class TypeAnnotationSyntax extends SyntaxNode {
-    private _colonToken: ISyntaxToken;
-    private _type: ITypeSyntax;
 
-    constructor(colonToken: ISyntaxToken,
-                type: ITypeSyntax,
+    constructor(public colonToken: ISyntaxToken,
+                public type: ITypeSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._colonToken = colonToken;
-        this._type = type;
     }
 
     public static create1(type: ITypeSyntax): TypeAnnotationSyntax {
@@ -2882,23 +2308,15 @@ class TypeAnnotationSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._colonToken;
-            case 1: return this._type;
+            case 0: return this.colonToken;
+            case 1: return this.type;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public colonToken(): ISyntaxToken {
-        return this._colonToken;
-    }
-
-    public type(): ITypeSyntax {
-        return this._type;
-    }
-
     public update(colonToken: ISyntaxToken,
                   type: ITypeSyntax): TypeAnnotationSyntax {
-        if (this._colonToken === colonToken && this._type === type) {
+        if (this.colonToken === colonToken && this.type === type) {
             return this;
         }
 
@@ -2914,11 +2332,11 @@ class TypeAnnotationSyntax extends SyntaxNode {
     }
 
     public withColonToken(colonToken: ISyntaxToken): TypeAnnotationSyntax {
-        return this.update(colonToken, this._type);
+        return this.update(colonToken, this.type);
     }
 
     public withType(type: ITypeSyntax): TypeAnnotationSyntax {
-        return this.update(this._colonToken, type);
+        return this.update(this.colonToken, type);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -2927,19 +2345,13 @@ class TypeAnnotationSyntax extends SyntaxNode {
 }
 
 class BlockSyntax extends SyntaxNode implements IStatementSyntax {
-    private _openBraceToken: ISyntaxToken;
-    private _statements: ISyntaxList;
-    private _closeBraceToken: ISyntaxToken;
 
-    constructor(openBraceToken: ISyntaxToken,
-                statements: ISyntaxList,
-                closeBraceToken: ISyntaxToken,
+    constructor(public openBraceToken: ISyntaxToken,
+                public statements: ISyntaxList,
+                public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._openBraceToken = openBraceToken;
-        this._statements = statements;
-        this._closeBraceToken = closeBraceToken;
     }
 
     public static create(openBraceToken: ISyntaxToken,
@@ -2965,9 +2377,9 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._openBraceToken;
-            case 1: return this._statements;
-            case 2: return this._closeBraceToken;
+            case 0: return this.openBraceToken;
+            case 1: return this.statements;
+            case 2: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -2980,22 +2392,10 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public openBraceToken(): ISyntaxToken {
-        return this._openBraceToken;
-    }
-
-    public statements(): ISyntaxList {
-        return this._statements;
-    }
-
-    public closeBraceToken(): ISyntaxToken {
-        return this._closeBraceToken;
-    }
-
     public update(openBraceToken: ISyntaxToken,
                   statements: ISyntaxList,
                   closeBraceToken: ISyntaxToken): BlockSyntax {
-        if (this._openBraceToken === openBraceToken && this._statements === statements && this._closeBraceToken === closeBraceToken) {
+        if (this.openBraceToken === openBraceToken && this.statements === statements && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
@@ -3011,11 +2411,11 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): BlockSyntax {
-        return this.update(openBraceToken, this._statements, this._closeBraceToken);
+        return this.update(openBraceToken, this.statements, this.closeBraceToken);
     }
 
     public withStatements(statements: ISyntaxList): BlockSyntax {
-        return this.update(this._openBraceToken, statements, this._closeBraceToken);
+        return this.update(this.openBraceToken, statements, this.closeBraceToken);
     }
 
     public withStatement(statement: IStatementSyntax): BlockSyntax {
@@ -3023,38 +2423,26 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): BlockSyntax {
-        return this.update(this._openBraceToken, this._statements, closeBraceToken);
+        return this.update(this.openBraceToken, this.statements, closeBraceToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._statements.isTypeScriptSpecific()) { return true; }
+        if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ParameterSyntax extends SyntaxNode {
-    private _dotDotDotToken: ISyntaxToken;
-    private _publicOrPrivateKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _questionToken: ISyntaxToken;
-    private _typeAnnotation: TypeAnnotationSyntax;
-    private _equalsValueClause: EqualsValueClauseSyntax;
 
-    constructor(dotDotDotToken: ISyntaxToken,
-                publicOrPrivateKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                questionToken: ISyntaxToken,
-                typeAnnotation: TypeAnnotationSyntax,
-                equalsValueClause: EqualsValueClauseSyntax,
+    constructor(public dotDotDotToken: ISyntaxToken,
+                public publicOrPrivateKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public questionToken: ISyntaxToken,
+                public typeAnnotation: TypeAnnotationSyntax,
+                public equalsValueClause: EqualsValueClauseSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._dotDotDotToken = dotDotDotToken;
-        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
-        this._identifier = identifier;
-        this._questionToken = questionToken;
-        this._typeAnnotation = typeAnnotation;
-        this._equalsValueClause = equalsValueClause;
     }
 
     public static create(identifier: ISyntaxToken): ParameterSyntax {
@@ -3079,38 +2467,14 @@ class ParameterSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._dotDotDotToken;
-            case 1: return this._publicOrPrivateKeyword;
-            case 2: return this._identifier;
-            case 3: return this._questionToken;
-            case 4: return this._typeAnnotation;
-            case 5: return this._equalsValueClause;
+            case 0: return this.dotDotDotToken;
+            case 1: return this.publicOrPrivateKeyword;
+            case 2: return this.identifier;
+            case 3: return this.questionToken;
+            case 4: return this.typeAnnotation;
+            case 5: return this.equalsValueClause;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public dotDotDotToken(): ISyntaxToken {
-        return this._dotDotDotToken;
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        return this._publicOrPrivateKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public questionToken(): ISyntaxToken {
-        return this._questionToken;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
-    }
-
-    public equalsValueClause(): EqualsValueClauseSyntax {
-        return this._equalsValueClause;
     }
 
     public update(dotDotDotToken: ISyntaxToken,
@@ -3119,7 +2483,7 @@ class ParameterSyntax extends SyntaxNode {
                   questionToken: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax,
                   equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax {
-        if (this._dotDotDotToken === dotDotDotToken && this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._identifier === identifier && this._questionToken === questionToken && this._typeAnnotation === typeAnnotation && this._equalsValueClause === equalsValueClause) {
+        if (this.dotDotDotToken === dotDotDotToken && this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.identifier === identifier && this.questionToken === questionToken && this.typeAnnotation === typeAnnotation && this.equalsValueClause === equalsValueClause) {
             return this;
         }
 
@@ -3135,53 +2499,47 @@ class ParameterSyntax extends SyntaxNode {
     }
 
     public withDotDotDotToken(dotDotDotToken: ISyntaxToken): ParameterSyntax {
-        return this.update(dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+        return this.update(dotDotDotToken, this.publicOrPrivateKeyword, this.identifier, this.questionToken, this.typeAnnotation, this.equalsValueClause);
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): ParameterSyntax {
-        return this.update(this._dotDotDotToken, publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+        return this.update(this.dotDotDotToken, publicOrPrivateKeyword, this.identifier, this.questionToken, this.typeAnnotation, this.equalsValueClause);
     }
 
     public withIdentifier(identifier: ISyntaxToken): ParameterSyntax {
-        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, identifier, this._questionToken, this._typeAnnotation, this._equalsValueClause);
+        return this.update(this.dotDotDotToken, this.publicOrPrivateKeyword, identifier, this.questionToken, this.typeAnnotation, this.equalsValueClause);
     }
 
     public withQuestionToken(questionToken: ISyntaxToken): ParameterSyntax {
-        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, questionToken, this._typeAnnotation, this._equalsValueClause);
+        return this.update(this.dotDotDotToken, this.publicOrPrivateKeyword, this.identifier, questionToken, this.typeAnnotation, this.equalsValueClause);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): ParameterSyntax {
-        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, typeAnnotation, this._equalsValueClause);
+        return this.update(this.dotDotDotToken, this.publicOrPrivateKeyword, this.identifier, this.questionToken, typeAnnotation, this.equalsValueClause);
     }
 
     public withEqualsValueClause(equalsValueClause: EqualsValueClauseSyntax): ParameterSyntax {
-        return this.update(this._dotDotDotToken, this._publicOrPrivateKeyword, this._identifier, this._questionToken, this._typeAnnotation, equalsValueClause);
+        return this.update(this.dotDotDotToken, this.publicOrPrivateKeyword, this.identifier, this.questionToken, this.typeAnnotation, equalsValueClause);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._dotDotDotToken !== null) { return true; }
-        if (this._publicOrPrivateKeyword !== null) { return true; }
-        if (this._questionToken !== null) { return true; }
-        if (this._typeAnnotation !== null) { return true; }
-        if (this._equalsValueClause !== null) { return true; }
+        if (this.dotDotDotToken !== null) { return true; }
+        if (this.publicOrPrivateKeyword !== null) { return true; }
+        if (this.questionToken !== null) { return true; }
+        if (this.typeAnnotation !== null) { return true; }
+        if (this.equalsValueClause !== null) { return true; }
         return false;
     }
 }
 
 class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _expression: IExpressionSyntax;
-    private _dotToken: ISyntaxToken;
-    private _name: ISyntaxToken;
 
-    constructor(expression: IExpressionSyntax,
-                dotToken: ISyntaxToken,
-                name: ISyntaxToken,
+    constructor(public expression: IExpressionSyntax,
+                public dotToken: ISyntaxToken,
+                public name: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._expression = expression;
-        this._dotToken = dotToken;
-        this._name = name;
     }
 
     public static create1(expression: IExpressionSyntax,
@@ -3203,9 +2561,9 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._expression;
-            case 1: return this._dotToken;
-            case 2: return this._name;
+            case 0: return this.expression;
+            case 1: return this.dotToken;
+            case 2: return this.name;
             default: throw Errors.invalidOperation();
         }
     }
@@ -3218,22 +2576,10 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return true;
     }
 
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public dotToken(): ISyntaxToken {
-        return this._dotToken;
-    }
-
-    public name(): ISyntaxToken {
-        return this._name;
-    }
-
     public update(expression: IExpressionSyntax,
                   dotToken: ISyntaxToken,
                   name: ISyntaxToken): MemberAccessExpressionSyntax {
-        if (this._expression === expression && this._dotToken === dotToken && this._name === name) {
+        if (this.expression === expression && this.dotToken === dotToken && this.name === name) {
             return this;
         }
 
@@ -3249,37 +2595,33 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     }
 
     public withExpression(expression: IExpressionSyntax): MemberAccessExpressionSyntax {
-        return this.update(expression, this._dotToken, this._name);
+        return this.update(expression, this.dotToken, this.name);
     }
 
     public withDotToken(dotToken: ISyntaxToken): MemberAccessExpressionSyntax {
-        return this.update(this._expression, dotToken, this._name);
+        return this.update(this.expression, dotToken, this.name);
     }
 
     public withName(name: ISyntaxToken): MemberAccessExpressionSyntax {
-        return this.update(this._expression, this._dotToken, name);
+        return this.update(this.expression, this.dotToken, name);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
-    private _operand: IExpressionSyntax;
-    private _operatorToken: ISyntaxToken;
 
     constructor(kind: SyntaxKind,
-                operand: IExpressionSyntax,
-                operatorToken: ISyntaxToken,
+                public operand: IExpressionSyntax,
+                public operatorToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
         this._kind = kind;
-        this._operand = operand;
-        this._operatorToken = operatorToken;
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -3292,8 +2634,8 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._operand;
-            case 1: return this._operatorToken;
+            case 0: return this.operand;
+            case 1: return this.operatorToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -3310,18 +2652,10 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this._kind;
     }
 
-    public operand(): IExpressionSyntax {
-        return this._operand;
-    }
-
-    public operatorToken(): ISyntaxToken {
-        return this._operatorToken;
-    }
-
     public update(kind: SyntaxKind,
                   operand: IExpressionSyntax,
                   operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
-        if (this._kind === kind && this._operand === operand && this._operatorToken === operatorToken) {
+        if (this._kind === kind && this.operand === operand && this.operatorToken === operatorToken) {
             return this;
         }
 
@@ -3337,40 +2671,32 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
     }
 
     public withKind(kind: SyntaxKind): PostfixUnaryExpressionSyntax {
-        return this.update(kind, this._operand, this._operatorToken);
+        return this.update(kind, this.operand, this.operatorToken);
     }
 
     public withOperand(operand: IExpressionSyntax): PostfixUnaryExpressionSyntax {
-        return this.update(this._kind, operand, this._operatorToken);
+        return this.update(this._kind, operand, this.operatorToken);
     }
 
     public withOperatorToken(operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
-        return this.update(this._kind, this._operand, operatorToken);
+        return this.update(this._kind, this.operand, operatorToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._operand.isTypeScriptSpecific()) { return true; }
+        if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _expression: IExpressionSyntax;
-    private _openBracketToken: ISyntaxToken;
-    private _argumentExpression: IExpressionSyntax;
-    private _closeBracketToken: ISyntaxToken;
 
-    constructor(expression: IExpressionSyntax,
-                openBracketToken: ISyntaxToken,
-                argumentExpression: IExpressionSyntax,
-                closeBracketToken: ISyntaxToken,
+    constructor(public expression: IExpressionSyntax,
+                public openBracketToken: ISyntaxToken,
+                public argumentExpression: IExpressionSyntax,
+                public closeBracketToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._expression = expression;
-        this._openBracketToken = openBracketToken;
-        this._argumentExpression = argumentExpression;
-        this._closeBracketToken = closeBracketToken;
     }
 
     public static create1(expression: IExpressionSyntax,
@@ -3392,10 +2718,10 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._expression;
-            case 1: return this._openBracketToken;
-            case 2: return this._argumentExpression;
-            case 3: return this._closeBracketToken;
+            case 0: return this.expression;
+            case 1: return this.openBracketToken;
+            case 2: return this.argumentExpression;
+            case 3: return this.closeBracketToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -3408,27 +2734,11 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return true;
     }
 
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public openBracketToken(): ISyntaxToken {
-        return this._openBracketToken;
-    }
-
-    public argumentExpression(): IExpressionSyntax {
-        return this._argumentExpression;
-    }
-
-    public closeBracketToken(): ISyntaxToken {
-        return this._closeBracketToken;
-    }
-
     public update(expression: IExpressionSyntax,
                   openBracketToken: ISyntaxToken,
                   argumentExpression: IExpressionSyntax,
                   closeBracketToken: ISyntaxToken): ElementAccessExpressionSyntax {
-        if (this._expression === expression && this._openBracketToken === openBracketToken && this._argumentExpression === argumentExpression && this._closeBracketToken === closeBracketToken) {
+        if (this.expression === expression && this.openBracketToken === openBracketToken && this.argumentExpression === argumentExpression && this.closeBracketToken === closeBracketToken) {
             return this;
         }
 
@@ -3444,39 +2754,35 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
     }
 
     public withExpression(expression: IExpressionSyntax): ElementAccessExpressionSyntax {
-        return this.update(expression, this._openBracketToken, this._argumentExpression, this._closeBracketToken);
+        return this.update(expression, this.openBracketToken, this.argumentExpression, this.closeBracketToken);
     }
 
     public withOpenBracketToken(openBracketToken: ISyntaxToken): ElementAccessExpressionSyntax {
-        return this.update(this._expression, openBracketToken, this._argumentExpression, this._closeBracketToken);
+        return this.update(this.expression, openBracketToken, this.argumentExpression, this.closeBracketToken);
     }
 
     public withArgumentExpression(argumentExpression: IExpressionSyntax): ElementAccessExpressionSyntax {
-        return this.update(this._expression, this._openBracketToken, argumentExpression, this._closeBracketToken);
+        return this.update(this.expression, this.openBracketToken, argumentExpression, this.closeBracketToken);
     }
 
     public withCloseBracketToken(closeBracketToken: ISyntaxToken): ElementAccessExpressionSyntax {
-        return this.update(this._expression, this._openBracketToken, this._argumentExpression, closeBracketToken);
+        return this.update(this.expression, this.openBracketToken, this.argumentExpression, closeBracketToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._argumentExpression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
+        if (this.argumentExpression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _expression: IExpressionSyntax;
-    private _argumentList: ArgumentListSyntax;
 
-    constructor(expression: IExpressionSyntax,
-                argumentList: ArgumentListSyntax,
+    constructor(public expression: IExpressionSyntax,
+                public argumentList: ArgumentListSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._expression = expression;
-        this._argumentList = argumentList;
     }
 
     public static create1(expression: IExpressionSyntax): InvocationExpressionSyntax {
@@ -3497,8 +2803,8 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._expression;
-            case 1: return this._argumentList;
+            case 0: return this.expression;
+            case 1: return this.argumentList;
             default: throw Errors.invalidOperation();
         }
     }
@@ -3511,17 +2817,9 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return true;
     }
 
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public argumentList(): ArgumentListSyntax {
-        return this._argumentList;
-    }
-
     public update(expression: IExpressionSyntax,
                   argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
-        if (this._expression === expression && this._argumentList === argumentList) {
+        if (this.expression === expression && this.argumentList === argumentList) {
             return this;
         }
 
@@ -3537,37 +2835,29 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
     }
 
     public withExpression(expression: IExpressionSyntax): InvocationExpressionSyntax {
-        return this.update(expression, this._argumentList);
+        return this.update(expression, this.argumentList);
     }
 
     public withArgumentList(argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
-        return this.update(this._expression, argumentList);
+        return this.update(this.expression, argumentList);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._argumentList.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
+        if (this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ArgumentListSyntax extends SyntaxNode {
-    private _typeArgumentList: TypeArgumentListSyntax;
-    private _openParenToken: ISyntaxToken;
-    private _arguments: ISeparatedSyntaxList;
-    private _closeParenToken: ISyntaxToken;
 
-    constructor(typeArgumentList: TypeArgumentListSyntax,
-                openParenToken: ISyntaxToken,
-                arguments: ISeparatedSyntaxList,
-                closeParenToken: ISyntaxToken,
+    constructor(public typeArgumentList: TypeArgumentListSyntax,
+                public openParenToken: ISyntaxToken,
+                public arguments: ISeparatedSyntaxList,
+                public closeParenToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._typeArgumentList = typeArgumentList;
-        this._openParenToken = openParenToken;
-        this._arguments = arguments;
-        this._closeParenToken = closeParenToken;
     }
 
     public static create(openParenToken: ISyntaxToken,
@@ -3593,35 +2883,19 @@ class ArgumentListSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._typeArgumentList;
-            case 1: return this._openParenToken;
-            case 2: return this._arguments;
-            case 3: return this._closeParenToken;
+            case 0: return this.typeArgumentList;
+            case 1: return this.openParenToken;
+            case 2: return this.arguments;
+            case 3: return this.closeParenToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public typeArgumentList(): TypeArgumentListSyntax {
-        return this._typeArgumentList;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public arguments(): ISeparatedSyntaxList {
-        return this._arguments;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
     }
 
     public update(typeArgumentList: TypeArgumentListSyntax,
                   openParenToken: ISyntaxToken,
                   _arguments: ISeparatedSyntaxList,
                   closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        if (this._typeArgumentList === typeArgumentList && this._openParenToken === openParenToken && this._arguments === _arguments && this._closeParenToken === closeParenToken) {
+        if (this.typeArgumentList === typeArgumentList && this.openParenToken === openParenToken && this.arguments === _arguments && this.closeParenToken === closeParenToken) {
             return this;
         }
 
@@ -3637,15 +2911,15 @@ class ArgumentListSyntax extends SyntaxNode {
     }
 
     public withTypeArgumentList(typeArgumentList: TypeArgumentListSyntax): ArgumentListSyntax {
-        return this.update(typeArgumentList, this._openParenToken, this._arguments, this._closeParenToken);
+        return this.update(typeArgumentList, this.openParenToken, this.arguments, this.closeParenToken);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ArgumentListSyntax {
-        return this.update(this._typeArgumentList, openParenToken, this._arguments, this._closeParenToken);
+        return this.update(this.typeArgumentList, openParenToken, this.arguments, this.closeParenToken);
     }
 
     public withArguments(_arguments: ISeparatedSyntaxList): ArgumentListSyntax {
-        return this.update(this._typeArgumentList, this._openParenToken, _arguments, this._closeParenToken);
+        return this.update(this.typeArgumentList, this.openParenToken, _arguments, this.closeParenToken);
     }
 
     public withArgument(_argument: IExpressionSyntax): ArgumentListSyntax {
@@ -3653,33 +2927,27 @@ class ArgumentListSyntax extends SyntaxNode {
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        return this.update(this._typeArgumentList, this._openParenToken, this._arguments, closeParenToken);
+        return this.update(this.typeArgumentList, this.openParenToken, this.arguments, closeParenToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._typeArgumentList !== null && this._typeArgumentList.isTypeScriptSpecific()) { return true; }
-        if (this._arguments.isTypeScriptSpecific()) { return true; }
+        if (this.typeArgumentList !== null && this.typeArgumentList.isTypeScriptSpecific()) { return true; }
+        if (this.arguments.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     private _kind: SyntaxKind;
-    private _left: IExpressionSyntax;
-    private _operatorToken: ISyntaxToken;
-    private _right: IExpressionSyntax;
 
     constructor(kind: SyntaxKind,
-                left: IExpressionSyntax,
-                operatorToken: ISyntaxToken,
-                right: IExpressionSyntax,
+                public left: IExpressionSyntax,
+                public operatorToken: ISyntaxToken,
+                public right: IExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
         this._kind = kind;
-        this._left = left;
-        this._operatorToken = operatorToken;
-        this._right = right;
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -3692,9 +2960,9 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._left;
-            case 1: return this._operatorToken;
-            case 2: return this._right;
+            case 0: return this.left;
+            case 1: return this.operatorToken;
+            case 2: return this.right;
             default: throw Errors.invalidOperation();
         }
     }
@@ -3707,23 +2975,11 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return this._kind;
     }
 
-    public left(): IExpressionSyntax {
-        return this._left;
-    }
-
-    public operatorToken(): ISyntaxToken {
-        return this._operatorToken;
-    }
-
-    public right(): IExpressionSyntax {
-        return this._right;
-    }
-
     public update(kind: SyntaxKind,
                   left: IExpressionSyntax,
                   operatorToken: ISyntaxToken,
                   right: IExpressionSyntax): BinaryExpressionSyntax {
-        if (this._kind === kind && this._left === left && this._operatorToken === operatorToken && this._right === right) {
+        if (this._kind === kind && this.left === left && this.operatorToken === operatorToken && this.right === right) {
             return this;
         }
 
@@ -3739,48 +2995,38 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     }
 
     public withKind(kind: SyntaxKind): BinaryExpressionSyntax {
-        return this.update(kind, this._left, this._operatorToken, this._right);
+        return this.update(kind, this.left, this.operatorToken, this.right);
     }
 
     public withLeft(left: IExpressionSyntax): BinaryExpressionSyntax {
-        return this.update(this._kind, left, this._operatorToken, this._right);
+        return this.update(this._kind, left, this.operatorToken, this.right);
     }
 
     public withOperatorToken(operatorToken: ISyntaxToken): BinaryExpressionSyntax {
-        return this.update(this._kind, this._left, operatorToken, this._right);
+        return this.update(this._kind, this.left, operatorToken, this.right);
     }
 
     public withRight(right: IExpressionSyntax): BinaryExpressionSyntax {
-        return this.update(this._kind, this._left, this._operatorToken, right);
+        return this.update(this._kind, this.left, this.operatorToken, right);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._left.isTypeScriptSpecific()) { return true; }
-        if (this._right.isTypeScriptSpecific()) { return true; }
+        if (this.left.isTypeScriptSpecific()) { return true; }
+        if (this.right.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
-    private _condition: IExpressionSyntax;
-    private _questionToken: ISyntaxToken;
-    private _whenTrue: IExpressionSyntax;
-    private _colonToken: ISyntaxToken;
-    private _whenFalse: IExpressionSyntax;
 
-    constructor(condition: IExpressionSyntax,
-                questionToken: ISyntaxToken,
-                whenTrue: IExpressionSyntax,
-                colonToken: ISyntaxToken,
-                whenFalse: IExpressionSyntax,
+    constructor(public condition: IExpressionSyntax,
+                public questionToken: ISyntaxToken,
+                public whenTrue: IExpressionSyntax,
+                public colonToken: ISyntaxToken,
+                public whenFalse: IExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._condition = condition;
-        this._questionToken = questionToken;
-        this._whenTrue = whenTrue;
-        this._colonToken = colonToken;
-        this._whenFalse = whenFalse;
     }
 
     public static create1(condition: IExpressionSyntax,
@@ -3803,11 +3049,11 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._condition;
-            case 1: return this._questionToken;
-            case 2: return this._whenTrue;
-            case 3: return this._colonToken;
-            case 4: return this._whenFalse;
+            case 0: return this.condition;
+            case 1: return this.questionToken;
+            case 2: return this.whenTrue;
+            case 3: return this.colonToken;
+            case 4: return this.whenFalse;
             default: throw Errors.invalidOperation();
         }
     }
@@ -3816,32 +3062,12 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return true;
     }
 
-    public condition(): IExpressionSyntax {
-        return this._condition;
-    }
-
-    public questionToken(): ISyntaxToken {
-        return this._questionToken;
-    }
-
-    public whenTrue(): IExpressionSyntax {
-        return this._whenTrue;
-    }
-
-    public colonToken(): ISyntaxToken {
-        return this._colonToken;
-    }
-
-    public whenFalse(): IExpressionSyntax {
-        return this._whenFalse;
-    }
-
     public update(condition: IExpressionSyntax,
                   questionToken: ISyntaxToken,
                   whenTrue: IExpressionSyntax,
                   colonToken: ISyntaxToken,
                   whenFalse: IExpressionSyntax): ConditionalExpressionSyntax {
-        if (this._condition === condition && this._questionToken === questionToken && this._whenTrue === whenTrue && this._colonToken === colonToken && this._whenFalse === whenFalse) {
+        if (this.condition === condition && this.questionToken === questionToken && this.whenTrue === whenTrue && this.colonToken === colonToken && this.whenFalse === whenFalse) {
             return this;
         }
 
@@ -3857,36 +3083,36 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
     }
 
     public withCondition(condition: IExpressionSyntax): ConditionalExpressionSyntax {
-        return this.update(condition, this._questionToken, this._whenTrue, this._colonToken, this._whenFalse);
+        return this.update(condition, this.questionToken, this.whenTrue, this.colonToken, this.whenFalse);
     }
 
     public withQuestionToken(questionToken: ISyntaxToken): ConditionalExpressionSyntax {
-        return this.update(this._condition, questionToken, this._whenTrue, this._colonToken, this._whenFalse);
+        return this.update(this.condition, questionToken, this.whenTrue, this.colonToken, this.whenFalse);
     }
 
     public withWhenTrue(whenTrue: IExpressionSyntax): ConditionalExpressionSyntax {
-        return this.update(this._condition, this._questionToken, whenTrue, this._colonToken, this._whenFalse);
+        return this.update(this.condition, this.questionToken, whenTrue, this.colonToken, this.whenFalse);
     }
 
     public withColonToken(colonToken: ISyntaxToken): ConditionalExpressionSyntax {
-        return this.update(this._condition, this._questionToken, this._whenTrue, colonToken, this._whenFalse);
+        return this.update(this.condition, this.questionToken, this.whenTrue, colonToken, this.whenFalse);
     }
 
     public withWhenFalse(whenFalse: IExpressionSyntax): ConditionalExpressionSyntax {
-        return this.update(this._condition, this._questionToken, this._whenTrue, this._colonToken, whenFalse);
+        return this.update(this.condition, this.questionToken, this.whenTrue, this.colonToken, whenFalse);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._condition.isTypeScriptSpecific()) { return true; }
-        if (this._whenTrue.isTypeScriptSpecific()) { return true; }
-        if (this._whenFalse.isTypeScriptSpecific()) { return true; }
+        if (this.condition.isTypeScriptSpecific()) { return true; }
+        if (this.whenTrue.isTypeScriptSpecific()) { return true; }
+        if (this.whenFalse.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
     constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
     }
 
     private isTypeMember(): bool {
@@ -3907,16 +3133,12 @@ class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
 }
 
 class ConstructSignatureSyntax extends TypeMemberSyntax {
-    private _newKeyword: ISyntaxToken;
-    private _callSignature: CallSignatureSyntax;
 
-    constructor(newKeyword: ISyntaxToken,
-                callSignature: CallSignatureSyntax,
+    constructor(public newKeyword: ISyntaxToken,
+                public callSignature: CallSignatureSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._newKeyword = newKeyword;
-        this._callSignature = callSignature;
     }
 
     public static create1(): ConstructSignatureSyntax {
@@ -3937,23 +3159,15 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._newKeyword;
-            case 1: return this._callSignature;
+            case 0: return this.newKeyword;
+            case 1: return this.callSignature;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public newKeyword(): ISyntaxToken {
-        return this._newKeyword;
-    }
-
-    public callSignature(): CallSignatureSyntax {
-        return this._callSignature;
-    }
-
     public update(newKeyword: ISyntaxToken,
                   callSignature: CallSignatureSyntax): ConstructSignatureSyntax {
-        if (this._newKeyword === newKeyword && this._callSignature === callSignature) {
+        if (this.newKeyword === newKeyword && this.callSignature === callSignature) {
             return this;
         }
 
@@ -3969,11 +3183,11 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ConstructSignatureSyntax {
-        return this.update(newKeyword, this._callSignature);
+        return this.update(newKeyword, this.callSignature);
     }
 
     public withCallSignature(callSignature: CallSignatureSyntax): ConstructSignatureSyntax {
-        return this.update(this._newKeyword, callSignature);
+        return this.update(this.newKeyword, callSignature);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -3982,19 +3196,13 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 }
 
 class FunctionSignatureSyntax extends TypeMemberSyntax {
-    private _identifier: ISyntaxToken;
-    private _questionToken: ISyntaxToken;
-    private _callSignature: CallSignatureSyntax;
 
-    constructor(identifier: ISyntaxToken,
-                questionToken: ISyntaxToken,
-                callSignature: CallSignatureSyntax,
+    constructor(public identifier: ISyntaxToken,
+                public questionToken: ISyntaxToken,
+                public callSignature: CallSignatureSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._identifier = identifier;
-        this._questionToken = questionToken;
-        this._callSignature = callSignature;
     }
 
     public static create(identifier: ISyntaxToken,
@@ -4020,29 +3228,17 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._identifier;
-            case 1: return this._questionToken;
-            case 2: return this._callSignature;
+            case 0: return this.identifier;
+            case 1: return this.questionToken;
+            case 2: return this.callSignature;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public questionToken(): ISyntaxToken {
-        return this._questionToken;
-    }
-
-    public callSignature(): CallSignatureSyntax {
-        return this._callSignature;
     }
 
     public update(identifier: ISyntaxToken,
                   questionToken: ISyntaxToken,
                   callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
-        if (this._identifier === identifier && this._questionToken === questionToken && this._callSignature === callSignature) {
+        if (this.identifier === identifier && this.questionToken === questionToken && this.callSignature === callSignature) {
             return this;
         }
 
@@ -4058,40 +3254,32 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
     }
 
     public withIdentifier(identifier: ISyntaxToken): FunctionSignatureSyntax {
-        return this.update(identifier, this._questionToken, this._callSignature);
+        return this.update(identifier, this.questionToken, this.callSignature);
     }
 
     public withQuestionToken(questionToken: ISyntaxToken): FunctionSignatureSyntax {
-        return this.update(this._identifier, questionToken, this._callSignature);
+        return this.update(this.identifier, questionToken, this.callSignature);
     }
 
     public withCallSignature(callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
-        return this.update(this._identifier, this._questionToken, callSignature);
+        return this.update(this.identifier, this.questionToken, callSignature);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._callSignature.isTypeScriptSpecific()) { return true; }
+        if (this.callSignature.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class IndexSignatureSyntax extends TypeMemberSyntax {
-    private _openBracketToken: ISyntaxToken;
-    private _parameter: ParameterSyntax;
-    private _closeBracketToken: ISyntaxToken;
-    private _typeAnnotation: TypeAnnotationSyntax;
 
-    constructor(openBracketToken: ISyntaxToken,
-                parameter: ParameterSyntax,
-                closeBracketToken: ISyntaxToken,
-                typeAnnotation: TypeAnnotationSyntax,
+    constructor(public openBracketToken: ISyntaxToken,
+                public parameter: ParameterSyntax,
+                public closeBracketToken: ISyntaxToken,
+                public typeAnnotation: TypeAnnotationSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._openBracketToken = openBracketToken;
-        this._parameter = parameter;
-        this._closeBracketToken = closeBracketToken;
-        this._typeAnnotation = typeAnnotation;
     }
 
     public static create(openBracketToken: ISyntaxToken,
@@ -4118,35 +3306,19 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._openBracketToken;
-            case 1: return this._parameter;
-            case 2: return this._closeBracketToken;
-            case 3: return this._typeAnnotation;
+            case 0: return this.openBracketToken;
+            case 1: return this.parameter;
+            case 2: return this.closeBracketToken;
+            case 3: return this.typeAnnotation;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public openBracketToken(): ISyntaxToken {
-        return this._openBracketToken;
-    }
-
-    public parameter(): ParameterSyntax {
-        return this._parameter;
-    }
-
-    public closeBracketToken(): ISyntaxToken {
-        return this._closeBracketToken;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
     }
 
     public update(openBracketToken: ISyntaxToken,
                   parameter: ParameterSyntax,
                   closeBracketToken: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
-        if (this._openBracketToken === openBracketToken && this._parameter === parameter && this._closeBracketToken === closeBracketToken && this._typeAnnotation === typeAnnotation) {
+        if (this.openBracketToken === openBracketToken && this.parameter === parameter && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
             return this;
         }
 
@@ -4162,19 +3334,19 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
     }
 
     public withOpenBracketToken(openBracketToken: ISyntaxToken): IndexSignatureSyntax {
-        return this.update(openBracketToken, this._parameter, this._closeBracketToken, this._typeAnnotation);
+        return this.update(openBracketToken, this.parameter, this.closeBracketToken, this.typeAnnotation);
     }
 
     public withParameter(parameter: ParameterSyntax): IndexSignatureSyntax {
-        return this.update(this._openBracketToken, parameter, this._closeBracketToken, this._typeAnnotation);
+        return this.update(this.openBracketToken, parameter, this.closeBracketToken, this.typeAnnotation);
     }
 
     public withCloseBracketToken(closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
-        return this.update(this._openBracketToken, this._parameter, closeBracketToken, this._typeAnnotation);
+        return this.update(this.openBracketToken, this.parameter, closeBracketToken, this.typeAnnotation);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
-        return this.update(this._openBracketToken, this._parameter, this._closeBracketToken, typeAnnotation);
+        return this.update(this.openBracketToken, this.parameter, this.closeBracketToken, typeAnnotation);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4183,19 +3355,13 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 }
 
 class PropertySignatureSyntax extends TypeMemberSyntax {
-    private _identifier: ISyntaxToken;
-    private _questionToken: ISyntaxToken;
-    private _typeAnnotation: TypeAnnotationSyntax;
 
-    constructor(identifier: ISyntaxToken,
-                questionToken: ISyntaxToken,
-                typeAnnotation: TypeAnnotationSyntax,
+    constructor(public identifier: ISyntaxToken,
+                public questionToken: ISyntaxToken,
+                public typeAnnotation: TypeAnnotationSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._identifier = identifier;
-        this._questionToken = questionToken;
-        this._typeAnnotation = typeAnnotation;
     }
 
     public static create(identifier: ISyntaxToken): PropertySignatureSyntax {
@@ -4220,29 +3386,17 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._identifier;
-            case 1: return this._questionToken;
-            case 2: return this._typeAnnotation;
+            case 0: return this.identifier;
+            case 1: return this.questionToken;
+            case 2: return this.typeAnnotation;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public questionToken(): ISyntaxToken {
-        return this._questionToken;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
     }
 
     public update(identifier: ISyntaxToken,
                   questionToken: ISyntaxToken,
                   typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax {
-        if (this._identifier === identifier && this._questionToken === questionToken && this._typeAnnotation === typeAnnotation) {
+        if (this.identifier === identifier && this.questionToken === questionToken && this.typeAnnotation === typeAnnotation) {
             return this;
         }
 
@@ -4258,15 +3412,15 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
     }
 
     public withIdentifier(identifier: ISyntaxToken): PropertySignatureSyntax {
-        return this.update(identifier, this._questionToken, this._typeAnnotation);
+        return this.update(identifier, this.questionToken, this.typeAnnotation);
     }
 
     public withQuestionToken(questionToken: ISyntaxToken): PropertySignatureSyntax {
-        return this.update(this._identifier, questionToken, this._typeAnnotation);
+        return this.update(this.identifier, questionToken, this.typeAnnotation);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax {
-        return this.update(this._identifier, this._questionToken, typeAnnotation);
+        return this.update(this.identifier, this.questionToken, typeAnnotation);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4275,19 +3429,13 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 }
 
 class ParameterListSyntax extends SyntaxNode {
-    private _openParenToken: ISyntaxToken;
-    private _parameters: ISeparatedSyntaxList;
-    private _closeParenToken: ISyntaxToken;
 
-    constructor(openParenToken: ISyntaxToken,
-                parameters: ISeparatedSyntaxList,
-                closeParenToken: ISyntaxToken,
+    constructor(public openParenToken: ISyntaxToken,
+                public parameters: ISeparatedSyntaxList,
+                public closeParenToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._openParenToken = openParenToken;
-        this._parameters = parameters;
-        this._closeParenToken = closeParenToken;
     }
 
     public static create(openParenToken: ISyntaxToken,
@@ -4313,29 +3461,17 @@ class ParameterListSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._openParenToken;
-            case 1: return this._parameters;
-            case 2: return this._closeParenToken;
+            case 0: return this.openParenToken;
+            case 1: return this.parameters;
+            case 2: return this.closeParenToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public parameters(): ISeparatedSyntaxList {
-        return this._parameters;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
     }
 
     public update(openParenToken: ISyntaxToken,
                   parameters: ISeparatedSyntaxList,
                   closeParenToken: ISyntaxToken): ParameterListSyntax {
-        if (this._openParenToken === openParenToken && this._parameters === parameters && this._closeParenToken === closeParenToken) {
+        if (this.openParenToken === openParenToken && this.parameters === parameters && this.closeParenToken === closeParenToken) {
             return this;
         }
 
@@ -4351,11 +3487,11 @@ class ParameterListSyntax extends SyntaxNode {
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ParameterListSyntax {
-        return this.update(openParenToken, this._parameters, this._closeParenToken);
+        return this.update(openParenToken, this.parameters, this.closeParenToken);
     }
 
     public withParameters(parameters: ISeparatedSyntaxList): ParameterListSyntax {
-        return this.update(this._openParenToken, parameters, this._closeParenToken);
+        return this.update(this.openParenToken, parameters, this.closeParenToken);
     }
 
     public withParameter(parameter: ParameterSyntax): ParameterListSyntax {
@@ -4363,29 +3499,23 @@ class ParameterListSyntax extends SyntaxNode {
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ParameterListSyntax {
-        return this.update(this._openParenToken, this._parameters, closeParenToken);
+        return this.update(this.openParenToken, this.parameters, closeParenToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._parameters.isTypeScriptSpecific()) { return true; }
+        if (this.parameters.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class CallSignatureSyntax extends TypeMemberSyntax {
-    private _typeParameterList: TypeParameterListSyntax;
-    private _parameterList: ParameterListSyntax;
-    private _typeAnnotation: TypeAnnotationSyntax;
 
-    constructor(typeParameterList: TypeParameterListSyntax,
-                parameterList: ParameterListSyntax,
-                typeAnnotation: TypeAnnotationSyntax,
+    constructor(public typeParameterList: TypeParameterListSyntax,
+                public parameterList: ParameterListSyntax,
+                public typeAnnotation: TypeAnnotationSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._typeParameterList = typeParameterList;
-        this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
     }
 
     public static create(parameterList: ParameterListSyntax): CallSignatureSyntax {
@@ -4410,29 +3540,17 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._typeParameterList;
-            case 1: return this._parameterList;
-            case 2: return this._typeAnnotation;
+            case 0: return this.typeParameterList;
+            case 1: return this.parameterList;
+            case 2: return this.typeAnnotation;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public typeParameterList(): TypeParameterListSyntax {
-        return this._typeParameterList;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
     }
 
     public update(typeParameterList: TypeParameterListSyntax,
                   parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-        if (this._typeParameterList === typeParameterList && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation) {
+        if (this.typeParameterList === typeParameterList && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation) {
             return this;
         }
 
@@ -4448,39 +3566,33 @@ class CallSignatureSyntax extends TypeMemberSyntax {
     }
 
     public withTypeParameterList(typeParameterList: TypeParameterListSyntax): CallSignatureSyntax {
-        return this.update(typeParameterList, this._parameterList, this._typeAnnotation);
+        return this.update(typeParameterList, this.parameterList, this.typeAnnotation);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): CallSignatureSyntax {
-        return this.update(this._typeParameterList, parameterList, this._typeAnnotation);
+        return this.update(this.typeParameterList, parameterList, this.typeAnnotation);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-        return this.update(this._typeParameterList, this._parameterList, typeAnnotation);
+        return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._typeParameterList !== null) { return true; }
-        if (this._parameterList.isTypeScriptSpecific()) { return true; }
-        if (this._typeAnnotation !== null) { return true; }
+        if (this.typeParameterList !== null) { return true; }
+        if (this.parameterList.isTypeScriptSpecific()) { return true; }
+        if (this.typeAnnotation !== null) { return true; }
         return false;
     }
 }
 
 class TypeParameterListSyntax extends SyntaxNode {
-    private _lessThanToken: ISyntaxToken;
-    private _typeParameters: ISeparatedSyntaxList;
-    private _greaterThanToken: ISyntaxToken;
 
-    constructor(lessThanToken: ISyntaxToken,
-                typeParameters: ISeparatedSyntaxList,
-                greaterThanToken: ISyntaxToken,
+    constructor(public lessThanToken: ISyntaxToken,
+                public typeParameters: ISeparatedSyntaxList,
+                public greaterThanToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._lessThanToken = lessThanToken;
-        this._typeParameters = typeParameters;
-        this._greaterThanToken = greaterThanToken;
     }
 
     public static create(lessThanToken: ISyntaxToken,
@@ -4506,29 +3618,17 @@ class TypeParameterListSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._lessThanToken;
-            case 1: return this._typeParameters;
-            case 2: return this._greaterThanToken;
+            case 0: return this.lessThanToken;
+            case 1: return this.typeParameters;
+            case 2: return this.greaterThanToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public lessThanToken(): ISyntaxToken {
-        return this._lessThanToken;
-    }
-
-    public typeParameters(): ISeparatedSyntaxList {
-        return this._typeParameters;
-    }
-
-    public greaterThanToken(): ISyntaxToken {
-        return this._greaterThanToken;
     }
 
     public update(lessThanToken: ISyntaxToken,
                   typeParameters: ISeparatedSyntaxList,
                   greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
-        if (this._lessThanToken === lessThanToken && this._typeParameters === typeParameters && this._greaterThanToken === greaterThanToken) {
+        if (this.lessThanToken === lessThanToken && this.typeParameters === typeParameters && this.greaterThanToken === greaterThanToken) {
             return this;
         }
 
@@ -4544,11 +3644,11 @@ class TypeParameterListSyntax extends SyntaxNode {
     }
 
     public withLessThanToken(lessThanToken: ISyntaxToken): TypeParameterListSyntax {
-        return this.update(lessThanToken, this._typeParameters, this._greaterThanToken);
+        return this.update(lessThanToken, this.typeParameters, this.greaterThanToken);
     }
 
     public withTypeParameters(typeParameters: ISeparatedSyntaxList): TypeParameterListSyntax {
-        return this.update(this._lessThanToken, typeParameters, this._greaterThanToken);
+        return this.update(this.lessThanToken, typeParameters, this.greaterThanToken);
     }
 
     public withTypeParameter(typeParameter: TypeParameterSyntax): TypeParameterListSyntax {
@@ -4556,7 +3656,7 @@ class TypeParameterListSyntax extends SyntaxNode {
     }
 
     public withGreaterThanToken(greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
-        return this.update(this._lessThanToken, this._typeParameters, greaterThanToken);
+        return this.update(this.lessThanToken, this.typeParameters, greaterThanToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4565,16 +3665,12 @@ class TypeParameterListSyntax extends SyntaxNode {
 }
 
 class TypeParameterSyntax extends SyntaxNode {
-    private _identifier: ISyntaxToken;
-    private _constraint: ConstraintSyntax;
 
-    constructor(identifier: ISyntaxToken,
-                constraint: ConstraintSyntax,
+    constructor(public identifier: ISyntaxToken,
+                public constraint: ConstraintSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._identifier = identifier;
-        this._constraint = constraint;
     }
 
     public static create(identifier: ISyntaxToken): TypeParameterSyntax {
@@ -4599,23 +3695,15 @@ class TypeParameterSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._identifier;
-            case 1: return this._constraint;
+            case 0: return this.identifier;
+            case 1: return this.constraint;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public constraint(): ConstraintSyntax {
-        return this._constraint;
-    }
-
     public update(identifier: ISyntaxToken,
                   constraint: ConstraintSyntax): TypeParameterSyntax {
-        if (this._identifier === identifier && this._constraint === constraint) {
+        if (this.identifier === identifier && this.constraint === constraint) {
             return this;
         }
 
@@ -4631,11 +3719,11 @@ class TypeParameterSyntax extends SyntaxNode {
     }
 
     public withIdentifier(identifier: ISyntaxToken): TypeParameterSyntax {
-        return this.update(identifier, this._constraint);
+        return this.update(identifier, this.constraint);
     }
 
     public withConstraint(constraint: ConstraintSyntax): TypeParameterSyntax {
-        return this.update(this._identifier, constraint);
+        return this.update(this.identifier, constraint);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4644,16 +3732,12 @@ class TypeParameterSyntax extends SyntaxNode {
 }
 
 class ConstraintSyntax extends SyntaxNode {
-    private _extendsKeyword: ISyntaxToken;
-    private _type: ITypeSyntax;
 
-    constructor(extendsKeyword: ISyntaxToken,
-                type: ITypeSyntax,
+    constructor(public extendsKeyword: ISyntaxToken,
+                public type: ITypeSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._extendsKeyword = extendsKeyword;
-        this._type = type;
     }
 
     public static create1(type: ITypeSyntax): ConstraintSyntax {
@@ -4674,23 +3758,15 @@ class ConstraintSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._extendsKeyword;
-            case 1: return this._type;
+            case 0: return this.extendsKeyword;
+            case 1: return this.type;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public extendsKeyword(): ISyntaxToken {
-        return this._extendsKeyword;
-    }
-
-    public type(): ITypeSyntax {
-        return this._type;
-    }
-
     public update(extendsKeyword: ISyntaxToken,
                   type: ITypeSyntax): ConstraintSyntax {
-        if (this._extendsKeyword === extendsKeyword && this._type === type) {
+        if (this.extendsKeyword === extendsKeyword && this.type === type) {
             return this;
         }
 
@@ -4706,11 +3782,11 @@ class ConstraintSyntax extends SyntaxNode {
     }
 
     public withExtendsKeyword(extendsKeyword: ISyntaxToken): ConstraintSyntax {
-        return this.update(extendsKeyword, this._type);
+        return this.update(extendsKeyword, this.type);
     }
 
     public withType(type: ITypeSyntax): ConstraintSyntax {
-        return this.update(this._extendsKeyword, type);
+        return this.update(this.extendsKeyword, type);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -4719,16 +3795,12 @@ class ConstraintSyntax extends SyntaxNode {
 }
 
 class ElseClauseSyntax extends SyntaxNode {
-    private _elseKeyword: ISyntaxToken;
-    private _statement: IStatementSyntax;
 
-    constructor(elseKeyword: ISyntaxToken,
-                statement: IStatementSyntax,
+    constructor(public elseKeyword: ISyntaxToken,
+                public statement: IStatementSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._elseKeyword = elseKeyword;
-        this._statement = statement;
     }
 
     public static create1(statement: IStatementSyntax): ElseClauseSyntax {
@@ -4749,23 +3821,15 @@ class ElseClauseSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._elseKeyword;
-            case 1: return this._statement;
+            case 0: return this.elseKeyword;
+            case 1: return this.statement;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public elseKeyword(): ISyntaxToken {
-        return this._elseKeyword;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
-    }
-
     public update(elseKeyword: ISyntaxToken,
                   statement: IStatementSyntax): ElseClauseSyntax {
-        if (this._elseKeyword === elseKeyword && this._statement === statement) {
+        if (this.elseKeyword === elseKeyword && this.statement === statement) {
             return this;
         }
 
@@ -4781,42 +3845,30 @@ class ElseClauseSyntax extends SyntaxNode {
     }
 
     public withElseKeyword(elseKeyword: ISyntaxToken): ElseClauseSyntax {
-        return this.update(elseKeyword, this._statement);
+        return this.update(elseKeyword, this.statement);
     }
 
     public withStatement(statement: IStatementSyntax): ElseClauseSyntax {
-        return this.update(this._elseKeyword, statement);
+        return this.update(this.elseKeyword, statement);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._statement.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _ifKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _condition: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
-    private _statement: IStatementSyntax;
-    private _elseClause: ElseClauseSyntax;
 
-    constructor(ifKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                condition: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
-                statement: IStatementSyntax,
-                elseClause: ElseClauseSyntax,
+    constructor(public ifKeyword: ISyntaxToken,
+                public openParenToken: ISyntaxToken,
+                public condition: IExpressionSyntax,
+                public closeParenToken: ISyntaxToken,
+                public statement: IStatementSyntax,
+                public elseClause: ElseClauseSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._ifKeyword = ifKeyword;
-        this._openParenToken = openParenToken;
-        this._condition = condition;
-        this._closeParenToken = closeParenToken;
-        this._statement = statement;
-        this._elseClause = elseClause;
     }
 
     public static create(ifKeyword: ISyntaxToken,
@@ -4846,12 +3898,12 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._ifKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._condition;
-            case 3: return this._closeParenToken;
-            case 4: return this._statement;
-            case 5: return this._elseClause;
+            case 0: return this.ifKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.condition;
+            case 3: return this.closeParenToken;
+            case 4: return this.statement;
+            case 5: return this.elseClause;
             default: throw Errors.invalidOperation();
         }
     }
@@ -4864,37 +3916,13 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public ifKeyword(): ISyntaxToken {
-        return this._ifKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public condition(): IExpressionSyntax {
-        return this._condition;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
-    }
-
-    public elseClause(): ElseClauseSyntax {
-        return this._elseClause;
-    }
-
     public update(ifKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   condition: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   statement: IStatementSyntax,
                   elseClause: ElseClauseSyntax): IfStatementSyntax {
-        if (this._ifKeyword === ifKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement && this._elseClause === elseClause) {
+        if (this.ifKeyword === ifKeyword && this.openParenToken === openParenToken && this.condition === condition && this.closeParenToken === closeParenToken && this.statement === statement && this.elseClause === elseClause) {
             return this;
         }
 
@@ -4910,48 +3938,44 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withIfKeyword(ifKeyword: ISyntaxToken): IfStatementSyntax {
-        return this.update(ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, this._elseClause);
+        return this.update(ifKeyword, this.openParenToken, this.condition, this.closeParenToken, this.statement, this.elseClause);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): IfStatementSyntax {
-        return this.update(this._ifKeyword, openParenToken, this._condition, this._closeParenToken, this._statement, this._elseClause);
+        return this.update(this.ifKeyword, openParenToken, this.condition, this.closeParenToken, this.statement, this.elseClause);
     }
 
     public withCondition(condition: IExpressionSyntax): IfStatementSyntax {
-        return this.update(this._ifKeyword, this._openParenToken, condition, this._closeParenToken, this._statement, this._elseClause);
+        return this.update(this.ifKeyword, this.openParenToken, condition, this.closeParenToken, this.statement, this.elseClause);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): IfStatementSyntax {
-        return this.update(this._ifKeyword, this._openParenToken, this._condition, closeParenToken, this._statement, this._elseClause);
+        return this.update(this.ifKeyword, this.openParenToken, this.condition, closeParenToken, this.statement, this.elseClause);
     }
 
     public withStatement(statement: IStatementSyntax): IfStatementSyntax {
-        return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, statement, this._elseClause);
+        return this.update(this.ifKeyword, this.openParenToken, this.condition, this.closeParenToken, statement, this.elseClause);
     }
 
     public withElseClause(elseClause: ElseClauseSyntax): IfStatementSyntax {
-        return this.update(this._ifKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement, elseClause);
+        return this.update(this.ifKeyword, this.openParenToken, this.condition, this.closeParenToken, this.statement, elseClause);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._condition.isTypeScriptSpecific()) { return true; }
-        if (this._statement.isTypeScriptSpecific()) { return true; }
-        if (this._elseClause !== null && this._elseClause.isTypeScriptSpecific()) { return true; }
+        if (this.condition.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
+        if (this.elseClause !== null && this.elseClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _expression: IExpressionSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(expression: IExpressionSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public expression: IExpressionSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._expression = expression;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create1(expression: IExpressionSyntax): ExpressionStatementSyntax {
@@ -4972,8 +3996,8 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._expression;
-            case 1: return this._semicolonToken;
+            case 0: return this.expression;
+            case 1: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -4986,17 +4010,9 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(expression: IExpressionSyntax,
                   semicolonToken: ISyntaxToken): ExpressionStatementSyntax {
-        if (this._expression === expression && this._semicolonToken === semicolonToken) {
+        if (this.expression === expression && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -5012,36 +4028,28 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withExpression(expression: IExpressionSyntax): ExpressionStatementSyntax {
-        return this.update(expression, this._semicolonToken);
+        return this.update(expression, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ExpressionStatementSyntax {
-        return this.update(this._expression, semicolonToken);
+        return this.update(this.expression, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSyntax {
-    private _constructorKeyword: ISyntaxToken;
-    private _parameterList: ParameterListSyntax;
-    private _block: BlockSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(constructorKeyword: ISyntaxToken,
-                parameterList: ParameterListSyntax,
-                block: BlockSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public constructorKeyword: ISyntaxToken,
+                public parameterList: ParameterListSyntax,
+                public block: BlockSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._constructorKeyword = constructorKeyword;
-        this._parameterList = parameterList;
-        this._block = block;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(constructorKeyword: ISyntaxToken,
@@ -5067,10 +4075,10 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._constructorKeyword;
-            case 1: return this._parameterList;
-            case 2: return this._block;
-            case 3: return this._semicolonToken;
+            case 0: return this.constructorKeyword;
+            case 1: return this.parameterList;
+            case 2: return this.block;
+            case 3: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -5079,27 +4087,11 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         return true;
     }
 
-    public constructorKeyword(): ISyntaxToken {
-        return this._constructorKeyword;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(constructorKeyword: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   block: BlockSyntax,
                   semicolonToken: ISyntaxToken): ConstructorDeclarationSyntax {
-        if (this._constructorKeyword === constructorKeyword && this._parameterList === parameterList && this._block === block && this._semicolonToken === semicolonToken) {
+        if (this.constructorKeyword === constructorKeyword && this.parameterList === parameterList && this.block === block && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -5115,19 +4107,19 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
     }
 
     public withConstructorKeyword(constructorKeyword: ISyntaxToken): ConstructorDeclarationSyntax {
-        return this.update(constructorKeyword, this._parameterList, this._block, this._semicolonToken);
+        return this.update(constructorKeyword, this.parameterList, this.block, this.semicolonToken);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): ConstructorDeclarationSyntax {
-        return this.update(this._constructorKeyword, parameterList, this._block, this._semicolonToken);
+        return this.update(this.constructorKeyword, parameterList, this.block, this.semicolonToken);
     }
 
     public withBlock(block: BlockSyntax): ConstructorDeclarationSyntax {
-        return this.update(this._constructorKeyword, this._parameterList, block, this._semicolonToken);
+        return this.update(this.constructorKeyword, this.parameterList, block, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ConstructorDeclarationSyntax {
-        return this.update(this._constructorKeyword, this._parameterList, this._block, semicolonToken);
+        return this.update(this.constructorKeyword, this.parameterList, this.block, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5136,25 +4128,15 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
 }
 
 class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
-    private _publicOrPrivateKeyword: ISyntaxToken;
-    private _staticKeyword: ISyntaxToken;
-    private _functionSignature: FunctionSignatureSyntax;
-    private _block: BlockSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(publicOrPrivateKeyword: ISyntaxToken,
-                staticKeyword: ISyntaxToken,
-                functionSignature: FunctionSignatureSyntax,
-                block: BlockSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public publicOrPrivateKeyword: ISyntaxToken,
+                public staticKeyword: ISyntaxToken,
+                public functionSignature: FunctionSignatureSyntax,
+                public block: BlockSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
-        this._staticKeyword = staticKeyword;
-        this._functionSignature = functionSignature;
-        this._block = block;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
@@ -5179,11 +4161,11 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._publicOrPrivateKeyword;
-            case 1: return this._staticKeyword;
-            case 2: return this._functionSignature;
-            case 3: return this._block;
-            case 4: return this._semicolonToken;
+            case 0: return this.publicOrPrivateKeyword;
+            case 1: return this.staticKeyword;
+            case 2: return this.functionSignature;
+            case 3: return this.block;
+            case 4: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -5196,32 +4178,12 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return true;
     }
 
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        return this._publicOrPrivateKeyword;
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        return this._staticKeyword;
-    }
-
-    public functionSignature(): FunctionSignatureSyntax {
-        return this._functionSignature;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(publicOrPrivateKeyword: ISyntaxToken,
                   staticKeyword: ISyntaxToken,
                   functionSignature: FunctionSignatureSyntax,
                   block: BlockSyntax,
                   semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._functionSignature === functionSignature && this._block === block && this._semicolonToken === semicolonToken) {
+        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.functionSignature === functionSignature && this.block === block && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -5237,23 +4199,23 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, this._semicolonToken);
+        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, this.semicolonToken);
     }
 
     public withStaticKeyword(staticKeyword: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._functionSignature, this._block, this._semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.functionSignature, this.block, this.semicolonToken);
     }
 
     public withFunctionSignature(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, functionSignature, this._block, this._semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, functionSignature, this.block, this.semicolonToken);
     }
 
     public withBlock(block: BlockSyntax): MemberFunctionDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, block, this._semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, block, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._functionSignature, this._block, semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5262,8 +4224,13 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
 }
 
 class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+    constructor(public publicOrPrivateKeyword: ISyntaxToken,
+                public staticKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public parameterList: ParameterListSyntax,
+                public block: BlockSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
     }
 
     private isMemberDeclaration(): bool {
@@ -5272,26 +4239,6 @@ class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     private isClassElement(): bool {
         return true;
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public identifier(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public parameterList(): ParameterListSyntax {
-        throw Errors.abstract();
-    }
-
-    public block(): BlockSyntax {
-        throw Errors.abstract();
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberAccessorDeclarationSyntax {
@@ -5308,31 +4255,17 @@ class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDecla
 }
 
 class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
-    private _publicOrPrivateKeyword: ISyntaxToken;
-    private _staticKeyword: ISyntaxToken;
-    private _getKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _parameterList: ParameterListSyntax;
-    private _typeAnnotation: TypeAnnotationSyntax;
-    private _block: BlockSyntax;
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
-                getKeyword: ISyntaxToken,
+                public getKeyword: ISyntaxToken,
                 identifier: ISyntaxToken,
                 parameterList: ParameterListSyntax,
-                typeAnnotation: TypeAnnotationSyntax,
+                public typeAnnotation: TypeAnnotationSyntax,
                 block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode); 
 
-        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
-        this._staticKeyword = staticKeyword;
-        this._getKeyword = getKeyword;
-        this._identifier = identifier;
-        this._parameterList = parameterList;
-        this._typeAnnotation = typeAnnotation;
-        this._block = block;
     }
 
     public static create(getKeyword: ISyntaxToken,
@@ -5360,43 +4293,15 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._publicOrPrivateKeyword;
-            case 1: return this._staticKeyword;
-            case 2: return this._getKeyword;
-            case 3: return this._identifier;
-            case 4: return this._parameterList;
-            case 5: return this._typeAnnotation;
-            case 6: return this._block;
+            case 0: return this.publicOrPrivateKeyword;
+            case 1: return this.staticKeyword;
+            case 2: return this.getKeyword;
+            case 3: return this.identifier;
+            case 4: return this.parameterList;
+            case 5: return this.typeAnnotation;
+            case 6: return this.block;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        return this._publicOrPrivateKeyword;
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        return this._staticKeyword;
-    }
-
-    public getKeyword(): ISyntaxToken {
-        return this._getKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public typeAnnotation(): TypeAnnotationSyntax {
-        return this._typeAnnotation;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
     }
 
     public update(publicOrPrivateKeyword: ISyntaxToken,
@@ -5406,7 +4311,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
                   parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax,
                   block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-        if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._getKeyword === getKeyword && this._identifier === identifier && this._parameterList === parameterList && this._typeAnnotation === typeAnnotation && this._block === block) {
+        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.getKeyword === getKeyword && this.identifier === identifier && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation && this.block === block) {
             return this;
         }
 
@@ -5422,31 +4327,31 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withStaticKeyword(staticKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withGetKeyword(getKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, getKeyword, this._identifier, this._parameterList, this._typeAnnotation, this._block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, getKeyword, this.identifier, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withIdentifier(identifier: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, identifier, this._parameterList, this._typeAnnotation, this._block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, identifier, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): GetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, parameterList, this._typeAnnotation, this._block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, parameterList, this.typeAnnotation, this.block);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): GetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, typeAnnotation, this._block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, typeAnnotation, this.block);
     }
 
     public withBlock(block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._getKeyword, this._identifier, this._parameterList, this._typeAnnotation, block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, block);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5455,28 +4360,16 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 }
 
 class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
-    private _publicOrPrivateKeyword: ISyntaxToken;
-    private _staticKeyword: ISyntaxToken;
-    private _setKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _parameterList: ParameterListSyntax;
-    private _block: BlockSyntax;
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
-                setKeyword: ISyntaxToken,
+                public setKeyword: ISyntaxToken,
                 identifier: ISyntaxToken,
                 parameterList: ParameterListSyntax,
                 block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode); 
 
-        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
-        this._staticKeyword = staticKeyword;
-        this._setKeyword = setKeyword;
-        this._identifier = identifier;
-        this._parameterList = parameterList;
-        this._block = block;
     }
 
     public static create(setKeyword: ISyntaxToken,
@@ -5504,38 +4397,14 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._publicOrPrivateKeyword;
-            case 1: return this._staticKeyword;
-            case 2: return this._setKeyword;
-            case 3: return this._identifier;
-            case 4: return this._parameterList;
-            case 5: return this._block;
+            case 0: return this.publicOrPrivateKeyword;
+            case 1: return this.staticKeyword;
+            case 2: return this.setKeyword;
+            case 3: return this.identifier;
+            case 4: return this.parameterList;
+            case 5: return this.block;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        return this._publicOrPrivateKeyword;
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        return this._staticKeyword;
-    }
-
-    public setKeyword(): ISyntaxToken {
-        return this._setKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public parameterList(): ParameterListSyntax {
-        return this._parameterList;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
     }
 
     public update(publicOrPrivateKeyword: ISyntaxToken,
@@ -5544,7 +4413,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
                   identifier: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-        if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._setKeyword === setKeyword && this._identifier === identifier && this._parameterList === parameterList && this._block === block) {
+        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.setKeyword === setKeyword && this.identifier === identifier && this.parameterList === parameterList && this.block === block) {
             return this;
         }
 
@@ -5560,27 +4429,27 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, this._block);
+        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, this.parameterList, this.block);
     }
 
     public withStaticKeyword(staticKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._setKeyword, this._identifier, this._parameterList, this._block);
+        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.setKeyword, this.identifier, this.parameterList, this.block);
     }
 
     public withSetKeyword(setKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, setKeyword, this._identifier, this._parameterList, this._block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, setKeyword, this.identifier, this.parameterList, this.block);
     }
 
     public withIdentifier(identifier: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, identifier, this._parameterList, this._block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, identifier, this.parameterList, this.block);
     }
 
     public withParameterList(parameterList: ParameterListSyntax): SetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, parameterList, this._block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, parameterList, this.block);
     }
 
     public withBlock(block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._setKeyword, this._identifier, this._parameterList, block);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, this.parameterList, block);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5589,22 +4458,14 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 }
 
 class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
-    private _publicOrPrivateKeyword: ISyntaxToken;
-    private _staticKeyword: ISyntaxToken;
-    private _variableDeclarator: VariableDeclaratorSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(publicOrPrivateKeyword: ISyntaxToken,
-                staticKeyword: ISyntaxToken,
-                variableDeclarator: VariableDeclaratorSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public publicOrPrivateKeyword: ISyntaxToken,
+                public staticKeyword: ISyntaxToken,
+                public variableDeclarator: VariableDeclaratorSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._publicOrPrivateKeyword = publicOrPrivateKeyword;
-        this._staticKeyword = staticKeyword;
-        this._variableDeclarator = variableDeclarator;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(variableDeclarator: VariableDeclaratorSyntax,
@@ -5630,10 +4491,10 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._publicOrPrivateKeyword;
-            case 1: return this._staticKeyword;
-            case 2: return this._variableDeclarator;
-            case 3: return this._semicolonToken;
+            case 0: return this.publicOrPrivateKeyword;
+            case 1: return this.staticKeyword;
+            case 2: return this.variableDeclarator;
+            case 3: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -5646,27 +4507,11 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return true;
     }
 
-    public publicOrPrivateKeyword(): ISyntaxToken {
-        return this._publicOrPrivateKeyword;
-    }
-
-    public staticKeyword(): ISyntaxToken {
-        return this._staticKeyword;
-    }
-
-    public variableDeclarator(): VariableDeclaratorSyntax {
-        return this._variableDeclarator;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(publicOrPrivateKeyword: ISyntaxToken,
                   staticKeyword: ISyntaxToken,
                   variableDeclarator: VariableDeclaratorSyntax,
                   semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
-        if (this._publicOrPrivateKeyword === publicOrPrivateKeyword && this._staticKeyword === staticKeyword && this._variableDeclarator === variableDeclarator && this._semicolonToken === semicolonToken) {
+        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.variableDeclarator === variableDeclarator && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -5682,19 +4527,19 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): MemberVariableDeclarationSyntax {
-        return this.update(publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, this._semicolonToken);
+        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.variableDeclarator, this.semicolonToken);
     }
 
     public withStaticKeyword(staticKeyword: ISyntaxToken): MemberVariableDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, staticKeyword, this._variableDeclarator, this._semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.variableDeclarator, this.semicolonToken);
     }
 
     public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): MemberVariableDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, variableDeclarator, this._semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, variableDeclarator, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
-        return this.update(this._publicOrPrivateKeyword, this._staticKeyword, this._variableDeclarator, semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.variableDeclarator, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -5703,19 +4548,13 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
 }
 
 class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _throwKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(throwKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public throwKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._throwKeyword = throwKeyword;
-        this._expression = expression;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create1(expression: IExpressionSyntax): ThrowStatementSyntax {
@@ -5736,9 +4575,9 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._throwKeyword;
-            case 1: return this._expression;
-            case 2: return this._semicolonToken;
+            case 0: return this.throwKeyword;
+            case 1: return this.expression;
+            case 2: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -5751,22 +4590,10 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public throwKeyword(): ISyntaxToken {
-        return this._throwKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(throwKeyword: ISyntaxToken,
                   expression: IExpressionSyntax,
                   semicolonToken: ISyntaxToken): ThrowStatementSyntax {
-        if (this._throwKeyword === throwKeyword && this._expression === expression && this._semicolonToken === semicolonToken) {
+        if (this.throwKeyword === throwKeyword && this.expression === expression && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -5782,37 +4609,31 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withThrowKeyword(throwKeyword: ISyntaxToken): ThrowStatementSyntax {
-        return this.update(throwKeyword, this._expression, this._semicolonToken);
+        return this.update(throwKeyword, this.expression, this.semicolonToken);
     }
 
     public withExpression(expression: IExpressionSyntax): ThrowStatementSyntax {
-        return this.update(this._throwKeyword, expression, this._semicolonToken);
+        return this.update(this.throwKeyword, expression, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ThrowStatementSyntax {
-        return this.update(this._throwKeyword, this._expression, semicolonToken);
+        return this.update(this.throwKeyword, this.expression, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _returnKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(returnKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
-                semicolonToken: ISyntaxToken,
+    constructor(public returnKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._returnKeyword = returnKeyword;
-        this._expression = expression;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(returnKeyword: ISyntaxToken,
@@ -5838,9 +4659,9 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._returnKeyword;
-            case 1: return this._expression;
-            case 2: return this._semicolonToken;
+            case 0: return this.returnKeyword;
+            case 1: return this.expression;
+            case 2: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -5853,22 +4674,10 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public returnKeyword(): ISyntaxToken {
-        return this._returnKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(returnKeyword: ISyntaxToken,
                   expression: IExpressionSyntax,
                   semicolonToken: ISyntaxToken): ReturnStatementSyntax {
-        if (this._returnKeyword === returnKeyword && this._expression === expression && this._semicolonToken === semicolonToken) {
+        if (this.returnKeyword === returnKeyword && this.expression === expression && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -5884,37 +4693,31 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withReturnKeyword(returnKeyword: ISyntaxToken): ReturnStatementSyntax {
-        return this.update(returnKeyword, this._expression, this._semicolonToken);
+        return this.update(returnKeyword, this.expression, this.semicolonToken);
     }
 
     public withExpression(expression: IExpressionSyntax): ReturnStatementSyntax {
-        return this.update(this._returnKeyword, expression, this._semicolonToken);
+        return this.update(this.returnKeyword, expression, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ReturnStatementSyntax {
-        return this.update(this._returnKeyword, this._expression, semicolonToken);
+        return this.update(this.returnKeyword, this.expression, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression !== null && this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression !== null && this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _newKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
-    private _argumentList: ArgumentListSyntax;
 
-    constructor(newKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
-                argumentList: ArgumentListSyntax,
+    constructor(public newKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
+                public argumentList: ArgumentListSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._newKeyword = newKeyword;
-        this._expression = expression;
-        this._argumentList = argumentList;
     }
 
     public static create(newKeyword: ISyntaxToken,
@@ -5940,9 +4743,9 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._newKeyword;
-            case 1: return this._expression;
-            case 2: return this._argumentList;
+            case 0: return this.newKeyword;
+            case 1: return this.expression;
+            case 2: return this.argumentList;
             default: throw Errors.invalidOperation();
         }
     }
@@ -5955,22 +4758,10 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return true;
     }
 
-    public newKeyword(): ISyntaxToken {
-        return this._newKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public argumentList(): ArgumentListSyntax {
-        return this._argumentList;
-    }
-
     public update(newKeyword: ISyntaxToken,
                   expression: IExpressionSyntax,
                   argumentList: ArgumentListSyntax): ObjectCreationExpressionSyntax {
-        if (this._newKeyword === newKeyword && this._expression === expression && this._argumentList === argumentList) {
+        if (this.newKeyword === newKeyword && this.expression === expression && this.argumentList === argumentList) {
             return this;
         }
 
@@ -5986,50 +4777,36 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
     }
 
     public withNewKeyword(newKeyword: ISyntaxToken): ObjectCreationExpressionSyntax {
-        return this.update(newKeyword, this._expression, this._argumentList);
+        return this.update(newKeyword, this.expression, this.argumentList);
     }
 
     public withExpression(expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
-        return this.update(this._newKeyword, expression, this._argumentList);
+        return this.update(this.newKeyword, expression, this.argumentList);
     }
 
     public withArgumentList(argumentList: ArgumentListSyntax): ObjectCreationExpressionSyntax {
-        return this.update(this._newKeyword, this._expression, argumentList);
+        return this.update(this.newKeyword, this.expression, argumentList);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._argumentList !== null && this._argumentList.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
+        if (this.argumentList !== null && this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _switchKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _expression: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
-    private _openBraceToken: ISyntaxToken;
-    private _switchClauses: ISyntaxList;
-    private _closeBraceToken: ISyntaxToken;
 
-    constructor(switchKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                expression: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
-                openBraceToken: ISyntaxToken,
-                switchClauses: ISyntaxList,
-                closeBraceToken: ISyntaxToken,
+    constructor(public switchKeyword: ISyntaxToken,
+                public openParenToken: ISyntaxToken,
+                public expression: IExpressionSyntax,
+                public closeParenToken: ISyntaxToken,
+                public openBraceToken: ISyntaxToken,
+                public switchClauses: ISyntaxList,
+                public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._switchKeyword = switchKeyword;
-        this._openParenToken = openParenToken;
-        this._expression = expression;
-        this._closeParenToken = closeParenToken;
-        this._openBraceToken = openBraceToken;
-        this._switchClauses = switchClauses;
-        this._closeBraceToken = closeBraceToken;
     }
 
     public static create(switchKeyword: ISyntaxToken,
@@ -6059,13 +4836,13 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._switchKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._expression;
-            case 3: return this._closeParenToken;
-            case 4: return this._openBraceToken;
-            case 5: return this._switchClauses;
-            case 6: return this._closeBraceToken;
+            case 0: return this.switchKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.expression;
+            case 3: return this.closeParenToken;
+            case 4: return this.openBraceToken;
+            case 5: return this.switchClauses;
+            case 6: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -6078,34 +4855,6 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public switchKeyword(): ISyntaxToken {
-        return this._switchKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public openBraceToken(): ISyntaxToken {
-        return this._openBraceToken;
-    }
-
-    public switchClauses(): ISyntaxList {
-        return this._switchClauses;
-    }
-
-    public closeBraceToken(): ISyntaxToken {
-        return this._closeBraceToken;
-    }
-
     public update(switchKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   expression: IExpressionSyntax,
@@ -6113,7 +4862,7 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
                   openBraceToken: ISyntaxToken,
                   switchClauses: ISyntaxList,
                   closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        if (this._switchKeyword === switchKeyword && this._openParenToken === openParenToken && this._expression === expression && this._closeParenToken === closeParenToken && this._openBraceToken === openBraceToken && this._switchClauses === switchClauses && this._closeBraceToken === closeBraceToken) {
+        if (this.switchKeyword === switchKeyword && this.openParenToken === openParenToken && this.expression === expression && this.closeParenToken === closeParenToken && this.openBraceToken === openBraceToken && this.switchClauses === switchClauses && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
@@ -6129,27 +4878,27 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withSwitchKeyword(switchKeyword: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
+        return this.update(switchKeyword, this.openParenToken, this.expression, this.closeParenToken, this.openBraceToken, this.switchClauses, this.closeBraceToken);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
+        return this.update(this.switchKeyword, openParenToken, this.expression, this.closeParenToken, this.openBraceToken, this.switchClauses, this.closeBraceToken);
     }
 
     public withExpression(expression: IExpressionSyntax): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, expression, this._closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
+        return this.update(this.switchKeyword, this.openParenToken, expression, this.closeParenToken, this.openBraceToken, this.switchClauses, this.closeBraceToken);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, closeParenToken, this._openBraceToken, this._switchClauses, this._closeBraceToken);
+        return this.update(this.switchKeyword, this.openParenToken, this.expression, closeParenToken, this.openBraceToken, this.switchClauses, this.closeBraceToken);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, openBraceToken, this._switchClauses, this._closeBraceToken);
+        return this.update(this.switchKeyword, this.openParenToken, this.expression, this.closeParenToken, openBraceToken, this.switchClauses, this.closeBraceToken);
     }
 
     public withSwitchClauses(switchClauses: ISyntaxList): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, switchClauses, this._closeBraceToken);
+        return this.update(this.switchKeyword, this.openParenToken, this.expression, this.closeParenToken, this.openBraceToken, switchClauses, this.closeBraceToken);
     }
 
     public withSwitchClause(switchClause: SwitchClauseSyntax): SwitchStatementSyntax {
@@ -6157,31 +4906,25 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        return this.update(this._switchKeyword, this._openParenToken, this._expression, this._closeParenToken, this._openBraceToken, this._switchClauses, closeBraceToken);
+        return this.update(this.switchKeyword, this.openParenToken, this.expression, this.closeParenToken, this.openBraceToken, this.switchClauses, closeBraceToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._switchClauses.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
+        if (this.switchClauses.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+    constructor(public colonToken: ISyntaxToken,
+                public statements: ISyntaxList,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
     }
 
     private isSwitchClause(): bool {
         return true;
-    }
-
-    public colonToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public statements(): ISyntaxList {
-        throw Errors.abstract();
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SwitchClauseSyntax {
@@ -6198,22 +4941,14 @@ class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
 }
 
 class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
-    private _caseKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
-    private _colonToken: ISyntaxToken;
-    private _statements: ISyntaxList;
 
-    constructor(caseKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
+    constructor(public caseKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
                 colonToken: ISyntaxToken,
                 statements: ISyntaxList,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(colonToken, statements, parsedInStrictMode); 
 
-        this._caseKeyword = caseKeyword;
-        this._expression = expression;
-        this._colonToken = colonToken;
-        this._statements = statements;
     }
 
     public static create(caseKeyword: ISyntaxToken,
@@ -6240,35 +4975,19 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._caseKeyword;
-            case 1: return this._expression;
-            case 2: return this._colonToken;
-            case 3: return this._statements;
+            case 0: return this.caseKeyword;
+            case 1: return this.expression;
+            case 2: return this.colonToken;
+            case 3: return this.statements;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public caseKeyword(): ISyntaxToken {
-        return this._caseKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public colonToken(): ISyntaxToken {
-        return this._colonToken;
-    }
-
-    public statements(): ISyntaxList {
-        return this._statements;
     }
 
     public update(caseKeyword: ISyntaxToken,
                   expression: IExpressionSyntax,
                   colonToken: ISyntaxToken,
                   statements: ISyntaxList): CaseSwitchClauseSyntax {
-        if (this._caseKeyword === caseKeyword && this._expression === expression && this._colonToken === colonToken && this._statements === statements) {
+        if (this.caseKeyword === caseKeyword && this.expression === expression && this.colonToken === colonToken && this.statements === statements) {
             return this;
         }
 
@@ -6284,19 +5003,19 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     public withCaseKeyword(caseKeyword: ISyntaxToken): CaseSwitchClauseSyntax {
-        return this.update(caseKeyword, this._expression, this._colonToken, this._statements);
+        return this.update(caseKeyword, this.expression, this.colonToken, this.statements);
     }
 
     public withExpression(expression: IExpressionSyntax): CaseSwitchClauseSyntax {
-        return this.update(this._caseKeyword, expression, this._colonToken, this._statements);
+        return this.update(this.caseKeyword, expression, this.colonToken, this.statements);
     }
 
     public withColonToken(colonToken: ISyntaxToken): CaseSwitchClauseSyntax {
-        return this.update(this._caseKeyword, this._expression, colonToken, this._statements);
+        return this.update(this.caseKeyword, this.expression, colonToken, this.statements);
     }
 
     public withStatements(statements: ISyntaxList): CaseSwitchClauseSyntax {
-        return this.update(this._caseKeyword, this._expression, this._colonToken, statements);
+        return this.update(this.caseKeyword, this.expression, this.colonToken, statements);
     }
 
     public withStatement(statement: IStatementSyntax): CaseSwitchClauseSyntax {
@@ -6304,26 +5023,20 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._statements.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
+        if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
-    private _defaultKeyword: ISyntaxToken;
-    private _colonToken: ISyntaxToken;
-    private _statements: ISyntaxList;
 
-    constructor(defaultKeyword: ISyntaxToken,
+    constructor(public defaultKeyword: ISyntaxToken,
                 colonToken: ISyntaxToken,
                 statements: ISyntaxList,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(colonToken, statements, parsedInStrictMode); 
 
-        this._defaultKeyword = defaultKeyword;
-        this._colonToken = colonToken;
-        this._statements = statements;
     }
 
     public static create(defaultKeyword: ISyntaxToken,
@@ -6349,29 +5062,17 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._defaultKeyword;
-            case 1: return this._colonToken;
-            case 2: return this._statements;
+            case 0: return this.defaultKeyword;
+            case 1: return this.colonToken;
+            case 2: return this.statements;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public defaultKeyword(): ISyntaxToken {
-        return this._defaultKeyword;
-    }
-
-    public colonToken(): ISyntaxToken {
-        return this._colonToken;
-    }
-
-    public statements(): ISyntaxList {
-        return this._statements;
     }
 
     public update(defaultKeyword: ISyntaxToken,
                   colonToken: ISyntaxToken,
                   statements: ISyntaxList): DefaultSwitchClauseSyntax {
-        if (this._defaultKeyword === defaultKeyword && this._colonToken === colonToken && this._statements === statements) {
+        if (this.defaultKeyword === defaultKeyword && this.colonToken === colonToken && this.statements === statements) {
             return this;
         }
 
@@ -6387,15 +5088,15 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     public withDefaultKeyword(defaultKeyword: ISyntaxToken): DefaultSwitchClauseSyntax {
-        return this.update(defaultKeyword, this._colonToken, this._statements);
+        return this.update(defaultKeyword, this.colonToken, this.statements);
     }
 
     public withColonToken(colonToken: ISyntaxToken): DefaultSwitchClauseSyntax {
-        return this.update(this._defaultKeyword, colonToken, this._statements);
+        return this.update(this.defaultKeyword, colonToken, this.statements);
     }
 
     public withStatements(statements: ISyntaxList): DefaultSwitchClauseSyntax {
-        return this.update(this._defaultKeyword, this._colonToken, statements);
+        return this.update(this.defaultKeyword, this.colonToken, statements);
     }
 
     public withStatement(statement: IStatementSyntax): DefaultSwitchClauseSyntax {
@@ -6403,25 +5104,19 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._statements.isTypeScriptSpecific()) { return true; }
+        if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _breakKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(breakKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                semicolonToken: ISyntaxToken,
+    constructor(public breakKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._breakKeyword = breakKeyword;
-        this._identifier = identifier;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(breakKeyword: ISyntaxToken,
@@ -6447,9 +5142,9 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._breakKeyword;
-            case 1: return this._identifier;
-            case 2: return this._semicolonToken;
+            case 0: return this.breakKeyword;
+            case 1: return this.identifier;
+            case 2: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -6462,22 +5157,10 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public breakKeyword(): ISyntaxToken {
-        return this._breakKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(breakKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   semicolonToken: ISyntaxToken): BreakStatementSyntax {
-        if (this._breakKeyword === breakKeyword && this._identifier === identifier && this._semicolonToken === semicolonToken) {
+        if (this.breakKeyword === breakKeyword && this.identifier === identifier && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -6493,15 +5176,15 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withBreakKeyword(breakKeyword: ISyntaxToken): BreakStatementSyntax {
-        return this.update(breakKeyword, this._identifier, this._semicolonToken);
+        return this.update(breakKeyword, this.identifier, this.semicolonToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): BreakStatementSyntax {
-        return this.update(this._breakKeyword, identifier, this._semicolonToken);
+        return this.update(this.breakKeyword, identifier, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): BreakStatementSyntax {
-        return this.update(this._breakKeyword, this._identifier, semicolonToken);
+        return this.update(this.breakKeyword, this.identifier, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6510,19 +5193,13 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
 }
 
 class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _continueKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(continueKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                semicolonToken: ISyntaxToken,
+    constructor(public continueKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._continueKeyword = continueKeyword;
-        this._identifier = identifier;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create(continueKeyword: ISyntaxToken,
@@ -6548,9 +5225,9 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._continueKeyword;
-            case 1: return this._identifier;
-            case 2: return this._semicolonToken;
+            case 0: return this.continueKeyword;
+            case 1: return this.identifier;
+            case 2: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -6563,22 +5240,10 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public continueKeyword(): ISyntaxToken {
-        return this._continueKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(continueKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   semicolonToken: ISyntaxToken): ContinueStatementSyntax {
-        if (this._continueKeyword === continueKeyword && this._identifier === identifier && this._semicolonToken === semicolonToken) {
+        if (this.continueKeyword === continueKeyword && this.identifier === identifier && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -6594,15 +5259,15 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withContinueKeyword(continueKeyword: ISyntaxToken): ContinueStatementSyntax {
-        return this.update(continueKeyword, this._identifier, this._semicolonToken);
+        return this.update(continueKeyword, this.identifier, this.semicolonToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): ContinueStatementSyntax {
-        return this.update(this._continueKeyword, identifier, this._semicolonToken);
+        return this.update(this.continueKeyword, identifier, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ContinueStatementSyntax {
-        return this.update(this._continueKeyword, this._identifier, semicolonToken);
+        return this.update(this.continueKeyword, this.identifier, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -6611,8 +5276,11 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
 }
 
 class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+    constructor(public openParenToken: ISyntaxToken,
+                public closeParenToken: ISyntaxToken,
+                public statement: IStatementSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
     }
 
     private isStatement(): bool {
@@ -6621,18 +5289,6 @@ class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private isModuleElement(): bool {
         return true;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public statement(): IStatementSyntax {
-        throw Errors.abstract();
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IterationStatementSyntax {
@@ -6649,28 +5305,13 @@ class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
 }
 
 class BaseForStatementSyntax extends IterationStatementSyntax {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
-    }
-
-    public forKeyword(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public openParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public variableDeclaration(): VariableDeclarationSyntax {
-        throw Errors.abstract();
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public statement(): IStatementSyntax {
-        throw Errors.abstract();
+    constructor(public forKeyword: ISyntaxToken,
+                openParenToken: ISyntaxToken,
+                public variableDeclaration: VariableDeclarationSyntax,
+                closeParenToken: ISyntaxToken,
+                statement: IStatementSyntax,
+                parsedInStrictMode: bool) {
+        super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): BaseForStatementSyntax {
@@ -6687,40 +5328,20 @@ class BaseForStatementSyntax extends IterationStatementSyntax {
 }
 
 class ForStatementSyntax extends BaseForStatementSyntax {
-    private _forKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _variableDeclaration: VariableDeclarationSyntax;
-    private _initializer: IExpressionSyntax;
-    private _firstSemicolonToken: ISyntaxToken;
-    private _condition: IExpressionSyntax;
-    private _secondSemicolonToken: ISyntaxToken;
-    private _incrementor: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
-    private _statement: IStatementSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 variableDeclaration: VariableDeclarationSyntax,
-                initializer: IExpressionSyntax,
-                firstSemicolonToken: ISyntaxToken,
-                condition: IExpressionSyntax,
-                secondSemicolonToken: ISyntaxToken,
-                incrementor: IExpressionSyntax,
+                public initializer: IExpressionSyntax,
+                public firstSemicolonToken: ISyntaxToken,
+                public condition: IExpressionSyntax,
+                public secondSemicolonToken: ISyntaxToken,
+                public incrementor: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
 
-        this._forKeyword = forKeyword;
-        this._openParenToken = openParenToken;
-        this._variableDeclaration = variableDeclaration;
-        this._initializer = initializer;
-        this._firstSemicolonToken = firstSemicolonToken;
-        this._condition = condition;
-        this._secondSemicolonToken = secondSemicolonToken;
-        this._incrementor = incrementor;
-        this._closeParenToken = closeParenToken;
-        this._statement = statement;
     }
 
     public static create(forKeyword: ISyntaxToken,
@@ -6750,58 +5371,18 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._forKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._variableDeclaration;
-            case 3: return this._initializer;
-            case 4: return this._firstSemicolonToken;
-            case 5: return this._condition;
-            case 6: return this._secondSemicolonToken;
-            case 7: return this._incrementor;
-            case 8: return this._closeParenToken;
-            case 9: return this._statement;
+            case 0: return this.forKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.variableDeclaration;
+            case 3: return this.initializer;
+            case 4: return this.firstSemicolonToken;
+            case 5: return this.condition;
+            case 6: return this.secondSemicolonToken;
+            case 7: return this.incrementor;
+            case 8: return this.closeParenToken;
+            case 9: return this.statement;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public forKeyword(): ISyntaxToken {
-        return this._forKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public variableDeclaration(): VariableDeclarationSyntax {
-        return this._variableDeclaration;
-    }
-
-    public initializer(): IExpressionSyntax {
-        return this._initializer;
-    }
-
-    public firstSemicolonToken(): ISyntaxToken {
-        return this._firstSemicolonToken;
-    }
-
-    public condition(): IExpressionSyntax {
-        return this._condition;
-    }
-
-    public secondSemicolonToken(): ISyntaxToken {
-        return this._secondSemicolonToken;
-    }
-
-    public incrementor(): IExpressionSyntax {
-        return this._incrementor;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
     }
 
     public update(forKeyword: ISyntaxToken,
@@ -6814,7 +5395,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
                   incrementor: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   statement: IStatementSyntax): ForStatementSyntax {
-        if (this._forKeyword === forKeyword && this._openParenToken === openParenToken && this._variableDeclaration === variableDeclaration && this._initializer === initializer && this._firstSemicolonToken === firstSemicolonToken && this._condition === condition && this._secondSemicolonToken === secondSemicolonToken && this._incrementor === incrementor && this._closeParenToken === closeParenToken && this._statement === statement) {
+        if (this.forKeyword === forKeyword && this.openParenToken === openParenToken && this.variableDeclaration === variableDeclaration && this.initializer === initializer && this.firstSemicolonToken === firstSemicolonToken && this.condition === condition && this.secondSemicolonToken === secondSemicolonToken && this.incrementor === incrementor && this.closeParenToken === closeParenToken && this.statement === statement) {
             return this;
         }
 
@@ -6830,84 +5411,68 @@ class ForStatementSyntax extends BaseForStatementSyntax {
     }
 
     public withForKeyword(forKeyword: ISyntaxToken): ForStatementSyntax {
-        return this.update(forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+        return this.update(forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, this.statement);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ForStatementSyntax {
-        return this.update(this._forKeyword, openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, this.statement);
     }
 
     public withVariableDeclaration(variableDeclaration: VariableDeclarationSyntax): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, this.statement);
     }
 
     public withInitializer(initializer: IExpressionSyntax): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, this.statement);
     }
 
     public withFirstSemicolonToken(firstSemicolonToken: ISyntaxToken): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, this.statement);
     }
 
     public withCondition(condition: IExpressionSyntax): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, this.statement);
     }
 
     public withSecondSemicolonToken(secondSemicolonToken: ISyntaxToken): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, secondSemicolonToken, this._incrementor, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, secondSemicolonToken, this.incrementor, this.closeParenToken, this.statement);
     }
 
     public withIncrementor(incrementor: IExpressionSyntax): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, incrementor, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, incrementor, this.closeParenToken, this.statement);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, closeParenToken, this.statement);
     }
 
     public withStatement(statement: IStatementSyntax): ForStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._initializer, this._firstSemicolonToken, this._condition, this._secondSemicolonToken, this._incrementor, this._closeParenToken, statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, statement);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._variableDeclaration !== null && this._variableDeclaration.isTypeScriptSpecific()) { return true; }
-        if (this._initializer !== null && this._initializer.isTypeScriptSpecific()) { return true; }
-        if (this._condition !== null && this._condition.isTypeScriptSpecific()) { return true; }
-        if (this._incrementor !== null && this._incrementor.isTypeScriptSpecific()) { return true; }
-        if (this._statement.isTypeScriptSpecific()) { return true; }
+        if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
+        if (this.initializer !== null && this.initializer.isTypeScriptSpecific()) { return true; }
+        if (this.condition !== null && this.condition.isTypeScriptSpecific()) { return true; }
+        if (this.incrementor !== null && this.incrementor.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class ForInStatementSyntax extends BaseForStatementSyntax {
-    private _forKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _variableDeclaration: VariableDeclarationSyntax;
-    private _left: IExpressionSyntax;
-    private _inKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
-    private _statement: IStatementSyntax;
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 variableDeclaration: VariableDeclarationSyntax,
-                left: IExpressionSyntax,
-                inKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
+                public left: IExpressionSyntax,
+                public inKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode); 
 
-        this._forKeyword = forKeyword;
-        this._openParenToken = openParenToken;
-        this._variableDeclaration = variableDeclaration;
-        this._left = left;
-        this._inKeyword = inKeyword;
-        this._expression = expression;
-        this._closeParenToken = closeParenToken;
-        this._statement = statement;
     }
 
     public static create(forKeyword: ISyntaxToken,
@@ -6938,48 +5503,16 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._forKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._variableDeclaration;
-            case 3: return this._left;
-            case 4: return this._inKeyword;
-            case 5: return this._expression;
-            case 6: return this._closeParenToken;
-            case 7: return this._statement;
+            case 0: return this.forKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.variableDeclaration;
+            case 3: return this.left;
+            case 4: return this.inKeyword;
+            case 5: return this.expression;
+            case 6: return this.closeParenToken;
+            case 7: return this.statement;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public forKeyword(): ISyntaxToken {
-        return this._forKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public variableDeclaration(): VariableDeclarationSyntax {
-        return this._variableDeclaration;
-    }
-
-    public left(): IExpressionSyntax {
-        return this._left;
-    }
-
-    public inKeyword(): ISyntaxToken {
-        return this._inKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
     }
 
     public update(forKeyword: ISyntaxToken,
@@ -6990,7 +5523,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
                   expression: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   statement: IStatementSyntax): ForInStatementSyntax {
-        if (this._forKeyword === forKeyword && this._openParenToken === openParenToken && this._variableDeclaration === variableDeclaration && this._left === left && this._inKeyword === inKeyword && this._expression === expression && this._closeParenToken === closeParenToken && this._statement === statement) {
+        if (this.forKeyword === forKeyword && this.openParenToken === openParenToken && this.variableDeclaration === variableDeclaration && this.left === left && this.inKeyword === inKeyword && this.expression === expression && this.closeParenToken === closeParenToken && this.statement === statement) {
             return this;
         }
 
@@ -7006,66 +5539,56 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
     }
 
     public withForKeyword(forKeyword: ISyntaxToken): ForInStatementSyntax {
-        return this.update(forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+        return this.update(forKeyword, this.openParenToken, this.variableDeclaration, this.left, this.inKeyword, this.expression, this.closeParenToken, this.statement);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ForInStatementSyntax {
-        return this.update(this._forKeyword, openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, openParenToken, this.variableDeclaration, this.left, this.inKeyword, this.expression, this.closeParenToken, this.statement);
     }
 
     public withVariableDeclaration(variableDeclaration: VariableDeclarationSyntax): ForInStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, variableDeclaration, this.left, this.inKeyword, this.expression, this.closeParenToken, this.statement);
     }
 
     public withLeft(left: IExpressionSyntax): ForInStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, left, this._inKeyword, this._expression, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, left, this.inKeyword, this.expression, this.closeParenToken, this.statement);
     }
 
     public withInKeyword(inKeyword: ISyntaxToken): ForInStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, inKeyword, this._expression, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.left, inKeyword, this.expression, this.closeParenToken, this.statement);
     }
 
     public withExpression(expression: IExpressionSyntax): ForInStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, expression, this._closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.left, this.inKeyword, expression, this.closeParenToken, this.statement);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ForInStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, closeParenToken, this._statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.left, this.inKeyword, this.expression, closeParenToken, this.statement);
     }
 
     public withStatement(statement: IStatementSyntax): ForInStatementSyntax {
-        return this.update(this._forKeyword, this._openParenToken, this._variableDeclaration, this._left, this._inKeyword, this._expression, this._closeParenToken, statement);
+        return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.left, this.inKeyword, this.expression, this.closeParenToken, statement);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._variableDeclaration !== null && this._variableDeclaration.isTypeScriptSpecific()) { return true; }
-        if (this._left !== null && this._left.isTypeScriptSpecific()) { return true; }
-        if (this._expression.isTypeScriptSpecific()) { return true; }
-        if (this._statement.isTypeScriptSpecific()) { return true; }
+        if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
+        if (this.left !== null && this.left.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class WhileStatementSyntax extends IterationStatementSyntax {
-    private _whileKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _condition: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
-    private _statement: IStatementSyntax;
 
-    constructor(whileKeyword: ISyntaxToken,
+    constructor(public whileKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
-                condition: IExpressionSyntax,
+                public condition: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
                 statement: IStatementSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
 
-        this._whileKeyword = whileKeyword;
-        this._openParenToken = openParenToken;
-        this._condition = condition;
-        this._closeParenToken = closeParenToken;
-        this._statement = statement;
     }
 
     public static create1(condition: IExpressionSyntax,
@@ -7087,33 +5610,13 @@ class WhileStatementSyntax extends IterationStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._whileKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._condition;
-            case 3: return this._closeParenToken;
-            case 4: return this._statement;
+            case 0: return this.whileKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.condition;
+            case 3: return this.closeParenToken;
+            case 4: return this.statement;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public whileKeyword(): ISyntaxToken {
-        return this._whileKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public condition(): IExpressionSyntax {
-        return this._condition;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
     }
 
     public update(whileKeyword: ISyntaxToken,
@@ -7121,7 +5624,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
                   condition: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   statement: IStatementSyntax): WhileStatementSyntax {
-        if (this._whileKeyword === whileKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement) {
+        if (this.whileKeyword === whileKeyword && this.openParenToken === openParenToken && this.condition === condition && this.closeParenToken === closeParenToken && this.statement === statement) {
             return this;
         }
 
@@ -7137,52 +5640,42 @@ class WhileStatementSyntax extends IterationStatementSyntax {
     }
 
     public withWhileKeyword(whileKeyword: ISyntaxToken): WhileStatementSyntax {
-        return this.update(whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement);
+        return this.update(whileKeyword, this.openParenToken, this.condition, this.closeParenToken, this.statement);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): WhileStatementSyntax {
-        return this.update(this._whileKeyword, openParenToken, this._condition, this._closeParenToken, this._statement);
+        return this.update(this.whileKeyword, openParenToken, this.condition, this.closeParenToken, this.statement);
     }
 
     public withCondition(condition: IExpressionSyntax): WhileStatementSyntax {
-        return this.update(this._whileKeyword, this._openParenToken, condition, this._closeParenToken, this._statement);
+        return this.update(this.whileKeyword, this.openParenToken, condition, this.closeParenToken, this.statement);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): WhileStatementSyntax {
-        return this.update(this._whileKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
+        return this.update(this.whileKeyword, this.openParenToken, this.condition, closeParenToken, this.statement);
     }
 
     public withStatement(statement: IStatementSyntax): WhileStatementSyntax {
-        return this.update(this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
+        return this.update(this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._condition.isTypeScriptSpecific()) { return true; }
-        if (this._statement.isTypeScriptSpecific()) { return true; }
+        if (this.condition.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _withKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _condition: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
-    private _statement: IStatementSyntax;
 
-    constructor(withKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                condition: IExpressionSyntax,
-                closeParenToken: ISyntaxToken,
-                statement: IStatementSyntax,
+    constructor(public withKeyword: ISyntaxToken,
+                public openParenToken: ISyntaxToken,
+                public condition: IExpressionSyntax,
+                public closeParenToken: ISyntaxToken,
+                public statement: IStatementSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._withKeyword = withKeyword;
-        this._openParenToken = openParenToken;
-        this._condition = condition;
-        this._closeParenToken = closeParenToken;
-        this._statement = statement;
     }
 
     public static create1(condition: IExpressionSyntax,
@@ -7204,11 +5697,11 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._withKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._condition;
-            case 3: return this._closeParenToken;
-            case 4: return this._statement;
+            case 0: return this.withKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.condition;
+            case 3: return this.closeParenToken;
+            case 4: return this.statement;
             default: throw Errors.invalidOperation();
         }
     }
@@ -7221,32 +5714,12 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public withKeyword(): ISyntaxToken {
-        return this._withKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public condition(): IExpressionSyntax {
-        return this._condition;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
-    }
-
     public update(withKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   condition: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   statement: IStatementSyntax): WithStatementSyntax {
-        if (this._withKeyword === withKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._statement === statement) {
+        if (this.withKeyword === withKeyword && this.openParenToken === openParenToken && this.condition === condition && this.closeParenToken === closeParenToken && this.statement === statement) {
             return this;
         }
 
@@ -7262,55 +5735,43 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withWithKeyword(withKeyword: ISyntaxToken): WithStatementSyntax {
-        return this.update(withKeyword, this._openParenToken, this._condition, this._closeParenToken, this._statement);
+        return this.update(withKeyword, this.openParenToken, this.condition, this.closeParenToken, this.statement);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): WithStatementSyntax {
-        return this.update(this._withKeyword, openParenToken, this._condition, this._closeParenToken, this._statement);
+        return this.update(this.withKeyword, openParenToken, this.condition, this.closeParenToken, this.statement);
     }
 
     public withCondition(condition: IExpressionSyntax): WithStatementSyntax {
-        return this.update(this._withKeyword, this._openParenToken, condition, this._closeParenToken, this._statement);
+        return this.update(this.withKeyword, this.openParenToken, condition, this.closeParenToken, this.statement);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): WithStatementSyntax {
-        return this.update(this._withKeyword, this._openParenToken, this._condition, closeParenToken, this._statement);
+        return this.update(this.withKeyword, this.openParenToken, this.condition, closeParenToken, this.statement);
     }
 
     public withStatement(statement: IStatementSyntax): WithStatementSyntax {
-        return this.update(this._withKeyword, this._openParenToken, this._condition, this._closeParenToken, statement);
+        return this.update(this.withKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._condition.isTypeScriptSpecific()) { return true; }
-        if (this._statement.isTypeScriptSpecific()) { return true; }
+        if (this.condition.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
-    private _exportKeyword: ISyntaxToken;
-    private _enumKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _openBraceToken: ISyntaxToken;
-    private _variableDeclarators: ISeparatedSyntaxList;
-    private _closeBraceToken: ISyntaxToken;
 
-    constructor(exportKeyword: ISyntaxToken,
-                enumKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                openBraceToken: ISyntaxToken,
-                variableDeclarators: ISeparatedSyntaxList,
-                closeBraceToken: ISyntaxToken,
+    constructor(public exportKeyword: ISyntaxToken,
+                public enumKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public openBraceToken: ISyntaxToken,
+                public variableDeclarators: ISeparatedSyntaxList,
+                public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._exportKeyword = exportKeyword;
-        this._enumKeyword = enumKeyword;
-        this._identifier = identifier;
-        this._openBraceToken = openBraceToken;
-        this._variableDeclarators = variableDeclarators;
-        this._closeBraceToken = closeBraceToken;
     }
 
     public static create(enumKeyword: ISyntaxToken,
@@ -7338,12 +5799,12 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._exportKeyword;
-            case 1: return this._enumKeyword;
-            case 2: return this._identifier;
-            case 3: return this._openBraceToken;
-            case 4: return this._variableDeclarators;
-            case 5: return this._closeBraceToken;
+            case 0: return this.exportKeyword;
+            case 1: return this.enumKeyword;
+            case 2: return this.identifier;
+            case 3: return this.openBraceToken;
+            case 4: return this.variableDeclarators;
+            case 5: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -7352,37 +5813,13 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return true;
     }
 
-    public exportKeyword(): ISyntaxToken {
-        return this._exportKeyword;
-    }
-
-    public enumKeyword(): ISyntaxToken {
-        return this._enumKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public openBraceToken(): ISyntaxToken {
-        return this._openBraceToken;
-    }
-
-    public variableDeclarators(): ISeparatedSyntaxList {
-        return this._variableDeclarators;
-    }
-
-    public closeBraceToken(): ISyntaxToken {
-        return this._closeBraceToken;
-    }
-
     public update(exportKeyword: ISyntaxToken,
                   enumKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   openBraceToken: ISyntaxToken,
                   variableDeclarators: ISeparatedSyntaxList,
                   closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        if (this._exportKeyword === exportKeyword && this._enumKeyword === enumKeyword && this._identifier === identifier && this._openBraceToken === openBraceToken && this._variableDeclarators === variableDeclarators && this._closeBraceToken === closeBraceToken) {
+        if (this.exportKeyword === exportKeyword && this.enumKeyword === enumKeyword && this.identifier === identifier && this.openBraceToken === openBraceToken && this.variableDeclarators === variableDeclarators && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
@@ -7398,23 +5835,23 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+        return this.update(exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
     }
 
     public withEnumKeyword(enumKeyword: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this._exportKeyword, enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+        return this.update(this.exportKeyword, enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this._exportKeyword, this._enumKeyword, identifier, this._openBraceToken, this._variableDeclarators, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, openBraceToken, this._variableDeclarators, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, openBraceToken, this.variableDeclarators, this.closeBraceToken);
     }
 
     public withVariableDeclarators(variableDeclarators: ISeparatedSyntaxList): EnumDeclarationSyntax {
-        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, variableDeclarators, this._closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, variableDeclarators, this.closeBraceToken);
     }
 
     public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): EnumDeclarationSyntax {
@@ -7422,7 +5859,7 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this._exportKeyword, this._enumKeyword, this._identifier, this._openBraceToken, this._variableDeclarators, closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, closeBraceToken);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7431,22 +5868,14 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 }
 
 class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _lessThanToken: ISyntaxToken;
-    private _type: ITypeSyntax;
-    private _greaterThanToken: ISyntaxToken;
-    private _expression: IUnaryExpressionSyntax;
 
-    constructor(lessThanToken: ISyntaxToken,
-                type: ITypeSyntax,
-                greaterThanToken: ISyntaxToken,
-                expression: IUnaryExpressionSyntax,
+    constructor(public lessThanToken: ISyntaxToken,
+                public type: ITypeSyntax,
+                public greaterThanToken: ISyntaxToken,
+                public expression: IUnaryExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._lessThanToken = lessThanToken;
-        this._type = type;
-        this._greaterThanToken = greaterThanToken;
-        this._expression = expression;
     }
 
     public static create1(type: ITypeSyntax,
@@ -7468,10 +5897,10 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._lessThanToken;
-            case 1: return this._type;
-            case 2: return this._greaterThanToken;
-            case 3: return this._expression;
+            case 0: return this.lessThanToken;
+            case 1: return this.type;
+            case 2: return this.greaterThanToken;
+            case 3: return this.expression;
             default: throw Errors.invalidOperation();
         }
     }
@@ -7484,27 +5913,11 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return true;
     }
 
-    public lessThanToken(): ISyntaxToken {
-        return this._lessThanToken;
-    }
-
-    public type(): ITypeSyntax {
-        return this._type;
-    }
-
-    public greaterThanToken(): ISyntaxToken {
-        return this._greaterThanToken;
-    }
-
-    public expression(): IUnaryExpressionSyntax {
-        return this._expression;
-    }
-
     public update(lessThanToken: ISyntaxToken,
                   type: ITypeSyntax,
                   greaterThanToken: ISyntaxToken,
                   expression: IUnaryExpressionSyntax): CastExpressionSyntax {
-        if (this._lessThanToken === lessThanToken && this._type === type && this._greaterThanToken === greaterThanToken && this._expression === expression) {
+        if (this.lessThanToken === lessThanToken && this.type === type && this.greaterThanToken === greaterThanToken && this.expression === expression) {
             return this;
         }
 
@@ -7520,19 +5933,19 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
     }
 
     public withLessThanToken(lessThanToken: ISyntaxToken): CastExpressionSyntax {
-        return this.update(lessThanToken, this._type, this._greaterThanToken, this._expression);
+        return this.update(lessThanToken, this.type, this.greaterThanToken, this.expression);
     }
 
     public withType(type: ITypeSyntax): CastExpressionSyntax {
-        return this.update(this._lessThanToken, type, this._greaterThanToken, this._expression);
+        return this.update(this.lessThanToken, type, this.greaterThanToken, this.expression);
     }
 
     public withGreaterThanToken(greaterThanToken: ISyntaxToken): CastExpressionSyntax {
-        return this.update(this._lessThanToken, this._type, greaterThanToken, this._expression);
+        return this.update(this.lessThanToken, this.type, greaterThanToken, this.expression);
     }
 
     public withExpression(expression: IUnaryExpressionSyntax): CastExpressionSyntax {
-        return this.update(this._lessThanToken, this._type, this._greaterThanToken, expression);
+        return this.update(this.lessThanToken, this.type, this.greaterThanToken, expression);
     }
 
     private isTypeScriptSpecific(): bool {
@@ -7541,19 +5954,13 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
 }
 
 class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _openBraceToken: ISyntaxToken;
-    private _propertyAssignments: ISeparatedSyntaxList;
-    private _closeBraceToken: ISyntaxToken;
 
-    constructor(openBraceToken: ISyntaxToken,
-                propertyAssignments: ISeparatedSyntaxList,
-                closeBraceToken: ISyntaxToken,
+    constructor(public openBraceToken: ISyntaxToken,
+                public propertyAssignments: ISeparatedSyntaxList,
+                public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._openBraceToken = openBraceToken;
-        this._propertyAssignments = propertyAssignments;
-        this._closeBraceToken = closeBraceToken;
     }
 
     public static create(openBraceToken: ISyntaxToken,
@@ -7579,9 +5986,9 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._openBraceToken;
-            case 1: return this._propertyAssignments;
-            case 2: return this._closeBraceToken;
+            case 0: return this.openBraceToken;
+            case 1: return this.propertyAssignments;
+            case 2: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -7594,22 +6001,10 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return true;
     }
 
-    public openBraceToken(): ISyntaxToken {
-        return this._openBraceToken;
-    }
-
-    public propertyAssignments(): ISeparatedSyntaxList {
-        return this._propertyAssignments;
-    }
-
-    public closeBraceToken(): ISyntaxToken {
-        return this._closeBraceToken;
-    }
-
     public update(openBraceToken: ISyntaxToken,
                   propertyAssignments: ISeparatedSyntaxList,
                   closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
-        if (this._openBraceToken === openBraceToken && this._propertyAssignments === propertyAssignments && this._closeBraceToken === closeBraceToken) {
+        if (this.openBraceToken === openBraceToken && this.propertyAssignments === propertyAssignments && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
@@ -7625,11 +6020,11 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
-        return this.update(openBraceToken, this._propertyAssignments, this._closeBraceToken);
+        return this.update(openBraceToken, this.propertyAssignments, this.closeBraceToken);
     }
 
     public withPropertyAssignments(propertyAssignments: ISeparatedSyntaxList): ObjectLiteralExpressionSyntax {
-        return this.update(this._openBraceToken, propertyAssignments, this._closeBraceToken);
+        return this.update(this.openBraceToken, propertyAssignments, this.closeBraceToken);
     }
 
     public withPropertyAssignment(propertyAssignment: PropertyAssignmentSyntax): ObjectLiteralExpressionSyntax {
@@ -7637,22 +6032,19 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
-        return this.update(this._openBraceToken, this._propertyAssignments, closeBraceToken);
+        return this.update(this.openBraceToken, this.propertyAssignments, closeBraceToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._propertyAssignments.isTypeScriptSpecific()) { return true; }
+        if (this.propertyAssignments.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class PropertyAssignmentSyntax extends SyntaxNode {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
-    }
-
-    public propertyName(): ISyntaxToken {
-        throw Errors.abstract();
+    constructor(public propertyName: ISyntaxToken,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertyAssignmentSyntax {
@@ -7669,19 +6061,13 @@ class PropertyAssignmentSyntax extends SyntaxNode {
 }
 
 class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
-    private _propertyName: ISyntaxToken;
-    private _colonToken: ISyntaxToken;
-    private _expression: IExpressionSyntax;
 
     constructor(propertyName: ISyntaxToken,
-                colonToken: ISyntaxToken,
-                expression: IExpressionSyntax,
+                public colonToken: ISyntaxToken,
+                public expression: IExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(propertyName, parsedInStrictMode); 
 
-        this._propertyName = propertyName;
-        this._colonToken = colonToken;
-        this._expression = expression;
     }
 
     public static create1(propertyName: ISyntaxToken,
@@ -7703,29 +6089,17 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._propertyName;
-            case 1: return this._colonToken;
-            case 2: return this._expression;
+            case 0: return this.propertyName;
+            case 1: return this.colonToken;
+            case 2: return this.expression;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public propertyName(): ISyntaxToken {
-        return this._propertyName;
-    }
-
-    public colonToken(): ISyntaxToken {
-        return this._colonToken;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
     }
 
     public update(propertyName: ISyntaxToken,
                   colonToken: ISyntaxToken,
                   expression: IExpressionSyntax): SimplePropertyAssignmentSyntax {
-        if (this._propertyName === propertyName && this._colonToken === colonToken && this._expression === expression) {
+        if (this.propertyName === propertyName && this.colonToken === colonToken && this.expression === expression) {
             return this;
         }
 
@@ -7741,42 +6115,30 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     }
 
     public withPropertyName(propertyName: ISyntaxToken): SimplePropertyAssignmentSyntax {
-        return this.update(propertyName, this._colonToken, this._expression);
+        return this.update(propertyName, this.colonToken, this.expression);
     }
 
     public withColonToken(colonToken: ISyntaxToken): SimplePropertyAssignmentSyntax {
-        return this.update(this._propertyName, colonToken, this._expression);
+        return this.update(this.propertyName, colonToken, this.expression);
     }
 
     public withExpression(expression: IExpressionSyntax): SimplePropertyAssignmentSyntax {
-        return this.update(this._propertyName, this._colonToken, expression);
+        return this.update(this.propertyName, this.colonToken, expression);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
-    }
-
-    public propertyName(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public openParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        throw Errors.abstract();
-    }
-
-    public block(): BlockSyntax {
-        throw Errors.abstract();
+    constructor(propertyName: ISyntaxToken,
+                public openParenToken: ISyntaxToken,
+                public closeParenToken: ISyntaxToken,
+                public block: BlockSyntax,
+                parsedInStrictMode: bool) {
+        super(propertyName, parsedInStrictMode); 
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): AccessorPropertyAssignmentSyntax {
@@ -7793,25 +6155,15 @@ class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 }
 
 class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
-    private _getKeyword: ISyntaxToken;
-    private _propertyName: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _closeParenToken: ISyntaxToken;
-    private _block: BlockSyntax;
 
-    constructor(getKeyword: ISyntaxToken,
+    constructor(public getKeyword: ISyntaxToken,
                 propertyName: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 closeParenToken: ISyntaxToken,
                 block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
 
-        this._getKeyword = getKeyword;
-        this._propertyName = propertyName;
-        this._openParenToken = openParenToken;
-        this._closeParenToken = closeParenToken;
-        this._block = block;
     }
 
     public static create1(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
@@ -7832,33 +6184,13 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._getKeyword;
-            case 1: return this._propertyName;
-            case 2: return this._openParenToken;
-            case 3: return this._closeParenToken;
-            case 4: return this._block;
+            case 0: return this.getKeyword;
+            case 1: return this.propertyName;
+            case 2: return this.openParenToken;
+            case 3: return this.closeParenToken;
+            case 4: return this.block;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public getKeyword(): ISyntaxToken {
-        return this._getKeyword;
-    }
-
-    public propertyName(): ISyntaxToken {
-        return this._propertyName;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
     }
 
     public update(getKeyword: ISyntaxToken,
@@ -7866,7 +6198,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                   openParenToken: ISyntaxToken,
                   closeParenToken: ISyntaxToken,
                   block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        if (this._getKeyword === getKeyword && this._propertyName === propertyName && this._openParenToken === openParenToken && this._closeParenToken === closeParenToken && this._block === block) {
+        if (this.getKeyword === getKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.closeParenToken === closeParenToken && this.block === block) {
             return this;
         }
 
@@ -7882,54 +6214,42 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     }
 
     public withGetKeyword(getKeyword: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, this._block);
+        return this.update(getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, this.block);
     }
 
     public withPropertyName(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this._getKeyword, propertyName, this._openParenToken, this._closeParenToken, this._block);
+        return this.update(this.getKeyword, propertyName, this.openParenToken, this.closeParenToken, this.block);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this._getKeyword, this._propertyName, openParenToken, this._closeParenToken, this._block);
+        return this.update(this.getKeyword, this.propertyName, openParenToken, this.closeParenToken, this.block);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this._getKeyword, this._propertyName, this._openParenToken, closeParenToken, this._block);
+        return this.update(this.getKeyword, this.propertyName, this.openParenToken, closeParenToken, this.block);
     }
 
     public withBlock(block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this._getKeyword, this._propertyName, this._openParenToken, this._closeParenToken, block);
+        return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, block);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._block.isTypeScriptSpecific()) { return true; }
+        if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
-    private _setKeyword: ISyntaxToken;
-    private _propertyName: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _parameterName: ISyntaxToken;
-    private _closeParenToken: ISyntaxToken;
-    private _block: BlockSyntax;
 
-    constructor(setKeyword: ISyntaxToken,
+    constructor(public setKeyword: ISyntaxToken,
                 propertyName: ISyntaxToken,
                 openParenToken: ISyntaxToken,
-                parameterName: ISyntaxToken,
+                public parameterName: ISyntaxToken,
                 closeParenToken: ISyntaxToken,
                 block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
 
-        this._setKeyword = setKeyword;
-        this._propertyName = propertyName;
-        this._openParenToken = openParenToken;
-        this._parameterName = parameterName;
-        this._closeParenToken = closeParenToken;
-        this._block = block;
     }
 
     public static create1(propertyName: ISyntaxToken,
@@ -7951,38 +6271,14 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._setKeyword;
-            case 1: return this._propertyName;
-            case 2: return this._openParenToken;
-            case 3: return this._parameterName;
-            case 4: return this._closeParenToken;
-            case 5: return this._block;
+            case 0: return this.setKeyword;
+            case 1: return this.propertyName;
+            case 2: return this.openParenToken;
+            case 3: return this.parameterName;
+            case 4: return this.closeParenToken;
+            case 5: return this.block;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public setKeyword(): ISyntaxToken {
-        return this._setKeyword;
-    }
-
-    public propertyName(): ISyntaxToken {
-        return this._propertyName;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public parameterName(): ISyntaxToken {
-        return this._parameterName;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
     }
 
     public update(setKeyword: ISyntaxToken,
@@ -7991,7 +6287,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
                   parameterName: ISyntaxToken,
                   closeParenToken: ISyntaxToken,
                   block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
-        if (this._setKeyword === setKeyword && this._propertyName === propertyName && this._openParenToken === openParenToken && this._parameterName === parameterName && this._closeParenToken === closeParenToken && this._block === block) {
+        if (this.setKeyword === setKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.parameterName === parameterName && this.closeParenToken === closeParenToken && this.block === block) {
             return this;
         }
 
@@ -8007,52 +6303,44 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
     }
 
     public withSetKeyword(setKeyword: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, this._block);
+        return this.update(setKeyword, this.propertyName, this.openParenToken, this.parameterName, this.closeParenToken, this.block);
     }
 
     public withPropertyName(propertyName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this._setKeyword, propertyName, this._openParenToken, this._parameterName, this._closeParenToken, this._block);
+        return this.update(this.setKeyword, propertyName, this.openParenToken, this.parameterName, this.closeParenToken, this.block);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this._setKeyword, this._propertyName, openParenToken, this._parameterName, this._closeParenToken, this._block);
+        return this.update(this.setKeyword, this.propertyName, openParenToken, this.parameterName, this.closeParenToken, this.block);
     }
 
     public withParameterName(parameterName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this._setKeyword, this._propertyName, this._openParenToken, parameterName, this._closeParenToken, this._block);
+        return this.update(this.setKeyword, this.propertyName, this.openParenToken, parameterName, this.closeParenToken, this.block);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, closeParenToken, this._block);
+        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameterName, closeParenToken, this.block);
     }
 
     public withBlock(block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this._setKeyword, this._propertyName, this._openParenToken, this._parameterName, this._closeParenToken, block);
+        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameterName, this.closeParenToken, block);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._block.isTypeScriptSpecific()) { return true; }
+        if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _functionKeyword: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _callSignature: CallSignatureSyntax;
-    private _block: BlockSyntax;
 
-    constructor(functionKeyword: ISyntaxToken,
-                identifier: ISyntaxToken,
-                callSignature: CallSignatureSyntax,
-                block: BlockSyntax,
+    constructor(public functionKeyword: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public callSignature: CallSignatureSyntax,
+                public block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._functionKeyword = functionKeyword;
-        this._identifier = identifier;
-        this._callSignature = callSignature;
-        this._block = block;
     }
 
     public static create(functionKeyword: ISyntaxToken,
@@ -8079,10 +6367,10 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._functionKeyword;
-            case 1: return this._identifier;
-            case 2: return this._callSignature;
-            case 3: return this._block;
+            case 0: return this.functionKeyword;
+            case 1: return this.identifier;
+            case 2: return this.callSignature;
+            case 3: return this.block;
             default: throw Errors.invalidOperation();
         }
     }
@@ -8095,27 +6383,11 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return true;
     }
 
-    public functionKeyword(): ISyntaxToken {
-        return this._functionKeyword;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public callSignature(): CallSignatureSyntax {
-        return this._callSignature;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
-    }
-
     public update(functionKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   callSignature: CallSignatureSyntax,
                   block: BlockSyntax): FunctionExpressionSyntax {
-        if (this._functionKeyword === functionKeyword && this._identifier === identifier && this._callSignature === callSignature && this._block === block) {
+        if (this.functionKeyword === functionKeyword && this.identifier === identifier && this.callSignature === callSignature && this.block === block) {
             return this;
         }
 
@@ -8131,36 +6403,34 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
     }
 
     public withFunctionKeyword(functionKeyword: ISyntaxToken): FunctionExpressionSyntax {
-        return this.update(functionKeyword, this._identifier, this._callSignature, this._block);
+        return this.update(functionKeyword, this.identifier, this.callSignature, this.block);
     }
 
     public withIdentifier(identifier: ISyntaxToken): FunctionExpressionSyntax {
-        return this.update(this._functionKeyword, identifier, this._callSignature, this._block);
+        return this.update(this.functionKeyword, identifier, this.callSignature, this.block);
     }
 
     public withCallSignature(callSignature: CallSignatureSyntax): FunctionExpressionSyntax {
-        return this.update(this._functionKeyword, this._identifier, callSignature, this._block);
+        return this.update(this.functionKeyword, this.identifier, callSignature, this.block);
     }
 
     public withBlock(block: BlockSyntax): FunctionExpressionSyntax {
-        return this.update(this._functionKeyword, this._identifier, this._callSignature, block);
+        return this.update(this.functionKeyword, this.identifier, this.callSignature, block);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._callSignature.isTypeScriptSpecific()) { return true; }
-        if (this._block.isTypeScriptSpecific()) { return true; }
+        if (this.callSignature.isTypeScriptSpecific()) { return true; }
+        if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(semicolonToken: ISyntaxToken,
+    constructor(public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._semicolonToken = semicolonToken;
     }
 
     public static create1(): EmptyStatementSyntax {
@@ -8181,7 +6451,7 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._semicolonToken;
+            case 0: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -8194,12 +6464,8 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     private update(semicolonToken: ISyntaxToken): EmptyStatementSyntax {
-        if (this._semicolonToken === semicolonToken) {
+        if (this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -8224,22 +6490,14 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 }
 
 class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _tryKeyword: ISyntaxToken;
-    private _block: BlockSyntax;
-    private _catchClause: CatchClauseSyntax;
-    private _finallyClause: FinallyClauseSyntax;
 
-    constructor(tryKeyword: ISyntaxToken,
-                block: BlockSyntax,
-                catchClause: CatchClauseSyntax,
-                finallyClause: FinallyClauseSyntax,
+    constructor(public tryKeyword: ISyntaxToken,
+                public block: BlockSyntax,
+                public catchClause: CatchClauseSyntax,
+                public finallyClause: FinallyClauseSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._tryKeyword = tryKeyword;
-        this._block = block;
-        this._catchClause = catchClause;
-        this._finallyClause = finallyClause;
     }
 
     public static create(tryKeyword: ISyntaxToken,
@@ -8265,10 +6523,10 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._tryKeyword;
-            case 1: return this._block;
-            case 2: return this._catchClause;
-            case 3: return this._finallyClause;
+            case 0: return this.tryKeyword;
+            case 1: return this.block;
+            case 2: return this.catchClause;
+            case 3: return this.finallyClause;
             default: throw Errors.invalidOperation();
         }
     }
@@ -8281,27 +6539,11 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public tryKeyword(): ISyntaxToken {
-        return this._tryKeyword;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
-    }
-
-    public catchClause(): CatchClauseSyntax {
-        return this._catchClause;
-    }
-
-    public finallyClause(): FinallyClauseSyntax {
-        return this._finallyClause;
-    }
-
     public update(tryKeyword: ISyntaxToken,
                   block: BlockSyntax,
                   catchClause: CatchClauseSyntax,
                   finallyClause: FinallyClauseSyntax): TryStatementSyntax {
-        if (this._tryKeyword === tryKeyword && this._block === block && this._catchClause === catchClause && this._finallyClause === finallyClause) {
+        if (this.tryKeyword === tryKeyword && this.block === block && this.catchClause === catchClause && this.finallyClause === finallyClause) {
             return this;
         }
 
@@ -8317,49 +6559,39 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withTryKeyword(tryKeyword: ISyntaxToken): TryStatementSyntax {
-        return this.update(tryKeyword, this._block, this._catchClause, this._finallyClause);
+        return this.update(tryKeyword, this.block, this.catchClause, this.finallyClause);
     }
 
     public withBlock(block: BlockSyntax): TryStatementSyntax {
-        return this.update(this._tryKeyword, block, this._catchClause, this._finallyClause);
+        return this.update(this.tryKeyword, block, this.catchClause, this.finallyClause);
     }
 
     public withCatchClause(catchClause: CatchClauseSyntax): TryStatementSyntax {
-        return this.update(this._tryKeyword, this._block, catchClause, this._finallyClause);
+        return this.update(this.tryKeyword, this.block, catchClause, this.finallyClause);
     }
 
     public withFinallyClause(finallyClause: FinallyClauseSyntax): TryStatementSyntax {
-        return this.update(this._tryKeyword, this._block, this._catchClause, finallyClause);
+        return this.update(this.tryKeyword, this.block, this.catchClause, finallyClause);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._block.isTypeScriptSpecific()) { return true; }
-        if (this._catchClause !== null && this._catchClause.isTypeScriptSpecific()) { return true; }
-        if (this._finallyClause !== null && this._finallyClause.isTypeScriptSpecific()) { return true; }
+        if (this.block.isTypeScriptSpecific()) { return true; }
+        if (this.catchClause !== null && this.catchClause.isTypeScriptSpecific()) { return true; }
+        if (this.finallyClause !== null && this.finallyClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class CatchClauseSyntax extends SyntaxNode {
-    private _catchKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _identifier: ISyntaxToken;
-    private _closeParenToken: ISyntaxToken;
-    private _block: BlockSyntax;
 
-    constructor(catchKeyword: ISyntaxToken,
-                openParenToken: ISyntaxToken,
-                identifier: ISyntaxToken,
-                closeParenToken: ISyntaxToken,
-                block: BlockSyntax,
+    constructor(public catchKeyword: ISyntaxToken,
+                public openParenToken: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public closeParenToken: ISyntaxToken,
+                public block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._catchKeyword = catchKeyword;
-        this._openParenToken = openParenToken;
-        this._identifier = identifier;
-        this._closeParenToken = closeParenToken;
-        this._block = block;
     }
 
     public static create1(identifier: ISyntaxToken): CatchClauseSyntax {
@@ -8380,33 +6612,13 @@ class CatchClauseSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._catchKeyword;
-            case 1: return this._openParenToken;
-            case 2: return this._identifier;
-            case 3: return this._closeParenToken;
-            case 4: return this._block;
+            case 0: return this.catchKeyword;
+            case 1: return this.openParenToken;
+            case 2: return this.identifier;
+            case 3: return this.closeParenToken;
+            case 4: return this.block;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public catchKeyword(): ISyntaxToken {
-        return this._catchKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
     }
 
     public update(catchKeyword: ISyntaxToken,
@@ -8414,7 +6626,7 @@ class CatchClauseSyntax extends SyntaxNode {
                   identifier: ISyntaxToken,
                   closeParenToken: ISyntaxToken,
                   block: BlockSyntax): CatchClauseSyntax {
-        if (this._catchKeyword === catchKeyword && this._openParenToken === openParenToken && this._identifier === identifier && this._closeParenToken === closeParenToken && this._block === block) {
+        if (this.catchKeyword === catchKeyword && this.openParenToken === openParenToken && this.identifier === identifier && this.closeParenToken === closeParenToken && this.block === block) {
             return this;
         }
 
@@ -8430,42 +6642,38 @@ class CatchClauseSyntax extends SyntaxNode {
     }
 
     public withCatchKeyword(catchKeyword: ISyntaxToken): CatchClauseSyntax {
-        return this.update(catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, this._block);
+        return this.update(catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, this.block);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): CatchClauseSyntax {
-        return this.update(this._catchKeyword, openParenToken, this._identifier, this._closeParenToken, this._block);
+        return this.update(this.catchKeyword, openParenToken, this.identifier, this.closeParenToken, this.block);
     }
 
     public withIdentifier(identifier: ISyntaxToken): CatchClauseSyntax {
-        return this.update(this._catchKeyword, this._openParenToken, identifier, this._closeParenToken, this._block);
+        return this.update(this.catchKeyword, this.openParenToken, identifier, this.closeParenToken, this.block);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): CatchClauseSyntax {
-        return this.update(this._catchKeyword, this._openParenToken, this._identifier, closeParenToken, this._block);
+        return this.update(this.catchKeyword, this.openParenToken, this.identifier, closeParenToken, this.block);
     }
 
     public withBlock(block: BlockSyntax): CatchClauseSyntax {
-        return this.update(this._catchKeyword, this._openParenToken, this._identifier, this._closeParenToken, block);
+        return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, block);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._block.isTypeScriptSpecific()) { return true; }
+        if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class FinallyClauseSyntax extends SyntaxNode {
-    private _finallyKeyword: ISyntaxToken;
-    private _block: BlockSyntax;
 
-    constructor(finallyKeyword: ISyntaxToken,
-                block: BlockSyntax,
+    constructor(public finallyKeyword: ISyntaxToken,
+                public block: BlockSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._finallyKeyword = finallyKeyword;
-        this._block = block;
     }
 
     public static create1(): FinallyClauseSyntax {
@@ -8486,23 +6694,15 @@ class FinallyClauseSyntax extends SyntaxNode {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._finallyKeyword;
-            case 1: return this._block;
+            case 0: return this.finallyKeyword;
+            case 1: return this.block;
             default: throw Errors.invalidOperation();
         }
     }
 
-    public finallyKeyword(): ISyntaxToken {
-        return this._finallyKeyword;
-    }
-
-    public block(): BlockSyntax {
-        return this._block;
-    }
-
     public update(finallyKeyword: ISyntaxToken,
                   block: BlockSyntax): FinallyClauseSyntax {
-        if (this._finallyKeyword === finallyKeyword && this._block === block) {
+        if (this.finallyKeyword === finallyKeyword && this.block === block) {
             return this;
         }
 
@@ -8518,33 +6718,27 @@ class FinallyClauseSyntax extends SyntaxNode {
     }
 
     public withFinallyKeyword(finallyKeyword: ISyntaxToken): FinallyClauseSyntax {
-        return this.update(finallyKeyword, this._block);
+        return this.update(finallyKeyword, this.block);
     }
 
     public withBlock(block: BlockSyntax): FinallyClauseSyntax {
-        return this.update(this._finallyKeyword, block);
+        return this.update(this.finallyKeyword, block);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._block.isTypeScriptSpecific()) { return true; }
+        if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _identifier: ISyntaxToken;
-    private _colonToken: ISyntaxToken;
-    private _statement: IStatementSyntax;
 
-    constructor(identifier: ISyntaxToken,
-                colonToken: ISyntaxToken,
-                statement: IStatementSyntax,
+    constructor(public identifier: ISyntaxToken,
+                public colonToken: ISyntaxToken,
+                public statement: IStatementSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._identifier = identifier;
-        this._colonToken = colonToken;
-        this._statement = statement;
     }
 
     public static create1(identifier: ISyntaxToken,
@@ -8566,9 +6760,9 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._identifier;
-            case 1: return this._colonToken;
-            case 2: return this._statement;
+            case 0: return this.identifier;
+            case 1: return this.colonToken;
+            case 2: return this.statement;
             default: throw Errors.invalidOperation();
         }
     }
@@ -8581,22 +6775,10 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public identifier(): ISyntaxToken {
-        return this._identifier;
-    }
-
-    public colonToken(): ISyntaxToken {
-        return this._colonToken;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
-    }
-
     public update(identifier: ISyntaxToken,
                   colonToken: ISyntaxToken,
                   statement: IStatementSyntax): LabeledStatementSyntax {
-        if (this._identifier === identifier && this._colonToken === colonToken && this._statement === statement) {
+        if (this.identifier === identifier && this.colonToken === colonToken && this.statement === statement) {
             return this;
         }
 
@@ -8612,49 +6794,35 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withIdentifier(identifier: ISyntaxToken): LabeledStatementSyntax {
-        return this.update(identifier, this._colonToken, this._statement);
+        return this.update(identifier, this.colonToken, this.statement);
     }
 
     public withColonToken(colonToken: ISyntaxToken): LabeledStatementSyntax {
-        return this.update(this._identifier, colonToken, this._statement);
+        return this.update(this.identifier, colonToken, this.statement);
     }
 
     public withStatement(statement: IStatementSyntax): LabeledStatementSyntax {
-        return this.update(this._identifier, this._colonToken, statement);
+        return this.update(this.identifier, this.colonToken, statement);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._statement.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class DoStatementSyntax extends IterationStatementSyntax {
-    private _doKeyword: ISyntaxToken;
-    private _statement: IStatementSyntax;
-    private _whileKeyword: ISyntaxToken;
-    private _openParenToken: ISyntaxToken;
-    private _condition: IExpressionSyntax;
-    private _closeParenToken: ISyntaxToken;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(doKeyword: ISyntaxToken,
+    constructor(public doKeyword: ISyntaxToken,
                 statement: IStatementSyntax,
-                whileKeyword: ISyntaxToken,
+                public whileKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
-                condition: IExpressionSyntax,
+                public condition: IExpressionSyntax,
                 closeParenToken: ISyntaxToken,
-                semicolonToken: ISyntaxToken,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(openParenToken, closeParenToken, statement, parsedInStrictMode); 
 
-        this._doKeyword = doKeyword;
-        this._statement = statement;
-        this._whileKeyword = whileKeyword;
-        this._openParenToken = openParenToken;
-        this._condition = condition;
-        this._closeParenToken = closeParenToken;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create1(statement: IStatementSyntax,
@@ -8676,43 +6844,15 @@ class DoStatementSyntax extends IterationStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._doKeyword;
-            case 1: return this._statement;
-            case 2: return this._whileKeyword;
-            case 3: return this._openParenToken;
-            case 4: return this._condition;
-            case 5: return this._closeParenToken;
-            case 6: return this._semicolonToken;
+            case 0: return this.doKeyword;
+            case 1: return this.statement;
+            case 2: return this.whileKeyword;
+            case 3: return this.openParenToken;
+            case 4: return this.condition;
+            case 5: return this.closeParenToken;
+            case 6: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
-    }
-
-    public doKeyword(): ISyntaxToken {
-        return this._doKeyword;
-    }
-
-    public statement(): IStatementSyntax {
-        return this._statement;
-    }
-
-    public whileKeyword(): ISyntaxToken {
-        return this._whileKeyword;
-    }
-
-    public openParenToken(): ISyntaxToken {
-        return this._openParenToken;
-    }
-
-    public condition(): IExpressionSyntax {
-        return this._condition;
-    }
-
-    public closeParenToken(): ISyntaxToken {
-        return this._closeParenToken;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
     }
 
     public update(doKeyword: ISyntaxToken,
@@ -8722,7 +6862,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
                   condition: IExpressionSyntax,
                   closeParenToken: ISyntaxToken,
                   semicolonToken: ISyntaxToken): DoStatementSyntax {
-        if (this._doKeyword === doKeyword && this._statement === statement && this._whileKeyword === whileKeyword && this._openParenToken === openParenToken && this._condition === condition && this._closeParenToken === closeParenToken && this._semicolonToken === semicolonToken) {
+        if (this.doKeyword === doKeyword && this.statement === statement && this.whileKeyword === whileKeyword && this.openParenToken === openParenToken && this.condition === condition && this.closeParenToken === closeParenToken && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -8738,51 +6878,47 @@ class DoStatementSyntax extends IterationStatementSyntax {
     }
 
     public withDoKeyword(doKeyword: ISyntaxToken): DoStatementSyntax {
-        return this.update(doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+        return this.update(doKeyword, this.statement, this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, this.semicolonToken);
     }
 
     public withStatement(statement: IStatementSyntax): DoStatementSyntax {
-        return this.update(this._doKeyword, statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+        return this.update(this.doKeyword, statement, this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, this.semicolonToken);
     }
 
     public withWhileKeyword(whileKeyword: ISyntaxToken): DoStatementSyntax {
-        return this.update(this._doKeyword, this._statement, whileKeyword, this._openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+        return this.update(this.doKeyword, this.statement, whileKeyword, this.openParenToken, this.condition, this.closeParenToken, this.semicolonToken);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): DoStatementSyntax {
-        return this.update(this._doKeyword, this._statement, this._whileKeyword, openParenToken, this._condition, this._closeParenToken, this._semicolonToken);
+        return this.update(this.doKeyword, this.statement, this.whileKeyword, openParenToken, this.condition, this.closeParenToken, this.semicolonToken);
     }
 
     public withCondition(condition: IExpressionSyntax): DoStatementSyntax {
-        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, condition, this._closeParenToken, this._semicolonToken);
+        return this.update(this.doKeyword, this.statement, this.whileKeyword, this.openParenToken, condition, this.closeParenToken, this.semicolonToken);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): DoStatementSyntax {
-        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, closeParenToken, this._semicolonToken);
+        return this.update(this.doKeyword, this.statement, this.whileKeyword, this.openParenToken, this.condition, closeParenToken, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): DoStatementSyntax {
-        return this.update(this._doKeyword, this._statement, this._whileKeyword, this._openParenToken, this._condition, this._closeParenToken, semicolonToken);
+        return this.update(this.doKeyword, this.statement, this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._statement.isTypeScriptSpecific()) { return true; }
-        if (this._condition.isTypeScriptSpecific()) { return true; }
+        if (this.statement.isTypeScriptSpecific()) { return true; }
+        if (this.condition.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _typeOfKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
 
-    constructor(typeOfKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
+    constructor(public typeOfKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._typeOfKeyword = typeOfKeyword;
-        this._expression = expression;
     }
 
     public static create1(expression: IExpressionSyntax): TypeOfExpressionSyntax {
@@ -8803,8 +6939,8 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._typeOfKeyword;
-            case 1: return this._expression;
+            case 0: return this.typeOfKeyword;
+            case 1: return this.expression;
             default: throw Errors.invalidOperation();
         }
     }
@@ -8817,17 +6953,9 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return true;
     }
 
-    public typeOfKeyword(): ISyntaxToken {
-        return this._typeOfKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
     public update(typeOfKeyword: ISyntaxToken,
                   expression: IExpressionSyntax): TypeOfExpressionSyntax {
-        if (this._typeOfKeyword === typeOfKeyword && this._expression === expression) {
+        if (this.typeOfKeyword === typeOfKeyword && this.expression === expression) {
             return this;
         }
 
@@ -8843,30 +6971,26 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
     }
 
     public withTypeOfKeyword(typeOfKeyword: ISyntaxToken): TypeOfExpressionSyntax {
-        return this.update(typeOfKeyword, this._expression);
+        return this.update(typeOfKeyword, this.expression);
     }
 
     public withExpression(expression: IExpressionSyntax): TypeOfExpressionSyntax {
-        return this.update(this._typeOfKeyword, expression);
+        return this.update(this.typeOfKeyword, expression);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _deleteKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
 
-    constructor(deleteKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
+    constructor(public deleteKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._deleteKeyword = deleteKeyword;
-        this._expression = expression;
     }
 
     public static create1(expression: IExpressionSyntax): DeleteExpressionSyntax {
@@ -8887,8 +7011,8 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._deleteKeyword;
-            case 1: return this._expression;
+            case 0: return this.deleteKeyword;
+            case 1: return this.expression;
             default: throw Errors.invalidOperation();
         }
     }
@@ -8901,17 +7025,9 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return true;
     }
 
-    public deleteKeyword(): ISyntaxToken {
-        return this._deleteKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
     public update(deleteKeyword: ISyntaxToken,
                   expression: IExpressionSyntax): DeleteExpressionSyntax {
-        if (this._deleteKeyword === deleteKeyword && this._expression === expression) {
+        if (this.deleteKeyword === deleteKeyword && this.expression === expression) {
             return this;
         }
 
@@ -8927,30 +7043,26 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
     }
 
     public withDeleteKeyword(deleteKeyword: ISyntaxToken): DeleteExpressionSyntax {
-        return this.update(deleteKeyword, this._expression);
+        return this.update(deleteKeyword, this.expression);
     }
 
     public withExpression(expression: IExpressionSyntax): DeleteExpressionSyntax {
-        return this.update(this._deleteKeyword, expression);
+        return this.update(this.deleteKeyword, expression);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
-    private _voidKeyword: ISyntaxToken;
-    private _expression: IExpressionSyntax;
 
-    constructor(voidKeyword: ISyntaxToken,
-                expression: IExpressionSyntax,
+    constructor(public voidKeyword: ISyntaxToken,
+                public expression: IExpressionSyntax,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._voidKeyword = voidKeyword;
-        this._expression = expression;
     }
 
     public static create1(expression: IExpressionSyntax): VoidExpressionSyntax {
@@ -8971,8 +7083,8 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._voidKeyword;
-            case 1: return this._expression;
+            case 0: return this.voidKeyword;
+            case 1: return this.expression;
             default: throw Errors.invalidOperation();
         }
     }
@@ -8985,17 +7097,9 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return true;
     }
 
-    public voidKeyword(): ISyntaxToken {
-        return this._voidKeyword;
-    }
-
-    public expression(): IExpressionSyntax {
-        return this._expression;
-    }
-
     public update(voidKeyword: ISyntaxToken,
                   expression: IExpressionSyntax): VoidExpressionSyntax {
-        if (this._voidKeyword === voidKeyword && this._expression === expression) {
+        if (this.voidKeyword === voidKeyword && this.expression === expression) {
             return this;
         }
 
@@ -9011,30 +7115,26 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
     }
 
     public withVoidKeyword(voidKeyword: ISyntaxToken): VoidExpressionSyntax {
-        return this.update(voidKeyword, this._expression);
+        return this.update(voidKeyword, this.expression);
     }
 
     public withExpression(expression: IExpressionSyntax): VoidExpressionSyntax {
-        return this.update(this._voidKeyword, expression);
+        return this.update(this.voidKeyword, expression);
     }
 
     private isTypeScriptSpecific(): bool {
-        if (this._expression.isTypeScriptSpecific()) { return true; }
+        if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
 }
 
 class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
-    private _debuggerKeyword: ISyntaxToken;
-    private _semicolonToken: ISyntaxToken;
 
-    constructor(debuggerKeyword: ISyntaxToken,
-                semicolonToken: ISyntaxToken,
+    constructor(public debuggerKeyword: ISyntaxToken,
+                public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
-        super(parsedInStrictMode);
+        super(parsedInStrictMode); 
 
-        this._debuggerKeyword = debuggerKeyword;
-        this._semicolonToken = semicolonToken;
     }
 
     public static create1(): DebuggerStatementSyntax {
@@ -9055,8 +7155,8 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     private childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this._debuggerKeyword;
-            case 1: return this._semicolonToken;
+            case 0: return this.debuggerKeyword;
+            case 1: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -9069,17 +7169,9 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    public debuggerKeyword(): ISyntaxToken {
-        return this._debuggerKeyword;
-    }
-
-    public semicolonToken(): ISyntaxToken {
-        return this._semicolonToken;
-    }
-
     public update(debuggerKeyword: ISyntaxToken,
                   semicolonToken: ISyntaxToken): DebuggerStatementSyntax {
-        if (this._debuggerKeyword === debuggerKeyword && this._semicolonToken === semicolonToken) {
+        if (this.debuggerKeyword === debuggerKeyword && this.semicolonToken === semicolonToken) {
             return this;
         }
 
@@ -9095,11 +7187,11 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
     }
 
     public withDebuggerKeyword(debuggerKeyword: ISyntaxToken): DebuggerStatementSyntax {
-        return this.update(debuggerKeyword, this._semicolonToken);
+        return this.update(debuggerKeyword, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): DebuggerStatementSyntax {
-        return this.update(this._debuggerKeyword, semicolonToken);
+        return this.update(this.debuggerKeyword, semicolonToken);
     }
 
     private isTypeScriptSpecific(): bool {

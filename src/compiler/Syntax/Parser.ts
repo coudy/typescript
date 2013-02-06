@@ -1489,7 +1489,7 @@ module Parser1 {
         private static isDirectivePrologueElement(node: SyntaxNode): bool {
             if (node.kind() === SyntaxKind.ExpressionStatement) {
                 var expressionStatement = <ExpressionStatementSyntax>node;
-                var expression = expressionStatement.expression();
+                var expression = expressionStatement.expression;
 
                 if (expression.kind() === SyntaxKind.StringLiteral) {
                     return true;
@@ -1501,7 +1501,7 @@ module Parser1 {
 
         private static isUseStrictDirective(node: SyntaxNode) {
             var expressionStatement = <ExpressionStatementSyntax>node;
-            var stringLiteral = <ISyntaxToken>expressionStatement.expression();
+            var stringLiteral = <ISyntaxToken>expressionStatement.expression;
 
             var text = stringLiteral.text();
             return text === '"use strict"' || text === "'use strict'";

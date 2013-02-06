@@ -347,7 +347,7 @@ module TypeScript {
         var isProperty = false;
         var parameter: ParameterSyntax;
 
-        var parameterSyntaxList = parameters.parameters();
+        var parameterSyntaxList = parameters.parameters;
         var parameterCount = parameterSyntaxList.nonSeparatorCount();
 
         if (parameterCount) {
@@ -358,7 +358,7 @@ module TypeScript {
 
                 decl = context.semanticInfo.getDeclForSyntaxElement(parameter);
 
-                parameterSymbol = new PullSymbol(parameter.identifier().text(), PullElementKind.Variable);
+                parameterSymbol = new PullSymbol(parameter.identifier.text(), PullElementKind.Variable);
                 
                 if (decl) {
                     parameterSymbol.addDeclaration(decl);
@@ -608,7 +608,7 @@ module TypeScript {
         if (context.useFidelity) {
             var syntaxElement = context.semanticInfo.getSyntaxElementForDecl(funcDecl);
             var functionSignatureElement: FunctionSignatureSyntax = (<any>syntaxElement).functionSignature();
-            var parameters = functionSignatureElement.callSignature().parameterList();
+            var parameters = functionSignatureElement.callSignature.parameterList;
 
             bindParameterSymbolsUsingFidelity(parameters, context, signature);
         }

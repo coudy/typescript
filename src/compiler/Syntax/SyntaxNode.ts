@@ -105,16 +105,20 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         if (this.hasRegularExpressionToken()) {
             result.hasRegularExpressionToken = true;
         }
-
+        
         if (this.parsedInStrictMode()) {
             result.parsedInStrictMode = true;
         }
 
-        for (var name in this) {
-            if (name !== "_data") {
-                var value = this[name];
-                if (value && typeof value === 'object') {
-                    result[name] = value;
+        for (var i = 0, n = this.childCount(); i < n; i++) {
+            var value = this.childAt(i);
+
+            if (value) {
+                for (var name in this) {
+                    if (value === this[name]) {
+                        result[name[0] === "_" ? name : ("_" +name)] = value;
+                        break;
+                    }
                 }
             }
         }
@@ -288,7 +292,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             var sourceUnit = <SourceUnitSyntax>this;
             return new PositionedToken(
                 new PositionedNode(null, sourceUnit, 0),
-                sourceUnit.endOfFileToken(), sourceUnit.moduleElements().fullWidth());
+                sourceUnit.endOfFileToken, sourceUnit.moduleElements.fullWidth());
         }
 
         return null;

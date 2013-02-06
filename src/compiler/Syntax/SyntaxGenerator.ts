@@ -1036,7 +1036,11 @@ function getSafeName(child: IMemberDefinition) {
 }
 
 function getPropertyAccess(child: IMemberDefinition): string {
-    return "this._" + child.name;
+    if (child.type === "SyntaxKind") {
+        return "this._kind";
+    }
+
+    return "this." + child.name;
 }
 
 function generateProperties(definition: ITypeDefinition): string {
@@ -1045,7 +1049,9 @@ function generateProperties(definition: ITypeDefinition): string {
     for (var i = 0; i < definition.children.length; i++) {
         var child: IMemberDefinition = definition.children[i];
 
-        result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
+        if (getType(child) === "SyntaxKind") {
+            result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
+        }
 
         hasKind = hasKind || (getType(child) === "SyntaxKind");
     }
@@ -1231,19 +1237,39 @@ function generateConstructor(definition: ITypeDefinition): string {
         // return "";
     }
 
+    var base = baseType(definition);
+    var subchildren = childrenInAllSubclasses(definition);
+    var baseSubchildren = childrenInAllSubclasses(base);
+    var baseSubchildrenNames = ArrayUtilities.select(baseSubchildren, c => c.name);
+
     var result = "";
     result += "    constructor("
 
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
+    var children = definition.children;
+    if (subchildren.length > 0) {
+        children = subchildren;
+    }
+
+    for (var i = 0; i < children.length; i++) {
+        var child = children[i];
+
+        if (getType(child) !== "SyntaxKind" && !ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
+            result += "public ";
+        }
 
         result += child.name + ": " + getType(child);
         result += ",\r\n                ";
     }
 
     result += "parsedInStrictMode: bool) {\r\n";
+    
+    result += "        super(";
 
-    result += "        super(parsedInStrictMode);\r\n";
+    for (var i = 0; i < baseSubchildrenNames.length; i++) {
+        result += baseSubchildrenNames[i] + ", ";
+    }
+
+    result += "parsedInStrictMode); \r\n";
     if (definition.children.length > 0) {
         result += "\r\n";
     }
@@ -1253,7 +1279,9 @@ function generateConstructor(definition: ITypeDefinition): string {
     for (var i = 0; i < definition.children.length; i++) {
         var child: IMemberDefinition = definition.children[i];
 
-        result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
+        if (child.type === "SyntaxKind") {
+            result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
+        }
     }
 
     result += "    }\r\n";
@@ -1531,7 +1559,7 @@ function generateSlotMethods(definition: ITypeDefinition): string {
                     continue;
                 }
 
-                result += "            case " + index + ": return this._" + definition.children[i].name + ";\r\n";
+                result += "            case " + index + ": return this." + definition.children[i].name + ";\r\n";
                 index++;
             }
 
@@ -1676,11 +1704,11 @@ function generateInsertChildrenIntoMethod(definition: ITypeDefinition): string {
     return result;
 }
 
-function baseType(definition: ITypeDefinition) {
+function baseType(definition: ITypeDefinition): ITypeDefinition {
     return ArrayUtilities.firstOrDefault(definitions, d => d.name === definition.baseType);
 }
 
-function memberDefinitionType(child: IMemberDefinition) {
+function memberDefinitionType(child: IMemberDefinition): ITypeDefinition {
     Debug.assert(child.type !== undefined);
     return ArrayUtilities.firstOrDefault(definitions, d => d.name === child.type);
 }
@@ -1708,20 +1736,10 @@ function contains(definition: ITypeDefinition, child: IMemberDefinition) {
              c.type === child.type);
 }
 
-function generateAccessors(definition: ITypeDefinition): string {
-    var result = "";
+function childrenInAllSubclasses(definition: ITypeDefinition): IMemberDefinition[]{
+    var result = [];
 
-    for (var i = 0; i < definition.children.length; i++) {
-        var child = definition.children[i];
-        
-        result += "\r\n";
-        result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
-        result += "        return " + getPropertyAccess(child) + ";\r\n";
-        result += "    }\r\n";
-    }
-
-    if (definition.isAbstract) {
-        // Generate accessors for all properties that all subclasses share.
+    if (definition !== null && definition.isAbstract) {
         var subclasses = ArrayUtilities.where(definitions, d => !d.isAbstract && derivesFrom(d, definition));
 
         if (subclasses.length > 0) {
@@ -1731,14 +1749,48 @@ function generateAccessors(definition: ITypeDefinition): string {
                 var child = firstSubclass.children[i];
 
                 if (ArrayUtilities.all(subclasses, s => contains(s, child))) {
-                    result += "\r\n";
-                    result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
-                    result += "        throw Errors.abstract();\r\n";
-                    result += "    }\r\n";
+                    result.push(child);
                 }
             }
         }
     }
+
+    return result;
+}
+
+function generateAccessors(definition: ITypeDefinition): string {
+    var result = "";
+
+    for (var i = 0; i < definition.children.length; i++) {
+        var child = definition.children[i];
+        
+        if (child.type === "SyntaxKind") {
+            result += "\r\n";
+            result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
+            result += "        return " + getPropertyAccess(child) + ";\r\n";
+            result += "    }\r\n";
+        }
+    }
+
+    //if (definition.isAbstract) {
+    //    // Generate accessors for all properties that all subclasses share.
+    //    var subclasses = ArrayUtilities.where(definitions, d => !d.isAbstract && derivesFrom(d, definition));
+
+    //    if (subclasses.length > 0) {
+    //        var firstSubclass = subclasses[0];
+
+    //        for (var i = 0; i < firstSubclass.children.length; i++) {
+    //            var child = firstSubclass.children[i];
+
+    //            if (ArrayUtilities.all(subclasses, s => contains(s, child))) {
+    //                result += "\r\n";
+    //                result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
+    //                result += "        throw Errors.abstract();\r\n";
+    //                result += "    }\r\n";
+    //            }
+    //        }
+    //    }
+    //}
 
     return result;
 }
@@ -2186,26 +2238,26 @@ function generateRewriter(): string {
 
             result += "            ";
             if (child.isOptional) {
-                result += "node." + child.name + "() === null ? null : ";
+                result += "node." + child.name + " === null ? null : ";
             }
 
             if (child.isToken) {
-                result += "this.visitToken(node." + child.name + "())";
+                result += "this.visitToken(node." + child.name + ")";
             }
             else if (child.isList) {
-                result += "this.visitList(node." + child.name + "())";
+                result += "this.visitList(node." + child.name + ")";
             }
             else if (child.isSeparatedList) {
-                result += "this.visitSeparatedList(node." + child.name + "())";
+                result += "this.visitSeparatedList(node." + child.name + ")";
             }
             else if (child.type === "SyntaxKind") {
                 result += "node.kind()";
             }
             else if (isNodeOrToken(child)) {
-                result += "<" + child.type + ">this.visitNodeOrToken(node." + child.name + "())";
+                result += "<" + child.type + ">this.visitNodeOrToken(node." + child.name + ")";
             }
             else {
-                result += "<" + child.type + ">this.visitNode(node." + child.name + "())";
+                result += "<" + child.type + ">this.visitNode(node." + child.name + ")";
             }
 
             if (j < definition.children.length - 1) {
@@ -2641,32 +2693,32 @@ function generateWalker(): string {
 
             if (child.isToken) {
                 if (child.isOptional) {
-                    result += "        this.visitOptionalToken(node." + child.name + "());\r\n";
+                    result += "        this.visitOptionalToken(node." + child.name + ");\r\n";
                 }
                 else {
-                    result += "        this.visitToken(node." + child.name + "());\r\n";
+                    result += "        this.visitToken(node." + child.name + ");\r\n";
                 }
             }
             else if (child.isList) {
-                result += "        this.visitList(node." + child.name + "());\r\n";
+                result += "        this.visitList(node." + child.name + ");\r\n";
             }
             else if (child.isSeparatedList) {
-                result += "        this.visitSeparatedList(node." + child.name + "());\r\n";
+                result += "        this.visitSeparatedList(node." + child.name + ");\r\n";
             }
             else if (isNodeOrToken(child)) {
                 if (child.isOptional) {
-                    result += "        this.visitOptionalNodeOrToken(node." + child.name + "());\r\n";
+                    result += "        this.visitOptionalNodeOrToken(node." + child.name + ");\r\n";
                 }
                 else {
-                    result += "        this.visitNodeOrToken(node." + child.name + "());\r\n";
+                    result += "        this.visitNodeOrToken(node." + child.name + ");\r\n";
                 }
             }
             else if (child.type !== "SyntaxKind") {
                 if (child.isOptional) {
-                    result += "        this.visitOptionalNode(node." + child.name + "());\r\n";
+                    result += "        this.visitOptionalNode(node." + child.name + ");\r\n";
                 }
                 else {
-                    result += "        this.visitNode(node." + child.name + "());\r\n";
+                    result += "        this.visitNode(node." + child.name + ");\r\n";
                 }
             }
         }
@@ -2816,6 +2868,9 @@ function generateFactory(): string {
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
+        if (definition.isAbstract) {
+            continue;
+        }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
 
         for (var j = 0; j < definition.children.length; j++) {
@@ -2837,6 +2892,9 @@ function generateFactory(): string {
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
+        if (definition.isAbstract) {
+            continue;
+        }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
 
         for (var j = 0; j < definition.children.length; j++) {
@@ -2869,6 +2927,9 @@ function generateFactory(): string {
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
+        if (definition.isAbstract) {
+            continue;
+        }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
 
         for (var j = 0; j < definition.children.length; j++) {

@@ -12,10 +12,10 @@ module Syntax {
             var parentPositionedNode = positionedToken.containingNode();
             var parentNode = parentPositionedNode.node();
 
-            if (parentNode.kind() === SyntaxKind.QualifiedName && (<QualifiedNameSyntax>parentNode).right() === token) {
+            if (parentNode.kind() === SyntaxKind.QualifiedName && (<QualifiedNameSyntax>parentNode).right === token) {
                 return parentPositionedNode;
             }
-            else if (parentNode.kind() === SyntaxKind.MemberAccessExpression && (<MemberAccessExpressionSyntax>parentNode).name() === token) {
+            else if (parentNode.kind() === SyntaxKind.MemberAccessExpression && (<MemberAccessExpressionSyntax>parentNode).name === token) {
                 return parentPositionedNode;
             }
         }
@@ -57,9 +57,9 @@ module Syntax {
         if (parent !== null) {
             switch (parent.kind()) {
                 case SyntaxKind.ArrayType:
-                    return (<ArrayTypeSyntax>parent).type() === nodeOrToken;
+                    return (<ArrayTypeSyntax>parent).type === nodeOrToken;
                 case SyntaxKind.CastExpression:
-                    return (<CastExpressionSyntax>parent).type() === nodeOrToken;
+                    return (<CastExpressionSyntax>parent).type === nodeOrToken;
                 case SyntaxKind.TypeAnnotation:
                 case SyntaxKind.ExtendsClause:
                 case SyntaxKind.ImplementsClause:
@@ -235,22 +235,22 @@ module Syntax {
 
     export function isSuperInvocationExpression(node: IExpressionSyntax): bool {
         return node.kind() === SyntaxKind.InvocationExpression &&
-            (<InvocationExpressionSyntax>node).expression().kind() === SyntaxKind.SuperKeyword;
+            (<InvocationExpressionSyntax>node).expression.kind() === SyntaxKind.SuperKeyword;
     }
 
     export function isSuperInvocationExpressionStatement(node: SyntaxNode): bool {
         return node.kind() === SyntaxKind.ExpressionStatement &&
-            isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression());
+            isSuperInvocationExpression((<ExpressionStatementSyntax>node).expression);
     }
 
     export function isSuperMemberAccessExpression(node: IExpressionSyntax): bool {
         return node.kind() === SyntaxKind.MemberAccessExpression &&
-            (<MemberAccessExpressionSyntax>node).expression().kind() === SyntaxKind.SuperKeyword;
+            (<MemberAccessExpressionSyntax>node).expression.kind() === SyntaxKind.SuperKeyword;
     }
 
     export function isSuperMemberAccessInvocationExpression(node: SyntaxNode): bool {
         return node.kind() === SyntaxKind.InvocationExpression &&
-            isSuperMemberAccessExpression((<InvocationExpressionSyntax>node).expression());
+            isSuperMemberAccessExpression((<InvocationExpressionSyntax>node).expression);
     }
 
     export function assignmentExpression(left: IExpressionSyntax, token: ISyntaxToken, right: IExpressionSyntax): BinaryExpressionSyntax {

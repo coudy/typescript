@@ -193,8 +193,8 @@ module TypeScript {
 
         private hasTopLevelImportOrExport(node: SourceUnitSyntax): bool {
             // TODO: implement this.
-            for (var i = 0, n = node.moduleElements().childCount(); i < n; i++) {
-                var moduleElement = node.moduleElements().childAt(i);
+            for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+                var moduleElement = node.moduleElements.childAt(i);
 
                 var firstToken = moduleElement.firstToken();
                 if (firstToken !== null && firstToken.kind() === SyntaxKind.ExportKeyword) {
@@ -203,7 +203,7 @@ module TypeScript {
 
                 if (moduleElement.kind() === SyntaxKind.ImportDeclaration) {
                     var importDecl = <ImportDeclarationSyntax>moduleElement;
-                    if (importDecl.moduleReference().kind() === SyntaxKind.ExternalModuleReference) {
+                    if (importDecl.moduleReference.kind() === SyntaxKind.ExternalModuleReference) {
                         return true;
                     }
                 }
@@ -238,7 +238,7 @@ module TypeScript {
 
             var isParsingDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
 
-            var bod = this.visitSyntaxList(node.moduleElements());
+            var bod = this.visitSyntaxList(node.moduleElements);
 
             var topLevelMod: ModuleDeclaration = null;
             if (moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
@@ -289,23 +289,23 @@ module TypeScript {
         }
 
         private visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
-            var name = this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
-            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
+            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
 
-            var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : new ASTList();
-            var implementsList = node.implementsClause() ? node.implementsClause().accept(this) : new ASTList();
-            var members = this.visitSyntaxList(node.classElements());
+            var extendsList = node.extendsClause ? node.extendsClause.accept(this) : new ASTList();
+            var implementsList = node.implementsClause ? node.implementsClause.accept(this) : new ASTList();
+            var members = this.visitSyntaxList(node.classElements);
 
-            this.requiresExtendsBlock = this.requiresExtendsBlock || !!node.extendsClause();
+            this.requiresExtendsBlock = this.requiresExtendsBlock || !!node.extendsClause;
 
             var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
             this.setSpan(result, node);
 
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 result.varFlags |= VarFlags.Exported;
             }
 
-            if (node.declareKeyword()) {
+            if (node.declareKeyword) {
                 result.varFlags |= VarFlags.Ambient;
             }
 
@@ -327,16 +327,16 @@ module TypeScript {
             }
 
             var knownMemberNames: any = {};
-            for (var i = 0, n = node.classElements().childCount(); i < n; i++) {
-                var classElement = <IClassElementSyntax>node.classElements().childAt(i);
+            for (var i = 0, n = node.classElements.childCount(); i < n; i++) {
+                var classElement = <IClassElementSyntax>node.classElements.childAt(i);
 
                 if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
                     var variableDeclaration = <MemberVariableDeclarationSyntax>classElement;
-                    knownMemberNames[this.identifierFromToken(variableDeclaration.variableDeclarator().identifier(), /*isOptional:*/ false).actualText] = true;
+                    knownMemberNames[this.identifierFromToken(variableDeclaration.variableDeclarator.identifier, /*isOptional:*/ false).actualText] = true;
                 }
                 else if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
                     var functionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
-                    knownMemberNames[this.identifierFromToken(functionDeclaration.functionSignature().identifier(), /*isOptional:*/ false).actualText] = true;
+                    knownMemberNames[this.identifierFromToken(functionDeclaration.functionSignature.identifier, /*isOptional:*/ false).actualText] = true;
                 }
             }
 
@@ -346,21 +346,21 @@ module TypeScript {
         }
 
         private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
-            var name = this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
-            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
-            var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : null;
-            var members = this.visitSeparatedSyntaxList(node.body().typeMembers());
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
+            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+            var extendsList = node.extendsClause ? node.extendsClause.accept(this) : null;
+            var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
 
             var result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);
             this.setSpan(result, node);
 
-            //if (node.publicOrPrivateKeyword()) {
+            //if (node.publicOrPrivateKeyword) {
             //    result.varFlags |= VarFlags.Private;
             //}
             //if (hasFlag(modifiers, Modifiers.Public)) {
             //    result.varFlags |= VarFlags.Public;
             //}
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 result.varFlags |= VarFlags.Exported;
             }
 
@@ -370,8 +370,8 @@ module TypeScript {
         private visitExtendsClause(node: ExtendsClauseSyntax): ASTList {
             var result = new ASTList();
 
-            for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
-                var type = this.visitType(node.typeNames().nonSeparatorAt(i));
+            for (var i = 0, n = node.typeNames.nonSeparatorCount(); i < n; i++) {
+                var type = this.visitType(node.typeNames.nonSeparatorAt(i));
                 if (type.nodeType === NodeType.TypeRef) {
                     type = (<TypeReference>type).term;
                 }
@@ -385,8 +385,8 @@ module TypeScript {
         private visitImplementsClause(node: ImplementsClauseSyntax): ASTList {
             var result = new ASTList();
 
-            for (var i = 0, n = node.typeNames().nonSeparatorCount(); i < n; i++) {
-                var type = this.visitType(node.typeNames().nonSeparatorAt(i));
+            for (var i = 0, n = node.typeNames.nonSeparatorCount(); i < n; i++) {
+                var type = this.visitType(node.typeNames.nonSeparatorAt(i));
                 if (type.nodeType === NodeType.TypeRef) {
                     type = (<TypeReference>type).term;
                 }
@@ -400,14 +400,14 @@ module TypeScript {
         private getModuleNamesInReverse(node: ModuleDeclarationSyntax): ISyntaxToken[]{
             var result: ISyntaxToken[] = [];
 
-            if (node.stringLiteral() !== null) {
-                result.push(node.stringLiteral());
+            if (node.stringLiteral !== null) {
+                result.push(node.stringLiteral);
             }
             else {
-                var current = node.moduleName();
+                var current = node.moduleName;
                 while (current.kind() === SyntaxKind.QualifiedName) {
-                    result.push((<QualifiedNameSyntax>current).right());
-                    current = (<QualifiedNameSyntax>current).left();
+                    result.push((<QualifiedNameSyntax>current).right);
+                    current = (<QualifiedNameSyntax>current).left;
                 }
 
                 result.push(<ISyntaxToken>current);
@@ -426,14 +426,14 @@ module TypeScript {
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleDeclaration {
             this.pushDeclLists();
 
-            var members = this.visitSyntaxList(node.moduleElements());
+            var members = this.visitSyntaxList(node.moduleElements);
             var namesInReverse = this.getModuleNamesInReverse(node);
 
             var moduleDecl: ModuleDeclaration = null;
             for (var i = 0; i < namesInReverse.length; i++) {
                 var innerName = this.identifierFromToken(namesInReverse[i], /*isOptional:*/ false);
 
-                var moduleDecl = new ModuleDeclaration(innerName, members, this.topVarList(), this.spanFromToken(node.closeBraceToken()));
+                var moduleDecl = new ModuleDeclaration(innerName, members, this.topVarList(), this.spanFromToken(node.closeBraceToken));
                 this.setSpan(moduleDecl, node);
                 //innerDecl.preComments = preComments;
 
@@ -453,7 +453,7 @@ module TypeScript {
                 members.append(moduleDecl);
             }
 
-            if (node.declareKeyword()) {
+            if (node.declareKeyword) {
                 moduleDecl.modFlags |= ModuleFlags.Ambient;
             }
 
@@ -479,7 +479,7 @@ module TypeScript {
 
         private hasDotDotDotParameter(parameters: ISeparatedSyntaxList): bool {
             for (var i = 0, n = parameters.nonSeparatorCount(); i < n; i++) {
-                if ((<ParameterSyntax>parameters.nonSeparatorAt(i)).dotDotDotToken()) {
+                if ((<ParameterSyntax>parameters.nonSeparatorAt(i)).dotDotDotToken) {
                     return true;
                 }
             }
@@ -488,17 +488,17 @@ module TypeScript {
         }
 
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
-            var name = this.identifierFromToken(node.functionSignature().identifier(), !!node.functionSignature().questionToken());
-            var typeParameters = node.functionSignature().callSignature().typeParameterList() === null ? null : node.functionSignature().callSignature().typeParameterList().accept(this);
-            var parameters = node.functionSignature().callSignature().parameterList().accept(this);
+            var name = this.identifierFromToken(node.functionSignature.identifier, !!node.functionSignature.questionToken);
+            var typeParameters = node.functionSignature.callSignature.typeParameterList === null ? null : node.functionSignature.callSignature.typeParameterList.accept(this);
+            var parameters = node.functionSignature.callSignature.parameterList.accept(this);
 
-            var returnType = node.functionSignature().callSignature().typeAnnotation()
-                ? node.functionSignature().callSignature().typeAnnotation().accept(this)
+            var returnType = node.functionSignature.callSignature.typeAnnotation
+                ? node.functionSignature.callSignature.typeAnnotation.accept(this)
                 : null;
 
             this.pushDeclLists();
 
-            var bod = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var bod = node.block ? this.visitSyntaxList(node.block.statements) : null;
             if (bod) {
                 bod.append(new EndCode());
             }
@@ -512,19 +512,19 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
 
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
             
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 funcDecl.fncFlags |= FncFlags.Exported;
             }
 
-            if (node.declareKeyword()) {
+            if (node.declareKeyword) {
                 funcDecl.fncFlags |= FncFlags.Ambient;
             }
 
-            if (node.semicolonToken()) {
+            if (node.semicolonToken) {
                 funcDecl.fncFlags |= FncFlags.Signature;
             }
 
@@ -532,9 +532,9 @@ module TypeScript {
         }
 
         private visitEnumDeclaration(enumDeclaration: EnumDeclarationSyntax): ModuleDeclaration {
-            var name = this.identifierFromToken(enumDeclaration.identifier(), /*isOptional:*/ false);
+            var name = this.identifierFromToken(enumDeclaration.identifier, /*isOptional:*/ false);
 
-            var membersMinChar = this.start(enumDeclaration.openBraceToken());
+            var membersMinChar = this.start(enumDeclaration.openBraceToken);
             this.pushDeclLists();
 
             var members = new ASTList();
@@ -551,24 +551,24 @@ module TypeScript {
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
 
-            for (var i = 0, n = enumDeclaration.variableDeclarators().nonSeparatorCount(); i < n; i++) {
-                var variableDeclarator = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators().nonSeparatorAt(i);
+            for (var i = 0, n = enumDeclaration.variableDeclarators.nonSeparatorCount(); i < n; i++) {
+                var variableDeclarator = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators.nonSeparatorAt(i);
 
                 var minChar = this.start(variableDeclarator);
                 var limChar;
-                var memberName: Identifier = this.identifierFromToken(variableDeclarator.identifier(), /*isOptional:*/ false);
+                var memberName: Identifier = this.identifierFromToken(variableDeclarator.identifier, /*isOptional:*/ false);
                 var memberValue: AST = null;
                 var preComments = null;
                 var postComments = null;
 
-                limChar = this.start(variableDeclarator.identifier());
-                preComments = this.convertComments(variableDeclarator.identifier().trailingTrivia());
+                limChar = this.start(variableDeclarator.identifier);
+                preComments = this.convertComments(variableDeclarator.identifier.trailingTrivia());
                 
-                if (variableDeclarator.equalsValueClause() !== null) {
-                    postComments = this.convertComments(variableDeclarator.equalsValueClause().equalsToken().trailingTrivia());
-                    memberValue = variableDeclarator.equalsValueClause().accept(this);
+                if (variableDeclarator.equalsValueClause !== null) {
+                    postComments = this.convertComments(variableDeclarator.equalsValueClause.equalsToken.trailingTrivia());
+                    memberValue = variableDeclarator.equalsValueClause.accept(this);
                     lastValue = <NumberLiteral>memberValue;
-                    limChar = this.end(variableDeclarator.equalsValueClause());
+                    limChar = this.end(variableDeclarator.equalsValueClause);
                 }
                 else {
                     if (lastValue == null) {
@@ -628,8 +628,8 @@ module TypeScript {
             }
 
             var endingToken = new ASTSpan();
-            endingToken.minChar = this.start(enumDeclaration.closeBraceToken());
-            endingToken.limChar = this.end(enumDeclaration.closeBraceToken());
+            endingToken.minChar = this.start(enumDeclaration.closeBraceToken);
+            endingToken.limChar = this.end(enumDeclaration.closeBraceToken);
 
             members.limChar = endingToken.limChar;
             var modDecl = new ModuleDeclaration(name, members, this.topVarList(), endingToken);
@@ -646,19 +646,19 @@ module TypeScript {
             var minChar = this.start(importDeclaration);
             var isDynamicImport = false;
 
-            name = this.identifierFromToken(importDeclaration.identifier(), /*isOptional:*/ false);
+            name = this.identifierFromToken(importDeclaration.identifier, /*isOptional:*/ false);
 
-            var aliasPreComments = this.convertTrailingComments(importDeclaration.equalsToken());
+            var aliasPreComments = this.convertTrailingComments(importDeclaration.equalsToken);
 
-            var moduleReference = importDeclaration.moduleReference();
+            var moduleReference = importDeclaration.moduleReference;
             var limChar = this.start(moduleReference);
             if (moduleReference.kind() === SyntaxKind.ExternalModuleReference) {
-                alias = this.identifierFromToken((<ExternalModuleReferenceSyntax>moduleReference).stringLiteral(), /*isOptional:*/ false);
+                alias = this.identifierFromToken((<ExternalModuleReferenceSyntax>moduleReference).stringLiteral, /*isOptional:*/ false);
                 isDynamicImport = true;
                 alias.preComments = aliasPreComments;
             }
             else {
-                alias = (<ModuleNameModuleReferenceSyntax>moduleReference).moduleName().accept(this);
+                alias = (<ModuleNameModuleReferenceSyntax>moduleReference).moduleName.accept(this);
                 limChar = this.end(moduleReference);
             }
 
@@ -672,7 +672,7 @@ module TypeScript {
         }
 
         private visitVariableStatement(node: VariableStatementSyntax): AST {
-            var varList = node.variableDeclaration().accept(this);
+            var varList = node.variableDeclaration.accept(this);
 
             if (varList.nodeType === NodeType.VarDecl) {
                 varDecl = <VarDecl>varList;
@@ -683,16 +683,16 @@ module TypeScript {
             for (var i = 0, n = varList.members.length; i < n; i++) {
                 var varDecl = <VarDecl>varList.members[i];
 
-                if (node.exportKeyword()) {
+                if (node.exportKeyword) {
                     varDecl.varFlags |= VarFlags.Exported;
                 }
 
-                if (node.declareKeyword()) {
+                if (node.declareKeyword) {
                     varDecl.varFlags |= VarFlags.Ambient;
                 }
             }
 
-            if (node.variableDeclaration().variableDeclarators().nonSeparatorCount() === 1) {
+            if (node.variableDeclaration.variableDeclarators.nonSeparatorCount() === 1) {
                 return varList.members[0];
             }
             else {
@@ -704,7 +704,7 @@ module TypeScript {
         }
 
         private visitVariableDeclaration(node: VariableDeclarationSyntax): AST {
-            var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators());
+            var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators);
             
             for (var i = 0; i < variableDecls.members.length; i++) {
                 (<BoundDecl>variableDecls.members[i]).nestingLevel = i;
@@ -718,14 +718,14 @@ module TypeScript {
         }
 
         private visitVariableDeclarator(node: VariableDeclaratorSyntax): VarDecl {
-            var name = this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             var result = new VarDecl(name, 0);
             this.setSpan(result, node);
 
             this.topVarList().append(result);
 
-            if (node.equalsValueClause()) {
-                result.init = node.equalsValueClause().accept(this);
+            if (node.equalsValueClause) {
+                result.init = node.equalsValueClause.accept(this);
 
                 if (result.init.nodeType == NodeType.FuncDecl) {
                     var funcDecl = <FuncDecl>result.init;
@@ -733,8 +733,8 @@ module TypeScript {
                 }
             }
 
-            if (node.typeAnnotation()) {
-                result.typeExpr = node.typeAnnotation().accept(this);
+            if (node.typeAnnotation) {
+                result.typeExpr = node.typeAnnotation.accept(this);
             }
             // TODO: more flags
 
@@ -742,7 +742,7 @@ module TypeScript {
         }
 
         private visitEqualsValueClause(node: EqualsValueClauseSyntax): AST {
-            return node.value().accept(this);
+            return node.value.accept(this);
         }
 
         private getUnaryExpressionNodeType(kind: SyntaxKind): NodeType {
@@ -761,15 +761,15 @@ module TypeScript {
         private visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): UnaryExpression {
             var result = new UnaryExpression(
                 this.getUnaryExpressionNodeType(node.kind()),
-                node.operand().accept(this));
+                node.operand.accept(this));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
-            var expressions = this.visitSeparatedSyntaxList(node.expressions());
-            if (node.expressions().childCount() > 0 && node.expressions().childAt(node.expressions().childCount() - 1).kind() === SyntaxKind.CommaToken) {
+            var expressions = this.visitSeparatedSyntaxList(node.expressions);
+            if (node.expressions.childCount() > 0 && node.expressions.childAt(node.expressions.childCount() - 1).kind() === SyntaxKind.CommaToken) {
                 expressions.append(new AST(NodeType.EmptyExpr));
             }
 
@@ -787,7 +787,7 @@ module TypeScript {
         }
 
         private visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): AST {
-            var result = node.expression().accept(this);
+            var result = node.expression.accept(this);
             result.isParenthesized = true;
 
             return result;
@@ -799,7 +799,7 @@ module TypeScript {
             if (body.kind() === SyntaxKind.Block) {
                 var block = <BlockSyntax>body;
 
-                statements = this.visitSyntaxList(block.statements());
+                statements = this.visitSyntaxList(block.statements);
             }
             else {
                 statements = new ASTList();
@@ -818,12 +818,12 @@ module TypeScript {
 
         private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FuncDecl {
             var parameters = new ASTList();
-            parameters.append(new ArgDecl(this.identifierFromToken(node.identifier(), /*isOptional:*/ false)));
+            parameters.append(new ArgDecl(this.identifierFromToken(node.identifier, /*isOptional:*/ false)));
             var returnType = null;
 
             this.pushDeclLists();
 
-            var statements = this.getArrowFunctionStatements(node.body());
+            var statements = this.getArrowFunctionStatements(node.body);
 
             var result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
@@ -841,13 +841,13 @@ module TypeScript {
         }
 
         private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FuncDecl {
-            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
-            var parameters = node.callSignature().parameterList().accept(this);
-            var returnType = node.callSignature().typeAnnotation() ? node.callSignature().typeAnnotation().accept(this) : null;
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
+            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
             
             this.pushDeclLists();
 
-            var statements = this.getArrowFunctionStatements(node.body());
+            var statements = this.getArrowFunctionStatements(node.body);
 
             var result = new FuncDecl(null, statements, /*isConstructor:*/ false, typeParameters, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
@@ -860,7 +860,7 @@ module TypeScript {
             result.returnTypeAnnotation = returnType;
             result.fncFlags |= FncFlags.IsFunctionExpression;
             result.fncFlags |= FncFlags.IsFatArrowFunction;
-            result.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
 
             return result;
         }
@@ -875,14 +875,14 @@ module TypeScript {
         }
 
         private visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
-            var left = this.visitType(node.left());
+            var left = this.visitType(node.left);
             if (left.nodeType === NodeType.TypeRef) {
                 left = (<TypeReference>left).term;
             }
 
             var result = new BinaryExpression(NodeType.Dot,
                 left,
-                this.identifierFromToken(node.right(), /*isOptional:*/ false));
+                this.identifierFromToken(node.right, /*isOptional:*/ false));
             this.setSpan(result, node);
 
             return new TypeReference(result, 0);
@@ -891,8 +891,8 @@ module TypeScript {
         private visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
             var result = new ASTList();
 
-            for (var i = 0, n = node.typeArguments().nonSeparatorCount(); i < n; i++) {
-                result.append(this.visitType(node.typeArguments().nonSeparatorAt(i)));
+            for (var i = 0, n = node.typeArguments.nonSeparatorCount(); i < n; i++) {
+                result.append(this.visitType(node.typeArguments.nonSeparatorAt(i)));
             }
 
             return result;
@@ -903,15 +903,15 @@ module TypeScript {
         }
 
         private visitFunctionType(node: FunctionTypeSyntax): TypeReference {
-            var parameters = node.parameterList().accept(this);
-            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
+            var parameters = node.parameterList.accept(this);
+            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
             var result = new FuncDecl(null, null, false, typeParameters, parameters, null, null, null, NodeType.FuncDecl);
             this.setSpan(result, node);
             
-            result.returnTypeAnnotation = node.type() ? this.visitType(node.type()) : null;
+            result.returnTypeAnnotation = node.type ? this.visitType(node.type) : null;
             // funcDecl.variableArgList = variableArgList;
             result.fncFlags |= FncFlags.Signature;
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
             var typeRef = new TypeReference(result, 0);
             this.setSpan(typeRef, node);
@@ -923,7 +923,7 @@ module TypeScript {
             var result = new InterfaceDeclaration(
                 new Identifier("_anonymous"),
                 null,
-                this.visitSeparatedSyntaxList(node.typeMembers()),
+                this.visitSeparatedSyntaxList(node.typeMembers),
                 null, null);
             this.setSpan(result, node);
 
@@ -938,7 +938,7 @@ module TypeScript {
             var current: ITypeSyntax = node;
             while (current.kind() === SyntaxKind.ArrayType) {
                 count++;
-                current = (<ArrayTypeSyntax>current).type();
+                current = (<ArrayTypeSyntax>current).type;
             }
 
             var underlying = this.visitType(current);
@@ -953,36 +953,36 @@ module TypeScript {
         }
 
         private visitGenericType(node: GenericTypeSyntax): TypeReference {
-            var underlying = this.visitType(node.name());
+            var underlying = this.visitType(node.name);
             if (underlying.nodeType === NodeType.TypeRef) {
                 underlying = (<TypeReference>underlying).term;
             }
 
-            var genericType = new GenericType(underlying, node.typeArgumentList().accept(this));
+            var genericType = new GenericType(underlying, node.typeArgumentList.accept(this));
             return new TypeReference(genericType, 0);
         }
         
         private visitTypeAnnotation(node: TypeAnnotationSyntax): AST {
-            return this.visitType(node.type());
+            return this.visitType(node.type);
         }
 
         private visitBlock(node: BlockSyntax): Block {
-            var result = new Block(this.visitSyntaxList(node.statements()), /*isStatementBlock:*/ true);
+            var result = new Block(this.visitSyntaxList(node.statements), /*isStatementBlock:*/ true);
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitParameter(node: ParameterSyntax): ArgDecl {
-            var result = new ArgDecl(this.identifierFromToken(node.identifier(), !!node.questionToken()));
+            var result = new ArgDecl(this.identifierFromToken(node.identifier, !!node.questionToken));
             this.setSpan(result, node);
 
-            result.isOptional = !!node.questionToken();
+            result.isOptional = !!node.questionToken;
             
-            if (node.publicOrPrivateKeyword()) {
+            if (node.publicOrPrivateKeyword) {
                 result.varFlags |= VarFlags.Property;
 
-                if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PublicKeyword) {
+                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PublicKeyword) {
                     result.varFlags |= VarFlags.Public;
                 }
                 else {
@@ -990,22 +990,22 @@ module TypeScript {
                 }
             }
 
-            if (node.equalsValueClause()) {
-                result.init = node.equalsValueClause().accept(this);
+            if (node.equalsValueClause) {
+                result.init = node.equalsValueClause.accept(this);
             }
 
-            if (node.typeAnnotation()) {
-                result.typeExpr = node.typeAnnotation().accept(this);
+            if (node.typeAnnotation) {
+                result.typeExpr = node.typeAnnotation.accept(this);
             }
             
             return result;
         }
 
         private visitMemberAccessExpression(node: MemberAccessExpressionSyntax): BinaryExpression {
-            var expression: AST = node.expression().accept(this);
+            var expression: AST = node.expression.accept(this);
             expression.flags |= ASTFlags.DotLHS;
 
-            var result = new BinaryExpression(NodeType.Dot, expression, this.identifierFromToken(node.name(), /*isOptional:*/ false));
+            var result = new BinaryExpression(NodeType.Dot, expression, this.identifierFromToken(node.name, /*isOptional:*/ false));
             this.setSpan(result, node);
 
             return result;
@@ -1013,7 +1013,7 @@ module TypeScript {
 
         private visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): UnaryExpression {
             var result = new UnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.IncPost : NodeType.DecPost,
-                node.operand().accept(this));
+                node.operand.accept(this));
             this.setSpan(result, node);
 
             return result;
@@ -1021,29 +1021,29 @@ module TypeScript {
 
         private visitElementAccessExpression(node: ElementAccessExpressionSyntax): BinaryExpression {
             var result = new BinaryExpression(NodeType.Index,
-                node.expression().accept(this),
-                node.argumentExpression().accept(this));
+                node.expression.accept(this),
+                node.argumentExpression.accept(this));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitInvocationExpression(node: InvocationExpressionSyntax): CallExpression {
-            var typeArguments = node.argumentList().typeArgumentList() !== null
-                ? node.argumentList().typeArgumentList().accept(this)
+            var typeArguments = node.argumentList.typeArgumentList !== null
+                ? node.argumentList.typeArgumentList.accept(this)
                 : null;
 
             var result = new CallExpression(NodeType.Call,
-                node.expression().accept(this),
+                node.expression.accept(this),
                 typeArguments,
-                node.argumentList().accept(this));
+                node.argumentList.accept(this));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitArgumentList(node: ArgumentListSyntax): ASTList {
-            return this.visitSeparatedSyntaxList(node.arguments());
+            return this.visitSeparatedSyntaxList(node.arguments);
         }
 
         private getBinaryExpressionNodeType(node: BinaryExpressionSyntax): NodeType {
@@ -1091,8 +1091,8 @@ module TypeScript {
 
         private visitBinaryExpression(node: BinaryExpressionSyntax): BinaryExpression {
             var nodeType = this.getBinaryExpressionNodeType(node);
-            var left = node.left().accept(this);
-            var right = node.right().accept(this);
+            var left = node.left.accept(this);
+            var right = node.right.accept(this);
 
             var result = new BinaryExpression(nodeType, left, right);
             this.setSpan(result, node);
@@ -1110,28 +1110,28 @@ module TypeScript {
         
         private visitConditionalExpression(node: ConditionalExpressionSyntax): ConditionalExpression {
             var result = new ConditionalExpression(
-                node.condition().accept(this),
-                node.whenTrue().accept(this),
-                node.whenFalse().accept(this));
+                node.condition.accept(this),
+                node.whenTrue.accept(this),
+                node.whenFalse.accept(this));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitConstructSignature(node: ConstructSignatureSyntax): FuncDecl {
-            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
-            var parameters = node.callSignature().parameterList().accept(this);
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
 
             var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
-            result.returnTypeAnnotation = node.callSignature().typeAnnotation()
-                ? node.callSignature().typeAnnotation().accept(this)
+            result.returnTypeAnnotation = node.callSignature.typeAnnotation
+                ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
             result.hint = "_construct";
             result.fncFlags |= FncFlags.ConstructMember;
-            result.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
 
             var scopeList = this.topScopeList();
             scopeList.append(result);
@@ -1140,16 +1140,16 @@ module TypeScript {
         }
 
         private visitFunctionSignature(node: FunctionSignatureSyntax): FuncDecl {
-            var name = this.identifierFromToken(node.identifier(), !!node.questionToken());
-            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
-            var parameters = node.callSignature().parameterList().accept(this);
+            var name = this.identifierFromToken(node.identifier, !!node.questionToken);
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
 
             var result = new FuncDecl(name, new ASTList(), false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
-            result.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
-            result.returnTypeAnnotation = node.callSignature().typeAnnotation()
-                ? node.callSignature().typeAnnotation().accept(this)
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
+            result.returnTypeAnnotation = node.callSignature.typeAnnotation
+                ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
             var scopeList = this.topScopeList();
@@ -1163,14 +1163,14 @@ module TypeScript {
             this.setSpan(name, node);
 
             var parameters = new ASTList();
-            parameters.append(node.parameter().accept(this));
+            parameters.append(node.parameter.accept(this));
             
             var result = new FuncDecl(name, new ASTList(), /*isConstructor:*/ false, null, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
-            result.variableArgList = !!node.parameter().dotDotDotToken();
-            result.returnTypeAnnotation = node.typeAnnotation()
-                ? node.typeAnnotation().accept(this)
+            result.variableArgList = !!node.parameter.dotDotDotToken;
+            result.returnTypeAnnotation = node.typeAnnotation
+                ? node.typeAnnotation.accept(this)
                 : null;
 
             result.fncFlags |= FncFlags.IndexerMember;
@@ -1182,13 +1182,13 @@ module TypeScript {
         }
 
         private visitPropertySignature(node: PropertySignatureSyntax): any {
-            var name = this.identifierFromToken(node.identifier(), !!node.questionToken());
+            var name = this.identifierFromToken(node.identifier, !!node.questionToken);
 
             var result = new VarDecl(name, 0);
             this.setSpan(result, node);
 
-            if (node.typeAnnotation()) {
-                result.typeExpr = node.typeAnnotation().accept(this);
+            if (node.typeAnnotation) {
+                result.typeExpr = node.typeAnnotation.accept(this);
             }
 
             result.varFlags |= VarFlags.Property;
@@ -1196,19 +1196,19 @@ module TypeScript {
         }
 
         private visitParameterList(node: ParameterListSyntax): ASTList {
-            return this.visitSeparatedSyntaxList(node.parameters());
+            return this.visitSeparatedSyntaxList(node.parameters);
         }
 
         private visitCallSignature(node: CallSignatureSyntax): any {
-            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
-            var parameters = node.parameterList().accept(this);
+            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+            var parameters = node.parameterList.accept(this);
 
             var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
-            result.returnTypeAnnotation = node.typeAnnotation()
-                ? node.typeAnnotation().accept(this)
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
+            result.returnTypeAnnotation = node.typeAnnotation
+                ? node.typeAnnotation.accept(this)
                 : null;
 
             result.hint = "_call";
@@ -1221,40 +1221,40 @@ module TypeScript {
         }
 
         private visitTypeParameterList(node: TypeParameterListSyntax): ASTList {
-            return this.visitSeparatedSyntaxList(node.typeParameters());
+            return this.visitSeparatedSyntaxList(node.typeParameters);
         }
 
         private visitTypeParameter(node: TypeParameterSyntax): TypeParameter {
             var result = new TypeParameter(
-                this.identifierFromToken(node.identifier(), /*isOptional:*/ false),
-                node.constraint() === null ? null : node.constraint().accept(this));
+                this.identifierFromToken(node.identifier, /*isOptional:*/ false),
+                node.constraint === null ? null : node.constraint.accept(this));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitConstraint(node: ConstraintSyntax): any {
-            return this.visitType(node.type());
+            return this.visitType(node.type);
         }
 
         private visitIfStatement(node: IfStatementSyntax): IfStatement {
-            var result = new IfStatement(node.condition().accept(this));
+            var result = new IfStatement(node.condition.accept(this));
             this.setSpan(result, node);
 
-            result.thenBod = node.statement().accept(this);
-            if (node.elseClause() !== null) {
-                result.elseBod = node.elseClause().accept(this);
+            result.thenBod = node.statement.accept(this);
+            if (node.elseClause !== null) {
+                result.elseBod = node.elseClause.accept(this);
             }
 
             return result;
         }
 
         private visitElseClause(node: ElseClauseSyntax): Statement {
-            return node.statement().accept(this);
+            return node.statement.accept(this);
         }
 
         private visitExpressionStatement(node: ExpressionStatementSyntax): AST {
-            var result = node.expression().accept(this);
+            var result = node.expression.accept(this);
             this.setSpan(result, node);
 
             result.flags |= ASTFlags.IsStatement;
@@ -1263,11 +1263,11 @@ module TypeScript {
         }
 
         private visitConstructorDeclaration(node: ConstructorDeclarationSyntax): any {
-            var parameters = node.parameterList().accept(this);
+            var parameters = node.parameterList.accept(this);
 
             this.pushDeclLists();
 
-            var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var statements = node.block ? this.visitSyntaxList(node.block.statements) : null;
             if (statements) {
                 statements.append(new EndCode());
             }
@@ -1280,7 +1280,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(result);
 
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
             // constructorFuncDecl.preComments = preComments;
             //if (requiresSignature && !isAmbient) {
             //    constructorFuncDecl.isOverload = true;
@@ -1293,7 +1293,7 @@ module TypeScript {
             //    constructorFuncDecl.fncFlags |= FncFlags.Ambient;
             //}
 
-            if (node.semicolonToken()) {
+            if (node.semicolonToken) {
                 result.fncFlags |= FncFlags.Signature;
             }
 
@@ -1318,13 +1318,13 @@ module TypeScript {
         }
 
         private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FuncDecl {
-            var name = this.identifierFromToken(node.functionSignature().identifier(), !!node.functionSignature().questionToken());
-            var typeParameters = node.functionSignature().callSignature().typeParameterList() === null ? null : node.functionSignature().callSignature().typeParameterList().accept(this);
-            var parameters = node.functionSignature().callSignature().parameterList().accept(this);
+            var name = this.identifierFromToken(node.functionSignature.identifier, !!node.functionSignature.questionToken);
+            var typeParameters = node.functionSignature.callSignature.typeParameterList === null ? null : node.functionSignature.callSignature.typeParameterList.accept(this);
+            var parameters = node.functionSignature.callSignature.parameterList.accept(this);
 
             this.pushDeclLists();
 
-            var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var statements = node.block ? this.visitSyntaxList(node.block.statements) : null;
             if (statements) {
                 statements.append(new EndCode());
             }
@@ -1337,17 +1337,17 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(result);
 
-            result.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
-            result.returnTypeAnnotation = node.functionSignature().callSignature().typeAnnotation()
-                ? node.functionSignature().callSignature().typeAnnotation().accept(this)
+            result.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
+            result.returnTypeAnnotation = node.functionSignature.callSignature.typeAnnotation
+                ? node.functionSignature.callSignature.typeAnnotation.accept(this)
                 : null;
 
-            if (node.semicolonToken()) {
+            if (node.semicolonToken) {
                 result.fncFlags |= FncFlags.Signature;
             }
 
-            if (node.publicOrPrivateKeyword()) {
-                if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PrivateKeyword) {
+            if (node.publicOrPrivateKeyword) {
+                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
                     result.fncFlags |= FncFlags.Private;
                 }
                 else {
@@ -1355,7 +1355,7 @@ module TypeScript {
                 }
             }
 
-            if (node.staticKeyword()) {
+            if (node.staticKeyword) {
                 result.fncFlags |= FncFlags.Static;
             }
 
@@ -1363,12 +1363,12 @@ module TypeScript {
         }
 
         private visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax): FuncDecl {
-            var name = this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
-            var parameters = node.parameterList().accept(this);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
+            var parameters = node.parameterList.accept(this);
 
             this.pushDeclLists();
 
-            var statements = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var statements = node.block ? this.visitSyntaxList(node.block.statements) : null;
             if (statements) {
                 statements.append(new EndCode());
             }
@@ -1381,10 +1381,10 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(result);
 
-            result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
+            result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
-            if (node.publicOrPrivateKeyword()) {
-                if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PrivateKeyword) {
+            if (node.publicOrPrivateKeyword) {
+                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
                     result.fncFlags |= FncFlags.Private;
                 }
                 else {
@@ -1392,7 +1392,7 @@ module TypeScript {
                 }
             }
 
-            if (node.staticKeyword()) {
+            if (node.staticKeyword) {
                 result.fncFlags |= FncFlags.Static;
             }
 
@@ -1405,8 +1405,8 @@ module TypeScript {
             result.fncFlags |= FncFlags.GetAccessor;
             result.hint = "get" + result.name.actualText;
 
-            result.returnTypeAnnotation = node.typeAnnotation()
-                ? node.typeAnnotation().accept(this)
+            result.returnTypeAnnotation = node.typeAnnotation
+                ? node.typeAnnotation.accept(this)
                 : null;
 
             return result;
@@ -1422,24 +1422,24 @@ module TypeScript {
         }
 
         private visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VarDecl {
-            var name = this.identifierFromToken(node.variableDeclarator().identifier(), /*isOptional:*/ false);
+            var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false);
             var varDecl = new VarDecl(name, 0);
-            this.setSpan(varDecl, node.variableDeclarator());
+            this.setSpan(varDecl, node.variableDeclarator);
 
-            if (node.variableDeclarator().typeAnnotation()) {
-                varDecl.typeExpr = node.variableDeclarator().typeAnnotation().accept(this);
+            if (node.variableDeclarator.typeAnnotation) {
+                varDecl.typeExpr = node.variableDeclarator.typeAnnotation.accept(this);
             }
 
-            if (node.variableDeclarator().equalsValueClause()) {
-                varDecl.init = node.variableDeclarator().equalsValueClause().accept(this);
+            if (node.variableDeclarator.equalsValueClause) {
+                varDecl.init = node.variableDeclarator.equalsValueClause.accept(this);
             }
 
-            if (node.staticKeyword()) {
+            if (node.staticKeyword) {
                 varDecl.varFlags |= VarFlags.Static;
             }
 
-            if (node.publicOrPrivateKeyword()) {
-                if (node.publicOrPrivateKeyword().kind() === SyntaxKind.PrivateKeyword) {
+            if (node.publicOrPrivateKeyword) {
+                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
                     varDecl.varFlags |= VarFlags.Private;
                 }
                 else {
@@ -1460,7 +1460,7 @@ module TypeScript {
         }
 
         private visitThrowStatement(node: ThrowStatementSyntax): UnaryExpression {
-            var result = new UnaryExpression(NodeType.Throw, node.expression().accept(this));
+            var result = new UnaryExpression(NodeType.Throw, node.expression.accept(this));
             this.setSpan(result, node);
             
             return result;
@@ -1470,15 +1470,15 @@ module TypeScript {
             var result = new ReturnStatement();
             this.setSpan(result, node);
 
-            if (node.expression() !== null) {
-                result.returnExpression = node.expression().accept(this);
+            if (node.expression !== null) {
+                result.returnExpression = node.expression.accept(this);
             }
 
             return result;
         }
 
         private visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): CallExpression {
-            var expression = node.expression().accept(this);
+            var expression = node.expression.accept(this);
             if (expression.nodeType === NodeType.TypeRef) {
                 var typeRef = <TypeReference>expression;
 
@@ -1494,24 +1494,24 @@ module TypeScript {
 
             var result = new CallExpression(NodeType.New,
                 expression,
-                node.argumentList() === null || node.argumentList().typeArgumentList() === null ? null : node.argumentList().typeArgumentList().accept(this),
-                node.argumentList() === null ? null : node.argumentList().accept(this));
+                node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this),
+                node.argumentList === null ? null : node.argumentList.accept(this));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitSwitchStatement(node: SwitchStatementSyntax): SwitchStatement {
-            var result = new SwitchStatement(node.expression().accept(this));
+            var result = new SwitchStatement(node.expression.accept(this));
             this.setSpan(result, node);
 
             result.statement.minChar = this.start(node);
-            result.statement.limChar = this.end(node.closeParenToken());
+            result.statement.limChar = this.end(node.closeParenToken);
 
             result.caseList = new ASTList()
 
-            for (var i = 0, n = node.switchClauses().childCount(); i < n; i++) {
-                var switchClause = node.switchClauses().childAt(i);
+            for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
+                var switchClause = node.switchClauses.childAt(i);
                 var translated = switchClause.accept(this);
 
                 if (switchClause.kind() === SyntaxKind.DefaultSwitchClause) {
@@ -1528,8 +1528,8 @@ module TypeScript {
             var result = new CaseStatement();
             this.setSpan(result, node);
 
-            result.expr = node.expression().accept(this);
-            result.body = this.visitSyntaxList(node.statements());
+            result.expr = node.expression.accept(this);
+            result.body = this.visitSyntaxList(node.statements);
 
             return result;
         }
@@ -1538,7 +1538,7 @@ module TypeScript {
             var result = new CaseStatement();
             this.setSpan(result, node);
 
-            result.body = this.visitSyntaxList(node.statements());
+            result.body = this.visitSyntaxList(node.statements);
 
             return result;
         }
@@ -1547,8 +1547,8 @@ module TypeScript {
             var result = new Jump(NodeType.Break);
             this.setSpan(result, node);
 
-            if (node.identifier() !== null) {
-                result.target = this.valueText(node.identifier());
+            if (node.identifier !== null) {
+                result.target = this.valueText(node.identifier);
             }
 
             return result;
@@ -1558,80 +1558,80 @@ module TypeScript {
             var result = new Jump(NodeType.Continue);
             this.setSpan(result, node);
 
-            if (node.identifier() !== null) {
-                result.target = this.valueText(node.identifier());
+            if (node.identifier !== null) {
+                result.target = this.valueText(node.identifier);
             }
 
             return result;
         }
 
         private visitForStatement(node: ForStatementSyntax): ForStatement {
-            var init = node.variableDeclaration() !== null
-                ? node.variableDeclaration().accept(this)
-                : node.initializer() !== null
-                    ? node.initializer().accept(this)
+            var init = node.variableDeclaration !== null
+                ? node.variableDeclaration.accept(this)
+                : node.initializer !== null
+                    ? node.initializer.accept(this)
                     : null;
             var result = new ForStatement(init);
             this.setSpan(result, node);
 
-            result.cond = node.condition() === null ? null : node.condition().accept(this);
-            result.incr = node.incrementor() === null ? null : node.incrementor().accept(this);
-            result.body = node.statement().accept(this);
+            result.cond = node.condition === null ? null : node.condition.accept(this);
+            result.incr = node.incrementor === null ? null : node.incrementor.accept(this);
+            result.body = node.statement.accept(this);
 
             return result;
         }
 
         private visitForInStatement(node: ForInStatementSyntax): ForInStatement {
             var result = new ForInStatement(
-                node.variableDeclaration() === null ? node.left().accept(this) : node.variableDeclaration().accept(this),
-                node.expression().accept(this));
+                node.variableDeclaration === null ? node.left.accept(this) : node.variableDeclaration.accept(this),
+                node.expression.accept(this));
             this.setSpan(result, node);
 
             result.statement.minChar = this.start(node);
-            result.statement.limChar = this.end(node.closeParenToken());
+            result.statement.limChar = this.end(node.closeParenToken);
 
-            result.body = node.statement().accept(this);
+            result.body = node.statement.accept(this);
 
             return result;
         }
 
         private visitWhileStatement(node: WhileStatementSyntax): WhileStatement {
-            var result = new WhileStatement(node.condition().accept(this));
+            var result = new WhileStatement(node.condition.accept(this));
             this.setSpan(result, node);
 
-            result.body = node.statement().accept(this);
+            result.body = node.statement.accept(this);
 
             return result;
         }
 
         private visitWithStatement(node: WithStatementSyntax): WithStatement {
-            var result = new WithStatement(node.condition().accept(this));
+            var result = new WithStatement(node.condition.accept(this));
             this.setSpan(result, node);
 
-            result.body = node.statement().accept(this);
+            result.body = node.statement.accept(this);
 
             return result;
         }
 
         private visitCastExpression(node: CastExpressionSyntax): UnaryExpression {
-            var result = new UnaryExpression(NodeType.TypeAssertion, node.expression().accept(this));
+            var result = new UnaryExpression(NodeType.TypeAssertion, node.expression.accept(this));
             this.setSpan(result, node);
 
-            result.castTerm = this.visitType(node.type());
+            result.castTerm = this.visitType(node.type);
 
             return result;
         }
 
         private visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): UnaryExpression {
-            var result = new UnaryExpression(NodeType.ObjectLit, this.visitSeparatedSyntaxList(node.propertyAssignments()));
+            var result = new UnaryExpression(NodeType.ObjectLit, this.visitSeparatedSyntaxList(node.propertyAssignments));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
-            var left = node.propertyName().accept(this);
-            var right = node.expression().accept(this);
+            var left = node.propertyName.accept(this);
+            var right = node.expression.accept(this);
 
             var result = new BinaryExpression(NodeType.Member, left, right);
             this.setSpan(result, node);
@@ -1647,12 +1647,12 @@ module TypeScript {
         private visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
             var parameters = new ASTList();
 
-            var idHint = "get" + node.propertyName().text();
-            var name = this.identifierFromToken(node.propertyName(), /*isOptional:*/ false);
+            var idHint = "get" + node.propertyName.text();
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
 
             this.pushDeclLists();
 
-            var statements = this.visitSyntaxList(node.block().statements());
+            var statements = this.visitSyntaxList(node.block.statements);
             statements.append(new EndCode());
 
             var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
@@ -1675,18 +1675,18 @@ module TypeScript {
         }
 
         private visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
-            var parameter = new ArgDecl(this.identifierFromToken(node.parameterName(), /*isOptional:*/ false));
-            this.setSpan(parameter, node.parameterName());
+            var parameter = new ArgDecl(this.identifierFromToken(node.parameterName, /*isOptional:*/ false));
+            this.setSpan(parameter, node.parameterName);
 
             var parameters = new ASTList();
             parameters.append(parameter);
 
-            var idHint = "set" + node.propertyName().text();
-            var name = this.identifierFromToken(node.propertyName(), /*isOptional:*/ false);
+            var idHint = "set" + node.propertyName.text();
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
 
             this.pushDeclLists();
 
-            var statements = this.visitSyntaxList(node.block().statements());
+            var statements = this.visitSyntaxList(node.block.statements);
             statements.append(new EndCode());
 
             var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
@@ -1709,17 +1709,17 @@ module TypeScript {
         }
 
         private visitFunctionExpression(node: FunctionExpressionSyntax): any {
-            var name = node.identifier() === null ? null : this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
-            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
-            var parameters = node.callSignature().parameterList().accept(this);
+            var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false);
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
 
-            var returnType = node.callSignature().typeAnnotation()
-                ? node.callSignature().typeAnnotation().accept(this)
+            var returnType = node.callSignature.typeAnnotation
+                ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
             this.pushDeclLists();
 
-            var bod = node.block() ? this.visitSyntaxList(node.block().statements()) : null;
+            var bod = node.block ? this.visitSyntaxList(node.block.statements) : null;
             if (bod) {
                 bod.append(new EndCode());
             }
@@ -1733,7 +1733,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
 
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
 
@@ -1747,12 +1747,12 @@ module TypeScript {
         }
 
         private visitTryStatement(node: TryStatementSyntax): AST {
-            var tryPart: AST = new Try(node.block().accept(this));
+            var tryPart: AST = new Try(node.block.accept(this));
             this.setSpan(tryPart, node);
 
             var tryCatch: TryCatch = null;
-            if (node.catchClause() !== null) {
-                var catchBit = node.catchClause().accept(this);
+            if (node.catchClause !== null) {
+                var catchBit = node.catchClause.accept(this);
 
                 tryCatch = new TryCatch(<Try>tryPart, catchBit);
                 
@@ -1760,12 +1760,12 @@ module TypeScript {
                 tryCatch.limChar = catchBit.limChar;
             }
 
-            if (node.finallyClause() !== null) {
+            if (node.finallyClause !== null) {
                 if (tryCatch !== null) {
                     tryPart = tryCatch;
                 }
 
-                var finallyBit = node.finallyClause().accept(this);
+                var finallyBit = node.finallyClause.accept(this);
 
                 var result = new TryFinally(tryPart, finallyBit);
                 this.setSpan(result, node);
@@ -1778,17 +1778,17 @@ module TypeScript {
         }
 
         private visitCatchClause(node: CatchClauseSyntax): Catch {
-            var varDecl = new VarDecl(this.identifierFromToken(node.identifier(), /*isOptional:*/ false), 0);
-            this.setSpan(varDecl, node.identifier());
+            var varDecl = new VarDecl(this.identifierFromToken(node.identifier, /*isOptional:*/ false), 0);
+            this.setSpan(varDecl, node.identifier);
 
-            var result = new Catch(varDecl, node.block().accept(this));
+            var result = new Catch(varDecl, node.block.accept(this));
             this.setSpan(result, node);
 
             return result;
         }
 
         private visitFinallyClause(node: FinallyClauseSyntax): Finally {
-            var result = new Finally(node.block().accept(this));
+            var result = new Finally(node.block.accept(this));
             this.setSpan(result, node);
 
             return result;
@@ -1796,9 +1796,9 @@ module TypeScript {
 
         private visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {
             var labelList = new ASTList();
-            labelList.append(new Label(this.identifierFromToken(node.identifier(), /*isOptional:*/ false)));
+            labelList.append(new Label(this.identifierFromToken(node.identifier, /*isOptional:*/ false)));
 
-            var result = new LabeledStatement(labelList, node.statement().accept(this));
+            var result = new LabeledStatement(labelList, node.statement.accept(this));
             this.setSpan(result, node);
 
             return result;
@@ -1808,27 +1808,27 @@ module TypeScript {
             var result = new DoWhileStatement();
             this.setSpan(result, node);
 
-            result.whileAST = this.identifierFromToken(node.whileKeyword(), /*isOptional:*/ false);
-            result.cond = node.condition().accept(this);
-            result.body = node.statement().accept(this);
+            result.whileAST = this.identifierFromToken(node.whileKeyword, /*isOptional:*/ false);
+            result.cond = node.condition.accept(this);
+            result.body = node.statement.accept(this);
 
             return result;
         }
 
         private visitTypeOfExpression(node: TypeOfExpressionSyntax): UnaryExpression {
-            var result = new UnaryExpression(NodeType.Typeof, node.expression().accept(this));
+            var result = new UnaryExpression(NodeType.Typeof, node.expression.accept(this));
             this.setSpan(result, node);
             return result;
         }
 
         private visitDeleteExpression(node: DeleteExpressionSyntax): UnaryExpression {
-            var result = new UnaryExpression(NodeType.Delete, node.expression().accept(this));
+            var result = new UnaryExpression(NodeType.Delete, node.expression.accept(this));
             this.setSpan(result, node);
             return result;
         }
 
         private visitVoidExpression(node: VoidExpressionSyntax): UnaryExpression {
-            var result = new UnaryExpression(NodeType.Void, node.expression().accept(this));
+            var result = new UnaryExpression(NodeType.Void, node.expression.accept(this));
             this.setSpan(result, node);
             return result;
         }

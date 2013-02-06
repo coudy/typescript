@@ -66,7 +66,7 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var decl = new PullDecl(node.identifier().text(), PullElementKind.TypeAlias, PullElementFlags.None, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier.text(), PullElementKind.TypeAlias, PullElementFlags.None, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 
@@ -83,11 +83,11 @@ module TypeScript {
 
             var declFlags = PullElementFlags.None;
 
-            if (node.declareKeyword()) {
+            if (node.declareKeyword) {
                 declFlags |= PullElementFlags.Ambient;
             }
 
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 declFlags |= PullElementFlags.Exported;
             }
 
@@ -96,7 +96,7 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var decl = new PullDecl(node.identifier().text(), PullElementKind.Class, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier.text(), PullElementKind.Class, declFlags, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 
@@ -117,7 +117,7 @@ module TypeScript {
 
             var declFlags = PullElementFlags.None;
 
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 declFlags |= PullElementFlags.Exported;
             }
 
@@ -126,7 +126,7 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var decl = new PullDecl(node.identifier().text(), PullElementKind.Interface, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier.text(), PullElementKind.Interface, declFlags, span, this.semanticInfo.getPath());
 
             var parent = this.getParent();
 
@@ -151,15 +151,15 @@ module TypeScript {
         private visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             var declFlags = PullElementFlags.None;
 
-            if (node.declareKeyword()) {
+            if (node.declareKeyword) {
                 declFlags |= PullElementFlags.Ambient;
             }
 
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 declFlags |= PullElementFlags.Exported;
             }
 
-            var modName = node.moduleName().fullText();
+            var modName = node.moduleName.fullText();
 
             var span = new DeclSpan();
 
@@ -237,7 +237,7 @@ module TypeScript {
 
             this.pushParent(decl);
 
-            var returnType = node.type();
+            var returnType = node.type;
 
             if (returnType &&
                 (returnType.kind() == SyntaxKind.FunctionType || 
@@ -281,7 +281,7 @@ module TypeScript {
 
             this.pushParent(decl);
 
-            var returnType = node.type();
+            var returnType = node.type;
 
             if (returnType &&
                 (returnType.kind() == SyntaxKind.FunctionType || 
@@ -309,15 +309,15 @@ module TypeScript {
             var isProperty = false;
             var isStatic = false;
 
-            if (node.declareKeyword()) {
+            if (node.declareKeyword) {
                 declFlags |= PullElementFlags.Ambient;
             }
 
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 declFlags |= PullElementFlags.Exported;
             }
 
-            if (!node.block()) {
+            if (!node.block) {
                 declFlags |= PullElementFlags.Signature;
             }
 
@@ -326,9 +326,9 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var signature = node.functionSignature();
+            var signature = node.functionSignature;
 
-            var funcName = signature.identifier() ? signature.identifier().text() : "";
+            var funcName = signature.identifier ? signature.identifier.text() : "";
 
             var decl = new PullDecl(funcName, declType, declFlags, span, this.semanticInfo.getPath());
 
@@ -349,12 +349,12 @@ module TypeScript {
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = signature.callSignature().typeAnnotation();
+            var typeAnnotation = signature.callSignature.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType || 
-                 typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                 typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType || 
+                 typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                 typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -367,7 +367,7 @@ module TypeScript {
             var declFlags = PullElementFlags.None;
             var declType = PullElementKind.FunctionExpression;
 
-            if (!node.block()) {
+            if (!node.block) {
                 declFlags |= PullElementFlags.Signature;
             }
 
@@ -395,12 +395,12 @@ module TypeScript {
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = node.callSignature().typeAnnotation();
+            var typeAnnotation = node.callSignature.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType || 
-                 typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                 typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType || 
+                 typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                 typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -472,13 +472,13 @@ module TypeScript {
 
             var declFlags = PullElementFlags.None;
             var declType = PullElementKind.Method;
-            var signature = node.functionSignature();
+            var signature = node.functionSignature;
 
-            if (node.staticKeyword()) {
+            if (node.staticKeyword) {
                 declFlags |= PullElementFlags.Static;
             }
 
-            var publicOrPrivateKeyword = node.publicOrPrivateKeyword();
+            var publicOrPrivateKeyword = node.publicOrPrivateKeyword;
 
             if (publicOrPrivateKeyword && publicOrPrivateKeyword.tokenKind == SyntaxKind.PrivateKeyword) {
                 declFlags |= PullElementFlags.Private;
@@ -497,7 +497,7 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var funcName = signature.identifier() ? signature.identifier().text() : "";
+            var funcName = signature.identifier ? signature.identifier.text() : "";
 
             var decl = new PullDecl(funcName, declType, declFlags, span, this.semanticInfo.getPath());
 
@@ -518,12 +518,12 @@ module TypeScript {
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = signature.callSignature().typeAnnotation();
+            var typeAnnotation = signature.callSignature.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType || 
-                 typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                 typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType || 
+                 typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                 typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -560,12 +560,12 @@ module TypeScript {
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = node.typeAnnotation();
+            var typeAnnotation = node.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType || 
-                 typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                 typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType || 
+                 typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                 typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -603,12 +603,12 @@ module TypeScript {
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = node.typeAnnotation();
+            var typeAnnotation = node.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType || 
-                 typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                 typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType || 
+                 typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                 typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -637,9 +637,9 @@ module TypeScript {
             }
             this.pushParent(decl);
 
-            var callSignature = node.callSignature();
+            var callSignature = node.callSignature;
 
-            super.visitParameterList(callSignature.parameterList());
+            super.visitParameterList(callSignature.parameterList);
 
             this.popParent();
 
@@ -648,12 +648,12 @@ module TypeScript {
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = callSignature.typeAnnotation();
+            var typeAnnotation = callSignature.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType || 
-                 typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                 typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType || 
+                 typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                 typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -701,11 +701,11 @@ module TypeScript {
             var declFlags = PullElementFlags.None;
             var declType = PullElementKind.Variable;
 
-            if (node.declareKeyword()) {
+            if (node.declareKeyword) {
                 declFlags |= PullElementFlags.Ambient;
             }
 
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 declFlags |= PullElementFlags.Exported;
             }
         
@@ -714,7 +714,7 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var varDecls = node.variableDeclaration().variableDeclarators();
+            var varDecls = node.variableDeclaration.variableDeclarators;
             var varDeclCount = varDecls.nonSeparatorCount();
             var varDecl: VariableDeclaratorSyntax;
             var typeAnnotation: TypeAnnotationSyntax;
@@ -723,19 +723,19 @@ module TypeScript {
 
             for (var i = 0; i < varDeclCount; i++) {
                 varDecl = <VariableDeclaratorSyntax>varDecls.nonSeparatorAt(i);
-                decl = new PullDecl(varDecl.identifier().text(), declType, declFlags, span, this.semanticInfo.getPath());
+                decl = new PullDecl(varDecl.identifier.text(), declType, declFlags, span, this.semanticInfo.getPath());
 
                 this.getParent().addChildDecl(decl);
 
                 this.semanticInfo.setDeclForSyntaxElement(node, decl);
                 this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-                typeAnnotation = varDecl.typeAnnotation();
+                typeAnnotation = varDecl.typeAnnotation;
 
                 if (typeAnnotation &&
-                    (typeAnnotation.type().kind() == SyntaxKind.FunctionType ||
-                     typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                     typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                    (typeAnnotation.type.kind() == SyntaxKind.FunctionType ||
+                     typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                     typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                     // collect the annotations in their own context
                     var collector = new PullDeclCollector(this.semanticInfo);
@@ -749,7 +749,7 @@ module TypeScript {
             var declFlags = PullElementFlags.Public;
             var declType = PullElementKind.Property;
 
-            if (node.questionToken()) {
+            if (node.questionToken) {
                 declFlags |= PullElementFlags.Optional;
             }
         
@@ -758,19 +758,19 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var decl = new PullDecl(node.identifier().text(), declType, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier.text(), declType, declFlags, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = node.typeAnnotation();
+            var typeAnnotation = node.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -782,13 +782,13 @@ module TypeScript {
             var declFlags = PullElementFlags.Public;
             var declType = PullElementKind.Property;
 
-            var publicOrPrivateKeyword = node.publicOrPrivateKeyword();
+            var publicOrPrivateKeyword = node.publicOrPrivateKeyword;
 
             if (publicOrPrivateKeyword && publicOrPrivateKeyword.tokenKind == SyntaxKind.PrivateKeyword) {
                 declFlags = PullElementFlags.Private;
             }
 
-            if (node.staticKeyword()) {
+            if (node.staticKeyword) {
                 declFlags |= PullElementFlags.Static;
             }
         
@@ -797,21 +797,21 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var varDecl = node.variableDeclarator();
+            var varDecl = node.variableDeclarator;
 
-            var decl = new PullDecl(varDecl.identifier().text(), declType, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(varDecl.identifier.text(), declType, declFlags, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = varDecl.typeAnnotation();
+            var typeAnnotation = varDecl.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -823,11 +823,11 @@ module TypeScript {
             var declFlags = PullElementFlags.Public;
             var declType = PullElementKind.GetAccessor;
 
-            if (node.staticKeyword()) {
+            if (node.staticKeyword) {
                 declFlags |= PullElementFlags.Static;
             }
 
-            var publicOrPrivateKeyword = node.publicOrPrivateKeyword();
+            var publicOrPrivateKeyword = node.publicOrPrivateKeyword;
 
             if (publicOrPrivateKeyword && publicOrPrivateKeyword.tokenKind == SyntaxKind.PrivateKeyword) {
                 declFlags = PullElementFlags.Private;
@@ -838,19 +838,19 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var decl = new PullDecl(node.identifier().text(), declType, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier.text(), declType, declFlags, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 
             this.semanticInfo.setDeclForSyntaxElement(node, decl);
             this.semanticInfo.setSyntaxElementForDecl(decl, node);
 
-            var typeAnnotation = node.typeAnnotation();
+            var typeAnnotation = node.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -862,11 +862,11 @@ module TypeScript {
             var declFlags = PullElementFlags.Public;
             var declType = PullElementKind.SetAccessor;
 
-            if (node.staticKeyword()) {
+            if (node.staticKeyword) {
                 declFlags |= PullElementFlags.Static;
             }
 
-            var publicOrPrivateKeyword = node.publicOrPrivateKeyword();
+            var publicOrPrivateKeyword = node.publicOrPrivateKeyword;
 
             if (publicOrPrivateKeyword && publicOrPrivateKeyword.tokenKind == SyntaxKind.PrivateKeyword) {
                 declFlags = PullElementFlags.Private;
@@ -877,14 +877,14 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
 
-            var decl = new PullDecl(node.identifier().text(), declType, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier.text(), declType, declFlags, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 
             this.pushParent(decl);
 
             // collect parameters
-            super.visitParameterList(node.parameterList());
+            super.visitParameterList(node.parameterList);
 
             this.popParent();
 
@@ -896,7 +896,7 @@ module TypeScript {
 
             var declFlags = PullElementFlags.None;
             var isProperty = false; 
-            var publicOrPrivateKeyword = node.publicOrPrivateKeyword();
+            var publicOrPrivateKeyword = node.publicOrPrivateKeyword;
 
             if (publicOrPrivateKeyword) {
                 isProperty = true;
@@ -914,13 +914,13 @@ module TypeScript {
             span.minChar = this.position;
             span.limChar = this.position + node.fullWidth();
             
-            var decl = new PullDecl(node.identifier().text(), PullElementKind.Parameter, declFlags, span, this.semanticInfo.getPath());
+            var decl = new PullDecl(node.identifier.text(), PullElementKind.Parameter, declFlags, span, this.semanticInfo.getPath());
 
             this.getParent().addChildDecl(decl);
 
             // if it's a property type, we'll need to add it to the parent's parent as well
             if (isProperty) {
-                var propDecl = new PullDecl(node.identifier().text(), PullElementKind.Property, declFlags, span, this.semanticInfo.getPath());
+                var propDecl = new PullDecl(node.identifier.text(), PullElementKind.Property, declFlags, span, this.semanticInfo.getPath());
                 
                 this.parentChain[this.parentChain.length - 2].addChildDecl(propDecl);
 
@@ -932,12 +932,12 @@ module TypeScript {
                 this.semanticInfo.setDeclForSyntaxElement(node, decl);   
             }
 
-            var typeAnnotation = node.typeAnnotation();
+            var typeAnnotation = node.typeAnnotation;
 
             if (typeAnnotation &&
-                (typeAnnotation.type().kind() == SyntaxKind.FunctionType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ObjectType ||
-                    typeAnnotation.type().kind() == SyntaxKind.ConstructorType)) {
+                (typeAnnotation.type.kind() == SyntaxKind.FunctionType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ObjectType ||
+                    typeAnnotation.type.kind() == SyntaxKind.ConstructorType)) {
 
                 // collect the annotations in their own context
                 var collector = new PullDeclCollector(this.semanticInfo);
@@ -948,11 +948,11 @@ module TypeScript {
         private visitEnumDeclarations(node: EnumDeclarationSyntax) {
             var declFlags = PullElementFlags.None;
 
-            if (node.exportKeyword()) {
+            if (node.exportKeyword) {
                 declFlags |= PullElementFlags.Exported;
             }
 
-            var enumName = node.identifier().text();
+            var enumName = node.identifier.text();
 
             var span = new DeclSpan();
 
@@ -965,7 +965,7 @@ module TypeScript {
 
             this.pushParent(decl);
 
-            var varDecls = node.variableDeclarators();
+            var varDecls = node.variableDeclarators;
             var varDeclCount = varDecls.nonSeparatorCount();
             var varDecl: VariableDeclaratorSyntax;
             var typeAnnotation: TypeAnnotationSyntax;
@@ -974,7 +974,7 @@ module TypeScript {
 
             for (var i = 0; i < varDeclCount; i++) {
                 varDecl = <VariableDeclaratorSyntax>varDecls.nonSeparatorAt(i);
-                memberPullDecl = new PullDecl(varDecl.identifier().text(), PullElementKind.Variable, declFlags, span, this.semanticInfo.getPath());
+                memberPullDecl = new PullDecl(varDecl.identifier.text(), PullElementKind.Variable, declFlags, span, this.semanticInfo.getPath());
 
                 this.getParent().addChildDecl(memberPullDecl);
 
