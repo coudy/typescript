@@ -282,7 +282,7 @@ interface JQueryStatic {
 
     makeArray(obj: any): any[];
 
-    map(array: any[], callback: (elementOfArray: any, indexInArray: any) =>any): JQuery;
+    map(array: any[], callback: (elementOfArray: any, indexInArray: any) =>any): any[];
     
     merge(first: any[], second: any[]): any[];
 
@@ -617,7 +617,7 @@ interface JQuery {
     /*************
      MISCELLANEOUS
     **************/
-    each(func: (index: any, elem: Element) => JQuery);
+    each(func: (index: any, elem: Element) => any): JQuery;
     
     get(index?: number): any;
     
@@ -668,10 +668,10 @@ interface JQuery {
     has(selector: string): JQuery;
     has(contained: Element): JQuery;
 
-    is(selector: string): JQuery;
-    is(func: (index: any) =>any): JQuery;
-    is(element: any): JQuery;
-    is(obj: JQuery): JQuery;
+    is(selector: string): bool;
+    is(func: (index: any) =>any): bool;
+    is(element: any): bool;
+    is(obj: JQuery): bool;
 
     last(): JQuery;
 
