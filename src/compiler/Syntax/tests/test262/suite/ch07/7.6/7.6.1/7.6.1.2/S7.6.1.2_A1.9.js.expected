@@ -11,18 +11,7 @@
         {
             "_position": 322,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "identifier"
-            ]
-        },
-        {
-            "_position": 324,
-            "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "identifier"
-            ]
+            "_diagnosticCode": "Identifier_expected"
         }
     ],
     "_sourceUnit": {
@@ -33,23 +22,20 @@
         "_moduleElements": [
             {
                 "kind": "VariableStatement",
-                "fullWidth": 324,
-                "hasSkippedText": true,
+                "fullWidth": 317,
                 "hasZeroWidthToken": true,
                 "_variableDeclaration": {
                     "kind": "VariableDeclaration",
-                    "fullWidth": 324,
-                    "hasSkippedText": true,
+                    "fullWidth": 317,
                     "_varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 324,
+                        "fullWidth": 317,
                         "text": "var",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
                         "hasLeadingNewLine": true,
                         "hasTrailingTrivia": true,
-                        "hasTrailingSkippedText": true,
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
@@ -88,22 +74,6 @@
                             {
                                 "kind": "WhitespaceTrivia",
                                 "text": " "
-                            },
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "enum"
-                            },
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            },
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "="
-                            },
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
                             }
                         ]
                     },
@@ -111,6 +81,50 @@
                 },
                 "_semicolonToken": {
                     "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "EnumDeclaration",
+                "fullWidth": 7,
+                "hasSkippedText": true,
+                "hasZeroWidthToken": true,
+                "_enumKeyword": {
+                    "kind": "EnumKeyword",
+                    "width": 4,
+                    "fullWidth": 7,
+                    "text": "enum",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingSkippedText": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        },
+                        {
+                            "kind": "SkippedTextTrivia",
+                            "text": "="
+                        },
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "_identifier": {
+                    "kind": "IdentifierName",
+                    "width": 0,
+                    "text": ""
+                },
+                "_openBraceToken": {
+                    "kind": "OpenBraceToken",
+                    "width": 0,
+                    "text": ""
+                },
+                "_variableDeclarators": [],
+                "_closeBraceToken": {
+                    "kind": "CloseBraceToken",
                     "width": 0,
                     "text": ""
                 }
