@@ -340,9 +340,12 @@ module TypeScript {
                     //        timer.end();
 
                     //        var translateTime = timer.time;
-                    //        IO.stdout.WriteLine();
-                    //        IO.stdout.WriteLine(filename +  ": Old - New - Translate: " + oldParseTime + " - " + newParseTime + " - " + translateTime);
-                    //        IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
+
+                    //        if (oldParseTime > 100) {
+                    //            // IO.stdout.WriteLine("");
+                    //            // IO.stdout.WriteLine(filename + ": Old - New - Translate: " + oldParseTime + " - " + newParseTime + " - " + translateTime);
+                    //            IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
+                    //        }
                             
                     //        script2.referencedFiles = referencedFiles;
                     //        script2.isResident = keepResident;
