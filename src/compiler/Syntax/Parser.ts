@@ -142,17 +142,19 @@ module Parser1 {
         SwitchStatement_SwitchClauses = 1 << 3,
         SwitchClause_Statements = 1 << 4,
         Block_Statements = 1 << 5,
-        EnumDeclaration_VariableDeclarators = 1 << 7,
-        ObjectType_TypeMembers = 1 << 8,
-        ExtendsOrImplementsClause_TypeNameList = 1 << 9,
-        VariableDeclaration_VariableDeclarators_AllowIn = 1 << 10,
-        VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 11,
-        ArgumentList_AssignmentExpressions = 1 << 12,
-        ObjectLiteralExpression_PropertyAssignments = 1 << 13,
-        ArrayLiteralExpression_AssignmentExpressions = 1 << 14,
-        ParameterList_Parameters = 1 << 15,
-        TypeArgumentList_Types = 1 << 16,
-        TypeParameterList_TypeParameters = 1 << 17,
+        TryBlock_Statements = 1 << 6,
+        CatchBlock_Statements = 1 << 7,
+        EnumDeclaration_VariableDeclarators = 1 << 8,
+        ObjectType_TypeMembers = 1 << 9,
+        ExtendsOrImplementsClause_TypeNameList = 1 << 10,
+        VariableDeclaration_VariableDeclarators_AllowIn = 1 << 11,
+        VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 12,
+        ArgumentList_AssignmentExpressions = 1 << 13,
+        ObjectLiteralExpression_PropertyAssignments = 1 << 14,
+        ArrayLiteralExpression_AssignmentExpressions = 1 << 15,
+        ParameterList_Parameters = 1 << 16,
+        TypeArgumentList_Types = 1 << 17,
+        TypeParameterList_TypeParameters = 1 << 18,
 
         FirstListParsingState = SourceUnit_ModuleElements,
         LastListParsingState = TypeArgumentList_Types,
@@ -2613,7 +2615,11 @@ module Parser1 {
             Debug.assert(this.isTryStatement());
 
             var tryKeyword = this.eatKeyword(SyntaxKind.TryKeyword);
+
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.TryBlock_Statements;
             var block = this.parseBlock();
+            this.listParsingState = savedListParsingState;
 
             var catchClause: CatchClauseSyntax = null;
             if (this.isCatchClause()) {
@@ -2641,7 +2647,11 @@ module Parser1 {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var identifier = this.eatIdentifierToken();
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= ListParsingState.CatchBlock_Statements;
             var block = this.parseBlock();
+            this.listParsingState = savedListParsingState;
 
             return this.factory.catchClause(catchKeyword, openParenToken, identifier, closeParenToken, block);
         }
@@ -4947,6 +4957,12 @@ module Parser1 {
                 case ListParsingState.Block_Statements:
                     return this.isExpectedBlock_StatementsTerminator();
 
+                case ListParsingState.TryBlock_Statements:
+                    return this.isExpectedTryBlock_StatementsTerminator();
+
+                case ListParsingState.CatchBlock_Statements:
+                    return this.isExpectedCatchBlock_StatementsTerminator();
+
                 case ListParsingState.EnumDeclaration_VariableDeclarators:
                     return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
 
@@ -5135,6 +5151,15 @@ module Parser1 {
             return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
+        private isExpectedTryBlock_StatementsTerminator(): bool {
+            return this.currentToken().tokenKind === SyntaxKind.CatchKeyword ||
+                   this.currentToken().tokenKind === SyntaxKind.FinallyKeyword;
+        }
+
+        private isExpectedCatchBlock_StatementsTerminator(): bool {
+            return this.currentToken().tokenKind === SyntaxKind.FinallyKeyword;
+        }
+
         private isExtendsOrImplementsClause(): bool {
             if (this.currentToken().tokenKind === SyntaxKind.ImplementsKeyword ||
                 this.currentToken().tokenKind === SyntaxKind.ExtendsKeyword) {
@@ -5174,6 +5199,14 @@ module Parser1 {
 
                 case ListParsingState.Block_Statements:
                     return this.isStatement();
+
+                case ListParsingState.TryBlock_Statements:
+                case ListParsingState.CatchBlock_Statements:
+                    // These two are special.  They're just augmentations of "Block_Statements" 
+                    // used so we can abort out of the try block if we see a 'catch' or 'finally'
+                    // keyword.  There are no additional list items that they add, so we just
+                    // return 'false' here.
+                    return false;
 
                 case ListParsingState.EnumDeclaration_VariableDeclarators:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:

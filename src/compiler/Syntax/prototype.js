@@ -34840,17 +34840,19 @@ var Parser1;
         ListParsingState.SwitchStatement_SwitchClauses = 1 << 3;
         ListParsingState.SwitchClause_Statements = 1 << 4;
         ListParsingState.Block_Statements = 1 << 5;
-        ListParsingState.EnumDeclaration_VariableDeclarators = 1 << 7;
-        ListParsingState.ObjectType_TypeMembers = 1 << 8;
-        ListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 9;
-        ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn = 1 << 10;
-        ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 11;
-        ListParsingState.ArgumentList_AssignmentExpressions = 1 << 12;
-        ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 13;
-        ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 14;
-        ListParsingState.ParameterList_Parameters = 1 << 15;
-        ListParsingState.TypeArgumentList_Types = 1 << 16;
-        ListParsingState.TypeParameterList_TypeParameters = 1 << 17;
+        ListParsingState.TryBlock_Statements = 1 << 6;
+        ListParsingState.CatchBlock_Statements = 1 << 7;
+        ListParsingState.EnumDeclaration_VariableDeclarators = 1 << 8;
+        ListParsingState.ObjectType_TypeMembers = 1 << 9;
+        ListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 10;
+        ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn = 1 << 11;
+        ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn = 1 << 12;
+        ListParsingState.ArgumentList_AssignmentExpressions = 1 << 13;
+        ListParsingState.ObjectLiteralExpression_PropertyAssignments = 1 << 14;
+        ListParsingState.ArrayLiteralExpression_AssignmentExpressions = 1 << 15;
+        ListParsingState.ParameterList_Parameters = 1 << 16;
+        ListParsingState.TypeArgumentList_Types = 1 << 17;
+        ListParsingState.TypeParameterList_TypeParameters = 1 << 18;
         ListParsingState.FirstListParsingState = ListParsingState.SourceUnit_ModuleElements;
         ListParsingState.LastListParsingState = ListParsingState.TypeArgumentList_Types;
     })(ListParsingState || (ListParsingState = {}));
@@ -35705,7 +35707,7 @@ var Parser1;
             if(!inExpression) {
                 var lessThanToken = this.eatToken(80 /* LessThanToken */ );
                 Debug.assert(lessThanToken.fullWidth() > 0);
-                var result = this.parseSeparatedSyntaxList(65536 /* TypeArgumentList_Types */ );
+                var result = this.parseSeparatedSyntaxList(131072 /* TypeArgumentList_Types */ );
                 var typeArguments = result.list;
                 lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
                 var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
@@ -35715,7 +35717,7 @@ var Parser1;
             try  {
                 var lessThanToken = this.eatToken(80 /* LessThanToken */ );
                 Debug.assert(lessThanToken.fullWidth() > 0);
-                var result = this.parseSeparatedSyntaxList(65536 /* TypeArgumentList_Types */ );
+                var result = this.parseSeparatedSyntaxList(131072 /* TypeArgumentList_Types */ );
                 var typeArguments = result.list;
                 lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
                 var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
@@ -35779,7 +35781,7 @@ var Parser1;
             var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
             var variableDeclarators = Syntax.emptySeparatedList;
             if(openBraceToken.width() > 0) {
-                var result = this.parseSeparatedSyntaxList(128 /* EnumDeclaration_VariableDeclarators */ );
+                var result = this.parseSeparatedSyntaxList(256 /* EnumDeclaration_VariableDeclarators */ );
                 variableDeclarators = result.list;
                 openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
@@ -36056,7 +36058,7 @@ var Parser1;
             var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
             var typeMembers = Syntax.emptySeparatedList;
             if(openBraceToken.width() > 0) {
-                var result = this.parseSeparatedSyntaxList(256 /* ObjectType_TypeMembers */ );
+                var result = this.parseSeparatedSyntaxList(512 /* ObjectType_TypeMembers */ );
                 typeMembers = result.list;
                 openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
@@ -36145,7 +36147,7 @@ var Parser1;
             Debug.assert(this.isExtendsClause());
             var extendsKeyword = this.eatKeyword(48 /* ExtendsKeyword */ );
             Debug.assert(extendsKeyword.fullWidth() > 0);
-            var result = this.parseSeparatedSyntaxList(512 /* ExtendsOrImplementsClause_TypeNameList */ );
+            var result = this.parseSeparatedSyntaxList(1024 /* ExtendsOrImplementsClause_TypeNameList */ );
             var typeNames = result.list;
             extendsKeyword = this.addSkippedTokensAfterToken(extendsKeyword, result.skippedTokens);
             return this.factory.extendsClause(extendsKeyword, typeNames);
@@ -36157,7 +36159,7 @@ var Parser1;
             Debug.assert(this.isImplementsClause());
             var implementsKeyword = this.eatKeyword(51 /* ImplementsKeyword */ );
             Debug.assert(implementsKeyword.fullWidth() > 0);
-            var result = this.parseSeparatedSyntaxList(512 /* ExtendsOrImplementsClause_TypeNameList */ );
+            var result = this.parseSeparatedSyntaxList(1024 /* ExtendsOrImplementsClause_TypeNameList */ );
             var typeNames = result.list;
             implementsKeyword = this.addSkippedTokensAfterToken(implementsKeyword, result.skippedTokens);
             return this.factory.implementsClause(implementsKeyword, typeNames);
@@ -36257,7 +36259,10 @@ var Parser1;
         ParserImpl.prototype.parseTryStatement = function () {
             Debug.assert(this.isTryStatement());
             var tryKeyword = this.eatKeyword(38 /* TryKeyword */ );
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= 64 /* TryBlock_Statements */ ;
             var block = this.parseBlock();
+            this.listParsingState = savedListParsingState;
             var catchClause = null;
             if(this.isCatchClause()) {
                 catchClause = this.parseCatchClause();
@@ -36277,7 +36282,10 @@ var Parser1;
             var openParenToken = this.eatToken(72 /* OpenParenToken */ );
             var identifier = this.eatIdentifierToken();
             var closeParenToken = this.eatToken(73 /* CloseParenToken */ );
+            var savedListParsingState = this.listParsingState;
+            this.listParsingState |= 128 /* CatchBlock_Statements */ ;
             var block = this.parseBlock();
+            this.listParsingState = savedListParsingState;
             return this.factory.catchClause(catchKeyword, openParenToken, identifier, closeParenToken, block);
         };
         ParserImpl.prototype.isFinallyClause = function () {
@@ -36633,7 +36641,7 @@ var Parser1;
             Debug.assert(this.currentToken().tokenKind === 40 /* VarKeyword */ );
             var varKeyword = this.eatKeyword(40 /* VarKeyword */ );
             Debug.assert(varKeyword.fullWidth() > 0);
-            var listParsingState = allowIn ? 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */  : 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ ;
+            var listParsingState = allowIn ? 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */  : 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ ;
             var result = this.parseSeparatedSyntaxList(listParsingState);
             var variableDeclarators = result.list;
             varKeyword = this.addSkippedTokensAfterToken(varKeyword, result.skippedTokens);
@@ -36862,7 +36870,7 @@ var Parser1;
             var openParenToken = this.eatToken(72 /* OpenParenToken */ );
             var arguments = Syntax.emptySeparatedList;
             if(openParenToken.fullWidth() > 0) {
-                var result = this.parseSeparatedSyntaxList(4096 /* ArgumentList_AssignmentExpressions */ );
+                var result = this.parseSeparatedSyntaxList(8192 /* ArgumentList_AssignmentExpressions */ );
                 arguments = result.list;
                 openParenToken = this.addSkippedTokensAfterToken(openParenToken, result.skippedTokens);
             }
@@ -37159,7 +37167,7 @@ var Parser1;
             Debug.assert(this.currentToken().tokenKind === 70 /* OpenBraceToken */ );
             var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
             Debug.assert(openBraceToken.fullWidth() > 0);
-            var result = this.parseSeparatedSyntaxList(8192 /* ObjectLiteralExpression_PropertyAssignments */ );
+            var result = this.parseSeparatedSyntaxList(16384 /* ObjectLiteralExpression_PropertyAssignments */ );
             var propertyAssignments = result.list;
             openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
@@ -37235,7 +37243,7 @@ var Parser1;
             Debug.assert(this.currentToken().tokenKind === 74 /* OpenBracketToken */ );
             var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
             Debug.assert(openBracketToken.fullWidth() > 0);
-            var result = this.parseSeparatedSyntaxList(16384 /* ArrayLiteralExpression_AssignmentExpressions */ );
+            var result = this.parseSeparatedSyntaxList(32768 /* ArrayLiteralExpression_AssignmentExpressions */ );
             var expressions = result.list;
             openBracketToken = this.addSkippedTokensAfterToken(openBracketToken, result.skippedTokens);
             var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
@@ -37276,7 +37284,7 @@ var Parser1;
             try  {
                 var lessThanToken = this.eatToken(80 /* LessThanToken */ );
                 Debug.assert(lessThanToken.fullWidth() > 0);
-                var result = this.parseSeparatedSyntaxList(131072 /* TypeParameterList_TypeParameters */ );
+                var result = this.parseSeparatedSyntaxList(262144 /* TypeParameterList_TypeParameters */ );
                 var typeParameterList = result.list;
                 lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
                 var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
@@ -37310,7 +37318,7 @@ var Parser1;
             var openParenToken = this.eatToken(72 /* OpenParenToken */ );
             var parameters = Syntax.emptySeparatedList;
             if(openParenToken.width() > 0) {
-                var result = this.parseSeparatedSyntaxList(32768 /* ParameterList_Parameters */ );
+                var result = this.parseSeparatedSyntaxList(65536 /* ParameterList_Parameters */ );
                 parameters = result.list;
                 openParenToken = this.addSkippedTokensAfterToken(openParenToken, result.skippedTokens);
             }
@@ -37473,7 +37481,7 @@ var Parser1;
         };
         ParserImpl.prototype.abortParsingListOrMoveToNextToken = function (currentListType, itemCount, items, skippedTokens) {
             this.reportUnexpectedTokenDiagnostic(currentListType);
-            for(var state = 65536 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
+            for(var state = 131072 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
                 if((this.listParsingState & state) !== 0) {
                     if(this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, true)) {
                         return true;
@@ -37609,18 +37617,18 @@ var Parser1;
         };
         ParserImpl.prototype.allowsTrailingSeparator = function (currentListType) {
             switch(currentListType) {
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
-                case 256 /* ObjectType_TypeMembers */ :
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 512 /* ObjectType_TypeMembers */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
                     return true;
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 32768 /* ParameterList_Parameters */ :
-                case 65536 /* TypeArgumentList_Types */ :
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 65536 /* ParameterList_Parameters */ :
+                case 131072 /* TypeArgumentList_Types */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return false;
                 case 1 /* SourceUnit_ModuleElements */ :
                 case 2 /* ClassDeclaration_ClassElements */ :
@@ -37634,18 +37642,18 @@ var Parser1;
         };
         ParserImpl.prototype.requiresAtLeastOneItem = function (currentListType) {
             switch(currentListType) {
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
-                case 65536 /* TypeArgumentList_Types */ :
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 131072 /* TypeArgumentList_Types */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return true;
-                case 256 /* ObjectType_TypeMembers */ :
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
-                case 32768 /* ParameterList_Parameters */ :
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 512 /* ObjectType_TypeMembers */ :
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 65536 /* ParameterList_Parameters */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
                     return false;
                 case 1 /* SourceUnit_ModuleElements */ :
                 case 2 /* ClassDeclaration_ClassElements */ :
@@ -37659,18 +37667,18 @@ var Parser1;
         };
         ParserImpl.prototype.allowsAutomaticSemicolonInsertion = function (currentListType) {
             switch(currentListType) {
-                case 256 /* ObjectType_TypeMembers */ :
+                case 512 /* ObjectType_TypeMembers */ :
                     return true;
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
-                case 32768 /* ParameterList_Parameters */ :
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                case 65536 /* TypeArgumentList_Types */ :
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 65536 /* ParameterList_Parameters */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 131072 /* TypeArgumentList_Types */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return false;
                 case 1 /* SourceUnit_ModuleElements */ :
                 case 2 /* ClassDeclaration_ClassElements */ :
@@ -37684,18 +37692,18 @@ var Parser1;
         };
         ParserImpl.prototype.separatorKind = function (currentListType) {
             switch(currentListType) {
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
-                case 32768 /* ParameterList_Parameters */ :
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
-                case 65536 /* TypeArgumentList_Types */ :
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 65536 /* ParameterList_Parameters */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 131072 /* TypeArgumentList_Types */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return 79 /* CommaToken */ ;
-                case 256 /* ObjectType_TypeMembers */ :
+                case 512 /* ObjectType_TypeMembers */ :
                     return 78 /* SemicolonToken */ ;
                 case 1 /* SourceUnit_ModuleElements */ :
                 case 2 /* ClassDeclaration_ClassElements */ :
@@ -37734,27 +37742,31 @@ var Parser1;
                     return this.isExpectedSwitchClause_StatementsTerminator();
                 case 32 /* Block_Statements */ :
                     return this.isExpectedBlock_StatementsTerminator();
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
+                case 64 /* TryBlock_Statements */ :
+                    return this.isExpectedTryBlock_StatementsTerminator();
+                case 128 /* CatchBlock_Statements */ :
+                    return this.isExpectedCatchBlock_StatementsTerminator();
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
                     return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
-                case 256 /* ObjectType_TypeMembers */ :
+                case 512 /* ObjectType_TypeMembers */ :
                     return this.isExpectedObjectType_TypeMembersTerminator();
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
                     return this.isExpectedArgumentList_AssignmentExpressionsTerminator();
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
                     return this.isExpectedExtendsOrImplementsClause_TypeNameListTerminator();
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                     return this.isExpectedVariableDeclaration_VariableDeclarators_AllowInTerminator(itemCount);
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                     return this.isExpectedVariableDeclaration_VariableDeclarators_DisallowInTerminator();
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
                     return this.isExpectedObjectLiteralExpression_PropertyAssignmentsTerminator();
-                case 32768 /* ParameterList_Parameters */ :
+                case 65536 /* ParameterList_Parameters */ :
                     return this.isExpectedParameterList_ParametersTerminator();
-                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeArgumentList_Types */ :
                     return this.isExpectedTypeArgumentList_TypesTerminator();
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return this.isExpectedTypeParameterList_TypeParametersTerminator();
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
                     return this.isExpectedLiteralExpression_AssignmentExpressionsTerminator();
                 default:
                     throw Errors.invalidOperation();
@@ -37853,6 +37865,12 @@ var Parser1;
         ParserImpl.prototype.isExpectedBlock_StatementsTerminator = function () {
             return this.currentToken().tokenKind === 71 /* CloseBraceToken */ ;
         };
+        ParserImpl.prototype.isExpectedTryBlock_StatementsTerminator = function () {
+            return this.currentToken().tokenKind === 17 /* CatchKeyword */  || this.currentToken().tokenKind === 25 /* FinallyKeyword */ ;
+        };
+        ParserImpl.prototype.isExpectedCatchBlock_StatementsTerminator = function () {
+            return this.currentToken().tokenKind === 25 /* FinallyKeyword */ ;
+        };
         ParserImpl.prototype.isExtendsOrImplementsClause = function () {
             if(this.currentToken().tokenKind === 51 /* ImplementsKeyword */  || this.currentToken().tokenKind === 48 /* ExtendsKeyword */ ) {
                 return this.isIdentifier(this.peekToken(1));
@@ -37879,25 +37897,28 @@ var Parser1;
                     return this.isStatement();
                 case 32 /* Block_Statements */ :
                     return this.isStatement();
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 64 /* TryBlock_Statements */ :
+                case 128 /* CatchBlock_Statements */ :
+                    return false;
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                     return this.isVariableDeclarator();
-                case 256 /* ObjectType_TypeMembers */ :
+                case 512 /* ObjectType_TypeMembers */ :
                     return this.isTypeMember();
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
                     return this.isExpression();
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
                     return this.isExtendsOrImplementsClauseTypeName();
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
                     return this.isPropertyAssignment(inErrorRecovery);
-                case 32768 /* ParameterList_Parameters */ :
+                case 65536 /* ParameterList_Parameters */ :
                     return this.isParameter();
-                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeArgumentList_Types */ :
                     return this.isType(true, true);
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return this.isTypeParameter();
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
                     return this.isAssignmentOrOmittedExpression();
                 default:
                     throw Errors.invalidOperation();
@@ -37917,27 +37938,27 @@ var Parser1;
                     return this.parseStatement();
                 case 32 /* Block_Statements */ :
                     return this.parseStatement();
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
                     return this.parseVariableDeclarator(true);
-                case 256 /* ObjectType_TypeMembers */ :
+                case 512 /* ObjectType_TypeMembers */ :
                     return this.parseTypeMember();
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
                     return this.parseAssignmentExpression(true);
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
                     return this.parseNameOrGenericType();
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                     return this.parseVariableDeclarator(true);
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                     return this.parseVariableDeclarator(false);
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
                     return this.parsePropertyAssignment();
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
                     return this.parseAssignmentOrOmittedExpression();
-                case 32768 /* ParameterList_Parameters */ :
+                case 65536 /* ParameterList_Parameters */ :
                     return this.parseParameter();
-                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeArgumentList_Types */ :
                     return this.parseType(false);
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return this.parseTypeParameter();
                 default:
                     throw Errors.invalidOperation();
@@ -37957,25 +37978,25 @@ var Parser1;
                     return Strings.statement;
                 case 32 /* Block_Statements */ :
                     return Strings.statement;
-                case 1024 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
-                case 2048 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 128 /* EnumDeclaration_VariableDeclarators */ :
+                case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
+                case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
+                case 256 /* EnumDeclaration_VariableDeclarators */ :
                     return Strings.identifier;
-                case 256 /* ObjectType_TypeMembers */ :
+                case 512 /* ObjectType_TypeMembers */ :
                     return Strings.call__construct__index__property_or_function_signature;
-                case 4096 /* ArgumentList_AssignmentExpressions */ :
+                case 8192 /* ArgumentList_AssignmentExpressions */ :
                     return Strings.expression;
-                case 512 /* ExtendsOrImplementsClause_TypeNameList */ :
+                case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
                     return Strings.type_name;
-                case 8192 /* ObjectLiteralExpression_PropertyAssignments */ :
+                case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
                     return Strings.property_or_accessor;
-                case 32768 /* ParameterList_Parameters */ :
+                case 65536 /* ParameterList_Parameters */ :
                     return Strings.parameter;
-                case 65536 /* TypeArgumentList_Types */ :
+                case 131072 /* TypeArgumentList_Types */ :
                     return Strings.type;
-                case 131072 /* TypeParameterList_TypeParameters */ :
+                case 262144 /* TypeParameterList_TypeParameters */ :
                     return Strings.type_parameter;
-                case 16384 /* ArrayLiteralExpression_AssignmentExpressions */ :
+                case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
                     return Strings.expression;
                 default:
                     throw Errors.invalidOperation();
@@ -54605,6 +54626,10 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         if(true) {
         }
+        Environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, generate);
+        });
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, generate);
@@ -54642,10 +54667,6 @@ var Program = (function () {
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter2\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, true);
-        });
-        Environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
     };
     Program.reusedElements = function reusedElements(oldNode, newNode, key) {

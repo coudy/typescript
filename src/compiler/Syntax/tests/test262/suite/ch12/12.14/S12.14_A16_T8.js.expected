@@ -12,26 +12,16 @@
             "_arguments": [
                 "statement"
             ]
-        },
-        {
-            "_position": 458,
-            "_width": 0,
-            "_diagnosticCode": "_0_expected",
-            "_arguments": [
-                "}"
-            ]
         }
     ],
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 458,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "TryStatement",
                 "fullWidth": 455,
-                "hasSkippedText": true,
                 "hasZeroWidthToken": true,
                 "tryKeyword": {
                     "kind": "TryKeyword",
@@ -110,8 +100,7 @@
                 },
                 "catchClause": {
                     "kind": "CatchClause",
-                    "fullWidth": 19,
-                    "hasSkippedText": true,
+                    "fullWidth": 9,
                     "hasZeroWidthToken": true,
                     "catchKeyword": {
                         "kind": "CatchKeyword",
@@ -135,58 +124,60 @@
                     },
                     "block": {
                         "kind": "Block",
-                        "fullWidth": 12,
-                        "hasSkippedText": true,
+                        "fullWidth": 2,
                         "hasZeroWidthToken": true,
                         "openBraceToken": {
                             "kind": "OpenBraceToken",
                             "width": 1,
-                            "fullWidth": 9,
+                            "fullWidth": 2,
                             "text": "{",
                             "hasTrailingTrivia": true,
                             "hasTrailingNewLine": true,
-                            "hasTrailingSkippedText": true,
                             "trailingTrivia": [
                                 {
                                     "kind": "NewLineTrivia",
                                     "text": "\n"
-                                },
-                                {
-                                    "kind": "SkippedTextTrivia",
-                                    "text": "finally"
                                 }
                             ]
                         },
-                        "statements": [
-                            {
-                                "kind": "Block",
-                                "fullWidth": 3,
-                                "openBraceToken": {
-                                    "kind": "OpenBraceToken",
-                                    "width": 1,
-                                    "text": "{"
-                                },
-                                "statements": [],
-                                "closeBraceToken": {
-                                    "kind": "CloseBraceToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": "}",
-                                    "hasTrailingTrivia": true,
-                                    "hasTrailingNewLine": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "NewLineTrivia",
-                                            "text": "\n"
-                                        }
-                                    ]
-                                }
-                            }
-                        ],
+                        "statements": [],
                         "closeBraceToken": {
                             "kind": "CloseBraceToken",
                             "width": 0,
                             "text": ""
+                        }
+                    }
+                },
+                "finallyClause": {
+                    "kind": "FinallyClause",
+                    "fullWidth": 10,
+                    "finallyKeyword": {
+                        "kind": "FinallyKeyword",
+                        "width": 7,
+                        "text": "finally"
+                    },
+                    "block": {
+                        "kind": "Block",
+                        "fullWidth": 3,
+                        "openBraceToken": {
+                            "kind": "OpenBraceToken",
+                            "width": 1,
+                            "text": "{"
+                        },
+                        "statements": [],
+                        "closeBraceToken": {
+                            "kind": "CloseBraceToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": "}",
+                            "hasTrailingTrivia": true,
+                            "hasTrailingNewLine": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "NewLineTrivia",
+                                    "text": "\n"
+                                }
+                            ]
                         }
                     }
                 }
