@@ -19,44 +19,47 @@ class SyntaxInformationMap extends SyntaxWalker {
 
     private _parentStack: SyntaxNode[] = [];
 
-    constructor() {
+    constructor(private trackParents: bool, private trackPreviousToken: bool) {
         super();
         this._parentStack.push(null);
     }
 
-    public static create(node: SyntaxNode): SyntaxInformationMap {
-        var map = new SyntaxInformationMap();
+    public static create(node: SyntaxNode, trackParents: bool, trackPreviousToken: bool): SyntaxInformationMap {
+        var map = new SyntaxInformationMap(trackParents, trackPreviousToken);
         map.visitNode(node);
         return map;
     }
 
     private visitNode(node: SyntaxNode): void {
-        this._elementToParent.add(node, ArrayUtilities.last(this._parentStack));
+        this.trackParents && this._elementToParent.add(node, ArrayUtilities.last(this._parentStack));
         this.elementToPosition.add(node, this._currentPosition);
-        
-        this._parentStack.push(node);
+
+        this.trackParents && this._parentStack.push(node);
         super.visitNode(node);
-        this._parentStack.pop();
+        this.trackParents && this._parentStack.pop();
     }
 
     private visitToken(token: ISyntaxToken): void {
-        this._elementToParent.add(token, ArrayUtilities.last(this._parentStack));
-        this.elementToPosition.add(token, this._currentPosition);
+        this.trackParents && this._elementToParent.add(token, ArrayUtilities.last(this._parentStack));
 
-        var tokenInformation: ITokenInformation = {
-            previousToken: this._previousToken,
-            nextToken: null
-        };
+        if (this.trackPreviousToken) {
+            var tokenInformation: ITokenInformation = {
+                previousToken: this._previousToken,
+                nextToken: null
+            };
 
-        if (this._previousTokenInformation !== null) {
-            this._previousTokenInformation.nextToken = token;
+            if (this._previousTokenInformation !== null) {
+                this._previousTokenInformation.nextToken = token;
+            }
+
+            this._previousToken = token;
+            this._previousTokenInformation = tokenInformation;
+
+            this.tokenToInformation.add(token, tokenInformation);
         }
 
-        this._previousToken = token;
+        this.elementToPosition.add(token, this._currentPosition);
         this._currentPosition += token.fullWidth();
-        this._previousTokenInformation = tokenInformation;
-
-        this.tokenToInformation.add(token, tokenInformation);
     }
 
     public parent(element: ISyntaxElement): SyntaxNode {
@@ -100,6 +103,7 @@ class SyntaxInformationMap extends SyntaxWalker {
     public isFirstTokenInLine(token: ISyntaxToken): bool {
         var information = this.tokenInformation(token);
         return this.isFirstTokenInLineWorker(information);
+
     }
 
     private isFirstTokenInLineWorker(information: ITokenInformation): bool {

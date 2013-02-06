@@ -333,7 +333,7 @@ module TypeScript {
 
                     var newParseTime = timer.time;
 
-                    if (false && syntaxTree.diagnostics().length === 0) {
+                    if (true && syntaxTree.diagnostics().length === 0) {
                         try {
                             timer.start();
                             var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);

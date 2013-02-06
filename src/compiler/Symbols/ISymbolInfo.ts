@@ -1,6 +1,5 @@
 ///<reference path='ISymbol.ts' />
 
-
 /// <summary>
 /// Indicates the reasons why a candidate (or set of candidate) symbols were not considered
 /// correct in SemanticInfo. Higher values take precedence over lower values, so if, for

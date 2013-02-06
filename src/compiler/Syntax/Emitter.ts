@@ -1223,7 +1223,7 @@ module Emitter {
         // Do the initial conversion. Note: the result at this point may be 'bogus'.  For example,
         // it make contain the same token instance multiple times in the tree.
         var output: SourceUnitSyntax = input.accept(
-            new EmitterImpl(SyntaxInformationMap.create(input), options));
+            new EmitterImpl(SyntaxInformationMap.create(input, /*trackParents:*/ true, /*trackPreviousToken:*/ true), options));
 
         // Make sure we clone any nodes/tokens we used in multiple places in the result.  That way
         // we don't break the invariant that all tokens in a tree are unique.
