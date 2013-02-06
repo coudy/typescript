@@ -64,6 +64,7 @@
 ///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
+///<reference path='Core\Timer.ts' />
 
 module TypeScript {
 
