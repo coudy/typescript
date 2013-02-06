@@ -388,10 +388,29 @@ var IO = (function() {
                 } catch (e) {
                     IOUtils.throwIOError("Couldn't write to file '" + path + "'.", e);
                 }
+                var buffer = "";
+                var bufferSize = 1024;
+                function bufferedWrite(str) {
+                    if (fd != null) {
+                        buffer += str;
+                        if (buffer.length >= bufferSize) {
+                            _fs.writeSync(fd, buffer);
+                            buffer = "";
+                        }
+                    }
+                }
                 return {
-                    Write: function(str) { _fs.writeSync(fd, str); },
-                    WriteLine: function(str) { _fs.writeSync(fd, str + '\r\n'); },
-                    Close: function() { _fs.closeSync(fd); fd = null; }
+                    // Writing to a string to improve performance
+                    Write: bufferedWrite,
+                    WriteLine: function (str) { bufferedWrite(str + '\r\n'); },
+                    Close: function () {
+                        if (fd != null) {
+                            _fs.writeSync(fd, buffer);
+                            _fs.closeSync(fd);
+                            fd = null;
+                            buffer = null;
+                        }
+                    }
                 };
             },
             dir: function dir(path, spec?, options?) {
