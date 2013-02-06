@@ -146,8 +146,8 @@ module Services {
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
                     var argumentList = <ArgumentListSyntax> list;
-                    var arguments = argumentList.arguments();
-                    if (arguments !== null && argumentList.closeParenToken() === element) {
+                    var arguments = argumentList.arguments;
+                    if (arguments !== null && argumentList.closeParenToken === element) {
                         return Indenter.getListItemIndentation(arguments, arguments.childCount() - 1);
                     }
                     break;
@@ -156,8 +156,8 @@ module Services {
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
                     var parameterList = <ParameterListSyntax> list;
-                    var parameters = parameterList.parameters();
-                    if (parameters !== null && parameterList.closeParenToken() === element) {
+                    var parameters = parameterList.parameters;
+                    if (parameters !== null && parameterList.closeParenToken === element) {
                         return Indenter.getListItemIndentation(parameters, parameters.childCount() - 1);
                     }
                     break;
@@ -166,8 +166,8 @@ module Services {
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
                     var typeArgumentList = <TypeArgumentListSyntax> list;
-                    var typeArguments = typeArgumentList.typeArguments();
-                    if (typeArguments !== null && typeArgumentList.greaterThanToken() === element) {
+                    var typeArguments = typeArgumentList.typeArguments;
+                    if (typeArguments !== null && typeArgumentList.greaterThanToken === element) {
                         return Indenter.getListItemIndentation(typeArguments, typeArguments.childCount() - 1);
                     }
                     break;
@@ -176,8 +176,8 @@ module Services {
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
                     var typeParameterList = <TypeParameterListSyntax> list;
-                    var typeParameters = typeParameterList.typeParameters();
-                    if (typeParameters !== null && typeParameterList.greaterThanToken() === element) {
+                    var typeParameters = typeParameterList.typeParameters;
+                    if (typeParameters !== null && typeParameterList.greaterThanToken === element) {
                         return Indenter.getListItemIndentation(typeParameters, typeParameters.childCount() - 1);
                     }
                     break;

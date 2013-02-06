@@ -18596,7 +18596,7 @@ var TypeScript;
             this.emitFullSourceMapPath = false;
             this.generateDeclarationFiles = false;
             this.useCaseSensitiveFileResolution = false;
-            this.useFidelity = true;
+            this.useFidelity = false;
             this.usePull = false;
             this.gatherDiagnostics = false;
         }
@@ -20832,6 +20832,9 @@ var PositionedElement = (function () {
     PositionedElement.prototype.parent = function () {
         return this._parent;
     };
+    PositionedElement.prototype.parentElement = function () {
+        return this._parent && this._parent._element;
+    };
     PositionedElement.prototype.element = function () {
         return this._element;
     };
@@ -21343,6 +21346,12 @@ var Syntax;
         },
         insertChildrenInto: function (array, index) {
         },
+        leadingTrivia: function () {
+            return Syntax.emptyTriviaList;
+        },
+        trailingTrivia: function () {
+            return Syntax.emptyTriviaList;
+        },
         leadingTriviaWidth: function () {
             return 0;
         },
@@ -21425,6 +21434,12 @@ var Syntax;
         };
         SingletonSeparatedSyntaxList.prototype.fullText = function () {
             return this.item.fullText();
+        };
+        SingletonSeparatedSyntaxList.prototype.leadingTrivia = function () {
+            return this.item.leadingTrivia();
+        };
+        SingletonSeparatedSyntaxList.prototype.trailingTrivia = function () {
+            return this.item.trailingTrivia();
         };
         SingletonSeparatedSyntaxList.prototype.leadingTriviaWidth = function () {
             return this.item.leadingTriviaWidth();
@@ -21580,6 +21595,12 @@ var Syntax;
             var fullWidth = this.fullWidth();
             return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
         };
+        NormalSeparatedSyntaxList.prototype.leadingTrivia = function () {
+            return this.firstToken().leadingTrivia();
+        };
+        NormalSeparatedSyntaxList.prototype.trailingTrivia = function () {
+            return this.lastToken().trailingTrivia();
+        };
         NormalSeparatedSyntaxList.prototype.leadingTriviaWidth = function () {
             return this.firstToken().leadingTriviaWidth();
         };
@@ -21712,6 +21733,12 @@ var Syntax;
         EmptySyntaxList.prototype.width = function () {
             return 0;
         };
+        EmptySyntaxList.prototype.leadingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
+        EmptySyntaxList.prototype.trailingTrivia = function () {
+            return Syntax.emptyTriviaList;
+        };
         EmptySyntaxList.prototype.leadingTriviaWidth = function () {
             return 0;
         };
@@ -21793,6 +21820,12 @@ var Syntax;
         };
         SingletonSyntaxList.prototype.width = function () {
             return this.item.width();
+        };
+        SingletonSyntaxList.prototype.leadingTrivia = function () {
+            return this.item.leadingTrivia();
+        };
+        SingletonSyntaxList.prototype.trailingTrivia = function () {
+            return this.item.trailingTrivia();
         };
         SingletonSyntaxList.prototype.leadingTriviaWidth = function () {
             return this.item.leadingTriviaWidth();
@@ -21911,6 +21944,12 @@ var Syntax;
         NormalSyntaxList.prototype.width = function () {
             var fullWidth = this.fullWidth();
             return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+        };
+        NormalSyntaxList.prototype.leadingTrivia = function () {
+            return this.firstToken().leadingTrivia();
+        };
+        NormalSyntaxList.prototype.trailingTrivia = function () {
+            return this.lastToken().trailingTrivia();
         };
         NormalSyntaxList.prototype.leadingTriviaWidth = function () {
             return this.firstToken().leadingTriviaWidth();
