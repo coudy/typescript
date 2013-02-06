@@ -1,9 +1,6 @@
 ///<reference path='ISyntaxElement.ts' />
 
 interface ISyntaxNodeOrToken extends ISyntaxElement {
-    leadingTrivia(): ISyntaxTriviaList;
-    trailingTrivia(): ISyntaxTriviaList;
-
     withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
     withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
 

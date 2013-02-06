@@ -14,21 +14,18 @@
 //
 
 ///<reference path='typescriptServices.ts' />
-///<reference path='..\compiler\Syntax\SyntaxWalker.generated.ts' />
+///<reference path='..\compiler\syntax\DepthLimitedWalker.ts' />
 
 module Services {
-    
-    export class OutliningElementsCollector extends SyntaxWalker {
-        private elements: NavigateToItem[] = [];
-        private position: number = 0;
+    export class OutliningElementsCollector extends DepthLimitedWalker {
+        // The maximum depth for collecting spans; this will cause us to miss deeply nested function/modules spans, 
+        // but will guarantee performance will not be closely tied to tree depth.
+        private static MaximumDepth: number = 10;
 
-        constructor(public unitIndex: number) {
-            super();
-        }
+        private elements: TextSpan[] = [];
 
-        public visitToken(token: ISyntaxToken): void {
-            this.position += token.fullWidth();
-            super.visitToken(token);
+        constructor() {
+            super(OutliningElementsCollector.MaximumDepth);
         }
 
         public visitClassDeclaration(node: ClassDeclarationSyntax): void {
@@ -84,23 +81,16 @@ module Services {
         private addOutlineRange(node: SyntaxNode, startElement: ISyntaxNodeOrToken, endElement: ISyntaxNodeOrToken) {
             if (startElement && endElement) {
                 // Compute the position
-                var start = this.position + Syntax.childOffset(node, startElement);
-                var end = this.position + Syntax.childOffset(node, endElement) + endElement.leadingTriviaWidth() + endElement.width();
+                var start = this.position() + Syntax.childOffset(node, startElement);
+                var end = this.position() + Syntax.childOffset(node, endElement) + endElement.leadingTriviaWidth() + endElement.width();
 
-                // Create the new range
-                var navigateToItem = new NavigateToItem();
-                navigateToItem.minChar = start;
-                navigateToItem.limChar = end;
-                navigateToItem.kind = ScriptElementKind.functionElement; // always mark them as functions. TODO change the return type to TextSpan instead of NavigateToItem
-                navigateToItem.unitIndex = this.unitIndex;
-
-                // Push it on the list
-                this.elements.push(navigateToItem);
+                // Push the new range
+                this.elements.push(TextSpan.fromBounds(start, end));
             }
         }
 
-        public static collectElements(node: SourceUnitSyntax, unitIndex: number): NavigateToItem[] {
-            var collector = new OutliningElementsCollector(unitIndex);
+        public static collectElements(node: SourceUnitSyntax): TextSpan[] {
+            var collector = new OutliningElementsCollector();
             node.accept(collector);
             return collector.elements;
         }

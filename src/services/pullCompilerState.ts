@@ -107,6 +107,7 @@ module Services {
             // Set "ES5" target by default for language service
             settings = new TypeScript.CompilationSettings();
             settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
+            settings.useFidelity = true;
             settings.usePull = true;
             return settings;
         }
@@ -236,10 +237,25 @@ module Services {
             return <TypeScript.Script>this.compiler.scripts.members[unitIndex];
         }
 
+        public createSyntaxTree(fileName: string): SyntaxTree {
+            var unitIndex = this.compilerCache.getUnitIndex(fileName);
+            if (unitIndex < 0) {
+                throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
+            }
+
+            var sourceText = this.getSourceText2(fileName, /*cached:*/ false);
+            var text = new TypeScript.SourceSimpleText(sourceText);
+            return Parser1.parse(text);
+        }
+
         public getSyntaxTree(fileName: string): SyntaxTree {
             var unitIndex = this.compilerCache.getUnitIndex(fileName);
             if (unitIndex < 0) {
                 throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
+            }
+
+            if (!this.compiler.syntaxTrees[unitIndex]) {
+                this.compiler.syntaxTrees[unitIndex] = this.createSyntaxTree(fileName);
             }
 
             return <SyntaxTree>this.compiler.syntaxTrees[unitIndex];
@@ -267,7 +283,7 @@ module Services {
             return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext);
         }
 
-        public getErrorEntries(maxCount: number, filter: (unitIndex: number, error: TypeScript.ErrorEntry) =>bool): TypeScript.ErrorEntry[] {
+        public old_getErrorEntries(maxCount: number, filter: (unitIndex: number, error: TypeScript.ErrorEntry) =>bool): TypeScript.ErrorEntry[] {
             var entries: TypeScript.ErrorEntry[] = [];
             var count = 0;
 
@@ -290,8 +306,9 @@ module Services {
                     for (var i = 0; i < errors.typeCheckErrors.length; i++) {
                         var error = errors.typeCheckErrors[i];
                         if (filter(unitIndex, error)) {
-                            if (!addError(error))
+                            if (!addError(error)) {
                                 break;
+                            }
                         }
                     }
                 }
@@ -301,11 +318,41 @@ module Services {
             var result: TypeScript.ErrorEntry[] = [];
             for (var i = 0; i < entries.length; i++) {
                 var e = entries[i];
-                var ne = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(e.unitIndex), e.minChar, e.limChar, e.message);
+                var ne = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(e.unitIndex), e.minChar, e.limChar, "OLD => " + e.message);
                 result.push(ne);
             }
             return result;
         }
+
+        public getErrorEntries(maxCount: number, filter: (unitIndex: number, error: SyntaxDiagnostic) => bool): TypeScript.ErrorEntry[] {
+            // Add errors from the old engine to the list untill type errors are available
+            var entries: TypeScript.ErrorEntry[] = this.old_getErrorEntries(maxCount, (u, e) => true);
+            var count = 0;
+
+            var addError = (unitIndex: number, error: SyntaxDiagnostic): bool => {
+                var entry = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(unitIndex), error.position(), error.width(), error.message());
+                entries.push(entry);
+                count++;
+                return (count < maxCount);
+            }
+
+            for (var unitIndex = 0, len = this.errorCollector.fileMap.length; unitIndex < len; unitIndex++) {
+                var errors = (<SyntaxTree>this.compiler.syntaxTrees[unitIndex]).diagnostics();
+                if (errors !== undefined) {
+                    for (var i = 0; i < errors.length; i++) {
+                        var error = errors[i];
+                        if (filter(unitIndex, error)) {
+                            if (!addError(unitIndex, error)) {
+                                break;
+                            }
+                        }
+                    }
+                    // TODO: Type checker errors
+                }
+            }
+
+            return entries;
+        } 
 
         public cleanASTTypesForReTypeCheck(ast: TypeScript.AST): void {
             this.compiler.cleanASTTypesForReTypeCheck(ast);
@@ -377,6 +424,10 @@ module Services {
                 return false;
             }
 
+            if (this.compilationSettings.useFidelity) {
+                this.updateSyntaxTree(scriptId);
+            }
+
             //
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
@@ -384,6 +435,29 @@ module Services {
             var sourceText = this.hostCache.getSourceText(hostUnitIndex);
             this.setUnitMapping(unitIndex, hostUnitIndex);
             return compiler.pullUpdateUnit(sourceText, scriptId, true/*setRecovery*/);
+        }
+
+        private updateSyntaxTree(scriptId: string): void {
+            var previousScript = this.getScriptAST(scriptId);
+            var editRange = this.getScriptEditRange(previousScript);
+
+            var start = editRange.minChar;
+            var end = editRange.limChar;
+            var newLength = end - start + editRange.delta;
+
+            Debug.assert(newLength >= 0);
+
+            var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
+
+            var textChangeRange = new TextChangeRange(TextSpan.fromBounds(start, end), newLength);
+
+            var newText = new TypeScript.SourceSimpleText(newSourceText);
+
+            var previousSyntaxTree = this.getSyntaxTree(scriptId);
+            var nextSyntaxTree = Parser1.incrementalParse(
+                previousSyntaxTree.sourceUnit(), [textChangeRange], newText);
+
+            this.setSyntaxTree(scriptId, nextSyntaxTree);
         }
 
         // Attempt an incremental refresh of the compiler state.

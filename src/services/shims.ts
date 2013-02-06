@@ -24,6 +24,8 @@ module Services {
     export interface ILanguageServiceShim {
         host: ILanguageServiceShimHost;
         languageService: Services.ILanguageService;
+        pullLanguageService: Services.IPullLanguageService;
+
         logger: TypeScript.ILogger;
 
         dispose(dummy: any): void;
@@ -185,7 +187,7 @@ module Services {
     export class LanguageServiceShim implements ILanguageServiceShim {
         public logger: TypeScript.ILogger;
 
-        constructor (public host: ILanguageServiceShimHost, public languageService: Services.ILanguageService) {
+        constructor(public host: ILanguageServiceShimHost, public languageService: Services.ILanguageService, public pullLanguageService: Services.IPullLanguageService) {
             this.logger = this.host;
         }
 

@@ -44,6 +44,14 @@ module Syntax {
             return 0;
         }
 
+        public leadingTrivia(): ISyntaxTriviaList {
+            return Syntax.emptyTriviaList;
+        }
+
+        public trailingTrivia(): ISyntaxTriviaList {
+            return Syntax.emptyTriviaList;
+        }
+
         public leadingTriviaWidth(): number {
             return 0;
         }
@@ -136,6 +144,14 @@ module Syntax {
 
         public width(): number {
             return this.item.width();
+        }
+        
+        public leadingTrivia(): ISyntaxTriviaList {
+            return this.item.leadingTrivia();
+        }
+
+        public trailingTrivia(): ISyntaxTriviaList {
+            return this.item.trailingTrivia();
         }
 
         public leadingTriviaWidth(): number {
@@ -276,6 +292,14 @@ module Syntax {
         public width(): number {
             var fullWidth = this.fullWidth();
             return fullWidth - this.leadingTriviaWidth() - this.trailingTriviaWidth();
+        }
+
+        public leadingTrivia(): ISyntaxTriviaList {
+            return this.firstToken().leadingTrivia();
+        }
+
+        public trailingTrivia(): ISyntaxTriviaList {
+            return this.lastToken().trailingTrivia();
         }
 
         public leadingTriviaWidth(): number {

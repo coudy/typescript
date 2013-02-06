@@ -32,6 +32,33 @@
 module FourSlashInterface {
     declare var FourSlash;
 
+    export interface Marker {
+        fileName: string;
+        position: number;
+        data?: any;
+    }
+
+    export interface Range {
+        fileName: string;
+        start: number;
+        end: number;
+    }
+
+    export interface TextSpan {
+        start: number;
+        end: number;
+    }
+
+    export class test {
+        public markers(): Marker[] {
+            return FourSlash.currentTestState.getMarkers();
+        }
+
+        public ranges(): Range[] {
+            return FourSlash.currentTestState.getRanges();
+        }
+    }
+
     export class goTo {
         // Moves the caret to the specified marker,
         // or the anonymous marker ('/**/') if no name
@@ -178,6 +205,26 @@ module FourSlashInterface {
         public baselineCurrentFileBreakpointLocations() {
             FourSlash.currentTestState.baselineCurrentFileBreakpointLocations();
         }
+
+        public outliningSpansInCurrentFile(spans: TextSpan[]) {
+            FourSlash.currentTestState.verifyOutliningSpans(spans);
+        }
+
+        public matchingBracePositionInCurrentFile(bracePosition: number, expectedMatchPosition: number) {
+            FourSlash.currentTestState.verifyMatchingBracePosition(bracePosition, expectedMatchPosition);
+        }
+    
+        public noMatchingBracePositionInCurrentFile(bracePosition: number) {
+            FourSlash.currentTestState.verifyNoMatchingBracePosition(bracePosition);
+        }
+
+        public indentationLevelAtPositionIs(position: number, numberOfTabs: number) {
+            FourSlash.currentTestState.verifyIndentationLevelAtPosition(position, numberOfTabs);
+        }
+
+        public indentationLevelIs(numberOfTabs: number) {
+            FourSlash.currentTestState.verifyIndentationLevelAtCurrentPosition(numberOfTabs);
+        }
     }
     
     export class edit {
@@ -244,6 +291,7 @@ module FourSlashInterface {
 }
 
 module fs {
+    export var test = new FourSlashInterface.test();
     export var goTo = new FourSlashInterface.goTo();
     export var verify = new FourSlashInterface.verify();
     export var edit = new FourSlashInterface.edit();
@@ -251,6 +299,7 @@ module fs {
     export var format = new FourSlashInterface.format();
 }
 
+var test = new FourSlashInterface.test();
 var goTo = new FourSlashInterface.goTo();
 var verify = new FourSlashInterface.verify();
 var edit = new FourSlashInterface.edit();

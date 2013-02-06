@@ -33,6 +33,9 @@ interface ISyntaxElement {
     // Text for this element, including leading and trailing trivia.
     fullText(): string;
 
+    leadingTrivia(): ISyntaxTriviaList;
+    trailingTrivia(): ISyntaxTriviaList;
+
     leadingTriviaWidth(): number;
     trailingTriviaWidth(): number;
 
