@@ -119,7 +119,13 @@ module TypeScript {
             // 2. If no other decl exists, create a new symbol and use that one
         
             var modName = moduleDecl.getName();
-            var moduleSymbol: PullTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(modName, PullElementKind.Module, []);
+            var moduleSymbol: PullTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
+
+            if (moduleSymbol && moduleSymbol.getKind() != PullElementKind.Module) {
+                // duplicate symbol error
+                moduleSymbol = null;
+            }
+
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleDecl);
             var createdNewSymbol = false;
 
@@ -177,7 +183,13 @@ module TypeScript {
             // 2. If no other decl exists, create a new symbol and use that one
         
             var enumName = enumDeclaration.getName();
-            var enumSymbol = <PullTypeSymbol>this.findSymbolInContext(enumName, PullElementKind.Module, []);
+            var enumSymbol = <PullTypeSymbol>this.findSymbolInContext(enumName, PullElementKind.SomeType, []);
+
+            if (enumSymbol && enumSymbol.getKind() != PullElementKind.Enum) {
+                // error
+                enumSymbol = null;
+            }
+
             var enumAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(enumDeclaration);
             var createdNewSymbol = false;
 
@@ -281,7 +293,14 @@ module TypeScript {
                     }
                 }
                 else {
-                   classSymbol = <PullClassSymbol>this.findSymbolInContext(className, PullElementKind.Class, []);
+                    classSymbol = <PullClassSymbol>this.findSymbolInContext(className, PullElementKind.SomeType, []);
+
+                    if (classSymbol && classSymbol.getKind() != PullElementKind.Class) {
+                        classSymbol = null;
+                    }
+                    else {
+                        reUsedSymbol = true;
+                    }
                 }
             }
 
@@ -349,7 +368,13 @@ module TypeScript {
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
             var interfaceName = interfaceDecl.getName();
-            var interfaceSymbol: PullTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(interfaceName, PullElementKind.Interface, []);
+            var interfaceSymbol: PullTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(interfaceName, PullElementKind.SomeType, []);
+
+            if (interfaceSymbol && interfaceSymbol.getKind() != PullElementKind.Interface) {
+                // error
+                interfaceSymbol = null;
+            }
+
             var interfaceAST = <TypeDeclaration>this.semanticInfo.getASTForDecl(interfaceDecl);
             var createdNewSymbol = false;
 
@@ -695,6 +720,8 @@ module TypeScript {
                 }
                 else {
                     functionSymbol = <PullFunctionSymbol>this.findSymbolInContext(funcName, declKind, []);
+
+                    // PULLTODO: Check that the symbol is a function symbol
                 }
 
                 if (functionSymbol) {
@@ -725,6 +752,8 @@ module TypeScript {
                 else {
                     // PULLREVIEW: This call ends up being quite expensive - need to avoid it if at all possible
                     candidateSym = <PullFunctionSymbol>this.findSymbolInContext(funcName, declKind, []);
+
+                    // PULLTODO: Check that the symbol is a function symbol
                 }
 
                 if (candidateSym && (candidateSym.getKind() & PullElementKind.Function)) {
