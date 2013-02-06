@@ -1012,9 +1012,15 @@ module TypeScript {
         public endingToken: ASTSpan = null;
         public isDeclaration() { return true; }
 
-        constructor (public name: Identifier, public bod: ASTList, public isConstructor: bool,
-                     public arguments: ASTList, public vars: ASTList, public scopes: ASTList, public statics: ASTList,
-                     nodeType: number) {
+        constructor(public name: Identifier,
+                    public bod: ASTList,
+                    public isConstructor: bool,
+                    public typeArguments: ASTList,
+                    public arguments: ASTList,
+                    public vars: ASTList,
+                    public scopes: ASTList,
+                    public statics: ASTList,
+                    nodeType: number) {
 
             super(nodeType);
         }
@@ -1163,7 +1169,7 @@ module TypeScript {
         }
 
         constructor (vars: ASTList, scopes: ASTList) {
-            super(new Identifier("script"), null, false, null, vars, scopes, null, NodeType.Script);
+            super(new Identifier("script"), null, false, null, null, vars, scopes, null, NodeType.Script);
             this.vars = vars;
         }
 
@@ -1312,11 +1318,12 @@ module TypeScript {
     export class TypeDeclaration extends NamedDeclaration {
         public varFlags = VarFlags.None;
 
-        constructor (nodeType: NodeType,
-                     name: Identifier,
-                     public extendsList: ASTList,
-                     public implementsList: ASTList,
-                     members: ASTList) {
+        constructor(nodeType: NodeType,
+                    name: Identifier,
+                    public typeParameters: ASTList,
+                    public extendsList: ASTList,
+                    public implementsList: ASTList,
+                    members: ASTList) {
             super(nodeType, name, members);
         }
 
@@ -1335,11 +1342,12 @@ module TypeScript {
         public constructorNestingLevel = 0;
         public endingToken: ASTSpan = null;
 
-        constructor (name: Identifier,
-                     members: ASTList,
-                     extendsList: ASTList,
-                     implementsList: ASTList) {
-            super(NodeType.ClassDeclaration, name, extendsList, implementsList, members);
+        constructor(name: Identifier,
+                    typeParameters: ASTList,
+                    members: ASTList,
+                    extendsList: ASTList,
+                    implementsList: ASTList) {
+            super(NodeType.ClassDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -1352,11 +1360,12 @@ module TypeScript {
     }
 
     export class InterfaceDeclaration extends TypeDeclaration {
-        constructor (name: Identifier,
-                     members: ASTList,
-                     extendsList: ASTList,
-                     implementsList: ASTList) {
-            super(NodeType.InterfaceDeclaration, name, extendsList, implementsList, members);
+        constructor(name: Identifier,
+                    typeParameters: ASTList,
+                    members: ASTList,
+                    extendsList: ASTList,
+                    implementsList: ASTList) {
+            super(NodeType.InterfaceDeclaration, name, typeParameters, extendsList, implementsList, members);
         }
 
         public typeCheck(typeFlow: TypeFlow) {
@@ -2155,6 +2164,12 @@ module TypeScript {
             }
             context.noContinuation = false;
             context.walker.options.goChildren = false;
+        }
+    }
+
+    export class TypeParameter extends AST {
+        constructor(public name: Identifier, public constraint: AST) {
+            super(NodeType.TypeParameter);
         }
     }
 

@@ -129,6 +129,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.Typeof] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.NumberLit] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.Name] = ChildrenWalkers.walkNone;
+            this.childrenWalkers[NodeType.TypeParameter] = ChildrenWalkers.walkTypeParameterChildren;
             this.childrenWalkers[NodeType.GenericType] = ChildrenWalkers.walkGenericTypeChildren;
             this.childrenWalkers[NodeType.TypeRef] = ChildrenWalkers.walkTypeReferenceChildren;
             this.childrenWalkers[NodeType.Index] = ChildrenWalkers.walkBinaryExpressionChildren;
@@ -277,6 +278,16 @@ module TypeScript {
                 if ((preAst.operand2) && (walker.options.goNextSibling)) {
                     preAst.operand2 = walker.walk(preAst.operand2, preAst);
                 }
+            }
+        }
+
+        export function walkTypeParameterChildren(preAst: TypeParameter, parent: AST, walker: IAstWalker): void {
+            if (preAst.name) {
+                preAst.name = <Identifier>walker.walk(preAst.name, preAst);
+            }
+
+            if (preAst.constraint && (walker.options.goNextSibling)) {
+                preAst.constraint = <ASTList> walker.walk(preAst.constraint, preAst);
             }
         }
 

@@ -870,7 +870,7 @@ module TypeScript {
                                             formals, false, true, false, false, false, false, null, true);
                     this.checkCurrentToken(TokenID.EqualsGreaterThan, errorRecoverySet);
                     var returnType = this.parseTypeReference(errorRecoverySet, true);
-                    var funcDecl = new FuncDecl(null, null, false, formals, null, null, null,
+                    var funcDecl = new FuncDecl(null, null, false, null, formals, null, null, null,
                                                 NodeType.FuncDecl);
                     funcDecl.returnTypeAnnotation = returnType;
                     funcDecl.variableArgList = variableArgList;
@@ -913,7 +913,7 @@ module TypeScript {
 
             // REVIEW: We're parsing an ObjectType, but we give a NodeType of Interface here.
             var interfaceDecl = new InterfaceDeclaration(
-                this.anonId, members, /*extends:*/ null, /*implements:*/ null);
+                this.anonId, null, members, /*extends:*/ null, /*implements:*/ null);
 
             interfaceDecl.minChar = minChar;
             interfaceDecl.limChar = members.limChar;    // "}"
@@ -1015,7 +1015,7 @@ module TypeScript {
                 limChar = this.scanner.pos;
             }
 
-            var funcDecl = new FuncDecl(name, bod, isConstructor, args, this.topVarList(),
+            var funcDecl = new FuncDecl(name, bod, isConstructor, null, args, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.popDeclLists();
             var scopeList = this.topScopeList();
@@ -1629,7 +1629,7 @@ module TypeScript {
             }
 
             // REVIEW: Note that we don't set this as the current class decl
-            var classDecl = new ClassDeclaration(name, new ASTList(), extendsList, implementsList);
+            var classDecl = new ClassDeclaration(name, null, new ASTList(), extendsList, implementsList);
 
             this.currentClassDefinition = classDecl;
 
@@ -2115,7 +2115,7 @@ module TypeScript {
             // have an 'ObjectType' and not a list of members.  We may want to consider making that
             // change.  Note: it would mean breaking aparat TypeDecl into InterfaceDeclaration and 
             // ClassDeclaration.
-            var interfaceDecl = new InterfaceDeclaration(name, members, extendsList, null);
+            var interfaceDecl = new InterfaceDeclaration(name, null, members, extendsList, null);
             if (hasFlag(modifiers, Modifiers.Private)) {
                 interfaceDecl.varFlags |= VarFlags.Private;
             }
@@ -4414,7 +4414,7 @@ module TypeScript {
 
         // REVIEW: use enclosing scope to determine this
         // REVIEW: Why even use class here?
-        var quickClassDecl = new ClassDeclaration(null, null, null, null);
+        var quickClassDecl = new ClassDeclaration(null, null, null, null, null);
         quickParser.currentClassDecl = quickClassDecl;
 
         var result = quickParser.quickParse(new StringSourceText(fragment), "", 0);

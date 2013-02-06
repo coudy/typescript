@@ -290,6 +290,7 @@ module TypeScript {
 
         private visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
             var name = this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
+            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
 
             var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : new ASTList();
             var implementsList = node.implementsClause() ? node.implementsClause().accept(this) : new ASTList();
@@ -297,7 +298,7 @@ module TypeScript {
 
             this.requiresExtendsBlock = this.requiresExtendsBlock || !!node.extendsClause();
 
-            var result = new ClassDeclaration(name, members, extendsList, implementsList);
+            var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList);
             this.setSpan(result, node);
 
             if (node.exportKeyword()) {
@@ -346,10 +347,11 @@ module TypeScript {
 
         private visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any {
             var name = this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
+            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
             var extendsList = node.extendsClause() ? node.extendsClause().accept(this) : null;
             var members = this.visitSeparatedSyntaxList(node.body().typeMembers());
 
-            var result = new InterfaceDeclaration(name, members, extendsList, null);
+            var result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);
             this.setSpan(result, node);
 
             //if (node.publicOrPrivateKeyword()) {
@@ -487,6 +489,7 @@ module TypeScript {
 
         private visitFunctionDeclaration(node: FunctionDeclarationSyntax): any {
             var name = this.identifierFromToken(node.functionSignature().identifier(), !!node.functionSignature().questionToken());
+            var typeParameters = node.functionSignature().callSignature().typeParameterList() === null ? null : node.functionSignature().callSignature().typeParameterList().accept(this);
             var parameters = node.functionSignature().callSignature().parameterList().accept(this);
 
             var returnType = node.functionSignature().callSignature().typeAnnotation()
@@ -500,7 +503,7 @@ module TypeScript {
                 bod.append(new EndCode());
             }
 
-            var funcDecl = new FuncDecl(name, bod, false, parameters, this.topVarList(),
+            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(),
                 this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, node);
 
@@ -512,7 +515,7 @@ module TypeScript {
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
             funcDecl.returnTypeAnnotation = returnType;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature().callSignature().parameterList().parameters());
-
+            
             if (node.exportKeyword()) {
                 funcDecl.fncFlags |= FncFlags.Exported;
             }
@@ -816,7 +819,7 @@ module TypeScript {
 
             var statements = this.getArrowFunctionStatements(node.body());
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
@@ -832,6 +835,7 @@ module TypeScript {
         }
 
         private visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): FuncDecl {
+            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
             var parameters = node.callSignature().parameterList().accept(this);
             var returnType = node.callSignature().typeAnnotation() ? node.callSignature().typeAnnotation().accept(this) : null;
             
@@ -839,7 +843,7 @@ module TypeScript {
 
             var statements = this.getArrowFunctionStatements(node.body());
 
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ false, typeParameters, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
@@ -894,7 +898,8 @@ module TypeScript {
 
         private visitFunctionType(node: FunctionTypeSyntax): TypeReference {
             var parameters = node.parameterList().accept(this);
-            var result = new FuncDecl(null, null, false, parameters, null, null, null, NodeType.FuncDecl);
+            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
+            var result = new FuncDecl(null, null, false, typeParameters, parameters, null, null, null, NodeType.FuncDecl);
             this.setSpan(result, node);
             
             result.returnTypeAnnotation = node.type() ? this.visitType(node.type()) : null;
@@ -911,6 +916,7 @@ module TypeScript {
         private visitObjectType(node: ObjectTypeSyntax): TypeReference {
             var result = new InterfaceDeclaration(
                 new Identifier("_anonymous"),
+                null,
                 this.visitSeparatedSyntaxList(node.typeMembers()),
                 null, null);
             this.setSpan(result, node);
@@ -1107,9 +1113,10 @@ module TypeScript {
         }
 
         private visitConstructSignature(node: ConstructSignatureSyntax): FuncDecl {
+            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
             var parameters = node.callSignature().parameterList().accept(this);
 
-            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
             result.returnTypeAnnotation = node.callSignature().typeAnnotation()
@@ -1128,9 +1135,10 @@ module TypeScript {
 
         private visitFunctionSignature(node: FunctionSignatureSyntax): FuncDecl {
             var name = this.identifierFromToken(node.identifier(), !!node.questionToken());
+            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
             var parameters = node.callSignature().parameterList().accept(this);
 
-            var result = new FuncDecl(name, new ASTList(), false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(name, new ASTList(), false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
             result.variableArgList = this.hasDotDotDotParameter(node.callSignature().parameterList().parameters());
@@ -1151,7 +1159,7 @@ module TypeScript {
             var parameters = new ASTList();
             parameters.append(node.parameter().accept(this));
             
-            var result = new FuncDecl(name, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(name, new ASTList(), /*isConstructor:*/ false, null, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
             result.variableArgList = !!node.parameter().dotDotDotToken();
@@ -1186,9 +1194,10 @@ module TypeScript {
         }
 
         private visitCallSignature(node: CallSignatureSyntax): any {
+            var typeParameters = node.typeParameterList() === null ? null : node.typeParameterList().accept(this);
             var parameters = node.parameterList().accept(this);
 
-            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList().parameters());
@@ -1205,16 +1214,21 @@ module TypeScript {
             return result;
         }
 
-        private visitTypeParameterList(node: TypeParameterListSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitTypeParameterList(node: TypeParameterListSyntax): ASTList {
+            return this.visitSeparatedSyntaxList(node.typeParameters());
         }
 
-        private visitTypeParameter(node: TypeParameterSyntax): any {
-            throw Errors.notYetImplemented();
+        private visitTypeParameter(node: TypeParameterSyntax): TypeParameter {
+            var result = new TypeParameter(
+                this.identifierFromToken(node.identifier(), /*isOptional:*/ false),
+                node.constraint() === null ? null : node.constraint().accept(this));
+            this.setSpan(result, node);
+
+            return result;
         }
 
         private visitConstraint(node: ConstraintSyntax): any {
-            throw Errors.notYetImplemented();
+            return this.visitType(node.type());
         }
 
         private visitIfStatement(node: IfStatementSyntax): IfStatement {
@@ -1251,7 +1265,7 @@ module TypeScript {
             if (statements) {
                 statements.append(new EndCode());
             }
-            var result = new FuncDecl(null, statements, /*isConstructor:*/ true, parameters, this.topVarList(),
+            var result = new FuncDecl(null, statements, /*isConstructor:*/ true, null, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
@@ -1299,6 +1313,7 @@ module TypeScript {
 
         private visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FuncDecl {
             var name = this.identifierFromToken(node.functionSignature().identifier(), !!node.functionSignature().questionToken());
+            var typeParameters = node.functionSignature().callSignature().typeParameterList() === null ? null : node.functionSignature().callSignature().typeParameterList().accept(this);
             var parameters = node.functionSignature().callSignature().parameterList().accept(this);
 
             this.pushDeclLists();
@@ -1307,7 +1322,7 @@ module TypeScript {
             if (statements) {
                 statements.append(new EndCode());
             }
-            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, typeParameters, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
@@ -1351,7 +1366,7 @@ module TypeScript {
             if (statements) {
                 statements.append(new EndCode());
             }
-            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+            var result = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(result, node);
 
@@ -1632,7 +1647,7 @@ module TypeScript {
             var statements = this.visitSyntaxList(node.block().statements());
             statements.append(new EndCode());
 
-            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, node);
 
@@ -1666,7 +1681,7 @@ module TypeScript {
             var statements = this.visitSyntaxList(node.block().statements());
             statements.append(new EndCode());
 
-            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, parameters, this.topVarList(),
+            var funcDecl = new FuncDecl(name, statements, /*isConstructor:*/ false, null, parameters, this.topVarList(),
                                         this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, node);
 
@@ -1687,6 +1702,7 @@ module TypeScript {
 
         private visitFunctionExpression(node: FunctionExpressionSyntax): any {
             var name = node.identifier() === null ? null : this.identifierFromToken(node.identifier(), /*isOptional:*/ false);
+            var typeParameters = node.callSignature().typeParameterList() === null ? null : node.callSignature().typeParameterList().accept(this);
             var parameters = node.callSignature().parameterList().accept(this);
 
             var returnType = node.callSignature().typeAnnotation()
@@ -1700,7 +1716,7 @@ module TypeScript {
                 bod.append(new EndCode());
             }
 
-            var funcDecl = new FuncDecl(name, bod, false, parameters, this.topVarList(),
+            var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(),
                 this.topScopeList(), this.topStaticsList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, node);
 
