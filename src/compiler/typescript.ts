@@ -307,9 +307,16 @@ module TypeScript {
                 //if (filename.indexOf("getCompletionsAtPosition5") < 0) {
                 //    return;
                 //}
-                 
+                
+                var timer = new Timer();
                 var sharedIndex = this.units.length;
+
+                timer.start();
                 var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
+                timer.end();
+
+                var oldParseTime = timer.time;
+
                 script.referencedFiles = referencedFiles;
                 script.isResident = keepResident;
                 this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
@@ -317,26 +324,38 @@ module TypeScript {
                 var index = this.units.length;
                 this.units[index] = script.locationInfo;
                 
-                //if (this.settings.useFidelity) {
-                //    var text = new TypeScript.SourceSimpleText(sourceText);
-                //    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
+                if (this.settings.useFidelity) {
+                    var text = new TypeScript.SourceSimpleText(sourceText);
 
-                //    if (syntaxTree.diagnostics().length === 0) {
-                //        try {
-                //            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                    timer.start();
+                    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
+                    timer.end();
 
-                //            script2.referencedFiles = referencedFiles;
-                //            script2.isResident = keepResident;
+                    var newParseTime = timer.time;
 
-                //            TypeScriptCompiler.compareObjects(script, script2);
-                //        } catch (e1) {
-                //            IO.stdout.WriteLine("Error converting: " + filename);
-                //            IO.stdout.WriteLine("\t" + e1.message);
-                //        }
-                //    }
+                    //if (syntaxTree.diagnostics().length === 0) {
+                    //    try {
+                    //        timer.start();
+                    //        var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                    //        timer.end();
+
+                    //        var translateTime = timer.time;
+                    //        IO.stdout.WriteLine();
+                    //        IO.stdout.WriteLine(filename +  ": Old - New - Translate: " + oldParseTime + " - " + newParseTime + " - " + translateTime);
+                    //        IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
+                            
+                    //        script2.referencedFiles = referencedFiles;
+                    //        script2.isResident = keepResident;
+
+                    //        // TypeScriptCompiler.compareObjects(script, script2);
+                    //    } catch (e1) {
+                    //        IO.stdout.WriteLine("Error converting: " + filename);
+                    //        IO.stdout.WriteLine("\t" + e1.message);
+                    //    }
+                    //}
                      
-                //    this.syntaxTrees.push(syntaxTree);
-                //}
+                    this.syntaxTrees.push(syntaxTree);
+                }
 
                 if (!this.settings.usePull) {
                     var typeCollectionStart = new Date().getTime();

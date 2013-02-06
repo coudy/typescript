@@ -42,6 +42,6 @@ class Timer {
 
     public end() {
         // Set time to MS.
-        this.time = (Clock.now() - this.startTime) / Clock.resolution * 1000;
+        this.time = (Clock.now() - this.startTime);
     }
 }

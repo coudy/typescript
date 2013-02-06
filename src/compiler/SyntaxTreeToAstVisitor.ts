@@ -674,6 +674,12 @@ module TypeScript {
         private visitVariableStatement(node: VariableStatementSyntax): AST {
             var varList = node.variableDeclaration().accept(this);
 
+            if (varList.nodeType === NodeType.VarDecl) {
+                varDecl = <VarDecl>varList;
+                varList = new ASTList();
+                varList.append(varDecl);
+            }
+
             for (var i = 0, n = varList.members.length; i < n; i++) {
                 var varDecl = <VarDecl>varList.members[i];
 
@@ -1484,9 +1490,11 @@ module TypeScript {
                 }
             }
 
+
+
             var result = new CallExpression(NodeType.New,
                 expression,
-                node.argumentList().typeArgumentList() === null ? null : node.argumentList().typeArgumentList().accept(this),
+                node.argumentList() === null || node.argumentList().typeArgumentList() === null ? null : node.argumentList().typeArgumentList().accept(this),
                 node.argumentList() === null ? null : node.argumentList().accept(this));
             this.setSpan(result, node);
 
