@@ -74,6 +74,27 @@ module IOUtils {
         }
         throw new Error(errorMessage);
     }
+
+    export class BufferedTextWriter implements ITextWriter {
+        public buffer = "";
+        // Inner writer does not need a WriteLine method, since the BufferedTextWriter wraps it itself
+        constructor(public writer: { Write: (str: string) => void; Close: () => void; }, public capacity = 1024) { }
+        Write(str) {
+            this.buffer += str;
+            if (this.buffer.length >= this.capacity) {
+                this.writer.Write(this.buffer);
+                this.buffer = "";
+            }
+        }
+        WriteLine(str) {
+            this.Write(str + '\r\n');
+        }
+        Close() {
+            this.writer.Write(this.buffer);
+            this.writer.Close();
+            this.buffer = null;
+        }
+    }
 }
 
 // Declare dependencies needed for all supported hosts
@@ -388,30 +409,11 @@ var IO = (function() {
                 } catch (e) {
                     IOUtils.throwIOError("Couldn't write to file '" + path + "'.", e);
                 }
-                var buffer = "";
-                var bufferSize = 1024;
-                function bufferedWrite(str) {
-                    if (fd != null) {
-                        buffer += str;
-                        if (buffer.length >= bufferSize) {
-                            _fs.writeSync(fd, buffer);
-                            buffer = "";
-                        }
-                    }
-                }
-                return {
-                    // Writing to a string to improve performance
-                    Write: bufferedWrite,
-                    WriteLine: function (str) { bufferedWrite(str + '\r\n'); },
-                    Close: function () {
-                        if (fd != null) {
-                            _fs.writeSync(fd, buffer);
-                            _fs.closeSync(fd);
-                            fd = null;
-                            buffer = null;
-                        }
-                    }
-                };
+                // Writing to a buffer to improve performance
+                return new IOUtils.BufferedTextWriter({
+                    Write: function (str) { _fs.writeSync(fd, str); },
+                    Close: function () { _fs.closeSync(fd); fd = null; }
+                });
             },
             dir: function dir(path, spec?, options?) {
                 options = options || <{ recursive?: bool; }>{};
