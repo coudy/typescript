@@ -1810,6 +1810,10 @@ module TypeScript {
             var variableArgList = false;
             var preComments = this.parseComments();
 
+            var constructorSpan = new ASTSpan();
+            constructorSpan.minChar = this.scanner.startPos;
+            constructorSpan.limChar = this.scanner.pos;
+
             this.currentToken = this.scanner.scan(); // scan past the 'constructor' token
 
             if (this.currentToken.tokenId == TokenID.OpenParen) {
@@ -1839,7 +1843,7 @@ module TypeScript {
                 errorRecoverySet | ErrorRecoverySet.RCurly, this.currentClassDefinition.name,
                 /*isConstructor:*/ true, /*isMethod:*/ false, args, AllowedElements.Properties,
                 minChar, requiresSignature, modifiers);
-
+            constructorFuncDecl.constructorSpan = constructorSpan;
             constructorFuncDecl.preComments = preComments;
 
             if (requiresSignature && !isAmbient) {

@@ -13,6 +13,6 @@
 ////}
 
 goTo.marker('1');
-verify.currentQuickInfoType('string');
+verify.quickInfoIs('string');
 goTo.marker('2');
-verify.currentQuickInfoType('FooOptions');
+verify.quickInfoIs('FooOptions');

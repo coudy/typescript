@@ -1,9 +1,9 @@
 /// <reference path='fourslash.ts' />
 
-////var f: /*A*/{
+////var /*A*/f: {
 ////    x: number;
 ////    <
 ////};
 
 goTo.marker('A');
-verify.quickInfoIs('{ x: number; }');
+verify.quickInfoIs('{ x: number; }', "", "f", "var");

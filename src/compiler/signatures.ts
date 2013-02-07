@@ -150,33 +150,44 @@ module TypeScript {
         }
 
         public toString() { return this.signatures.toString(); }
-        public toStrings(prefix: string, shortform: bool, scope: SymbolScope, getPrettyTypeName? : bool) {
+        public toStrings(prefix: string, shortform: bool, scope: SymbolScope, getPrettyTypeName? : bool, useSignature? : Signature) {
             var result : MemberName[] = [];  
             var len = this.signatures.length;
             if (!getPrettyTypeName && len > 1) {
                 shortform = false;
             }
-            for (var i = 0; i < len; i++) {
-                // the definition signature shouldn't be printed if there are overloads
-                if (len > 1 && this.signatures[i] == this.definitionSignature) {
-                    continue;
-                }
-                var currentSignature: MemberNameArray;
+
+            var getMemberNameOfSignature = (signature: Signature) => {
                 if (this.flags & SignatureFlags.IsIndexer) {
-                    currentSignature = this.signatures[i].toStringHelperEx(shortform, true, scope);
+                    return signature.toStringHelperEx(shortform, true, scope);
                 }
                 else {
-                    currentSignature = this.signatures[i].toStringHelperEx(shortform, false, scope, prefix);
-                }
-                result.push(currentSignature);
-
-                if (getPrettyTypeName) {
-                    var overloadString = " (+ " + ((this.definitionSignature != null) ? len - 2 : len - 1) + " overload(s))";
-                    currentSignature.add(MemberName.create(overloadString));
-                    break;
+                    return signature.toStringHelperEx(shortform, false, scope, prefix);
                 }
             }
-            
+
+            if (useSignature) {
+                result.push(getMemberNameOfSignature(useSignature));
+            } else {
+                for (var i = 0; i < len; i++) {
+                    // the definition signature shouldn't be printed if there are overloads
+                    if (len > 1 && this.signatures[i] == this.definitionSignature) {
+                        continue;
+                    }
+
+                    result.push(getMemberNameOfSignature(this.signatures[i]));
+                    if (getPrettyTypeName) {
+                        break;
+                    }
+                }
+            }
+
+            if (getPrettyTypeName && len > 1) {
+                var lastMemberName = <MemberNameArray>result[result.length - 1];
+                var overloadString = " (+ " + ((this.definitionSignature != null) ? len - 2 : len - 1) + " overload(s))";
+                lastMemberName.add(MemberName.create(overloadString));
+            }
+
             return result;
         }
 

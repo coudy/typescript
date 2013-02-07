@@ -77,6 +77,7 @@ module FourSlash {
 
         // The current caret position in the active file
         public currentCaretPosition = 0;
+        public lastKnownMarker: string = "";
 
         // The file that's currently 'opened'
         public activeFile: FourSlashFile = null;
@@ -105,7 +106,7 @@ module FourSlash {
             if (marker.position === -1 || marker.position > this.langSvc.getScriptSourceLength(this.getActiveFileIndex())) {
                 throw new Error('Marker "' + name + '" has been invalidated by unrecoverable edits to the file.');
             }
-
+            this.lastKnownMarker = name;
             this.currentCaretPosition = marker.position;
         }
 
@@ -278,16 +279,34 @@ module FourSlash {
             return this.realLangSvc.getCompletionsAtPosition(this.activeFile.name, this.currentCaretPosition, false);
         }
 
-        public verifyQuickInfo(expectedTypeName: string, negative: number) {
+        public verifyQuickInfo(expectedTypeName: string, negative: number, docComment?: string, symbolName?: string, kind?: string) {
             var actualQuickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition);
-            var actualQuickInfoString = actualQuickInfo.memberName.toString();
-            if (actualQuickInfo.docComment != "") {
-                actualQuickInfoString += "\n" + actualQuickInfo.docComment;
-            }
+            var actualQuickInfoMemberName = actualQuickInfo ? actualQuickInfo.memberName.toString() : "";
+            var actualQuickInfoDocComment = actualQuickInfo ? actualQuickInfo.docComment : "";
+            var actualQuickInfoSymbolName = actualQuickInfo ? actualQuickInfo.fullSymbolName : "";
+            var actualQuickInfoKind = actualQuickInfo ? actualQuickInfo.kind : "";
             if (negative) {
-                assert.notEqual(actualQuickInfoString, expectedTypeName);
+                assert.notEqual(actualQuickInfoMemberName, expectedTypeName);
+                if (docComment != undefined) {
+                    assert.notEqual(actualQuickInfoDocComment, docComment);
+                }
+                if (symbolName != undefined) {
+                    assert.notEqual(actualQuickInfoSymbolName, symbolName);
+                }
+                if (kind != undefined) {
+                    assert.notEqual(actualQuickInfoKind, kind);
+                }
             } else {
-                assert.equal(actualQuickInfoString, expectedTypeName);
+                assert.equal(actualQuickInfoMemberName, expectedTypeName);
+                if (docComment != undefined) {
+                    assert.equal(actualQuickInfoDocComment, docComment);
+                }
+                if (symbolName != undefined) {
+                    assert.equal(actualQuickInfoSymbolName, symbolName);
+                }
+                if (kind != undefined) {
+                    assert.equal(actualQuickInfoKind, kind);
+                }
             }
         }
 
@@ -305,12 +324,6 @@ module FourSlash {
 
         public verifyCurrentParameterHelpType(typeName: string) {
             assert.equal(this.getActiveParameter().type, typeName);
-        }
-
-        public verifyQuickInfoType(expected: string) {
-            var memberName = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition).memberName;
-            var typeName = memberName.toString();
-            assert.equal(typeName, expected);
         }
 
         public verifyCurrentSignatureHelpReturnType(returnTypeName: string) {
@@ -767,6 +780,11 @@ module FourSlash {
         assert.bugs(content);
 
         currentTestState = new TestState(testData);
+        var oldThrowAssertError = assert.throwAssertError;
+        assert.throwAssertError = (error: Error) => {
+            error.message = "Marker: " + currentTestState.lastKnownMarker + "\n" + error.message;
+            throw error;
+        }
 
         var mockFilename = 'test_input.ts';
         if (fsCompiler === undefined) {
@@ -807,6 +825,7 @@ module FourSlash {
 
         // Compile and execute the test
         eval(result);
+        assert.throwAssertError = oldThrowAssertError;
     }
 
     function chompLeadingSpace(content: string) {

@@ -119,8 +119,8 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyErrorExistsAfterMarker(markerName, !this.negative, false);
         }
 
-        public quickInfoIs(typeName: string) {
-            FourSlash.currentTestState.verifyQuickInfo(typeName, this.negative);
+        public quickInfoIs(typeName: string, docComment?: string, symbolName?: string, kind?: string) {
+            FourSlash.currentTestState.verifyQuickInfo(typeName, this.negative, docComment, symbolName, kind);
         }
 
     }
@@ -165,10 +165,6 @@ module FourSlashInterface {
 
         public currentParameterHelpType(expected: string) {
             FourSlash.currentTestState.verifyCurrentParameterHelpType(expected);
-        }
-
-        public currentQuickInfoType(expected: string) {
-            FourSlash.currentTestState.verifyQuickInfoType(expected);
         }
 
         public numberOfErrorsInCurrentFile(expected: number) {

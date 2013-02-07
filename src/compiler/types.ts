@@ -187,8 +187,8 @@ module TypeScript {
             return this.getMemberTypeName("", true, false, scope, getPrettyTypeName);
         }
 
-        public getScopedTypeNameEx(scope: SymbolScope) {
-            return this.getMemberTypeNameEx("", true, false, scope);
+        public getScopedTypeNameEx(scope: SymbolScope, getPrettyTypeName?: bool) {
+            return this.getMemberTypeNameEx("", true, false, scope, getPrettyTypeName);
         }
 
         // REVIEW: No need for this to be a method

@@ -20,20 +20,20 @@
 ////}
 /////** Import declaration*/
 ////import e/*3*/xtMod = module("e/*4*/xtMod");
-/////*5*/extMod./*6*/m1./*7*/fooExport(/*8*/);
+/////*5*/extMod./*6*/m1./*7*/fooEx/*8q*/port(/*8*/);
 ////var new/*9*/Var = new extMod.m1.m2./*10*/c();
 
 goTo.marker('1');
-verify.quickInfoIs("extMod\nExtMod - contains m1");
+verify.quickInfoIs("extMod", "ExtMod - contains m1", "extMod", "module");
 
 goTo.marker('2');
-verify.quickInfoIs("m1\nModuleComment");
+verify.quickInfoIs("m1", "ModuleComment", "extMod.m1", "module");
 
 goTo.marker('3');
-verify.quickInfoIs("extMod\nExtMod - contains m1");
+verify.quickInfoIs("extMod", "Import declaration", "extMod", "module");
 
 goTo.marker('4');
-verify.quickInfoIs("extMod\nExtMod - contains m1");
+verify.quickInfoIs("extMod", "ExtMod - contains m1", "extMod", "module");
 
 goTo.marker('5');
 verify.completionListContains("extMod", "extMod", "Import declaration", "extMod", "module");
@@ -48,9 +48,11 @@ verify.memberListContains("m2", "extMod.m1.m2", "m2 comments", "extMod.m1.m2", "
 
 goTo.marker('8');
 verify.currentSignatureHelpDocCommentIs("exported function");
+goTo.marker('8q');
+verify.quickInfoIs("() => number", "exported function", "extMod.m1.fooExport", "function");
 
 goTo.marker('9');
-verify.quickInfoIs("extMod.m1.m2.c\nclass comment;");
+verify.quickInfoIs("extMod.m1.m2.c", "", "newVar", "var");
 
 goTo.marker('10');
 verify.memberListContains("c", "new() => extMod.m1.m2.c", "class comment;", "extMod.m1.m2.c", "class");

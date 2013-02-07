@@ -1004,6 +1004,7 @@ module TypeScript {
         public scopeType: Type = null; // Type of the FuncDecl, before target typing
         public endingToken: ASTSpan = null;
         public isDeclaration() { return true; }
+        public constructorSpan: ASTSpan = null;
 
         constructor (public name: Identifier, public bod: ASTList, public isConstructor: bool,
                      public arguments: ASTList, public vars: ASTList, public scopes: ASTList, public statics: ASTList,
