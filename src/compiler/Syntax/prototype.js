@@ -52911,7 +52911,9 @@ var PrettyPrinter;
         };
         PrettyPrinterImpl.prototype.visitBinaryExpression = function (node) {
             node.left.accept(this);
-            this.ensureSpace();
+            if(node.kind() !== 170 /* CommaExpression */ ) {
+                this.ensureSpace();
+            }
             this.appendToken(node.operatorToken);
             this.ensureSpace();
             node.right.accept(this);

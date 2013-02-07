@@ -489,7 +489,11 @@ module PrettyPrinter {
 
         private visitBinaryExpression(node: BinaryExpressionSyntax): void {
             node.left.accept(this);
-            this.ensureSpace();
+
+            if (node.kind() !== SyntaxKind.CommaExpression) {
+                this.ensureSpace();
+            }
+
             this.appendToken(node.operatorToken);
             this.ensureSpace();
             node.right.accept(this);
