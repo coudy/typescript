@@ -1,6 +1,7 @@
 ///<reference path='..\parser.ts' />
 ///<reference path='Emitter.ts' />
 ///<reference path='Parser.ts' />
+///<reference path='PrettyPrinter.ts' />
 ///<reference path='..\Core\Environment.ts' />
 ///<reference path='..\Text\TextFactory.ts' />
 ///<reference path='Test262.ts' />
@@ -28,6 +29,10 @@ class Program {
         if (true) {
             // return;
         }
+
+        Environment.standardOut.WriteLine("Testing pretty printer.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
+            filePath => this.runPrettyPrinter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
@@ -237,6 +242,33 @@ class Program {
             ? <any>emitted.fullText()
             : { fullText: emitted.fullText().split("\r\n"), sourceUnit: emitted };
         this.checkResult(filePath, result, verify, generateBaseline, justText);
+    }
+
+    runPrettyPrinter(filePath: string,
+        languageVersion: LanguageVersion,
+        verify: bool,
+        generateBaseline: bool): void {
+        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+            return;
+        }
+
+        if (filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+
+        var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
+        // Environment.standardOut.WriteLine(filePath);
+
+        totalSize += contents.length;
+
+        var text = TextFactory.createText(contents);
+        
+        var tree = Parser1.parse(text, languageVersion, stringTable);
+        var result = PrettyPrinter.prettyPrint(tree.sourceUnit());
+
+        this.checkResult(filePath, result, verify, generateBaseline, true);
+
+        totalTime += timer.time;
     }
 
     runParser(filePath: string,

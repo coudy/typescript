@@ -52512,6 +52512,783 @@ var Emitter;
     }
     Emitter.emit = emit;
 })(Emitter || (Emitter = {}));
+var PrettyPrinter;
+(function (PrettyPrinter) {
+    function prettyPrint(node, indentWhitespace) {
+        if (typeof indentWhitespace === "undefined") { indentWhitespace = "    "; }
+        var impl = new PrettyPrinterImpl(indentWhitespace);
+        node.accept(impl);
+        return impl.result.join("");
+    }
+    PrettyPrinter.prettyPrint = prettyPrint;
+    var PrettyPrinterImpl = (function () {
+        function PrettyPrinterImpl(indentWhitespace) {
+            this.indentWhitespace = indentWhitespace;
+            this.result = [];
+            this.indentations = [];
+            this.indentation = 0;
+        }
+        PrettyPrinterImpl.prototype.newLineCountBetweenModuleElements = function (element1, element2) {
+            return 1;
+        };
+        PrettyPrinterImpl.prototype.newLineCountBetweenClassElements = function (element1, element2) {
+            return 1;
+        };
+        PrettyPrinterImpl.prototype.newLineCountBetweenStatements = function (element1, element2) {
+            return 1;
+        };
+        PrettyPrinterImpl.prototype.newLineCountBetweenSwitchClauses = function (element1, element2) {
+            return 1;
+        };
+        PrettyPrinterImpl.prototype.ensureSpace = function () {
+            if(this.result.length > 0) {
+                var last = ArrayUtilities.last(this.result);
+                if(last !== " " && last !== "\r\n") {
+                    this.appendText(" ");
+                }
+            }
+        };
+        PrettyPrinterImpl.prototype.ensureNewLine = function () {
+            if(this.result.length > 0) {
+                var last = ArrayUtilities.last(this.result);
+                if(last !== "\r\n") {
+                    this.appendText("\r\n");
+                }
+            }
+        };
+        PrettyPrinterImpl.prototype.appendNewLines = function (count) {
+            for(var i = 0; i < count; i++) {
+                this.appendText("\r\n");
+            }
+        };
+        PrettyPrinterImpl.prototype.getIndentation = function (count) {
+            for(var i = this.indentations.length; i <= count; i++) {
+                var text = i === 0 ? "" : this.indentations[i - 1] + this.indentWhitespace;
+                this.indentations[i] = text;
+            }
+            return this.indentations[count];
+        };
+        PrettyPrinterImpl.prototype.appendIndentationIfAfterNewLine = function () {
+            if(this.result.length > 0) {
+                if(ArrayUtilities.last(this.result) === "\r\n") {
+                    this.result.push(this.getIndentation(this.indentation));
+                }
+            }
+        };
+        PrettyPrinterImpl.prototype.appendText = function (text) {
+            this.result.push(text);
+        };
+        PrettyPrinterImpl.prototype.appendNode = function (node) {
+            if(node !== null) {
+                node.accept(this);
+            }
+        };
+        PrettyPrinterImpl.prototype.appendToken = function (token) {
+            if(token !== null && token.fullWidth() > 0) {
+                this.appendIndentationIfAfterNewLine();
+                this.appendText(token.text());
+            }
+        };
+        PrettyPrinterImpl.prototype.visitToken = function (token) {
+        };
+        PrettyPrinterImpl.prototype.appendSeparatorSpaceList = function (list) {
+            for(var i = 0, n = list.childCount(); i < n; i++) {
+                if(i % 2 === 0) {
+                    if(i > 0) {
+                        this.ensureSpace();
+                    }
+                    list.childAt(i).accept(this);
+                } else {
+                    this.appendToken(list.childAt(i));
+                }
+            }
+        };
+        PrettyPrinterImpl.prototype.appendSeparatorNewLineList = function (list) {
+            for(var i = 0, n = list.childCount(); i < n; i++) {
+                if(i % 2 === 0) {
+                    if(i > 0) {
+                        this.ensureNewLine();
+                    }
+                    list.childAt(i).accept(this);
+                } else {
+                    this.appendToken(list.childAt(i));
+                }
+            }
+        };
+        PrettyPrinterImpl.prototype.appendModuleElements = function (list) {
+            var lastModuleElement = null;
+            for(var i = 0, n = list.childCount(); i < n; i++) {
+                var moduleElement = list.childAt(i);
+                var newLineCount = this.newLineCountBetweenModuleElements(lastModuleElement, moduleElement);
+                this.appendNewLines(newLineCount);
+                moduleElement.accept(this);
+                lastModuleElement = moduleElement;
+            }
+        };
+        PrettyPrinterImpl.prototype.visitSourceUnit = function (node) {
+            this.appendModuleElements(node.moduleElements);
+        };
+        PrettyPrinterImpl.prototype.visitExternalModuleReference = function (node) {
+            this.appendToken(node.moduleKeyword);
+            this.appendToken(node.openParenToken);
+            this.appendToken(node.stringLiteral);
+            this.appendToken(node.closeParenToken);
+        };
+        PrettyPrinterImpl.prototype.visitModuleNameModuleReference = function (node) {
+            node.moduleName.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitImportDeclaration = function (node) {
+            this.appendToken(node.importKeyword);
+            this.ensureSpace();
+            this.appendToken(node.equalsToken);
+            this.ensureSpace();
+            node.moduleReference.accept(this);
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitClassDeclaration = function (node) {
+            this.appendToken(node.exportKeyword);
+            this.ensureSpace();
+            this.appendToken(node.declareKeyword);
+            this.ensureSpace();
+            this.appendToken(node.classKeyword);
+            this.ensureSpace();
+            this.appendToken(node.identifier);
+            this.appendNode(node.typeParameterList);
+            this.ensureSpace();
+            this.appendNode(node.extendsClause);
+            this.ensureSpace();
+            this.appendNode(node.implementsClause);
+            this.ensureSpace();
+            this.appendToken(node.openBraceToken);
+            this.ensureNewLine();
+            this.indentation++;
+            var lastClassElement = null;
+            for(var i = 0, n = node.classElements.childCount(); i < n; i++) {
+                var classElement = node.classElements.childAt(i);
+                var newLineCount = this.newLineCountBetweenClassElements(lastClassElement, classElement);
+                this.appendNewLines(newLineCount);
+                classElement.accept(this);
+                lastClassElement = classElement;
+            }
+            this.indentation--;
+            this.ensureNewLine();
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.visitInterfaceDeclaration = function (node) {
+            this.appendToken(node.exportKeyword);
+            this.ensureSpace();
+            this.appendToken(node.interfaceKeyword);
+            this.ensureSpace();
+            this.appendToken(node.identifier);
+            this.appendNode(node.typeParameterList);
+            this.ensureSpace();
+            this.appendObjectType(node.body, true);
+        };
+        PrettyPrinterImpl.prototype.appendObjectType = function (node, appendNewLines) {
+            this.appendToken(node.openBraceToken);
+            if(appendNewLines) {
+                this.ensureNewLine();
+                this.indentation++;
+            } else {
+                this.ensureSpace();
+            }
+            for(var i = 0, n = node.typeMembers.childCount(); i < n; i++) {
+                node.typeMembers.childAt(i).accept(this);
+                if(appendNewLines) {
+                    this.ensureNewLine();
+                } else {
+                    this.ensureSpace();
+                }
+            }
+            this.indentation--;
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.visitExtendsClause = function (node) {
+            this.appendToken(node.extendsKeyword);
+            this.ensureSpace();
+            this.appendSeparatorSpaceList(node.typeNames);
+        };
+        PrettyPrinterImpl.prototype.visitImplementsClause = function (node) {
+            this.appendToken(node.implementsKeyword);
+            this.ensureSpace();
+            this.appendSeparatorSpaceList(node.typeNames);
+        };
+        PrettyPrinterImpl.prototype.visitModuleDeclaration = function (node) {
+            this.appendToken(node.exportKeyword);
+            this.ensureSpace();
+            this.appendToken(node.moduleKeyword);
+            this.ensureSpace();
+            this.appendNode(node.moduleName);
+            this.ensureSpace();
+            this.appendToken(node.stringLiteral);
+            this.ensureSpace();
+            this.appendToken(node.openBraceToken);
+            this.ensureNewLine();
+            this.indentation++;
+            this.appendModuleElements(node.moduleElements);
+            this.indentation--;
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.appendBlockOrSemicolon = function (block, semicolonToken) {
+            if(block) {
+                this.ensureSpace();
+                block.accept(this);
+            } else {
+                this.appendToken(semicolonToken);
+            }
+        };
+        PrettyPrinterImpl.prototype.visitFunctionDeclaration = function (node) {
+            this.appendToken(node.exportKeyword);
+            this.ensureSpace();
+            this.appendToken(node.functionKeyword);
+            this.ensureSpace();
+            this.appendNode(node.functionSignature);
+            this.appendBlockOrSemicolon(node.block, node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitVariableStatement = function (node) {
+            this.appendToken(node.exportKeyword);
+            this.ensureSpace();
+            this.appendToken(node.declareKeyword);
+            this.ensureSpace();
+            node.variableDeclaration.accept(this);
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitVariableDeclaration = function (node) {
+            this.appendToken(node.varKeyword);
+            this.ensureSpace();
+            this.appendSeparatorSpaceList(node.variableDeclarators);
+        };
+        PrettyPrinterImpl.prototype.visitVariableDeclarator = function (node) {
+            this.appendToken(node.identifier);
+            this.appendNode(node.equalsValueClause);
+        };
+        PrettyPrinterImpl.prototype.visitEqualsValueClause = function (node) {
+            this.ensureSpace();
+            this.appendToken(node.equalsToken);
+            this.ensureSpace();
+            node.value.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitPrefixUnaryExpression = function (node) {
+            this.appendToken(node.operatorToken);
+            node.operand.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitArrayLiteralExpression = function (node) {
+            this.appendToken(node.openBracketToken);
+            this.appendSeparatorSpaceList(node.expressions);
+            this.appendToken(node.closeBracketToken);
+        };
+        PrettyPrinterImpl.prototype.visitOmittedExpression = function (node) {
+        };
+        PrettyPrinterImpl.prototype.visitParenthesizedExpression = function (node) {
+            this.appendToken(node.openParenToken);
+            node.expression.accept(this);
+            this.appendToken(node.closeParenToken);
+        };
+        PrettyPrinterImpl.prototype.visitSimpleArrowFunctionExpression = function (node) {
+            this.appendToken(node.identifier);
+            this.ensureSpace();
+            this.appendToken(node.equalsGreaterThanToken);
+            this.ensureSpace();
+            node.body.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
+            node.callSignature.accept(this);
+            this.ensureSpace();
+            this.appendToken(node.equalsGreaterThanToken);
+            this.ensureSpace();
+            node.body.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitQualifiedName = function (node) {
+            node.left.accept(this);
+            this.appendToken(node.dotToken);
+            this.appendToken(node.right);
+        };
+        PrettyPrinterImpl.prototype.visitTypeArgumentList = function (node) {
+            this.appendToken(node.lessThanToken);
+            this.appendSeparatorSpaceList(node.typeArguments);
+            this.appendToken(node.greaterThanToken);
+        };
+        PrettyPrinterImpl.prototype.visitConstructorType = function (node) {
+            this.appendToken(node.newKeyword);
+            this.ensureSpace();
+            this.appendNode(node.typeParameterList);
+            node.parameterList.accept(this);
+            this.ensureSpace();
+            this.appendToken(node.equalsGreaterThanToken);
+            this.ensureSpace();
+            node.type.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitFunctionType = function (node) {
+            this.appendNode(node.typeParameterList);
+            node.parameterList.accept(this);
+            this.ensureSpace();
+            this.appendToken(node.equalsGreaterThanToken);
+            this.ensureSpace();
+            node.type.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitObjectType = function (node) {
+            this.appendToken(node.openBraceToken);
+            this.ensureSpace();
+            this.appendSeparatorSpaceList(node.typeMembers);
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.visitArrayType = function (node) {
+            node.type.accept(this);
+            this.appendToken(node.openBracketToken);
+            this.appendToken(node.closeBracketToken);
+        };
+        PrettyPrinterImpl.prototype.visitGenericType = function (node) {
+            node.name.accept(this);
+            node.typeArgumentList.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitTypeAnnotation = function (node) {
+            this.appendToken(node.colonToken);
+            this.ensureSpace();
+            node.type.accept(this);
+        };
+        PrettyPrinterImpl.prototype.appendStatements = function (statements) {
+            var lastStatement = null;
+            for(var i = 0, n = statements.childCount(); i < n; i++) {
+                var statement = statements.childAt(i);
+                var newLineCount = this.newLineCountBetweenStatements(lastStatement, statement);
+                this.appendNewLines(newLineCount);
+                statement.accept(this);
+                lastStatement = statement;
+            }
+        };
+        PrettyPrinterImpl.prototype.visitBlock = function (node) {
+            this.appendToken(node.openBraceToken);
+            this.ensureNewLine();
+            this.indentation++;
+            this.appendStatements(node.statements);
+            this.indentation--;
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.visitParameter = function (node) {
+            this.appendToken(node.dotDotDotToken);
+            this.appendToken(node.identifier);
+            this.appendToken(node.questionToken);
+            this.appendNode(node.typeAnnotation);
+            this.appendNode(node.equalsValueClause);
+        };
+        PrettyPrinterImpl.prototype.visitMemberAccessExpression = function (node) {
+            node.expression.accept(this);
+            this.appendToken(node.dotToken);
+            this.appendToken(node.name);
+        };
+        PrettyPrinterImpl.prototype.visitPostfixUnaryExpression = function (node) {
+            node.operand.accept(this);
+            this.appendToken(node.operatorToken);
+        };
+        PrettyPrinterImpl.prototype.visitElementAccessExpression = function (node) {
+            node.expression.accept(this);
+            this.appendToken(node.openBracketToken);
+            node.argumentExpression.accept(this);
+            this.appendToken(node.closeBracketToken);
+        };
+        PrettyPrinterImpl.prototype.visitInvocationExpression = function (node) {
+            node.expression.accept(this);
+            node.argumentList.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitArgumentList = function (node) {
+            this.appendToken(node.openParenToken);
+            this.appendSeparatorSpaceList(node.arguments);
+            this.appendToken(node.closeParenToken);
+        };
+        PrettyPrinterImpl.prototype.visitBinaryExpression = function (node) {
+            node.left.accept(this);
+            this.ensureSpace();
+            this.appendToken(node.operatorToken);
+            this.ensureSpace();
+            node.right.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitConditionalExpression = function (node) {
+            node.condition.accept(this);
+            this.ensureSpace();
+            this.appendToken(node.questionToken);
+            this.ensureSpace();
+            node.whenTrue.accept(this);
+            this.ensureSpace();
+            this.appendToken(node.colonToken);
+            this.ensureSpace();
+            node.whenFalse.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitConstructSignature = function (node) {
+            this.appendToken(node.newKeyword);
+            node.callSignature.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitFunctionSignature = function (node) {
+            this.appendToken(node.identifier);
+            this.appendToken(node.questionToken);
+            node.callSignature.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitIndexSignature = function (node) {
+            this.appendToken(node.openBracketToken);
+            node.parameter.accept(this);
+            this.appendToken(node.closeBracketToken);
+            this.appendNode(node.typeAnnotation);
+        };
+        PrettyPrinterImpl.prototype.visitPropertySignature = function (node) {
+            this.appendToken(node.identifier);
+            this.appendToken(node.questionToken);
+            this.appendNode(node.typeAnnotation);
+        };
+        PrettyPrinterImpl.prototype.visitParameterList = function (node) {
+            this.appendToken(node.openParenToken);
+            this.appendSeparatorSpaceList(node.parameters);
+            this.appendToken(node.closeParenToken);
+        };
+        PrettyPrinterImpl.prototype.visitCallSignature = function (node) {
+            this.appendNode(node.typeParameterList);
+            node.parameterList.accept(this);
+            this.appendNode(node.typeAnnotation);
+        };
+        PrettyPrinterImpl.prototype.visitTypeParameterList = function (node) {
+            this.appendToken(node.lessThanToken);
+            this.appendSeparatorSpaceList(node.typeParameters);
+            this.appendToken(node.greaterThanToken);
+        };
+        PrettyPrinterImpl.prototype.visitTypeParameter = function (node) {
+            this.appendToken(node.identifier);
+            this.appendNode(node.constraint);
+        };
+        PrettyPrinterImpl.prototype.visitConstraint = function (node) {
+            this.ensureSpace();
+            this.appendToken(node.extendsKeyword);
+            this.ensureSpace();
+            node.type.accept(this);
+        };
+        PrettyPrinterImpl.prototype.appendBlockOrStatement = function (node) {
+            if(node.kind() === 143 /* Block */ ) {
+                this.ensureSpace();
+                node.accept(this);
+            } else {
+                this.ensureNewLine();
+                this.indentation++;
+                node.accept(this);
+                this.indentation--;
+            }
+        };
+        PrettyPrinterImpl.prototype.visitIfStatement = function (node) {
+            this.appendToken(node.ifKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            node.condition.accept(this);
+            this.appendToken(node.closeParenToken);
+            this.appendBlockOrStatement(node.statement);
+        };
+        PrettyPrinterImpl.prototype.visitElseClause = function (node) {
+            this.ensureNewLine();
+            this.appendToken(node.elseKeyword);
+            if(node.statement.kind() === 144 /* IfStatement */ ) {
+                this.ensureSpace();
+                node.statement.accept(this);
+            } else {
+                this.appendBlockOrStatement(node.statement);
+            }
+        };
+        PrettyPrinterImpl.prototype.visitExpressionStatement = function (node) {
+            node.expression.accept(this);
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitConstructorDeclaration = function (node) {
+            this.appendToken(node.constructorKeyword);
+            node.parameterList.accept(this);
+            this.appendBlockOrSemicolon(node.block, node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitMemberFunctionDeclaration = function (node) {
+            this.appendToken(node.publicOrPrivateKeyword);
+            this.ensureSpace();
+            this.appendToken(node.staticKeyword);
+            this.ensureSpace();
+            node.functionSignature.accept(this);
+            this.appendBlockOrSemicolon(node.block, node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitGetMemberAccessorDeclaration = function (node) {
+            this.appendToken(node.publicOrPrivateKeyword);
+            this.ensureSpace();
+            this.appendToken(node.staticKeyword);
+            this.ensureSpace();
+            this.appendToken(node.getKeyword);
+            this.ensureSpace();
+            this.appendToken(node.identifier);
+            node.parameterList.accept(this);
+            this.appendNode(node.typeAnnotation);
+            this.ensureSpace();
+            node.block.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitSetMemberAccessorDeclaration = function (node) {
+            this.appendToken(node.publicOrPrivateKeyword);
+            this.ensureSpace();
+            this.appendToken(node.staticKeyword);
+            this.ensureSpace();
+            this.appendToken(node.setKeyword);
+            this.ensureSpace();
+            this.appendToken(node.identifier);
+            node.parameterList.accept(this);
+            this.ensureSpace();
+            node.block.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitMemberVariableDeclaration = function (node) {
+            this.appendToken(node.publicOrPrivateKeyword);
+            this.ensureSpace();
+            this.appendToken(node.staticKeyword);
+            this.ensureSpace();
+            node.variableDeclarator.accept(this);
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitThrowStatement = function (node) {
+            this.appendToken(node.throwKeyword);
+            this.appendNode(node.expression);
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitReturnStatement = function (node) {
+            this.appendToken(node.returnKeyword);
+            this.appendNode(node.expression);
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitObjectCreationExpression = function (node) {
+            this.appendToken(node.newKeyword);
+            this.ensureSpace();
+            node.expression.accept(this);
+            this.appendNode(node.argumentList);
+        };
+        PrettyPrinterImpl.prototype.visitSwitchStatement = function (node) {
+            this.appendToken(node.switchKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            node.expression.accept(this);
+            this.appendToken(node.closeParenToken);
+            this.ensureSpace();
+            this.appendToken(node.openBraceToken);
+            this.ensureNewLine();
+            var lastSwitchClause = null;
+            for(var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
+                var switchClause = node.switchClauses.childAt(i);
+                var newLineCount = this.newLineCountBetweenSwitchClauses(lastSwitchClause, switchClause);
+                this.appendNewLines(newLineCount);
+                switchClause.accept(this);
+                lastSwitchClause = switchClause;
+            }
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.appendSwitchClauseStatements = function (node) {
+            if(node.statements.childCount() === 1 && node.statements.childAt(0).kind() === 143 /* Block */ ) {
+                this.ensureSpace();
+                node.statements.childAt(0).accept(this);
+            } else if(node.statements.childCount() > 0) {
+                this.ensureNewLine();
+                this.indentation++;
+                this.appendStatements(node.statements);
+                this.indentation--;
+            }
+        };
+        PrettyPrinterImpl.prototype.visitCaseSwitchClause = function (node) {
+            this.appendToken(node.caseKeyword);
+            this.ensureSpace();
+            node.expression.accept(this);
+            this.appendToken(node.colonToken);
+            this.appendSwitchClauseStatements(node);
+        };
+        PrettyPrinterImpl.prototype.visitDefaultSwitchClause = function (node) {
+            this.appendToken(node.defaultKeyword);
+            this.appendToken(node.colonToken);
+            this.appendSwitchClauseStatements(node);
+        };
+        PrettyPrinterImpl.prototype.visitBreakStatement = function (node) {
+            this.appendToken(node.breakKeyword);
+            if(node.identifier) {
+                this.ensureSpace();
+                this.appendToken(node.identifier);
+            }
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitContinueStatement = function (node) {
+            this.appendToken(node.continueKeyword);
+            if(node.identifier) {
+                this.ensureSpace();
+                this.appendToken(node.identifier);
+            }
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitForStatement = function (node) {
+            this.appendToken(node.forKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            this.appendNode(node.variableDeclaration);
+            this.appendNode(node.initializer);
+            this.appendToken(node.firstSemicolonToken);
+            if(node.condition) {
+                this.ensureSpace();
+                node.condition.accept(this);
+            }
+            this.appendToken(node.secondSemicolonToken);
+            if(node.incrementor) {
+                this.ensureSpace();
+                node.incrementor.accept(this);
+            }
+            this.appendToken(node.closeParenToken);
+            this.appendBlockOrStatement(node.statement);
+        };
+        PrettyPrinterImpl.prototype.visitForInStatement = function (node) {
+            this.appendToken(node.forKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            this.appendNode(node.variableDeclaration);
+            this.appendNode(node.left);
+            this.ensureSpace();
+            this.appendToken(node.inKeyword);
+            this.ensureSpace();
+            this.appendNode(node.expression);
+            this.appendToken(node.closeParenToken);
+            this.appendBlockOrStatement(node.statement);
+        };
+        PrettyPrinterImpl.prototype.visitWhileStatement = function (node) {
+            this.appendToken(node.whileKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            node.condition.accept(this);
+            this.appendToken(node.closeParenToken);
+            this.appendBlockOrStatement(node.statement);
+        };
+        PrettyPrinterImpl.prototype.visitWithStatement = function (node) {
+            this.appendToken(node.withKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            node.condition.accept(this);
+            this.appendToken(node.closeParenToken);
+            this.appendBlockOrStatement(node.statement);
+        };
+        PrettyPrinterImpl.prototype.visitEnumDeclaration = function (node) {
+            this.appendToken(node.exportKeyword);
+            this.ensureSpace();
+            this.appendToken(node.enumKeyword);
+            this.ensureSpace();
+            this.appendToken(node.identifier);
+            this.ensureSpace();
+            this.appendToken(node.openBraceToken);
+            this.ensureNewLine();
+            this.indentation++;
+            this.appendSeparatorNewLineList(node.variableDeclarators);
+            this.indentation--;
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.visitCastExpression = function (node) {
+            this.appendToken(node.lessThanToken);
+            node.type.accept(this);
+            this.appendToken(node.greaterThanToken);
+            node.expression.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitObjectLiteralExpression = function (node) {
+            this.appendToken(node.openBraceToken);
+            if(node.propertyAssignments.childCount() > 0) {
+                this.indentation++;
+                this.appendSeparatorNewLineList(node.propertyAssignments);
+                this.indentation--;
+            }
+            this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.visitSimplePropertyAssignment = function (node) {
+            this.appendToken(node.propertyName);
+            this.appendToken(node.colonToken);
+            this.ensureSpace();
+            node.expression.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitGetAccessorPropertyAssignment = function (node) {
+            this.appendToken(node.getKeyword);
+            this.ensureSpace();
+            this.appendToken(node.propertyName);
+            this.appendToken(node.openParenToken);
+            this.appendToken(node.closeParenToken);
+            this.ensureSpace();
+            node.block.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitSetAccessorPropertyAssignment = function (node) {
+            this.appendToken(node.setKeyword);
+            this.ensureSpace();
+            this.appendToken(node.propertyName);
+            this.appendToken(node.openParenToken);
+            this.appendToken(node.parameterName);
+            this.appendToken(node.closeParenToken);
+            this.ensureSpace();
+            node.block.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitFunctionExpression = function (node) {
+            this.appendToken(node.functionKeyword);
+            if(node.identifier) {
+                this.ensureSpace();
+                this.appendToken(node.identifier);
+            }
+            node.callSignature.accept(this);
+            this.ensureSpace();
+            node.block.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitEmptyStatement = function (node) {
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitTryStatement = function (node) {
+            this.appendToken(node.tryKeyword);
+            this.ensureSpace();
+            node.block.accept(this);
+            this.appendNode(node.catchClause);
+            this.appendNode(node.finallyClause);
+        };
+        PrettyPrinterImpl.prototype.visitCatchClause = function (node) {
+            this.ensureNewLine();
+            this.appendToken(node.catchKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            this.appendToken(node.identifier);
+            this.appendToken(node.closeParenToken);
+            this.ensureSpace();
+            node.block.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitFinallyClause = function (node) {
+            this.ensureNewLine();
+            this.appendToken(node.finallyKeyword);
+            this.ensureNewLine();
+            node.block.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitLabeledStatement = function (node) {
+            this.appendToken(node.identifier);
+            this.appendToken(node.colonToken);
+            this.ensureNewLine();
+            this.indentation++;
+            node.statement.accept(this);
+            this.indentation--;
+        };
+        PrettyPrinterImpl.prototype.visitDoStatement = function (node) {
+            this.appendToken(node.doKeyword);
+            this.appendBlockOrStatement(node.statement);
+            this.appendToken(node.whileKeyword);
+            this.ensureSpace();
+            this.appendToken(node.openParenToken);
+            node.condition.accept(this);
+            this.appendToken(node.closeParenToken);
+            this.appendToken(node.semicolonToken);
+        };
+        PrettyPrinterImpl.prototype.visitTypeOfExpression = function (node) {
+            this.appendToken(node.typeOfKeyword);
+            this.ensureSpace();
+            node.expression.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitDeleteExpression = function (node) {
+            this.appendToken(node.deleteKeyword);
+            this.ensureSpace();
+            node.expression.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitVoidExpression = function (node) {
+            this.appendToken(node.voidKeyword);
+            this.ensureSpace();
+            node.expression.accept(this);
+        };
+        PrettyPrinterImpl.prototype.visitDebuggerStatement = function (node) {
+            this.appendToken(node.debuggerKeyword);
+            this.appendToken(node.semicolonToken);
+        };
+        return PrettyPrinterImpl;
+    })();    
+})(PrettyPrinter || (PrettyPrinter = {}));
 var Environment = (function () {
     function getWindowsScriptHostEnvironment() {
         try  {
@@ -54719,6 +55496,10 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         if(true) {
         }
+        Environment.standardOut.WriteLine("Testing pretty printer.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (filePath) {
+            return _this.runPrettyPrinter(filePath, 1 /* EcmaScript5 */ , verify, generate);
+        });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
@@ -54878,6 +55659,21 @@ var Program = (function () {
             sourceUnit: emitted
         };
         this.checkResult(filePath, result, verify, generateBaseline, justText);
+    };
+    Program.prototype.runPrettyPrinter = function (filePath, languageVersion, verify, generateBaseline) {
+        if(!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+            return;
+        }
+        if(filePath.indexOf("RealSource") >= 0) {
+            return;
+        }
+        var contents = Environment.readFile(filePath, true);
+        totalSize += contents.length;
+        var text = TextFactory.createText(contents);
+        var tree = Parser1.parse(text, languageVersion, stringTable);
+        var result = PrettyPrinter.prettyPrint(tree.sourceUnit());
+        this.checkResult(filePath, result, verify, generateBaseline, true);
+        totalTime += timer.time;
     };
     Program.prototype.runParser = function (filePath, languageVersion, useTypeScript, verify, generateBaseline) {
         if (typeof generateBaseline === "undefined") { generateBaseline = false; }
