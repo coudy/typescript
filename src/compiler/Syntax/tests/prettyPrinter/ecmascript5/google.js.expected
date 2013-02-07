@@ -1309,15 +1309,19 @@ var _ = _ || {};
             case "string":
                 (0, _.uf)(a, b, c);
                 break;
+
             case "number":
                 c.push((0, window.isFinite)(b) && !(0, window.isNaN)(b) ? b : "null");
                 break;
+
             case "boolean":
                 c.push(b);
                 break;
+
             case "undefined":
                 c.push("null");
                 break;
+
             case "object":
                 if (b == _.l) {
                     c.push("null");
@@ -1337,10 +1341,13 @@ var _ = _ || {};
                     window.Object.prototype.hasOwnProperty.call(b, f) && (e = b[f], "function" != typeof e && (c.push(d), (0, _.uf)(a, f, c), c.push(":"), (0, _.tf)(a, a.A ? a.A.call(b, f, e) : e, c), d = ","));
                 c.push("}");
                 break;
+
             case "function":
                 break;
+
             default:
-                (0, _.aa)((0, window.Error)("Unknown type: " + typeof b))}
+                (0, _.aa)((0, window.Error)("Unknown type: " + typeof b))
+            }
         };
         _.uf = function(a, b, c) {
             c.push('"', b.replace(_.paa, function(a) {
@@ -3247,8 +3254,10 @@ var _ = _ || {};
             case 304:
             case 1223:
                 return _.k;
+
             default:
-                return _.n}
+                return _.n
+            }
         };
         (0, _.Nc)(_.U.I(), "sy6");
         _.zl = _.zl || {};
@@ -3385,10 +3394,13 @@ var _ = _ || {};
             case _.Dl.OC:
             case _.Dl.dF:
                 return _.k;
+
             case _.Dl.YD:
                 return !_.Me.ze || _.Me.ze && (0, _.Se)("10");
+
             case _.Dl.aE:
-                return !_.Me.ze}
+                return !_.Me.ze
+            }
             return _.n
         };
         _.Kl = function(a, b) {
@@ -3772,6 +3784,7 @@ var _ = _ || {};
                             }
                         };
                         break;
+
                     case _.Pl.OC:
                         var t = a.FK, Aa = a.TC, ea = a.xD, pa = a.sD, Q = function() {
                             return Aa && K.length >= ea
@@ -3832,6 +3845,7 @@ var _ = _ || {};
                             }
                         };
                         break;
+
                     case _.Pl.YD:
                     case _.Pl.dF:
                     case _.Pl.aE:
@@ -3901,7 +3915,8 @@ var _ = _ || {};
                                 }
                                 La = []
                             }
-                        }}
+                        }
+                    }
                     h ? (a = {
                         D: function() {
                             return r
@@ -5317,7 +5332,8 @@ var _ = _ || {};
             case q.vo:
             case q.Zo:
             case q.Ko:
-                j = _.k}
+                j = _.k
+            }
             f || (f = _.zl.jf);
             return p
         };
@@ -7071,8 +7087,10 @@ var _ = _ || {};
                         if (Ka(b, _.k))
                             return Ea.add(ra.Ce), _.k;
                         break;
+
                     case a.Qo:
-                        return wa.Dc(b)}
+                        return wa.Dc(b)
+                    }
                 return _.n
             }
             function h() {
@@ -7104,8 +7122,10 @@ var _ = _ || {};
                 case Ja.Bh:
                     d = _.k;
                     break;
+
                 case Ja.jk:
-                    d = _.n}
+                    d = _.n
+                }
                 d ? (b && wa.Vm(), tb && e.setParameter("gs_is", 1), Ta.Te(tb), xa.zg(e), nb = _.l) : f && (wa.clear(), xa.Ze());
                 va.ea(2, { Ic: c })
             }
@@ -7899,23 +7919,30 @@ var _ = _ || {};
                                 case T.ye:
                                     Q.om();
                                     break;
+
                                 case T.Yj:
                                     Q.tn();
                                     break;
+
                                 case T.Zj:
                                     Q.un();
                                     break;
+
                                 case T.Gh:
                                     Q.vm();
                                     break;
+
                                 case T.Fh:
                                     Q.nm(Na);
                                     break;
+
                                 case T.Sj:
                                     Q.mm(Na);
                                     break;
+
                                 case T.$j:
-                                    Q.mn(Na)}
+                                    Q.mn(Na)
+                                }
                             }
                     M();
                     Q.rn(G.value, Na, b)
@@ -8659,18 +8686,23 @@ var _ = _ || {};
                 case b.Yj:
                     d ? f.Zs() : f.$s();
                     break;
+
                 case b.Zj:
                     d ? f.$s() : f.Zs();
                     break;
+
                 case b.Sj:
                 case b.$j:
                     f.Gy();
                     break;
+
                 case b.ye:
                 case b.gr:
                     f.gy();
+
                 default:
-                    return}
+                    return
+                }
                 _.zl.kb(a)
             }
             var f, g, h, j, p, q, m = {
@@ -10316,16 +10348,20 @@ var _ = _ || {};
                             case 403:
                                 r = 1E3;
                                 break;
+
                             case 302:
                             case 500:
                             case 502:
                             case 503:
                                 ++r;
                                 break;
+
                             case 200:
                                 e(eval(g.responseText), _.n);
+
                             default:
-                                r = 0}
+                                r = 0
+                            }
                             d(a)
                         }
                     }, m[a] = g, g.send(_.l)
@@ -11913,6 +11949,7 @@ var _ = _ || {};
                     case D.vl:
                     case D.Pc:
                         return m(b)[a] || _.l;
+
                     case D.De:
                         var c;
                         a:
@@ -11923,8 +11960,10 @@ var _ = _ || {};
                                 c = _.l
                             }
                         return c;
+
                     default:
-                        return _.l}
+                        return _.l
+                    }
                 },
                 bd: function(a) {
                     v && v.Sg(a)
@@ -12085,23 +12124,31 @@ var _ = _ || {};
             switch (_.ol) {
             case 1:
                 return (0, _.nd)().width;
+
             case 2:
                 return window.innerWidth;
+
             case 3:
                 return window.Math.round(window.outerWidth / (window.devicePixelRatio || 1));
+
             default:
-                return (0, _.Te)(2)}
+                return (0, _.Te)(2)
+            }
         };
         _.pl = function() {
             switch (_.ol) {
             case 1:
                 return (0, _.nd)().height;
+
             case 2:
                 return window.innerHeight;
+
             case 3:
                 return window.Math.round(window.outerHeight / (window.devicePixelRatio || 1));
+
             default:
-                return (0, _.Te)(0)}
+                return (0, _.Te)(0)
+            }
         };
         _.ql = function() {
             (0, _.rl)("biw", (0, _.nl)());
@@ -12148,14 +12195,18 @@ var _ = _ || {};
                 case "d":
                     _.ol = 1;
                     break;
+
                 case "i":
                     _.ol = 2;
                     break;
+
                 case "o":
                     _.ol = 3;
                     break;
+
                 default:
-                    _.ol = 0}
+                    _.ol = 0
+                }
                 if ("web" == window.google.sn) {
                     var b = (0, _.nl)(), c = (0, _.pl)();
                     b && (c && (b != a.biw || c != a.bih)) && window.google.log("", "", "/client_204?&biw=" + b + "&bih=" + c + "&ei=" + window.google.kEI)
@@ -12366,14 +12417,19 @@ var _ = _ || {};
             switch (a) {
             case 61:
                 return 187;
+
             case 59:
                 return 186;
+
             case 224:
                 return 91;
+
             case 0:
                 return 224;
+
             default:
-                return a}
+                return a
+            }
         };
         (0, _.Nc)(_.U.I(), "sy26");
         (0, _.Kc)(_.U.I(), "sy26");
@@ -14390,8 +14446,10 @@ var _ = _ || {};
             case 0:
                 window.google.log(b, "toBase");
                 break;
+
             case 2:
-                window.google.log(b, "toReporting")}
+                window.google.log(b, "toReporting")
+            }
         };
         _.Pia = function() {
             2 == _.iD.kr ? (0, _.hD)(0, "kr") : (0, _.Kia)()
@@ -14701,8 +14759,10 @@ var _ = _ || {};
             case 0:
                 j = new _.sja;
                 break;
+
             case 1:
-                j = new _.yja}
+                j = new _.yja
+            }
             j.bT(this);
             this.Hz = j;
             this.jx = !!b;
@@ -15340,8 +15400,10 @@ var _ = _ || {};
                                             break a
                                         }
                                         break;
+
                                     default:
-                                        break a}
+                                        break a
+                                    }
                                     j = _.l
                                 }
                             (j == _.l ? f : b).push({
@@ -16189,19 +16251,24 @@ var _ = _ || {};
                 switch (c) {
                 case "amp":
                     return "&";
+
                 case "lt":
                     return "<";
+
                 case "gt":
                     return ">";
+
                 case "quot":
                     return '"';
+
                 default:
                     if ("#" == c.charAt(0)) {
                         var d = (0, window.Number)("0" + c.substr(1));
                         if (!(0, window.isNaN)(d))
                             return window.String.fromCharCode(d)
                     }
-                    return a}
+                    return a
+                }
             })
         };
         _.s7 = function(a, b) {
@@ -18885,8 +18952,10 @@ var _ = _ || {};
             case 1:
                 if (this.C < this.A.length)
                     return --this.J, this.A[this.C++];
+
             case 2:
-                return 0 <= this.F ? (--this.J, this.A[this.F--]) : this.next()}
+                return 0 <= this.F ? (--this.J, this.A[this.F--]) : this.next()
+            }
             return _.l
         };
         _.Jfa = "authuser deb e esrch expid expflags plugin uideb".split(" ");

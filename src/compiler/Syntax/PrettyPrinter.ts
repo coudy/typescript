@@ -711,6 +711,7 @@ module PrettyPrinter {
                 lastSwitchClause = switchClause;
             }
 
+            this.ensureNewLine();
             this.appendToken(node.closeBraceToken);
         }
 

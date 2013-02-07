@@ -53095,6 +53095,7 @@ var PrettyPrinter;
                 switchClause.accept(this);
                 lastSwitchClause = switchClause;
             }
+            this.ensureNewLine();
             this.appendToken(node.closeBraceToken);
         };
         PrettyPrinterImpl.prototype.appendSwitchClauseStatements = function (node) {
