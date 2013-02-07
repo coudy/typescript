@@ -53203,9 +53203,15 @@ var PrettyPrinter;
         };
         PrettyPrinterImpl.prototype.visitObjectLiteralExpression = function (node) {
             this.appendToken(node.openBraceToken);
-            if(node.propertyAssignments.childCount() > 0) {
+            if(node.propertyAssignments.childCount() === 1) {
+                this.ensureSpace();
+                node.propertyAssignments.childAt(0).accept(this);
+                this.ensureSpace();
+            } else if(node.propertyAssignments.childCount() > 0) {
                 this.indentation++;
+                this.ensureNewLine();
                 this.appendSeparatorNewLineList(node.propertyAssignments);
+                this.ensureNewLine();
                 this.indentation--;
             }
             this.appendToken(node.closeBraceToken);
