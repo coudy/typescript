@@ -53291,10 +53291,7 @@ var PrettyPrinter;
         PrettyPrinterImpl.prototype.visitLabeledStatement = function (node) {
             this.appendToken(node.identifier);
             this.appendToken(node.colonToken);
-            this.ensureNewLine();
-            this.indentation++;
-            node.statement.accept(this);
-            this.indentation--;
+            this.appendBlockOrStatement(node.statement);
         };
         PrettyPrinterImpl.prototype.visitDoStatement = function (node) {
             this.appendToken(node.doKeyword);

@@ -815,22 +815,21 @@ var _ = _ || {};
                 var f = c[d];
                 if ((0, _.sa)(f) && !((0, _.Sa)(f) && 0 < f.nodeType)) {
                     var g = _.Ob, h;
-                    a:
-                        {
-                            if ((h = f) && "number" == typeof h.length) {
-                                if ((0, _.Sa)(h)) {
-                                    h = "function" == typeof h.item || "string" == typeof h.item;
-                                    break a
-                                }
-
-                                if ((0, _.Ha)(h)) {
-                                    h = "function" == typeof h.item;
-                                    break a
-                                }
+                    a: {
+                        if ((h = f) && "number" == typeof h.length) {
+                            if ((0, _.Sa)(h)) {
+                                h = "function" == typeof h.item || "string" == typeof h.item;
+                                break a
                             }
 
-                            h = _.n
+                            if ((0, _.Ha)(h)) {
+                                h = "function" == typeof h.item;
+                                break a
+                            }
                         }
+
+                        h = _.n
+                    }
 
                     g(h ? (0, _.Cb)(f) : f, e)
                 }
@@ -2044,19 +2043,18 @@ var _ = _ || {};
             if (!_.zg) {
                 var h;
                 if (!(h = b))
-                    a:
-                        {
-                            h = ["window", "event"];
-                            for (var j = _.ja; f = h.shift();)
-                                if (j[f] != _.l)
-                                    j = j[f];
-                                else {
-                                    h = _.l;
-                                    break a
-                                }
+                    a: {
+                        h = ["window", "event"];
+                        for (var j = _.ja; f = h.shift();)
+                            if (j[f] != _.l)
+                                j = j[f];
+                            else {
+                                h = _.l;
+                                break a
+                            }
 
-                            h = j
-                        }
+                        h = j
+                    }
 
                 f = h;
                 h = _.k in e;
@@ -2064,21 +2062,20 @@ var _ = _ || {};
                 if (h) {
                     if (0 > f.keyCode || f.returnValue != _.ba)
                         return _.k;
-                    a:
-                        {
-                            var p = _.n;
-                            if (0 == f.keyCode)
-                                try {
-                                    f.keyCode = -1;
-                                    break a
-                                }
-                                catch (q) {
-                                    p = _.k
-                                }
+                    a: {
+                        var p = _.n;
+                        if (0 == f.keyCode)
+                            try {
+                                f.keyCode = -1;
+                                break a
+                            }
+                            catch (q) {
+                                p = _.k
+                            }
 
-                            if (p || f.returnValue == _.ba)
-                                f.returnValue = _.k
-                        }
+                        if (p || f.returnValue == _.ba)
+                            f.returnValue = _.k
+                    }
                 }
 
                 p = new _.sg;
@@ -2690,28 +2687,27 @@ var _ = _ || {};
         _.hi = -1 != _.mi.indexOf("Win");
         _.ii = -1 != _.mi.indexOf("Linux");
         _.maa = !!(0, _.ec)() && -1 != ((0, _.ec)().appVersion || "").indexOf("X11");
-        a:
-            {
-                _.oi = "";
-                if (_.he && _.ja.opera) {
-                    _.qi = _.ja.opera.version;
-                    _.oi = "function" == typeof _.qi ? (0, _.qi)() : _.qi
-                }
-                else if (_.ge ? _.pi = /rv\:([^\);]+)(\)|;)/ : _.kc ? _.pi = /MSIE\s+([^\);]+)(\)|;)/ : _.td && (_.pi = /WebKit\/(\S+)/), _.pi) {
-                    _.ri = _.pi.exec((0, _.dc)());
-                    _.oi = _.ri ? _.ri[1] : ""
-                }
-
-                if (_.kc) {
-                    _.si = (0, _.fc)();
-                    if (_.si > (0, window.parseFloat)(_.oi)) {
-                        _.ni = (0, window.String)(_.si);
-                        break a
-                    }
-                }
-
-                _.ni = _.oi
+        a: {
+            _.oi = "";
+            if (_.he && _.ja.opera) {
+                _.qi = _.ja.opera.version;
+                _.oi = "function" == typeof _.qi ? (0, _.qi)() : _.qi
             }
+            else if (_.ge ? _.pi = /rv\:([^\);]+)(\)|;)/ : _.kc ? _.pi = /MSIE\s+([^\);]+)(\)|;)/ : _.td && (_.pi = /WebKit\/(\S+)/), _.pi) {
+                _.ri = _.pi.exec((0, _.dc)());
+                _.oi = _.ri ? _.ri[1] : ""
+            }
+
+            if (_.kc) {
+                _.si = (0, _.fc)();
+                if (_.si > (0, window.parseFloat)(_.oi)) {
+                    _.ni = (0, window.String)(_.si);
+                    break a
+                }
+            }
+
+            _.ni = _.oi
+        }
 
         _.ic = _.ni;
         _.hc = {};
@@ -4036,26 +4032,25 @@ var _ = _ || {};
                     case _.Pl.gC:
                         var t = a.FK, q = a.FM, j = function(a, b, c) {
                             function d() {
-                                a:
-                                    {
-                                        var b, e;
-                                        try {
-                                            b = a.location.href, e = 7 >= P || "complete" == a.document.readyState
-                                        }
-                                        catch (f) {
-                                            p.handleError(1, 13, u, f, _.ba);
-                                            break a
-                                        }
-
-                                        try {
-                                            !G.test(b) && ((!a.google || !a.google.loc) && e && 0 > b.indexOf(x[c])) && p.handleError(1, 19, u, _.ba, _.ba)
-                                        }
-                                        catch (g) {
-                                            p.handleError(1, 7, u, g, _.ba)
-                                        }
-
-                                        y == s.RC && a && (a.src = "about:blank")
+                                a: {
+                                    var b, e;
+                                    try {
+                                        b = a.location.href, e = 7 >= P || "complete" == a.document.readyState
                                     }
+                                    catch (f) {
+                                        p.handleError(1, 13, u, f, _.ba);
+                                        break a
+                                    }
+
+                                    try {
+                                        !G.test(b) && ((!a.google || !a.google.loc) && e && 0 > b.indexOf(x[c])) && p.handleError(1, 19, u, _.ba, _.ba)
+                                    }
+                                    catch (g) {
+                                        p.handleError(1, 7, u, g, _.ba)
+                                    }
+
+                                    y == s.RC && a && (a.src = "about:blank")
+                                }
                             }
 
                             b = window.document.getElementsByName(b);
@@ -4455,15 +4450,14 @@ var _ = _ || {};
                     QF: function(a, b, c) {
                         if (S) {
                             var d = a.u, e = d ? h(d) : "", f;
-                            a:
-                                {
-                                    if (d && (b = d.match(_.qba))) {
-                                        f = b[1];
-                                        break a
-                                    }
-
-                                    f = ""
+                            a: {
+                                if (d && (b = d.match(_.qba))) {
+                                    f = b[1];
+                                    break a
                                 }
+
+                                f = ""
+                            }
 
                             var g = a.e, t;
                             b = f;
@@ -12938,19 +12932,18 @@ var _ = _ || {};
                     if (!qa) {
                         c = s(c);
                         var d = _.zl.Nn(a), e;
-                        a:
-                            {
-                                if (a)
-                                    for (var f = a; f = f.parentNode;) {
-                                        var g = f.dir;
-                                        if (g) {
-                                            e = g;
-                                            break a
-                                        }
+                        a: {
+                            if (a)
+                                for (var f = a; f = f.parentNode;) {
+                                    var g = f.dir;
+                                    if (g) {
+                                        e = g;
+                                        break a
                                     }
+                                }
 
-                                e = "ltr"
-                            }
+                            e = "ltr"
+                        }
 
                         var h = !!d.getElementById("gs_id" + Ga), f = ["gssb_c", "gssb_k"];
                         c.le && f.push(c.le);
@@ -13165,13 +13158,12 @@ var _ = _ || {};
 
                     case D.De:
                         var c;
-                        a:
-                            {
-                                if ((c = p()) && 46 == c.D())
-                                    if (c = c.O().W("g"))
-                                        break a;
-                                c = _.l
-                            }
+                        a: {
+                            if ((c = p()) && 46 == c.D())
+                                if (c = c.O().W("g"))
+                                    break a;
+                            c = _.l
+                        }
 
                         return c;
 
@@ -14518,28 +14510,27 @@ var _ = _ || {};
             var b = (0, _.nr)(), c = a.F.x, d = a.F.y, e = b - a.A.t;
             a.A.update(b, c, d, (c - a.A.x) / e, (d - a.A.y) / e);
             if (b = a.Q)
-                a:
-                    {
-                        if (e)
-                            if (b = a.A, c = b.x, b.A && (c += 3E3 * b.A), d = b.y, b.C && (d += 3E3 * b.C), b = {
-                                x: c,
-                                y: d
-                            }, b = a.ha.edgeDistance(b.x, b.y), c = a.ha.edgeDistance(a.A.x, a.A.y), 0 > b || 0 > c)
-                                a.J = 0;
-                            else {
-                                c < a.V && (e *= window.Math.max(c / a.V, 0.25));
-                                a.J += e;
-                                e = _.n;
-                                for (b = 0; c = a.N[b++];)
-                                    c.time && a.J >= c.time && (c.aY(), c.time = 0), c.time && (e = _.k);
-                                if (!e) {
-                                    b = _.k;
-                                    break a
-                                }
+                a: {
+                    if (e)
+                        if (b = a.A, c = b.x, b.A && (c += 3E3 * b.A), d = b.y, b.C && (d += 3E3 * b.C), b = {
+                            x: c,
+                            y: d
+                        }, b = a.ha.edgeDistance(b.x, b.y), c = a.ha.edgeDistance(a.A.x, a.A.y), 0 > b || 0 > c)
+                            a.J = 0;
+                        else {
+                            c < a.V && (e *= window.Math.max(c / a.V, 0.25));
+                            a.J += e;
+                            e = _.n;
+                            for (b = 0; c = a.N[b++];)
+                                c.time && a.J >= c.time && (c.aY(), c.time = 0), c.time && (e = _.k);
+                            if (!e) {
+                                b = _.k;
+                                break a
                             }
+                        }
 
-                        b = _.n
-                    }
+                    b = _.n
+                }
 
             b && a.clear();
             a.C && (a.C = window.setTimeout(function() {
@@ -14759,14 +14750,13 @@ var _ = _ || {};
         };
         _.ds = function(a) {
             (0, _.mh)(window.document, "mousemove", _.ds);
-            a:
-                {
-                    _.cs.s = _.n;
-                    for (var b in _.cs)
-                        if (_.cs[b])
-                            break a;
-                    _.qr = _.n
-                }
+            a: {
+                _.cs.s = _.n;
+                for (var b in _.cs)
+                    if (_.cs[b])
+                        break a;
+                _.qr = _.n
+            }
 
             _.qr || (a || (a = window.event), (0, _.Wr)(a))
         };
@@ -16889,24 +16879,23 @@ var _ = _ || {};
                     if (!(0 > this.Mz || 0 == this.FG[this.Mz])) {
                         for (var b = [], f = [], e = 0, g; g = this.tB[e]; ++e) {
                             var h = (0, window.parseInt)(g.getAttribute("data-idx"), 10), j = g.cells[this.Mz], p = this.TF[this.Mz].getAttribute("data-type");
-                            a:
-                                {
-                                    j = j.getAttribute("data-value");
-                                    switch (p) {
-                                    case "2":
-                                        if (j) {
-                                            j = new window.Date((0, window.parseInt)(j, 10));
-                                            break a
-                                        }
-
-                                        break;
-
-                                    default:
+                            a: {
+                                j = j.getAttribute("data-value");
+                                switch (p) {
+                                case "2":
+                                    if (j) {
+                                        j = new window.Date((0, window.parseInt)(j, 10));
                                         break a
                                     }
 
-                                    j = _.l
+                                    break;
+
+                                default:
+                                    break a
                                 }
+
+                                j = _.l
+                            }
 
                             (j == _.l ? f : b).push({
                                 index: h,
@@ -17864,110 +17853,109 @@ var _ = _ || {};
             (b = d[3]) && (g = g + "\u00a0-\u00a0" + b);
             (b = (0, _.q7)(f, "imgrefurl")) || (b = (0, _.q7)(f, "url"));
             var h = /:\/\/(www.)?([^/?#]*)/i.exec(b), j = 6 <= d.length && _.x7 && _.y7;
-            a:
-                {
-                    var b = d[1], p = d[2], q = c, m = g, r = h ? h[2] : "", c = j ? d[5] : "", g = j ? _.x7 : "", d = j ? d[6] : "", j = j ? _.y7 : "";
-                    window.document.getElementById("rg_hl").href = f;
-                    h = window.document.getElementById("rg_hi");
-                    h.removeAttribute("src");
-                    if (e == _.z7.src)
-                        h.src = e;
-                    else {
-                        var w = (0, _.Ze)("IMG", window.document.getElementById(a.targetDocId));
-                        if (w == _.l)
-                            break a;
-                        w = _.Me.ze ? (w = w.getAttributeNode("src")) ? w.value : "" : w.getAttribute("src");
-                        w && h.setAttribute("src", w);
-                        _.z7.src = e
-                    }
-
-                    h.width = b;
-                    h.height = p;
-                    h.setAttribute("data-width", b);
-                    h.setAttribute("data-height", p);
-                    (0, _.$e)(h, "width", b + "px", "height", p + "px");
-                    var p = window.document.getElementById("rg_ilbg"), w = window.document.getElementById("rg_il"), s = window.document.getElementById(a.targetDocId).parentNode, t = (0, _.Ze)(".rg_ilbg", s), s = (0, _.Ze)(".rg_il", s);
-                    t && s ? (p.innerHTML = t.innerHTML, p.style.display = "block", w.innerHTML = s.innerHTML, w.style.display = "block") : (p.innerHTML = "", p.style.display = "none", w.innerHTML = "", w.style.display = "none");
-                    window.document.getElementById("rg_ht").style.display = q ? "" : "none";
-                    q && (p = window.document.getElementById("rg_hta"), p.href = f, (0, _.s7)(p, (0, window.decodeURI)(q).replace(/ /g, "\u00a0").replace(/-/g, "\u2011")));
-                    var D = window.google.hover.ga(a.targetDocId, ["uh_r"]);
-                    _.u7 = D;
-                    var B = (0, _.QOa)(D);
-                    if (B && B.getAttribute("g:imgtitle")) {
-                        D.removeChild(B);
-                        p = (0, _.Ze)("#rg_ht");
-                        p.appendChild(B);
-                        p.style.maxHeight = "2.4em";
-                        (0, _.v7)();
-                        var u = window.document.getElementById("rg_hx");
-                        _.A7 = function(a) {
-                            window.google.pw && window.google.pw.jN && window.google.pw.jN.animate(a, B, u)
-                        };
-                        (0, _.kh)(u, "mouseover", _.A7);
-                        _.B7 = function(a) {
-                            window.google.pw && window.google.pw.jN && window.google.pw.jN.u7(a, B, u)
-                        };
-                        (0, _.kh)(u, "mouseout", _.B7);
-                        p = (0, _.Ze)("#rg_img_wn");
-                        w = B.getAttribute("g:undo");
-                        t = (0, _.Ze)("#rg_pos");
-                        if (p && t && w) {
-                            t.innerHTML = "";
-                            var v = p.cloneNode(_.k);
-                            v.id = w;
-                            t.appendChild(v);
-                            var x = (0, _.bg)(B, "eswa");
-                            _.w7 = function() {
-                                if (!(0, _.bg)(B, "esww")) {
-                                    v.style.display = x ? "none" : "";
-                                    var a = (0, _.Ze)("div.rg_ils", D), b = (0, _.Ze)("#isr_soa");
-                                    b && !x && (a && D.removeChild(a), a = b.cloneNode(_.k), a.removeAttribute("id"), D.appendChild(a));
-                                    a && (a = a.style, a.display = x ? "none" : "", a.width = D.style.width);
-                                    x = !x
-                                }
-                            };
-                            (0, _.kh)(B, "click", _.w7)
-                        }
-
-                        p = _.k
-                    }
-                    else
-                        p = _.n;
-                    (0, _.Ze)("#rg_ht").style.display = q || p ? "" : "none";
-                    (w = (0, _.Ze)("#rg_pos")) && (w.style.display = p ? "" : "none");
-                    p = a.targetDocId;
-                    if (w = (0, _.C7)(window.document.getElementById("rg_hr"), "pplsrsli"))
-                        if (w.style.display = "inline", w.id = "srsl_" + p, w.setAttribute("data-docid", p), w.setAttribute("data-title", q), w.setAttribute("data-url", f), w.setAttribute("data-imgurl", e), e = window.document.getElementById("rg_ht"), e.style.maxHeight = "2.4em", e = (0, _.C7)(e, "pplsrslc"))
-                            e.style.display = "none", e.id = "srslc_" + p, e = (0, _.hd)("a", "pplsrslcl", e), e.length && (e[0].id = "srslcl_" + p);
-                    e = window.document.getElementById("rg_hn");
-                    e.innerHTML = "";
-                    e.style.display = m ? "" : "none";
-                    e.appendChild((0, _.OOa)(m));
-                    window.document.getElementById("rg_hr").innerHTML = r;
-                    f = window.document.getElementById("rg_ha_osl");
-                    e = window.document.getElementById("rg_hs");
-                    m = window.document.getElementById("sha" + a.targetDocId);
-                    e.style.display = "none";
-                    if (m && (e.style.display = "", e.innerHTML = m.innerHTML, window.google.sos && (window.google.sos.hover && window.google.sos.hover.b_) && window.google.sos.hover.b_(e), f && (f.style.display = "none"), (m = (0, _.Ze)("a.kpbb", e)) && m.href)) {
-                        r = window.location.protocol + "//" + window.location.host + (0, _.Uf)();
-                        if ((q = m.href) && -1 != q.indexOf("//plus.google.com/up") && r && (0, _.Wf)("continue", q) === _.l)
-                            p = "&", -1 == q.indexOf("?") && (p = "?"), q += p + "continue=" + (0, window.escape)(r);
-                        m.href = q;
-                        (0, _.kh)(m, "click", function() {
-                            window.google.log("biuc", "up")
-                        })
-                    }
-
-                    if (c || d)
-                        f && (f.style.display = ""), f = "none", m = window.document.getElementById("rg_hals"), m.style.display = c ? "" : "none", c && (m.href = c, (0, _.s7)(m, g)), g = window.document.getElementById("rg_haln"), g.style.display = d ? "" : "none", d && (g.href = d, (0, _.s7)(g, j), c && (f = "")), window.document.getElementById("rg_has").style.display = f;
-                    a.element = window.document.getElementById("rg_h");
-                    a.image = h;
-                    c = 0;
-                    if (e && (g = (0, _.Ze)("div.cpb", e)))
-                        d = a.element.style.display, a.element.style.display = "inline-block", c = 58 + g.offsetWidth, a.element.style.display = d;
-                    a = window.Math.max(window.document.getElementById("rg_hr").offsetWidth + 2, window.document.getElementById("rg_ha").offsetWidth + 2, c, b, 160);
-                    window.google.hover.s(a)
+            a: {
+                var b = d[1], p = d[2], q = c, m = g, r = h ? h[2] : "", c = j ? d[5] : "", g = j ? _.x7 : "", d = j ? d[6] : "", j = j ? _.y7 : "";
+                window.document.getElementById("rg_hl").href = f;
+                h = window.document.getElementById("rg_hi");
+                h.removeAttribute("src");
+                if (e == _.z7.src)
+                    h.src = e;
+                else {
+                    var w = (0, _.Ze)("IMG", window.document.getElementById(a.targetDocId));
+                    if (w == _.l)
+                        break a;
+                    w = _.Me.ze ? (w = w.getAttributeNode("src")) ? w.value : "" : w.getAttribute("src");
+                    w && h.setAttribute("src", w);
+                    _.z7.src = e
                 }
+
+                h.width = b;
+                h.height = p;
+                h.setAttribute("data-width", b);
+                h.setAttribute("data-height", p);
+                (0, _.$e)(h, "width", b + "px", "height", p + "px");
+                var p = window.document.getElementById("rg_ilbg"), w = window.document.getElementById("rg_il"), s = window.document.getElementById(a.targetDocId).parentNode, t = (0, _.Ze)(".rg_ilbg", s), s = (0, _.Ze)(".rg_il", s);
+                t && s ? (p.innerHTML = t.innerHTML, p.style.display = "block", w.innerHTML = s.innerHTML, w.style.display = "block") : (p.innerHTML = "", p.style.display = "none", w.innerHTML = "", w.style.display = "none");
+                window.document.getElementById("rg_ht").style.display = q ? "" : "none";
+                q && (p = window.document.getElementById("rg_hta"), p.href = f, (0, _.s7)(p, (0, window.decodeURI)(q).replace(/ /g, "\u00a0").replace(/-/g, "\u2011")));
+                var D = window.google.hover.ga(a.targetDocId, ["uh_r"]);
+                _.u7 = D;
+                var B = (0, _.QOa)(D);
+                if (B && B.getAttribute("g:imgtitle")) {
+                    D.removeChild(B);
+                    p = (0, _.Ze)("#rg_ht");
+                    p.appendChild(B);
+                    p.style.maxHeight = "2.4em";
+                    (0, _.v7)();
+                    var u = window.document.getElementById("rg_hx");
+                    _.A7 = function(a) {
+                        window.google.pw && window.google.pw.jN && window.google.pw.jN.animate(a, B, u)
+                    };
+                    (0, _.kh)(u, "mouseover", _.A7);
+                    _.B7 = function(a) {
+                        window.google.pw && window.google.pw.jN && window.google.pw.jN.u7(a, B, u)
+                    };
+                    (0, _.kh)(u, "mouseout", _.B7);
+                    p = (0, _.Ze)("#rg_img_wn");
+                    w = B.getAttribute("g:undo");
+                    t = (0, _.Ze)("#rg_pos");
+                    if (p && t && w) {
+                        t.innerHTML = "";
+                        var v = p.cloneNode(_.k);
+                        v.id = w;
+                        t.appendChild(v);
+                        var x = (0, _.bg)(B, "eswa");
+                        _.w7 = function() {
+                            if (!(0, _.bg)(B, "esww")) {
+                                v.style.display = x ? "none" : "";
+                                var a = (0, _.Ze)("div.rg_ils", D), b = (0, _.Ze)("#isr_soa");
+                                b && !x && (a && D.removeChild(a), a = b.cloneNode(_.k), a.removeAttribute("id"), D.appendChild(a));
+                                a && (a = a.style, a.display = x ? "none" : "", a.width = D.style.width);
+                                x = !x
+                            }
+                        };
+                        (0, _.kh)(B, "click", _.w7)
+                    }
+
+                    p = _.k
+                }
+                else
+                    p = _.n;
+                (0, _.Ze)("#rg_ht").style.display = q || p ? "" : "none";
+                (w = (0, _.Ze)("#rg_pos")) && (w.style.display = p ? "" : "none");
+                p = a.targetDocId;
+                if (w = (0, _.C7)(window.document.getElementById("rg_hr"), "pplsrsli"))
+                    if (w.style.display = "inline", w.id = "srsl_" + p, w.setAttribute("data-docid", p), w.setAttribute("data-title", q), w.setAttribute("data-url", f), w.setAttribute("data-imgurl", e), e = window.document.getElementById("rg_ht"), e.style.maxHeight = "2.4em", e = (0, _.C7)(e, "pplsrslc"))
+                        e.style.display = "none", e.id = "srslc_" + p, e = (0, _.hd)("a", "pplsrslcl", e), e.length && (e[0].id = "srslcl_" + p);
+                e = window.document.getElementById("rg_hn");
+                e.innerHTML = "";
+                e.style.display = m ? "" : "none";
+                e.appendChild((0, _.OOa)(m));
+                window.document.getElementById("rg_hr").innerHTML = r;
+                f = window.document.getElementById("rg_ha_osl");
+                e = window.document.getElementById("rg_hs");
+                m = window.document.getElementById("sha" + a.targetDocId);
+                e.style.display = "none";
+                if (m && (e.style.display = "", e.innerHTML = m.innerHTML, window.google.sos && (window.google.sos.hover && window.google.sos.hover.b_) && window.google.sos.hover.b_(e), f && (f.style.display = "none"), (m = (0, _.Ze)("a.kpbb", e)) && m.href)) {
+                    r = window.location.protocol + "//" + window.location.host + (0, _.Uf)();
+                    if ((q = m.href) && -1 != q.indexOf("//plus.google.com/up") && r && (0, _.Wf)("continue", q) === _.l)
+                        p = "&", -1 == q.indexOf("?") && (p = "?"), q += p + "continue=" + (0, window.escape)(r);
+                    m.href = q;
+                    (0, _.kh)(m, "click", function() {
+                        window.google.log("biuc", "up")
+                    })
+                }
+
+                if (c || d)
+                    f && (f.style.display = ""), f = "none", m = window.document.getElementById("rg_hals"), m.style.display = c ? "" : "none", c && (m.href = c, (0, _.s7)(m, g)), g = window.document.getElementById("rg_haln"), g.style.display = d ? "" : "none", d && (g.href = d, (0, _.s7)(g, j), c && (f = "")), window.document.getElementById("rg_has").style.display = f;
+                a.element = window.document.getElementById("rg_h");
+                a.image = h;
+                c = 0;
+                if (e && (g = (0, _.Ze)("div.cpb", e)))
+                    d = a.element.style.display, a.element.style.display = "inline-block", c = 58 + g.offsetWidth, a.element.style.display = d;
+                a = window.Math.max(window.document.getElementById("rg_hr").offsetWidth + 2, window.document.getElementById("rg_ha").offsetWidth + 2, c, b, 160);
+                window.google.hover.s(a)
+            }
 
             return _.k
         };
@@ -18339,20 +18327,19 @@ var _ = _ || {};
         (0, _.Zn)("psh", function(a, b) {
             if (b && a) {
                 var c;
-                a:
-                    {
-                        c = a;
-                        try {
-                            c = (0, window.decodeURIComponent)(c);
-                            var d = (0, _.of)(c) || []
-                        }
-                        catch (e) {
-                            c = _.n;
-                            break a
-                        }
-
-                        c = "1" == d[0]
+                a: {
+                    c = a;
+                    try {
+                        c = (0, window.decodeURIComponent)(c);
+                        var d = (0, _.of)(c) || []
                     }
+                    catch (e) {
+                        c = _.n;
+                        break a
+                    }
+
+                    c = "1" == d[0]
+                }
 
                 c && (a = (0, window.decodeURIComponent)(a));
                 _.OO = (0, _.of)(a) || [];
@@ -18389,21 +18376,20 @@ var _ = _ || {};
             _.PO = a;
             _.QO = [];
             (0, _.cD)("rk");
-            a:
-                {
-                    a = window.google.dom.getAll(".mhc-\\d");
-                    var b = a.length, c, d = [];
-                    if (a) {
-                        for (var e = 0; e < b; e++)
-                            a[e] && ("mhc-5" === a[e].getAttribute("data-mhc") ? c = a[e] : d[d.length] = a[e]);
-                        if (c) {
-                            a = [c, d];
-                            break a
-                        }
+            a: {
+                a = window.google.dom.getAll(".mhc-\\d");
+                var b = a.length, c, d = [];
+                if (a) {
+                    for (var e = 0; e < b; e++)
+                        a[e] && ("mhc-5" === a[e].getAttribute("data-mhc") ? c = a[e] : d[d.length] = a[e]);
+                    if (c) {
+                        a = [c, d];
+                        break a
                     }
-
-                    a = _.ba
                 }
+
+                a = _.ba
+            }
 
             if (a && a[0]) {
                 c = (0, _.Ye)("li", a[0]);
@@ -18412,19 +18398,18 @@ var _ = _ || {};
                 d = a.length;
                 for (e = 0; e < b; e++) {
                     var f = c[e], g;
-                    a:
-                        {
-                            if ((g = (0, _.Vc)(f)) && 0 != g.length)
-                                for (var h = 0; h < g.length; h++) {
-                                    var j = g[h];
-                                    if ((0, _.fb)(j, "iukp")) {
-                                        g = j;
-                                        break a
-                                    }
+                    a: {
+                        if ((g = (0, _.Vc)(f)) && 0 != g.length)
+                            for (var h = 0; h < g.length; h++) {
+                                var j = g[h];
+                                if ((0, _.fb)(j, "iukp")) {
+                                    g = j;
+                                    break a
                                 }
+                            }
 
-                            g = _.l
-                        }
+                        g = _.l
+                    }
 
                     h = (0, _.Ze)("a", f);
                     f = (0, _.Ze)(".krable", f);
@@ -19109,24 +19094,23 @@ var _ = _ || {};
                         }
                     }, 100, _.k);
                     this.Ob.featuresCallback = function(a) {
-                        a:
-                            {
-                                a = (0, _.sea)(d, a);
-                                for (var b = 0, c; c = a[b++];)
-                                    if ("0" == c.id) {
-                                        a = _.l;
-                                        break a
-                                    }
-
-                                d.S.sN || d.Q.A.length && (a = d.Q.A);
-                                if (0 == a.length || d.If)
-                                    a = d.ha;
-                                else {
-                                    for (var h = [], b = 0; c = a[b++];)
-                                        h.push(c.id);
-                                    a = h.length ? d.ha + "&iwloc=cids:" + h.join(",") : _.l
+                        a: {
+                            a = (0, _.sea)(d, a);
+                            for (var b = 0, c; c = a[b++];)
+                                if ("0" == c.id) {
+                                    a = _.l;
+                                    break a
                                 }
+
+                            d.S.sN || d.Q.A.length && (a = d.Q.A);
+                            if (0 == a.length || d.If)
+                                a = d.ha;
+                            else {
+                                for (var h = [], b = 0; c = a[b++];)
+                                    h.push(c.id);
+                                a = h.length ? d.ha + "&iwloc=cids:" + h.join(",") : _.l
                             }
+                        }
 
                         return a
                     };
@@ -19775,16 +19759,15 @@ var _ = _ || {};
                         if (!(e = c == window.document.documentElement))
                             if (e = _.ux.exp.lru)
                                 if (!(e = "rso" == c.id)) {
-                                    a:
-                                        {
-                                            for (var e = 0, f; f = c.childNodes[e]; e++)
-                                                if ((0, _.ox)(f)) {
-                                                    e = _.k;
-                                                    break a
-                                                }
+                                    a: {
+                                        for (var e = 0, f; f = c.childNodes[e]; e++)
+                                            if ((0, _.ox)(f)) {
+                                                e = _.k;
+                                                break a
+                                            }
 
-                                            e = _.n
-                                        }
+                                        e = _.n
+                                    }
 
                                     e = e || (0, _.bg)(c, "intrlu")
                                 }
@@ -21543,84 +21526,83 @@ var _ = _ || {};
                 return _.Xl && (d = a.t[b][0]), c != _.ba ? e = c : _.Xl && (e = e[0]), _.Yl ? d > e ? d - e : e - d : d - e
         };
         _.Zl = function(a, b, c) {
-            a:
-                {
-                    var d = "";
-                    if (_.$l && (window[_.am].pt && (d += "&srt=" + window[_.am].pt, delete window[_.am].pt), _.bm))
-                        try {
-                            window.external && window.external.tran ? d += "&tran=" + window.external.tran : window.gtbExternal && window.gtbExternal.tran ? d += "&tran=" + window.gtbExternal.tran() : window.chrome && window.chrome.csi && (d += "&tran=" + window.chrome.csi().tran)
-                        }
-                        catch (e) {
-                        }
-
-                    if (_.cm) {
-                        var f = (0, _.V)("csi");
-                        if (f) {
-                            var g;
-                            window[_.am]._bfr != _.ba ? g = window[_.am]._bfr : (g = f.value, window[_.am]._bfr = g, f.value = 1);
-                            if (_.dm) {
-                                if (g) {
-                                    a = "";
-                                    break a
-                                }
-                            }
-                            else
-                                g && (d += "&bfr=1")
-                        }
+            a: {
+                var d = "";
+                if (_.$l && (window[_.am].pt && (d += "&srt=" + window[_.am].pt, delete window[_.am].pt), _.bm))
+                    try {
+                        window.external && window.external.tran ? d += "&tran=" + window.external.tran : window.gtbExternal && window.gtbExternal.tran ? d += "&tran=" + window.gtbExternal.tran() : window.chrome && window.chrome.csi && (d += "&tran=" + window.chrome.csi().tran)
+                    }
+                    catch (e) {
                     }
 
-                    if (_.em && (f = window.chrome))
-                        if (f = f.loadTimes)
-                            f().wasFetchedViaSpdy && (d += "&p=s"), f().wasNpnNegotiated && (d += "&npn=1"), f().wasAlternateProtocolAvailable && (d += "&apa=1");
-                    a.vX && (d += "&" + a.vX);
-                    _.fm && window.parent != window && (d += "&wif=1");
-                    if ("undefined" != typeof window.navigator && window.navigator && window.navigator.connection) {
-                        f = window.navigator.connection;
-                        g = f.type;
-                        for (var h in f)
-                            if ("type" != h && f[h] == g) {
-                                d += "&conn=" + h;
-                                break
+                if (_.cm) {
+                    var f = (0, _.V)("csi");
+                    if (f) {
+                        var g;
+                        window[_.am]._bfr != _.ba ? g = window[_.am]._bfr : (g = f.value, window[_.am]._bfr = g, f.value = 1);
+                        if (_.dm) {
+                            if (g) {
+                                a = "";
+                                break a
                             }
-                    }
-
-                    f = a.t;
-                    g = f.start;
-                    h = [];
-                    var j = _.n;
-                    if (_.Xl)
-                        var p = [];
-                    for (var q in f)
-                        if ("jsrt" == q && (j = _.k), "start" != q) {
-                            if (_.Xl) {
-                                if (0 == q.indexOf("_"))
-                                    continue;
-                                var m = f[q][1];
-                                if (m) {
-                                    f[m] && p.push(q + "." + (0, _.Wl)(a, q, f[m][0]));
-                                    continue
-                                }
-                            }
-
-                            g && h.push(q + "." + (0, _.Wl)(a, q))
                         }
-
-                    if (!j) {
-                        var m = [], r = window.performance && window.performance.timing;
-                        r && (j = r.navigationStart, j || (j = r.fetchStart), j && g && m.push("wsrt." + (g - j)), r.connectEnd && r.connectStart && m.push("cst." + (r.connectEnd - r.connectStart)), r.domainLookupEnd && r.domainLookupStart && m.push("dnst." + (r.domainLookupEnd - r.domainLookupStart)), r.redirectEnd && r.redirectStart && m.push("rdxt." + (r.redirectEnd - r.redirectStart)), r.responseEnd && r.requestStart && m.push("rqst." + (r.responseEnd - r.requestStart)), r.responseEnd && r.responseStart && m.push("rspt." + (r.responseEnd - r.responseStart)));
-                        (j = m.join(",")) && h.push(j)
+                        else
+                            g && (d += "&bfr=1")
                     }
-
-                    if ((j = window.google.timers.session) && j.t && g)
-                        for (q in j.t)
-                            "start" != q && h.push(q + "." + (g - j.t[q]));
-                    delete f.start;
-                    if (b)
-                        for (var w in b)
-                            d += "&" + w + "=" + b[w];
-                    (b = c) || (b = "https:" == window.document.location.protocol ? _.gm : _.hm);
-                    a = [b, "?v=3", "&s=" + (window[_.am].sn || _.im) + "&action=", a.name, _.Xl && p.length ? "&it=" + p.join(",") : "", "", d, "&rt=", h.join(",")].join("")
                 }
+
+                if (_.em && (f = window.chrome))
+                    if (f = f.loadTimes)
+                        f().wasFetchedViaSpdy && (d += "&p=s"), f().wasNpnNegotiated && (d += "&npn=1"), f().wasAlternateProtocolAvailable && (d += "&apa=1");
+                a.vX && (d += "&" + a.vX);
+                _.fm && window.parent != window && (d += "&wif=1");
+                if ("undefined" != typeof window.navigator && window.navigator && window.navigator.connection) {
+                    f = window.navigator.connection;
+                    g = f.type;
+                    for (var h in f)
+                        if ("type" != h && f[h] == g) {
+                            d += "&conn=" + h;
+                            break
+                        }
+                }
+
+                f = a.t;
+                g = f.start;
+                h = [];
+                var j = _.n;
+                if (_.Xl)
+                    var p = [];
+                for (var q in f)
+                    if ("jsrt" == q && (j = _.k), "start" != q) {
+                        if (_.Xl) {
+                            if (0 == q.indexOf("_"))
+                                continue;
+                            var m = f[q][1];
+                            if (m) {
+                                f[m] && p.push(q + "." + (0, _.Wl)(a, q, f[m][0]));
+                                continue
+                            }
+                        }
+
+                        g && h.push(q + "." + (0, _.Wl)(a, q))
+                    }
+
+                if (!j) {
+                    var m = [], r = window.performance && window.performance.timing;
+                    r && (j = r.navigationStart, j || (j = r.fetchStart), j && g && m.push("wsrt." + (g - j)), r.connectEnd && r.connectStart && m.push("cst." + (r.connectEnd - r.connectStart)), r.domainLookupEnd && r.domainLookupStart && m.push("dnst." + (r.domainLookupEnd - r.domainLookupStart)), r.redirectEnd && r.redirectStart && m.push("rdxt." + (r.redirectEnd - r.redirectStart)), r.responseEnd && r.requestStart && m.push("rqst." + (r.responseEnd - r.requestStart)), r.responseEnd && r.responseStart && m.push("rspt." + (r.responseEnd - r.responseStart)));
+                    (j = m.join(",")) && h.push(j)
+                }
+
+                if ((j = window.google.timers.session) && j.t && g)
+                    for (q in j.t)
+                        "start" != q && h.push(q + "." + (g - j.t[q]));
+                delete f.start;
+                if (b)
+                    for (var w in b)
+                        d += "&" + w + "=" + b[w];
+                (b = c) || (b = "https:" == window.document.location.protocol ? _.gm : _.hm);
+                a = [b, "?v=3", "&s=" + (window[_.am].sn || _.im) + "&action=", a.name, _.Xl && p.length ? "&it=" + p.join(",") : "", "", d, "&rt=", h.join(",")].join("")
+            }
 
             if (!a)
                 return "";
@@ -22466,20 +22448,19 @@ var _ = _ || {};
                         (0, _.Qf)(53);
                         window.google.j.ss = (0, _.Mt)();
                         _.Ku = _.Yt = _.k;
-                        a:
-                            {
-                                var h = g;
-                                _.Lu && (0, _.Qf)(72, []);
-                                var j = _.Lu.S(h);
-                                if (!j && (_.Mu || (_.Lu.J(), _.Lu.C(), _.Lu.qa()), _.Nu && !_.Lu.ha())) {
-                                    _.Nu.jd(h, c);
-                                    break a
-                                }
-
-                                d && j && !c ? window.setTimeout(function() {
-                                    _.Lu.jd(h)
-                                }, d) : _.Lu.jd(h, c)
+                        a: {
+                            var h = g;
+                            _.Lu && (0, _.Qf)(72, []);
+                            var j = _.Lu.S(h);
+                            if (!j && (_.Mu || (_.Lu.J(), _.Lu.C(), _.Lu.qa()), _.Nu && !_.Lu.ha())) {
+                                _.Nu.jd(h, c);
+                                break a
                             }
+
+                            d && j && !c ? window.setTimeout(function() {
+                                _.Lu.jd(h)
+                            }, d) : _.Lu.jd(h, c)
+                        }
                     }
                     else
                         _.Cu = 1
@@ -22920,43 +22901,42 @@ var _ = _ || {};
                         window.google.j.hm = !!a.hme;
                         _.uu = a.bpcl;
                         (0, _.Nf)(25, _.kv);
-                        a:
-                            {
-                                var j = _.k;
-                                try {
-                                    var p = (0, _.Mf)(), q, m = p.F(_.k, d, f), r = p.A(_.k, d, f);
-                                    if (window.google.ucp || g)
-                                        q = [p.N(_.k, d, f), r];
-                                    else {
-                                        q = [];
-                                        var w = 5, s = p.J(w);
-                                        b && q.push(s);
-                                        (!_.Ne.uz || !(0, _.vt)((0, _.jt)().href)) && !h && q.push(m);
-                                        (!_.Me.yz || h) && q.push(r);
-                                        b || q.push(s);
-                                        _.Ne.uz && (0, _.vt)((0, _.jt)().href) || q.push(p.C(_.k, d, f))
-                                    }
-
-                                    _.Lu = (0, _.vl)(p, q);
-                                    _.Lu.F(_.jv);
-                                    j = _.Lu.C();
-                                    (0, _.qv)(_.Lu)
-                                }
-                                catch (t) {
-                                    _.nu = _.n;
-                                    break a
+                        a: {
+                            var j = _.k;
+                            try {
+                                var p = (0, _.Mf)(), q, m = p.F(_.k, d, f), r = p.A(_.k, d, f);
+                                if (window.google.ucp || g)
+                                    q = [p.N(_.k, d, f), r];
+                                else {
+                                    q = [];
+                                    var w = 5, s = p.J(w);
+                                    b && q.push(s);
+                                    (!_.Ne.uz || !(0, _.vt)((0, _.jt)().href)) && !h && q.push(m);
+                                    (!_.Me.yz || h) && q.push(r);
+                                    b || q.push(s);
+                                    _.Ne.uz && (0, _.vt)((0, _.jt)().href) || q.push(p.C(_.k, d, f))
                                 }
 
-                                try {
-                                    if (!_.Lu.ha() && (w = 1, q = [], h || q.push(m), q.push(p.J(w)), _.Nu = (0, _.vl)(p, q)))
-                                        _.Nu.F(_.jv), _.Nu.C() && (0, _.qv)(_.Nu)
-                                }
-                                catch (D) {
-                                    _.Nu = _.l
-                                }
-
-                                _.nu = j
+                                _.Lu = (0, _.vl)(p, q);
+                                _.Lu.F(_.jv);
+                                j = _.Lu.C();
+                                (0, _.qv)(_.Lu)
                             }
+                            catch (t) {
+                                _.nu = _.n;
+                                break a
+                            }
+
+                            try {
+                                if (!_.Lu.ha() && (w = 1, q = [], h || q.push(m), q.push(p.J(w)), _.Nu = (0, _.vl)(p, q)))
+                                    _.Nu.F(_.jv), _.Nu.C() && (0, _.qv)(_.Nu)
+                            }
+                            catch (D) {
+                                _.Nu = _.l
+                            }
+
+                            _.nu = j
+                        }
                     }
 
                     if (_.nu) {
@@ -23477,25 +23457,24 @@ var _ = _ || {};
             window.document.body.style.height = "";
             b || window.google.timers && window.google.timers.load.t && (window.google.timers.load.t.prt = window.google.time());
             var c = (0, _.Qf)(19, [_.mt], _.mt);
-            a:
-                {
-                    try {
-                        var d = (0, _.cu)();
-                        d == _.l && (d = _.ev);
-                        if (d == _.l)
-                            break a;
-                        d = (0, _.Qf)(4, [d], d, _.l);
-                        if (d == _.l)
-                            break a;
-                        var e = (0, _.pq)();
-                        e && e.q.value != d && (e.q.value = d)
-                    }
-                    catch (f) {
-                        (0, _.lt)("PQ", {}, f)
-                    }
-
-                    (0, _.It)()
+            a: {
+                try {
+                    var d = (0, _.cu)();
+                    d == _.l && (d = _.ev);
+                    if (d == _.l)
+                        break a;
+                    d = (0, _.Qf)(4, [d], d, _.l);
+                    if (d == _.l)
+                        break a;
+                    var e = (0, _.pq)();
+                    e && e.q.value != d && (e.q.value = d)
                 }
+                catch (f) {
+                    (0, _.lt)("PQ", {}, f)
+                }
+
+                (0, _.It)()
+            }
 
             b || window.google.timers && window.google.timers.load.t && (window.google.timers.load.t.pprt = window.google.time());
             b || (0, _.Ru)(c);
@@ -25372,16 +25351,15 @@ var _ = _ || {};
             (0, _.F2)(_.L1.yf);
             (0, _.q2)(_.L1.results);
             if (b && !_.K0)
-                a:
-                    {
-                        b = _.L1.results;
-                        if ((0, _.Y1)(b, a) && ((0, _.q2)(b), 0 == ++b.If % _.GGa)) {
-                            a = _.k;
-                            break a
-                        }
-
-                        a = _.n
+                a: {
+                    b = _.L1.results;
+                    if ((0, _.Y1)(b, a) && ((0, _.q2)(b), 0 == ++b.If % _.GGa)) {
+                        a = _.k;
+                        break a
                     }
+
+                    a = _.n
+                }
             else
                 a = !_.K0 || 1 == _.L1.results.C;
             return a
@@ -25709,21 +25687,20 @@ var _ = _ || {};
                     window.google.timers.load.t.xjs = window.google.time();
                     for (var b = "ist_rc ist_rn ist_nr ist_cdts ist_dp ist_rrx ist_rxr ist_rs ist_sr".split(" "), c = 0, d; d = b[c++];) {
                         var e;
-                        a:
-                            {
-                                try {
-                                    var f = window.external[d];
-                                    if (f != _.ba) {
-                                        window.google.kCSI[d] = f;
-                                        e = _.k;
-                                        break a
-                                    }
+                        a: {
+                            try {
+                                var f = window.external[d];
+                                if (f != _.ba) {
+                                    window.google.kCSI[d] = f;
+                                    e = _.k;
+                                    break a
                                 }
-                                catch (g) {
-                                }
-
-                                e = _.n
                             }
+                            catch (g) {
+                            }
+
+                            e = _.n
+                        }
 
                         if (e === _.n)
                             break

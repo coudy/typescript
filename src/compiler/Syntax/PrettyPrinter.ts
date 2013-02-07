@@ -954,11 +954,7 @@ module PrettyPrinter {
         private visitLabeledStatement(node: LabeledStatementSyntax): void {
             this.appendToken(node.identifier);
             this.appendToken(node.colonToken);
-            this.ensureNewLine();
-
-            this.indentation++;
-            node.statement.accept(this);
-            this.indentation--;
+            this.appendBlockOrStatement(node.statement);
         }
 
         private visitDoStatement(node: DoStatementSyntax): void {
