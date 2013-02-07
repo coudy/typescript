@@ -597,6 +597,7 @@ module PrettyPrinter {
             node.condition.accept(this);
             this.appendToken(node.closeParenToken);
             this.appendBlockOrStatement(node.statement);
+            this.appendNode(node.elseClause);
         }
 
         private visitElseClause(node: ElseClauseSyntax): void {

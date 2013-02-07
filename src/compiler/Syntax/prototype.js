@@ -53001,6 +53001,7 @@ var PrettyPrinter;
             node.condition.accept(this);
             this.appendToken(node.closeParenToken);
             this.appendBlockOrStatement(node.statement);
+            this.appendNode(node.elseClause);
         };
         PrettyPrinterImpl.prototype.visitElseClause = function (node) {
             this.ensureNewLine();
