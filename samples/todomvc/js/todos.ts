@@ -60,15 +60,14 @@ declare module Backbone {
     export class Collection {
         constructor (models? , opts? );
         bind(ev: string, f: Function, ctx?: any): void;
-        collection: Model;
         length: number;
-        create(attrs, opts? ): Collection;
+        create(attrs, opts? ): any;
         each(f: (elem: any) => void ): void;
         fetch(opts?: any): void;
         last(): any;
         last(n: number): any[];
-        filter(f: (elem: any) => any): Collection;
-        without(...values: any[]): Collection;
+        filter(f: (elem: any) => any): any[];
+        without(...values: any[]): any[];
     }
     export class View {
         constructor (options? );
