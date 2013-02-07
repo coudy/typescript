@@ -1709,7 +1709,7 @@ function baseType(definition: ITypeDefinition): ITypeDefinition {
 }
 
 function memberDefinitionType(child: IMemberDefinition): ITypeDefinition {
-    Debug.assert(child.type !== undefined);
+    // Debug.assert(child.type !== undefined);
     return ArrayUtilities.firstOrDefault(definitions, d => d.name === child.type);
 }
 
@@ -2186,7 +2186,7 @@ function generateRewriter(): string {
 "            }\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
+"        // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
 "        return newItems === null ? list : Syntax.list(newItems);\r\n" +
 "    }\r\n" +
 "\r\n" +
@@ -2209,7 +2209,7 @@ function generateRewriter(): string {
 "            }\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
+"        // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
 "        return newItems === null ? list : Syntax.separatedList(newItems);\r\n" +
 "    }\r\n";
 

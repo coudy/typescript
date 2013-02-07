@@ -3,6 +3,7 @@
 interface ISyntaxTrivia {
     kind(): SyntaxKind;
 
+    isWhitespace(): bool;
     isComment(): bool;
     isNewLine(): bool;
     isSkippedText(): bool;

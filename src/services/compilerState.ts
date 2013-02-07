@@ -402,7 +402,7 @@ module Services {
             var end = editRange.limChar;
             var newLength = end - start + editRange.delta;
 
-            Debug.assert(newLength >= 0);
+            // Debug.assert(newLength >= 0);
 
             var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
 

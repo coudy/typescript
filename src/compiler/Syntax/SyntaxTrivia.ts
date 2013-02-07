@@ -32,6 +32,10 @@ module Syntax {
             return this._text;
         }
 
+        public isWhitespace(): bool {
+            return this.kind() === SyntaxKind.WhitespaceTrivia;
+        }
+
         public isComment(): bool {
             return this.kind() === SyntaxKind.SingleLineCommentTrivia || this.kind() === SyntaxKind.MultiLineCommentTrivia;
         }

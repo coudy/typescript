@@ -4,6 +4,38 @@
 /// <reference path='ast.ts' />
 
 module TypeScript {
+    class SyntaxPositionMap {
+        private position = 0;
+        private elementToPosition = Collections.createHashTable(2048, Collections.identityHashCode);
+
+        constructor(node: SyntaxNode) {
+            this.process(node);
+        }
+
+        private process(element: ISyntaxElement) {
+            if (element !== null) {
+                if (element.isToken()) {
+                    this.elementToPosition.add(element, this.position);
+                    this.position += element.fullWidth();
+                }
+                else {
+                    if (element.isNode()) {
+                        this.elementToPosition.add(element, this.position);
+                    }
+
+                    for (var i = 0, n = element.childCount(); i < n; i++) {
+                        this.process(element.childAt(i));
+                    }
+                }
+            }
+        }
+
+        public static create(node: SyntaxNode): SyntaxPositionMap {
+            var map = new SyntaxPositionMap(node);
+            return map;
+        }
+    }
+
     export class SyntaxTreeToAstVisitor implements ISyntaxVisitor {
         private nestingLevel = 0;
 
@@ -19,8 +51,8 @@ module TypeScript {
         }
 
         public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): Script {
-            var map = null;// SyntaxInformationMap.create(sourceUnit);
-            var visitor = new SyntaxTreeToAstVisitor(map, fileName, unitIndex);
+            var map = SyntaxPositionMap.create(sourceUnit);
+            var visitor = new SyntaxTreeToAstVisitor(null, fileName, unitIndex);
             return sourceUnit.accept(visitor);
         }
 
