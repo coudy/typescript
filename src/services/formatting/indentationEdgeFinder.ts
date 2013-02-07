@@ -279,7 +279,11 @@ module Formatting {
                                 // Use the parent virtual block to set the indentation delta for try/catch/finally
                             var parent = node.Parent;
                             while (parent != null) {
-                                if (parent.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkBlock) {
+                                // TypeScript-specific: TypeScript tryCatch and tryFinally nodes are not enclosed in 
+                                // virtual blocks. the indentationDelta should be picked form the first tryCatch or tryFinally node
+                                if ((parent.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkTryCatch ||
+                                    parent.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkTryFinally) &&
+                                    parent.IndentationDelta != null) {
                                     node.IndentationDelta = parent.IndentationDelta;
                                     break;
                                 }
