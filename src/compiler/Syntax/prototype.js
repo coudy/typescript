@@ -52602,6 +52602,7 @@ var PrettyPrinter;
             }
         };
         PrettyPrinterImpl.prototype.visitToken = function (token) {
+            this.appendToken(token);
         };
         PrettyPrinterImpl.prototype.appendSeparatorSpaceList = function (list) {
             for(var i = 0, n = list.childCount(); i < n; i++) {
@@ -53052,12 +53053,18 @@ var PrettyPrinter;
         };
         PrettyPrinterImpl.prototype.visitThrowStatement = function (node) {
             this.appendToken(node.throwKeyword);
-            this.appendNode(node.expression);
+            if(node.expression) {
+                this.ensureSpace();
+                node.expression.accept(this);
+            }
             this.appendToken(node.semicolonToken);
         };
         PrettyPrinterImpl.prototype.visitReturnStatement = function (node) {
             this.appendToken(node.returnKeyword);
-            this.appendNode(node.expression);
+            if(node.expression) {
+                this.ensureSpace();
+                node.expression.accept(this);
+            }
             this.appendToken(node.semicolonToken);
         };
         PrettyPrinterImpl.prototype.visitObjectCreationExpression = function (node) {

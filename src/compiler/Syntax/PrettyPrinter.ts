@@ -108,6 +108,7 @@ module PrettyPrinter {
         }
 
         private visitToken(token: ISyntaxToken): void {
+            this.appendToken(token);
         }
 
         private appendSeparatorSpaceList(list: ISeparatedSyntaxList): void {
@@ -653,13 +654,23 @@ module PrettyPrinter {
 
         private visitThrowStatement(node: ThrowStatementSyntax): void {
             this.appendToken(node.throwKeyword);
-            this.appendNode(node.expression);
+
+            if (node.expression) {
+                this.ensureSpace();
+                node.expression.accept(this);
+            }
+
             this.appendToken(node.semicolonToken);
         }
 
         private visitReturnStatement(node: ReturnStatementSyntax): void {
             this.appendToken(node.returnKeyword);
-            this.appendNode(node.expression);
+
+            if (node.expression) {
+                this.ensureSpace();
+                node.expression.accept(this);
+            }
+
             this.appendToken(node.semicolonToken);
         }
 
