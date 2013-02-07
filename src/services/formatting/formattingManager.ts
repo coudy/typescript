@@ -407,7 +407,10 @@ module Formatting {
                 var span = new SnapshotSpan(this.snapshot, Span.FromBounds(prevLine.startPosition(), currentLine.endPosition()));
 
                 if (span != null) {
-                    return this.Format(span, FormattingRequestKind.FormatOnEnter, null);
+                    var caret = new SnapshotPoint(this.snapshot, caretPosition);
+                    var mappedPoint = this.MapDownSnapshotPoint(caret);
+                    return this.Format(span, FormattingRequestKind.FormatOnEnter,
+                        (tokens, requestKind) => { return !this.IsInsideStringLiteralOrComment(mappedPoint, tokens); });
                 }
             }
 
