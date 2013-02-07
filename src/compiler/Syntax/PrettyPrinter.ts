@@ -16,19 +16,35 @@ module PrettyPrinter {
         }
 
         private newLineCountBetweenModuleElements(element1: IModuleElementSyntax, element2: IModuleElementSyntax): number {
-            return 1;
+            if (element1 !== null && element2 !== null) {
+                return 1;
+            }
+
+            return 0;
         }
 
         private newLineCountBetweenClassElements(element1: IClassElementSyntax, element2: IClassElementSyntax): number {
-            return 1;
+            if (element1 !== null && element2 !== null) {
+                return 1;
+            }
+
+            return 0;
         }
 
         private newLineCountBetweenStatements(element1: IClassElementSyntax, element2: IClassElementSyntax): number {
-            return 1;
+            if (element1 !== null && element2 !== null) {
+                return 1;
+            }
+
+            return 0;
         }
 
         private newLineCountBetweenSwitchClauses(element1: SwitchClauseSyntax, element2: SwitchClauseSyntax): number {
-            return 1;
+            if (element1 !== null && element2 !== null) {
+                return 1;
+            }
+
+            return 0;
         }
 
         private ensureSpace(): void {
@@ -429,6 +445,7 @@ module PrettyPrinter {
             this.appendStatements(node.statements);
 
             this.indentation--;
+            this.ensureNewLine();
             this.appendToken(node.closeBraceToken);
         }
 

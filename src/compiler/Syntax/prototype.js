@@ -52529,16 +52529,28 @@ var PrettyPrinter;
             this.indentation = 0;
         }
         PrettyPrinterImpl.prototype.newLineCountBetweenModuleElements = function (element1, element2) {
-            return 1;
+            if(element1 !== null && element2 !== null) {
+                return 1;
+            }
+            return 0;
         };
         PrettyPrinterImpl.prototype.newLineCountBetweenClassElements = function (element1, element2) {
-            return 1;
+            if(element1 !== null && element2 !== null) {
+                return 1;
+            }
+            return 0;
         };
         PrettyPrinterImpl.prototype.newLineCountBetweenStatements = function (element1, element2) {
-            return 1;
+            if(element1 !== null && element2 !== null) {
+                return 1;
+            }
+            return 0;
         };
         PrettyPrinterImpl.prototype.newLineCountBetweenSwitchClauses = function (element1, element2) {
-            return 1;
+            if(element1 !== null && element2 !== null) {
+                return 1;
+            }
+            return 0;
         };
         PrettyPrinterImpl.prototype.ensureSpace = function () {
             if(this.result.length > 0) {
@@ -52862,6 +52874,7 @@ var PrettyPrinter;
             this.indentation++;
             this.appendStatements(node.statements);
             this.indentation--;
+            this.ensureNewLine();
             this.appendToken(node.closeBraceToken);
         };
         PrettyPrinterImpl.prototype.visitParameter = function (node) {
