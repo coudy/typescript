@@ -53299,6 +53299,7 @@ var PrettyPrinter;
         PrettyPrinterImpl.prototype.visitDoStatement = function (node) {
             this.appendToken(node.doKeyword);
             this.appendBlockOrStatement(node.statement);
+            this.ensureNewLine();
             this.appendToken(node.whileKeyword);
             this.ensureSpace();
             this.appendToken(node.openParenToken);

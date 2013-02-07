@@ -964,6 +964,7 @@ module PrettyPrinter {
         private visitDoStatement(node: DoStatementSyntax): void {
             this.appendToken(node.doKeyword);
             this.appendBlockOrStatement(node.statement);
+            this.ensureNewLine();
             this.appendToken(node.whileKeyword);
             this.ensureSpace();
             this.appendToken(node.openParenToken);

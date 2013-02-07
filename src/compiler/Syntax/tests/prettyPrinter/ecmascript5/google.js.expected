@@ -400,7 +400,8 @@ var _ = _ || {};
                         if (0 == q[0].length && 0 == m[0].length)
                             break;
                         b = ((0 == q[1].length ? 0 : (0, window.parseInt)(q[1], 10)) < (0 == m[1].length ? 0 : (0, window.parseInt)(m[1], 10)) ? -1 : (0 == q[1].length ? 0 : (0, window.parseInt)(q[1], 10)) > (0 == m[1].length ? 0 : (0, window.parseInt)(m[1], 10)) ? 1 : 0) || ((0 == q[2].length) < (0 == m[2].length) ? -1 : (0 == q[2].length) > (0 == m[2].length) ? 1 : 0) || (q[2] < m[2] ? -1 : q[2] > m[2] ? 1 : 0)
-                    }while (0 == b)
+                    }
+                    while (0 == b)
                 }
 
                 b = _.hc[a] = 0 <= b
@@ -1100,7 +1101,8 @@ var _ = _ || {};
                     }
 
                     b = b.offsetParent
-                }while (b && b != a);
+                }
+                while (b && b != a);
                 if (_.he || _.td && "absolute" == d)
                     f.y -= c.body.offsetTop;
                 for (b = a; (b = (0, _.te)(b)) && b != c.body && b != g;)
@@ -1255,7 +1257,8 @@ var _ = _ || {};
                     if (0 == m[0].length && 0 == r[0].length)
                         break;
                     c = ((0 == m[1].length ? 0 : (0, window.parseInt)(m[1], 10)) < (0 == r[1].length ? 0 : (0, window.parseInt)(r[1], 10)) ? -1 : (0 == m[1].length ? 0 : (0, window.parseInt)(m[1], 10)) > (0 == r[1].length ? 0 : (0, window.parseInt)(r[1], 10)) ? 1 : 0) || ((0 == m[2].length) < (0 == r[2].length) ? -1 : (0 == m[2].length) > (0 == r[2].length) ? 1 : 0) || (m[2] < r[2] ? -1 : m[2] > r[2] ? 1 : 0)
-                }while (0 == c)
+                }
+                while (0 == c)
             }
 
             return c
@@ -3868,7 +3871,8 @@ var _ = _ || {};
                     if (a && a.source == window && La.length && ("comm.df" == a.data || "comm.df.daisy" == a.data)) {
                         var c = window.google.time();
                         do
-                            La.shift()();while (La.length && 20 > window.google.time() - c);
+                            La.shift()();
+                        while (La.length && 20 > window.google.time() - c);
                         La.length && "comm.df.daisy" == a.data && window.setTimeout(function() {
                             b(a)
                         }, 0)
@@ -16254,7 +16258,8 @@ var _ = _ || {};
                 a = [];
                 for (b = (0, _.Rg)();;) {
                     do
-                        this.A.y += this.C.y, this.A.x += this.C.x, this.ha = window.Math.round(this.A.y), this.V = window.Math.round(this.A.x), (0, _.uja)(this, this.A.x, this.S.x, this.qa.x, this.C.x, this.N, _.n), (0, _.uja)(this, this.A.y, this.S.y, this.qa.y, this.C.y, this.Q, _.k), b += _.mE;while (!(this.ha != this.J.y || this.V != this.J.x) && (window.Math.abs(this.C.y) >= _.pE || window.Math.abs(this.C.x) >= _.pE));
+                        this.A.y += this.C.y, this.A.x += this.C.x, this.ha = window.Math.round(this.A.y), this.V = window.Math.round(this.A.x), (0, _.uja)(this, this.A.x, this.S.x, this.qa.x, this.C.x, this.N, _.n), (0, _.uja)(this, this.A.y, this.S.y, this.qa.y, this.C.y, this.Q, _.k), b += _.mE;
+                    while (!(this.ha != this.J.y || this.V != this.J.x) && (window.Math.abs(this.C.y) >= _.pE || window.Math.abs(this.C.x) >= _.pE));
                     if (0 == this.N && 0 == this.Q && !(this.ha != this.J.y || this.V != this.J.x))
                         break;
                     a.push(b, this.V, this.ha);
