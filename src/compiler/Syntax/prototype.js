@@ -52532,6 +52532,9 @@ var PrettyPrinter;
             if(element1 === null || element2 === null) {
                 return 0;
             }
+            if(element1.lastToken().kind() === 71 /* CloseBraceToken */ ) {
+                return 2;
+            }
             return 1;
         };
         PrettyPrinterImpl.prototype.newLineCountBetweenClassElements = function (element1, element2) {
@@ -52543,6 +52546,9 @@ var PrettyPrinter;
         PrettyPrinterImpl.prototype.newLineCountBetweenStatements = function (element1, element2) {
             if(element1 === null || element2 === null) {
                 return 0;
+            }
+            if(element1.lastToken().kind() === 71 /* CloseBraceToken */ ) {
+                return 2;
             }
             return 1;
         };

@@ -20,6 +20,10 @@ module PrettyPrinter {
                 return 0;
             }
 
+            if (element1.lastToken().kind() === SyntaxKind.CloseBraceToken) {
+                return 2;
+            }
+
             return 1;
         }
 
@@ -34,6 +38,10 @@ module PrettyPrinter {
         private newLineCountBetweenStatements(element1: IClassElementSyntax, element2: IClassElementSyntax): number {
             if (element1 === null || element2 === null) {
                 return 0;
+            }
+
+            if (element1.lastToken().kind() === SyntaxKind.CloseBraceToken) {
+                return 2;
             }
 
             return 1;
