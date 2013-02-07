@@ -52529,28 +52529,31 @@ var PrettyPrinter;
             this.indentation = 0;
         }
         PrettyPrinterImpl.prototype.newLineCountBetweenModuleElements = function (element1, element2) {
-            if(element1 !== null && element2 !== null) {
-                return 1;
+            if(element1 === null || element2 === null) {
+                return 0;
             }
-            return 0;
+            return 1;
         };
         PrettyPrinterImpl.prototype.newLineCountBetweenClassElements = function (element1, element2) {
-            if(element1 !== null && element2 !== null) {
-                return 1;
+            if(element1 === null || element2 === null) {
+                return 0;
             }
-            return 0;
+            return 1;
         };
         PrettyPrinterImpl.prototype.newLineCountBetweenStatements = function (element1, element2) {
-            if(element1 !== null && element2 !== null) {
-                return 1;
+            if(element1 === null || element2 === null) {
+                return 0;
             }
-            return 0;
+            return 1;
         };
         PrettyPrinterImpl.prototype.newLineCountBetweenSwitchClauses = function (element1, element2) {
-            if(element1 !== null && element2 !== null) {
+            if(element1 === null || element2 === null) {
+                return 0;
+            }
+            if(element1.statements.childCount() === 0) {
                 return 1;
             }
-            return 0;
+            return 2;
         };
         PrettyPrinterImpl.prototype.ensureSpace = function () {
             if(this.result.length > 0) {

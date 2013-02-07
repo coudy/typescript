@@ -16,35 +16,39 @@ module PrettyPrinter {
         }
 
         private newLineCountBetweenModuleElements(element1: IModuleElementSyntax, element2: IModuleElementSyntax): number {
-            if (element1 !== null && element2 !== null) {
-                return 1;
+            if (element1 === null || element2 === null) {
+                return 0;
             }
 
-            return 0;
+            return 1;
         }
 
         private newLineCountBetweenClassElements(element1: IClassElementSyntax, element2: IClassElementSyntax): number {
-            if (element1 !== null && element2 !== null) {
-                return 1;
+            if (element1 === null || element2 === null) {
+                return 0;
             }
 
-            return 0;
+            return 1;
         }
 
         private newLineCountBetweenStatements(element1: IClassElementSyntax, element2: IClassElementSyntax): number {
-            if (element1 !== null && element2 !== null) {
-                return 1;
+            if (element1 === null || element2 === null) {
+                return 0;
             }
 
-            return 0;
+            return 1;
         }
 
         private newLineCountBetweenSwitchClauses(element1: SwitchClauseSyntax, element2: SwitchClauseSyntax): number {
-            if (element1 !== null && element2 !== null) {
+            if (element1 === null || element2 === null) {
+                return 0;
+            }
+
+            if (element1.statements.childCount() === 0) {
                 return 1;
             }
 
-            return 0;
+            return 2;
         }
 
         private ensureSpace(): void {
