@@ -1,4 +1,3 @@
-/// <reference path='SyntaxRewriter.generated.ts' />
 /// <reference path='SlidingWindow.ts' />
 
 /// <reference path='ParseOptions.ts' />

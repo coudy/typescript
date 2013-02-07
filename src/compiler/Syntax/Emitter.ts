@@ -8,6 +8,11 @@
 ///<reference path='Syntax.ts' />
 
 module Emitter {
+    function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {
+        return CallSignatureSyntax.create1().withParameterList(
+            ParameterListSyntax.create1().withParameter(parameter));
+    }
+
     // Class that makes sure we're not reusing tokens in a tree
     class EnsureTokenUniquenessRewriter extends SyntaxRewriter {
         private tokenTable = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
@@ -262,7 +267,7 @@ module Emitter {
 
             // function(M) { ... }
             var functionExpression = FunctionExpressionSyntax.create1()
-                .withCallSignature(Syntax.callSignature(ParameterSyntax.create(moduleIdentifier)).withTrailingTrivia(this.space))
+                .withCallSignature(callSignature(ParameterSyntax.create(moduleIdentifier)).withTrailingTrivia(this.space))
                 .withBlock(this.factory.block(
                     Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                     Syntax.list(moduleElements),
@@ -305,7 +310,7 @@ module Emitter {
 
         private visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): FunctionExpressionSyntax {
             return FunctionExpressionSyntax.create1()
-                .withCallSignature(Syntax.callSignature(ParameterSyntax.create(this.withNoTrivia(node.identifier))).withTrailingTrivia(this.space))
+                .withCallSignature(callSignature(ParameterSyntax.create(this.withNoTrivia(node.identifier))).withTrailingTrivia(this.space))
                 .withBlock(this.convertArrowFunctionBody(node)).withLeadingTrivia(node.leadingTrivia());
         }
 

@@ -7,6 +7,7 @@
 // Adds argument checking to the generated nodes.  Argument checking appears to slow things down
 // parsing about 7%.  If we want to get that perf back, we can always remove this.
 var argumentChecks = false;
+var forPrettyPrinter = false;
 
 interface ITypeDefinition {
     name: string;
@@ -1772,26 +1773,6 @@ function generateAccessors(definition: ITypeDefinition): string {
         }
     }
 
-    //if (definition.isAbstract) {
-    //    // Generate accessors for all properties that all subclasses share.
-    //    var subclasses = ArrayUtilities.where(definitions, d => !d.isAbstract && derivesFrom(d, definition));
-
-    //    if (subclasses.length > 0) {
-    //        var firstSubclass = subclasses[0];
-
-    //        for (var i = 0; i < firstSubclass.children.length; i++) {
-    //            var child = firstSubclass.children[i];
-
-    //            if (ArrayUtilities.all(subclasses, s => contains(s, child))) {
-    //                result += "\r\n";
-    //                result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
-    //                result += "        throw Errors.abstract();\r\n";
-    //                result += "    }\r\n";
-    //            }
-    //        }
-    //    }
-    //}
-
     return result;
 }
 
@@ -1878,12 +1859,12 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
     
     // Don't need an public update method if there's only 1 child.  In that case, just call the
     // 'withXXX' method.
-    if (definition.children.length <= 1) {
-        result += "    private ";
-    }
-    else {
+    //if (definition.children.length <= 1) {
+    //    result += "    private ";
+    //}
+    //else {
         result += "    public ";
-    }
+    //}
     
     result += "update("
 
@@ -2096,21 +2077,25 @@ function generateNode(definition: ITypeDefinition): string {
 
     result += generateProperties(definition);
     result += generateConstructor(definition);
-    result += generateFactoryMethod(definition);
     result += generateAcceptMethods(definition);
     result += generateKindMethod(definition);
     result += generateSlotMethods(definition);
     result += generateIsMethod(definition);
+    result += generateAccessors(definition);
+    result += generateUpdateMethod(definition);
+
+    if (!forPrettyPrinter) {
+        result += generateFactoryMethod(definition);
+        result += generateTriviaMethods(definition);
+        result += generateWithMethods(definition);
+        result += generateIsTypeScriptSpecificMethod(definition);
+    }
+
     // result += generateIsMissingMethod(definition);
     // result += generateFirstTokenMethod(definition);
     // result += generateLastTokenMethod(definition);
     // result += generateInsertChildrenIntoMethod(definition);
-    result += generateAccessors(definition);
-    result += generateUpdateMethod(definition);
-    result += generateTriviaMethods(definition);
-    result += generateWithMethods(definition);
     // result += generateCollectTextElementsMethod(definition);
-    result += generateIsTypeScriptSpecificMethod(definition);
     // result += generateComputeDataMethod(definition);
     // result += generateFindTokenInternalMethod(definition);
     // result += generateStructuralEqualsMethod(definition);
@@ -2226,12 +2211,12 @@ function generateRewriter(): string {
             continue;
         }
 
-        if (definition.children.length === 1) {
-            result += "        return node.with" + pascalCase(definition.children[0].name) + "(\r\n";
-        }
-        else {
+        //if (definition.children.length === 1) {
+        //    result += "        return node.with" + pascalCase(definition.children[0].name) + "(\r\n";
+        //}
+        //else {
             result += "        return node.update(\r\n";
-        }
+        //}
 
         for (var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
@@ -2835,26 +2820,28 @@ function generateVisitor(): string {
 
     result += "}\r\n\r\n";
 
-    result += "class SyntaxVisitor implements ISyntaxVisitor {\r\n";
-    result += "    public defaultVisit(node: ISyntaxNodeOrToken): any {\r\n";
-    result += "        return null;\r\n";
-    result += "    }\r\n";
-    result += "\r\n";
-    result += "    private visitToken(token: ISyntaxToken): any {\r\n";
-    result += "        return this.defaultVisit(token);\r\n";
-    result += "    }\r\n";
+    if (!forPrettyPrinter) {
+        result += "class SyntaxVisitor implements ISyntaxVisitor {\r\n";
+        result += "    public defaultVisit(node: ISyntaxNodeOrToken): any {\r\n";
+        result += "        return null;\r\n";
+        result += "    }\r\n";
+        result += "\r\n";
+        result += "    private visitToken(token: ISyntaxToken): any {\r\n";
+        result += "        return this.defaultVisit(token);\r\n";
+        result += "    }\r\n";
 
-    for (var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
+        for (var i = 0; i < definitions.length; i++) {
+            var definition = definitions[i];
 
-        if (!definition.isAbstract) {
-            result += "\r\n    private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
-            result += "        return this.defaultVisit(node);\r\n";
-            result += "    }\r\n";
+            if (!definition.isAbstract) {
+                result += "\r\n    private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+                result += "        return this.defaultVisit(node);\r\n";
+                result += "    }\r\n";
+            }
         }
-    }
 
-    result += "}";
+        result += "}";
+    }
 
     return result;
 }

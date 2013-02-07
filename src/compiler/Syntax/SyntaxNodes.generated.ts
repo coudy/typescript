@@ -15,14 +15,6 @@ class SourceUnitSyntax extends SyntaxNode {
 
     }
 
-    public static create(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
-        return new SourceUnitSyntax(Syntax.emptyList, endOfFileToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
-        return new SourceUnitSyntax(Syntax.emptyList, endOfFileToken, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSourceUnit(this);
     }
@@ -50,6 +42,14 @@ class SourceUnitSyntax extends SyntaxNode {
         }
 
         return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
+        return new SourceUnitSyntax(Syntax.emptyList, endOfFileToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(endOfFileToken: ISyntaxToken): SourceUnitSyntax {
+        return new SourceUnitSyntax(Syntax.emptyList, endOfFileToken, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SourceUnitSyntax {
@@ -111,10 +111,6 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     }
 
-    public static create1(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return new ExternalModuleReferenceSyntax(Syntax.token(SyntaxKind.ModuleKeyword), Syntax.token(SyntaxKind.OpenParenToken), stringLiteral, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitExternalModuleReference(this);
     }
@@ -146,6 +142,10 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         }
 
         return new ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
+        return new ExternalModuleReferenceSyntax(Syntax.token(SyntaxKind.ModuleKeyword), Syntax.token(SyntaxKind.OpenParenToken), stringLiteral, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExternalModuleReferenceSyntax {
@@ -204,7 +204,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         }
     }
 
-    private update(moduleName: INameSyntax): ModuleNameModuleReferenceSyntax {
+    public update(moduleName: INameSyntax): ModuleNameModuleReferenceSyntax {
         if (this.moduleName === moduleName) {
             return this;
         }
@@ -239,11 +239,6 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(identifier: ISyntaxToken,
-                          moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
-        return new ImportDeclarationSyntax(Syntax.token(SyntaxKind.ImportKeyword), identifier, Syntax.token(SyntaxKind.EqualsToken), moduleReference, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -283,6 +278,11 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         }
 
         return new ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(identifier: ISyntaxToken,
+                          moduleReference: ModuleReferenceSyntax): ImportDeclarationSyntax {
+        return new ImportDeclarationSyntax(Syntax.token(SyntaxKind.ImportKeyword), identifier, Syntax.token(SyntaxKind.EqualsToken), moduleReference, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ImportDeclarationSyntax {
@@ -335,17 +335,6 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
 
     }
 
-    public static create(classKeyword: ISyntaxToken,
-                         identifier: ISyntaxToken,
-                         openBraceToken: ISyntaxToken,
-                         closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
-        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): ClassDeclarationSyntax {
-        return new ClassDeclarationSyntax(null, null, Syntax.token(SyntaxKind.ClassKeyword), identifier, null, null, null, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitClassDeclaration(this);
     }
@@ -393,6 +382,17 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         }
 
         return new ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(classKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ClassDeclarationSyntax {
+        return new ClassDeclarationSyntax(null, null, classKeyword, identifier, null, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): ClassDeclarationSyntax {
+        return new ClassDeclarationSyntax(null, null, Syntax.token(SyntaxKind.ClassKeyword), identifier, null, null, null, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ClassDeclarationSyntax {
@@ -465,16 +465,6 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
 
     }
 
-    public static create(interfaceKeyword: ISyntaxToken,
-                         identifier: ISyntaxToken,
-                         body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
-        return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, null, body, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
-        return new InterfaceDeclarationSyntax(null, Syntax.token(SyntaxKind.InterfaceKeyword), identifier, null, null, ObjectTypeSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitInterfaceDeclaration(this);
     }
@@ -514,6 +504,16 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         }
 
         return new InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(interfaceKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         body: ObjectTypeSyntax): InterfaceDeclarationSyntax {
+        return new InterfaceDeclarationSyntax(null, interfaceKeyword, identifier, null, null, body, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): InterfaceDeclarationSyntax {
+        return new InterfaceDeclarationSyntax(null, Syntax.token(SyntaxKind.InterfaceKeyword), identifier, null, null, ObjectTypeSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): InterfaceDeclarationSyntax {
@@ -562,10 +562,6 @@ class ExtendsClauseSyntax extends SyntaxNode {
 
     }
 
-    public static create1(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
-        return new ExtendsClauseSyntax(Syntax.token(SyntaxKind.ExtendsKeyword), typeNames, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitExtendsClause(this);
     }
@@ -593,6 +589,10 @@ class ExtendsClauseSyntax extends SyntaxNode {
         }
 
         return new ExtendsClauseSyntax(extendsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(typeNames: ISeparatedSyntaxList): ExtendsClauseSyntax {
+        return new ExtendsClauseSyntax(Syntax.token(SyntaxKind.ExtendsKeyword), typeNames, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExtendsClauseSyntax {
@@ -629,10 +629,6 @@ class ImplementsClauseSyntax extends SyntaxNode {
 
     }
 
-    public static create1(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
-        return new ImplementsClauseSyntax(Syntax.token(SyntaxKind.ImplementsKeyword), typeNames, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitImplementsClause(this);
     }
@@ -660,6 +656,10 @@ class ImplementsClauseSyntax extends SyntaxNode {
         }
 
         return new ImplementsClauseSyntax(implementsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(typeNames: ISeparatedSyntaxList): ImplementsClauseSyntax {
+        return new ImplementsClauseSyntax(Syntax.token(SyntaxKind.ImplementsKeyword), typeNames, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ImplementsClauseSyntax {
@@ -700,16 +700,6 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(moduleKeyword: ISyntaxToken,
-                         openBraceToken: ISyntaxToken,
-                         closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
-        return new ModuleDeclarationSyntax(null, null, moduleKeyword, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ModuleDeclarationSyntax {
-        return new ModuleDeclarationSyntax(null, null, Syntax.token(SyntaxKind.ModuleKeyword), null, null, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -755,6 +745,16 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         }
 
         return new ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(moduleKeyword: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ModuleDeclarationSyntax {
+        return new ModuleDeclarationSyntax(null, null, moduleKeyword, null, null, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ModuleDeclarationSyntax {
+        return new ModuleDeclarationSyntax(null, null, Syntax.token(SyntaxKind.ModuleKeyword), null, null, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ModuleDeclarationSyntax {
@@ -819,15 +819,6 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
 
     }
 
-    public static create(functionKeyword: ISyntaxToken,
-                         functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
-        return new FunctionDeclarationSyntax(null, null, functionKeyword, functionSignature, null, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
-        return new FunctionDeclarationSyntax(null, null, Syntax.token(SyntaxKind.FunctionKeyword), functionSignature, null, null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFunctionDeclaration(this);
     }
@@ -871,6 +862,15 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(functionKeyword: ISyntaxToken,
+                         functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
+        return new FunctionDeclarationSyntax(null, null, functionKeyword, functionSignature, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
+        return new FunctionDeclarationSyntax(null, null, Syntax.token(SyntaxKind.FunctionKeyword), functionSignature, null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionDeclarationSyntax {
@@ -925,15 +925,6 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     }
 
-    public static create(variableDeclaration: VariableDeclarationSyntax,
-                         semicolonToken: ISyntaxToken): VariableStatementSyntax {
-        return new VariableStatementSyntax(null, null, variableDeclaration, semicolonToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(variableDeclaration: VariableDeclarationSyntax): VariableStatementSyntax {
-        return new VariableStatementSyntax(null, null, variableDeclaration, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitVariableStatement(this);
     }
@@ -973,6 +964,15 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(variableDeclaration: VariableDeclarationSyntax,
+                         semicolonToken: ISyntaxToken): VariableStatementSyntax {
+        return new VariableStatementSyntax(null, null, variableDeclaration, semicolonToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(variableDeclaration: VariableDeclarationSyntax): VariableStatementSyntax {
+        return new VariableStatementSyntax(null, null, variableDeclaration, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableStatementSyntax {
@@ -1016,10 +1016,6 @@ class VariableDeclarationSyntax extends SyntaxNode {
 
     }
 
-    public static create1(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
-        return new VariableDeclarationSyntax(Syntax.token(SyntaxKind.VarKeyword), variableDeclarators, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitVariableDeclaration(this);
     }
@@ -1047,6 +1043,10 @@ class VariableDeclarationSyntax extends SyntaxNode {
         }
 
         return new VariableDeclarationSyntax(varKeyword, variableDeclarators, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(variableDeclarators: ISeparatedSyntaxList): VariableDeclarationSyntax {
+        return new VariableDeclarationSyntax(Syntax.token(SyntaxKind.VarKeyword), variableDeclarators, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableDeclarationSyntax {
@@ -1085,14 +1085,6 @@ class VariableDeclaratorSyntax extends SyntaxNode {
 
     }
 
-    public static create(identifier: ISyntaxToken): VariableDeclaratorSyntax {
-        return new VariableDeclaratorSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): VariableDeclaratorSyntax {
-        return new VariableDeclaratorSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitVariableDeclarator(this);
     }
@@ -1122,6 +1114,14 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         }
 
         return new VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(identifier: ISyntaxToken): VariableDeclaratorSyntax {
+        return new VariableDeclaratorSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): VariableDeclaratorSyntax {
+        return new VariableDeclaratorSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VariableDeclaratorSyntax {
@@ -1160,10 +1160,6 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 
     }
 
-    public static create1(value: IExpressionSyntax): EqualsValueClauseSyntax {
-        return new EqualsValueClauseSyntax(Syntax.token(SyntaxKind.EqualsToken), value, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitEqualsValueClause(this);
     }
@@ -1191,6 +1187,10 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         }
 
         return new EqualsValueClauseSyntax(equalsToken, value, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(value: IExpressionSyntax): EqualsValueClauseSyntax {
+        return new EqualsValueClauseSyntax(Syntax.token(SyntaxKind.EqualsToken), value, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): EqualsValueClauseSyntax {
@@ -1301,15 +1301,6 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     }
 
-    public static create(openBracketToken: ISyntaxToken,
-                         closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
-        return new ArrayLiteralExpressionSyntax(openBracketToken, Syntax.emptySeparatedList, closeBracketToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ArrayLiteralExpressionSyntax {
-        return new ArrayLiteralExpressionSyntax(Syntax.token(SyntaxKind.OpenBracketToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBracketToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitArrayLiteralExpression(this);
     }
@@ -1347,6 +1338,15 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         }
 
         return new ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(openBracketToken: ISyntaxToken,
+                         closeBracketToken: ISyntaxToken): ArrayLiteralExpressionSyntax {
+        return new ArrayLiteralExpressionSyntax(openBracketToken, Syntax.emptySeparatedList, closeBracketToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ArrayLiteralExpressionSyntax {
+        return new ArrayLiteralExpressionSyntax(Syntax.token(SyntaxKind.OpenBracketToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBracketToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrayLiteralExpressionSyntax {
@@ -1404,7 +1404,7 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return true;
     }
 
-    private update(): OmittedExpressionSyntax {
+    public update(): OmittedExpressionSyntax {
         return this;
     }
 
@@ -1429,10 +1429,6 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(expression: IExpressionSyntax): ParenthesizedExpressionSyntax {
-        return new ParenthesizedExpressionSyntax(Syntax.token(SyntaxKind.OpenParenToken), expression, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1472,6 +1468,10 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         }
 
         return new ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(expression: IExpressionSyntax): ParenthesizedExpressionSyntax {
+        return new ParenthesizedExpressionSyntax(Syntax.token(SyntaxKind.OpenParenToken), expression, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParenthesizedExpressionSyntax {
@@ -1538,11 +1538,6 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
 
     }
 
-    public static create1(identifier: ISyntaxToken,
-                          body: ISyntaxNodeOrToken): SimpleArrowFunctionExpressionSyntax {
-        return new SimpleArrowFunctionExpressionSyntax(identifier, Syntax.token(SyntaxKind.EqualsGreaterThanToken), body, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSimpleArrowFunctionExpression(this);
     }
@@ -1572,6 +1567,11 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         }
 
         return new SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(identifier: ISyntaxToken,
+                          body: ISyntaxNodeOrToken): SimpleArrowFunctionExpressionSyntax {
+        return new SimpleArrowFunctionExpressionSyntax(identifier, Syntax.token(SyntaxKind.EqualsGreaterThanToken), body, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SimpleArrowFunctionExpressionSyntax {
@@ -1609,10 +1609,6 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
 
     }
 
-    public static create1(body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
-        return new ParenthesizedArrowFunctionExpressionSyntax(CallSignatureSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), body, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitParenthesizedArrowFunctionExpression(this);
     }
@@ -1642,6 +1638,10 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         }
 
         return new ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(body: ISyntaxNodeOrToken): ParenthesizedArrowFunctionExpressionSyntax {
+        return new ParenthesizedArrowFunctionExpressionSyntax(CallSignatureSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), body, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParenthesizedArrowFunctionExpressionSyntax {
@@ -1677,11 +1677,6 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(left: INameSyntax,
-                          right: ISyntaxToken): QualifiedNameSyntax {
-        return new QualifiedNameSyntax(left, Syntax.token(SyntaxKind.DotToken), right, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1731,6 +1726,11 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return new QualifiedNameSyntax(left, dotToken, right, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(left: INameSyntax,
+                          right: ISyntaxToken): QualifiedNameSyntax {
+        return new QualifiedNameSyntax(left, Syntax.token(SyntaxKind.DotToken), right, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): QualifiedNameSyntax {
         return <QualifiedNameSyntax>super.withLeadingTrivia(trivia);
     }
@@ -1766,15 +1766,6 @@ class TypeArgumentListSyntax extends SyntaxNode {
 
     }
 
-    public static create(lessThanToken: ISyntaxToken,
-                         greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
-        return new TypeArgumentListSyntax(lessThanToken, Syntax.emptySeparatedList, greaterThanToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): TypeArgumentListSyntax {
-        return new TypeArgumentListSyntax(Syntax.token(SyntaxKind.LessThanToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.GreaterThanToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeArgumentList(this);
     }
@@ -1804,6 +1795,15 @@ class TypeArgumentListSyntax extends SyntaxNode {
         }
 
         return new TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(lessThanToken: ISyntaxToken,
+                         greaterThanToken: ISyntaxToken): TypeArgumentListSyntax {
+        return new TypeArgumentListSyntax(lessThanToken, Syntax.emptySeparatedList, greaterThanToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): TypeArgumentListSyntax {
+        return new TypeArgumentListSyntax(Syntax.token(SyntaxKind.LessThanToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.GreaterThanToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeArgumentListSyntax {
@@ -1845,17 +1845,6 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(newKeyword: ISyntaxToken,
-                         parameterList: ParameterListSyntax,
-                         equalsGreaterThanToken: ISyntaxToken,
-                         type: ITypeSyntax): ConstructorTypeSyntax {
-        return new ConstructorTypeSyntax(newKeyword, null, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(type: ITypeSyntax): ConstructorTypeSyntax {
-        return new ConstructorTypeSyntax(Syntax.token(SyntaxKind.NewKeyword), null, ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -1905,6 +1894,17 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return new ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(newKeyword: ISyntaxToken,
+                         parameterList: ParameterListSyntax,
+                         equalsGreaterThanToken: ISyntaxToken,
+                         type: ITypeSyntax): ConstructorTypeSyntax {
+        return new ConstructorTypeSyntax(newKeyword, null, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(type: ITypeSyntax): ConstructorTypeSyntax {
+        return new ConstructorTypeSyntax(Syntax.token(SyntaxKind.NewKeyword), null, ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructorTypeSyntax {
         return <ConstructorTypeSyntax>super.withLeadingTrivia(trivia);
     }
@@ -1947,16 +1947,6 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(parameterList: ParameterListSyntax,
-                         equalsGreaterThanToken: ISyntaxToken,
-                         type: ITypeSyntax): FunctionTypeSyntax {
-        return new FunctionTypeSyntax(null, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(type: ITypeSyntax): FunctionTypeSyntax {
-        return new FunctionTypeSyntax(null, ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2004,6 +1994,16 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return new FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(parameterList: ParameterListSyntax,
+                         equalsGreaterThanToken: ISyntaxToken,
+                         type: ITypeSyntax): FunctionTypeSyntax {
+        return new FunctionTypeSyntax(null, parameterList, equalsGreaterThanToken, type, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(type: ITypeSyntax): FunctionTypeSyntax {
+        return new FunctionTypeSyntax(null, ParameterListSyntax.create1(), Syntax.token(SyntaxKind.EqualsGreaterThanToken), type, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionTypeSyntax {
         return <FunctionTypeSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2041,15 +2041,6 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(openBraceToken: ISyntaxToken,
-                         closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
-        return new ObjectTypeSyntax(openBraceToken, Syntax.emptySeparatedList, closeBraceToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ObjectTypeSyntax {
-        return new ObjectTypeSyntax(Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2095,6 +2086,15 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return new ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ObjectTypeSyntax {
+        return new ObjectTypeSyntax(openBraceToken, Syntax.emptySeparatedList, closeBraceToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ObjectTypeSyntax {
+        return new ObjectTypeSyntax(Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectTypeSyntax {
         return <ObjectTypeSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2132,10 +2132,6 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(type: ITypeSyntax): ArrayTypeSyntax {
-        return new ArrayTypeSyntax(type, Syntax.token(SyntaxKind.OpenBracketToken), Syntax.token(SyntaxKind.CloseBracketToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2181,6 +2177,10 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return new ArrayTypeSyntax(type, openBracketToken, closeBracketToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(type: ITypeSyntax): ArrayTypeSyntax {
+        return new ArrayTypeSyntax(type, Syntax.token(SyntaxKind.OpenBracketToken), Syntax.token(SyntaxKind.CloseBracketToken), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArrayTypeSyntax {
         return <ArrayTypeSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2213,10 +2213,6 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(name: INameSyntax): GenericTypeSyntax {
-        return new GenericTypeSyntax(name, TypeArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2260,6 +2256,10 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return new GenericTypeSyntax(name, typeArgumentList, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(name: INameSyntax): GenericTypeSyntax {
+        return new GenericTypeSyntax(name, TypeArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GenericTypeSyntax {
         return <GenericTypeSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2288,10 +2288,6 @@ class TypeAnnotationSyntax extends SyntaxNode {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(type: ITypeSyntax): TypeAnnotationSyntax {
-        return new TypeAnnotationSyntax(Syntax.token(SyntaxKind.ColonToken), type, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2323,6 +2319,10 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return new TypeAnnotationSyntax(colonToken, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(type: ITypeSyntax): TypeAnnotationSyntax {
+        return new TypeAnnotationSyntax(Syntax.token(SyntaxKind.ColonToken), type, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeAnnotationSyntax {
         return <TypeAnnotationSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2352,15 +2352,6 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(openBraceToken: ISyntaxToken,
-                         closeBraceToken: ISyntaxToken): BlockSyntax {
-        return new BlockSyntax(openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): BlockSyntax {
-        return new BlockSyntax(Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -2400,6 +2391,15 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new BlockSyntax(openBraceToken, statements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): BlockSyntax {
+        return new BlockSyntax(openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): BlockSyntax {
+        return new BlockSyntax(Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): BlockSyntax {
@@ -2445,14 +2445,6 @@ class ParameterSyntax extends SyntaxNode {
 
     }
 
-    public static create(identifier: ISyntaxToken): ParameterSyntax {
-        return new ParameterSyntax(null, null, identifier, null, null, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): ParameterSyntax {
-        return new ParameterSyntax(null, null, identifier, null, null, null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitParameter(this);
     }
@@ -2488,6 +2480,14 @@ class ParameterSyntax extends SyntaxNode {
         }
 
         return new ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(identifier: ISyntaxToken): ParameterSyntax {
+        return new ParameterSyntax(null, null, identifier, null, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): ParameterSyntax {
+        return new ParameterSyntax(null, null, identifier, null, null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParameterSyntax {
@@ -2542,11 +2542,6 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
 
     }
 
-    public static create1(expression: IExpressionSyntax,
-                          name: ISyntaxToken): MemberAccessExpressionSyntax {
-        return new MemberAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.DotToken), name, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitMemberAccessExpression(this);
     }
@@ -2584,6 +2579,11 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         }
 
         return new MemberAccessExpressionSyntax(expression, dotToken, name, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(expression: IExpressionSyntax,
+                          name: ISyntaxToken): MemberAccessExpressionSyntax {
+        return new MemberAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.DotToken), name, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberAccessExpressionSyntax {
@@ -2699,11 +2699,6 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     }
 
-    public static create1(expression: IExpressionSyntax,
-                          argumentExpression: IExpressionSyntax): ElementAccessExpressionSyntax {
-        return new ElementAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.OpenBracketToken), argumentExpression, Syntax.token(SyntaxKind.CloseBracketToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitElementAccessExpression(this);
     }
@@ -2743,6 +2738,11 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         }
 
         return new ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(expression: IExpressionSyntax,
+                          argumentExpression: IExpressionSyntax): ElementAccessExpressionSyntax {
+        return new ElementAccessExpressionSyntax(expression, Syntax.token(SyntaxKind.OpenBracketToken), argumentExpression, Syntax.token(SyntaxKind.CloseBracketToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ElementAccessExpressionSyntax {
@@ -2785,10 +2785,6 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
 
     }
 
-    public static create1(expression: IExpressionSyntax): InvocationExpressionSyntax {
-        return new InvocationExpressionSyntax(expression, ArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitInvocationExpression(this);
     }
@@ -2826,6 +2822,10 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return new InvocationExpressionSyntax(expression, argumentList, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(expression: IExpressionSyntax): InvocationExpressionSyntax {
+        return new InvocationExpressionSyntax(expression, ArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): InvocationExpressionSyntax {
         return <InvocationExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -2860,15 +2860,6 @@ class ArgumentListSyntax extends SyntaxNode {
 
     }
 
-    public static create(openParenToken: ISyntaxToken,
-                         closeParenToken: ISyntaxToken): ArgumentListSyntax {
-        return new ArgumentListSyntax(null, openParenToken, Syntax.emptySeparatedList, closeParenToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ArgumentListSyntax {
-        return new ArgumentListSyntax(null, Syntax.token(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitArgumentList(this);
     }
@@ -2900,6 +2891,15 @@ class ArgumentListSyntax extends SyntaxNode {
         }
 
         return new ArgumentListSyntax(typeArgumentList, openParenToken, _arguments, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(openParenToken: ISyntaxToken,
+                         closeParenToken: ISyntaxToken): ArgumentListSyntax {
+        return new ArgumentListSyntax(null, openParenToken, Syntax.emptySeparatedList, closeParenToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ArgumentListSyntax {
+        return new ArgumentListSyntax(null, Syntax.token(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ArgumentListSyntax {
@@ -3029,12 +3029,6 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
 
     }
 
-    public static create1(condition: IExpressionSyntax,
-                          whenTrue: IExpressionSyntax,
-                          whenFalse: IExpressionSyntax): ConditionalExpressionSyntax {
-        return new ConditionalExpressionSyntax(condition, Syntax.token(SyntaxKind.QuestionToken), whenTrue, Syntax.token(SyntaxKind.ColonToken), whenFalse, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConditionalExpression(this);
     }
@@ -3072,6 +3066,12 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         }
 
         return new ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(condition: IExpressionSyntax,
+                          whenTrue: IExpressionSyntax,
+                          whenFalse: IExpressionSyntax): ConditionalExpressionSyntax {
+        return new ConditionalExpressionSyntax(condition, Syntax.token(SyntaxKind.QuestionToken), whenTrue, Syntax.token(SyntaxKind.ColonToken), whenFalse, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConditionalExpressionSyntax {
@@ -3141,10 +3141,6 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
 
     }
 
-    public static create1(): ConstructSignatureSyntax {
-        return new ConstructSignatureSyntax(Syntax.token(SyntaxKind.NewKeyword), CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConstructSignature(this);
     }
@@ -3172,6 +3168,10 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         }
 
         return new ConstructSignatureSyntax(newKeyword, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(): ConstructSignatureSyntax {
+        return new ConstructSignatureSyntax(Syntax.token(SyntaxKind.NewKeyword), CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructSignatureSyntax {
@@ -3205,15 +3205,6 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
 
     }
 
-    public static create(identifier: ISyntaxToken,
-                         callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
-        return new FunctionSignatureSyntax(identifier, null, callSignature, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): FunctionSignatureSyntax {
-        return new FunctionSignatureSyntax(identifier, null, CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFunctionSignature(this);
     }
@@ -3243,6 +3234,15 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         }
 
         return new FunctionSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(identifier: ISyntaxToken,
+                         callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
+        return new FunctionSignatureSyntax(identifier, null, callSignature, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): FunctionSignatureSyntax {
+        return new FunctionSignatureSyntax(identifier, null, CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionSignatureSyntax {
@@ -3282,16 +3282,6 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
 
     }
 
-    public static create(openBracketToken: ISyntaxToken,
-                         parameter: ParameterSyntax,
-                         closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
-        return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(parameter: ParameterSyntax): IndexSignatureSyntax {
-        return new IndexSignatureSyntax(Syntax.token(SyntaxKind.OpenBracketToken), parameter, Syntax.token(SyntaxKind.CloseBracketToken), null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitIndexSignature(this);
     }
@@ -3323,6 +3313,16 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         }
 
         return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(openBracketToken: ISyntaxToken,
+                         parameter: ParameterSyntax,
+                         closeBracketToken: ISyntaxToken): IndexSignatureSyntax {
+        return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(parameter: ParameterSyntax): IndexSignatureSyntax {
+        return new IndexSignatureSyntax(Syntax.token(SyntaxKind.OpenBracketToken), parameter, Syntax.token(SyntaxKind.CloseBracketToken), null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IndexSignatureSyntax {
@@ -3364,14 +3364,6 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
 
     }
 
-    public static create(identifier: ISyntaxToken): PropertySignatureSyntax {
-        return new PropertySignatureSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): PropertySignatureSyntax {
-        return new PropertySignatureSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitPropertySignature(this);
     }
@@ -3401,6 +3393,14 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         }
 
         return new PropertySignatureSyntax(identifier, questionToken, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(identifier: ISyntaxToken): PropertySignatureSyntax {
+        return new PropertySignatureSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): PropertySignatureSyntax {
+        return new PropertySignatureSyntax(identifier, null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertySignatureSyntax {
@@ -3438,15 +3438,6 @@ class ParameterListSyntax extends SyntaxNode {
 
     }
 
-    public static create(openParenToken: ISyntaxToken,
-                         closeParenToken: ISyntaxToken): ParameterListSyntax {
-        return new ParameterListSyntax(openParenToken, Syntax.emptySeparatedList, closeParenToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ParameterListSyntax {
-        return new ParameterListSyntax(Syntax.token(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitParameterList(this);
     }
@@ -3476,6 +3467,15 @@ class ParameterListSyntax extends SyntaxNode {
         }
 
         return new ParameterListSyntax(openParenToken, parameters, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(openParenToken: ISyntaxToken,
+                         closeParenToken: ISyntaxToken): ParameterListSyntax {
+        return new ParameterListSyntax(openParenToken, Syntax.emptySeparatedList, closeParenToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ParameterListSyntax {
+        return new ParameterListSyntax(Syntax.token(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ParameterListSyntax {
@@ -3518,14 +3518,6 @@ class CallSignatureSyntax extends TypeMemberSyntax {
 
     }
 
-    public static create(parameterList: ParameterListSyntax): CallSignatureSyntax {
-        return new CallSignatureSyntax(null, parameterList, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): CallSignatureSyntax {
-        return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCallSignature(this);
     }
@@ -3555,6 +3547,14 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         }
 
         return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(parameterList: ParameterListSyntax): CallSignatureSyntax {
+        return new CallSignatureSyntax(null, parameterList, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): CallSignatureSyntax {
+        return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
@@ -3595,15 +3595,6 @@ class TypeParameterListSyntax extends SyntaxNode {
 
     }
 
-    public static create(lessThanToken: ISyntaxToken,
-                         greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
-        return new TypeParameterListSyntax(lessThanToken, Syntax.emptySeparatedList, greaterThanToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): TypeParameterListSyntax {
-        return new TypeParameterListSyntax(Syntax.token(SyntaxKind.LessThanToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.GreaterThanToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeParameterList(this);
     }
@@ -3633,6 +3624,15 @@ class TypeParameterListSyntax extends SyntaxNode {
         }
 
         return new TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(lessThanToken: ISyntaxToken,
+                         greaterThanToken: ISyntaxToken): TypeParameterListSyntax {
+        return new TypeParameterListSyntax(lessThanToken, Syntax.emptySeparatedList, greaterThanToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): TypeParameterListSyntax {
+        return new TypeParameterListSyntax(Syntax.token(SyntaxKind.LessThanToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.GreaterThanToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeParameterListSyntax {
@@ -3673,14 +3673,6 @@ class TypeParameterSyntax extends SyntaxNode {
 
     }
 
-    public static create(identifier: ISyntaxToken): TypeParameterSyntax {
-        return new TypeParameterSyntax(identifier, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): TypeParameterSyntax {
-        return new TypeParameterSyntax(identifier, null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeParameter(this);
     }
@@ -3708,6 +3700,14 @@ class TypeParameterSyntax extends SyntaxNode {
         }
 
         return new TypeParameterSyntax(identifier, constraint, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(identifier: ISyntaxToken): TypeParameterSyntax {
+        return new TypeParameterSyntax(identifier, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): TypeParameterSyntax {
+        return new TypeParameterSyntax(identifier, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeParameterSyntax {
@@ -3740,10 +3740,6 @@ class ConstraintSyntax extends SyntaxNode {
 
     }
 
-    public static create1(type: ITypeSyntax): ConstraintSyntax {
-        return new ConstraintSyntax(Syntax.token(SyntaxKind.ExtendsKeyword), type, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitConstraint(this);
     }
@@ -3771,6 +3767,10 @@ class ConstraintSyntax extends SyntaxNode {
         }
 
         return new ConstraintSyntax(extendsKeyword, type, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(type: ITypeSyntax): ConstraintSyntax {
+        return new ConstraintSyntax(Syntax.token(SyntaxKind.ExtendsKeyword), type, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstraintSyntax {
@@ -3803,10 +3803,6 @@ class ElseClauseSyntax extends SyntaxNode {
 
     }
 
-    public static create1(statement: IStatementSyntax): ElseClauseSyntax {
-        return new ElseClauseSyntax(Syntax.token(SyntaxKind.ElseKeyword), statement, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitElseClause(this);
     }
@@ -3834,6 +3830,10 @@ class ElseClauseSyntax extends SyntaxNode {
         }
 
         return new ElseClauseSyntax(elseKeyword, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(statement: IStatementSyntax): ElseClauseSyntax {
+        return new ElseClauseSyntax(Syntax.token(SyntaxKind.ElseKeyword), statement, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ElseClauseSyntax {
@@ -3869,19 +3869,6 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(ifKeyword: ISyntaxToken,
-                         openParenToken: ISyntaxToken,
-                         condition: IExpressionSyntax,
-                         closeParenToken: ISyntaxToken,
-                         statement: IStatementSyntax): IfStatementSyntax {
-        return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(condition: IExpressionSyntax,
-                          statement: IStatementSyntax): IfStatementSyntax {
-        return new IfStatementSyntax(Syntax.token(SyntaxKind.IfKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), statement, null, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -3927,6 +3914,19 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(ifKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         condition: IExpressionSyntax,
+                         closeParenToken: ISyntaxToken,
+                         statement: IStatementSyntax): IfStatementSyntax {
+        return new IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(condition: IExpressionSyntax,
+                          statement: IStatementSyntax): IfStatementSyntax {
+        return new IfStatementSyntax(Syntax.token(SyntaxKind.IfKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), statement, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IfStatementSyntax {
@@ -3978,10 +3978,6 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     }
 
-    public static create1(expression: IExpressionSyntax): ExpressionStatementSyntax {
-        return new ExpressionStatementSyntax(expression, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitExpressionStatement(this);
     }
@@ -4019,6 +4015,10 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return new ExpressionStatementSyntax(expression, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(expression: IExpressionSyntax): ExpressionStatementSyntax {
+        return new ExpressionStatementSyntax(expression, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExpressionStatementSyntax {
         return <ExpressionStatementSyntax>super.withLeadingTrivia(trivia);
     }
@@ -4050,15 +4050,6 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(constructorKeyword: ISyntaxToken,
-                         parameterList: ParameterListSyntax): ConstructorDeclarationSyntax {
-        return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, null, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ConstructorDeclarationSyntax {
-        return new ConstructorDeclarationSyntax(Syntax.token(SyntaxKind.ConstructorKeyword), ParameterListSyntax.create1(), null, null, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4096,6 +4087,15 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         }
 
         return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(constructorKeyword: ISyntaxToken,
+                         parameterList: ParameterListSyntax): ConstructorDeclarationSyntax {
+        return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ConstructorDeclarationSyntax {
+        return new ConstructorDeclarationSyntax(Syntax.token(SyntaxKind.ConstructorKeyword), ParameterListSyntax.create1(), null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ConstructorDeclarationSyntax {
@@ -4139,14 +4139,6 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     }
 
-    public static create(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
-        return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
-        return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitMemberFunctionDeclaration(this);
     }
@@ -4188,6 +4180,14 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         }
 
         return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
+        return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
+        return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberFunctionDeclarationSyntax {
@@ -4268,17 +4268,6 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
     }
 
-    public static create(getKeyword: ISyntaxToken,
-                         identifier: ISyntaxToken,
-                         parameterList: ParameterListSyntax,
-                         block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-        return new GetMemberAccessorDeclarationSyntax(null, null, getKeyword, identifier, parameterList, null, block, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return new GetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.GetKeyword), identifier, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitGetMemberAccessorDeclaration(this);
     }
@@ -4316,6 +4305,17 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         }
 
         return new GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(getKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         parameterList: ParameterListSyntax,
+                         block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
+        return new GetMemberAccessorDeclarationSyntax(null, null, getKeyword, identifier, parameterList, null, block, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+        return new GetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.GetKeyword), identifier, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GetMemberAccessorDeclarationSyntax {
@@ -4372,17 +4372,6 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
 
     }
 
-    public static create(setKeyword: ISyntaxToken,
-                         identifier: ISyntaxToken,
-                         parameterList: ParameterListSyntax,
-                         block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-        return new SetMemberAccessorDeclarationSyntax(null, null, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return new SetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.SetKeyword), identifier, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSetMemberAccessorDeclaration(this);
     }
@@ -4418,6 +4407,17 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         }
 
         return new SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(setKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         parameterList: ParameterListSyntax,
+                         block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
+        return new SetMemberAccessorDeclarationSyntax(null, null, setKeyword, identifier, parameterList, block, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+        return new SetMemberAccessorDeclarationSyntax(null, null, Syntax.token(SyntaxKind.SetKeyword), identifier, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SetMemberAccessorDeclarationSyntax {
@@ -4468,15 +4468,6 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
 
     }
 
-    public static create(variableDeclarator: VariableDeclaratorSyntax,
-                         semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
-        return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, semicolonToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(variableDeclarator: VariableDeclaratorSyntax): MemberVariableDeclarationSyntax {
-        return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitMemberVariableDeclaration(this);
     }
@@ -4518,6 +4509,15 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return new MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(variableDeclarator: VariableDeclaratorSyntax,
+                         semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
+        return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, semicolonToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(variableDeclarator: VariableDeclaratorSyntax): MemberVariableDeclarationSyntax {
+        return new MemberVariableDeclarationSyntax(null, null, variableDeclarator, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberVariableDeclarationSyntax {
         return <MemberVariableDeclarationSyntax>super.withLeadingTrivia(trivia);
     }
@@ -4555,10 +4555,6 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(expression: IExpressionSyntax): ThrowStatementSyntax {
-        return new ThrowStatementSyntax(Syntax.token(SyntaxKind.ThrowKeyword), expression, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4600,6 +4596,10 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return new ThrowStatementSyntax(throwKeyword, expression, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(expression: IExpressionSyntax): ThrowStatementSyntax {
+        return new ThrowStatementSyntax(Syntax.token(SyntaxKind.ThrowKeyword), expression, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ThrowStatementSyntax {
         return <ThrowStatementSyntax>super.withLeadingTrivia(trivia);
     }
@@ -4634,15 +4634,6 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(returnKeyword: ISyntaxToken,
-                         semicolonToken: ISyntaxToken): ReturnStatementSyntax {
-        return new ReturnStatementSyntax(returnKeyword, null, semicolonToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ReturnStatementSyntax {
-        return new ReturnStatementSyntax(Syntax.token(SyntaxKind.ReturnKeyword), null, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4684,6 +4675,15 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return new ReturnStatementSyntax(returnKeyword, expression, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(returnKeyword: ISyntaxToken,
+                         semicolonToken: ISyntaxToken): ReturnStatementSyntax {
+        return new ReturnStatementSyntax(returnKeyword, null, semicolonToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ReturnStatementSyntax {
+        return new ReturnStatementSyntax(Syntax.token(SyntaxKind.ReturnKeyword), null, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ReturnStatementSyntax {
         return <ReturnStatementSyntax>super.withLeadingTrivia(trivia);
     }
@@ -4718,15 +4718,6 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(newKeyword: ISyntaxToken,
-                         expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
-        return new ObjectCreationExpressionSyntax(newKeyword, expression, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
-        return new ObjectCreationExpressionSyntax(Syntax.token(SyntaxKind.NewKeyword), expression, null, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4768,6 +4759,15 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return new ObjectCreationExpressionSyntax(newKeyword, expression, argumentList, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(newKeyword: ISyntaxToken,
+                         expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
+        return new ObjectCreationExpressionSyntax(newKeyword, expression, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
+        return new ObjectCreationExpressionSyntax(Syntax.token(SyntaxKind.NewKeyword), expression, null, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectCreationExpressionSyntax {
         return <ObjectCreationExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -4807,19 +4807,6 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(switchKeyword: ISyntaxToken,
-                         openParenToken: ISyntaxToken,
-                         expression: IExpressionSyntax,
-                         closeParenToken: ISyntaxToken,
-                         openBraceToken: ISyntaxToken,
-                         closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
-        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(expression: IExpressionSyntax): SwitchStatementSyntax {
-        return new SwitchStatementSyntax(Syntax.token(SyntaxKind.SwitchKeyword), Syntax.token(SyntaxKind.OpenParenToken), expression, Syntax.token(SyntaxKind.CloseParenToken), Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -4867,6 +4854,19 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(switchKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         expression: IExpressionSyntax,
+                         closeParenToken: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): SwitchStatementSyntax {
+        return new SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, Syntax.emptyList, closeBraceToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(expression: IExpressionSyntax): SwitchStatementSyntax {
+        return new SwitchStatementSyntax(Syntax.token(SyntaxKind.SwitchKeyword), Syntax.token(SyntaxKind.OpenParenToken), expression, Syntax.token(SyntaxKind.CloseParenToken), Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptyList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SwitchStatementSyntax {
@@ -4951,16 +4951,6 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
     }
 
-    public static create(caseKeyword: ISyntaxToken,
-                         expression: IExpressionSyntax,
-                         colonToken: ISyntaxToken): CaseSwitchClauseSyntax {
-        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, Syntax.emptyList, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(expression: IExpressionSyntax): CaseSwitchClauseSyntax {
-        return new CaseSwitchClauseSyntax(Syntax.token(SyntaxKind.CaseKeyword), expression, Syntax.token(SyntaxKind.ColonToken), Syntax.emptyList, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCaseSwitchClause(this);
     }
@@ -4992,6 +4982,16 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         }
 
         return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(caseKeyword: ISyntaxToken,
+                         expression: IExpressionSyntax,
+                         colonToken: ISyntaxToken): CaseSwitchClauseSyntax {
+        return new CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, Syntax.emptyList, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(expression: IExpressionSyntax): CaseSwitchClauseSyntax {
+        return new CaseSwitchClauseSyntax(Syntax.token(SyntaxKind.CaseKeyword), expression, Syntax.token(SyntaxKind.ColonToken), Syntax.emptyList, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CaseSwitchClauseSyntax {
@@ -5039,15 +5039,6 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     }
 
-    public static create(defaultKeyword: ISyntaxToken,
-                         colonToken: ISyntaxToken): DefaultSwitchClauseSyntax {
-        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, Syntax.emptyList, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): DefaultSwitchClauseSyntax {
-        return new DefaultSwitchClauseSyntax(Syntax.token(SyntaxKind.DefaultKeyword), Syntax.token(SyntaxKind.ColonToken), Syntax.emptyList, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitDefaultSwitchClause(this);
     }
@@ -5077,6 +5068,15 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         }
 
         return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(defaultKeyword: ISyntaxToken,
+                         colonToken: ISyntaxToken): DefaultSwitchClauseSyntax {
+        return new DefaultSwitchClauseSyntax(defaultKeyword, colonToken, Syntax.emptyList, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): DefaultSwitchClauseSyntax {
+        return new DefaultSwitchClauseSyntax(Syntax.token(SyntaxKind.DefaultKeyword), Syntax.token(SyntaxKind.ColonToken), Syntax.emptyList, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DefaultSwitchClauseSyntax {
@@ -5119,15 +5119,6 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     }
 
-    public static create(breakKeyword: ISyntaxToken,
-                         semicolonToken: ISyntaxToken): BreakStatementSyntax {
-        return new BreakStatementSyntax(breakKeyword, null, semicolonToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): BreakStatementSyntax {
-        return new BreakStatementSyntax(Syntax.token(SyntaxKind.BreakKeyword), null, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitBreakStatement(this);
     }
@@ -5167,6 +5158,15 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return new BreakStatementSyntax(breakKeyword, identifier, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(breakKeyword: ISyntaxToken,
+                         semicolonToken: ISyntaxToken): BreakStatementSyntax {
+        return new BreakStatementSyntax(breakKeyword, null, semicolonToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): BreakStatementSyntax {
+        return new BreakStatementSyntax(Syntax.token(SyntaxKind.BreakKeyword), null, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): BreakStatementSyntax {
         return <BreakStatementSyntax>super.withLeadingTrivia(trivia);
     }
@@ -5200,15 +5200,6 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(continueKeyword: ISyntaxToken,
-                         semicolonToken: ISyntaxToken): ContinueStatementSyntax {
-        return new ContinueStatementSyntax(continueKeyword, null, semicolonToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ContinueStatementSyntax {
-        return new ContinueStatementSyntax(Syntax.token(SyntaxKind.ContinueKeyword), null, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -5248,6 +5239,15 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new ContinueStatementSyntax(continueKeyword, identifier, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(continueKeyword: ISyntaxToken,
+                         semicolonToken: ISyntaxToken): ContinueStatementSyntax {
+        return new ContinueStatementSyntax(continueKeyword, null, semicolonToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ContinueStatementSyntax {
+        return new ContinueStatementSyntax(Syntax.token(SyntaxKind.ContinueKeyword), null, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ContinueStatementSyntax {
@@ -5344,19 +5344,6 @@ class ForStatementSyntax extends BaseForStatementSyntax {
 
     }
 
-    public static create(forKeyword: ISyntaxToken,
-                         openParenToken: ISyntaxToken,
-                         firstSemicolonToken: ISyntaxToken,
-                         secondSemicolonToken: ISyntaxToken,
-                         closeParenToken: ISyntaxToken,
-                         statement: IStatementSyntax): ForStatementSyntax {
-        return new ForStatementSyntax(forKeyword, openParenToken, null, null, firstSemicolonToken, null, secondSemicolonToken, null, closeParenToken, statement, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(statement: IStatementSyntax): ForStatementSyntax {
-        return new ForStatementSyntax(Syntax.token(SyntaxKind.ForKeyword), Syntax.token(SyntaxKind.OpenParenToken), null, null, Syntax.token(SyntaxKind.SemicolonToken), null, Syntax.token(SyntaxKind.SemicolonToken), null, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitForStatement(this);
     }
@@ -5400,6 +5387,19 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         }
 
         return new ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(forKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         firstSemicolonToken: ISyntaxToken,
+                         secondSemicolonToken: ISyntaxToken,
+                         closeParenToken: ISyntaxToken,
+                         statement: IStatementSyntax): ForStatementSyntax {
+        return new ForStatementSyntax(forKeyword, openParenToken, null, null, firstSemicolonToken, null, secondSemicolonToken, null, closeParenToken, statement, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(statement: IStatementSyntax): ForStatementSyntax {
+        return new ForStatementSyntax(Syntax.token(SyntaxKind.ForKeyword), Syntax.token(SyntaxKind.OpenParenToken), null, null, Syntax.token(SyntaxKind.SemicolonToken), null, Syntax.token(SyntaxKind.SemicolonToken), null, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ForStatementSyntax {
@@ -5475,20 +5475,6 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
 
     }
 
-    public static create(forKeyword: ISyntaxToken,
-                         openParenToken: ISyntaxToken,
-                         inKeyword: ISyntaxToken,
-                         expression: IExpressionSyntax,
-                         closeParenToken: ISyntaxToken,
-                         statement: IStatementSyntax): ForInStatementSyntax {
-        return new ForInStatementSyntax(forKeyword, openParenToken, null, null, inKeyword, expression, closeParenToken, statement, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(expression: IExpressionSyntax,
-                          statement: IStatementSyntax): ForInStatementSyntax {
-        return new ForInStatementSyntax(Syntax.token(SyntaxKind.ForKeyword), Syntax.token(SyntaxKind.OpenParenToken), null, null, Syntax.token(SyntaxKind.InKeyword), expression, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitForInStatement(this);
     }
@@ -5528,6 +5514,20 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         }
 
         return new ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(forKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         inKeyword: ISyntaxToken,
+                         expression: IExpressionSyntax,
+                         closeParenToken: ISyntaxToken,
+                         statement: IStatementSyntax): ForInStatementSyntax {
+        return new ForInStatementSyntax(forKeyword, openParenToken, null, null, inKeyword, expression, closeParenToken, statement, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(expression: IExpressionSyntax,
+                          statement: IStatementSyntax): ForInStatementSyntax {
+        return new ForInStatementSyntax(Syntax.token(SyntaxKind.ForKeyword), Syntax.token(SyntaxKind.OpenParenToken), null, null, Syntax.token(SyntaxKind.InKeyword), expression, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ForInStatementSyntax {
@@ -5591,11 +5591,6 @@ class WhileStatementSyntax extends IterationStatementSyntax {
 
     }
 
-    public static create1(condition: IExpressionSyntax,
-                          statement: IStatementSyntax): WhileStatementSyntax {
-        return new WhileStatementSyntax(Syntax.token(SyntaxKind.WhileKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitWhileStatement(this);
     }
@@ -5629,6 +5624,11 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         }
 
         return new WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(condition: IExpressionSyntax,
+                          statement: IStatementSyntax): WhileStatementSyntax {
+        return new WhileStatementSyntax(Syntax.token(SyntaxKind.WhileKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): WhileStatementSyntax {
@@ -5678,11 +5678,6 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     }
 
-    public static create1(condition: IExpressionSyntax,
-                          statement: IStatementSyntax): WithStatementSyntax {
-        return new WithStatementSyntax(Syntax.token(SyntaxKind.WithKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitWithStatement(this);
     }
@@ -5724,6 +5719,11 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(condition: IExpressionSyntax,
+                          statement: IStatementSyntax): WithStatementSyntax {
+        return new WithStatementSyntax(Syntax.token(SyntaxKind.WithKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), statement, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): WithStatementSyntax {
@@ -5774,17 +5774,6 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     }
 
-    public static create(enumKeyword: ISyntaxToken,
-                         identifier: ISyntaxToken,
-                         openBraceToken: ISyntaxToken,
-                         closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, Syntax.emptySeparatedList, closeBraceToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(identifier: ISyntaxToken): EnumDeclarationSyntax {
-        return new EnumDeclarationSyntax(null, Syntax.token(SyntaxKind.EnumKeyword), identifier, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitEnumDeclaration(this);
     }
@@ -5824,6 +5813,17 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         }
 
         return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(enumKeyword: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
+        return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, Syntax.emptySeparatedList, closeBraceToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(identifier: ISyntaxToken): EnumDeclarationSyntax {
+        return new EnumDeclarationSyntax(null, Syntax.token(SyntaxKind.EnumKeyword), identifier, Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): EnumDeclarationSyntax {
@@ -5878,11 +5878,6 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
 
     }
 
-    public static create1(type: ITypeSyntax,
-                          expression: IUnaryExpressionSyntax): CastExpressionSyntax {
-        return new CastExpressionSyntax(Syntax.token(SyntaxKind.LessThanToken), type, Syntax.token(SyntaxKind.GreaterThanToken), expression, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCastExpression(this);
     }
@@ -5924,6 +5919,11 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(type: ITypeSyntax,
+                          expression: IUnaryExpressionSyntax): CastExpressionSyntax {
+        return new CastExpressionSyntax(Syntax.token(SyntaxKind.LessThanToken), type, Syntax.token(SyntaxKind.GreaterThanToken), expression, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CastExpressionSyntax {
         return <CastExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -5963,15 +5963,6 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
 
     }
 
-    public static create(openBraceToken: ISyntaxToken,
-                         closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
-        return new ObjectLiteralExpressionSyntax(openBraceToken, Syntax.emptySeparatedList, closeBraceToken, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): ObjectLiteralExpressionSyntax {
-        return new ObjectLiteralExpressionSyntax(Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitObjectLiteralExpression(this);
     }
@@ -6009,6 +6000,15 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         }
 
         return new ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(openBraceToken: ISyntaxToken,
+                         closeBraceToken: ISyntaxToken): ObjectLiteralExpressionSyntax {
+        return new ObjectLiteralExpressionSyntax(openBraceToken, Syntax.emptySeparatedList, closeBraceToken, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): ObjectLiteralExpressionSyntax {
+        return new ObjectLiteralExpressionSyntax(Syntax.token(SyntaxKind.OpenBraceToken), Syntax.emptySeparatedList, Syntax.token(SyntaxKind.CloseBraceToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ObjectLiteralExpressionSyntax {
@@ -6070,11 +6070,6 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     }
 
-    public static create1(propertyName: ISyntaxToken,
-                          expression: IExpressionSyntax): SimplePropertyAssignmentSyntax {
-        return new SimplePropertyAssignmentSyntax(propertyName, Syntax.token(SyntaxKind.ColonToken), expression, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSimplePropertyAssignment(this);
     }
@@ -6104,6 +6099,11 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         }
 
         return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(propertyName: ISyntaxToken,
+                          expression: IExpressionSyntax): SimplePropertyAssignmentSyntax {
+        return new SimplePropertyAssignmentSyntax(propertyName, Syntax.token(SyntaxKind.ColonToken), expression, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SimplePropertyAssignmentSyntax {
@@ -6166,10 +6166,6 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     }
 
-    public static create1(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return new GetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.GetKeyword), propertyName, Syntax.token(SyntaxKind.OpenParenToken), Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitGetAccessorPropertyAssignment(this);
     }
@@ -6203,6 +6199,10 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         }
 
         return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
+        return new GetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.GetKeyword), propertyName, Syntax.token(SyntaxKind.OpenParenToken), Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GetAccessorPropertyAssignmentSyntax {
@@ -6252,11 +6252,6 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
 
     }
 
-    public static create1(propertyName: ISyntaxToken,
-                          parameterName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return new SetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.SetKeyword), propertyName, Syntax.token(SyntaxKind.OpenParenToken), parameterName, Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitSetAccessorPropertyAssignment(this);
     }
@@ -6292,6 +6287,11 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         }
 
         return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(propertyName: ISyntaxToken,
+                          parameterName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+        return new SetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.SetKeyword), propertyName, Syntax.token(SyntaxKind.OpenParenToken), parameterName, Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SetAccessorPropertyAssignmentSyntax {
@@ -6343,16 +6343,6 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
 
     }
 
-    public static create(functionKeyword: ISyntaxToken,
-                         callSignature: CallSignatureSyntax,
-                         block: BlockSyntax): FunctionExpressionSyntax {
-        return new FunctionExpressionSyntax(functionKeyword, null, callSignature, block, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): FunctionExpressionSyntax {
-        return new FunctionExpressionSyntax(Syntax.token(SyntaxKind.FunctionKeyword), null, CallSignatureSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFunctionExpression(this);
     }
@@ -6394,6 +6384,16 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create(functionKeyword: ISyntaxToken,
+                         callSignature: CallSignatureSyntax,
+                         block: BlockSyntax): FunctionExpressionSyntax {
+        return new FunctionExpressionSyntax(functionKeyword, null, callSignature, block, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): FunctionExpressionSyntax {
+        return new FunctionExpressionSyntax(Syntax.token(SyntaxKind.FunctionKeyword), null, CallSignatureSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionExpressionSyntax {
         return <FunctionExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -6433,10 +6433,6 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     }
 
-    public static create1(): EmptyStatementSyntax {
-        return new EmptyStatementSyntax(Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitEmptyStatement(this);
     }
@@ -6464,12 +6460,16 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return true;
     }
 
-    private update(semicolonToken: ISyntaxToken): EmptyStatementSyntax {
+    public update(semicolonToken: ISyntaxToken): EmptyStatementSyntax {
         if (this.semicolonToken === semicolonToken) {
             return this;
         }
 
         return new EmptyStatementSyntax(semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(): EmptyStatementSyntax {
+        return new EmptyStatementSyntax(Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): EmptyStatementSyntax {
@@ -6498,15 +6498,6 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create(tryKeyword: ISyntaxToken,
-                         block: BlockSyntax): TryStatementSyntax {
-        return new TryStatementSyntax(tryKeyword, block, null, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): TryStatementSyntax {
-        return new TryStatementSyntax(Syntax.token(SyntaxKind.TryKeyword), BlockSyntax.create1(), null, null, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -6548,6 +6539,15 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new TryStatementSyntax(tryKeyword, block, catchClause, finallyClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(tryKeyword: ISyntaxToken,
+                         block: BlockSyntax): TryStatementSyntax {
+        return new TryStatementSyntax(tryKeyword, block, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): TryStatementSyntax {
+        return new TryStatementSyntax(Syntax.token(SyntaxKind.TryKeyword), BlockSyntax.create1(), null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TryStatementSyntax {
@@ -6594,10 +6594,6 @@ class CatchClauseSyntax extends SyntaxNode {
 
     }
 
-    public static create1(identifier: ISyntaxToken): CatchClauseSyntax {
-        return new CatchClauseSyntax(Syntax.token(SyntaxKind.CatchKeyword), Syntax.token(SyntaxKind.OpenParenToken), identifier, Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitCatchClause(this);
     }
@@ -6631,6 +6627,10 @@ class CatchClauseSyntax extends SyntaxNode {
         }
 
         return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(identifier: ISyntaxToken): CatchClauseSyntax {
+        return new CatchClauseSyntax(Syntax.token(SyntaxKind.CatchKeyword), Syntax.token(SyntaxKind.OpenParenToken), identifier, Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CatchClauseSyntax {
@@ -6676,10 +6676,6 @@ class FinallyClauseSyntax extends SyntaxNode {
 
     }
 
-    public static create1(): FinallyClauseSyntax {
-        return new FinallyClauseSyntax(Syntax.token(SyntaxKind.FinallyKeyword), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitFinallyClause(this);
     }
@@ -6707,6 +6703,10 @@ class FinallyClauseSyntax extends SyntaxNode {
         }
 
         return new FinallyClauseSyntax(finallyKeyword, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(): FinallyClauseSyntax {
+        return new FinallyClauseSyntax(Syntax.token(SyntaxKind.FinallyKeyword), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FinallyClauseSyntax {
@@ -6739,11 +6739,6 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(identifier: ISyntaxToken,
-                          statement: IStatementSyntax): LabeledStatementSyntax {
-        return new LabeledStatementSyntax(identifier, Syntax.token(SyntaxKind.ColonToken), statement, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -6783,6 +6778,11 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new LabeledStatementSyntax(identifier, colonToken, statement, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(identifier: ISyntaxToken,
+                          statement: IStatementSyntax): LabeledStatementSyntax {
+        return new LabeledStatementSyntax(identifier, Syntax.token(SyntaxKind.ColonToken), statement, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): LabeledStatementSyntax {
@@ -6825,11 +6825,6 @@ class DoStatementSyntax extends IterationStatementSyntax {
 
     }
 
-    public static create1(statement: IStatementSyntax,
-                          condition: IExpressionSyntax): DoStatementSyntax {
-        return new DoStatementSyntax(Syntax.token(SyntaxKind.DoKeyword), statement, Syntax.token(SyntaxKind.WhileKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitDoStatement(this);
     }
@@ -6867,6 +6862,11 @@ class DoStatementSyntax extends IterationStatementSyntax {
         }
 
         return new DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(statement: IStatementSyntax,
+                          condition: IExpressionSyntax): DoStatementSyntax {
+        return new DoStatementSyntax(Syntax.token(SyntaxKind.DoKeyword), statement, Syntax.token(SyntaxKind.WhileKeyword), Syntax.token(SyntaxKind.OpenParenToken), condition, Syntax.token(SyntaxKind.CloseParenToken), Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DoStatementSyntax {
@@ -6921,10 +6921,6 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
 
     }
 
-    public static create1(expression: IExpressionSyntax): TypeOfExpressionSyntax {
-        return new TypeOfExpressionSyntax(Syntax.token(SyntaxKind.TypeOfKeyword), expression, /*parsedInStrictMode:*/ false);
-    }
-
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitTypeOfExpression(this);
     }
@@ -6962,6 +6958,10 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return new TypeOfExpressionSyntax(typeOfKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(expression: IExpressionSyntax): TypeOfExpressionSyntax {
+        return new TypeOfExpressionSyntax(Syntax.token(SyntaxKind.TypeOfKeyword), expression, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeOfExpressionSyntax {
         return <TypeOfExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -6991,10 +6991,6 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(expression: IExpressionSyntax): DeleteExpressionSyntax {
-        return new DeleteExpressionSyntax(Syntax.token(SyntaxKind.DeleteKeyword), expression, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7034,6 +7030,10 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return new DeleteExpressionSyntax(deleteKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(expression: IExpressionSyntax): DeleteExpressionSyntax {
+        return new DeleteExpressionSyntax(Syntax.token(SyntaxKind.DeleteKeyword), expression, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DeleteExpressionSyntax {
         return <DeleteExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -7063,10 +7063,6 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(expression: IExpressionSyntax): VoidExpressionSyntax {
-        return new VoidExpressionSyntax(Syntax.token(SyntaxKind.VoidKeyword), expression, /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7106,6 +7102,10 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return new VoidExpressionSyntax(voidKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
+    public static create1(expression: IExpressionSyntax): VoidExpressionSyntax {
+        return new VoidExpressionSyntax(Syntax.token(SyntaxKind.VoidKeyword), expression, /*parsedInStrictMode:*/ false);
+    }
+
     public withLeadingTrivia(trivia: ISyntaxTriviaList): VoidExpressionSyntax {
         return <VoidExpressionSyntax>super.withLeadingTrivia(trivia);
     }
@@ -7135,10 +7135,6 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
 
-    }
-
-    public static create1(): DebuggerStatementSyntax {
-        return new DebuggerStatementSyntax(Syntax.token(SyntaxKind.DebuggerKeyword), Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public accept(visitor: ISyntaxVisitor): any {
@@ -7176,6 +7172,10 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         }
 
         return new DebuggerStatementSyntax(debuggerKeyword, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(): DebuggerStatementSyntax {
+        return new DebuggerStatementSyntax(Syntax.token(SyntaxKind.DebuggerKeyword), Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): DebuggerStatementSyntax {

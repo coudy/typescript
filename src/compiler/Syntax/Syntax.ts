@@ -212,11 +212,6 @@ module Syntax {
         return identifier(text);
     }
 
-    export function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {
-        return CallSignatureSyntax.create1().withParameterList(
-            ParameterListSyntax.create1().withParameter(parameter));
-    }
-
     export function trueExpression(): IUnaryExpressionSyntax {
         return Syntax.token(SyntaxKind.TrueKeyword);
     }

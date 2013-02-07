@@ -32,7 +32,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             }
         }
 
-        Debug.assert(newItems === null || newItems.length === list.childCount());
+        // Debug.assert(newItems === null || newItems.length === list.childCount());
         return newItems === null ? list : Syntax.list(newItems);
     }
 
@@ -55,7 +55,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             }
         }
 
-        Debug.assert(newItems === null || newItems.length === list.childCount());
+        // Debug.assert(newItems === null || newItems.length === list.childCount());
         return newItems === null ? list : Syntax.separatedList(newItems);
     }
 
@@ -74,7 +74,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
     }
 
     public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
-        return node.withModuleName(
+        return node.update(
             <INameSyntax>this.visitNodeOrToken(node.moduleName));
     }
 
@@ -632,7 +632,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
     }
 
     public visitEmptyStatement(node: EmptyStatementSyntax): any {
-        return node.withSemicolonToken(
+        return node.update(
             this.visitToken(node.semicolonToken));
     }
 
