@@ -152,6 +152,8 @@ module TypeScript {
 
     export class PullSymbolGraphUpdater {
 
+        constructor (public semanticInfoChain: SemanticInfoChain) { }
+
         public updateVersion = 0;
 
         public removeDecl(declToRemove: PullDecl) {
@@ -172,6 +174,8 @@ module TypeScript {
                         this.removeDecl(childDecls[i]);
                     }
                 }
+
+                this.semanticInfoChain.removeSymbolFromCache(declSymbol);
             }
 
             this.updateVersion++;

@@ -66,6 +66,9 @@ module TypeScript {
                     if (symbol) {
                         var endTime = new Date().getTime();
                         time_in_findSymbol += endTime - startTime;
+
+                        symbol.setDeclPath(nestedSymbolPath);
+
                         return symbol;
                     }
                     nestedSymbolPath.length -= 2;
@@ -92,6 +95,9 @@ module TypeScript {
                     if (symbol) {
                         var endTime = new Date().getTime();
                         time_in_findSymbol += endTime - startTime;
+
+                        symbol.setDeclPath(copyOfContextSymbolPath);
+
                         return symbol;
                     }
                     copyOfContextSymbolPath.length -= 2;
@@ -101,6 +107,10 @@ module TypeScript {
 
             // finally, try searching globally
             symbol = this.semanticInfoChain.findSymbol([name], declKind);
+
+            if (symbol) {
+                symbol.setDeclPath([name]);
+            }
 
             var endTime = new Date().getTime();
             time_in_findSymbol += endTime - startTime;

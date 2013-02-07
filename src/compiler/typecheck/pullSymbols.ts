@@ -23,6 +23,8 @@ module TypeScript {
 
         private name: string;
 
+        private cachedDeclPath: string[];
+
         private declKind: PullElementKind;
 
         // caches - free these on invalidate
@@ -69,6 +71,9 @@ module TypeScript {
 
         public setIsOptional() { this.isOptional = true; }
         public getIsOptional() { return this.isOptional; }
+
+        public setDeclPath(declPath: string[]) { this.cachedDeclPath = declPath; }
+        public getDeclPath() { return this.cachedDeclPath; }
 
         // declaration methods
         public addDeclaration(decl: PullDecl) { this.declarations.addItem(decl); }

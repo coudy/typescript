@@ -2541,6 +2541,7 @@ module TypeScript {
         }
 
         static cleanJSDocComment(content: string, spacesToRemove?: number) {
+
             var docCommentLines: string[] = [];
             content = content.replace("/**", ""); // remove /**
             if (content.length >= 2 && content.charAt(content.length - 1) == "/" && content.charAt(content.length - 2) == "*") {

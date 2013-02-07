@@ -211,12 +211,7 @@ class BatchCompiler {
 
         try {
             if (this.compilationSettings.usePull) {
-                //if (this.compilationSettings.useFidelity) {
-                //    compiler.pullTypeCheckWithFidelity();
-                //}
-                //else {
-                    compiler.pullTypeCheck();
-                //}
+                compiler.pullTypeCheck();
             }
             else {
                 compiler.typeCheck();

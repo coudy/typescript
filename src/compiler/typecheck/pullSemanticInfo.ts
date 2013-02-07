@@ -20,6 +20,10 @@ module TypeScript {
     export var symbolCacheHit = 0;
     export var symbolCacheMiss = 0;
 
+    export class SemanticError {
+        constructor (public ast: AST, public message: string) { }
+    }
+
     export class SemanticInfo {
         private compilationUnitPath: string;  // the "file" this is tied to
         private decls: PullDecl[] = []; // top-level decls
@@ -39,7 +43,9 @@ module TypeScript {
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
-        constructor (compilationUnitPath: string) {
+        private semanticErrors: SemanticError[] = [];
+
+        constructor (compilationUnitPath: string, public locationInfo: LocationInfo = null) {
             this.compilationUnitPath = compilationUnitPath;
         }
 
@@ -115,7 +121,11 @@ module TypeScript {
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
         }
 
-        public update() { }
+        public postSemanticError(error: SemanticError) {
+            this.semanticErrors[this.semanticErrors.length] = error;
+        }
+
+        public getSemanticErrors() { return this.semanticErrors; }
     }
 
     export class SemanticInfoChain {
@@ -293,7 +303,10 @@ module TypeScript {
 
             if (decls.length) {
                 var symbol = decls[0].getSymbol();
-                this.symbolCache[cacheID] = symbol;
+
+                if (symbol) {
+                    this.symbolCache[cacheID] = symbol;
+                }
             }
 
             return symbol;
@@ -352,6 +365,37 @@ module TypeScript {
 
             if (unit) {
                 unit.setSymbolForAST(ast, typeSymbol);
+            }
+        }
+
+        public removeSymbolFromCache(symbol: PullSymbol) {
+            
+            var path = symbol.getDeclPath();
+
+            if (path) {
+                var kind = (symbol.getKind() & PullElementKind.SomeType) != 0 ? PullElementKind.SomeType: PullElementKind.SomeValue;
+
+                var kindID = this.getDeclPathCacheID(path, kind);
+                var symID = this.getDeclPathCacheID(path, symbol.getKind());
+
+                this.symbolCache[kindID] = undefined;
+                this.symbolCache[symID] = undefined;
+            }
+        }
+
+        public postErrors(errorReporter: PullErrorReporter) {
+            var errors: SemanticError[]
+            
+            for (var i = 1; i < this.units.length; i++) {
+                errors = this.units[i].getSemanticErrors();
+
+                if (errors.length) {
+                    errorReporter.locationInfo = this.units[i].locationInfo;
+
+                    for (var j = 0; j < errors.length; j++) {
+                        errorReporter.simpleError(errors[j].ast, errors[j].message);
+                    }
+                }
             }
         }
     }
