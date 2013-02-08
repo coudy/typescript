@@ -2756,7 +2756,7 @@ module TypeScript {
                     } else {
                         ast = new CallExpression(NodeType.New, target, null);
                         ast.minChar = minChar;
-                        limChar = this.scanner.lastTokenLimChar();
+                        limChar = this.currentToken.tokenId == TokenID.EndOfFile ? this.scanner.pos : this.scanner.lastTokenLimChar();
                         inNew = true;
                     }
                     break;
@@ -2765,7 +2765,7 @@ module TypeScript {
                     ast = this.parseFncDecl(errorRecoverySet, false, false, false, null, false, false, false, Modifiers.None, null, true);
                     (<FuncDecl>ast).fncFlags |= FncFlags.IsFunctionExpression;
                     ast.minChar = minChar;
-                    limChar = this.scanner.lastTokenLimChar();
+                    limChar = this.currentToken.tokenId == TokenID.EndOfFile ? this.scanner.pos : this.scanner.lastTokenLimChar();
                     ast.limChar = limChar;
                     break;
             }
