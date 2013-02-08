@@ -1170,7 +1170,7 @@ module TypeScript {
 
         public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): { ast: AST; typeName: string; typeInfo: string; typeSymbol: PullTypeSymbol; } {
             return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", () => {
-
+                
                 var info = this.resolvePosition(pos, script, scriptName);
 
                 if (info.symbol) {
