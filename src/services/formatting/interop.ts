@@ -283,8 +283,10 @@ module Formatting {
             if (path.isListOfObjectLit()) {
                 // Because of the peculiarities of the formatting engnine, 
                 // we want the list to *not* have the same span as the object literal AST.
-                Formatting.Debug.Assert(path.parent().minChar == path.ast().minChar, "Assumption about AST minChar position is not verified");
-                Formatting.Debug.Assert(path.parent().limChar == path.ast().limChar, "Assumption about AST limChar position is not verified");
+                if (!path.parent().isParenthesized) {
+                    Formatting.Debug.Assert(path.parent().minChar == path.ast().minChar, "Assumption about AST minChar position is not verified");
+                    Formatting.Debug.Assert(path.parent().limChar == path.ast().limChar, "Assumption about AST limChar position is not verified");
+                }
                 result.StartOffset = ast.minChar + 1;
                 result.EndOffset = ast.limChar - 1;
             }
