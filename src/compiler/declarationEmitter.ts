@@ -140,6 +140,9 @@ module TypeScript {
 
             // Static/public/private/global declare
             if (hasFlag(declFlags, DeclFlags.LocalStatic) || hasFlag(declFlags, DeclFlags.Static)) {
+                if (hasFlag(declFlags, DeclFlags.Private)) {
+                    result += "private ";
+                }
                 result += "static " + accessorString;
             }
             else {

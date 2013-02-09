@@ -197,7 +197,7 @@ module m1 {
         private n4;
         public a: () => string;
         private b;
-        static s1;
+        private static s1;
         static s2;
         public d(): string;
         public e: {

@@ -119,8 +119,8 @@ class a {
         x: number;
         y: number;
     };
-    static d2();
-    static p3;
+    private static d2();
+    private static p3;
     private pv3;
     private foo(n);
 }
