@@ -8,7 +8,4 @@
 
 goTo.marker();
 format.document();
-// Bug 17854: Bad formatting after chained fat arrow
-// verify.currentLineContentIs('    }');
-verify.currentLineContentIs('}');
-
+verify.currentLineContentIs('    }');

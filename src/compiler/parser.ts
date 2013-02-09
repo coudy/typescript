@@ -1000,6 +1000,7 @@ module TypeScript {
                     retStmt.minChar = retExpr.minChar;
                     retStmt.limChar = retExpr.limChar;
                     bod.minChar = bodMinChar;
+                    bod.limChar = retExpr.limChar;
                     bod.append(retStmt);
                 }
                 else {
@@ -1127,6 +1128,7 @@ module TypeScript {
             // a single identifier node and the current token is the ':' before a typereference
             if (isLambda && preProcessedLambdaArgs && preProcessedLambdaArgs.nodeType != NodeType.EmptyExpr) {
                 hasOptional = this.transformAnonymousArgsIntoFormals(formals, preProcessedLambdaArgs);
+                formals.minChar = preProcessedLambdaArgs.minChar;
                 haveFirstArgID = true;
             }
 
