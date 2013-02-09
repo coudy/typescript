@@ -119,15 +119,15 @@ var d4: {
     };
 };
 module m2 {
-    export var a, b2: number, b;
-    export class C2 {
+    var a, b2: number, b;
+    class C2 {
         public b;
         constructor(b);
     }
-    export var mE;
-    export var d1E, d2E;
-    export var b2E;
-    export var v1E;
+    var mE;
+    var d1E, d2E;
+    var b2E;
+    var v1E;
 }
 var a22, b22: number, c22: number;
 var nn;

@@ -132,9 +132,11 @@ module TypeScript {
                 accessorString = "set ";
             }
 
-            // Emit export 
+            // Emit export only for global export statements. The container for this would be dynamic module which is whole file
             var container = this.getAstDeclarationContainer();
-            if (hasFlag(declFlags, DeclFlags.Exported)) {
+            if (container.nodeType == NodeType.ModuleDeclaration &&
+                hasFlag((<ModuleDeclaration>container).modFlags, ModuleFlags.IsWholeFile) &&
+                hasFlag(declFlags, DeclFlags.Exported)) {
                 result += "export ";
             }
 

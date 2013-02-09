@@ -3,7 +3,7 @@
 /////** ExtMod - contains m1*/
 ////declare module /*1*/"extMod" {
 ////    /** ModuleComment*/
-////    export module m/*2*/1 {
+////    module m/*2*/1 {
 ////        /** b's comment*/
 ////        export var b: number;
 ////        /** m2 comments*/

@@ -60,10 +60,10 @@ interface i1 {
 }
 var i1_i: i1;
 module m1 {
-    export class b {
+    class b {
         public x: number;
         constructor(x: number);
     }
-    export module m2 {
+    module m2 {
     }
 }

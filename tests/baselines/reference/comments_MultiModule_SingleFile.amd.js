@@ -36,15 +36,15 @@ new multiM.c();
 /** this is multi declare module*/
 module multiM {
     /** class b*/
-    export class b {
+    class b {
     }
-    export class d {
+    class d {
     }
 }
 module multiM {
     /** class c comment*/
-    export class c {
+    class c {
     }
-    export class e {
+    class e {
     }
 }

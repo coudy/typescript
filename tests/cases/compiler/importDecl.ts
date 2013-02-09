@@ -2,7 +2,7 @@
 declare export module "m4" {
     export class d {
     };
-    export var x: d;
+    var x: d;
     export function foo(): d;
 }
 
@@ -25,7 +25,7 @@ export module m1 {
 declare export module "glo_m4" {
     export class d {
     };
-    export var x: d;
+    var x: d;
     export function foo(): d;
 }
 import glo_m4 = module("glo_m4");
@@ -37,14 +37,14 @@ export var useGlo_m4_f4 = glo_m4.foo();
 declare export module "fncOnly_m4" {
     export class d {
     };
-    export var x: d;
+    var x: d;
     export function foo(): d;
 }
 import fncOnly_m4 = module("fncOnly_m4");
 export var useFncOnly_m4_f4 = fncOnly_m4.foo();
 
 declare export module "private_m4" {
-    export class d {
+    class d {
     };
     export var x: d;
     export function foo(): d;
