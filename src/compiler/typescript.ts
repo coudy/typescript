@@ -336,7 +336,7 @@ module TypeScript {
 
                     var newParseTime = timer.time;
 
-                    if (true && syntaxTree.diagnostics().length === 0) {
+                    if (false && syntaxTree.diagnostics().length === 0) {
                         try {
                             timer.start();
                             var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
@@ -352,7 +352,7 @@ module TypeScript {
 
                             script2.referencedFiles = referencedFiles;
                             script2.isResident = keepResident; 
-
+                             
                             // TypeScriptCompiler.compareObjects(script, script2);
                         } catch (e1) {
                             IO.stdout.WriteLine("Error converting: " + filename);
