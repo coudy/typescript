@@ -1308,11 +1308,12 @@ module TypeScript {
             }
             else {
                 var list = <ASTList>ast;
+                this.emitParensAndCommentsInPlace(ast, true);
                 if (list.members.length == 0) {
+                    this.emitParensAndCommentsInPlace(ast, false);
                     return;
                 }
 
-                this.emitParensAndCommentsInPlace(ast, true);
                 var len = list.members.length;
                 for (var i = 0; i < len; i++) {
                     if (emitPrologue) {

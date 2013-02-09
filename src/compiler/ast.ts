@@ -1215,9 +1215,7 @@ module TypeScript {
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             if (this.emitRequired(emitter.emitOptions)) {
-                emitter.emitParensAndCommentsInPlace(this.bod, true);
                 emitter.emitJavascriptList(this.bod, null, TokenID.Semicolon, true, false, false, true, this.requiresExtendsBlock);
-                emitter.emitParensAndCommentsInPlace(this.bod, false);
             }
         }
 
