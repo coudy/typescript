@@ -6546,6 +6546,174 @@ var TypeScript;
         return ErrorReporter;
     })();
     TypeScript.ErrorReporter = ErrorReporter;    
+    var PullErrorReporter = (function () {
+        function PullErrorReporter(outfile) {
+            this.outfile = outfile;
+            this.parser = null;
+            this.lineCol = {
+                line: 0,
+                col: 0
+            };
+            this.emitAsComments = true;
+            this.hasErrors = false;
+            this.pushToErrorSink = false;
+            this.errorSink = [];
+        }
+        PullErrorReporter.prototype.getCapturedErrors = function () {
+            return this.errorSink;
+        };
+        PullErrorReporter.prototype.freeCapturedErrors = function () {
+            this.errorSink = [];
+        };
+        PullErrorReporter.prototype.captureError = function (emsg) {
+            this.errorSink[this.errorSink.length] = emsg;
+        };
+        PullErrorReporter.prototype.setErrOut = function (outerr) {
+            this.outfile = outerr;
+            this.emitAsComments = false;
+        };
+        PullErrorReporter.prototype.emitPrefix = function () {
+            if(this.emitAsComments) {
+                this.outfile.Write("// ");
+            }
+            this.outfile.Write(this.locationInfo.filename + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
+        };
+        PullErrorReporter.prototype.writePrefix = function (ast) {
+            if(ast) {
+                this.setError(ast);
+            } else {
+                this.lineCol.line = 0;
+                this.lineCol.col = 0;
+            }
+            this.emitPrefix();
+        };
+        PullErrorReporter.prototype.writePrefixFromSym = function (symbol) {
+            if(symbol && this.locationInfo.lineMap) {
+                TypeScript.getSourceLineColFromMap(this.lineCol, symbol.location, this.locationInfo.lineMap);
+            } else {
+                this.lineCol.line = -1;
+                this.lineCol.col = -1;
+            }
+            this.emitPrefix();
+        };
+        PullErrorReporter.prototype.setError = function (ast) {
+            if(ast) {
+                ast.flags |= 8 /* Error */ ;
+                if(this.locationInfo.lineMap) {
+                    TypeScript.getSourceLineColFromMap(this.lineCol, ast.minChar, this.locationInfo.lineMap);
+                }
+            }
+        };
+        PullErrorReporter.prototype.reportError = function (ast, message) {
+            if(this.pushToErrorSink) {
+                this.captureError(message);
+                return;
+            }
+            this.hasErrors = true;
+            if(ast && this.parser.errorRecovery && this.parser.errorCallback) {
+                var len = (ast.limChar - ast.minChar);
+                this.parser.errorCallback(ast.minChar, len, message, this.locationInfo.unitIndex);
+            } else {
+                this.writePrefix(ast);
+                this.outfile.WriteLine(message);
+            }
+        };
+        PullErrorReporter.prototype.reportErrorFromSym = function (symbol, message) {
+            if(this.pushToErrorSink) {
+                this.captureError(message);
+                return;
+            }
+            this.hasErrors = true;
+            if(this.parser.errorRecovery && this.parser.errorCallback) {
+                this.parser.errorCallback(symbol.location, symbol.length, message, this.locationInfo.unitIndex);
+            } else {
+                this.writePrefixFromSym(symbol);
+                this.outfile.WriteLine(message);
+            }
+        };
+        PullErrorReporter.prototype.emitterError = function (ast, message) {
+            this.reportError(ast, message);
+            throw Error("EmitError");
+        };
+        PullErrorReporter.prototype.duplicateIdentifier = function (ast, name) {
+            this.reportError(ast, "Duplicate identifier '" + name + "'");
+        };
+        PullErrorReporter.prototype.showRef = function (ast, text, symbol) {
+            var defLineCol = {
+                line: -1,
+                col: -1
+            };
+            this.parser.getSourceLineCol(defLineCol, symbol.location);
+            this.reportError(ast, "symbol " + text + " defined at (" + defLineCol.line + "," + defLineCol.col + ")");
+        };
+        PullErrorReporter.prototype.unresolvedSymbol = function (ast, name) {
+            this.reportError(ast, "The name '" + name + "' does not exist in the current scope");
+        };
+        PullErrorReporter.prototype.symbolDoesNotReferToAValue = function (ast, name) {
+            this.reportError(ast, "The name '" + name + "' does not refer to a value");
+        };
+        PullErrorReporter.prototype.styleError = function (ast, msg) {
+            var bkThrow = this.pushToErrorSink;
+            this.pushToErrorSink = false;
+            this.reportError(ast, "STYLE: " + msg);
+            this.pushToErrorSink = bkThrow;
+        };
+        PullErrorReporter.prototype.simpleError = function (ast, msg) {
+            this.reportError(ast, msg);
+        };
+        PullErrorReporter.prototype.simpleErrorFromSym = function (sym, msg) {
+            this.reportErrorFromSym(sym, msg);
+        };
+        PullErrorReporter.prototype.invalidSuperReference = function (ast) {
+            this.simpleError(ast, "Keyword 'super' can only be used inside a class instance method");
+        };
+        PullErrorReporter.prototype.valueCannotBeModified = function (ast) {
+            this.simpleError(ast, "The left-hand side of an assignment expression must be a variable, property or indexer");
+        };
+        PullErrorReporter.prototype.invalidCall = function (ast, nodeType, scope) {
+            var targetType = ast.target.type;
+            var typeName = targetType.getScopedTypeName(scope);
+            if(targetType.construct && (nodeType == 30 /* Call */ )) {
+                this.reportError(ast, "Value of type '" + typeName + "' is not callable.  Did you mean to include 'new'?");
+            } else {
+                var catString = (nodeType == 30 /* Call */ ) ? "callable" : "newable";
+                this.reportError(ast, "Value of type '" + typeName + "' is not " + catString);
+            }
+        };
+        PullErrorReporter.prototype.indexLHS = function (ast, scope) {
+            var targetType = ast.operand1.type.getScopedTypeName(scope);
+            var indexType = ast.operand2.type.getScopedTypeName(scope);
+            this.simpleError(ast, "Value of type '" + targetType + "' is not indexable by type '" + indexType + "'");
+        };
+        PullErrorReporter.prototype.incompatibleTypes = function (ast, t1, t2, op, scope, comparisonInfo) {
+            var t1Name;
+            var t2Name;
+            if(!t1) {
+                t1Name = "any";
+            } else {
+                t1Name = t1.getScopedTypeName(scope);
+            }
+            if(!t2) {
+                t2Name = "any";
+            } else {
+                t2Name = t2.getScopedTypeName(scope);
+            }
+            var reason = comparisonInfo ? comparisonInfo.message : "";
+            if(op) {
+                this.reportError(ast, "Operator '" + op + "' cannot be applied to types '" + t1Name + "' and '" + t2Name + "'" + (reason ? ": " + reason : ""));
+            } else {
+                this.reportError(ast, "Cannot convert '" + t1Name + "' to '" + t2Name + "'" + (reason ? ": " + reason : ""));
+            }
+        };
+        PullErrorReporter.prototype.expectedClassOrInterface = function (ast) {
+            this.simpleError(ast, "Expected var, class, interface, or module");
+        };
+        PullErrorReporter.prototype.unaryOperatorTypeError = function (ast, op, type) {
+            this.reportError(ast, "Operator '" + op + "' cannot be applied to type '" + type.getTypeName() + "'");
+        };
+        return PullErrorReporter;
+    })();
+    TypeScript.PullErrorReporter = PullErrorReporter;    
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -18596,7 +18764,7 @@ var TypeScript;
             this.emitFullSourceMapPath = false;
             this.generateDeclarationFiles = false;
             this.useCaseSensitiveFileResolution = false;
-            this.useFidelity = true;
+            this.useFidelity = false;
             this.usePull = false;
             this.gatherDiagnostics = false;
         }
@@ -38729,6 +38897,12 @@ var TypeScript;
         PullSymbol.prototype.getIsOptional = function () {
             return this.isOptional;
         };
+        PullSymbol.prototype.setDeclPath = function (declPath) {
+            this.cachedDeclPath = declPath;
+        };
+        PullSymbol.prototype.getDeclPath = function () {
+            return this.cachedDeclPath;
+        };
         PullSymbol.prototype.addDeclaration = function (decl) {
             this.declarations.addItem(decl);
         };
@@ -39636,10 +39810,9 @@ var TypeScript;
     })();
     TypeScript.PullResolutionDataCache = PullResolutionDataCache;    
     var PullTypeResolver = (function () {
-        function PullTypeResolver(semanticInfoChain, unitPath, logger) {
+        function PullTypeResolver(semanticInfoChain, unitPath) {
             this.semanticInfoChain = semanticInfoChain;
             this.unitPath = unitPath;
-            this.logger = logger;
             this.cachedArrayInterfaceType = null;
             this.cachedNumberInterfaceType = null;
             this.cachedStringInterfaceType = null;
@@ -39654,6 +39827,7 @@ var TypeScript;
             this.identicalCache = {
             };
             this.resolutionDataCache = new PullResolutionDataCache();
+            this.currentUnit = null;
             this.cachedArrayInterfaceType = this.getSymbolFromDeclPath("Array", [], 32 /* Interface */ );
             this.cachedNumberInterfaceType = this.getSymbolFromDeclPath("Number", [], 32 /* Interface */ );
             this.cachedStringInterfaceType = this.getSymbolFromDeclPath("String", [], 32 /* Interface */ );
@@ -39661,18 +39835,18 @@ var TypeScript;
             this.cachedObjectInterfaceType = this.getSymbolFromDeclPath("Object", [], 32 /* Interface */ );
             this.cachedFunctionInterfaceType = this.getSymbolFromDeclPath("Function", [], 32 /* Interface */ );
             this.cachedIArgumentsInterfaceType = this.getSymbolFromDeclPath("IArguments", [], 32 /* Interface */ );
+            this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
         PullTypeResolver.prototype.getUnitPath = function () {
             return this.unitPath;
         };
         PullTypeResolver.prototype.setUnitPath = function (unitPath) {
             this.unitPath = unitPath;
+            this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         };
-        PullTypeResolver.prototype.log = function (message) {
-            if(this.logger) {
-                this.logger.log(message);
-            } else {
-                this.log(message);
+        PullTypeResolver.prototype.postSemanticError = function (ast, message) {
+            if(this.currentUnit) {
+                this.currentUnit.postSemanticError(new TypeScript.SemanticError(ast, message));
             }
         };
         PullTypeResolver.prototype.getDeclForAST = function (ast, unitPath) {
@@ -39817,7 +39991,7 @@ var TypeScript;
                 case 76 /* ArgDecl */ :
                     return this.resolveVariableDeclaration(declAST, context);
                 default:
-                    this.log("RESOLUTION ERROR: Invalid declaration type...");
+                    this.postSemanticError(declAST, "RESOLUTION ERROR: Invalid declaration type...");
                     return this.semanticInfoChain.anyTypeSymbol;
             }
         };
@@ -40016,7 +40190,7 @@ var TypeScript;
                     context.resolvingTypeReference = prevResolvingTypeReference;
                 }
                 if(!typeDeclSymbol) {
-                    this.log("RESOLUTION ERROR: Could not find type '" + typeName.actualText + "'");
+                    this.postSemanticError(typeName, "RESOLUTION ERROR: Could not find type '" + typeName.actualText + "'");
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
             } else if(typeRef.term.nodeType == 73 /* FuncDecl */ ) {
@@ -40029,12 +40203,12 @@ var TypeScript;
                 typeDeclSymbol = this.resolveDottedNameExpression(dottedName, enclosingDecl, context);
                 context.resolvingTypeReference = prevResolvingTypeReference;
                 if(!typeDeclSymbol) {
-                    this.log("RESOLUTION ERROR: Could not find dotted type '" + (dottedName.operand2).actualText + "'");
+                    this.postSemanticError(dottedName.operand2, "RESOLUTION ERROR: Could not find dotted type '" + (dottedName.operand2).actualText + "'");
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
             }
             if(!typeDeclSymbol) {
-                this.log("RESOLUTION ERROR: Couldn't bind to the type symbol before creating the array, for some reason");
+                this.postSemanticError(typeRef.term, "RESOLUTION ERROR: Couldn't bind to the type symbol before creating the array, for some reason");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
             if(typeRef.arrayCount) {
@@ -40060,17 +40234,19 @@ var TypeScript;
             var decl = this.getDeclForAST(varDecl);
             var declSymbol = decl.getSymbol();
             var declPropertySymbol = decl.getPropertySymbol();
+            var hadError = false;
             if(declSymbol.isResolved()) {
                 return declSymbol.getType();
             }
             if(varDecl.typeExpr) {
                 var typeExprSymbol = this.resolveTypeReference(varDecl.typeExpr, this.getEnclosingDecl(decl), context);
                 if(!typeExprSymbol) {
-                    this.log("RESOLUTION ERROR: Could not resolve type expression for variable '" + varDecl.id.actualText + "'");
+                    this.postSemanticError(varDecl, "RESOLUTION ERROR: Could not resolve type expression for variable '" + varDecl.id.actualText + "'");
                     declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     if(declPropertySymbol) {
                         declPropertySymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     }
+                    hadError = true;
                 } else {
                     if(typeExprSymbol.hasBrand()) {
                         typeExprSymbol = (typeExprSymbol).getInstanceType();
@@ -40083,11 +40259,12 @@ var TypeScript;
             } else if(varDecl.init) {
                 var initExprSymbol = this.resolveStatementOrExpression(varDecl.init, false, this.getEnclosingDecl(decl), context);
                 if(!initExprSymbol) {
-                    this.log("RESOLUTION ERROR: Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'");
+                    this.postSemanticError(varDecl, "RESOLUTION ERROR: Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'");
                     context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
                     if(declPropertySymbol) {
                         context.setTypeInContext(declPropertySymbol, this.semanticInfoChain.anyTypeSymbol);
                     }
+                    hadError = true;
                 } else {
                     context.setTypeInContext(declSymbol, initExprSymbol.getType());
                     initExprSymbol.addOutgoingLink(declSymbol, 2 /* ProvidesInferredType */ );
@@ -40102,7 +40279,9 @@ var TypeScript;
                     declPropertySymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                 }
             }
-            declSymbol.setResolved();
+            if(!hadError) {
+                declSymbol.setResolved();
+            }
             if(declPropertySymbol) {
                 declPropertySymbol.setResolved();
                 this.setSymbolForAST(varDecl, declPropertySymbol);
@@ -40163,6 +40342,7 @@ var TypeScript;
             var funcDecl = this.getDeclForAST(funcDeclAST);
             var funcSymbol = funcDecl.getSymbol();
             var signature = funcDecl.getSignatureSymbol();
+            var hadError = false;
             if(signature.isResolved()) {
                 return funcSymbol;
             }
@@ -40176,8 +40356,9 @@ var TypeScript;
                     var returnTypeRef = funcDeclAST.returnTypeAnnotation;
                     var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, this.getEnclosingDecl(funcDecl), context);
                     if(!returnTypeSymbol) {
-                        this.log("RESOLUTION ERROR: Could not resolve return type reference for some reason...");
+                        this.postSemanticError(funcDeclAST.returnTypeAnnotation, "RESOLUTION ERROR: Could not resolve return type reference for some reason...");
                         signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                        hadError = true;
                     } else {
                         signature.setReturnType(returnTypeSymbol);
                     }
@@ -40188,7 +40369,9 @@ var TypeScript;
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, funcDecl, new TypeScript.PullTypeResolutionContext());
                     }
                 }
-                signature.setResolved();
+                if(!hadError) {
+                    signature.setResolved();
+                }
             }
             return funcSymbol;
         };
@@ -40312,7 +40495,7 @@ var TypeScript;
                 nameSymbol = this.getSymbolFromDeclPath(id, declPath, TypeScript.PullElementKind.SomeType);
             }
             if(!nameSymbol) {
-                this.log("RESOLUTION ERROR: Could not find symbol '" + id + "'");
+                this.postSemanticError(nameAST, "RESOLUTION ERROR: Could not find symbol '" + id + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
             if(!nameSymbol.isResolved()) {
@@ -40334,7 +40517,7 @@ var TypeScript;
                 return lhsType;
             }
             if(!lhsType) {
-                this.log("RESOLUTION ERROR: Could not find lhs type for dotted name '" + rhsName + "'");
+                this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find lhs type for dotted name '" + rhsName + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
             if(lhsType.hasBrand() && !context.resolvingTypeReference) {
@@ -40359,7 +40542,7 @@ var TypeScript;
                     nameSymbol = lhsType.findMember(rhsName);
                 }
                 if(!nameSymbol) {
-                    this.log("RESOLUTION ERROR: Could not find dotted symbol name '" + rhsName + "'");
+                    this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find dotted symbol name '" + rhsName + "'");
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
             }
@@ -40601,7 +40784,7 @@ var TypeScript;
                 }
             }
             if(!elementType) {
-                this.log("RESOLUTION ERROR: Incompatible types in array literal expression");
+                this.postSemanticError(expressionAST, "RESOLUTION ERROR: Incompatible types in array literal expression");
                 elementType = this.semanticInfoChain.anyTypeSymbol;
             } else if(targetElementType) {
                 if(this.sourceIsAssignableToTarget(elementType, targetElementType, context)) {
@@ -40726,7 +40909,7 @@ var TypeScript;
             }
             var signatures = (targetSymbol).getCallSignatures();
             if(!signatures.length) {
-                this.log("RESOLUTION ERROR: Attempting to call on a type with no call signatures");
+                this.postSemanticError(expressionAST, "RESOLUTION ERROR: Attempting to call on a type with no call signatures");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
             var signature = signatures.length > 1 ? this.resolveOverloads(expressionAST, signatures, enclosingDecl, context) : signatures[0];
@@ -40815,7 +40998,7 @@ var TypeScript;
             } else if(targetTypeSymbol.hasBrand()) {
                 return returnType;
             }
-            this.log("RESOLUTION ERROR: Invalid 'new' expression");
+            this.postSemanticError(expressionAST, "RESOLUTION ERROR: Invalid 'new' expression");
             return this.semanticInfoChain.anyTypeSymbol;
         };
         PullTypeResolver.prototype.resolveTypeAssertionExpression = function (expressionAST, isTypedAssignment, enclosingDecl, context) {
@@ -41430,15 +41613,15 @@ var TypeScript;
                 if(applicableCandidates.length > 0) {
                     var candidateInfo = this.findMostApplicableSignature(applicableCandidates, args, enclosingDecl, context);
                     if(candidateInfo.ambiguous) {
-                        this.log("Ambiguous call expression - could not choose overload");
+                        this.postSemanticError(application, "Ambiguous call expression - could not choose overload");
                     }
                     candidate = candidateInfo.sig;
                 } else {
                     var emsg = "Supplied parameters do not match any signature of call target";
                     if(comparisonInfo.message) {
-                        this.log("RESOLUTION ERROR: " + emsg + ":\n\t" + comparisonInfo.message);
+                        this.postSemanticError(application, "RESOLUTION ERROR: " + emsg + ":\n\t" + comparisonInfo.message);
                     } else {
-                        this.log("RESOLUTION ERROR: " + emsg);
+                        this.postSemanticError(application, "RESOLUTION ERROR: " + emsg);
                     }
                 }
             } else {
@@ -41452,7 +41635,7 @@ var TypeScript;
                     }
                     var candidateInfo = this.findMostApplicableSignature(applicableSigs, args, enclosingDecl, context);
                     if(candidateInfo.ambiguous) {
-                        this.log("RESOLUTION ERROR: Ambiguous call expression - could not choose overload");
+                        this.postSemanticError(application, "RESOLUTION ERROR: Ambiguous call expression - could not choose overload");
                     }
                     candidate = candidateInfo.sig;
                 } else {
@@ -41746,8 +41929,8 @@ var TypeScript;
             this.context = new TypeScript.PullTypeResolutionContext();
             this.semanticInfoChain = semanticInfoChain;
         }
-        PullTypeChecker.prototype.setUnit = function (unitPath, logger) {
-            this.resolver = new TypeScript.PullTypeResolver(this.semanticInfoChain, unitPath, logger);
+        PullTypeChecker.prototype.setUnit = function (unitPath) {
+            this.resolver = new TypeScript.PullTypeResolver(this.semanticInfoChain, unitPath);
         };
         PullTypeChecker.prototype.typeCheck = function (ast) {
             return ast;
@@ -41969,8 +42152,18 @@ var TypeScript;
     TypeScript.declCacheMiss = 0;
     TypeScript.symbolCacheHit = 0;
     TypeScript.symbolCacheMiss = 0;
+    var SemanticError = (function () {
+        function SemanticError(ast, message) {
+            this.ast = ast;
+            this.message = message;
+        }
+        return SemanticError;
+    })();
+    TypeScript.SemanticError = SemanticError;    
     var SemanticInfo = (function () {
-        function SemanticInfo(compilationUnitPath) {
+        function SemanticInfo(compilationUnitPath, locationInfo) {
+            if (typeof locationInfo === "undefined") { locationInfo = null; }
+            this.locationInfo = locationInfo;
             this.decls = [];
             this.astDeclMap = new TypeScript.DataMap();
             this.declASTMap = new TypeScript.DataMap();
@@ -41981,6 +42174,7 @@ var TypeScript;
             this.symbolASTMap = new TypeScript.DataMap();
             this.syntaxElementSymbolMap = new TypeScript.DataMap();
             this.symbolSyntaxElementMap = new TypeScript.DataMap();
+            this.semanticErrors = [];
             this.compilationUnitPath = compilationUnitPath;
         }
         SemanticInfo.prototype.addTopLevelDecl = function (decl) {
@@ -42036,7 +42230,11 @@ var TypeScript;
             this.syntaxElementSymbolMap.link(Collections.identityHashCode(syntaxElement).toString(), symbol);
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
         };
-        SemanticInfo.prototype.update = function () {
+        SemanticInfo.prototype.postSemanticError = function (error) {
+            this.semanticErrors[this.semanticErrors.length] = error;
+        };
+        SemanticInfo.prototype.getSemanticErrors = function () {
+            return this.semanticErrors;
         };
         return SemanticInfo;
     })();
@@ -42173,7 +42371,9 @@ var TypeScript;
             var symbol = null;
             if(decls.length) {
                 var symbol = decls[0].getSymbol();
-                this.symbolCache[cacheID] = symbol;
+                if(symbol) {
+                    this.symbolCache[cacheID] = symbol;
+                }
             }
             return symbol;
         };
@@ -42213,6 +42413,28 @@ var TypeScript;
             var unit = this.unitCache[unitPath];
             if(unit) {
                 unit.setSymbolForAST(ast, typeSymbol);
+            }
+        };
+        SemanticInfoChain.prototype.removeSymbolFromCache = function (symbol) {
+            var path = symbol.getDeclPath();
+            if(path) {
+                var kind = (symbol.getKind() & TypeScript.PullElementKind.SomeType) != 0 ? TypeScript.PullElementKind.SomeType : TypeScript.PullElementKind.SomeValue;
+                var kindID = this.getDeclPathCacheID(path, kind);
+                var symID = this.getDeclPathCacheID(path, symbol.getKind());
+                this.symbolCache[kindID] = undefined;
+                this.symbolCache[symID] = undefined;
+            }
+        };
+        SemanticInfoChain.prototype.postErrors = function (errorReporter) {
+            var errors;
+            for(var i = 1; i < this.units.length; i++) {
+                errors = this.units[i].getSemanticErrors();
+                if(errors.length) {
+                    errorReporter.locationInfo = this.units[i].locationInfo;
+                    for(var j = 0; j < errors.length; j++) {
+                        errorReporter.simpleError(errors[j].ast, errors[j].message);
+                    }
+                }
             }
         };
         return SemanticInfoChain;
@@ -43858,6 +44080,7 @@ var TypeScript;
                     if(symbol) {
                         var endTime = new Date().getTime();
                         TypeScript.time_in_findSymbol += endTime - startTime;
+                        symbol.setDeclPath(nestedSymbolPath);
                         return symbol;
                     }
                     nestedSymbolPath.length -= 2;
@@ -43877,6 +44100,7 @@ var TypeScript;
                     if(symbol) {
                         var endTime = new Date().getTime();
                         TypeScript.time_in_findSymbol += endTime - startTime;
+                        symbol.setDeclPath(copyOfContextSymbolPath);
                         return symbol;
                     }
                     copyOfContextSymbolPath.length -= 2;
@@ -43886,13 +44110,21 @@ var TypeScript;
             symbol = this.semanticInfoChain.findSymbol([
                 name
             ], declKind);
+            if(symbol) {
+                symbol.setDeclPath([
+                    name
+                ]);
+            }
             var endTime = new Date().getTime();
             TypeScript.time_in_findSymbol += endTime - startTime;
             return symbol;
         };
         PullSymbolBinder.prototype.bindModuleDeclarationToPullSymbol = function (moduleDecl) {
             var modName = moduleDecl.getName();
-            var moduleSymbol = this.findSymbolInContext(modName, 8 /* Module */ , []);
+            var moduleSymbol = this.findSymbolInContext(modName, TypeScript.PullElementKind.SomeType, []);
+            if(moduleSymbol && moduleSymbol.getKind() != 8 /* Module */ ) {
+                moduleSymbol = null;
+            }
             var moduleAST = this.semanticInfo.getASTForDecl(moduleDecl);
             var createdNewSymbol = false;
             if(!moduleSymbol) {
@@ -43931,7 +44163,10 @@ var TypeScript;
         };
         PullSymbolBinder.prototype.bindEnumDeclarationToPullSymbol = function (enumDeclaration) {
             var enumName = enumDeclaration.getName();
-            var enumSymbol = this.findSymbolInContext(enumName, 8 /* Module */ , []);
+            var enumSymbol = this.findSymbolInContext(enumName, TypeScript.PullElementKind.SomeType, []);
+            if(enumSymbol && enumSymbol.getKind() != 128 /* Enum */ ) {
+                enumSymbol = null;
+            }
             var enumAST = this.semanticInfo.getASTForDecl(enumDeclaration);
             var createdNewSymbol = false;
             if(!enumSymbol) {
@@ -44005,7 +44240,12 @@ var TypeScript;
                         }
                     }
                 } else {
-                    classSymbol = this.findSymbolInContext(className, 16 /* Class */ , []);
+                    classSymbol = this.findSymbolInContext(className, TypeScript.PullElementKind.SomeType, []);
+                    if(classSymbol && classSymbol.getKind() != 16 /* Class */ ) {
+                        classSymbol = null;
+                    } else {
+                        reUsedSymbol = true;
+                    }
                 }
             }
             if(!reUsedSymbol) {
@@ -44050,7 +44290,10 @@ var TypeScript;
         };
         PullSymbolBinder.prototype.bindInterfaceDeclarationToPullSymbol = function (interfaceDecl) {
             var interfaceName = interfaceDecl.getName();
-            var interfaceSymbol = this.findSymbolInContext(interfaceName, 32 /* Interface */ , []);
+            var interfaceSymbol = this.findSymbolInContext(interfaceName, TypeScript.PullElementKind.SomeType, []);
+            if(interfaceSymbol && interfaceSymbol.getKind() != 32 /* Interface */ ) {
+                interfaceSymbol = null;
+            }
             var interfaceAST = this.semanticInfo.getASTForDecl(interfaceDecl);
             var createdNewSymbol = false;
             if(!interfaceSymbol) {
@@ -45417,7 +45660,8 @@ var TypeScript;
     })();
     TypeScript.PullSymbolUpdate = PullSymbolUpdate;    
     var PullSymbolGraphUpdater = (function () {
-        function PullSymbolGraphUpdater() {
+        function PullSymbolGraphUpdater(semanticInfoChain) {
+            this.semanticInfoChain = semanticInfoChain;
             this.updateVersion = 0;
         }
         PullSymbolGraphUpdater.prototype.removeDecl = function (declToRemove) {
@@ -45433,6 +45677,7 @@ var TypeScript;
                         this.removeDecl(childDecls[i]);
                     }
                 }
+                this.semanticInfoChain.removeSymbolFromCache(declSymbol);
             }
             this.updateVersion++;
         };
@@ -47617,8 +47862,10 @@ var TypeScript;
             this.stringTable = Collections.createStringTable();
             this.typeCollectionTime = 0;
             this.errorReporter = new TypeScript.ErrorReporter(this.errorOutput);
+            this.pullErrorReporter = new TypeScript.PullErrorReporter(this.errorOutput);
             this.persistentTypeState = new TypeScript.PersistentGlobalTypeState(this.errorReporter);
             this.errorReporter.parser = this.parser;
+            this.pullErrorReporter.parser = this.parser;
             this.initTypeChecker(this.errorOutput);
             this.parser.style_requireSemi = this.settings.styleSettings.requireSemi;
             this.parser.style_funcInLoop = this.settings.styleSettings.funcInLoop;
@@ -47740,7 +47987,7 @@ var TypeScript;
                     var syntaxTree = Parser1.parse(text, 1 /* EcmaScript5 */ , _this.stringTable);
                     timer.end();
                     var newParseTime = timer.time;
-                    if(true && syntaxTree.diagnostics().length === 0) {
+                    if(false && syntaxTree.diagnostics().length === 0) {
                         try  {
                             timer.start();
                             var script2 = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
@@ -48145,7 +48392,7 @@ var TypeScript;
                 var i = 0;
                 var createDeclsStartTime = new Date().getTime();
                 for(; i < _this.scripts.members.length; i++) {
-                    semanticInfo = new TypeScript.SemanticInfo(_this.units[i].filename);
+                    semanticInfo = new TypeScript.SemanticInfo(_this.units[i].filename, _this.units[i]);
                     declCollectionContext = new TypeScript.DeclCollectionContext(semanticInfo);
                     declCollectionContext.scriptName = _this.units[i].filename;
                     TypeScript.getAstWalkerFactory().walk(_this.scripts.members[i], TypeScript.preCollectDecls, TypeScript.postCollectDecls, null, declCollectionContext);
@@ -48161,7 +48408,7 @@ var TypeScript;
                 var bindEndTime = new Date().getTime();
                 var typeCheckStartTime = new Date().getTime();
                 for(i = 0; i < _this.scripts.members.length; i++) {
-                    _this.pullTypeChecker.setUnit(_this.units[i].filename, _this.logger);
+                    _this.pullTypeChecker.setUnit(_this.units[i].filename);
                     _this.pullTypeChecker.resolver.resolveBoundDecls(_this.semanticInfoChain.units[i + 1].getTopLevelDecls()[0], new TypeScript.PullTypeResolutionContext());
                 }
                 var typeCheckEndTime = new Date().getTime();
@@ -48170,42 +48417,14 @@ var TypeScript;
                 _this.logger.log("    Time in findSymbol: " + TypeScript.time_in_findSymbol);
                 _this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
                 _this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
-            });
-        };
-        TypeScriptCompiler.prototype.pullTypeCheckWithFidelity = function (refresh) {
-            if (typeof refresh === "undefined") { refresh = false; }
-            var _this = this;
-            return this.timeFunction("pullTypeCheck()", function () {
-                if(!_this.pullTypeChecker || refresh) {
-                    _this.semanticInfoChain = new TypeScript.SemanticInfoChain();
-                    _this.pullTypeChecker = new TypeScript.PullTypeChecker(_this.semanticInfoChain);
-                }
-                var semanticInfo = null;
-                var declCollectionStartTime = new Date().getTime();
-                TypeScript.lastBoundPullDeclId = TypeScript.pullDeclId;
-                for(var i = 0; i < _this.scripts.members.length; i++) {
-                    semanticInfo = new TypeScript.SemanticInfo(_this.units[i].filename);
-                    TypeScript.PullDeclCollector.collectDecls(_this.syntaxTrees[i].sourceUnit(), semanticInfo);
-                    _this.semanticInfoChain.addUnit(semanticInfo);
-                }
-                var declCollectionEndTime = new Date().getTime();
-                _this.logger.log("Decl collection: " + (declCollectionEndTime - declCollectionStartTime));
-                var bindStartTime = new Date().getTime();
-                var topLevelDecls = null;
-                var bindStartTime = new Date().getTime();
-                var binder = new TypeScript.PullSymbolBinder(_this.semanticInfoChain);
-                for(i = 1; i < _this.semanticInfoChain.units.length; i++) {
-                    binder.bindDeclsForUnit(_this.semanticInfoChain.units[i].getPath());
-                }
-                var bindEndTime = new Date().getTime();
-                _this.logger.log("Binding: " + (bindEndTime - bindStartTime));
+                _this.semanticInfoChain.postErrors(_this.pullErrorReporter);
             });
         };
         TypeScriptCompiler.prototype.pullUpdateScript = function (oldScript, newScript) {
             var _this = this;
             return this.timeFunction("pullUpdateScript: ", function () {
                 var declDiffer = new TypeScript.PullDeclDiffer();
-                var newScriptSemanticInfo = new TypeScript.SemanticInfo(oldScript.locationInfo.filename);
+                var newScriptSemanticInfo = new TypeScript.SemanticInfo(oldScript.locationInfo.filename, newScript.locationInfo);
                 var oldScriptSemanticInfo = _this.semanticInfoChain.getUnit(oldScript.locationInfo.filename);
                 TypeScript.lastBoundPullDeclId = TypeScript.pullDeclId;
                 var declCollectionContext = new TypeScript.DeclCollectionContext(newScriptSemanticInfo);
@@ -48231,9 +48450,8 @@ var TypeScript;
                 var innerBindEndTime = new Date().getTime();
                 _this.logger.log("Update Script - Inner bind time: " + (innerBindEndTime - innerBindStartTime));
                 if(diffResults.length) {
-                    var graphUpdater = new TypeScript.PullSymbolGraphUpdater();
+                    var graphUpdater = new TypeScript.PullSymbolGraphUpdater(_this.semanticInfoChain);
                     var diff;
-                    var addedDiff = null;
                     var traceStartTime = new Date().getTime();
                     for(var i = 0; i < diffResults.length; i++) {
                         diff = diffResults[i];
@@ -48241,137 +48459,146 @@ var TypeScript;
                             graphUpdater.removeDecl(diff.oldDecl);
                         } else if(diff.kind == 1 /* DeclAdded */ ) {
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
-                            addedDiff = diff;
+                            _this.resolvePosition(diff.newDecl.getSpan().minChar, newScript);
                         } else {
                         }
                     }
                     var traceEndTime = new Date().getTime();
                     _this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     _this.logger.log("Update Script - Number of diffs: " + diffResults.length);
+                    _this.semanticInfoChain.postErrors(_this.pullErrorReporter);
                     return true;
                 }
+                _this.semanticInfoChain.postErrors(_this.pullErrorReporter);
                 return false;
             });
+        };
+        TypeScriptCompiler.prototype.resolvePosition = function (pos, script, scriptName) {
+            var declStack = [];
+            var resultASTs = [];
+            if(!scriptName) {
+                scriptName = script.locationInfo.filename;
+            }
+            var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
+            var lastDeclAST = null;
+            var foundAST = null;
+            var symbol = null;
+            var lambdaAST = null;
+            var declarationInitASTs = [];
+            var objectLitAST = null;
+            var asgAST = null;
+            var typeAssertionASTs = [];
+            var resolutionContext = new TypeScript.PullTypeResolutionContext();
+            var pre = function (cur, parent) {
+                if(TypeScript.isValidAstNode(cur)) {
+                    if(pos >= cur.minChar && pos <= cur.limChar) {
+                        var previous = resultASTs[resultASTs.length - 1];
+                        if(previous == undefined || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
+                            var decl = semanticInfo.getDeclForAST(cur);
+                            if(decl) {
+                                declStack[declStack.length] = decl;
+                                lastDeclAST = cur;
+                            }
+                            if(cur.nodeType == 73 /* FuncDecl */  && TypeScript.hasFlag((cur).fncFlags, 131072 /* IsFunctionExpression */ )) {
+                                lambdaAST = cur;
+                            } else if(cur.nodeType == 75 /* VarDecl */ ) {
+                                declarationInitASTs[declarationInitASTs.length] = cur;
+                            } else if(cur.nodeType == 11 /* ObjectLit */ ) {
+                                objectLitAST = cur;
+                            } else if(cur.nodeType == 72 /* TypeAssertion */ ) {
+                                typeAssertionASTs[typeAssertionASTs.length] = cur;
+                            } else if(cur.nodeType == 32 /* Asg */ ) {
+                                asgAST = cur;
+                            }
+                            resultASTs[resultASTs.length] = cur;
+                        }
+                    }
+                }
+                return cur;
+            };
+            TypeScript.getAstWalkerFactory().walk(script, pre);
+            if(resultASTs.length) {
+                this.pullTypeChecker.setUnit(script.locationInfo.filename);
+                foundAST = resultASTs[resultASTs.length - 1];
+                if(lastDeclAST == foundAST) {
+                    symbol = declStack[declStack.length - 1].getSymbol();
+                    this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, resolutionContext);
+                } else {
+                    var enclosingDecl = null;
+                    for(var i = declStack.length - 1; i >= 0; i--) {
+                        if(!(declStack[i].getKind() & (1024 /* Variable */  | 2048 /* Parameter */ ))) {
+                            enclosingDecl = declStack[i];
+                            break;
+                        }
+                    }
+                    if(foundAST.nodeType == 25 /* Name */  && resultASTs.length > 1) {
+                        for(var i = resultASTs.length - 2; i >= 0; i--) {
+                            if(resultASTs[i].nodeType == 19 /* Dot */  || resultASTs[i].nodeType == 75 /* VarDecl */ ) {
+                                foundAST = resultASTs[i];
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    if(foundAST.nodeType == 94 /* List */ ) {
+                        for(var i = 0; i < (foundAST).members.length; i++) {
+                            if((foundAST).members[i].minChar > pos) {
+                                foundAST = (foundAST).members[i];
+                                break;
+                            }
+                        }
+                    }
+                    resolutionContext.resolveAggressively = true;
+                    var isTypedAssignment = false;
+                    if(declarationInitASTs.length) {
+                        var assigningAST;
+                        var varSymbol;
+                        for(var i = 0; i < declarationInitASTs.length; i++) {
+                            assigningAST = declarationInitASTs[i];
+                            isTypedAssignment = (assigningAST != null) && (assigningAST.typeExpr != null);
+                            this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
+                            varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
+                            if(varSymbol && isTypedAssignment) {
+                                var contextualType = varSymbol.getType();
+                                resolutionContext.pushContextualType(contextualType, false);
+                            }
+                            if(assigningAST.init) {
+                                this.pullTypeChecker.resolver.resolveAST(assigningAST.init, true, enclosingDecl, resolutionContext);
+                            }
+                        }
+                    }
+                    if(typeAssertionASTs.length) {
+                        for(var i = 0; i < typeAssertionASTs.length; i++) {
+                            this.pullTypeChecker.resolver.resolveAST(typeAssertionASTs[i], isTypedAssignment, enclosingDecl, resolutionContext);
+                        }
+                    }
+                    if(asgAST) {
+                        this.pullTypeChecker.resolver.resolveAST(asgAST, isTypedAssignment, enclosingDecl, resolutionContext);
+                    }
+                    if(objectLitAST) {
+                        this.pullTypeChecker.resolver.resolveAST(objectLitAST, isTypedAssignment, enclosingDecl, resolutionContext);
+                    }
+                    if(lambdaAST) {
+                        this.pullTypeChecker.resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
+                        enclosingDecl = semanticInfo.getDeclForAST(lambdaAST);
+                    }
+                    symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, isTypedAssignment, enclosingDecl, resolutionContext);
+                }
+            }
+            return {
+                symbol: symbol,
+                ast: foundAST
+            };
         };
         TypeScriptCompiler.prototype.pullGetTypeInfoAtPosition = function (pos, script, scriptName) {
             var _this = this;
             return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", function () {
-                var declStack = [];
-                var resultASTs = [];
-                if(!scriptName) {
-                    scriptName = script.locationInfo.filename;
-                }
-                var semanticInfo = _this.semanticInfoChain.getUnit(scriptName);
-                var lastDeclAST = null;
-                var foundAST = null;
-                var symbol = null;
-                var lambdaAST = null;
-                var declarationInitASTs = [];
-                var objectLitAST = null;
-                var asgAST = null;
-                var typeAssertionASTs = [];
-                var resolutionContext = new TypeScript.PullTypeResolutionContext();
-                var pre = function (cur, parent) {
-                    if(TypeScript.isValidAstNode(cur)) {
-                        if(pos >= cur.minChar && pos <= cur.limChar) {
-                            var previous = resultASTs[resultASTs.length - 1];
-                            if(previous == undefined || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
-                                var decl = semanticInfo.getDeclForAST(cur);
-                                if(decl) {
-                                    declStack[declStack.length] = decl;
-                                    lastDeclAST = cur;
-                                }
-                                if(cur.nodeType == 73 /* FuncDecl */  && TypeScript.hasFlag((cur).fncFlags, 131072 /* IsFunctionExpression */ )) {
-                                    lambdaAST = cur;
-                                } else if(cur.nodeType == 75 /* VarDecl */ ) {
-                                    declarationInitASTs[declarationInitASTs.length] = cur;
-                                } else if(cur.nodeType == 11 /* ObjectLit */ ) {
-                                    objectLitAST = cur;
-                                } else if(cur.nodeType == 72 /* TypeAssertion */ ) {
-                                    typeAssertionASTs[typeAssertionASTs.length] = cur;
-                                } else if(cur.nodeType == 32 /* Asg */ ) {
-                                    asgAST = cur;
-                                }
-                                resultASTs[resultASTs.length] = cur;
-                            }
-                        }
-                    }
-                    return cur;
-                };
-                TypeScript.getAstWalkerFactory().walk(script, pre);
-                if(resultASTs.length) {
-                    _this.pullTypeChecker.setUnit(script.locationInfo.filename, _this.logger);
-                    foundAST = resultASTs[resultASTs.length - 1];
-                    if(lastDeclAST == foundAST) {
-                        symbol = declStack[declStack.length - 1].getSymbol();
-                        _this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, resolutionContext);
-                    } else {
-                        var enclosingDecl = null;
-                        for(var i = declStack.length - 1; i >= 0; i--) {
-                            if(!(declStack[i].getKind() & (1024 /* Variable */  | 2048 /* Parameter */ ))) {
-                                enclosingDecl = declStack[i];
-                                break;
-                            }
-                        }
-                        if(foundAST.nodeType == 25 /* Name */  && resultASTs.length > 1) {
-                            for(var i = resultASTs.length - 2; i >= 0; i--) {
-                                if(resultASTs[i].nodeType == 19 /* Dot */  || resultASTs[i].nodeType == 75 /* VarDecl */ ) {
-                                    foundAST = resultASTs[i];
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                        if(foundAST.nodeType == 94 /* List */ ) {
-                            for(var i = 0; i < (foundAST).members.length; i++) {
-                                if((foundAST).members[i].minChar > pos) {
-                                    foundAST = (foundAST).members[i];
-                                    break;
-                                }
-                            }
-                        }
-                        resolutionContext.resolveAggressively = true;
-                        var isTypedAssignment = false;
-                        if(declarationInitASTs.length) {
-                            var assigningAST;
-                            var varSymbol;
-                            for(var i = 0; i < declarationInitASTs.length; i++) {
-                                assigningAST = declarationInitASTs[i];
-                                isTypedAssignment = (assigningAST != null) && (assigningAST.typeExpr != null);
-                                _this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
-                                varSymbol = _this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
-                                if(varSymbol && isTypedAssignment) {
-                                    var contextualType = varSymbol.getType();
-                                    resolutionContext.pushContextualType(contextualType, false);
-                                }
-                                if(assigningAST.init) {
-                                    _this.pullTypeChecker.resolver.resolveAST(assigningAST.init, true, enclosingDecl, resolutionContext);
-                                }
-                            }
-                        }
-                        if(typeAssertionASTs.length) {
-                            for(var i = 0; i < typeAssertionASTs.length; i++) {
-                                _this.pullTypeChecker.resolver.resolveAST(typeAssertionASTs[i], isTypedAssignment, enclosingDecl, resolutionContext);
-                            }
-                        }
-                        if(asgAST) {
-                            _this.pullTypeChecker.resolver.resolveAST(asgAST, isTypedAssignment, enclosingDecl, resolutionContext);
-                        }
-                        if(objectLitAST) {
-                            _this.pullTypeChecker.resolver.resolveAST(objectLitAST, isTypedAssignment, enclosingDecl, resolutionContext);
-                        }
-                        if(lambdaAST) {
-                            _this.pullTypeChecker.resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
-                            enclosingDecl = semanticInfo.getDeclForAST(lambdaAST);
-                        }
-                        symbol = _this.pullTypeChecker.resolver.resolveAST(foundAST, isTypedAssignment, enclosingDecl, resolutionContext);
-                    }
-                }
-                if(symbol) {
-                    var type = symbol.getType();
+                var info = _this.resolvePosition(pos, script, scriptName);
+                if(info.symbol) {
+                    var type = info.symbol.getType();
                     if(type) {
                         return {
-                            ast: foundAST,
+                            ast: info.ast,
                             typeName: type.getName(),
                             typeInfo: type.toString(),
                             typeSymbol: type
@@ -48379,7 +48606,7 @@ var TypeScript;
                     }
                 }
                 return {
-                    ast: foundAST,
+                    ast: info.ast,
                     typeName: "couldn't find the type...",
                     typeInfo: "couldn't find members...",
                     typeSymbol: null
