@@ -4,14 +4,7 @@
 
 class CompilerBaselineRunner extends RunnerBase {
 
-    constructor() {
-        super();
-        this.errors = true;
-        this.emit = true;
-        this.decl = true;
-        this.output = true;
-    }
-
+    private basePath = 'tests/cases';
     private errors;
     private emit;
     private decl;
@@ -19,6 +12,19 @@ class CompilerBaselineRunner extends RunnerBase {
 
     public options: string;
 
+    constructor(public testType?: string) {
+        super();
+        this.errors = true;
+        this.emit = true;
+        this.decl = true;
+        this.output = true;
+
+        if (testType === 'prototyping') {
+            this.basePath += '/prototyping';
+        }
+        this.basePath += '/compiler';
+    }
+    
     // the compiler flags which we support and functions to set the right settings
     private supportedFlags: { flag: string; setFlag: (x: TypeScript.CompilationSettings, value: string) => void; }[] = [
     { flag: 'comments', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.emitComments = value.toLowerCase() === 'true' ? true : false; } },
@@ -62,7 +68,6 @@ class CompilerBaselineRunner extends RunnerBase {
             });
         }
 
-        var basePath = 'tests/cases/compiler/';
         // strips the filename from the path.
         var justName = filename.replace(/^.*[\\\/]/, '');
         var content = IO.readFile(filename);
@@ -178,7 +183,7 @@ class CompilerBaselineRunner extends RunnerBase {
         this.parseOptions();
 
         if (this.tests.length === 0) {
-            this.enumerateFiles('tests/cases/compiler').forEach(fn => {
+            this.enumerateFiles(this.basePath).forEach(fn => {
                 fn = fn.replace(/\\/g, "/");
                 this.checkTestCodeOutput(fn);
             });

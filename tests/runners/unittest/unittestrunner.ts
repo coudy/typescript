@@ -23,6 +23,7 @@ class UnitTestRunner extends RunnerBase {
                 break;
             case 'samples':
                 this.tests = this.enumerateFiles('tests/cases/unittests/samples');
+                break;
             default:               
                 if (this.tests.length === 0) {
                     throw new Error('Unsupported test cases: ' + this.testType);

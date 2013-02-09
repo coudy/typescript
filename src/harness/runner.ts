@@ -278,10 +278,21 @@ opts.option('iterations', {
     }
 });
 
+// For running only compiler baselines with specific options like emit, decl files, etc
 opts.option('compiler-baselines', {
     experimental: true,
     set: function (str) {
         var runner = new CompilerBaselineRunner();
+        runner.options = str;
+        runners.push(runner);
+    }
+});
+
+// for running a second copy of compiler baselines in a prototyping subdirectory for destabilizing changes
+opts.option('prototyping', {
+    experimental: true,
+    set: function (str) {
+        var runner = new CompilerBaselineRunner('prototyping');
         runner.options = str;
         runners.push(runner);
     }

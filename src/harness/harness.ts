@@ -1748,11 +1748,21 @@ module Harness {
         }
 
         function localPath(filename: string) {
-            return Harness.userSpecifiedroot + 'tests/baselines/local/' + filename;
+            if (this.runners[0].testType === 'prototyping') {
+                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/local/' + filename;
+            }
+            else {
+                return Harness.userSpecifiedroot + 'tests/baselines/local/' + filename;
+            }
         }
 
         function referencePath(filename: string) {
-            return Harness.userSpecifiedroot + 'tests/baselines/reference/' + filename;
+            if (this.runners[0].testType === 'prototyping') {
+                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/reference/' + filename;
+            }
+            else {
+                return Harness.userSpecifiedroot + 'tests/baselines/reference/' + filename;
+            }
         }
 
         export function reset() {
