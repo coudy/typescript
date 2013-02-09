@@ -13,7 +13,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    // "S11.8.1_A2.1_T2";
+    // "editorHistoryModel.ts";
     undefined;
 
 var generate = false;
@@ -30,6 +30,18 @@ class Program {
             // return;
         }
 
+        Environment.standardOut.WriteLine("Testing against monoco.");
+        this.runTests("C:\\temp\\monoco-files",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+
+        Environment.standardOut.WriteLine("Testing against 262.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
+
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
             filePath => this.runPrettyPrinter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
@@ -44,18 +56,6 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
-
-        Environment.standardOut.WriteLine("Testing against 262.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
-
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
-
-        Environment.standardOut.WriteLine("Testing against monoco.");
-        this.runTests("C:\\temp\\monoco-files",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
@@ -307,7 +307,9 @@ class Program {
 
             Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
             
-            this.checkResult(filePath, tree, verify, generateBaseline, false);
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+
+            //this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
 
         totalTime += timer.time;
