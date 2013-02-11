@@ -313,21 +313,22 @@ module TypeScript {
 
                 var timer = new Timer();
                 var sharedIndex = this.units.length;
+                var reParsedScript: Script = null;
+                
+                if (!this.settings.useFidelity) {
+                    timer.start();
+                    var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
+                    timer.end();
 
-                timer.start();
-                var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
-                timer.end();
+                    reParsedScript = script;
 
-                var oldParseTime = timer.time;
+                    var oldParseTime = timer.time;
 
-                script.referencedFiles = referencedFiles;
-                script.isResident = keepResident;
-                this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
-
-                var index = this.units.length;
-                this.units[index] = script.locationInfo;
-
-                if (this.settings.useFidelity) {
+                    script.referencedFiles = referencedFiles;
+                    script.isResident = keepResident;
+                    this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
+                }
+                else {
                     var text = new TypeScript.SourceSimpleText(sourceText);
 
                     timer.start();
@@ -336,7 +337,7 @@ module TypeScript {
 
                     var newParseTime = timer.time;
 
-                    if (false && syntaxTree.diagnostics().length === 0) {
+                    if (true || syntaxTree.diagnostics().length === 0) {
                         try {
                             timer.start();
                             var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
@@ -344,14 +345,16 @@ module TypeScript {
 
                             var translateTime = timer.time;
 
-                            if (filename.indexOf("lib.d.ts") >= 0) {
-                                // IO.stdout.WriteLine("");
-                                IO.stdout.WriteLine("Old - New - Translate: " + oldParseTime + "\t" + newParseTime + "\t" + translateTime);
-                                // IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
-                            }
+                            //if (filename.indexOf("lib.d.ts") >= 0) {
+                            //    // IO.stdout.WriteLine("");
+                            //    IO.stdout.WriteLine("Old - New - Translate: " + oldParseTime + "\t" + newParseTime + "\t" + translateTime);
+                            //    // IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
+                            //}
 
                             script2.referencedFiles = referencedFiles;
-                            script2.isResident = keepResident; 
+                            script2.isResident = keepResident;
+
+                            reParsedScript = script2;
                              
                             // TypeScriptCompiler.compareObjects(script, script2);
                         } catch (e1) {
@@ -363,15 +366,18 @@ module TypeScript {
                     this.syntaxTrees.push(syntaxTree);
                 }
 
+                var index = this.units.length;
+                this.units[index] = reParsedScript.locationInfo;
+
                 if (!this.settings.usePull) {
                     var typeCollectionStart = new Date().getTime();
-                    this.typeChecker.collectTypes(script);
+                    this.typeChecker.collectTypes(reParsedScript);
                     this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
                 }
 
-                this.scripts.append(script);
+                this.scripts.append(reParsedScript);
 
-                return script
+                return reParsedScript;
             });
         }
 

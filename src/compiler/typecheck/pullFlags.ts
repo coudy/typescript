@@ -22,7 +22,7 @@ module TypeScript {
         Signature = 1 << 12,
         Enum = 1 << 13,
         FatArrow = 1 << 14,
-
+        
         ClassConstructorVariable = 1 << 15,
         InitializedModuleVariable = 1 << 16,
         EnumVariable = 1 << 17,

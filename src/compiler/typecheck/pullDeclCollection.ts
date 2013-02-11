@@ -43,28 +43,33 @@ module TypeScript {
     export function preCollectModuleDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>ast;
         var declFlags = PullElementFlags.None;
+        var modName = (<Identifier>moduleDecl.name).text;
+        var isDynamic = isQuoted(modName);
+        var kind: PullElementKind = PullElementKind.Module;
 
         if (hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
-        }
-
-        if (hasFlag(moduleDecl.modFlags, ModuleFlags.IsEnum)) {
-            declFlags |= PullElementFlags.Enum;
         }
 
         if (hasFlag(moduleDecl.modFlags, ModuleFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        var modName = (<Identifier>moduleDecl.name).text;
+        if (hasFlag(moduleDecl.modFlags, ModuleFlags.IsEnum)) {
+            declFlags |= PullElementFlags.Enum;
+            kind = PullElementKind.Enum;
+        }
+        else {
+            kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Module;
+        }
+
         var span = new DeclSpan();
 
         span.minChar = moduleDecl.minChar;
 
         span.limChar = moduleDecl.limChar;
 
-        var isDynamic = isQuoted(modName);
-        var decl = new PullDecl(modName, isDynamic ? PullElementKind.DynamicModule : PullElementKind.Module, declFlags, span, context.scriptName);
+        var decl = new PullDecl(modName, kind, declFlags, span, context.scriptName);
 
         context.getParent().addChildDecl(decl);
 

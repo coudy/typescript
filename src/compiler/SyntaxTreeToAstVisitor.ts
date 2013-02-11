@@ -572,7 +572,10 @@ module TypeScript {
                 //    innerDecl.modFlags |= ModuleFlags.Ambient;
                 //}
 
-                moduleDecl.modFlags |= ModuleFlags.Exported;
+                // mark the inner module declarations as exported
+                if (i) {
+                    moduleDecl.modFlags |= ModuleFlags.Exported;
+                }
 
                 // REVIEW: will also possibly need to re-parent comments as well
 
@@ -706,6 +709,7 @@ module TypeScript {
             members.append(mapDecl);
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
+            var start = this.position;
 
             for (var i = 0, n = enumDeclaration.variableDeclarators.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
@@ -717,6 +721,7 @@ module TypeScript {
                     var memberName: Identifier = this.identifierFromToken(variableDeclarator.identifier, /*isOptional:*/ false);
                     this.movePast(variableDeclarator.identifier);
                     var memberValue: AST = null;
+                    var memberStart = this.position;
 
                     if (variableDeclarator.equalsValueClause !== null) {
                         memberValue = variableDeclarator.equalsValueClause.accept(this);
@@ -745,6 +750,7 @@ module TypeScript {
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
                     member.typeExpr = new TypeReference(this.createRef(name.actualText, name.hasEscapeSequence, -1), 0);
                     member.varFlags |= (VarFlags.Readonly | VarFlags.Property);
+                    this.setSpan(member, memberStart, this.position);
 
                     if (memberValue.nodeType == NodeType.NumberLit) {
                         member.varFlags |= VarFlags.Constant;
@@ -781,6 +787,13 @@ module TypeScript {
             var endingToken = new ASTSpan();
             var modDecl = new ModuleDeclaration(name, members, this.topVarList(), endingToken);
             modDecl.modFlags |= ModuleFlags.IsEnum;
+
+            if (enumDeclaration.exportKeyword) {
+                modDecl.modFlags |= ModuleFlags.Exported;
+            }
+
+            this.setSpan(modDecl, start, this.position);
+            
             this.popDeclLists();
 
             return modDecl;
@@ -1116,6 +1129,7 @@ module TypeScript {
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
             result.fncFlags |= FncFlags.ConstructMember;
+            result.flags |= ASTFlags.TypeReference;
             result.hint = "_construct";
             result.classDecl = null;
 
@@ -1140,6 +1154,7 @@ module TypeScript {
             result.returnTypeAnnotation = returnType;
             // funcDecl.variableArgList = variableArgList;
             result.fncFlags |= FncFlags.Signature;
+            result.flags |= ASTFlags.TypeReference;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
 
             var typeRef = new TypeReference(result, 0);
@@ -1161,8 +1176,11 @@ module TypeScript {
                 null,
                 typeMembers,
                 null, null);
-            this.setSpan(result, start, this.position);
 
+            result.flags |= ASTFlags.TypeReference;
+
+            this.setSpan(result, start, this.position);
+            
             var typeRef = new TypeReference(result, 0);
             this.setSpan(typeRef, start, this.position);
 
@@ -1185,6 +1203,8 @@ module TypeScript {
             else {
                 result = new TypeReference(underlying, 1);
             }
+            
+            result.flags |= ASTFlags.TypeReference;
 
             this.setSpan(result, start, this.position);
 
@@ -1202,6 +1222,9 @@ module TypeScript {
             }
 
             var genericType = new GenericType(underlying, typeArguments);
+
+            genericType.flags |= ASTFlags.TypeReference;
+
             return new TypeReference(genericType, 0);
         }
 
@@ -1735,6 +1758,8 @@ module TypeScript {
             if (node.staticKeyword) {
                 result.fncFlags |= FncFlags.Static;
             }
+
+            result.fncFlags |= FncFlags.Method;
 
             return result;
         }
