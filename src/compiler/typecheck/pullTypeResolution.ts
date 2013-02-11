@@ -1490,7 +1490,7 @@ module TypeScript {
                     memberSymbol = new PullSymbol(text, PullElementKind.Property);
 
                     if (contextualType) {
-                        assigningSymbol = contextualType.getMemberByName(text);
+                        assigningSymbol = contextualType.findMember(text);
 
                         if (assigningSymbol) {
 
@@ -2167,7 +2167,7 @@ module TypeScript {
                 for (var iMember = 0; iMember < t1Members.length; iMember++) {
 
                     t1MemberSymbol = t1Members[iMember];
-                    t2MemberSymbol = t2.getMemberByName(t1MemberSymbol.getName());
+                    t2MemberSymbol = t2.findMember(t1MemberSymbol.getName());
 
                     if (t1MemberSymbol.getIsOptional() != t2MemberSymbol.getIsOptional()) {
                         this.identicalCache[comboId] = undefined;
@@ -2441,7 +2441,7 @@ module TypeScript {
                 for (var iMProp = 0; iMProp < mProps.length; iMProp++) {
 
                     mProp = mProps[iMProp];
-                    nProp = source.getMemberByName(mProp.getName());
+                    nProp = source.findMember(mProp.getName());
 
                     // PULLTODO:
                     // methods do not have the "arguments" field
@@ -2462,14 +2462,14 @@ module TypeScript {
                     if (!nProp) {
                         // If it's not present on the type in question, look for the property on 'Object'
                         if (this.cachedObjectInterfaceType) {
-                            nProp = this.cachedObjectInterfaceType.getMemberByName(mProp.getName());
+                            nProp = this.cachedObjectInterfaceType.findMember(mProp.getName());
                         }
 
                         if (!nProp) {
                             // Now, the property was not found on Object, but the type in question is a function, look
                             // for it on function
                             if (this.cachedFunctionInterfaceType && (mPropType.getCallSignatures().length || mPropType.getConstructSignatures().length)) {
-                                nProp = this.cachedFunctionInterfaceType.getMemberByName(mProp.getName());
+                                nProp = this.cachedFunctionInterfaceType.findMember(mProp.getName());
                             }
 
                             // finally, check to see if the property is optional

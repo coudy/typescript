@@ -130,9 +130,9 @@ module TypeScript {
 
     export class SemanticInfoChain {
         public units: SemanticInfo[] = [new SemanticInfo("")];
-        private declCache = <any>{};
-        private symbolCache = <any>{};
-        private unitCache = <any>{};
+        private declCache = <any>new BlockIntrinsics();
+        private symbolCache = <any>new BlockIntrinsics();
+        private unitCache = <any>new BlockIntrinsics();
 
         public anyTypeSymbol: PullTypeSymbol = null;
         public boolTypeSymbol: PullTypeSymbol = null;
@@ -315,7 +315,7 @@ module TypeScript {
         public update(compilationUnitPath: string) {
 
             // PULLTODO: Be less aggressive about clearing the cache
-            this.declCache = <any>{};
+            this.declCache = <any>new BlockIntrinsics();
             //this.symbolCache = <any>{};
             //this.unitCache[compilationUnitPath] = undefined;
         }

@@ -18,13 +18,18 @@ module TypeScript {
         public semanticInfo: SemanticInfo;
 
         public reBindingAfterChange = false;
-        public startingDeclForRebind = pullDeclId; // note that this gets set on creation
+        public startingDeclForRebind = pullDeclID; // note that this gets set on creation
+        public startingSymbolForRebind = pullSymbolID; // note that this gets set on creation
 
         constructor (public semanticInfoChain: SemanticInfoChain) {
         }
 
         public setUnit(fileName: string) {
             this.semanticInfo = this.semanticInfoChain.getUnit(fileName);
+        }
+
+        public postError(ast: AST, message: string) {
+            this.semanticInfo.postSemanticError(new SemanticError(ast, message));
         }
 
         public getParent(n = 0): PullTypeSymbol {
@@ -132,17 +137,28 @@ module TypeScript {
             // 2. If no other decl exists, create a new symbol and use that one
         
             var modName = moduleDecl.getName();
-            var moduleSymbol: PullTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
+            var moduleSymbol: PullTypeSymbol = null;
+            var parent = this.getParent();
+
+            var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleDecl);
+
+            var createdNewSymbol = false;
+
+            if (parent) {
+                moduleSymbol = parent.findNestedType(modName);
+            }
+            else if (!(moduleDecl.getFlags() & PullElementFlags.Exported)) {
+                moduleSymbol = <PullTypeSymbol>this.findSymbolInContext(modName, PullElementKind.SomeType, []);
+            }
 
             if (moduleSymbol && moduleSymbol.getKind() != PullElementKind.Module) {
                 // duplicate symbol error
+                this.postError(moduleAST, "Duplicate identifier '" + modName + "'");
+
                 moduleSymbol = null;
             }
 
-            var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleDecl);
-            var createdNewSymbol = false;
-
-            if (!moduleSymbol) {                
+            if (!moduleSymbol) { 
                 var moduleSymbol = new PullTypeSymbol(modName, PullElementKind.Module);
                 createdNewSymbol = true;
             }
@@ -198,13 +214,21 @@ module TypeScript {
             var enumName = enumDeclaration.getName();
             var enumSymbol = <PullTypeSymbol>this.findSymbolInContext(enumName, PullElementKind.Enum, []);
 
-            if (enumSymbol && enumSymbol.getKind() != PullElementKind.Enum) {
-                // error
-                enumSymbol = null;
-            }
-
             var enumAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(enumDeclaration);
             var createdNewSymbol = false;
+            var parent = this.getParent();
+
+            if (parent) {
+                enumSymbol = parent.findNestedType(enumName);
+            }
+            else if (!(enumDeclaration.getFlags() & PullElementFlags.Exported)) {
+                enumSymbol = <PullTypeSymbol>this.findSymbolInContext(enumName, PullElementKind.SomeType, []);
+            }
+
+            if (enumSymbol && (enumSymbol.getKind() != PullElementKind.Enum || enumSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+                this.postError(enumAST, "Duplicate identifier '" + enumName + "'");
+                enumSymbol = null;
+            }
 
             if (!enumSymbol) {
                 enumSymbol = new PullTypeSymbol(enumName, PullElementKind.Enum);
@@ -270,51 +294,39 @@ module TypeScript {
             var parent = this.getParent();
             var cleanedPreviousDecls = false;
 
-            if (this.reBindingAfterChange) {
+            if (parent) {
+                classSymbol = <PullClassTypeSymbol>parent.findNestedType(className);
+            }
+            else if (!(classDecl.getFlags() & PullElementFlags.Exported)) {
+                classSymbol = <PullClassTypeSymbol>this.findSymbolInContext(className, PullElementKind.SomeType, []);
+            }
 
-                if (parent) {
-                    // see if the parent already has a symbol for this class
-                    var members = parent.getMembers();
-                    var member: PullSymbol = null;
+            if (classSymbol && (classSymbol.getKind() != PullElementKind.Class || classSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+                this.postError(classAST, "Duplicate identifier '" + className + "'");
+                classSymbol = null;
+            }
+            else if (classSymbol) {
+                reUsedSymbol = true;
+            }
 
-                    for (var i = 0 ; i < members.length; i++) {
-                        member = members[i];
+            if (this.reBindingAfterChange && classSymbol) {
 
-                        if (member.getName() == className && member.getKind() == PullElementKind.Class) {
-                            reUsedSymbol = true;
-                            classSymbol = <PullClassTypeSymbol>member;
+                // prune out-of-date decls
+                var decls = classSymbol.getDeclarations();
+                var scriptName = classDecl.getScriptName();
 
-                            // prune out-of-date decls
-                            var decls = classSymbol.getDeclarations();
-                            var scriptName = classDecl.getScriptName();
-
-                            for (var j = 0; j < decls.length; j++) {
-                                if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                    classSymbol.removeDeclaration(decls[j]);
-                                }
-                            }
-
-                            decls = classSymbol.getDeclarations();
-
-                            for (var j = 0; j < decls.length; j++) {
-                                if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                    classSymbol.removeDeclaration(decls[j]);
-                                    cleanedPreviousDecls = true;
-                                }
-                            }
-
-                            break;
-                        }
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        classSymbol.removeDeclaration(decls[j]);
                     }
                 }
-                else {
-                    classSymbol = <PullClassTypeSymbol>this.findSymbolInContext(className, PullElementKind.SomeType, []);
 
-                    if (classSymbol && classSymbol.getKind() != PullElementKind.Class) {
-                        classSymbol = null;
-                    }
-                    else {
-                        reUsedSymbol = true;
+                decls = classSymbol.getDeclarations();
+
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        classSymbol.removeDeclaration(decls[j]);
+                        cleanedPreviousDecls = true;
                     }
                 }
             }
@@ -419,13 +431,21 @@ module TypeScript {
             var interfaceName = interfaceDecl.getName();
             var interfaceSymbol: PullTypeSymbol = <PullTypeSymbol>this.findSymbolInContext(interfaceName, PullElementKind.SomeType, []);
 
-            if (interfaceSymbol && interfaceSymbol.getKind() != PullElementKind.Interface) {
-                // error
-                interfaceSymbol = null;
-            }
-
             var interfaceAST = <TypeDeclaration>this.semanticInfo.getASTForDecl(interfaceDecl);
             var createdNewSymbol = false;
+            var parent = this.getParent();
+
+            if (parent) {
+                interfaceSymbol = parent.findNestedType(interfaceName);
+            }
+            else if (!(interfaceDecl.getFlags() & PullElementFlags.Exported)) {
+                interfaceSymbol = <PullClassTypeSymbol>this.findSymbolInContext(interfaceName, PullElementKind.SomeType, []);
+            }
+
+            if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface)) {
+                this.postError(interfaceAST, "Duplicate identifier '" + interfaceName + "'");
+                interfaceSymbol = null;
+            }
 
             if (!interfaceSymbol) {
                 interfaceSymbol = new PullTypeSymbol(interfaceName, PullElementKind.Interface);
@@ -439,7 +459,6 @@ module TypeScript {
             this.semanticInfo.setSymbolForAST(interfaceAST.name, interfaceSymbol);
 
             if (createdNewSymbol) {
-                var parent = this.getParent();
 
                 if (parent) {
                     var linkKind = interfaceDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
@@ -525,7 +544,7 @@ module TypeScript {
         // variables
         public bindVariableDeclarationToPullSymbol(variableDeclaration: PullDecl) {
             var declFlags = variableDeclaration.getFlags();
-            var declType = variableDeclaration.getKind();
+            var declKind = variableDeclaration.getKind();
             var varDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(variableDeclaration);
 
             var isExported = false;
@@ -540,36 +559,34 @@ module TypeScript {
 
             var parent = this.getParent();
 
-            if (this.reBindingAfterChange && parent) {
-                // see if the parent already has a symbol for this class
-                var members = parent.getMembers();
-                var member: PullSymbol = null;
+            if (parent) {
+                variableSymbol = parent.findMember(declName);
+            }
+            else if (!(variableDeclaration.getFlags() & PullElementFlags.Exported)) {
+                variableSymbol = this.findSymbolInContext(declName, PullElementKind.SomeValue, []);
+            }
 
-                for (var i = 0 ; i < members.length; i++) {
-                    member = members[i];
+            if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+                this.postError(varDeclAST, "Duplicate identifier '" + declName + "'");
+                variableSymbol = null;
+            }
 
-                    if (member.getName() == declName && member.getKind() == declType) {
-                        parentHadSymbol = true;
-                        variableSymbol = member;
-                    
-                        // prune out-of-date decls...
-                        var decls = member.getDeclarations();
-                        var scriptName = variableDeclaration.getScriptName();
+            if (this.reBindingAfterChange && variableSymbol) {
+   
+                // prune out-of-date decls...
+                var decls = variableSymbol.getDeclarations();
+                var scriptName = variableDeclaration.getScriptName();
 
-                        for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                variableSymbol.removeDeclaration(decls[j]);
-                            }
-                        }
-
-                        break;
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        variableSymbol.removeDeclaration(decls[j]);
                     }
                 }
             }
 
-            if (!parentHadSymbol) {
-                variableSymbol = new PullSymbol(declName, declType);
-            }        
+            if (!variableSymbol) {
+                variableSymbol = new PullSymbol(declName, declKind);
+            }
 
             variableSymbol.addDeclaration(variableDeclaration);
             variableDeclaration.setSymbol(variableSymbol);
@@ -657,29 +674,27 @@ module TypeScript {
 
             var parent = this.getParent();
 
-            if (this.reBindingAfterChange && parent) {
-                // see if the parent already has a symbol for this class
-                var members = parent.isClass() && isStatic ? (<PullClassTypeSymbol>parent).getConstructorMethod().getType().getMembers() : parent.getMembers();
-                var member: PullSymbol = null;
+            propertySymbol = parent.findMember(declName);
 
-                for (var i = 0 ; i < members.length; i++) {
-                    member = members[i];
+            if (propertySymbol && (propertySymbol.getSymbolID() > this.startingSymbolForRebind)) {
+                this.postError(propDeclAST, "Duplicate identifier '" + declName + "'");
 
-                    if (member.getName() == declName && member.getKind() == declKind) {
-                        reUsedSymbol = true;
-                        propertySymbol = member;
-                    
-                        // prune out-of-date decls...
-                        var decls = member.getDeclarations();
-                        var scriptName = propertyDeclaration.getScriptName();
+                propertySymbol = null;
+            }
 
-                        for (var j = 0; j < decls.length; j++) {
-                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                                propertySymbol.removeDeclaration(decls[j]);
-                            }
-                        }
+            if (propertySymbol) {
+                reUsedSymbol = true;
+            }
 
-                        break;
+            if (this.reBindingAfterChange && propertySymbol) {
+
+                // prune out-of-date decls...
+                var decls = propertySymbol.getDeclarations();
+                var scriptName = propertyDeclaration.getScriptName();
+
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        propertySymbol.removeDeclaration(decls[j]);
                     }
                 }
             }
@@ -760,6 +775,7 @@ module TypeScript {
             var argDecl: BoundDecl = null;
             var parameterSymbol: PullSymbol = null;
             var isProperty = false;
+            var params: any = new BlockIntrinsics();
 
             if (funcDecl.arguments) {
 
@@ -768,6 +784,13 @@ module TypeScript {
                     decl = this.semanticInfo.getDeclForAST(argDecl);
                     isProperty = hasFlag(argDecl.varFlags, VarFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Variable);
+
+                    if (params[argDecl.id.actualText]) {
+                        this.postError(argDecl, "Duplicate identifier '" + argDecl.id.actualText + "'");
+                    }
+                    else {
+                        params[argDecl.id.actualText] = true;
+                    }
                 
                     if (decl) {
                         parameterSymbol.addDeclaration(decl);
@@ -824,65 +847,35 @@ module TypeScript {
             var functionSymbol: PullSymbol = null;
             var functionTypeSymbol: PullFunctionTypeSymbol = null;
 
-            if (this.reBindingAfterChange) {
-                if (parent) { // PULLREVIEW: What if the parent's a function?
-                    var members = parent.getMembers();
-                    var member: PullSymbol = null;
+            if (parent) {
+                functionSymbol = parent.findMember(funcName);
+            }
+            else if (!(functionDeclaration.getFlags() & PullElementFlags.Exported)) {
+                functionSymbol = this.findSymbolInContext(funcName, PullElementKind.SomeValue, []);
+            }
 
-                    for (var i = 0 ; i < members.length; i++) {
-                        member = members[i];
+            if (functionSymbol && functionSymbol.getKind() != PullElementKind.Function) {
+                this.postError(funcDeclAST, "Duplicate identifier '" + funcName + "'");
+                functionSymbol = null;
+            }
 
-                        if (member.getName() == funcName && (member.getKind() & declKind)) {
-                            reUsedSymbol = true;
-                            functionSymbol = <PullFunctionTypeSymbol>member;
+            if (functionSymbol) {
+                functionTypeSymbol = <PullFunctionTypeSymbol>functionSymbol.getType();
+                reUsedSymbol = true;
+            }
+            
+            if (this.reBindingAfterChange && functionSymbol) {
 
-                            break;
-                        }
+                // prune out-of-date decls...
+                var decls = functionSymbol.getDeclarations();
+                var scriptName = functionDeclaration.getScriptName();
+
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        functionSymbol.removeDeclaration(decls[j]);
                     }
                 }
-                else {
-                    functionSymbol = <PullFunctionTypeSymbol>this.findSymbolInContext(funcName, declKind, []);
-
-                    // PULLTODO: Check that the symbol is a function symbol
-                }
-
-                if (functionSymbol) {
-                    reUsedSymbol = true;
-                    
-                    // prune out-of-date decls...
-                    var decls = functionSymbol.getDeclarations();
-                    var scriptName = functionDeclaration.getScriptName();
-
-                    for (var j = 0; j < decls.length; j++) {
-                        if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                            functionSymbol.removeDeclaration(decls[j]);
-                            cleanedPreviousDecls = true;
-                        }
-                    }
-
-                    functionSymbol.invalidate();
-                }
-            }
-            else {
-                var candidateSym: PullSymbol;
-
-                // if there's already a parent symbol, any preceeding overloads will be present there,
-                // so we can just check the parent's children
-                if (parent) {
-                    candidateSym = parent.getMemberByName(funcName);
-                }
-                else {
-                    // PULLREVIEW: This call ends up being quite expensive - need to avoid it if at all possible
-                    candidateSym = <PullFunctionTypeSymbol>this.findSymbolInContext(funcName, declKind, []);
-
-                    // PULLTODO: Check that the symbol is a function symbol
-                }
-
-                if (candidateSym && (candidateSym.getKind() & PullElementKind.Function)) {
-                    functionSymbol = <PullFunctionTypeSymbol>candidateSym;
-                    functionTypeSymbol = <PullFunctionTypeSymbol>functionSymbol.getType();
-                }
-            }
+            } 
 
             if (!functionSymbol) {
                 // PULLTODO: Make sure that we properly flag signature decl types when collecting decls
@@ -1043,47 +1036,29 @@ module TypeScript {
             var linkKind = isStatic ? SymbolLinkKind.StaticMember :
                             isPrivate ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember;
 
-            if (this.reBindingAfterChange) {
-                var members = parent.isClass() && isStatic ? (<PullClassTypeSymbol>parent).getConstructorMethod().getType().getMembers() : parent.getMembers();
-                var member: PullSymbol = null;
 
-                for (var i = 0 ; i < members.length; i++) {
-                    member = members[i];
+            methodSymbol = parent.isClass() && isStatic && (<PullClassTypeSymbol>parent).getConstructorMethod() ? (<PullClassTypeSymbol>parent).getConstructorMethod().getType().findMember(methodName) : parent.findMember(methodName);
 
-                    if (member.getName() == methodName && (member.getKind() & declKind)) {
-                        reUsedSymbol = true;
-
-                        methodSymbol = member;
-                        methodTypeSymbol = <PullFunctionTypeSymbol>member.getType();
-
-                        break;
-                    }
-                }
-            
-                if (methodSymbol) {
-                    // prune out-of-date decls...
-                    var decls = methodSymbol.getDeclarations();
-                    var scriptName = methodDeclaration.getScriptName();
-
-                    for (var j = 0; j < decls.length; j++) {
-                        if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                            methodSymbol.removeDeclaration(decls[j]);
-                            cleanedPreviousDecls = true;
-                        }
-                    }
-
-                    methodSymbol.invalidate();
-                    methodTypeSymbol.invalidate();
-                }
+            if (methodSymbol && methodSymbol.getKind() != PullElementKind.Method) {
+                this.postError(methodAST, "Duplicate identifier '" + methodName + "'");
+                methodSymbol = null;
             }
-            else {
-                var candidateSym: PullSymbol;
-                
-                candidateSym = parent.getMemberByName(methodName);
 
-                if (candidateSym && (candidateSym.getKind() & PullElementKind.Function)) {
-                    methodSymbol = candidateSym;
-                    methodTypeSymbol = <PullFunctionTypeSymbol>methodSymbol.getType();
+            if (methodSymbol) {
+                methodTypeSymbol = <PullFunctionTypeSymbol>methodSymbol.getType();
+                reUsedSymbol = true;
+            }
+
+            if (this.reBindingAfterChange && methodSymbol) {
+
+                // prune out-of-date decls...
+                var decls = methodSymbol.getDeclarations();
+                var scriptName = methodDeclaration.getScriptName();
+
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        methodSymbol.removeDeclaration(decls[j]);
+                    }
                 }
             }
 
@@ -1326,6 +1301,7 @@ module TypeScript {
 
             if (rebind) {
                 this.startingDeclForRebind = lastBoundPullDeclId;
+                this.startingSymbolForRebind = lastBoundPullSymbolID;
                 this.reBindingAfterChange = true;
             }
 

@@ -6,6 +6,7 @@
 module TypeScript {
 
     export var pullSymbolID = 0
+    export var lastBoundPullSymbolID = 0;
 
     export class PullSymbol {
 
@@ -408,8 +409,8 @@ module TypeScript {
             memberSymbol.setContainer(this, linkKind);
 
             if (!this.memberCache) {
-                this.memberCache = {};
-                this.memberTypeCache = {};
+                this.memberCache = new BlockIntrinsics();
+                this.memberTypeCache = new BlockIntrinsics();
             }
 
             if (!memberSymbol.isType()) {
@@ -443,16 +444,6 @@ module TypeScript {
                 members[members.length] = this.memberLinks[i].end;
             }
             return members;
-        }
-
-        public getMemberByName(name: string): PullSymbol {
-            for (var i = 0; i < this.memberLinks.length; i++) {
-                if (this.memberLinks[i].end.getName() == name) {
-                    return this.memberLinks[i].end;
-                }
-            }
-
-            return null;
         }
 
         public addCallSignature(callSignature: PullSignatureSymbol) { 
@@ -642,7 +633,7 @@ module TypeScript {
             var memberSymbol: PullSymbol;
 
             if (!this.memberCache) {
-                this.memberCache = {};
+                this.memberCache = new BlockIntrinsics();
 
                 for (var i = 0; i < this.memberLinks.length; i++) {
                     this.memberCache[this.memberLinks[i].end.getName()] = this.memberLinks[i].end;
@@ -669,7 +660,7 @@ module TypeScript {
             var memberSymbol: PullTypeSymbol;
 
             if (!this.memberTypeCache) {
-                this.memberTypeCache = {};
+                this.memberTypeCache = new BlockIntrinsics();
 
                 for (var i = 0; i < this.memberLinks.length; i++) {
                     if (this.memberLinks[i].end.isType()) {

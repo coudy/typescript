@@ -924,7 +924,8 @@ module TypeScript {
                 var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.filename, newScript.locationInfo);
                 var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldScript.locationInfo.filename);
 
-                lastBoundPullDeclId = pullDeclId;
+                lastBoundPullDeclId = pullDeclID;
+                lastBoundPullSymbolID = pullSymbolID;
 
                 var declCollectionContext = new DeclCollectionContext(newScriptSemanticInfo);
 

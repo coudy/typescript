@@ -11,7 +11,7 @@ module TypeScript {
         private declPath: string[] = [];
         public semanticInfo: SemanticInfo;
         public reBindingAfterChange = false;
-        public startingDeclForRebind = pullDeclId; // note that this gets set on creation
+        public startingDeclForRebind = pullDeclID; // note that this gets set on creation
 
         constructor (public semanticInfoChain: SemanticInfoChain, public scriptName: string, public useFidelity = false) {
             this.semanticInfo = this.semanticInfoChain.getUnit(this.scriptName);

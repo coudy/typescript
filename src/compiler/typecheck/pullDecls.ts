@@ -5,7 +5,7 @@
 
 module TypeScript { 
 
-    export var pullDeclId = 0;
+    export var pullDeclID = 0;
     export var lastBoundPullDeclId = 0;
 
     export class DeclSpan {
@@ -32,7 +32,7 @@ module TypeScript {
         private childDeclTypeCache: any = new BlockIntrinsics();
         private childDeclValueCache: any = new BlockIntrinsics();
         
-        private declID = pullDeclId++;
+        private declID = pullDeclID++;
         
         private declFlags: PullElementFlags = PullElementFlags.None;
         

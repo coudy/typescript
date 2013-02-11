@@ -442,7 +442,6 @@ module TypeScript {
         public currentTokens: SavedToken[];
         public tokensByLine: SavedToken[][];
         public lexStateByLine: LexState[];
-        private prevToken: SavedToken = null;
         public previousToken(): Token { return this.prevToken; }
         public currentToken = 0;
         public tokens = new SavedToken[];
