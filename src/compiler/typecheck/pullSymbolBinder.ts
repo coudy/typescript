@@ -326,6 +326,7 @@ module TypeScript {
                 for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         classSymbol.removeDeclaration(decls[j]);
+
                         cleanedPreviousDecls = true;
                     }
                 }
@@ -584,14 +585,14 @@ module TypeScript {
                 }
             }
 
-            if (!variableSymbol) {
-                variableSymbol = new PullSymbol(declName, declKind);
-            }
-
-            variableSymbol.addDeclaration(variableDeclaration);
-            variableDeclaration.setSymbol(variableSymbol);
-
             if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
+                if (!variableSymbol) {
+                    variableSymbol = new PullSymbol(declName, declKind);
+                }
+
+                variableSymbol.addDeclaration(variableDeclaration);
+                variableDeclaration.setSymbol(variableSymbol);
+
                 this.semanticInfo.setSymbolForAST(varDeclAST, variableSymbol);
                 this.semanticInfo.setSymbolForAST(varDeclAST.id, variableSymbol);
             }
@@ -620,15 +621,12 @@ module TypeScript {
                 }
 
                 if (classTypeSymbol) {
-                    var constructorMethod = classTypeSymbol.getConstructorMethod();
-
-                    variableSymbol.setType(constructorMethod.getType());
+                    variableSymbol = classTypeSymbol.getConstructorMethod();
+                    variableDeclaration.setSymbol(variableSymbol);
                 }
                 else {
                     variableSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                 }
-                
-                variableSymbol.setResolved();
             }
 
             if (parent && !parentHadSymbol) {
@@ -699,14 +697,14 @@ module TypeScript {
                 }
             }
 
-            if (!reUsedSymbol) {
-                propertySymbol = new PullSymbol(declName, declKind);
-            }        
-
-            propertySymbol.addDeclaration(propertyDeclaration);
-            propertyDeclaration.setSymbol(propertySymbol);
-
             if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
+                if (!reUsedSymbol) {
+                    propertySymbol = new PullSymbol(declName, declKind);
+                }
+
+                propertySymbol.addDeclaration(propertyDeclaration);
+                propertyDeclaration.setSymbol(propertySymbol);
+
                 this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
                 this.semanticInfo.setSymbolForAST(propDeclAST.id, propertySymbol);
             }
@@ -735,9 +733,8 @@ module TypeScript {
                 }
 
                 if (classTypeSymbol) {
-                    var constructorMethod = classTypeSymbol.getConstructorMethod();
-
-                    propertySymbol.setType(constructorMethod.getType());
+                    propertySymbol = classTypeSymbol.getConstructorMethod();
+                    propertyDeclaration.setSymbol(propertySymbol);
                 }
                 else {
                     propertySymbol.setType(this.semanticInfoChain.anyTypeSymbol);
@@ -873,6 +870,8 @@ module TypeScript {
                 for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         functionSymbol.removeDeclaration(decls[j]);
+
+                        cleanedPreviousDecls = true;
                     }
                 }
             } 
@@ -1058,6 +1057,8 @@ module TypeScript {
                 for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         methodSymbol.removeDeclaration(decls[j]);
+
+                        cleanedPreviousDecls = true;
                     }
                 }
             }
@@ -1163,6 +1164,7 @@ module TypeScript {
                     for (var j = 0; j < decls.length; j++) {
                         if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                             constructorSymbol.removeDeclaration(decls[j]);
+
                             cleanedPreviousDecls = true;
                         }
                     }
@@ -1175,11 +1177,11 @@ module TypeScript {
             if (!constructorSymbol) {
                 constructorSymbol = new PullSymbol(constructorName, PullElementKind.ConstructorMethod);
                 constructorTypeSymbol = new PullConstructorTypeSymbol();
-                
-                constructorSymbol.setType(constructorTypeSymbol);
-
-                parent.setConstructorMethod(constructorSymbol);
             }
+
+            // Even if we're reusing the symbol, it would have been cleared by the call to invalidate above
+            parent.setConstructorMethod(constructorSymbol);
+            constructorSymbol.setType(constructorTypeSymbol);
 
             constructorDeclaration.setSymbol(constructorSymbol);
             constructorSymbol.addDeclaration(constructorDeclaration);

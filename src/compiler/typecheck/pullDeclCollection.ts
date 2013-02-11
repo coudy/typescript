@@ -109,9 +109,8 @@ module TypeScript {
         context.pushParent(decl);
 
         context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setDeclForAST(ast, constructorDecl);
 
-        context.semanticInfo.setASTForDecl(decl,ast);
+        context.semanticInfo.setASTForDecl(decl, ast);
 
         return true;
     }

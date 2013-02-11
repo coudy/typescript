@@ -214,7 +214,6 @@ module TypeScript {
             this.removeOutgoingLink(this.cachedTypeLink);
 
             this.cachedContainerLink = null;
-            this.cachedTypeLink = null;
             
             this.hasBeenResolved = false;
         }
@@ -676,7 +675,6 @@ module TypeScript {
 
         public invalidate() {
             this.memberCache = null;
-            this.memberTypeCache = null;
 
             this.memberLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.StaticMember ||
                                                               psl.kind == SymbolLinkKind.PrivateMember ||
@@ -736,7 +734,7 @@ module TypeScript {
         public invalidate() { }
 
         public toString() {
-            return name;
+            return this.getName();
         }
     }
 

@@ -337,17 +337,19 @@ module Services {
             }
 
             for (var unitIndex = 0, len = this.errorCollector.fileMap.length; unitIndex < len; unitIndex++) {
-                var errors = (<SyntaxTree>this.compiler.syntaxTrees[unitIndex]).diagnostics();
-                if (errors !== undefined) {
-                    for (var i = 0; i < errors.length; i++) {
-                        var error = errors[i];
-                        if (filter(unitIndex, error)) {
-                            if (!addError(unitIndex, error)) {
-                                break;
+                if (this.compiler.syntaxTrees[unitIndex]) {
+                    var errors = (<SyntaxTree>this.compiler.syntaxTrees[unitIndex]).diagnostics();
+                    if (errors !== undefined) {
+                        for (var i = 0; i < errors.length; i++) {
+                            var error = errors[i];
+                            if (filter(unitIndex, error)) {
+                                if (!addError(unitIndex, error)) {
+                                    break;
+                                }
                             }
                         }
+                        // TODO: Type checker errors
                     }
-                    // TODO: Type checker errors
                 }
             }
 
