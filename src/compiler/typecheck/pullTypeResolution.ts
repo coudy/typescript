@@ -350,7 +350,7 @@ module TypeScript {
                 case NodeType.ArgDecl:
                     return this.resolveVariableDeclaration(<BoundDecl>declAST, context);
                 default:
-                    this.postSemanticError(declAST, "RESOLUTION ERROR: Invalid declaration type...");
+                    this.postSemanticError(declAST, "Invalid declaration type");
                     return this.semanticInfoChain.anyTypeSymbol;
             }
         }
@@ -651,7 +651,7 @@ module TypeScript {
                 }
 
                 if (!typeDeclSymbol) {
-                    this.postSemanticError(typeName, "RESOLUTION ERROR: Could not find type '" + typeName.actualText + "'");
+                    this.postSemanticError(typeName, "Could not find type '" + typeName.actualText + "'");
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
             }
@@ -682,13 +682,13 @@ module TypeScript {
                 context.resolvingTypeReference = prevResolvingTypeReference;
                 
                 if (!typeDeclSymbol) {
-                    this.postSemanticError(dottedName.operand2, "RESOLUTION ERROR: Could not find dotted type '" + (<Identifier>dottedName.operand2).actualText + "'");
+                    this.postSemanticError(dottedName.operand2, "Could not find dotted type '" + (<Identifier>dottedName.operand2).actualText + "'");
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
             }
 
             if (!typeDeclSymbol) {
-                this.postSemanticError(typeRef.term, "RESOLUTION ERROR: Couldn't bind to the type symbol before creating the array, for some reason");
+                this.postSemanticError(typeRef.term, "Couldn't bind to the type symbol before creating the array");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -738,7 +738,7 @@ module TypeScript {
                 var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, this.getEnclosingDecl(decl), context);
 
                 if (!typeExprSymbol) {
-                    this.postSemanticError(varDecl, "RESOLUTION ERROR: Could not resolve type expression for variable '" + varDecl.id.actualText + "'");
+                    this.postSemanticError(varDecl, "Could not resolve type expression for variable '" + varDecl.id.actualText + "'");
                      
                     declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
 
@@ -764,7 +764,7 @@ module TypeScript {
                 var initExprSymbol = this.resolveStatementOrExpression(varDecl.init, false, this.getEnclosingDecl(decl), context);
 
                 if (!initExprSymbol) {
-                    this.postSemanticError(varDecl, "RESOLUTION ERROR: Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'");
+                    this.postSemanticError(varDecl, "Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'");
 
                     context.setTypeInContext(declSymbol, this.semanticInfoChain.anyTypeSymbol);
 
@@ -903,7 +903,7 @@ module TypeScript {
                     var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, this.getEnclosingDecl(funcDecl), context);
 
                     if (!returnTypeSymbol) {
-                        this.postSemanticError(funcDeclAST.returnTypeAnnotation, "RESOLUTION ERROR: Could not resolve return type reference for some reason...");
+                        this.postSemanticError(funcDeclAST.returnTypeAnnotation, "Could not resolve return type reference for some reason...");
                         signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
 
                         hadError = true;
@@ -1101,7 +1101,7 @@ module TypeScript {
             nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
             if (!nameSymbol) {
-                this.postSemanticError(nameAST, "RESOLUTION ERROR: Could not find symbol '" + id + "'");
+                this.postSemanticError(nameAST, "Could not find symbol '" + id + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1125,7 +1125,7 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find lhs type for dotted name '" + rhsName + "'");
+                this.postSemanticError(dottedNameAST.operand2, "Could not find enclosing symbol for dotted name '" + rhsName + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1161,7 +1161,7 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
-                    this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find dotted symbol name '" + rhsName + "'");
+                    this.postSemanticError(dottedNameAST.operand2, "Could not find dotted symbol name '" + rhsName + "'");
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
             }
@@ -1188,7 +1188,7 @@ module TypeScript {
             nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
             if (!nameSymbol) {
-                this.postSemanticError(nameAST, "RESOLUTION ERROR: Could not find type '" + id + "'");
+                this.postSemanticError(nameAST, "Could not find type '" + id + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1218,7 +1218,7 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find lhs type for dotted name '" + rhsName + "'");
+                this.postSemanticError(dottedNameAST.operand2, "RCould not find enclosing type for dotted type name '" + rhsName + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1227,7 +1227,7 @@ module TypeScript {
             var childTypeSymbol = lhsType.findNestedType(rhsName);
 
             if (!childTypeSymbol) {
-                this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find dotted type name '" + rhsName + "'");
+                this.postSemanticError(dottedNameAST.operand2, "Could not find dotted type name '" + rhsName + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1579,7 +1579,7 @@ module TypeScript {
                 }
             }
             if (!elementType) {
-                this.postSemanticError(expressionAST, "RESOLUTION ERROR: Incompatible types in array literal expression");
+                this.postSemanticError(expressionAST, "Incompatible types in array literal expression");
 
                 elementType = this.semanticInfoChain.anyTypeSymbol;
             }
@@ -1778,7 +1778,7 @@ module TypeScript {
             var signatures = (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
 
             if (!signatures.length) {
-                this.postSemanticError(expressionAST, "RESOLUTION ERROR: Attempting to call on a type with no call signatures");
+                this.postSemanticError(expressionAST, "Attempting to call on a type with no call signatures");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1897,7 +1897,7 @@ module TypeScript {
                 return returnType;
             }
             
-            this.postSemanticError(expressionAST, "RESOLUTION ERROR: Invalid 'new' expression");
+            this.postSemanticError(expressionAST, "Invalid 'new' expression");
 
             return this.semanticInfoChain.anyTypeSymbol;
 
@@ -2755,10 +2755,10 @@ module TypeScript {
                     var emsg = "Supplied parameters do not match any signature of call target";
                     if (comparisonInfo.message) {
                         //this.checker.errorReporter.simpleError(target, emsg + ":\n\t" + comparisonInfo.message);
-                        this.postSemanticError(application, "RESOLUTION ERROR: " + emsg + ":\n\t" + comparisonInfo.message);
+                        this.postSemanticError(application, emsg + ":\n\t" + comparisonInfo.message);
                     }
                     else {
-                        this.postSemanticError(application, "RESOLUTION ERROR: " + emsg);
+                        this.postSemanticError(application, emsg);
                         //this.checker.errorReporter.simpleError(target, emsg);
                     }
                 }
@@ -2772,7 +2772,7 @@ module TypeScript {
                     var candidateInfo = this.findMostApplicableSignature(applicableSigs, args, enclosingDecl, context);
                     if (candidateInfo.ambiguous) {
                         //this.checker.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
-                        this.postSemanticError(application, "RESOLUTION ERROR: Ambiguous call expression - could not choose overload");
+                        this.postSemanticError(application, "Ambiguous call expression - could not choose overload");
                     }
                     candidate = candidateInfo.sig;
                 }

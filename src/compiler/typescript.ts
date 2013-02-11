@@ -66,6 +66,8 @@
 
 module TypeScript {
 
+    declare var IO;
+
     export enum UpdateUnitKind {
         Unknown,
         NoEdits,
