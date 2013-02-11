@@ -154,7 +154,7 @@ module TypeScript {
             var valDecl = declToRemove.getValDecl();
 
             if (valDecl) {
-                //this.removeDecl(valDecl);
+                this.removeDecl(valDecl);
             }
 
             this.updateVersion++;
