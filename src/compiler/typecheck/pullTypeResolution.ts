@@ -303,17 +303,9 @@ module TypeScript {
                         if (declMembers[j].getName() == symbolName) {
                             kind = declMembers[j].getKind();
 
-                            if ((kind & declSearchKind) != 0 || kind == PullElementKind.Enum) {
+                            if ((kind & declSearchKind) != 0) {
                                 return declMembers[j];
-                            }
-                            // PULLTODO: Here we'll sub in class constructors and enums, but really we should 
-                            // post-process the initial decl tree to parent constructors and enums alongside their
-                            // type declarations
-                            // (Basically, if we've gotten here, declSearchKind is SomeValue, but we've grabbed
-                            // a type of the same name)
-                            //else if (kind == PullElementKind.Class) {
-                            //    return (<PullClassTypeSymbol>declMembers[j]).getConstructorMethod();
-                            //}                            
+                            }                         
                         }
                     }
                     
@@ -1099,6 +1091,15 @@ module TypeScript {
             var nameSymbol: PullSymbol = null
 
             nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+
+            // PULLREVIEW: until further notice, search out for modules or enums
+            if (!nameSymbol) {
+                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+
+                if (nameSymbol && nameSymbol.getKind() == PullElementKind.Interface) {
+                    nameSymbol = null;
+                }
+            }
 
             if (!nameSymbol) {
                 this.postSemanticError(nameAST, "Could not find symbol '" + id + "'");
