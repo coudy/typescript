@@ -22,6 +22,12 @@ module TypeScript {
         Signature = 1 << 12,
         Enum = 1 << 13,
         FatArrow = 1 << 14,
+
+        ClassConstructorVariable = 1 << 15,
+        InitializedModuleVariable = 1 << 16,
+        EnumVariable = 1 << 17,
+
+        ImplicitVariable = ClassConstructorVariable | InitializedModuleVariable | EnumVariable,
     }
 
     export enum PullElementKind {
@@ -67,5 +73,35 @@ module TypeScript {
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType,
         
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
+    }
+
+    export enum SymbolLinkKind {
+        TypedAs,
+        ContextuallyTypedAs,
+        ProvidesInferredType,
+        ArrayType,
+
+        InstanceType,
+        ArrayOf,
+
+        PublicMember,
+        PrivateMember,
+        StaticMember, // PULLTODO: Remove
+
+        ConstructorMethod,
+
+        Aliases,
+
+        ContainedBy,
+
+        Extends,
+        Implements,
+
+        Parameter,
+        ReturnType,
+
+        CallSignature,
+        ConstructSignature,
+        IndexSignature,
     }
 }

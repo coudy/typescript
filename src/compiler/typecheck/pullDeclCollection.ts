@@ -80,6 +80,7 @@ module TypeScript {
     export function preCollectClassDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var classDecl = <ClassDeclaration>ast;
         var declFlags = PullElementFlags.None;
+        var constructorDeclKind = PullElementKind.Variable;
 
         if (hasFlag(classDecl.varFlags, VarFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
@@ -87,6 +88,7 @@ module TypeScript {
 
         if (hasFlag(classDecl.varFlags, VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
+            constructorDeclKind = PullElementKind.Property;
         }
 
         var span = new DeclSpan();
@@ -96,12 +98,18 @@ module TypeScript {
         span.limChar = classDecl.limChar;
 
         var decl = new PullDecl(classDecl.name.text, PullElementKind.Class, declFlags, span, context.scriptName);
+        
+        var constructorDecl = new PullDecl(classDecl.name.text, constructorDeclKind, declFlags | PullElementFlags.ClassConstructorVariable, span, context.scriptName);
+
+        decl.setValDecl(constructorDecl);
 
         context.getParent().addChildDecl(decl);
+        context.getParent().addChildDecl(constructorDecl);
 
         context.pushParent(decl);
 
         context.semanticInfo.setDeclForAST(ast, decl);
+        context.semanticInfo.setDeclForAST(ast, constructorDecl);
 
         context.semanticInfo.setASTForDecl(decl,ast);
 
@@ -685,7 +693,7 @@ module TypeScript {
     // construct signatures
     export function createConstructSignatureDeclaration(constructSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
-        var declType = PullElementKind.CallSignature;
+        var declType = PullElementKind.ConstructSignature;
 
         var span = new DeclSpan();
 
@@ -734,7 +742,7 @@ module TypeScript {
         span.minChar = constructorDeclAST.minChar;
         span.limChar = constructorDeclAST.limChar;
 
-        var decl = new PullDecl("constructor", declType, declFlags, span, context.scriptName);
+        var decl = new PullDecl(constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
 
         var parent = context.getParent();
 

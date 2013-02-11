@@ -4,35 +4,6 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-    export enum SymbolLinkKind {
-        TypedAs,
-        ContextuallyTypedAs,
-        ProvidesInferredType,
-        ArrayType,
-
-        InstanceType,
-        ArrayOf,
-
-        PublicMember,
-        PrivateMember,
-        StaticMember,
-
-        ConstructorMethod,
-
-        Aliases,
-
-        ContainedBy,
-
-        Extends,
-        Implements,
-
-        Parameter,
-        ReturnType,
-
-        CallSignature,
-        ConstructSignature,
-        IndexSignature,
-    }
     
     export var linkID = 0; // PULLTODO: Prune these if not in use
 
@@ -176,6 +147,14 @@ module TypeScript {
                 }
 
                 this.semanticInfoChain.removeSymbolFromCache(declSymbol);
+            }
+
+            // if we're removing a class, enum, etc., remove the implicit
+            // value decl as well
+            var valDecl = declToRemove.getValDecl();
+
+            if (valDecl) {
+                this.removeDecl(valDecl);
             }
 
             this.updateVersion++;

@@ -46,6 +46,11 @@ module TypeScript {
         
         private dependencies: PullDecl[] = []; // decls that this decl depends on to know its type
 
+        // In the case of classes, initialized modules and enums, we need to track the implicit
+        // value set to the constructor or instance type.  We can use this field to make sure that on
+        // edits and updates we don't leak the val decl or symbol
+        private synthesizedValDecl: PullDecl = null;
+
         constructor (declName: string, declType: PullElementKind, declFlags: PullElementFlags, span: DeclSpan, scriptName: string) {
             this.declName = declName;
             this.declType = declType;
@@ -68,7 +73,7 @@ module TypeScript {
         public setSignatureSymbol(signature: PullSignatureSymbol) { this.signatureSymbol = signature; }
         public getSignatureSymbol() { return this.signatureSymbol; }
 
-        public getDeclFlags() { return this.declFlags; }
+        public getFlags() { return this.declFlags; }
         
         public getSpan() { return this.span; }
         public setSpan(span: DeclSpan) { this.span = span; }
@@ -83,6 +88,9 @@ module TypeScript {
         
         public getDependentDecls() { return this.dependentDecls; }
         public addDependentDecl(dependentDecl: PullDecl) { this.dependentDecls[this.dependentDecls.length] = dependentDecl; }
+
+        public setValDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
+        public getValDecl() { return this.synthesizedValDecl; }
 
         // returns 'true' if the child decl was successfully added
         // ('false' is returned if addIfDuplicate is false and there is a collision)
@@ -128,19 +136,6 @@ module TypeScript {
             else {
                 return [];
             }
-
-            //var foundDecls: PullDecl[] = []; 
-
-            //for (var i = 0; i < this.childDecls.length; i++) {
-            //    if (this.childDecls[i].getDeclName() == declName) {
-            //        if (!declKind || (this.childDecls[i].getDeclKind() & declKind)) {
-            //            foundDecls[foundDecls.length] = this.childDecls[i];
-            //            break;
-            //        }
-            //    }
-            //}
-
-            //return foundDecls;
         }
 
         public getChildDecls() { return this.childDecls; }

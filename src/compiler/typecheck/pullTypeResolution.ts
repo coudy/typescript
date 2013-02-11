@@ -266,7 +266,7 @@ module TypeScript {
         }
 
         // search for an unqualified symbol name within a given decl path
-        public getSymbolFromDeclPath(symbolName: string, declPath: PullDecl[], declKind: PullElementKind): PullSymbol {
+        public getSymbolFromDeclPath(symbolName: string, declPath: PullDecl[], declSearchKind: PullElementKind): PullSymbol {
             var symbol: PullSymbol = null;
 
             // search backwards through the decl list
@@ -286,7 +286,7 @@ module TypeScript {
 
                 if (pathDeclKind & PullElementKind.Module) {
                     // first check locally
-                    childDecls = decl.findChildDecls(symbolName, declKind);
+                    childDecls = decl.findChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
@@ -296,16 +296,30 @@ module TypeScript {
                     declSymbol = <PullTypeSymbol>decl.getSymbol();
                     declMembers = declSymbol.getMembers();
 
+                    var kind: PullElementKind;
+
                     for (var j = 0; j < declMembers.length; j++) {
                         // PULLTODO: declkind should equal declkind, or is it ok to just mask the value?
-                        if (declMembers[j].getName() == symbolName && (declMembers[j].getKind() & declKind)) {
-                            return declMembers[j];
+                        if (declMembers[j].getName() == symbolName) {
+                            kind = declMembers[j].getKind();
+
+                            if ((kind & declSearchKind) != 0 || kind == PullElementKind.Enum) {
+                                return declMembers[j];
+                            }
+                            // PULLTODO: Here we'll sub in class constructors and enums, but really we should 
+                            // post-process the initial decl tree to parent constructors and enums alongside their
+                            // type declarations
+                            // (Basically, if we've gotten here, declSearchKind is SomeValue, but we've grabbed
+                            // a type of the same name)
+                            //else if (kind == PullElementKind.Class) {
+                            //    return (<PullClassTypeSymbol>declMembers[j]).getConstructorMethod();
+                            //}                            
                         }
                     }
                     
                 }
                 else /*if (pathDeclKind & DeclKind.Function)*/ {
-                    childDecls = decl.findChildDecls(symbolName, declKind);
+                    childDecls = decl.findChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
                         return childDecls[0].getSymbol();
@@ -314,7 +328,7 @@ module TypeScript {
             }
 
             // otherwise, search globally
-            symbol = this.semanticInfoChain.findSymbol([symbolName], declKind);
+            symbol = this.semanticInfoChain.findSymbol([symbolName], declSearchKind);
 
             return symbol;
         }
@@ -389,8 +403,7 @@ module TypeScript {
         public resolveClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var enclosingDecl = this.getEnclosingDecl(classDecl);
-            var classDeclSymbol = <PullClassSymbol>classDecl.getSymbol();
-            var instanceDeclSymbol = classDeclSymbol.getInstanceType();
+            var classDeclSymbol = <PullClassTypeSymbol>classDecl.getSymbol();
 
             if (classDeclSymbol.isResolved()) {
                 return classDeclSymbol;
@@ -401,7 +414,6 @@ module TypeScript {
                 for (var i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), enclosingDecl, context);
                     classDeclSymbol.addExtendedType(parentType);
-                    instanceDeclSymbol.addExtendedType((<PullClassSymbol>parentType).getInstanceType());
                 }
             }
 
@@ -410,22 +422,20 @@ module TypeScript {
                 for (var i = 0; i < classDeclAST.implementsList.members.length; i++) {
                     implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), enclosingDecl, context);
                     classDeclSymbol.addImplementedType(implementedType);
-                    instanceDeclSymbol.addImplementedType(implementedType);
                 }
             }
 
             classDeclSymbol.setResolved();
-            instanceDeclSymbol.setResolved();
 
-            var classMembers = classDeclSymbol.getMembers();
-            var instanceMembers = instanceDeclSymbol.getMembers();
+            var classMembers = classDeclSymbol.getMembers();         
+            var constructorMethod = classDeclSymbol.getConstructorMethod();
+
+            if (constructorMethod) {
+                this.resolveDeclaredSymbol(constructorMethod, context);
+            }
 
             for (var i = 0; i < classMembers.length; i++) {
                 this.resolveDeclaredSymbol(classMembers[i], context);
-            }
-
-            for (i = 0; i < instanceMembers.length; i++) {
-                this.resolveDeclaredSymbol(instanceMembers[i], context);
             }
 
             return classDeclSymbol;
@@ -463,7 +473,7 @@ module TypeScript {
         
         public resolveFunctionTypeSignature(funcDeclAST: FuncDecl, enclosingDecl : PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
 
-            var funcDeclSymbol = <PullFunctionSymbol>this.semanticInfoChain.getSymbolForAST(funcDeclAST, this.unitPath);
+            var funcDeclSymbol = <PullFunctionTypeSymbol>this.semanticInfoChain.getSymbolForAST(funcDeclAST, this.unitPath);
 
             if (!funcDeclSymbol) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
@@ -479,7 +489,7 @@ module TypeScript {
                 binder.setUnit(this.unitPath);
                 binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
 
-                funcDeclSymbol = <PullFunctionSymbol>functionDecl.getSymbol();
+                funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
             }
 
             var signature = funcDeclSymbol.getCallSignatures()[0];
@@ -514,10 +524,6 @@ module TypeScript {
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
                 
-                if (typeRef.hasBrand()) {
-                    typeRef = (<PullClassSymbol>typeRef).getInstanceType();
-                }
-                
                 context.setTypeInContext(paramSymbol,typeRef);
             } // PULLTODO: default values?
             else {
@@ -538,10 +544,6 @@ module TypeScript {
             
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
-
-                if (typeRef.hasBrand()) {
-                    typeRef = (<PullClassSymbol>typeRef).getInstanceType();
-                }
 
                 context.setTypeInContext(paramSymbol,typeRef);
             } // PULLTODO: default values?
@@ -576,7 +578,7 @@ module TypeScript {
                 binder.setUnit(this.unitPath);
                 binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
 
-                interfaceSymbol = <PullFunctionSymbol>interfaceDecl.getSymbol();
+                interfaceSymbol = <PullFunctionTypeSymbol>interfaceDecl.getSymbol();
             }
 
             if (interfaceDeclAST.members) {
@@ -643,7 +645,7 @@ module TypeScript {
                 else {
                     context.resolvingTypeReference = true;
 
-                    typeDeclSymbol = <PullTypeSymbol>this.resolveNameExpression(typeName, enclosingDecl, context);
+                    typeDeclSymbol = <PullTypeSymbol>this.resolveTypeNameExpression(typeName, enclosingDecl, context);
 
                     context.resolvingTypeReference = prevResolvingTypeReference;
                 }
@@ -675,7 +677,7 @@ module TypeScript {
                 // find the decl
                 var prevResolvingTypeReference = context.resolvingTypeReference;
 
-                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedNameExpression(dottedName, enclosingDecl, context);
+                typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
                 
@@ -694,10 +696,6 @@ module TypeScript {
             // PULLTODO: Arity > 1
             if (typeRef.arrayCount) {
 
-                // arrays should be of the instance type
-                if (typeDeclSymbol.hasBrand()) {
-                    typeDeclSymbol = (<PullClassSymbol>typeDeclSymbol).getInstanceType();
-                }
                 var arraySymbol: PullTypeSymbol = typeDeclSymbol.getArrayType();
 
                 // otherwise, create a new array symbol
@@ -751,9 +749,6 @@ module TypeScript {
                     hadError = true;
                 }
                 else {
-                    if (typeExprSymbol.hasBrand()) {
-                        typeExprSymbol = (<PullClassSymbol>typeExprSymbol).getInstanceType();
-                    }
 
                     context.setTypeInContext(declSymbol, typeExprSymbol);
 
@@ -883,7 +878,7 @@ module TypeScript {
       
             var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
 
-            var funcSymbol = <PullFunctionSymbol>funcDecl.getSymbol();
+            var funcSymbol = <PullFunctionTypeSymbol>funcDecl.getSymbol();
 
             var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
@@ -975,11 +970,22 @@ module TypeScript {
 
         public resolveStatementOrExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext):PullSymbol {
 
+
             switch (expressionAST.nodeType) {
                 case NodeType.Name:
-                    return this.resolveNameExpression(<Identifier>expressionAST, enclosingDecl, context);
+                    if (context.searchTypeSpace) {
+                        return this.resolveTypeNameExpression(<Identifier>expressionAST, enclosingDecl, context);
+                    }
+                    else {
+                        return this.resolveNameExpression(<Identifier>expressionAST, enclosingDecl, context);
+                    }
                 case NodeType.Dot:
-                    return this.resolveDottedNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
+                    if (context.searchTypeSpace) {
+                        return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
+                    }
+                    else {
+                        return this.resolveDottedNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
+                    }
                 case NodeType.FuncDecl:
                     return this.resolveFunctionExpression(<FuncDecl>expressionAST, isTypedAssignment, enclosingDecl, context);
 
@@ -1092,15 +1098,7 @@ module TypeScript {
 
             var nameSymbol: PullSymbol = null
 
-            // first, if we're not looking for a type, resolve the id as a value
-            if (!context.resolvingTypeReference) {
-                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
-            }
-
-            // no luck? check the type space
-            if (!nameSymbol) {
-                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
-            }
+            nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
             if (!nameSymbol) {
                 this.postSemanticError(nameAST, "RESOLUTION ERROR: Could not find symbol '" + id + "'");
@@ -1111,14 +1109,6 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, context);
             }
 
-            if (nameSymbol.isType() && (<PullTypeSymbol>nameSymbol).hasBrand()) {
-                var instanceType = (<PullClassSymbol>nameSymbol).getInstanceType();
-
-                if (!instanceType.isResolved()) {
-                    this.resolveDeclaredSymbol(instanceType, context);
-                }
-            }
-
             return nameSymbol;
         }
 
@@ -1126,7 +1116,6 @@ module TypeScript {
             
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
-
 
             var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
             var lhsType = lhs.getType();
@@ -1141,10 +1130,7 @@ module TypeScript {
             }
 
             // if we're resolving a type reference, we really only want to check the constructor type
-            if (lhsType.hasBrand() && !context.resolvingTypeReference) {
-                lhsType = (<PullClassSymbol>lhsType).getInstanceType();
-            }
-            else if (lhsType == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+            if (lhsType == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
                 lhsType = this.cachedNumberInterfaceType;
             }
             else if (lhsType == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
@@ -1158,7 +1144,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(lhsType, context);
             }
 
-            if (rhsName == "prototype" && lhsType.hasBrand()) {
+            if (rhsName == "prototype" && lhsType.isClass()) {
                 return lhsType;
             }
 
@@ -1168,8 +1154,8 @@ module TypeScript {
             if (!nameSymbol) {
                 
                 // could be a static
-                if (lhsType.hasBrand()) {
-                    lhsType = (<PullClassSymbol>lhsType).getConstructorType();
+                if (lhsType.isClass()) {
+                    lhsType = (<PullClassTypeSymbol>lhsType).getConstructorMethod().getType();
 
                     nameSymbol = lhsType.findMember(rhsName);
                 }
@@ -1187,13 +1173,78 @@ module TypeScript {
             return nameSymbol;
         }
 
+        public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            
+            var id = nameAST.actualText;
+
+            var declPath = this.getPathToDecl(enclosingDecl);
+
+            if (enclosingDecl && !declPath.length) {
+                declPath = [enclosingDecl];
+            }
+
+            var nameSymbol: PullSymbol = null
+
+            nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+
+            if (!nameSymbol) {
+                this.postSemanticError(nameAST, "RESOLUTION ERROR: Could not find type '" + id + "'");
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            if (!nameSymbol.isResolved()) {
+                this.resolveDeclaredSymbol(nameSymbol, context);
+            }
+
+            return nameSymbol;
+        }
+
+        public resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            
+            // assemble the dotted name path
+            var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
+
+            var prevSearchTypeSpace = context.searchTypeSpace;
+            context.searchTypeSpace = true;
+            
+            var lhs: PullSymbol = this.resolveStatementOrExpression(dottedNameAST.operand1, false, enclosingDecl, context);
+            
+            context.searchTypeSpace = prevSearchTypeSpace;
+            
+            var lhsType = lhs.getType();
+
+            if (lhsType == this.semanticInfoChain.anyTypeSymbol) {
+                return lhsType;
+            }
+
+            if (!lhsType) {
+                this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find lhs type for dotted name '" + rhsName + "'");
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+
+            // now for the name...
+            var childTypeSymbol = lhsType.findNestedType(rhsName);
+
+            if (!childTypeSymbol) {
+                this.postSemanticError(dottedNameAST.operand2, "RESOLUTION ERROR: Could not find dotted type name '" + rhsName + "'");
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            if (!childTypeSymbol.isResolved()) {
+                this.resolveDeclaredSymbol(childTypeSymbol, context);
+            }
+
+            return childTypeSymbol;
+        }
+
         public resolveFunctionExpression(funcDeclAST: FuncDecl, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
              
             var functionDecl = this.getDeclForAST(funcDeclAST);
-            var funcDeclSymbol: PullFunctionSymbol = null;
+            var funcDeclSymbol: PullSymbol = null;
 
             if (functionDecl) {
-                funcDeclSymbol = <PullFunctionSymbol> functionDecl.getSymbol();
+                funcDeclSymbol = functionDecl.getSymbol();
                 if (funcDeclSymbol.isResolved()) {
                     return funcDeclSymbol;
                 }
@@ -1205,7 +1256,7 @@ module TypeScript {
             
             var shouldContextuallyType = isTypedAssignment && !funcDeclAST.isParenthesized;
             
-            var assigningFunctionTypeSymbol: PullFunctionSymbol = null;
+            var assigningFunctionTypeSymbol: PullFunctionTypeSymbol = null;
             var assigningFunctionSignature: PullSignatureSymbol = null;
 
             if (funcDeclAST.returnTypeAnnotation) {
@@ -1224,7 +1275,7 @@ module TypeScript {
 
             if (shouldContextuallyType) {
 
-                assigningFunctionTypeSymbol = <PullFunctionSymbol>context.getContextualType();
+                assigningFunctionTypeSymbol = <PullFunctionTypeSymbol>context.getContextualType();
 
                 this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, context);
 
@@ -1249,10 +1300,10 @@ module TypeScript {
                 binder.setUnit(this.unitPath);
                 binder.bindFunctionExpressionToPullSymbol(functionDecl);
 
-                funcDeclSymbol = <PullFunctionSymbol>functionDecl.getSymbol();
+                funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
             }
 
-            var signature = funcDeclSymbol.getCallSignatures()[0];
+            var signature = funcDeclSymbol.getType().getCallSignatures()[0];
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
@@ -1321,7 +1372,7 @@ module TypeScript {
 
             var declPath = this.getPathToDecl(enclosingDecl);
             var decl: PullDecl;
-            var classSymbol: PullClassSymbol;
+            var classSymbol: PullClassTypeSymbol;
 
             // work back up the decl path, until you can find a class
             // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
@@ -1330,10 +1381,8 @@ module TypeScript {
                     decl = declPath[i];
 
                     if (decl.getKind() == PullElementKind.Class) {
-                        classSymbol = <PullClassSymbol>decl.getSymbol();
+                        classSymbol = <PullClassTypeSymbol>decl.getSymbol();
                         
-                        // set to the instance type
-                        classSymbol = <PullClassSymbol>classSymbol.getInstanceType();
                         return classSymbol;
                     }
                 }
@@ -1351,13 +1400,13 @@ module TypeScript {
             var declPath = this.getPathToDecl(enclosingDecl);
             var decl: PullDecl;
             var declFlags: PullElementFlags;
-            var classSymbol: PullClassSymbol = null;
+            var classSymbol: PullClassTypeSymbol = null;
 
             // work back up the decl path, until you can find a class
             if (declPath.length) {
                 for (var i = declPath.length - 1; i >= 0; i--) {
                     decl = declPath[i];
-                    declFlags = decl.getDeclFlags();
+                    declFlags = decl.getFlags();
 
                     if (decl.getKind() == PullElementKind.FunctionExpression &&
                         !(declFlags & PullElementFlags.FatArrow)) {
@@ -1368,10 +1417,8 @@ module TypeScript {
                         break;
                     }
                     else if (decl.getKind() == PullElementKind.Class) {
-                        classSymbol = <PullClassSymbol>decl.getSymbol();
+                        classSymbol = <PullClassTypeSymbol>decl.getSymbol();
                         
-                        // set to the instance type
-                        classSymbol = <PullClassSymbol>classSymbol.getInstanceType();
                         break;
                     }
                 }
@@ -1381,7 +1428,7 @@ module TypeScript {
                 var parents = classSymbol.getExtendedTypes();
 
                 if (parents.length) {
-                    return (<PullClassSymbol>parents[0]).getInstanceType();
+                    return parents[0];
                 }
             }
             
@@ -1497,10 +1544,6 @@ module TypeScript {
 
                 if (contextualType.isArray()) {
                     contextualType = contextualType.getElementType();
-                }
-
-                if (contextualType.hasBrand() && (<PullClassSymbol>contextualType).getInstanceType()) {
-                    contextualType = (<PullClassSymbol>contextualType).getInstanceType();
                 }
 
                 context.pushContextualType(contextualType, context.inProvisionalResolution());
@@ -1732,7 +1775,7 @@ module TypeScript {
             //    return this.semanticInfoChain.anyTypeSymbol;
             //}
 
-            var signatures = (<PullFunctionSymbol>targetSymbol).getCallSignatures();
+            var signatures = (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
 
             if (!signatures.length) {
                 this.postSemanticError(expressionAST, "RESOLUTION ERROR: Attempting to call on a type with no call signatures");
@@ -1779,17 +1822,7 @@ module TypeScript {
             }
 
             if (returnType) {
-                // PULLREVIEW: The return type may be the result of a call, which would
-                // have already returned the instance type.  Since the instance type of an
-                // instance type is null, we'd get an NRE here, hence the check for the 
-                // instance type.  I think we need a better, more consistent way of managing
-                // instance versus constructor types here
-                if (returnType.hasBrand() && (<PullClassSymbol>returnType).getInstanceType()) {
-                    return (<PullClassSymbol>returnType).getInstanceType();
-                }
-                else {
-                    return returnType;
-                }
+                return returnType;
             }
             else {
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -1808,11 +1841,6 @@ module TypeScript {
 
             if (targetTypeSymbol == this.semanticInfoChain.anyTypeSymbol) {
                 return this.semanticInfoChain.anyTypeSymbol;
-            }
-
-            if (targetTypeSymbol.hasBrand()) {
-                targetTypeSymbol = (<PullClassSymbol>targetTypeSymbol).getConstructorType();
-                returnType = (<PullClassSymbol>targetTypeSymbol).getInstanceType();
             }
 
             var constructSignatures = targetTypeSymbol.getConstructSignatures();
@@ -1863,7 +1891,7 @@ module TypeScript {
 
                 return returnType;
             }
-            else if (targetTypeSymbol.hasBrand()) {
+            else if (targetTypeSymbol.isClass()) {
 
                 // implicit constructor
                 return returnType;
@@ -1879,10 +1907,6 @@ module TypeScript {
             
             var assertionExpression = <UnaryExpression>expressionAST;
             var typeReference = this.resolveTypeReference(<TypeReference>assertionExpression.castTerm, enclosingDecl, context);
-
-            if (typeReference.hasBrand()) {
-                typeReference = (<PullClassSymbol>typeReference).getInstanceType();
-            }
             
             // PULLTODO: We don't technically need to resolve the operand, since the type of the
             // expression is the type of the cast term.  Still, it makes life a bit easier for the LS
@@ -1942,7 +1966,12 @@ module TypeScript {
                 case PullElementKind.Variable:
                 case PullElementKind.Parameter:
                     var varDecl = <BoundDecl>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
-                    this.resolveVariableDeclaration(varDecl, context);
+
+                    // varDecl may be null if we're dealing with an implicit variable created for a class,
+                    // module or enum
+                    if (varDecl) {
+                        this.resolveVariableDeclaration(varDecl, context);
+                    }
                     break;
             }
         }
@@ -2082,7 +2111,7 @@ module TypeScript {
                 return false;
             }
 
-            if (t1.hasBrand()) {
+            if (t1.isClass()) {
                 return false;
             }
 
@@ -2397,7 +2426,7 @@ module TypeScript {
             //}
 
             // At this point, if the target is a class, but not the source or a parent of the source, bail
-            if (target.hasBrand()) {
+            if (target.isClass()) {
                 comparisonCache[comboId] = undefined;
                 return false;
             }

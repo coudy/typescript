@@ -59,9 +59,7 @@
 ///<reference path='typecheck\pullDeclDiffer.ts' />
 ///<reference path='typecheck\pullSemanticInfo.ts' />
 ///<reference path='typecheck\pullDeclCollection.ts' />
-///<reference path='typecheck\pullBinder.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
-///<reference path='typecheck\pullDeclCollector.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
 ///<reference path='Core\Timer.ts' />

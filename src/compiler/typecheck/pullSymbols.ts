@@ -5,11 +5,6 @@
 
 module TypeScript {
 
-    export enum PullSymbolVisibility {
-        Private,
-        Public
-    }
-
     export var pullSymbolID = 0
 
     export class PullSymbol {
@@ -369,6 +364,7 @@ module TypeScript {
     export class PullTypeSymbol extends PullSymbol {
         private memberLinks: PullSymbolLink[] = [];
         private memberCache: any = null;
+        private memberTypeCache: any = null;
 
         private implementedTypeLinks: PullSymbolLink[] = [];
         private extendedTypeLinks: PullSymbolLink[] = [];
@@ -380,7 +376,7 @@ module TypeScript {
         private arrayType: PullTypeSymbol = null;
 
         public isType() { return true; }
-        public hasBrand() { return false; }
+        public isClass() { return false; }
         public hasMembers() { return this.memberLinks.length != 0; }
         public isInstanceType() { return false; }
         public isFunction() { return false; }
@@ -413,8 +409,15 @@ module TypeScript {
 
             if (!this.memberCache) {
                 this.memberCache = {};
+                this.memberTypeCache = {};
             }
-            this.memberCache[memberSymbol.getName()] = memberSymbol;
+
+            if (!memberSymbol.isType()) {
+                this.memberCache[memberSymbol.getName()] = memberSymbol;
+            }
+            else {
+                this.memberTypeCache[memberSymbol.getName()] = memberSymbol;
+            }
         }
 
         public removeMember(memberSymbol: PullSymbol) {
@@ -662,8 +665,27 @@ module TypeScript {
             return memberSymbol;
         }
 
+        public findNestedType(name: string): PullTypeSymbol {
+            var memberSymbol: PullTypeSymbol;
+
+            if (!this.memberTypeCache) {
+                this.memberTypeCache = {};
+
+                for (var i = 0; i < this.memberLinks.length; i++) {
+                    if (this.memberLinks[i].end.isType()) {
+                        this.memberTypeCache[this.memberLinks[i].end.getName()] = this.memberLinks[i].end;
+                    }
+                }
+            }
+            
+            memberSymbol = this.memberTypeCache[name];
+
+            return memberSymbol;
+        }
+
         public invalidate() {
             this.memberCache = null;
+            this.memberTypeCache = null;
 
             this.memberLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.StaticMember ||
                                                               psl.kind == SymbolLinkKind.PrivateMember ||
@@ -721,54 +743,39 @@ module TypeScript {
 
         public isResolved() { return true; }
         public invalidate() { }
+
+        public toString() {
+            return name;
+        }
     }
 
-    export class PullClassSymbol extends PullTypeSymbol {
-        private instanceType: PullTypeSymbol = null;
+    export class PullClassTypeSymbol extends PullTypeSymbol {
+
+        private constructorMethod: PullSymbol = null;
 
         constructor (name: string) {
             super(name, PullElementKind.Class);
         }
 
-        public hasBrand() {
+        public isClass() {
             return true;
         }
 
-        public getConstructorType() { return this; }
-
-        public setInstanceType(instanceType: PullTypeSymbol) {
-            this.addOutgoingLink(instanceType, SymbolLinkKind.InstanceType);
-            this.instanceType = instanceType; 
+        public getConstructorMethod() {
+            return this.constructorMethod;
         }
 
-        public getInstanceType() {
-            return this.instanceType;
-        }
-
-        public addInstanceMember(instanceMember: PullSymbol, linkKind: SymbolLinkKind) {
-            this.instanceType.addMember(instanceMember, linkKind);
+        public setConstructorMethod(constructorMethod: PullSymbol) {
+            this.constructorMethod = constructorMethod;
         }
 
         public invalidate() {
 
-            if (this.instanceType) {
-                this.instanceType.invalidate();
+            if (this.constructorMethod) {
+                this.constructorMethod.invalidate();
             }
+
             super.invalidate();
-        }
-    }
-
-    export class PullClassInstanceSymbol extends PullClassSymbol {
-        constructor (name: string, private constructorType: PullClassSymbol) {
-            super(name);
-        }
-
-        public getConstructorType() { return this.constructorType; }
-
-        public isInstanceType() { return true; }
-
-        public getInstanceType() {
-            return this;
         }
     }
     
@@ -776,8 +783,12 @@ module TypeScript {
         public isDefinition() { return true; }
     }
 
-    export class PullFunctionSymbol extends PullTypeSymbol {
+    export class PullFunctionTypeSymbol extends PullTypeSymbol {
         private definitionSignature: PullDefinitionSignatureSymbol = null;
+
+        constructor () {
+            super("", PullElementKind.FunctionType);
+        }
 
         public isFunction() { return true; }
 
@@ -790,6 +801,33 @@ module TypeScript {
 
         public addSignature(signature: PullSignatureSymbol) {
             this.addCallSignature(signature);
+
+            if (signature.isDefinition()) {
+                this.definitionSignature = <PullDefinitionSignatureSymbol>signature;
+            }
+        }
+
+        public getDefinitionSignature() { return this.definitionSignature; }
+    }
+
+    export class PullConstructorTypeSymbol extends PullTypeSymbol {
+        private definitionSignature: PullDefinitionSignatureSymbol = null;
+
+        constructor () {
+            super("", PullElementKind.ConstructorType);
+        }
+
+        public isFunction() { return true; }
+
+        public invalidate(sweepForNewValues = false) {
+
+            this.definitionSignature = null;
+
+            super.invalidate();
+        }
+
+        public addSignature(signature: PullSignatureSymbol) {
+            this.addConstructSignature(signature);
 
             if (signature.isDefinition()) {
                 this.definitionSignature = <PullDefinitionSignatureSymbol>signature;
@@ -823,8 +861,10 @@ module TypeScript {
         var newField: PullSymbol = null;
         var fieldType: PullTypeSymbol = null;
         
-        var method: PullFunctionSymbol = null;    
-        var newMethod: PullFunctionSymbol = null;
+        var method: PullSymbol = null;
+        var methodType: PullFunctionTypeSymbol = null;
+        var newMethod: PullSymbol = null;
+        var newMethodType: PullFunctionTypeSymbol = null;
         
         var signatures: PullSignatureSymbol[] = null;
         var newSignature: PullSignatureSymbol = null;
@@ -841,15 +881,20 @@ module TypeScript {
         for (var i = 0; i < members.length; i++) {
             resolver.resolveDeclaredSymbol(members[i], context);
 
-            if (members[i].isType()) { // must be a method
-                method = <PullFunctionSymbol> members[i];
+            if (members[i].getKind() == PullElementKind.Method) { // must be a method
+                method = <PullFunctionTypeSymbol> members[i];
 
                 resolver.resolveDeclaredSymbol(method, context);
 
-                newMethod = new PullFunctionSymbol(method.getName(), method.getKind());
+                methodType = <PullFunctionTypeSymbol>method.getType();
+
+                newMethod = new PullSymbol(method.getName(), PullElementKind.Method);
+                newMethodType = new PullFunctionTypeSymbol();
+                newMethod.setType(newMethodType);
+
                 newMethod.addDeclaration(method.getDeclarations()[0]);
 
-                signatures = method.getCallSignatures();
+                signatures = methodType.getCallSignatures();
 
                 // specialize each signature
                 for (var j = 0; j < signatures.length; j++) {
@@ -882,7 +927,7 @@ module TypeScript {
                         newSignature.addParameter(newParameter);
                     }
 
-                    newMethod.addSignature(newSignature);
+                    newMethodType.addSignature(newSignature);
                 }
 
                 newArrayType.addMember(newMethod, SymbolLinkKind.PublicMember);

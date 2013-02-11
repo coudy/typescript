@@ -30,6 +30,8 @@ module TypeScript {
         public resolvingTypeReference = false;
 
         public resolveAggressively = false;
+
+        public searchTypeSpace = false;
         
         public pushContextualType(type: PullTypeSymbol, provisional: bool) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional));

@@ -59,9 +59,7 @@ var compilerSources = [
 	"typecheck/pullDeclDiffer.ts",
 	"typecheck/pullSemanticInfo.ts",
 	"typecheck/pullDeclCollection.ts",
-	"typecheck/pullBinder.ts",
 	"typecheck/pullSymbolBinder.ts",
-	"typecheck/pullDeclCollector.ts",
 	"typecheck/pullSymbolGraph.ts",
 	"typescript.ts"
 ].map(function (f) {
