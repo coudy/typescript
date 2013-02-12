@@ -926,10 +926,13 @@ module TypeScript {
             bod.minChar = bodMinChar;
             bod.limChar = this.scanner.pos;
             this.inFunction = savedInFunction;
-            var ec = new EndCode();
-            ec.minChar = bod.limChar;
-            ec.limChar = ec.minChar;
-            bod.append(ec);
+            if (bod.limChar > bod.minChar) {
+                // bod could be empty due to error recovery (e.g. 'function foo ('); do not add the EndCode node for these cases
+                var ec = new EndCode();
+                ec.minChar = bod.limChar;
+                ec.limChar = ec.minChar;
+                bod.append(ec);
+            }
         }
 
         private parseFunctionStatements(errorRecoverySet: ErrorRecoverySet,
@@ -997,11 +1000,10 @@ module TypeScript {
                     bod.limChar = retExpr.limChar;
                     bod.append(retStmt);
                 }
-                else {
+                else if (this.currentToken.tokenId != TokenID.EndOfFile) {
                     isAnonLambda = wasShorthand;
                     this.parseFunctionBlock(errorRecoverySet, allowedElements, parentModifiers, bod, bodMinChar);
                 }
-
                 limChar = this.scanner.pos;
             }
 
@@ -1303,7 +1305,8 @@ module TypeScript {
             else if (expectClosingRParen) {
                 this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet | ErrorRecoverySet.LCurly | ErrorRecoverySet.SColon);
             }
-            formals.limChar = this.scanner.lastTokenLimChar(); // ')' or ']'
+            // Extend the formals to catch EOF if it was encountered
+            formals.limChar = this.currentToken.tokenId == TokenID.EndOfFile ? this.scanner.pos : this.scanner.lastTokenLimChar(); // ')' or ']'
             return sawEllipsis;
         }
 
