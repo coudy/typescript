@@ -181,8 +181,14 @@ module TypeScript {
     }
 
     export function preCollectInterfaceDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
+
         var interfaceDecl = <InterfaceDeclaration>ast;
         var declFlags = PullElementFlags.None;
+
+        // PULLTODO
+        //if (ast.flags & ASTFlags.TypeReference) {
+        //    return createObjectTypeDeclaration(interfaceDecl, context);
+        //}
 
         if (hasFlag(interfaceDecl.varFlags, VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
@@ -257,6 +263,36 @@ module TypeScript {
         }
          
         return false;
+    }
+
+    export function preCollectTypeParameterDecl(ast: AST, parent: AST, context: DeclCollectionContext) {
+        var typeParameterDecl = <TypeParameter>ast;
+        var declFlags = PullElementFlags.None;
+
+        var span = new DeclSpan();
+
+        span.minChar = typeParameterDecl.minChar;
+        span.limChar = typeParameterDecl.limChar;
+
+        var decl = new PullDecl(typeParameterDecl.name.actualText, PullElementKind.TypeParameter, declFlags, span, context.scriptName);
+
+        context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfo.setDeclForAST(ast, decl);
+
+        context.getParent().addChildDecl(decl);
+
+        if (typeParameterDecl.constraint &&
+            ((<TypeReference>typeParameterDecl.constraint).term.nodeType == NodeType.InterfaceDeclaration ||
+            (<TypeReference>typeParameterDecl.constraint).term.nodeType == NodeType.FuncDecl)) {
+
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfo);
+
+            declCollectionContext.scriptName = context.scriptName;
+
+            getAstWalkerFactory().walk((<TypeReference>typeParameterDecl.constraint).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+        }
+
+        return true;
     }
 
     // interface properties
@@ -936,6 +972,9 @@ module TypeScript {
         }
         else if (ast.nodeType == NodeType.ImportDeclaration) {
             go = preCollectImportDecls(ast, parent, context);
+        }
+        else if (ast.nodeType == NodeType.TypeParameter) {
+            go = preCollectTypeParameterDecl(ast, parent, context);
         }
         else if (ast.nodeType == NodeType.If) {
             go = true;

@@ -122,6 +122,8 @@ module Services {
             this.compilationSettings = new TypeScript.CompilationSettings();
             
             Services.copyDataObject(this.compilationSettings, this.getHostCompilationSettings());
+            this.compilationSettings.usePull = true;
+            this.compilationSettings.useFidelity = true;
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
             this.scriptMap = new ScriptMap();
             this.unitIndexMap = [];
@@ -204,11 +206,11 @@ module Services {
             }
 
             // If any compilation settings changes, a new compiler instance is needed
-            if (!Services.compareDataObjects(this.compilationSettings, this.getHostCompilationSettings())) {
-                this.logger.log("Creating new compiler instance because compilation settings have changed.");
-                this.createCompiler();
-                return true;
-            }
+            //if (!Services.compareDataObjects(this.compilationSettings, this.getHostCompilationSettings())) {
+            //    this.logger.log("Creating new compiler instance because compilation settings have changed.");
+            //    this.createCompiler();
+            //    return true;
+            //}
 
             /// If any file was deleted, we need to create a new compiler, because we are not
             /// even close to supporting removing symbols (unitindex will be all over the place

@@ -335,6 +335,9 @@ module TypeScript {
             if (preAst.name) {
                 preAst.name = <Identifier>walker.walk(preAst.name, preAst);
             }
+            if (preAst.typeArguments) {
+                preAst.typeArguments = <ASTList>walker.walk(preAst.typeArguments, preAst);
+            }
             if (preAst.arguments && (preAst.arguments.members.length > 0) && (walker.options.goNextSibling)) {
                 preAst.arguments = <ASTList>walker.walk(preAst.arguments, preAst);
             }
@@ -499,6 +502,10 @@ module TypeScript {
         export function walkClassDeclChildren(preAst: ClassDeclaration, parent: AST, walker: IAstWalker): void {
             walkNamedTypeChildren(preAst, parent, walker);
 
+            if (walker.options.goNextSibling && preAst.typeParameters) {
+                preAst.typeParameters = <ASTList>walker.walk(preAst.typeParameters, preAst);
+            }
+
             if (walker.options.goNextSibling && preAst.extendsList) {
                 preAst.extendsList = <ASTList>walker.walk(preAst.extendsList, preAst);
             }
@@ -516,6 +523,10 @@ module TypeScript {
 
         export function walkTypeDeclChildren(preAst: InterfaceDeclaration, parent: AST, walker: IAstWalker): void {
             walkNamedTypeChildren(preAst, parent, walker);
+
+            if (walker.options.goNextSibling && preAst.typeParameters) {
+                preAst.typeParameters = <ASTList>walker.walk(preAst.typeParameters, preAst);
+            }
 
             // walked arguments as part of members
             if (walker.options.goNextSibling && preAst.extendsList) {

@@ -321,7 +321,7 @@ module TypeScript {
                     timer.end();
 
                     reParsedScript = script;
-
+                    
                     var oldParseTime = timer.time;
 
                     script.referencedFiles = referencedFiles;
@@ -1212,7 +1212,23 @@ module TypeScript {
                             this.parser.errorCallback = errorCapture;
 
                         var oldScript = <Script>this.scripts.members[i];
-                        var newScript = this.parser.parse(sourceText, filename, i);
+
+                        var text = new TypeScript.SourceSimpleText(sourceText);
+
+                        var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
+                        var newScript: Script = null;
+                        try {
+                            newScript = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, i);
+
+                            // TypeScriptCompiler.compareObjects(script, script2);
+                        } catch (e1) {
+                            IO.stdout.WriteLine("Error converting: " + filename);
+                            IO.stdout.WriteLine("\t" + e1.message);
+                        }
+
+                        this.syntaxTrees[i] = syntaxTree;
+
+                        //var newScript = this.parser.parse(sourceText, filename, i);
 
                         if (svErrorCallback)
                             this.parser.errorCallback = svErrorCallback;

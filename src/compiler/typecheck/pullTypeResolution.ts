@@ -103,7 +103,7 @@ module TypeScript {
 
         private currentUnit: SemanticInfo = null;
 
-        constructor (private semanticInfoChain: SemanticInfoChain, private unitPath: string) {
+        constructor (public semanticInfoChain: SemanticInfoChain, private unitPath: string) {
             this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);
             this.cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface);
             this.cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface);
@@ -308,7 +308,6 @@ module TypeScript {
                             }                         
                         }
                     }
-                    
                 }
                 else /*if (pathDeclKind & DeclKind.Function)*/ {
                     childDecls = decl.findChildDecls(symbolName, declSearchKind);
@@ -341,6 +340,9 @@ module TypeScript {
                 case NodeType.VarDecl:
                 case NodeType.ArgDecl:
                     return this.resolveVariableDeclaration(<BoundDecl>declAST, context);
+
+                case NodeType.TypeParameter:
+                    return this.resolveTypeParameterDeclaration(<TypeParameter>declAST, context);
                 default:
                     this.postSemanticError(declAST, "Invalid declaration type");
                     return this.semanticInfoChain.anyTypeSymbol;
@@ -659,8 +661,12 @@ module TypeScript {
 
                 typeDeclSymbol = this.resolveInterfaceTypeReference(<NamedDeclaration>typeRef.term, enclosingDecl, context);
             }
+            else if (typeRef.term.nodeType == NodeType.GenericType) {
+                typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
+            }
 
-            // a dotted name
+
+                // a dotted name
             else if (typeRef.term.nodeType == NodeType.Dot) {
 
                 // assemble the dotted name path
@@ -672,7 +678,7 @@ module TypeScript {
                 typeDeclSymbol = <PullTypeSymbol>this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
-                
+
                 if (!typeDeclSymbol) {
                     this.postSemanticError(dottedName.operand2, "Could not find dotted type '" + (<Identifier>dottedName.operand2).actualText + "'");
                     return this.semanticInfoChain.anyTypeSymbol;
@@ -680,7 +686,7 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol) {
-                this.postSemanticError(typeRef.term, "Couldn't bind to the type symbol before creating the array");
+                this.postSemanticError(typeRef.term, "Could not resolve type reference");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -797,6 +803,26 @@ module TypeScript {
             }    
 
             return declSymbol;
+        }
+
+        public resolveTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext): PullTypeSymbol {
+            var typeParameterDecl = this.getDeclForAST(typeParameterAST);
+            var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
+
+            if (typeParameterAST.constraint) {
+                var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, this.getEnclosingDecl(typeParameterDecl), context);
+
+                if (!constraintTypeSymbol) {
+                    this.postSemanticError(typeParameterAST, "Could not resolve constraint for type parameter '" + typeParameterDecl.getName() + "'");
+                }
+                else {
+                    typeParameterSymbol.setConstraint(constraintTypeSymbol);
+                }
+            }
+
+            typeParameterSymbol.setResolved();
+
+            return typeParameterSymbol;
         }
 
         public resolveFunctionBodyReturnTypes(funcDeclAST: FuncDecl, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
@@ -971,6 +997,8 @@ module TypeScript {
                     else {
                         return this.resolveNameExpression(<Identifier>expressionAST, enclosingDecl, context);
                     }
+                case GenericType:
+                    return this.resolveGenericTypeReference(<GenericType>expressionAST, enclosingDecl, context);
                 case NodeType.Dot:
                     if (context.searchTypeSpace) {
                         return this.resolveDottedTypeNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
@@ -1198,6 +1226,43 @@ module TypeScript {
             }
 
             return nameSymbol;
+        }
+
+        public resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            var nameAST = <Identifier> genericTypeAST.name;
+            var id = nameAST.actualText;
+
+            var declPath = this.getPathToDecl(enclosingDecl);
+
+            if (enclosingDecl && !declPath.length) {
+                declPath = [enclosingDecl];
+            }
+
+            var genericTypeSymbol: PullTypeSymbol = null
+
+            genericTypeSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+
+            if (!genericTypeSymbol) {
+                this.postSemanticError(nameAST, "Could not find generic type '" + id + "'");
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            if (!genericTypeSymbol.isResolved()) {
+                this.resolveDeclaredSymbol(genericTypeSymbol, context);
+            }
+
+            // specialize the type arguments
+            var typeArgs: PullTypeSymbol[] = [];
+
+            if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
+                for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
+                    typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
+                }
+            }
+
+            var specializedSymbol = specializeType(genericTypeAST, genericTypeSymbol, typeArgs, this, context);
+
+            return specializedSymbol;
         }
 
         public resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {

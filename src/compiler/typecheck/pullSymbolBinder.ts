@@ -422,6 +422,16 @@ module TypeScript {
 
                 this.staticClassMembers.length = 0;
             }
+
+            var typeParameters = classDecl.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+            }
         }
 
         // interfaces
@@ -493,6 +503,16 @@ module TypeScript {
             }
 
             this.popParent();
+
+            var typeParameters = interfaceDecl.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                interfaceSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+            }
         }
 
         public bindObjectTypeDeclarationToPullSymbol(objectDecl: PullDecl) {
@@ -513,7 +533,17 @@ module TypeScript {
                 this.bindDeclToPullSymbol(childDecls[i]);
             }
 
-            this.popParent();        
+            this.popParent();
+
+            var typeParameters = objectDecl.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                objectSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+            }
         }
 
         public bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
@@ -539,7 +569,16 @@ module TypeScript {
 
             // add the implicit construct member for this function type
             constructorTypeSymbol.addSignature(signature);
-  
+
+            var typeParameters = constructorTypeDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                constructorTypeSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+            }
         }
 
         // variables
@@ -925,6 +964,16 @@ module TypeScript {
 
             this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(functionDeclaration), signature);
 
+            var typeParameters = functionDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                signature.addTypeParameter(typeParameter);
+            }
+
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
         
@@ -965,6 +1014,16 @@ module TypeScript {
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
+            var typeParameters = functionExpressionDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                signature.addTypeParameter(typeParameter);
+            }
+
             signature.addDeclaration(functionExpressionDeclaration);
             functionExpressionDeclaration.setSignatureSymbol(signature);
 
@@ -999,6 +1058,16 @@ module TypeScript {
             this.pushParent(functionTypeSymbol);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
+
+            var typeParameters = functionTypeDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                signature.addTypeParameter(typeParameter);
+            }
 
             signature.addDeclaration(functionTypeDeclaration);
             functionTypeDeclaration.setSignatureSymbol(signature);
@@ -1113,6 +1182,16 @@ module TypeScript {
 
             var signature = isSignature ? new PullSignatureSymbol(sigKind) : new PullDefinitionSignatureSymbol(sigKind);
 
+            var typeParameters = methodDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                signature.addTypeParameter(typeParameter);
+            }
+
             signature.addDeclaration(methodDeclaration);
             methodDeclaration.setSignatureSymbol(signature);
 
@@ -1207,6 +1286,16 @@ module TypeScript {
 
             constructSignature.setReturnType(parent);
 
+            var typeParameters = constructorDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                constructSignature.addTypeParameter(typeParameter);
+            }
+
             constructSignature.addDeclaration(constructorDeclaration);
             constructorDeclaration.setSignatureSymbol(constructSignature);
 
@@ -1240,6 +1329,16 @@ module TypeScript {
             
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
+            var typeParameters = constructSignatureDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                constructSignature.addTypeParameter(typeParameter);
+            }
+
             constructSignature.addDeclaration(constructSignatureDeclaration);
             constructSignatureDeclaration.setSignatureSymbol(constructSignature);
 
@@ -1265,6 +1364,16 @@ module TypeScript {
             
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
+            var typeParameters = callSignatureDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                callSignature.addTypeParameter(typeParameter);
+            }
+
             callSignature.addDeclaration(callSignatureDeclaration);
             callSignatureDeclaration.setSignatureSymbol(callSignature);
 
@@ -1287,6 +1396,16 @@ module TypeScript {
             parent.invalidate();
             
             var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
+
+            var typeParameters = indexSignatureDeclaration.getTypeParameters();
+            var typeParameter: PullTypeParameterSymbol;
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+                typeParameter.addDeclaration(typeParameters[i]);
+                typeParameters[i].setSymbol(typeParameter);
+                indexSignature.addTypeParameter(typeParameter);
+            }
 
             indexSignature.addDeclaration(indexSignatureDeclaration);
             indexSignatureDeclaration.setSignatureSymbol(indexSignature);

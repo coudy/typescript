@@ -35,7 +35,6 @@ module TypeScript {
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
 
-
         // public surface area
         public getSymbolID() { return this.pullSymbolID; }
 
@@ -240,6 +239,7 @@ module TypeScript {
 
     export class PullSignatureSymbol extends PullSymbol {
         private parameterLinks: PullSymbolLink[] = [];
+        private typeParameterLinks: PullSymbolLink[] = [];
         private returnTypeLink: PullSymbolLink = null;
         private hasOptionalParam = false;
         private nonOptionalParamCount = 0;
@@ -253,12 +253,17 @@ module TypeScript {
 
         public addParameter(parameter: PullSymbol, isOptional = false) {
             var link = this.addOutgoingLink(parameter, SymbolLinkKind.Parameter);
-            this.parameterLinks[this.parameterLinks.length] = link;
+            this.typeParameterLinks[this.typeParameterLinks.length] = link;
             this.hasOptionalParam = isOptional;
 
             if (!isOptional) {
                 this.nonOptionalParamCount++;
             }
+        }
+
+        public addTypeParameter(parameter: PullTypeParameterSymbol) {
+            var link = this.addOutgoingLink(parameter, SymbolLinkKind.TypeParameter);
+            this.typeParameterLinks[this.parameterLinks.length] = link;
         }
 
         public getNonOptionalParameterCount() { return this.nonOptionalParamCount; }
@@ -272,6 +277,16 @@ module TypeScript {
 
             for (var i = 0; i < this.parameterLinks.length; i++) {
                 params[params.length] = this.parameterLinks[i].end;
+            }
+
+            return params;
+        }
+
+        public getTypeParameters() {
+            var params: PullTypeParameterSymbol[] = [];
+
+            for (var i = 0; i < this.typeParameterLinks.length; i++) {
+                params[params.length] = <PullTypeParameterSymbol>this.typeParameterLinks[i].end;
             }
 
             return params;
@@ -363,8 +378,13 @@ module TypeScript {
 
     export class PullTypeSymbol extends PullSymbol {
         private memberLinks: PullSymbolLink[] = [];
+        private typeParameterLinks: PullSymbolLink[] = [];
+        private specializedTypeLinks: PullSymbolLink[] = [];
+
         private memberCache: any = null;
         private memberTypeCache: any = null;
+        private memberTypeParameterCache: any = null;
+        private specializedTypeCache: any = null;
 
         private implementedTypeLinks: PullSymbolLink[] = [];
         private extendedTypeLinks: PullSymbolLink[] = [];
@@ -375,11 +395,15 @@ module TypeScript {
 
         private arrayType: PullTypeSymbol = null;
 
+        private isSpecialized = false;
+
         public isType() { return true; }
         public isClass() { return false; }
         public hasMembers() { return this.memberLinks.length != 0; }
         public isInstanceType() { return false; }
         public isFunction() { return false; }
+
+        public setIsSpecialized() { this.isSpecialized = true; }
 
         public getType() { return this; }
 
@@ -403,20 +427,36 @@ module TypeScript {
         public addMember(memberSymbol: PullSymbol, linkKind: SymbolLinkKind) {
             var link = this.addOutgoingLink(memberSymbol, linkKind);
 
-            this.memberLinks[this.memberLinks.length] = link;
-
             memberSymbol.setContainer(this, linkKind);
 
             if (!this.memberCache) {
                 this.memberCache = new BlockIntrinsics();
                 this.memberTypeCache = new BlockIntrinsics();
+                this.memberTypeParameterCache = new BlockIntrinsics();
             }
 
             if (!memberSymbol.isType()) {
+                if (!this.memberCache) {
+                    this.memberCache = new BlockIntrinsics();
+                }
+                this.memberLinks[this.memberLinks.length] = link;
                 this.memberCache[memberSymbol.getName()] = memberSymbol;
             }
             else {
-                this.memberTypeCache[memberSymbol.getName()] = memberSymbol;
+                if ((<PullTypeSymbol>memberSymbol).isTypeParameter()) {
+                    if (!this.memberTypeParameterCache) {
+                        this.memberTypeParameterCache = new BlockIntrinsics();
+                    }
+                    this.typeParameterLinks[this.typeParameterLinks.length] = link;
+                    this.memberTypeParameterCache[memberSymbol.getName()] = memberSymbol;
+                }
+                else {
+                    if (!this.memberTypeCache) {
+                        this.memberTypeCache = new BlockIntrinsics();
+                    }
+                    this.memberLinks[this.memberLinks.length] = link;
+                    this.memberTypeCache[memberSymbol.getName()] = memberSymbol;
+                }
             }
         }
 
@@ -424,9 +464,11 @@ module TypeScript {
             var memberLink: PullSymbolLink;
             var child: PullSymbol;
 
-            for (var i = 0; i < this.memberLinks.length; i++) {
-                if (memberSymbol == this.memberLinks[i].end) {
-                    memberLink = this.memberLinks[i];
+            var links = (memberSymbol.isType() && (<PullTypeSymbol>memberSymbol).isTypeParameter()) ? this.typeParameterLinks : this.memberLinks;
+
+            for (var i = 0; i < links.length; i++) {
+                if (memberSymbol == links[i].end) {
+                    memberLink = links[i];
                     child = memberLink.end;
                     child.unsetContainer();
                     this.removeOutgoingLink(memberLink);
@@ -443,6 +485,42 @@ module TypeScript {
                 members[members.length] = this.memberLinks[i].end;
             }
             return members;
+        }
+
+        public getTypeParameters(): PullTypeSymbol[] {
+            var members: PullTypeSymbol[] = [];
+            for (var i = 0; i < this.typeParameterLinks.length; i++) {
+                members[members.length] = <PullTypeSymbol>this.typeParameterLinks[i].end;
+            }
+            return members;
+        }
+
+        public isGeneric(): bool { return this.typeParameterLinks.length != 0; }
+
+        public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
+            if (!this.specializedTypeCache) {
+                this.specializedTypeCache = new BlockIntrinsics();
+            }
+            
+            this.addOutgoingLink(specializedVersionOfThisType, SymbolLinkKind.SpecializedTo);
+
+            this.specializedTypeCache[getIDForTypeSubstitutions(substitutingTypes)] = specializedVersionOfThisType;
+        }
+
+        public getSpecialization(substitutingTypes: PullTypeSymbol[]): PullTypeSymbol {
+            if (!this.specializedTypeCache) {
+                this.specializedTypeCache = new BlockIntrinsics();
+
+                return null;
+            }
+
+            var specialization = <PullTypeSymbol>this.specializedTypeCache[getIDForTypeSubstitutions(substitutingTypes)];
+
+            if (!specialization) {
+                return null;
+            }
+
+            return specialization;
         }
 
         public addCallSignature(callSignature: PullSignatureSymbol) { 
@@ -673,12 +751,30 @@ module TypeScript {
             return memberSymbol;
         }
 
+        public findTypeParameter(name: string): PullTypeSymbol {
+            var memberSymbol: PullTypeSymbol;
+
+            if (!this.memberTypeCache) {
+                this.memberTypeParameterCache = new BlockIntrinsics();
+
+                for (var i = 0; i < this.typeParameterLinks.length; i++) {
+                    this.memberTypeParameterCache[this.typeParameterLinks[i].end.getName()] = this.typeParameterLinks[i].end;
+                }
+            }
+
+            memberSymbol = this.memberTypeParameterCache[name];
+
+            return memberSymbol;
+        }
+
         public invalidate() {
             this.memberCache = null;
 
             this.memberLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.StaticMember ||
                                                               psl.kind == SymbolLinkKind.PrivateMember ||
                                                               psl.kind == SymbolLinkKind.PublicMember);
+
+            this.typeParameterLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.TypeParameter);
 
             this.callSignatureLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.CallSignature);
 
@@ -692,6 +788,8 @@ module TypeScript {
 
             super.invalidate();
         }
+
+        public isTypeParameter() { return false; }
 
         public toString() {
             var tstring = this.getName() + " { "
@@ -826,6 +924,28 @@ module TypeScript {
         public getDefinitionSignature() { return this.definitionSignature; }
     }
 
+    export class PullTypeParameterSymbol extends PullTypeSymbol {
+        private constraint: PullTypeSymbol = null;
+
+        constructor(name: string) {
+            super(name, PullElementKind.TypeParameter);
+        }
+
+        public isTypeParameter() { return true; }
+
+        public setConstraint(constraintType: PullTypeSymbol) {
+            this.constraint = constraintType;
+        }
+
+        public getConstraint() { return this.constraint; }
+
+        public invalidate() {
+            this.constraint = null;
+
+            super.invalidate();
+        }
+    }
+
     // PULLTODO: This should be a part of the resolver class
     export function specializeToArrayType(arrayInterfaceType: PullTypeSymbol, typeToReplace: PullTypeSymbol, typeToSpecializeTo: PullTypeSymbol, resolver: PullTypeResolver, context: PullTypeResolutionContext) {
 
@@ -942,6 +1062,151 @@ module TypeScript {
         }
         newArrayType.addOutgoingLink(arrayInterfaceType, SymbolLinkKind.ArrayType);
         return newArrayType;
+    }
+
+    export function specializeType(ast: AST, typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, context: PullTypeResolutionContext): PullTypeSymbol {
+
+        // set any slack to 'any'
+        var typeParameters = typeToSpecialize.getTypeParameters();
+
+        if (typeArguments.length > typeParameters.length) {
+            resolver.postSemanticError(ast, "Type expects " + typeParameters.length + " type arguments, but " + typeArguments.length + " type arguments were supplied");
+            return null;
+        }
+        else if (typeParameters.length > typeArguments.length) {
+            for (var i = typeArguments.length; i < typeParameters.length; i++) {
+                typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
+            }
+        }
+
+        var newType: PullTypeSymbol = typeToSpecialize.getSpecialization(typeArguments);
+
+        if (newType) {
+            return newType;
+        }
+        
+        newType = new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
+        newType.addDeclaration(typeToSpecialize.getDeclarations()[0]);
+
+        typeToSpecialize.addSpecialization(newType, typeArguments);
+
+        var field: PullSymbol = null;
+        var newField: PullSymbol = null;
+        var fieldType: PullTypeSymbol = null;
+
+        var method: PullSymbol = null;
+        var methodType: PullFunctionTypeSymbol = null;
+        var newMethod: PullSymbol = null;
+        var newMethodType: PullFunctionTypeSymbol = null;
+
+        var signatures: PullSignatureSymbol[] = null;
+        var newSignature: PullSignatureSymbol = null;
+
+        var parameters: PullSymbol[] = null;
+        var newParameter: PullSymbol = null;
+        var parameterType: PullTypeSymbol = null;
+
+        var returnType: PullTypeSymbol = null;
+        var newReturnType: PullTypeSymbol = null;
+
+        var members = typeToSpecialize.getMembers();
+        var typeToReplace: PullTypeSymbol = null;
+        var typeToSpecializeTo: PullTypeSymbol = null;
+
+        // PULLTODO: For classes, specialized both the constructor and the class body
+        // PULLTODO: Privates and statics
+        // PULLTODO: Call, construct and new signatures
+        // PULLTODO: Check constraints
+        for (var iArg = 0; iArg < typeArguments.length; iArg++) {
+            typeToReplace = typeParameters[iArg];
+            typeToSpecializeTo = typeArguments[iArg];
+
+            for (var i = 0; i < members.length; i++) {
+                resolver.resolveDeclaredSymbol(members[i], context);
+
+                if (members[i].getKind() == PullElementKind.Method) { // must be a method
+                    method = <PullFunctionTypeSymbol> members[i];
+
+                    resolver.resolveDeclaredSymbol(method, context);
+
+                    methodType = <PullFunctionTypeSymbol>method.getType();
+
+                    newMethod = new PullSymbol(method.getName(), PullElementKind.Method);
+                    newMethodType = new PullFunctionTypeSymbol();
+                    newMethod.setType(newMethodType);
+
+                    newMethod.addDeclaration(method.getDeclarations()[0]);
+
+                    signatures = methodType.getCallSignatures();
+
+                    // specialize each signature
+                    for (var j = 0; j < signatures.length; j++) {
+
+                        newSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
+                        newSignature.addDeclaration(signatures[j].getDeclarations[0]);
+
+                        parameters = signatures[j].getParameters();
+                        returnType = signatures[j].getReturnType();
+
+                        if (returnType == typeToReplace) {
+                            newSignature.setReturnType(typeToSpecializeTo);
+                        }
+                        else {
+                            newSignature.setReturnType(returnType);
+                        }
+
+                        for (var k = 0; k < parameters.length; k++) {
+                            newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
+
+                            parameterType = parameters[k].getType();
+
+                            if (parameterType == typeToReplace) {
+                                newParameter.setType(typeToSpecializeTo);
+                            }
+                            else {
+                                newParameter.setType(parameterType);
+                            }
+
+                            newSignature.addParameter(newParameter);
+                        }
+
+                        newMethodType.addSignature(newSignature);
+                    }
+
+                    newType.addMember(newMethod, SymbolLinkKind.PublicMember);
+                }
+
+                else { // must be a field
+                    field = members[i];
+
+                    newField = new PullSymbol(field.getName(), field.getKind());
+                    newField.addDeclaration(field.getDeclarations()[0]);
+
+                    fieldType = field.getType();
+
+                    if (fieldType == typeToReplace) {
+                        newField.setType(typeToSpecializeTo);
+                    }
+                    else {
+                        newField.setType(fieldType);
+                    }
+
+                    newType.addMember(newField, SymbolLinkKind.PublicMember);
+                }
+            }
+        }
+
+        return newType;
+    }
+
+    export function getIDForTypeSubstitutions(types: PullTypeSymbol[]): string {
+        var substitution = "";
+
+        for (var i = 0; i < types.length; i++) {
+            substitution += types[i].getSymbolID().toString() + "#";
+        }
+
+        return substitution;
     }
 
 }

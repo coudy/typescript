@@ -29,8 +29,11 @@ module TypeScript {
         private containedExpressionSymbols: PullSymbol[] = [];
         
         private childDecls: PullDecl[] = [];
+        private typeParameters: PullDecl[] = [];
+
         private childDeclTypeCache: any = new BlockIntrinsics();
         private childDeclValueCache: any = new BlockIntrinsics();
+        private childDeclTypeParameterCache: any = new BlockIntrinsics();
         
         private declID = pullDeclID++;
         
@@ -107,10 +110,15 @@ module TypeScript {
                 }
             }
 
-            this.childDecls[this.childDecls.length] = childDecl;
+            if (childDecl.getKind() & PullElementKind.TypeParameter) {
+                this.typeParameters[this.typeParameters.length] = childDecl;
+            }
+            else {
+                this.childDecls[this.childDecls.length] = childDecl;
+            }
 
             // add to the appropriate cache
-            var cache = (childDecl.getKind() & PullElementKind.SomeType) ? this.childDeclTypeCache : this.childDeclValueCache;
+            var cache = (childDecl.getKind() & PullElementKind.SomeType) ? (childDecl.getKind() & PullElementKind.TypeParameter) ? this.childDeclTypeParameterCache : this.childDeclTypeCache : this.childDeclValueCache;
             var cacheVal = <PullDecl[]>cache[declName];
             if (!cacheVal) {
                 cacheVal = [];
@@ -134,11 +142,20 @@ module TypeScript {
                 return cacheVal;
             }
             else {
+                if (declKind & PullElementKind.SomeType) {
+                    cacheVal = this.childDeclTypeParameterCache[declName];
+                    
+                    if (cacheVal) {
+                        return cacheVal;
+                    }                    
+                }
+
                 return [];
             }
         }
 
         public getChildDecls() { return this.childDecls; }
+        public getTypeParameters() { return this.typeParameters; }
 
         public addContainedExpressionSymbol(symbol: PullSymbol) {
             this.containedExpressionSymbols[this.containedExpressionSymbols.length] = symbol;

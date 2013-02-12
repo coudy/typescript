@@ -44,33 +44,35 @@ module TypeScript {
         Enum = 1 << 7,
         Array = 1 << 8,
         TypeAlias = 1 << 9,
+        //TypeVariable = 1 << 10,
 
-        Variable = 1 << 10,
-        Parameter = 1 << 11,
-        Property = 1 << 12,
+        Variable = 1 << 11,
+        Parameter = 1 << 12,
+        Property = 1 << 13,
+        TypeParameter = 1 << 14,
 
-        Function = 1 << 13,
-        ConstructorMethod = 1 << 14,
-        Method = 1 << 15,
-        FunctionExpression = 1 << 16,
+        Function = 1 << 15,
+        ConstructorMethod = 1 << 16,
+        Method = 1 << 17,
+        FunctionExpression = 1 << 18,
 
-        GetAccessor = 1 << 17,
-        SetAccessor = 1 << 18,
+        GetAccessor = 1 << 19,
+        SetAccessor = 1 << 20,
 
-        CallSignature = 1 << 19,
-        ConstructSignature = 1 << 20,
-        IndexSignature = 1 << 21,
+        CallSignature = 1 << 21,
+        ConstructSignature = 1 << 22,
+        IndexSignature = 1 << 23,
         
-        ObjectType = 1 << 22,
-        FunctionType = 1 << 23,
-        ConstructorType = 1 << 24,
+        ObjectType = 1 << 24,
+        FunctionType = 1 << 25,
+        ConstructorType = 1 << 26,
 
         SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor,
 
         SomeValue = Variable | Parameter | Property | SomeFunction,
 
         SomeType =  Script | Global | Primitive | Module | Class | Interface | DynamicModule | 
-                    Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType,
+                    Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter,
         
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
     }
@@ -103,5 +105,10 @@ module TypeScript {
         CallSignature,
         ConstructSignature,
         IndexSignature,
+
+        TypeParameter,
+        TypeArgument,
+        TypeParameterSpecializedTo,
+        SpecializedTo,
     }
 }
