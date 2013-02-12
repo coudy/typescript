@@ -4206,7 +4206,7 @@ module TypeScript {
         private okAmbientModuleMember(ast: AST) {
             var nt = ast.nodeType;
 
-            return (nt == NodeType.FuncDecl) || (nt == NodeType.ClassDeclaration) || (nt == NodeType.ImportDeclaration) || (nt == NodeType.InterfaceDeclaration) || (nt == NodeType.ModuleDeclaration) ||
+            return (nt == NodeType.ClassDeclaration) || (nt == NodeType.ImportDeclaration) || (nt == NodeType.InterfaceDeclaration) || (nt == NodeType.ModuleDeclaration) ||
                 (nt == NodeType.Empty) || (nt == NodeType.VarDecl) ||
                 ((nt == NodeType.Block) && !(<Block>ast).isStatementBlock) ||
                 ((nt == NodeType.FuncDecl) && ((<FuncDecl>ast).bod == null));
