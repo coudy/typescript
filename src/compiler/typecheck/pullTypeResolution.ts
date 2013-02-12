@@ -423,6 +423,7 @@ module TypeScript {
 
             var classMembers = classDeclSymbol.getMembers();         
             var constructorMethod = classDeclSymbol.getConstructorMethod();
+            var classTypeParameters = classDeclSymbol.getTypeParameters();
 
             if (constructorMethod) {
                 this.resolveDeclaredSymbol(constructorMethod, context);
@@ -430,6 +431,10 @@ module TypeScript {
 
             for (var i = 0; i < classMembers.length; i++) {
                 this.resolveDeclaredSymbol(classMembers[i], context);
+            }
+
+            for (var i = 0; i < classTypeParameters.length; i++) {
+                this.resolveDeclaredSymbol(classTypeParameters[i], context);
             }
 
             return classDeclSymbol;
@@ -461,6 +466,17 @@ module TypeScript {
             }
 
             interfaceDeclSymbol.setResolved();
+
+            var interfaceMembers = interfaceDeclSymbol.getMembers();
+            var interfaceTypeParameters = interfaceDeclSymbol.getTypeParameters();
+
+            for (var i = 0; i < interfaceMembers.length; i++) {
+                this.resolveDeclaredSymbol(interfaceMembers[i], context);
+            }
+
+            for (var i = 0; i < interfaceTypeParameters.length; i++) {
+                this.resolveDeclaredSymbol(interfaceTypeParameters[i], context);
+            }
 
             return interfaceDeclSymbol;
         }
@@ -815,6 +831,9 @@ module TypeScript {
                 if (!constraintTypeSymbol) {
                     this.postSemanticError(typeParameterAST, "Could not resolve constraint for type parameter '" + typeParameterDecl.getName() + "'");
                 }
+                else if (constraintTypeSymbol.isTypeParameter() || constraintTypeSymbol.isPrimitive()) {
+                    this.postSemanticError(typeParameterAST.constraint, "Type parameter constraints may not be type parameters or primitive types");
+                }
                 else {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
                 }
@@ -1028,6 +1047,9 @@ module TypeScript {
 
                 case NodeType.TypeAssertion:
                     return this.resolveTypeAssertionExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+
+                case NodeType.TypeRef:
+                    return this.resolveTypeReference(<TypeReference>expressionAST, enclosingDecl, context);
 
                 // primitives
                 case NodeType.NumberLit:
@@ -1253,14 +1275,16 @@ module TypeScript {
 
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
+            var typeArg: PullTypeSymbol = null;
 
             if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                 for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                    typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
+                    typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
+                    typeArgs[i] = context.findSpecializationForType(typeArg);
                 }
             }
 
-            var specializedSymbol = specializeType(genericTypeAST, genericTypeSymbol, typeArgs, this, context);
+            var specializedSymbol = specializeType(genericTypeAST, genericTypeSymbol, typeArgs, this, enclosingDecl, context);
 
             return specializedSymbol;
         }
@@ -1904,6 +1928,13 @@ module TypeScript {
             var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context);
 
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.getType();
+
+            // PULLREVIEW: In the case of a generic instantiation of a class type,
+            // we'll have gotten a 'GenericType' node, which will be resolved as the class type and not
+            // the constructor type.  In this case, set the targetTypeSymbol to the constructor type
+            if (targetTypeSymbol.isClass()) {
+                targetTypeSymbol = (<PullClassTypeSymbol>targetTypeSymbol).getConstructorMethod().getType();
+            }
 
             if (targetTypeSymbol == this.semanticInfoChain.anyTypeSymbol) {
                 return this.semanticInfoChain.anyTypeSymbol;

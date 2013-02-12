@@ -235,10 +235,17 @@ module TypeScript {
             // if another type infers its type from this one, unset the link
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.InstanceType) {
-
-            // remove the instance type
-            update.updater.removeSymbol(affectedSymbol);
+        if (link.kind == SymbolLinkKind.TypeParameter) {
+            // no action...
+        }
+        if (link.kind == SymbolLinkKind.TypeArgument) {
+            // no action...
+        }
+        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+            // no action...
+        }
+        if (link.kind == SymbolLinkKind.SpecializedTo) {
+            // no action...
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
 
@@ -249,9 +256,6 @@ module TypeScript {
             update.updater.removeSymbol(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.PrivateMember) {
-            update.updater.removeSymbol(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.StaticMember) {
             update.updater.removeSymbol(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
@@ -302,7 +306,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             // no action...
         }
-        else if (link.kind == SymbolLinkKind.InstanceType) {
+        if (link.kind == SymbolLinkKind.TypeParameter) {
+            // no action...
+        }
+        if (link.kind == SymbolLinkKind.TypeArgument) {
+            // no action...
+        }
+        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+            // no action...
+        }
+        if (link.kind == SymbolLinkKind.SpecializedTo) {
             // no action...
         }
         else if (link.kind == SymbolLinkKind.ArrayType) {
@@ -315,9 +328,6 @@ module TypeScript {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.PrivateMember) {
-            update.updater.invalidateType(affectedSymbol);
-        }
-        else if (link.kind == SymbolLinkKind.StaticMember) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
@@ -367,7 +377,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.InstanceType) {
+        if (link.kind == SymbolLinkKind.TypeParameter) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeArgument) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.SpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
@@ -380,9 +399,6 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.PrivateMember) {
             // Don't invalidate the type in this case - we only care about
             // public properties
-        }
-        else if (link.kind == SymbolLinkKind.StaticMember) {
-            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
@@ -431,7 +447,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.InstanceType) {
+        if (link.kind == SymbolLinkKind.TypeParameter) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeArgument) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.SpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
@@ -442,9 +467,6 @@ module TypeScript {
         }
         else if (link.kind == SymbolLinkKind.PrivateMember) {
             // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.StaticMember) {
-            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);
@@ -492,7 +514,16 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             // do nothing...
         }
-        else if (link.kind == SymbolLinkKind.InstanceType) {
+        if (link.kind == SymbolLinkKind.TypeParameter) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeArgument) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.SpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
@@ -502,9 +533,6 @@ module TypeScript {
             // do nothing...
         }
         else if (link.kind == SymbolLinkKind.PrivateMember) {
-            // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.StaticMember) {
             // do nothing...
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
@@ -556,8 +584,17 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ArrayType) {
             update.updater.invalidateType(affectedSymbol);
         }
-        else if (link.kind == SymbolLinkKind.InstanceType) {
-            // do nothing...
+        if (link.kind == SymbolLinkKind.TypeParameter) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeArgument) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        if (link.kind == SymbolLinkKind.SpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
             // do nothing...
@@ -567,9 +604,6 @@ module TypeScript {
         }
         else if (link.kind == SymbolLinkKind.PrivateMember) {
             // do nothing...
-        }
-        else if (link.kind == SymbolLinkKind.StaticMember) {
-            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
             update.updater.invalidateType(affectedSymbol);

@@ -26,6 +26,7 @@ module TypeScript {
 
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
+        private typeSpecializationStack: any[] = [];
 
         public resolvingTypeReference = false;
 
@@ -66,6 +67,30 @@ module TypeScript {
             if (this.contextStack.length && this.inProvisionalResolution()) {
                 this.contextStack[this.contextStack.length].recordProvisionallyTypedSymbol(symbol);
             }
+        }
+
+        public pushTypeSpecializationCache(cache) {
+            this.typeSpecializationStack[this.typeSpecializationStack.length] = cache;
+        }
+
+        public popTypeSpecializationCache() {
+            if (this.typeSpecializationStack.length) {
+                this.typeSpecializationStack.length--;
+            }
+        }
+
+        public findSpecializationForType(type: PullTypeSymbol) {
+            var specialization: PullTypeSymbol = null;
+
+            for (var i = this.typeSpecializationStack.length - 1; i >= 0; i--) {
+                specialization = (this.typeSpecializationStack[i])[type.getSymbolID().toString()];
+
+                if (specialization) {
+                    return specialization;
+                }
+            }
+
+            return type;
         }
     }
 

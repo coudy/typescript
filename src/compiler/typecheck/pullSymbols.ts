@@ -770,8 +770,7 @@ module TypeScript {
         public invalidate() {
             this.memberCache = null;
 
-            this.memberLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.StaticMember ||
-                                                              psl.kind == SymbolLinkKind.PrivateMember ||
+            this.memberLinks = this.findOutgoingLinks(psl =>  psl.kind == SymbolLinkKind.PrivateMember ||
                                                               psl.kind == SymbolLinkKind.PublicMember);
 
             this.typeParameterLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.TypeParameter);
@@ -921,6 +920,17 @@ module TypeScript {
             }
         }
 
+        public addTypeParameter(typeParameter: PullTypeParameterSymbol) {
+
+            this.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+
+            var constructSignatures = this.getConstructSignatures();
+
+            for (var i = 0; i < constructSignatures.length; i++) {
+                constructSignatures[i].addTypeParameter(typeParameter);
+            }
+        }
+
         public getDefinitionSignature() { return this.definitionSignature; }
     }
 
@@ -938,6 +948,8 @@ module TypeScript {
         }
 
         public getConstraint() { return this.constraint; }
+
+        public isGeneric() { return true; }
 
         public invalidate() {
             this.constraint = null;
@@ -1064,18 +1076,39 @@ module TypeScript {
         return newArrayType;
     }
 
-    export function specializeType(ast: AST, typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, context: PullTypeResolutionContext): PullTypeSymbol {
+    export function specializeType(ast: AST, typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
 
         // set any slack to 'any'
         var typeParameters = typeToSpecialize.getTypeParameters();
 
-        if (typeArguments.length > typeParameters.length) {
-            resolver.postSemanticError(ast, "Type expects " + typeParameters.length + " type arguments, but " + typeArguments.length + " type arguments were supplied");
-            return null;
+        if (!typeParameters.length) {
+            return typeToSpecialize;
         }
-        else if (typeParameters.length > typeArguments.length) {
-            for (var i = typeArguments.length; i < typeParameters.length; i++) {
+
+        if (!typeArguments.length) {
+            for (var i = 0; i < typeParameters.length; i++) {
                 typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
+            }
+        }
+        //else if (typeArguments.length != typeParameters.length) {
+        //    resolver.postSemanticError(ast, "Type expects " + typeParameters.length + " type arguments, but " + typeArguments.length + " type arguments were supplied");
+        //    return null;
+        //}
+
+        var typeToReplace: PullTypeParameterSymbol = null;
+        var typeConstraint: PullTypeSymbol = null;
+
+        for (var iArg = 0; iArg < typeArguments.length; iArg++) {
+            typeToReplace = <PullTypeParameterSymbol>typeParameters[iArg];
+
+            typeConstraint = typeToReplace.getConstraint();
+
+            // test specialization type for assignment compatibility with the constraint
+            if (typeConstraint) {
+                if (!resolver.sourceIsAssignableToTarget(typeArguments[iArg], typeConstraint, context)) {
+                    resolver.postSemanticError(ast, "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'");
+                    typeArguments[iArg] = resolver.semanticInfoChain.anyTypeSymbol;
+                }
             }
         }
 
@@ -1084,119 +1117,157 @@ module TypeScript {
         if (newType) {
             return newType;
         }
-        
-        newType = new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
+
+        newType = typeToSpecialize.isClass ? new PullClassTypeSymbol(typeToSpecialize.getName()) : new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
         newType.addDeclaration(typeToSpecialize.getDeclarations()[0]);
 
         typeToSpecialize.addSpecialization(newType, typeArguments);
 
+        // create the type replacement map
+
+        var typeReplacementMap: any = {};
+
+        for (var i = 0; i < typeParameters.length; i++) {
+            typeReplacementMap[typeParameters[i].getSymbolID().toString()] = typeArguments[i];
+        }
+        
+        var callSignatures = typeToSpecialize.getCallSignatures();
+        var constructSignatures = typeToSpecialize.getConstructSignatures();
+        var indexSignatures = typeToSpecialize.getIndexSignatures();
+        var members = typeToSpecialize.getMembers();
+
+        // specialize call signatures
+        var newSignature: PullSignatureSymbol;
+
+        for (var i = 0; i < callSignatures.length; i++) {
+            newSignature = specializeSignature(callSignatures[i], typeReplacementMap, resolver, context);
+
+            newType.addCallSignature(newSignature);
+        }
+
+        // specialize construct signatures
+        for (var i = 0; i < constructSignatures.length; i++) {
+            newSignature = specializeSignature(constructSignatures[i], typeReplacementMap, resolver, context);
+
+            newType.addConstructSignature(newSignature);
+        }
+
+        // specialize index signatures
+        for (var i = 0; i < indexSignatures.length; i++) {
+            newSignature = specializeSignature(indexSignatures[i], typeReplacementMap, resolver, context);
+
+            newType.addIndexSignature(newSignature);
+        }
+
+        // specialize members
+
         var field: PullSymbol = null;
         var newField: PullSymbol = null;
+
         var fieldType: PullTypeSymbol = null;
+        var newFieldType: PullTypeSymbol = null;
+        var replacementType: PullTypeSymbol = null;
+        
+        var decl: PullDecl = null;
+        var declAST: AST;
 
-        var method: PullSymbol = null;
-        var methodType: PullFunctionTypeSymbol = null;
-        var newMethod: PullSymbol = null;
-        var newMethodType: PullFunctionTypeSymbol = null;
+        for (var i = 0; i < members.length; i++) {
+            field = members[i];
+            decl = field.getDeclarations()[0];
 
-        var signatures: PullSignatureSymbol[] = null;
-        var newSignature: PullSignatureSymbol = null;
+            newField = new PullSymbol(field.getName(), field.getKind());
+            newField.addDeclaration(decl);
 
-        var parameters: PullSymbol[] = null;
-        var newParameter: PullSymbol = null;
-        var parameterType: PullTypeSymbol = null;
+            fieldType = field.getType();
 
-        var returnType: PullTypeSymbol = null;
-        var newReturnType: PullTypeSymbol = null;
-
-        var members = typeToSpecialize.getMembers();
-        var typeToReplace: PullTypeSymbol = null;
-        var typeToSpecializeTo: PullTypeSymbol = null;
-
-        // PULLTODO: For classes, specialized both the constructor and the class body
-        // PULLTODO: Privates and statics
-        // PULLTODO: Call, construct and new signatures
-        // PULLTODO: Check constraints
-        for (var iArg = 0; iArg < typeArguments.length; iArg++) {
-            typeToReplace = typeParameters[iArg];
-            typeToSpecializeTo = typeArguments[iArg];
-
-            for (var i = 0; i < members.length; i++) {
-                resolver.resolveDeclaredSymbol(members[i], context);
-
-                if (members[i].getKind() == PullElementKind.Method) { // must be a method
-                    method = <PullFunctionTypeSymbol> members[i];
-
-                    resolver.resolveDeclaredSymbol(method, context);
-
-                    methodType = <PullFunctionTypeSymbol>method.getType();
-
-                    newMethod = new PullSymbol(method.getName(), PullElementKind.Method);
-                    newMethodType = new PullFunctionTypeSymbol();
-                    newMethod.setType(newMethodType);
-
-                    newMethod.addDeclaration(method.getDeclarations()[0]);
-
-                    signatures = methodType.getCallSignatures();
-
-                    // specialize each signature
-                    for (var j = 0; j < signatures.length; j++) {
-
-                        newSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
-                        newSignature.addDeclaration(signatures[j].getDeclarations[0]);
-
-                        parameters = signatures[j].getParameters();
-                        returnType = signatures[j].getReturnType();
-
-                        if (returnType == typeToReplace) {
-                            newSignature.setReturnType(typeToSpecializeTo);
-                        }
-                        else {
-                            newSignature.setReturnType(returnType);
-                        }
-
-                        for (var k = 0; k < parameters.length; k++) {
-                            newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
-
-                            parameterType = parameters[k].getType();
-
-                            if (parameterType == typeToReplace) {
-                                newParameter.setType(typeToSpecializeTo);
-                            }
-                            else {
-                                newParameter.setType(parameterType);
-                            }
-
-                            newSignature.addParameter(newParameter);
-                        }
-
-                        newMethodType.addSignature(newSignature);
-                    }
-
-                    newType.addMember(newMethod, SymbolLinkKind.PublicMember);
-                }
-
-                else { // must be a field
-                    field = members[i];
-
-                    newField = new PullSymbol(field.getName(), field.getKind());
-                    newField.addDeclaration(field.getDeclarations()[0]);
-
-                    fieldType = field.getType();
-
-                    if (fieldType == typeToReplace) {
-                        newField.setType(typeToSpecializeTo);
-                    }
-                    else {
-                        newField.setType(fieldType);
-                    }
-
-                    newType.addMember(newField, SymbolLinkKind.PublicMember);
-                }
+            replacementType = <PullTypeSymbol>typeReplacementMap[fieldType.getSymbolID().toString()];
+                
+            if (replacementType) {
+                newField.setType(replacementType);
             }
+            else {
+                declAST = resolver.semanticInfoChain.getASTForDecl(decl, resolver.getUnitPath());
+
+                // re-resolve using the current replacements
+                context.pushTypeSpecializationCache(typeReplacementMap);
+                field.invalidate();
+                resolver.resolveAST(declAST, false, enclosingDecl, context);
+                context.popTypeSpecializationCache();
+
+                newFieldType = field.getType();
+
+                newField.setType(newFieldType);
+            }
+
+            newType.addMember(newField, (decl.getFlags() & PullElementFlags.Private) ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember);
+        }
+
+        // specialize the constructor and statics, if need be
+        if (typeToSpecialize.isClass()) {
+            var constructorMethod = (<PullClassTypeSymbol>typeToSpecialize).getConstructorMethod();
+            var newConstructorMethod = new PullSymbol(constructorMethod.getName(), PullElementKind.ConstructorMethod);
+            var newConstructorType = specializeType(ast, constructorMethod.getType(), typeArguments, resolver, enclosingDecl, context);
+
+            newConstructorMethod.setType(newConstructorType);
+
+            (<PullClassTypeSymbol>newType).setConstructorMethod(newConstructorMethod);
         }
 
         return newType;
+    }
+
+    function specializeSignature(signature: PullSignatureSymbol,
+                                    typeReplacementMap: any,
+                                    resolver: PullTypeResolver,
+                                    context: PullTypeResolutionContext): PullSignatureSymbol {
+
+
+        var newSignature = new PullSignatureSymbol(signature.getKind());
+        newSignature.addDeclaration(signature.getDeclarations[0]);
+
+        var parameters = signature.getParameters();
+        var typeParameters = signature.getTypeParameters();
+        var returnType = signature.getReturnType();
+
+        var replacementReturnType = <PullTypeSymbol>typeReplacementMap[returnType.getSymbolID().toString()];
+
+        if (replacementReturnType) {
+            newSignature.setReturnType(replacementReturnType);
+        }
+        else {
+            newSignature.setReturnType(returnType);
+        }
+
+        var newParameter: PullSymbol;
+        var parameterType: PullTypeSymbol;
+        var replacementParameterType: PullTypeSymbol;
+        var localTypeParameters: any = {};
+
+        // if we specialize the signature recursive (through, say, the specialization of a method whilst specializing
+        // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the
+        // enclosing type.  (E.g., "class C<T> { public m<T>() {...} }" )
+        for (var i = 0; i < typeParameters.length; i++) {
+            localTypeParameters[typeParameters[i].getName()] = true;
+        }
+
+        for (var k = 0; k < parameters.length; k++) {
+            newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
+
+            parameterType = parameters[k].getType();
+
+            replacementParameterType = <PullTypeSymbol>typeReplacementMap[parameterType.getSymbolID().toString()];
+
+            if (!localTypeParameters[parameterType.getName()] && parameterType == replacementParameterType) {
+                newParameter.setType(replacementParameterType);
+            }
+            else {
+                newParameter.setType(parameterType);
+            }
+
+            newSignature.addParameter(newParameter);
+        }
+
+        return newSignature;
     }
 
     export function getIDForTypeSubstitutions(types: PullTypeSymbol[]): string {

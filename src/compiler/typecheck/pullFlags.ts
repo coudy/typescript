@@ -83,12 +83,10 @@ module TypeScript {
         ProvidesInferredType,
         ArrayType,
 
-        InstanceType,
         ArrayOf,
 
         PublicMember,
         PrivateMember,
-        StaticMember, // PULLTODO: Remove
 
         ConstructorMethod,
 

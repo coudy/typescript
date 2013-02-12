@@ -389,7 +389,7 @@ module TypeScript {
 
             // create the default constructor symbol, if necessary
             var constructorSymbol = classSymbol.getConstructorMethod();
-            var constructorTypeSymbol: PullConstructorTypeSymbol;
+            var constructorTypeSymbol: PullConstructorTypeSymbol = null;
 
             if (!constructorSymbol) {
                 constructorSymbol = new PullSymbol(className, PullElementKind.ConstructorMethod);
@@ -403,10 +403,10 @@ module TypeScript {
                 constructorTypeSymbol.addSignature(constructorSignature);
             }
 
+            constructorTypeSymbol = <PullConstructorTypeSymbol>constructorSymbol.getType();
+
             // bind statics to the constructor symbol
             if (this.staticClassMembers.length) {
-                constructorTypeSymbol = <PullConstructorTypeSymbol>constructorSymbol.getType();
-
                 var member: PullSymbol;
                 var isPrivate = false;
                 var decls: PullDecl[];
@@ -430,7 +430,9 @@ module TypeScript {
                 typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
+
                 classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+                constructorTypeSymbol.addTypeParameter(typeParameter);
             }
         }
 
@@ -694,7 +696,6 @@ module TypeScript {
 
             if (hasFlag(declFlags, PullElementFlags.Static)) {
                 isStatic = true;
-                linkKind = SymbolLinkKind.StaticMember;
             }
 
             if (hasFlag(declFlags, PullElementFlags.Private)) {
@@ -1101,9 +1102,7 @@ module TypeScript {
             var methodSymbol: PullSymbol = null;
             var methodTypeSymbol: PullFunctionTypeSymbol = null;
 
-            var linkKind = isStatic ? SymbolLinkKind.StaticMember :
-                            isPrivate ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember;
-
+            var linkKind = isPrivate ? SymbolLinkKind.PrivateMember : SymbolLinkKind.PublicMember;
 
             methodSymbol = parent.isClass() && isStatic && (<PullClassTypeSymbol>parent).getConstructorMethod() ? (<PullClassTypeSymbol>parent).getConstructorMethod().getType().findMember(methodName) : parent.findMember(methodName);
 
@@ -1286,15 +1285,16 @@ module TypeScript {
 
             constructSignature.setReturnType(parent);
 
-            var typeParameters = constructorDeclaration.getTypeParameters();
-            var typeParameter: PullTypeParameterSymbol;
+            // PULLREVIEW: A class constructor doesn't declare it's own type parameters
+            //var typeParameters = constructorDeclaration.getTypeParameters();
+            //var typeParameter: PullTypeParameterSymbol;
 
-            for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
-                typeParameter.addDeclaration(typeParameters[i]);
-                typeParameters[i].setSymbol(typeParameter);
-                constructSignature.addTypeParameter(typeParameter);
-            }
+            //for (var i = 0; i < typeParameters.length; i++) {
+            //    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+            //    typeParameter.addDeclaration(typeParameters[i]);
+            //    typeParameters[i].setSymbol(typeParameter);
+            //    constructSignature.addTypeParameter(typeParameter);
+            //}
 
             constructSignature.addDeclaration(constructorDeclaration);
             constructorDeclaration.setSignatureSymbol(constructSignature);
