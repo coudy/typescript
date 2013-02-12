@@ -1784,7 +1784,9 @@ module TypeScript {
         }
 
         // REVIEW: isClass param may now be redundant
-        public addConstructorLocalArgs(container: Symbol, args: ASTList, table: IHashTable, isClass: bool): void {
+        public addConstructorLocalArgs(constructorDecl: FuncDecl, table: IHashTable, isClass: bool): void {
+            var container = constructorDecl.type.symbol;
+            var args = constructorDecl.arguments;
             if (args) {
                 var len = args.members.length;
                 for (var i = 0; i < len; i++) {
@@ -1799,6 +1801,7 @@ module TypeScript {
                             var varSym = new ParameterSymbol(local.id.text, local.minChar,
                                                                    this.checker.locationInfo.unitIndex,
                                                                    localVar);
+                            varSym.funcDecl = constructorDecl;
                             varSym.declAST = local;
                             localVar.symbol = varSym;
                             localVar.typeLink.type = local.type;
@@ -2489,7 +2492,7 @@ module TypeScript {
                     this.addFormals(container, signature, funcTable);
                 }
                 else {
-                    this.addConstructorLocalArgs(funcDecl.type.symbol, funcDecl.arguments, funcTable, hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod));
+                    this.addConstructorLocalArgs(funcDecl, funcTable, hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod));
 
                     if (this.thisClassNode && this.thisClassNode.extendsList) {
                         var tmpScope = this.scope;
@@ -2879,7 +2882,7 @@ module TypeScript {
                 var ssb = <SymbolScopeBuilder>this.scope;
                 var funcTable = ssb.valueMembers.allMembers;
 
-                this.addConstructorLocalArgs(classDecl.constructorDecl.type.symbol, classDecl.constructorDecl.arguments, funcTable, true);
+                this.addConstructorLocalArgs(classDecl.constructorDecl, funcTable, true);
             }
 
             this.typeCheck(classDecl.members);

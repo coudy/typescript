@@ -1116,7 +1116,7 @@ module Services {
             //  we'll want to switch to typeName later, though
             var memberName = TypeScript.MemberName.create(info.typeInfo);
 
-            var typeInfo = new TypeInfo(memberName, null, minChar, limChar);
+            var typeInfo = new TypeInfo(memberName, null, "", "", minChar, limChar);
 
             return typeInfo;
         }

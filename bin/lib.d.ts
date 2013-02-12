@@ -229,7 +229,7 @@ interface Function {
       * @param thisArg The object to be used as the this object.
       * @param argArray A set of arguments to be passed to the function.
       */
-    apply(thisArg: any, ...argArray: any[]): any;
+    apply(thisArg: any, argArray?: any[]): any;
 
     /**
       * Calls a method of an object, substituting another object for the current object.
@@ -924,6 +924,7 @@ interface Array {
     toString(): string;
     toLocaleString(): string;
     concat(...items: _element[][]): _element[];
+    concat(...items: _element[]): _element[];
     join(seperator?: string): string;
     pop(): _element;
     push(...items: _element[]): number;
@@ -7710,11 +7711,18 @@ interface Blob {
     size: number;
     msDetachStream(): any;
     slice(start?: number, end?: number, contentType?: string): Blob;
+    close(): void;
     msClose(): void;
+}
+interface BlobPropertyBag {
+    /** Corresponds to the 'type' property of the Blob object */
+    type?: string;
+    /** Either 'transparent' or 'native' */
+    endings?: string;
 }
 declare var Blob: {
     prototype: Blob;
-    new (): Blob;
+    new (blobParts?: any[], options?: BlobPropertyBag): Blob;
 }
 
 interface ApplicationCache extends EventTarget {

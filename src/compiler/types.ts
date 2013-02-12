@@ -183,12 +183,12 @@ module TypeScript {
             return this.getMemberTypeName("", true, false, null);
         }
 
-        public getScopedTypeName(scope: SymbolScope) {
-            return this.getMemberTypeName("", true, false, scope);
+        public getScopedTypeName(scope: SymbolScope, getPrettyTypeName?: bool) {
+            return this.getMemberTypeName("", true, false, scope, getPrettyTypeName);
         }
 
-        public getScopedTypeNameEx(scope: SymbolScope) {
-            return this.getMemberTypeNameEx("", true, false, scope);
+        public getScopedTypeNameEx(scope: SymbolScope, getPrettyTypeName?: bool) {
+            return this.getMemberTypeNameEx("", true, false, scope, getPrettyTypeName);
         }
 
         // REVIEW: No need for this to be a method
@@ -207,13 +207,13 @@ module TypeScript {
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeName(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope): string {
-            var memberName = this.getMemberTypeNameEx(prefix, topLevel, isElementType, scope);
+        public getMemberTypeName(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope, getPrettyTypeName?: bool): string {
+            var memberName = this.getMemberTypeNameEx(prefix, topLevel, isElementType, scope, getPrettyTypeName);
             return memberName.toString();
         }
 
         // REVIEW: No need for this to be a method
-        public getMemberTypeNameEx(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope): MemberName {
+        public getMemberTypeNameEx(prefix: string, topLevel: bool, isElementType: bool, scope: SymbolScope, getPrettyTypeName?: bool): MemberName {
             if (this.elementType) {
                 return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true, scope), "", "[]");
             }
@@ -256,9 +256,10 @@ module TypeScript {
                     var signatureCount = this.callCount();
                     var j: number;
                     var len = 0;
-                    var shortform = !curlies && signatureCount == 1 && topLevel;
+                    var getPrettyFunctionOverload = getPrettyTypeName && !curlies && this.call && this.call.signatures.length > 1 && !this.members && !this.construct;
+                    var shortform = !curlies && (signatureCount == 1 || getPrettyFunctionOverload) && topLevel;
                     if (this.call) {
-                        allMemberNames.addAll(this.call.toStrings(prefix, shortform, scope));
+                        allMemberNames.addAll(this.call.toStrings(prefix, shortform, scope, getPrettyFunctionOverload));
                     }
 
                     if (this.construct) {
@@ -269,7 +270,7 @@ module TypeScript {
                         allMemberNames.addAll(this.index.toStrings("", shortform, scope));
                     }
 
-                    if ((curlies) || ((signatureCount > 1) && topLevel)) {
+                    if ((curlies) || (!getPrettyFunctionOverload && (signatureCount > 1) && topLevel)) {
                         allMemberNames.prefix = "{ ";
                         allMemberNames.suffix = "}";
                         allMemberNames.delim = delim;

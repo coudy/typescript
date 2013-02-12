@@ -79,6 +79,9 @@ module Harness {
     // Assert functions
     export module Assert {
         export var bugIds: string[] = [];
+        export var throwAssertError = (error: Error) => {
+            throw error;
+        };
 
         // Marks that the current scenario is impacted by a bug
         export function bug(id: string) {
@@ -96,33 +99,34 @@ module Harness {
         }
 
         export function is(result: bool, msg?: string) {
-            if (!result)
-                throw new Error(msg || "Expected true, got false.");
+            if (!result) {
+                throwAssertError(new Error(msg || "Expected true, got false."));
+            }
         }
 
         export function arrayLengthIs(arr: any[], length: number) {
             if (arr.length != length) {
                 var actual = '';
                 arr.forEach(n => actual = actual + '\n      ' + n.toString());
-                throw new Error('Expected array to have ' + length + ' elements. Actual elements were:' + actual);
+                throwAssertError(new Error('Expected array to have ' + length + ' elements. Actual elements were:' + actual));
             }
         }
 
         export function equal(actual, expected) {
             if (actual !== expected) {
-                throw new Error("Expected " + actual + " to equal " + expected);
+                throwAssertError(new Error("Expected " + actual + " to equal " + expected));
             }
         }
 
         export function notEqual(actual, expected) {
             if (actual === expected) {
-                throw new Error("Expected " + actual + " to *not* equal " + expected);
+                throwAssertError(new Error("Expected " + actual + " to *not* equal " + expected));
             }
         }
 
         export function notNull(result) {
             if (result === null) {
-                throw new Error("Expected " + result + " to *not* be null");
+                throwAssertError(new Error("Expected " + result + " to *not* be null"));
             }
         }
 
@@ -132,7 +136,7 @@ module Harness {
                 result.errors.forEach(err => {
                     actual = actual + '\n     ' + err.toString();
                 });
-                throw new Error("Expected compiler warning at (" + line + ", " + column + "): " + desc + "\nActual errors follow: " + actual);
+                throwAssertError(new Error("Expected compiler warning at (" + line + ", " + column + "): " + desc + "\nActual errors follow: " + actual));
             }
         }
 
@@ -151,7 +155,7 @@ module Harness {
                         errorString += "                 Right File: " + text2Lines[i] + "\n\n";
                     }
                 }
-                throw new Error(errorString);
+                throwAssertError(new Error(errorString));
             }
         }
 
@@ -168,8 +172,9 @@ module Harness {
                     }
                 }
 
-                if (!found)
-                    throw new Error("Expected array to contain \"" + contains[i] + "\"");
+                if (!found) {
+                    throwAssertError(new Error("Expected array to contain \"" + contains[i] + "\""));
+                }
             }
         }
 
@@ -182,8 +187,9 @@ module Harness {
                 }
             }
 
-            if (foundCount !== 1)
-                throw new Error("Expected array to match element only once (instead of " + foundCount + " times)");
+            if (foundCount !== 1) {
+                throwAssertError(new Error("Expected array to match element only once (instead of " + foundCount + " times)"));
+            }
         }
     }
 

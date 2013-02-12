@@ -75,7 +75,7 @@ module TypeScript {
             return this.toStringHelperEx(shortform, brackets, scope).toString();
         }
 
-        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix? : string = "") : MemberName {
+        public toStringHelperEx(shortform: bool, brackets: bool, scope: SymbolScope, prefix?: string = ""): MemberNameArray {
             var builder = new MemberNameArray();
             if (brackets) {
                 builder.prefix =  prefix + "[";
@@ -150,25 +150,44 @@ module TypeScript {
         }
 
         public toString() { return this.signatures.toString(); }
-        public toStrings(prefix: string, shortform: bool, scope: SymbolScope) {
+        public toStrings(prefix: string, shortform: bool, scope: SymbolScope, getPrettyTypeName? : bool, useSignature? : Signature) {
             var result : MemberName[] = [];  
             var len = this.signatures.length;
-            if (len > 1) {
+            if (!getPrettyTypeName && len > 1) {
                 shortform = false;
             }
-            for (var i = 0; i < len; i++) {
-                // the definition signature shouldn't be printed if there are overloads
-                if (len > 1 && this.signatures[i] == this.definitionSignature) {
-                    continue;
-                }
+
+            var getMemberNameOfSignature = (signature: Signature) => {
                 if (this.flags & SignatureFlags.IsIndexer) {
-                    result.push(this.signatures[i].toStringHelperEx(shortform, true, scope));
+                    return signature.toStringHelperEx(shortform, true, scope);
                 }
                 else {
-                    result.push(this.signatures[i].toStringHelperEx(shortform, false, scope, prefix));
+                    return signature.toStringHelperEx(shortform, false, scope, prefix);
                 }
             }
-            
+
+            if (useSignature) {
+                result.push(getMemberNameOfSignature(useSignature));
+            } else {
+                for (var i = 0; i < len; i++) {
+                    // the definition signature shouldn't be printed if there are overloads
+                    if (len > 1 && this.signatures[i] == this.definitionSignature) {
+                        continue;
+                    }
+
+                    result.push(getMemberNameOfSignature(this.signatures[i]));
+                    if (getPrettyTypeName) {
+                        break;
+                    }
+                }
+            }
+
+            if (getPrettyTypeName && len > 1) {
+                var lastMemberName = <MemberNameArray>result[result.length - 1];
+                var overloadString = " (+ " + ((this.definitionSignature != null) ? len - 2 : len - 1) + " overload(s))";
+                lastMemberName.add(MemberName.create(overloadString));
+            }
+
             return result;
         }
 

@@ -1011,6 +1011,7 @@ module TypeScript {
         public scopeType: Type = null; // Type of the FuncDecl, before target typing
         public endingToken: ASTSpan = null;
         public isDeclaration() { return true; }
+        public constructorSpan: ASTSpan = null;
 
         constructor(public name: Identifier,
                     public bod: ASTList,
@@ -1297,6 +1298,7 @@ module TypeScript {
         public isExported() { return hasFlag(this.modFlags, ModuleFlags.Exported); }
         public isAmbient() { return hasFlag(this.modFlags, ModuleFlags.Ambient); }
         public isEnum() { return hasFlag(this.modFlags, ModuleFlags.IsEnum); }
+        public isWholeFile() { return hasFlag(this.modFlags, ModuleFlags.IsWholeFile); }
 
         public recordNonInterface() {
             this.modFlags &= ~ModuleFlags.ShouldEmitModuleDecl;
@@ -2717,16 +2719,17 @@ module TypeScript {
             return "";
         }
 
-        static getDocCommentTextOfSignatures(signatures: Signature[]) {
-            var comments: string[] = [];
-            for (var i = 0; i < signatures.length; i++) {
-                var signatureDocComment = TypeScript.Comment.getDocCommentText(signatures[i].declAST.getDocComments());
-                if (signatureDocComment != "") {
-                    comments.push(signatureDocComment);
+        static getDocCommentFirstOverloadSignature(signatureGroup: SignatureGroup) {
+            for (var i = 0; i < signatureGroup.signatures.length; i++) {
+                var signature = signatureGroup.signatures[i];
+                if (signature == signatureGroup.definitionSignature) {
+                    continue;
                 }
+
+                return TypeScript.Comment.getDocCommentText(signature.declAST.getDocComments());
             }
 
-            return comments.join("\n");
+            return "";
         }
     }
 

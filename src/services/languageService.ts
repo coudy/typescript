@@ -305,6 +305,8 @@ module Services {
         constructor (
             public memberName: TypeScript.MemberName,
             public docComment: string,
+            public fullSymbolName: string,
+            public kind: string,
             public minChar: number,
             public limChar: number) {
         }
@@ -367,6 +369,7 @@ module Services {
         public type = "";
         public kind = "";            // see ScriptElementKind
         public kindModifiers = "";   // see ScriptElementKindModifier, comma separated
+        public fullSymbolName = "";
         public docComment = "";
     }
 
@@ -393,11 +396,17 @@ module Services {
 
         // Inside module and script only
         // var v = ..
-        static variableElement = "variable";
+        static variableElement = "var";
+
+        // Inside function
+        static localVariableElement = "local var";
 
         // Inside module and script only
         // function f() { }
         static functionElement = "function";
+
+        // Inside function
+        static localFunctionElement = "local function";
 
         // class X { [public|private]* foo() {} }
         static memberFunctionElement = "method";
@@ -421,6 +430,9 @@ module Services {
 
         // interface Y { new():Y; }
         static constructSignatureElement = "construct";
+
+        // function foo(*Y*: string)
+        static parameterElement = "parameter";
     }
 
     export class ScriptElementKindModifier {
@@ -457,6 +469,14 @@ module Services {
         text: string;
     }
     
+    export interface TypeInfoAtPosition {
+        spanInfo: SpanInfo; 
+        ast: TypeScript.AST;
+        symbol?: TypeScript.Symbol;
+        callSignature?: TypeScript.Signature;
+        isNew: bool;
+    }
+
     export class LanguageService implements ILanguageService {
 
         public  logger: TypeScript.ILogger;
@@ -545,24 +565,58 @@ module Services {
             return this.compilerState.getScriptAST(fileName);
         }
 
+        private getTypeInfo(type: TypeScript.Type, symbol: TypeScript.Symbol, typeInfoAtPosition: TypeInfoAtPosition, enclosingScopeContext: TypeScript.EnclosingScopeContext): TypeInfo {
+            var memberName: TypeScript.MemberName = null;
+            var kind = "";
+            var docComment = "";
+            var symbolName = "";
+            var scopeSymbol = enclosingScopeContext.getScope();
+            if (typeInfoAtPosition.ast.nodeType == TypeScript.NodeType.Dot) {
+                return null;
+            }
+            if (symbol.declAST && symbol.declAST.nodeType == TypeScript.NodeType.FuncDecl && (<TypeScript.FuncDecl>symbol.declAST).accessorSymbol) {
+                symbol = (<TypeScript.FuncDecl>symbol.declAST).accessorSymbol;
+                type = symbol.getType();
+            }
+            if (typeInfoAtPosition.callSignature) {
+                var signatureGroup: TypeScript.SignatureGroup = null;
+                if (typeInfoAtPosition.isNew) {
+                    signatureGroup = type.construct;
+                } else {
+                    signatureGroup = type.call;
+                }
+                var memberNames = new TypeScript.MemberNameArray();
+                memberNames.addAll(signatureGroup.toStrings("", true, scopeSymbol, true, typeInfoAtPosition.callSignature));
+                memberName = memberNames;
+                if (typeInfoAtPosition.callSignature.declAST) {
+                    docComment = TypeScript.Comment.getDocCommentText(typeInfoAtPosition.callSignature.declAST.getDocComments());
+                    if (typeInfoAtPosition.callSignature.declAST.type.symbol.name != "_anonymous") {
+                        symbol = typeInfoAtPosition.callSignature.declAST.type.symbol;
+                    }
+                } else {
+                    docComment = "";
+                }
+                kind = this.getSymbolElementKind(symbol, scopeSymbol, false);
+                if (kind == ScriptElementKind.interfaceElement || kind == ScriptElementKind.classElement) {
+                    kind = typeInfoAtPosition.isNew ? ScriptElementKind.constructorImplementationElement : ScriptElementKind.functionElement;
+                }
+            } else {
+                memberName = type.getScopedTypeNameEx(scopeSymbol, true);
+                docComment = this.getDocCommentOfSymbol(symbol);
+                kind = this.getSymbolElementKind(symbol, scopeSymbol, true);
+            }
+            symbolName = symbol ? this.getFullNameOfSymbol(symbol, enclosingScopeContext) : "";
+            return new TypeInfo(memberName, docComment, symbolName, kind, typeInfoAtPosition.ast.minChar, typeInfoAtPosition.ast.limChar);
+        }
+
         public getTypeAtPosition(fileName: string, pos: number): TypeInfo {
             this.refresh();
 
             var script = this.compilerState.getScriptAST(fileName);
             var sourceText = this.compilerState.getSourceText(script);
 
-            // First check whether we are in a comment where quick info should not be displayed
-            var path = this.getAstPathToPosition(script, pos);
-            if (path.count() == 0)
-                return null;
-
-            if (path.nodeType() === TypeScript.NodeType.Comment) {
-                this.logger.log("The specified location is inside a comment");
-                return null;
-            }
-
             // Look for AST node containing the position
-            var typeInfo = this.getTypeInfoAtPosition(pos, script);
+            var typeInfo = this.getTypeInfoAtPosition(pos, script, true);
             if (typeInfo == null) {
                 this.logger.log("No type found at the specified location.");
                 return null;
@@ -574,8 +628,14 @@ module Services {
                 return null;
             }
 
-            var memberName = typeInfo.type.getScopedTypeNameEx(enclosingScopeContext.getScope());
-            return new TypeInfo(memberName, TypeScript.Comment.getDocCommentText(typeInfo.type.getDocComments()), typeInfo.ast.minChar, typeInfo.ast.limChar);
+            if (typeInfo.symbol) {
+                return this.getTypeInfo(typeInfo.symbol.getType(), typeInfo.symbol, typeInfo, enclosingScopeContext);
+            } else if (typeInfo.ast.type) {
+                return this.getTypeInfo(typeInfo.ast.type, typeInfo.ast.type.symbol, typeInfo, enclosingScopeContext);
+            } else {
+                this.logger.log("No type found at the specified location.");
+                return null;
+            }
         }
 
         public getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo {
@@ -584,13 +644,13 @@ module Services {
             var script = this.compilerState.getScriptAST(fileName);
 
             // Look for AST node containing the position
-            var spanInfo = this.getNameOrDottedNameSpanFromPosition(startPos, script);
-            if (spanInfo == null) {
+            var typeAndSpanInfo = this.getTypeInfoAtPosition(startPos, script);
+            if (typeAndSpanInfo == null) {
                 this.logger.log("No name or dotted name found at the specified location.");
                 return null;
             }
 
-            return spanInfo;
+            return typeAndSpanInfo.spanInfo;
         }
 
         // Gets breakpoint span in the statement depending on context
@@ -1142,11 +1202,108 @@ module Services {
             return manager.getBraceMatchingAtPosition(position);
         }
 
-        private getSymbolElementKind(sym: TypeScript.Symbol): string {
+        private getFullNameOfSymbol(symbol: TypeScript.Symbol, enclosingScopeContext: TypeScript.EnclosingScopeContext) {
+            if (symbol && symbol.container && symbol.container.declAST && symbol.container.declAST.nodeType == TypeScript.NodeType.FuncDecl) {
+                var funcDecl = <TypeScript.FuncDecl>symbol.container.declAST;
+                if (funcDecl.symbols.lookup(symbol.name) == symbol) {
+                    return symbol.getPrettyName(enclosingScopeContext.getScope().container);
+                }
+            }
+
+            if (symbol && symbol.kind() == TypeScript.SymbolKind.Type) {
+                var typeSymbol = <TypeScript.TypeSymbol>symbol;
+                if (typeSymbol.type.symbol == symbol && typeSymbol.type.primitiveTypeClass != TypeScript.Primitive.None) {
+                    // Primitive type symbols - do not use symbol name
+                    return "";
+                }
+            }
+            return symbol.fullName(enclosingScopeContext.getScope());
+        }
+
+        private getSymbolElementKind(sym: TypeScript.Symbol, scopeSymbol?: TypeScript.SymbolScope, useConstructorAsClass?: bool): string {
+            if (!sym) {
+                return ScriptElementKind.unknown;
+            }
+
             if (sym.declAST == null) {
                 return ScriptElementKind.keyword; // Predefined type (void, etc.)
             }
-            return this.getDeclNodeElementKind(sym.declAST);
+
+            var isLocal = () => {
+                if (sym.container && sym.container.declAST && sym.container.declAST.nodeType == TypeScript.NodeType.FuncDecl) {
+                    if (scopeSymbol && scopeSymbol.container == sym.container) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            var ast = sym.declAST;
+            //var isMember = symbol.isMember() || symbol.container && 
+            switch (ast.nodeType) {
+                case TypeScript.NodeType.InterfaceDeclaration:
+                    return ScriptElementKind.interfaceElement;
+
+                case TypeScript.NodeType.ClassDeclaration:
+                    return ScriptElementKind.classElement;
+
+                case TypeScript.NodeType.ModuleDeclaration:
+                    var moduleDecl = <TypeScript.ModuleDeclaration>ast;
+                    var isEnum = moduleDecl.isEnum();
+                    return isEnum ? ScriptElementKind.enumElement : ScriptElementKind.moduleElement;
+
+                case TypeScript.NodeType.ImportDeclaration:
+                    return ScriptElementKind.moduleElement;
+
+                case TypeScript.NodeType.VarDecl:
+                    var varDecl = <TypeScript.VarDecl>ast;
+                    if (varDecl.isProperty()) {
+                        return ScriptElementKind.memberVariableElement;
+                    }
+                    return isLocal() ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
+
+                case TypeScript.NodeType.ArgDecl:
+                    var argDecl = <TypeScript.ArgDecl>ast;
+                    if (sym.kind() == TypeScript.SymbolKind.Parameter) {
+                        return ScriptElementKind.parameterElement;
+                    }
+                    return (argDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
+
+                case TypeScript.NodeType.FuncDecl:
+                    var funcDecl = <TypeScript.FuncDecl>ast;
+                    if (funcDecl.isGetAccessor()) {
+                        return ScriptElementKind.memberGetAccessorElement;
+                    }
+                    else if (funcDecl.isSetAccessor()) {
+                        return ScriptElementKind.memberSetAccessorElement;
+                    }
+                    else if (funcDecl.isCallMember()) {
+                        return ScriptElementKind.callSignatureElement;
+                    }
+                    else if (funcDecl.isIndexerMember()) {
+                        return ScriptElementKind.indexSignatureElement;
+                    }
+                    else if (funcDecl.isConstructMember()) {
+                        return ScriptElementKind.constructSignatureElement;
+                    }
+                    else if (funcDecl.isConstructor) {
+                        return useConstructorAsClass ? ScriptElementKind.classElement : ScriptElementKind.constructorImplementationElement;
+                    }
+                    else if (funcDecl.isMethod()) {
+                        return ScriptElementKind.memberFunctionElement;
+                    }
+                    else if (isLocal()) {
+                        return ScriptElementKind.localFunctionElement;
+                    } else {
+                        return ScriptElementKind.functionElement;
+                    }
+
+                default:
+                    if (this.logger.warning()) {
+                        this.logger.log("Warning: unrecognized AST node type: " + (<any>TypeScript.NodeType)._map[ast.nodeType]);
+                    }
+                    return ScriptElementKind.unknown;
+            }
         }
 
         private getSymbolElementKindModifiers(sym: TypeScript.Symbol): string {
@@ -1402,32 +1559,50 @@ module Services {
             return result;
         }
 
-        private getCompletionsFromEnclosingScopeContext(enclosingScopeContext: TypeScript.EnclosingScopeContext, result: CompletionInfo): void {
+        private getDocCommentOfSymbol(symbol: TypeScript.Symbol) {
+            if (!symbol) {
+                return "";
+            }
 
+            var type = symbol.getType();
+            if (type && type.isClass() && type.symbol.name == symbol.name) {
+                return TypeScript.Comment.getDocCommentText(type.getDocComments());
+            }
+
+
+            if (symbol.declAST && symbol.declAST.nodeType == TypeScript.NodeType.FuncDecl && type.call && type.call.signatures.length > 1) {
+                // Overload method - combine docComments from all the signatures
+                return TypeScript.Comment.getDocCommentFirstOverloadSignature(type.call);
+            }
+
+            if (symbol.kind() == TypeScript.SymbolKind.Parameter) {
+                // Its a parameter
+                return (<TypeScript.ParameterSymbol>symbol).getParameterDocComments();
+            }
+
+            if (symbol.declAST && symbol.declAST.nodeType == TypeScript.NodeType.ArgDecl &&
+                (<TypeScript.ArgDecl>symbol.declAST).isProperty()) {
+                // Its a property that was defined as parameter to constructor
+                return (<TypeScript.ParameterSymbol>(<TypeScript.ArgDecl>symbol.declAST).sym).getParameterDocComments();
+            }
+
+
+            return TypeScript.Comment.getDocCommentText(symbol.getDocComments());
+        }
+
+        private getCompletionsFromEnclosingScopeContext(enclosingScopeContext: TypeScript.EnclosingScopeContext, result: CompletionInfo): void {
             var getCompletions = (isMemberCompletion: bool) => {
                 result.isMemberCompletion = isMemberCompletion;
                 enclosingScopeContext.isMemberCompletion = isMemberCompletion;
 
-                var entries = this.compilerState.getScopeEntries(enclosingScopeContext);
+                var entries = this.compilerState.getScopeEntries(enclosingScopeContext, true);
                 entries.forEach(x => {
                     var entry = new CompletionEntry();
                     entry.name = x.name;
                     entry.type = x.type;
-                    entry.kind = this.getSymbolElementKind(x.sym);
-                    var type = x.sym.getType();
-                    if (type && type.isClass() && type.symbol.name == x.name) {
-                        entry.docComment = TypeScript.Comment.getDocCommentText(type.getDocComments());
-                    } else if (x.sym.declAST && x.sym.declAST.nodeType == TypeScript.NodeType.FuncDecl &&
-                        type.call && type.call.signatures.length > 1) {
-                        // Overload method - combine docComments from all the signatures
-                        entry.docComment = TypeScript.Comment.getDocCommentTextOfSignatures(type.call.signatures);
-                    } else {
-                        if (x.sym.kind() == TypeScript.SymbolKind.Parameter) {
-                            entry.docComment = (<TypeScript.ParameterSymbol>x.sym).getParameterDocComments();
-                        } else {
-                            entry.docComment = TypeScript.Comment.getDocCommentText(x.sym.getDocComments());
-                        }
-                    }
+                    entry.kind = this.getSymbolElementKind(x.sym, enclosingScopeContext.getScope(), true);
+                    entry.fullSymbolName = this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
+                    entry.docComment = this.getDocCommentOfSymbol(x.sym);
                     entry.kindModifiers = this.getSymbolElementKindModifiers(x.sym);
                     result.entries.push(entry);
                 });
@@ -1874,70 +2049,95 @@ module Services {
             return this.compilerState.getEmitOutput(fileName);
         }
 
-        private getTypeInfoAtPosition(pos: number, script: TypeScript.AST): {
-            ast: TypeScript.AST; type: TypeScript.Type;
-        } {
-            var result: { ast: TypeScript.AST; type: TypeScript.Type; } = null;
-            var resultASTs: TypeScript.AST[] = [];
+        private getTypeInfoAtPosition(pos: number, script: TypeScript.Script, constructorIsValid?: bool): TypeInfoAtPosition {
+            var result: TypeInfoAtPosition = null;
 
-            var pre = (cur: TypeScript.AST, parent: TypeScript.AST): TypeScript.AST => {
-                if (TypeScript.isValidAstNode(cur)) {
-                    if (pos >= cur.minChar && pos < cur.limChar) {
-                        // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
-                        //       than top of the stack.
-                        var previous = resultASTs[resultASTs.length - 1];
-                        if (previous == undefined || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
-                            resultASTs.push(cur);
-
-                            //logASTNode(script, cur, 0);
-                            if ((<TypeScript.BoundDecl>cur).sym != null && (<TypeScript.BoundDecl>cur).sym.getType() != null) {
-                                result = { ast: cur, type: (<TypeScript.BoundDecl>cur).sym.getType() };
-                            }
-                            else if (cur.type != null) {
-                                result = { ast: cur, type: cur.type };
-                            }
-                        }
+            var callExpr: TypeScript.CallExpression[] = [];
+            var createTypeInfoAtPosition = (minChar: number, limChar: number, ast: TypeScript.AST,
+                type: TypeScript.Type, forceNew?: bool) => {
+                var typeInfoAtPosition = <TypeInfoAtPosition>{
+                    spanInfo: new SpanInfo(minChar, limChar),
+                    ast: ast
+                }
+                if (callExpr.length > 0) {
+                    var curCallExpr = callExpr[callExpr.length - 1];
+                    if (curCallExpr.target.type == type) {
+                        typeInfoAtPosition.callSignature = curCallExpr.signature;
+                        typeInfoAtPosition.isNew = forceNew || curCallExpr.nodeType == TypeScript.NodeType.New;
                     }
                 }
-                return cur;
+                return typeInfoAtPosition;
             }
-
-            TypeScript.getAstWalkerFactory().walk(script, pre);
-            return result;
-        }
-
-        private getNameOrDottedNameSpanFromPosition(pos: number, script: TypeScript.Script): SpanInfo  {
-            var result: SpanInfo = null;
 
             var pre = (cur: TypeScript.AST, parent: TypeScript.AST): TypeScript.AST => {
                 if (TypeScript.isValidAstNode(cur)) {
                     if (pos >= cur.minChar && pos < cur.limChar) {
-                        if (cur.nodeType == TypeScript.NodeType.Dot) {
-                            // Dotted expression
-                            if (result == null) {
-                                result = new SpanInfo(cur.minChar, cur.limChar);
-                            }
-                        }
-                        else if (cur.nodeType == TypeScript.NodeType.Name) {
-                            // If it was the first thing we found, use it directly
-                            if (result == null) {
-                                result = new SpanInfo(cur.minChar, cur.limChar);
-                            }
-                            else {
+                        switch (cur.nodeType) {
+                            case TypeScript.NodeType.Call:
+                            case TypeScript.NodeType.New:
+                                var curCallExpr = <TypeScript.CallExpression>cur;
+                                if (pos >= curCallExpr.target.minChar && pos < curCallExpr.target.limChar) {
+                                    callExpr.push(curCallExpr);
+                                }
+                                break;
+
+                            case TypeScript.NodeType.Dot:
+                                // Dotted expression
+                                if (result == null) {
+                                    result = createTypeInfoAtPosition(cur.minChar, cur.limChar, cur, cur.type);
+                                }
+                                break;
+
+                            case TypeScript.NodeType.Name:
+                                // If it was the first thing we found, use it directly
                                 // Its a dotted expression, use the current end as the end of our span
-                                result.limChar = cur.limChar;
-                            }
-                        } else if (cur.nodeType == TypeScript.NodeType.QString || 
-                            cur.nodeType == TypeScript.NodeType.This || 
-                            cur.nodeType == TypeScript.NodeType.Super) {
-                            result = new SpanInfo(cur.minChar, cur.limChar);
+                                result = createTypeInfoAtPosition(result == null ? cur.minChar : result.spanInfo.minChar, cur.limChar, cur,
+                                    (<TypeScript.Identifier>cur).sym ? (<TypeScript.Identifier>cur).sym.getType() : cur.type);
+                                result.symbol = (<TypeScript.Identifier>cur).sym;
+                                break;
+
+                            case TypeScript.NodeType.FuncDecl:
+                                var funcDecl = <TypeScript.FuncDecl>cur;
+                                if (constructorIsValid && funcDecl.constructorSpan && pos >= funcDecl.constructorSpan.minChar && pos < funcDecl.constructorSpan.limChar) {
+                                    result = {
+                                        spanInfo: new SpanInfo(funcDecl.constructorSpan.minChar, funcDecl.constructorSpan.limChar),
+                                        ast: cur,
+                                        callSignature: funcDecl.signature,
+                                        isNew: true
+                                    };
+                                }
+                                break;
+
+                            case TypeScript.NodeType.Super:
+                                result = createTypeInfoAtPosition(cur.minChar, cur.limChar, cur, cur.type, true);
+                                result.symbol = cur.type.symbol;
+                                break;
+
+                            case TypeScript.NodeType.QString:
+                            case TypeScript.NodeType.This:
+                                result = createTypeInfoAtPosition(cur.minChar, cur.limChar, cur, cur.type);
+                                break;
+                        }
+                    } else if (result && callExpr.length > 0) {
+                        var curCallExpr = callExpr[callExpr.length - 1];
+                        if (curCallExpr.target.minChar >= cur.minChar && curCallExpr.target.minChar < cur.limChar) {
+                            result.callSignature = null;
                         }
                     }
                 }
                 return cur;
             }
 
-            TypeScript.getAstWalkerFactory().walk(script, pre);
+            var post = (cur: TypeScript.AST, parent: TypeScript.AST) => {
+                var callExprLength = callExpr.length;
+                if (callExprLength > 0 && callExpr[callExprLength - 1] == parent) {
+                    callExpr.pop();
+                }
+                
+                return cur;
+            }
+
+            TypeScript.getAstWalkerFactory().walk(script, pre, post);
             return result;
         }
 
@@ -1997,66 +2197,6 @@ module Services {
 
             for (var i = 0, len = context.scope.length; i < len; i++) {
                 processScript(context.scope[i]);
-            }
-        }
-
-        //
-        // Return the comma separated list of modifers (from the ScriptElementKindModifier list of constants) 
-        // of an AST node referencing a known declaration kind.
-        //
-        private getDeclNodeElementKind(ast: TypeScript.AST): string {
-            switch (ast.nodeType) {
-                case TypeScript.NodeType.InterfaceDeclaration:
-                    return ScriptElementKind.interfaceElement;
-
-                case TypeScript.NodeType.ClassDeclaration:
-                    return ScriptElementKind.classElement;
-
-                case TypeScript.NodeType.ModuleDeclaration:
-                    var moduleDecl = <TypeScript.ModuleDeclaration>ast;
-                    var isEnum = moduleDecl.isEnum();
-                    return isEnum ? ScriptElementKind.enumElement : ScriptElementKind.moduleElement;
-
-                case TypeScript.NodeType.VarDecl:
-                    var varDecl = <TypeScript.VarDecl>ast;
-                    return (varDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
-
-                case TypeScript.NodeType.ArgDecl:
-                    var argDecl = <TypeScript.ArgDecl>ast;
-                    return (argDecl.isProperty() ? ScriptElementKind.memberVariableElement : ScriptElementKind.variableElement);
-
-                case TypeScript.NodeType.FuncDecl:
-                    var funcDecl = <TypeScript.FuncDecl>ast;
-                    if (funcDecl.isGetAccessor()) {
-                        return ScriptElementKind.memberGetAccessorElement;
-                    }
-                    else if (funcDecl.isSetAccessor()) {
-                        return ScriptElementKind.memberSetAccessorElement;
-                    }
-                    else if (funcDecl.isCallMember()) {
-                        return ScriptElementKind.callSignatureElement;
-                    }
-                    else if (funcDecl.isIndexerMember()) {
-                        return ScriptElementKind.indexSignatureElement;
-                    }
-                    else if (funcDecl.isConstructMember()) {
-                        return ScriptElementKind.constructSignatureElement;
-                    }
-                    else if (funcDecl.isConstructor) {
-                        return ScriptElementKind.constructorImplementationElement;
-                    }
-                    else if (funcDecl.isMethod()) {
-                        return ScriptElementKind.memberFunctionElement;
-                    }
-                    else {
-                        return ScriptElementKind.functionElement;
-                    }
-
-                default:
-                    if (this.logger.warning()) {
-                        this.logger.log("Warning: unrecognized AST node type: " + (<any>TypeScript.NodeType)._map[ast.nodeType]);
-                    }
-                    return ScriptElementKind.unknown;
             }
         }
 

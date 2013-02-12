@@ -17,20 +17,7 @@
 ////}
 ////Fo/**/o();
 
-var expected = "{ (a: string, b: number, c: bool): any; \
-(a: any, name: string, age: number): any; \
-(fred: any[], name: string, age: number): any; \
-(fred: any[], name: string[], age: number): any; \
-(fred: any[], name: string[], age: number[]): any; \
-(fred: any, name: string[], age: number[]): any; \
-(fred: any, name: bool, age: number[]): any; \
-(dave: bool, name: string): any; \
-(fred: any, mandy: () => number, age: number[]): any; \
-(fred: any, name: string, age: {}): any; \
-(fred: any, name: string, age: number[]): any; \
-(test: string, name: any, age: number): any; \
-(): any; }"
 goTo.marker();
-verify.quickInfoIs(expected);
+verify.quickInfoIs("() => any (+ 12 overload(s))", "", "Foo", "function");
 
 
