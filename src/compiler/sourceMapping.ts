@@ -162,15 +162,13 @@ module TypeScript {
             }
 
             // Write the actual map file
-            if (mappingsString != "") {
-                sourceMapOut.Write(JSON2.stringify({
-                    version: 3,
-                    file: sourceMapper.jsFileName,
-                    sources: tsFiles,
-                    names: namesList,
-                    mappings: mappingsString
-                }));
-            }
+            sourceMapOut.Write(JSON2.stringify({
+                version: 3,
+                file: sourceMapper.jsFileName,
+                sources: tsFiles,
+                names: namesList,
+                mappings: mappingsString
+            }));
 
             // Done, close the file
             try {

@@ -72,33 +72,33 @@ exports.newVar2 = new extMod.m4.m2.c();
 /** Module comment*/
 export module m1 {
     /** b's comment*/
-    export var b: number;
+    var b: number;
     /** m2 comments*/
-    export module m2 {
+    module m2 {
         /** class comment;*/
-        export class c {
+        class c {
         }
         /** i*/
-        export var i: c;
+        var i: c;
     }
     /** exported function*/
-    export function fooExport(): number;
+    function fooExport(): number;
 }
 /** Module comment */
 export module m4 {
     /** b's comment */
-    export var b: number;
+    var b: number;
     /** m2 comments
     */
-    export module m2 {
+    module m2 {
         /** class comment; */
-        export class c {
+        class c {
         }
         /** i */
-        export var i: c;
+        var i: c;
     }
     /** exported function */
-    export function fooExport(): number;
+    function fooExport(): number;
 }
 ////[comments_ExternalModules_1.d.ts]
 /**This is on import declaration*/

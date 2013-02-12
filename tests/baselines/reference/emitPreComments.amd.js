@@ -1,3 +1,4 @@
+// This is pre comment
 var y = 10;
 /**
 * @name Foo

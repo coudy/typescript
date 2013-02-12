@@ -34,7 +34,7 @@ module m1 {
 
 
 declare module "m1" {
-    export class A {
+    class A {
     }
 }
 

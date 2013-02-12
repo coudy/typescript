@@ -608,10 +608,6 @@ module TypeScript {
             return importDecl;
         }
 
-        private reportAmbientElementNotExported(name: Identifier) {
-            this.reportParseError("Element of an ambient module must specify export", name.minChar, name.limChar);
-        }
-
         private parseModuleDecl(errorRecoverySet: ErrorRecoverySet, modifiers: Modifiers, preComments: Comment[]): ModuleDeclaration {
             var leftCurlyCount = this.scanner.leftCurlyCount;
             var rightCurlyCount = this.scanner.rightCurlyCount;
@@ -739,10 +735,8 @@ module TypeScript {
             if (this.parsingDeclareFile || svAmbient || hasFlag(modifiers, Modifiers.Ambient)) {
                 moduleDecl.modFlags |= ModuleFlags.Ambient;
             }
-            if (hasFlag(modifiers, Modifiers.Exported)) {
+            if (svAmbient || hasFlag(modifiers, Modifiers.Exported)) {
                 moduleDecl.modFlags |= ModuleFlags.Exported;
-            } else if (svAmbient) {
-                this.reportAmbientElementNotExported(name);
             }
 
             if (isDynamicMod) {
@@ -1590,6 +1584,7 @@ module TypeScript {
             // mark the class as ambient, as necessary
             if (this.parsingDeclareFile || this.ambientModule) {
                 modifiers |= Modifiers.Ambient;
+                modifiers |= Modifiers.Exported;
             }
 
             var classIsMarkedAsAmbient = this.parsingDeclareFile || (modifiers & Modifiers.Ambient) != Modifiers.None;
@@ -1615,10 +1610,6 @@ module TypeScript {
                 }
             }
 
-            if (this.ambientModule && !hasFlag(modifiers, Modifiers.Exported)) {
-                this.reportAmbientElementNotExported(name);
-            }
-
             var extendsList: ASTList = null;
             var implementsList: ASTList = null;
             var requiresSignature = false;
@@ -1638,7 +1629,7 @@ module TypeScript {
             // parse the classes members
             this.parseClassElements(classDecl, errorRecoverySet, modifiers);
 
-            if (hasFlag(modifiers, Modifiers.Exported)) {
+            if (this.ambientModule || this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Exported)) {
                 classDecl.varFlags |= VarFlags.Exported;
             }
 
@@ -1871,6 +1862,10 @@ module TypeScript {
 
             if (requiresSignature) {
                 constructorFuncDecl.fncFlags |= FncFlags.Signature;
+            }
+
+            if (this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
+                constructorFuncDecl.fncFlags |= FncFlags.Exported;
             }
 
             if (this.currentClassDefinition.constructorDecl) {
@@ -2128,11 +2123,9 @@ module TypeScript {
             if (hasFlag(modifiers, Modifiers.Public)) {
                 interfaceDecl.varFlags |= VarFlags.Public;
             }
-            if (hasFlag(modifiers, Modifiers.Exported)) {
+            if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
                 interfaceDecl.varFlags |= VarFlags.Exported;
-            } else if (this.ambientModule) {
-                this.reportAmbientElementNotExported(name);
-            }
+            } 
 
             interfaceDecl.limChar = members.limChar;
             interfaceDecl.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
@@ -2428,10 +2421,8 @@ module TypeScript {
                 if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Ambient)) {
                     varDecl.varFlags |= VarFlags.Ambient;
                 }
-                if (hasFlag(modifiers, Modifiers.Exported)) {
+                if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
                     varDecl.varFlags |= VarFlags.Exported;
-                } else if (this.ambientModule) {
-                    this.reportAmbientElementNotExported(varDecl.id);
                 }
 
                 varDecl.minChar = minChar;
@@ -4108,10 +4099,8 @@ module TypeScript {
                         if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Ambient)) {
                             (<ModuleDeclaration>ast).modFlags |= ModuleFlags.Ambient;
                         }
-                        if (hasFlag(modifiers, Modifiers.Exported)) {
+                        if (this.parsingDeclareFile || this.ambientModule || hasFlag(modifiers, Modifiers.Exported)) {
                             (<ModuleDeclaration>ast).modFlags |= ModuleFlags.Exported;
-                        } else if (this.ambientModule) {
-                            this.reportAmbientElementNotExported((<ModuleDeclaration>ast).name);
                         }
                         break;
                     case TokenID.Debugger:

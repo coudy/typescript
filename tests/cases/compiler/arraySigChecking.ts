@@ -1,14 +1,14 @@
 declare module M {
-	export interface iBar { t: any; }
-	export interface iFoo extends iBar {
+	interface iBar { t: any; }
+	interface iFoo extends iBar {
 		s:any;
 	}
 
-	export class cFoo {
+	class cFoo {
 		t:any;
 	}
 
-	export var foo: { [index: any]; }; // expect an error here
+	var foo: { [index: any]; }; // expect an error here
 }
 
 interface myInt {

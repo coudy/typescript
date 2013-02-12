@@ -76,10 +76,10 @@ export function exportedFunction(): {
     n: number;
 };
 export module m2 {
-    export var a: number;
+    var a: number;
 }
 export module m3 {
-    export function foo(): string;
+    function foo(): string;
 }
 export var eVar1, eVar2: number;
 export var eVar3: number, eVar4, eVar5;

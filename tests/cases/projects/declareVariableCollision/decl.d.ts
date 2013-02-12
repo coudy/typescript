@@ -3,10 +3,10 @@
 module A
 {
 
-    declare export class MyRoot { }
+    declare class MyRoot { }
 
     export module B
     {
-        declare export class MyClass{ }
+        declare class MyClass{ }
     }
 }

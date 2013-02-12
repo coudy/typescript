@@ -179,34 +179,34 @@ module exportTests {
 }
 
 declare module mAmbient {
-    export class C {
+    class C {
         public myProp: number;
     }
 
-    export function foo() : C;
-    export var aVar: C;
-    export interface B {
+    function foo() : C;
+    var aVar: C;
+    interface B {
         x: number;
         y: C;
     }
-    export enum e {
+    enum e {
         x,
         y,
         z
     }
 
-    export module m3 {
-        export class C {
+    module m3 {
+        class C {
             public myProp: number;
         }
 
-        export function foo(): C;
-        export var aVar: C;
-        export interface B {
+        function foo(): C;
+        var aVar: C;
+        interface B {
             x: number;
             y: C;
         }
-        export enum e {
+        enum e {
             x,
             y,
             z
