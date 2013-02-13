@@ -2743,7 +2743,6 @@ module TypeScript {
                     ast.minChar = minChar;
                     break;
                 case TokenID.New:
-                    minChar = this.scanner.pos;
                     this.currentToken = this.scanner.scan();
                     var target = this.parseTerm(errorRecoverySet, false, TypeContext.AllSimpleTypes, inCast);
 
