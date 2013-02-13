@@ -1088,7 +1088,7 @@ module TypeScript {
                 if (this.thisClassNode && (hasFlag(this.thisFnc.fncFlags, FncFlags.IsPropertyBound) || (this.inSuperCall && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor)))) {
                     illegalThisRef = true;
                 }
-                if (this.thisFnc.isMethod() || this.thisFnc.isConstructor || this.thisFnc.isTargetTypedAsMethod) {
+                if (this.thisFnc.isMethod() || this.thisFnc.isConstructor) {
                     if (this.thisType && !(this.thisFnc.fncFlags & FncFlags.Static)) {
                         ast.type = this.thisType;
                     }
@@ -2396,19 +2396,6 @@ module TypeScript {
                             targetParams = candidateParams;
                             targetReturnType = candidateTypeContext.targetSig.returnType.type;
 
-                            // Set "this" if applicable
-                            if (candidateTypeContext.targetSig.declAST) {
-                                if (candidateTypeContext.targetSig.declAST.isConstructor) {
-                                    //candidateTypeContext.targetThis=candidateType.instanceType;
-                                    //this.thisType = candidateType.instanceType;
-                                    funcDecl.isTargetTypedAsMethod = true;
-                                }
-                                else if (candidateTypeContext.targetSig.declAST.isMethod()) {
-                                    //candidateTypeContext.targetThis=candidateTypeContext.targetSig.declAST.type.enclosingType;
-                                    //this.thisType = candidateTypeContext.targetSig.declAST.type.enclosingType;
-                                    funcDecl.isTargetTypedAsMethod = true;
-                                }
-                            }
                             fgSym.type = candidateTypeContext.contextualType;
                             acceptedContextualType = true;
                         }
