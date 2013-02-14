@@ -506,7 +506,7 @@ module TypeScript {
         public writeable() { return this.isAccessor() ? this.setter != null : this.canWrite; }
         public getType() { return this.field.typeLink.type; }
         public getTypeNameEx(scope: SymbolScope) {
-            return MemberName.create(this.field.typeLink.type.getScopedTypeNameEx(scope), this.name + this.getOptionalNameString() + ": ", "");
+            return MemberName.create(this.field.typeLink.type ? this.field.typeLink.type.getScopedTypeNameEx(scope) : MemberName.create("any"), this.name + this.getOptionalNameString() + ": ", "");
         }
 
         public isMember() { return true; }
