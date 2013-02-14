@@ -1,4 +1,4 @@
-var m1 = require("./m1")
+var m1 = require('./m1')
 exports.a1 = 10;
 var c1 = (function () {
     function c1() { }

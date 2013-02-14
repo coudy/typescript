@@ -38,6 +38,18 @@ var MyClass = (function () {
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 ////[bin/duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map]
 {"version":3,"file":"duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js","sources":["duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts"],"names":[],"mappings":""}
+////[bin/module1.js]
+//@ sourceMappingURL=module1.js.map
+////[bin/module1.js.map]
+{"version":3,"file":"module1.js","sources":["module1.ts"],"names":[],"mappings":""}
+////[bin/module2.js]
+//@ sourceMappingURL=module2.js.map
+////[bin/module2.js.map]
+{"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
+////[bin/test.js]
+//@ sourceMappingURL=test.js.map
+////[bin/test.js.map]
+{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[bin/importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[bin/importInsideModule_file1.js.map]
