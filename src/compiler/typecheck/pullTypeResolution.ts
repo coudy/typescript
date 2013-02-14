@@ -1284,7 +1284,13 @@ module TypeScript {
                 }
             }
 
-            var specializedSymbol = specializeType(genericTypeAST, genericTypeSymbol, typeArgs, this, enclosingDecl, context);
+            if (typeArgs.length && typeArgs.length != genericTypeSymbol.getTypeParameters().length) {
+                this.postSemanticError(genericTypeAST, "Generic type '"+ genericTypeSymbol.getName() +"' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied");
+
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
 
             return specializedSymbol;
         }
@@ -1857,7 +1863,31 @@ module TypeScript {
 
             if (targetSymbol == this.semanticInfoChain.anyTypeSymbol) {
                 return targetSymbol;
-            }            
+            }
+
+            if (callEx.typeArguments) {
+                // specialize the type arguments
+                var typeArgs: PullTypeSymbol[] = [];
+                var typeArg: PullTypeSymbol = null;
+
+                if (callEx.typeArguments && callEx.typeArguments.members.length) {
+                    for (var i = 0; i < callEx.typeArguments.members.length; i++) {
+                        typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
+                        typeArgs[i] = context.findSpecializationForType(typeArg);
+                    }
+                }
+
+                // map type arguments to type parameters for specialization
+                var typeReplacementMap: any = {};                
+
+                //targetSymbol = specializeType(callEx, targetSymbol, typeArgs, this, enclosingDecl, context);
+
+                //if (typeArgs.length && typeArgs.length != genericTypeSymbol.getTypeParameters().length) {
+                //    this.postSemanticError(genericTypeAST, "Generic type '" + genericTypeSymbol.getName() + "' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied");
+
+                //    return this.semanticInfoChain.anyTypeSymbol;
+                //}
+            }
 
             // the target should be a function
             //if (!targetSymbol.isType()) {
@@ -1891,7 +1921,7 @@ module TypeScript {
                     if (params.length && i < params.length) {
                         contextualType = params[i].getType();
                     }
-                    else {
+                    else if (params.length) {
                         contextualType = params[params.length - 1].getType();
                         if (contextualType.isArray()) {
                             contextualType = contextualType.getElementType();
@@ -1966,7 +1996,7 @@ module TypeScript {
                         if (params.length && i < params.length) {
                             contextualType = params[i].getType();
                         }
-                        else {
+                        else if (params.length) {
                             contextualType = params[params.length - 1].getType();
                             if (contextualType.isArray()) {
                                 contextualType = contextualType.getElementType();
@@ -3217,6 +3247,209 @@ module TypeScript {
 
             // if we're here, the contextual type can be applied to the function
             return true;
+        }
+
+        public inferArgumentTypesForSignature(signature: PullSignatureSymbol,
+                                                args: ASTList,
+                                                comparisonInfo: TypeComparisonInfo,
+                                                enclosingDecl: PullDecl,
+                                                context: PullTypeResolutionContext): PullTypeSymbol[] {
+
+            var cxt: PullContextualTypeContext = null;
+            var hadProvisionalErrors = false;
+
+            var argSym: PullSymbol;
+
+            var parameters = signature.getParameters();
+            var typeParameters = signature.getTypeParameters();
+            var argContext = new ArgumentInferenceContext();
+
+            var parameterType: PullTypeSymbol = null;
+            var typeParameter: PullTypeParameterSymbol;
+
+            // seed each type parameter with the undefined type, so that we can widen it to 'any'
+            // if no inferences can be made
+            for (var i = 0; i < typeParameters.length; i++) {
+                argContext.addCandidateForInference(typeParameters[i], this.semanticInfoChain.undefinedTypeSymbol, false);
+            }
+
+            for (var i = 0; i < args.members.length; i++) {
+
+                if (i >= parameters.length) {
+                    break;
+                }
+
+                parameterType = parameters[i].getType();
+                typeParameter = typeParameters[i];
+
+                // account for varargs
+                if (signature.hasVariableParamList() && (i >= signature.getNonOptionalParameterCount() - 1) && parameterType.isArray()) {
+                    parameterType = parameterType.getElementType();
+                }
+
+                context.pushContextualType(parameterType, true);
+                argSym = this.resolveStatementOrExpression(args.members[i], true, enclosingDecl, context);
+
+                this.relateTypeToTypeParameters(argSym.getType(), parameterType, false, argContext, enclosingDecl, context);
+                
+                cxt = context.popContextualType();
+                hadProvisionalErrors = cxt.hadProvisionalErrors;
+            }
+
+            hadProvisionalErrors = false;
+
+            var inferenceResults = argContext.inferArgumentTypes(this, context);
+            var resultTypes: PullTypeSymbol[] = [];
+
+            for (var i = 0; i < inferenceResults.length; i++) {
+                resultTypes[resultTypes.length] = inferenceResults[i].type;
+            }
+
+            return resultTypes;
+        }
+
+        public relateTypeToTypeParameters(expressionType: PullTypeSymbol,
+                                            parameterType: PullTypeSymbol,
+                                            shouldFix: bool,
+                                            argContext: ArgumentInferenceContext,
+                                            enclosingDecl: PullDecl,
+                                            context: PullTypeResolutionContext): void {
+
+            // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
+            var anyExpressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
+            var anyParameterType = this.specializeTypeToAny(parameterType, enclosingDecl, context);
+
+            if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
+                return;
+            }
+            
+            if (parameterType.isTypeParameter()) {
+                argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
+                return;
+            }
+
+            if (expressionType.isArray() && parameterType.isArray()) {
+                this.relateArrayTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, enclosingDecl, context);
+
+                return;
+            }
+            
+            this.relateObjectTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, enclosingDecl, context);
+        }
+        
+        public relateFunctionSignatureToTypeParameters(expressionSignature: PullSignatureSymbol,
+                                                        parameterSignature: PullSignatureSymbol,
+                                                        argContext: ArgumentInferenceContext,
+                                                        enclosingDecl: PullDecl,
+                                                        context: PullTypeResolutionContext): void {
+            // Sub in 'any' for type parameters
+
+            var anyExpressionSignature = this.specializeSignatureToAny(expressionSignature, context);
+            var anyParamExpressionSignature = this.specializeSignatureToAny(parameterSignature, context);
+
+            if (!this.signatureIsAssignableToTarget(anyExpressionSignature, anyParamExpressionSignature, context)) {
+                return;
+            }
+
+            var expressionParams = expressionSignature.getParameters();
+            var expressionReturnType = expressionSignature.getReturnType();
+
+            var parameterParams = parameterSignature.getParameters();
+            var parameterReturnType = parameterSignature.getReturnType();
+
+            var len = parameterParams.length < expressionParams.length ? parameterParams.length : expressionParams.length;
+
+            for (var i = 0; i < len; i++) {
+                this.relateTypeToTypeParameters(expressionParams[i].getType(), parameterParams[i].getType(), true, argContext, enclosingDecl, context);
+            }
+
+            this.relateTypeToTypeParameters(expressionReturnType, parameterReturnType, true, argContext, enclosingDecl, context);
+        }
+
+        public relateObjectTypeToTypeParameters(objectType: PullTypeSymbol,
+                                                parameterType: PullTypeSymbol,
+                                                shouldFix: bool,
+                                                argContext: ArgumentInferenceContext,
+                                                enclosingDecl: PullDecl,
+                                                context: PullTypeResolutionContext): void {
+
+            var parameterTypeMembers = parameterType.getMembers();
+            var parameterSignatures: PullSignatureSymbol[];
+            var parameterSignature: PullSignatureSymbol;
+
+            var objectMember: PullSymbol;
+            var objectSignatures: PullSignatureSymbol[];
+
+            for (var i = 0; i < parameterTypeMembers.length; i++) {
+                objectMember = objectType.findMember(parameterTypeMembers[i].getName());
+
+                if (objectMember) {
+                    this.relateTypeToTypeParameters(objectMember.getType(), parameterTypeMembers[i].getType(), shouldFix, argContext, enclosingDecl, context);
+                }
+            }
+
+            parameterSignatures = parameterType.getCallSignatures();
+            objectSignatures = objectType.getCallSignatures();
+
+            for (var i = 0; i < parameterSignatures.length; i++) {
+                parameterSignature = parameterSignatures[i];
+                
+                for (var j = 0; j < objectSignatures.length; j++) {
+                    this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, enclosingDecl, context);
+                }                
+            }
+
+            parameterSignatures = parameterType.getConstructSignatures();
+            objectSignatures = objectType.getConstructSignatures();
+
+            for (var i = 0; i < parameterSignatures.length; i++) {
+                parameterSignature = parameterSignatures[i];
+
+                for (var j = 0; j < objectSignatures.length; j++) {
+                    this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, enclosingDecl, context);
+                }
+            }
+
+            parameterSignatures = parameterType.getIndexSignatures();
+            objectSignatures = objectType.getIndexSignatures();
+
+            for (var i = 0; i < parameterSignatures.length; i++) {
+                parameterSignature = parameterSignatures[i];
+
+                for (var j = 0; j < objectSignatures.length; j++) {
+                    this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, enclosingDecl, context);
+                }
+            }            
+        }
+
+        public relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,
+                                                parameterArrayType: PullTypeSymbol,
+                                                shouldFix: bool,
+                                                argContext: ArgumentInferenceContext,
+                                                enclosingDecl: PullDecl,
+                                                context: PullTypeResolutionContext): void {
+
+            var argElement = argArrayType.getElementType();
+            var paramElement = parameterArrayType.getElementType();
+
+            this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
+        }
+
+        public specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            return specializeType(typeToSpecialize, [], this, enclosingDecl, context);
+        }
+
+        public specializeSignatureToAny(signatureToSpecialize: PullSignatureSymbol, context: PullTypeResolutionContext) {
+            var typeParameters = signatureToSpecialize.getTypeParameters();
+            var typeReplacementMap: any = {};
+            var typeArguments: PullTypeSymbol[] = []; // PULLTODO - may be expensive, but easy to cache
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeArguments[i] = this.semanticInfoChain.anyTypeSymbol;
+                typeReplacementMap[typeParameters[i].getSymbolID().toString()] = typeArguments[i];
+            }
+            
+            return specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, context);
         }
     }
 }

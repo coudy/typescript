@@ -243,6 +243,7 @@ module TypeScript {
         private returnTypeLink: PullSymbolLink = null;
         private hasOptionalParam = false;
         private nonOptionalParamCount = 0;
+        private specializationCache: any = {}
 
         constructor (kind: PullElementKind) {
             super("", kind);
@@ -259,6 +260,20 @@ module TypeScript {
             if (!isOptional) {
                 this.nonOptionalParamCount++;
             }
+        }
+
+        public addSpecialization(signature: PullSignatureSymbol, typeArguments: PullTypeSymbol[]) {
+            this.specializationCache[getIDForTypeSubstitutions(typeArguments)] = signature;
+        }
+
+        public getSpecialization(typeArguments): PullSignatureSymbol {
+            var sig = <PullSignatureSymbol>this.specializationCache[getIDForTypeSubstitutions(typeArguments)];
+
+            if (sig) {
+                return sig;
+            }
+
+            return null;
         }
 
         public addTypeParameter(parameter: PullTypeParameterSymbol) {
@@ -400,8 +415,8 @@ module TypeScript {
         public isType() { return true; }
         public isClass() { return false; }
         public hasMembers() { return this.memberLinks.length != 0; }
-        public isInstanceType() { return false; }
         public isFunction() { return false; }
+        public isTypeParameter() { return false; }
 
         public setIsSpecialized() { this.isSpecialized = true; }
 
@@ -788,8 +803,6 @@ module TypeScript {
             super.invalidate();
         }
 
-        public isTypeParameter() { return false; }
-
         public toString() {
             var tstring = this.getName() + " { "
             var members = this.getMembers();
@@ -904,6 +917,7 @@ module TypeScript {
         }
 
         public isFunction() { return true; }
+        public isConstructor() { return true; }
 
         public invalidate(sweepForNewValues = false) {
 
@@ -935,7 +949,7 @@ module TypeScript {
     }
 
     export class PullTypeParameterSymbol extends PullTypeSymbol {
-        private constraint: PullTypeSymbol = null;
+        private constraintLink: PullSymbolLink = null;
 
         constructor(name: string) {
             super(name, PullElementKind.TypeParameter);
@@ -944,16 +958,25 @@ module TypeScript {
         public isTypeParameter() { return true; }
 
         public setConstraint(constraintType: PullTypeSymbol) {
-            this.constraint = constraintType;
+
+            if (this.constraintLink) {
+                this.removeOutgoingLink(this.constraintLink);
+            }
+
+            this.constraintLink = this.addOutgoingLink(constraintType, SymbolLinkKind.TypeConstraint);
         }
 
-        public getConstraint() { return this.constraint; }
+        public getConstraint(): PullTypeSymbol {
+            if (this.constraintLink) {
+                return <PullTypeSymbol>this.constraintLink.end;
+            }
+
+            return null;
+        }
 
         public isGeneric() { return true; }
 
         public invalidate() {
-            this.constraint = null;
-
             super.invalidate();
         }
     }
@@ -1076,7 +1099,7 @@ module TypeScript {
         return newArrayType;
     }
 
-    export function specializeType(ast: AST, typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+    export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
 
         // set any slack to 'any'
         var typeParameters = typeToSpecialize.getTypeParameters();
@@ -1090,10 +1113,6 @@ module TypeScript {
                 typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
             }
         }
-        //else if (typeArguments.length != typeParameters.length) {
-        //    resolver.postSemanticError(ast, "Type expects " + typeParameters.length + " type arguments, but " + typeArguments.length + " type arguments were supplied");
-        //    return null;
-        //}
 
         var typeToReplace: PullTypeParameterSymbol = null;
         var typeConstraint: PullTypeSymbol = null;
@@ -1106,7 +1125,9 @@ module TypeScript {
             // test specialization type for assignment compatibility with the constraint
             if (typeConstraint) {
                 if (!resolver.sourceIsAssignableToTarget(typeArguments[iArg], typeConstraint, context)) {
-                    resolver.postSemanticError(ast, "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'");
+                    if (ast) {
+                        resolver.postSemanticError(ast, "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'");
+                    }
                     typeArguments[iArg] = resolver.semanticInfoChain.anyTypeSymbol;
                 }
             }
@@ -1140,21 +1161,21 @@ module TypeScript {
         var newSignature: PullSignatureSymbol;
 
         for (var i = 0; i < callSignatures.length; i++) {
-            newSignature = specializeSignature(callSignatures[i], typeReplacementMap, resolver, context);
+            newSignature = specializeSignature(callSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
 
             newType.addCallSignature(newSignature);
         }
 
         // specialize construct signatures
         for (var i = 0; i < constructSignatures.length; i++) {
-            newSignature = specializeSignature(constructSignatures[i], typeReplacementMap, resolver, context);
+            newSignature = specializeSignature(constructSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
 
             newType.addConstructSignature(newSignature);
         }
 
         // specialize index signatures
         for (var i = 0; i < indexSignatures.length; i++) {
-            newSignature = specializeSignature(indexSignatures[i], typeReplacementMap, resolver, context);
+            newSignature = specializeSignature(indexSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
 
             newType.addIndexSignature(newSignature);
         }
@@ -1206,7 +1227,7 @@ module TypeScript {
         if (typeToSpecialize.isClass()) {
             var constructorMethod = (<PullClassTypeSymbol>typeToSpecialize).getConstructorMethod();
             var newConstructorMethod = new PullSymbol(constructorMethod.getName(), PullElementKind.ConstructorMethod);
-            var newConstructorType = specializeType(ast, constructorMethod.getType(), typeArguments, resolver, enclosingDecl, context);
+            var newConstructorType = specializeType(constructorMethod.getType(), typeArguments, resolver, enclosingDecl, context, ast);
 
             newConstructorMethod.setType(newConstructorType);
 
@@ -1216,14 +1237,25 @@ module TypeScript {
         return newType;
     }
 
-    function specializeSignature(signature: PullSignatureSymbol,
-                                    typeReplacementMap: any,
-                                    resolver: PullTypeResolver,
-                                    context: PullTypeResolutionContext): PullSignatureSymbol {
+    // PULLTODO: Replace typeReplacementMap with use of context
+    export function specializeSignature(signature: PullSignatureSymbol,
+                                        skipLocalTypeParameters: bool,
+                                        typeReplacementMap: any,
+                                        typeArguments: PullTypeSymbol[],
+                                        resolver: PullTypeResolver,
+                                        context: PullTypeResolutionContext): PullSignatureSymbol {
 
 
-        var newSignature = new PullSignatureSymbol(signature.getKind());
+        var newSignature = signature.getSpecialization(typeArguments);
+
+        if (newSignature) {
+            return newSignature;
+        }
+
+        newSignature = new PullSignatureSymbol(signature.getKind());
         newSignature.addDeclaration(signature.getDeclarations[0]);
+
+        signature.addSpecialization(newSignature, typeArguments);
 
         var parameters = signature.getParameters();
         var typeParameters = signature.getTypeParameters();
@@ -1246,8 +1278,10 @@ module TypeScript {
         // if we specialize the signature recursive (through, say, the specialization of a method whilst specializing
         // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the
         // enclosing type.  (E.g., "class C<T> { public m<T>() {...} }" )
-        for (var i = 0; i < typeParameters.length; i++) {
-            localTypeParameters[typeParameters[i].getName()] = true;
+        if (skipLocalTypeParameters) {
+            for (var i = 0; i < typeParameters.length; i++) {
+                localTypeParameters[typeParameters[i].getName()] = true;
+            }
         }
 
         for (var k = 0; k < parameters.length; k++) {

@@ -108,5 +108,6 @@ module TypeScript {
         TypeArgument,
         TypeParameterSpecializedTo,
         SpecializedTo,
+        TypeConstraint,
     }
 }

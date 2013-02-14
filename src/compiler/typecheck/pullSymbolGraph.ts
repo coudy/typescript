@@ -235,16 +235,19 @@ module TypeScript {
             // if another type infers its type from this one, unset the link
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameter) {
+        else if (link.kind == SymbolLinkKind.TypeParameter) {
             // no action...
         }
-        if (link.kind == SymbolLinkKind.TypeArgument) {
+        else if (link.kind == SymbolLinkKind.TypeArgument) {
             // no action...
         }
-        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
             // no action...
         }
-        if (link.kind == SymbolLinkKind.SpecializedTo) {
+        else if (link.kind == SymbolLinkKind.SpecializedTo) {
+            // no action...
+        }
+        else if (link.kind == SymbolLinkKind.TypeConstraint) {
             // no action...
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
@@ -306,17 +309,20 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             // no action...
         }
-        if (link.kind == SymbolLinkKind.TypeParameter) {
-            // no action...
+        else if (link.kind == SymbolLinkKind.TypeParameter) {
+            update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeArgument) {
-            // no action...
+        else if (link.kind == SymbolLinkKind.TypeArgument) {
+            update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
-            // no action...
+        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.SpecializedTo) {
-            // no action...
+        else if (link.kind == SymbolLinkKind.SpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.TypeConstraint) {
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayType) {
             update.updater.removeSymbol(affectedSymbol);
@@ -377,16 +383,19 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameter) {
+        else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeArgument) {
+        else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.SpecializedTo) {
+        else if (link.kind == SymbolLinkKind.SpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
@@ -447,16 +456,19 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameter) {
+        else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeArgument) {
+        else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.SpecializedTo) {
+        else if (link.kind == SymbolLinkKind.SpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
@@ -514,16 +526,19 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             // do nothing...
         }
-        if (link.kind == SymbolLinkKind.TypeParameter) {
+        else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeArgument) {
+        else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.SpecializedTo) {
+        else if (link.kind == SymbolLinkKind.SpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
@@ -584,16 +599,19 @@ module TypeScript {
         else if (link.kind == SymbolLinkKind.ArrayType) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameter) {
+        else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeArgument) {
+        else if (link.kind == SymbolLinkKind.TypeArgument) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
+        else if (link.kind == SymbolLinkKind.TypeParameterSpecializedTo) {
             update.updater.invalidateType(affectedSymbol);
         }
-        if (link.kind == SymbolLinkKind.SpecializedTo) {
+        else if (link.kind == SymbolLinkKind.SpecializedTo) {
+            update.updater.invalidateType(affectedSymbol);
+        }
+        else if (link.kind == SymbolLinkKind.TypeConstraint) {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
