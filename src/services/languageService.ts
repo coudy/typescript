@@ -1214,7 +1214,7 @@ module Services {
 
             if (symbol && symbol.kind() == TypeScript.SymbolKind.Type) {
                 var typeSymbol = <TypeScript.TypeSymbol>symbol;
-                if (typeSymbol.type.symbol == symbol && typeSymbol.type.primitiveTypeClass != TypeScript.Primitive.None) {
+                if (typeSymbol.type && typeSymbol.type.symbol == symbol && typeSymbol.type.primitiveTypeClass != TypeScript.Primitive.None) {
                     // Primitive type symbols - do not use symbol name
                     return "";
                 }
