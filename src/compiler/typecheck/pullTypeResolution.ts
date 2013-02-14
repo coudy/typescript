@@ -1865,9 +1865,15 @@ module TypeScript {
                 return targetSymbol;
             }
 
+            var signatures = (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
+
+            var typeArgs: PullTypeSymbol[] = null;
+
+            // resolve the type arguments, specializing if necessary
             if (callEx.typeArguments) {
                 // specialize the type arguments
-                var typeArgs: PullTypeSymbol[] = [];
+                typeArgs = [];
+
                 var typeArg: PullTypeSymbol = null;
 
                 if (callEx.typeArguments && callEx.typeArguments.members.length) {
@@ -1876,26 +1882,60 @@ module TypeScript {
                         typeArgs[i] = context.findSpecializationForType(typeArg);
                     }
                 }
-
-                // map type arguments to type parameters for specialization
-                var typeReplacementMap: any = {};                
-
-                //targetSymbol = specializeType(callEx, targetSymbol, typeArgs, this, enclosingDecl, context);
-
-                //if (typeArgs.length && typeArgs.length != genericTypeSymbol.getTypeParameters().length) {
-                //    this.postSemanticError(genericTypeAST, "Generic type '" + genericTypeSymbol.getName() + "' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied");
-
-                //    return this.semanticInfoChain.anyTypeSymbol;
-                //}
             }
+
+            // next, walk the available signatures
+            // if any are generic, and we don't have type arguments, try to infer
+            // otherwise, try to specialize to the type arguments above
+            var resolvedSignatures: PullSignatureSymbol[] = [];
+            var inferredTypeArgs: PullTypeSymbol[];
+            var specializedSignature: PullSignatureSymbol;
+            var typeParameters: PullTypeParameterSymbol[];
+            var typeReplacementMap: any;
+
+            for (var i = 0; i < signatures.length; i++) {
+                if (signatures[i].isGeneric()) {
+                    if (typeArgs) {
+                        inferredTypeArgs = typeArgs;
+                    }
+                    else {
+                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
+                    }
+
+                    // if we could infer Args, or we have type arguments, then attempt to specialize the signature
+                    if (inferredTypeArgs) {
+                        typeParameters = signatures[i].getTypeParameters();
+
+                        if (inferredTypeArgs.length != typeParameters.length) {
+                            continue;
+                        }
+
+                        typeReplacementMap = {};
+
+                        for (var j = 0; j < typeParameters.length; j++) {
+                            typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
+                        }
+
+                        specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, context);
+
+                        if (specializedSignature) {
+                            resolvedSignatures[resolvedSignatures.length] = specializedSignature;
+                        }
+                    }
+                }
+                else {
+                    resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                }
+            }
+
+            // PULLTODO: Try to avoid copying here...
+            signatures = resolvedSignatures;
 
             // the target should be a function
             //if (!targetSymbol.isType()) {
             //    this.log("Attempting to call a non-function symbol");
             //    return this.semanticInfoChain.anyTypeSymbol;
             //}
-
-            var signatures = (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
 
             if (!signatures.length) {
                 this.postSemanticError(expressionAST, "Attempting to call on a type with no call signatures");
@@ -3299,10 +3339,16 @@ module TypeScript {
             hadProvisionalErrors = false;
 
             var inferenceResults = argContext.inferArgumentTypes(this, context);
+            
+
+            if (inferenceResults.unfit) {
+                return null;
+            }
+
             var resultTypes: PullTypeSymbol[] = [];
 
-            for (var i = 0; i < inferenceResults.length; i++) {
-                resultTypes[resultTypes.length] = inferenceResults[i].type;
+            for (var i = 0; i < inferenceResults.results.length; i++) {
+                resultTypes[resultTypes.length] = inferenceResults.results[i].type;
             }
 
             return resultTypes;
@@ -3315,16 +3361,16 @@ module TypeScript {
                                             enclosingDecl: PullDecl,
                                             context: PullTypeResolutionContext): void {
 
+            if (parameterType.isTypeParameter()) {
+                argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
+                return;
+            }
+
             // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
             var anyExpressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
             var anyParameterType = this.specializeTypeToAny(parameterType, enclosingDecl, context);
 
             if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
-                return;
-            }
-            
-            if (parameterType.isTypeParameter()) {
-                argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
                 return;
             }
 
@@ -3449,6 +3495,7 @@ module TypeScript {
                 typeReplacementMap[typeParameters[i].getSymbolID().toString()] = typeArguments[i];
             }
             
+            // no need to worry about returning 'null', since 'any' satisfies all constraints
             return specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, context);
         }
     }

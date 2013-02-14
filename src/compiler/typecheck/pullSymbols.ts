@@ -237,12 +237,16 @@ module TypeScript {
         }
     }
 
+    // PULLTODO: Need a major cleanup of '[]' initializers!
     export class PullSignatureSymbol extends PullSymbol {
         private parameterLinks: PullSymbolLink[] = [];
         private typeParameterLinks: PullSymbolLink[] = [];
+
         private returnTypeLink: PullSymbolLink = null;
+
         private hasOptionalParam = false;
         private nonOptionalParamCount = 0;
+
         private specializationCache: any = {}
 
         constructor (kind: PullElementKind) {
@@ -252,9 +256,11 @@ module TypeScript {
         public isDefinition() { return false; }
         public hasVariableParamList() { return this.hasOptionalParam; }
 
+        public isGeneric() { return this.typeParameterLinks.length != 0; }
+
         public addParameter(parameter: PullSymbol, isOptional = false) {
             var link = this.addOutgoingLink(parameter, SymbolLinkKind.Parameter);
-            this.typeParameterLinks[this.typeParameterLinks.length] = link;
+            this.parameterLinks[this.parameterLinks.length] = link;
             this.hasOptionalParam = isOptional;
 
             if (!isOptional) {
@@ -278,7 +284,7 @@ module TypeScript {
 
         public addTypeParameter(parameter: PullTypeParameterSymbol) {
             var link = this.addOutgoingLink(parameter, SymbolLinkKind.TypeParameter);
-            this.typeParameterLinks[this.parameterLinks.length] = link;
+            this.typeParameterLinks[this.typeParameterLinks.length] = link;
         }
 
         public getNonOptionalParameterCount() { return this.nonOptionalParamCount; }
@@ -1128,7 +1134,8 @@ module TypeScript {
                     if (ast) {
                         resolver.postSemanticError(ast, "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'");
                     }
-                    typeArguments[iArg] = resolver.semanticInfoChain.anyTypeSymbol;
+
+                    return resolver.semanticInfoChain.anyTypeSymbol;
                 }
             }
         }
@@ -1163,6 +1170,10 @@ module TypeScript {
         for (var i = 0; i < callSignatures.length; i++) {
             newSignature = specializeSignature(callSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
 
+            if (!newSignature) {
+                return resolver.semanticInfoChain.anyTypeSymbol;
+            }
+
             newType.addCallSignature(newSignature);
         }
 
@@ -1170,12 +1181,20 @@ module TypeScript {
         for (var i = 0; i < constructSignatures.length; i++) {
             newSignature = specializeSignature(constructSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
 
+            if (!newSignature) {
+                return resolver.semanticInfoChain.anyTypeSymbol;
+            }
+
             newType.addConstructSignature(newSignature);
         }
 
         // specialize index signatures
         for (var i = 0; i < indexSignatures.length; i++) {
             newSignature = specializeSignature(indexSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
+
+            if (!newSignature) {
+                return resolver.semanticInfoChain.anyTypeSymbol;
+            }
 
             newType.addIndexSignature(newSignature);
         }
@@ -1243,7 +1262,8 @@ module TypeScript {
                                         typeReplacementMap: any,
                                         typeArguments: PullTypeSymbol[],
                                         resolver: PullTypeResolver,
-                                        context: PullTypeResolutionContext): PullSignatureSymbol {
+                                        context: PullTypeResolutionContext,
+                                        ast?: AST): PullSignatureSymbol {
 
 
         var newSignature = signature.getSpecialization(typeArguments);
@@ -1274,6 +1294,26 @@ module TypeScript {
         var parameterType: PullTypeSymbol;
         var replacementParameterType: PullTypeSymbol;
         var localTypeParameters: any = {};
+        var typeToReplace: PullTypeParameterSymbol;
+        var typeConstraint: PullTypeSymbol;
+
+        for (var iArg = 0; iArg < typeArguments.length; iArg++) {
+            typeToReplace = <PullTypeParameterSymbol>typeParameters[iArg];
+
+            typeConstraint = typeToReplace.getConstraint();
+
+            // test specialization type for assignment compatibility with the constraint
+            if (typeConstraint) {
+                if (!resolver.sourceIsAssignableToTarget(typeArguments[iArg], typeConstraint, context)) {
+                    if (ast) {
+                        resolver.postSemanticError(ast, "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'");
+                    }
+
+                    return null;
+                    //typeArguments[iArg] = resolver.semanticInfoChain.anyTypeSymbol;
+                }
+            }
+        }
 
         // if we specialize the signature recursive (through, say, the specialization of a method whilst specializing
         // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the

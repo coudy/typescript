@@ -42,7 +42,7 @@ module TypeScript {
             }
         }
 
-        public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[] {
+        public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: bool; } {
             var info: CandidateInferenceInfo = null;
 
             var collection: IPullTypeCollection;
@@ -50,6 +50,8 @@ module TypeScript {
             var bestCommonType: PullTypeSymbol;
 
             var results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[] = [];
+
+            var unfit = false;
 
             for (var infoKey in this.candidateCache) {
                 info = <CandidateInferenceInfo>this.candidateCache[infoKey];
@@ -62,16 +64,20 @@ module TypeScript {
                     }
                 }
 
-                bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], null, collection, true, context, new TypeComparisonInfo()));
+                bestCommonType = resolver.findBestCommonType(info.inferenceCandidates[0], null, collection, true, context, new TypeComparisonInfo());
 
                 if (!bestCommonType) {
-                    bestCommonType = resolver.semanticInfoChain.anyTypeSymbol;
+                    bestCommonType = resolver.semanticInfoChain.undefinedTypeSymbol;
+                }
+
+                if (bestCommonType == resolver.semanticInfoChain.undefinedTypeSymbol) {
+                    unfit = true;
                 }
 
                 results[results.length] = { param: info.typeParameter, type: bestCommonType };
             }
 
-            return results;
+            return { results: results, unfit: unfit };
         }
     }
 

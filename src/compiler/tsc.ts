@@ -432,6 +432,7 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.usePull = true;
+                this.compilationSettings.useFidelity = true;
             }
         });
 
