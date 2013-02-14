@@ -9,6 +9,7 @@ class CompilerBaselineRunner extends RunnerBase {
     private emit;
     private decl;
     private output;
+    private usepull;
 
     public options: string;
 
@@ -18,9 +19,11 @@ class CompilerBaselineRunner extends RunnerBase {
         this.emit = true;
         this.decl = true;
         this.output = true;
+        this.usepull = false;
 
         if (testType === 'prototyping') {
             this.basePath += '/prototyping';
+            this.usepull = true;
         }
         this.basePath += '/compiler';
     }
@@ -53,6 +56,8 @@ class CompilerBaselineRunner extends RunnerBase {
     { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.CodeGenTarget.ES3 : TypeScript.CodeGenTarget.ES5; } },
     { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
     { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
+    { flag: 'usepull', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.usePull = value.toLowerCase() === 'true'? true: false; } },
+    { flag: 'usefidelity', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.useFidelity = value.toLowerCase() === 'true'? true: false; } }
     ];
 
     public checkTestCodeOutput(filename: string) {
@@ -88,6 +93,11 @@ class CompilerBaselineRunner extends RunnerBase {
 
             var errorDescriptionAsync = '';
             var errorDescriptionLocal = '';
+
+            if (that.usepull) {
+                tcSettings.push({ flag: 'usepull', value: 'true' });
+                tcSettings.push({ flag: 'usefidelity', value: 'true' });
+            }
 
             // compile as CommonJS module                    
             Harness.Compiler.compileUnits(units, function (result) {

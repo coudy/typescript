@@ -270,13 +270,19 @@ task("tests", [run, serviceFile].concat(libraryTargets), function() {
 
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
+var localPrototypingBaseline = "tests/baselines/prototyping/local/";
+var refPrototypingBaseline = "tests/baselines/prototyping/reference/";
 desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='. Both parameters are optional.");
 task("runtests", ["tests", builtTestDirectory], function() {
 	// Clean the local baselines directory
 	if (fs.exists(localBaseline)) {
 		jake.rmRf(localBaseline);
 	}
+	if (fs.exists(localPrototypingBaseline)) {
+		jake.rmRf(localPrototypingBaseline);
+	}
 	jake.mkdirP(localBaseline);
+	jake.mkdirP(localPrototypingBaseline);
 	host = process.env.host || process.env.TYPESCRIPT_HOST || "Node";
 	tests = process.env.test || process.env.tests;
 	tests = tests ? tests.split(',').join(' ') : ([].slice.call(arguments).join(' ') || "");
@@ -301,4 +307,11 @@ desc("Makes the most recent test results the new baseline, overwriting the old b
 task("baseline-accept", function() {
 	jake.rmRf(refBaseline);
 	fs.renameSync(localBaseline, refBaseline);
+});
+
+// Makes the test results the new baseline
+desc("Makes the most recent prototyping test results the new baseline, overwriting the old baseline");
+task("baseline-accept-prototyping", function() {
+	jake.rmRf(refPrototypingBaseline);
+	fs.renameSync(localPrototypingBaseline, refPrototypingBaseline);
 });
