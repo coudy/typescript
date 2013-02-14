@@ -1056,14 +1056,14 @@ module TypeScript {
                 }
             }
             else if (this.lexState == LexState.InMultilineSingleQuoteString && this.pos < this.len) {
-                this.ch = LexCodeAPO;
+                this.ch = this.peekChar();
                 this.lexState = LexState.Start;
-                return this.scanStringConstant();
+                return this.scanStringConstant(LexCodeAPO);
             }
             else if (this.lexState == LexState.InMultilineDoubleQuoteString && this.pos < this.len) {
-                this.ch = LexCodeQUO;
+                this.ch = this.peekChar();
                 this.lexState = LexState.Start;
-                return this.scanStringConstant();
+                return this.scanStringConstant(LexCodeQUO);
             }
             this.prevLine = this.line;
             var prevTok = this.innerScan();
@@ -1090,11 +1090,7 @@ module TypeScript {
             return valid;
         }
 
-        private scanStringConstant(): Token {
-            var endCode = this.ch;
-
-            // Skip the first quote
-            this.nextChar();
+        private scanStringConstant(endCode: number): Token {
 
             // Accumulate with escape characters
             scanStringConstantLoop:
@@ -1146,13 +1142,12 @@ module TypeScript {
                                     this.nextChar();
                                 }
 
-                                // Consume the new line char
-                                this.nextChar();
-
                                 // Record new line
                                 this.newLine();
 
                                 if (this.mode == LexMode.Line) {
+                                    // Consume the new line char
+                                    this.nextChar();
                                     this.lexState = endCode == LexCodeAPO ? LexState.InMultilineSingleQuoteString : LexState.InMultilineDoubleQuoteString;
                                     break scanStringConstantLoop;
                                 }
@@ -1176,7 +1171,7 @@ module TypeScript {
                         break;
                 }
 
-            // Record seeing a Unicode char
+                // Record seeing a Unicode char
                 if (this.ch >= LexCodeASCIIChars) {
                     this.seenUnicodeChar = true;
                 }
@@ -1334,7 +1329,10 @@ module TypeScript {
                     return staticTokens[TokenID.Semicolon];
                 }
                 else if ((this.ch == LexCodeAPO) || (this.ch == LexCodeQUO)) {
-                    return this.scanStringConstant();
+                    // Skip the first quote
+                    var endCode = this.ch;
+                    this.nextChar();
+                    return this.scanStringConstant(endCode);
                 }
                 else if (autoToken[this.ch]) {
                     var atok = autoToken[this.ch];
