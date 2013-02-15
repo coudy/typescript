@@ -964,25 +964,8 @@ module Services {
 
                 // Path that should make us stop looking up..
                 if (pos > path.ast().minChar) {  // If cursor is on the "{" of the body, we may wat to display param help
-                    if (path.isBodyOfBlock() ||
-                        path.isBodyOfCase() ||
-                        path.isBodyOfCatch() ||
-                        path.isBodyOfDefaultCase() ||
-                        path.isBodyOfDoWhile() ||
-                        path.isBodyOfClass() ||
-                        path.isBodyOfFinally() ||
-                        path.isBodyOfFor() ||
-                        path.isBodyOfForIn() ||
-                        path.isBodyOfFunction() ||
-                        path.isBodyOfInterface() ||
-                        path.isBodyOfModule() ||
-                        path.isBodyOfObjectLit() ||
-                        path.isBodyOfScript() ||
-                        path.isBodyOfSwitch() ||
-                        path.isBodyOfTry() ||
-                        path.isBodyOfWhile() ||
-                        path.isBodyOfWith()
-                        ) {
+                    if (path.ast().nodeType !== TypeScript.NodeType.Error && path.ast().nodeType !== TypeScript.NodeType.List) {
+                        // only skip errors and lists that contain the caret position
                         break;
                     }
                 }
