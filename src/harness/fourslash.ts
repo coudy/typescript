@@ -338,7 +338,8 @@ module FourSlash {
 
         public verifyCurrentSignatureHelpCount(expected: number) {
             var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.name, this.currentCaretPosition);
-            assert.equal(help.formal.signatureGroup.length, expected);
+            var actual = help && help.formal ? help.formal.signatureGroup.length : 0;
+            assert.equal(actual, expected);
         }
 
         public verifySignatureHelpPresent(shouldBePresent = true) {
