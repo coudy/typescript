@@ -819,7 +819,8 @@ module TypeScript {
                     // Do not add dynamic module names to the list, since they're not legal as identifiers
                     if (displayThisMember && !isQuoted(symbol.name) && !isRelative(symbol.name)) {
                         var getPrettyOverload = getPrettyTypeName && symbol.declAST && symbol.declAST.nodeType == NodeType.FuncDecl;
-                        var typeName = symbol.getType().getScopedTypeName(enclosingScope, getPrettyOverload);
+                        var type = symbol.getType();
+                        var typeName = type ? type.getScopedTypeName(enclosingScope, getPrettyOverload) : "";
                         result.push(new ScopeEntry(name, typeName, symbol));
                     }
                 }

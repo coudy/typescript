@@ -45,6 +45,14 @@ module TypeScript {
         return str;
     }
 
+    export function changeToSingleQuote(str: string) {
+        if (str.indexOf("\"") != -1) {
+            str = str.replace("\"", "'");
+            str = str.replace("\"", "'");
+        }
+        return str;
+    }
+
     export function switchToForwardSlashes(path: string) {
         return path.replace(/\\/g, "/");
     }
