@@ -213,7 +213,6 @@ module TypeScript {
         public parser: Parser = null;
         public lineCol = { line: 0, col: 0 };
         public locationInfo: LocationInfo;
-        public emitAsComments = true;
         public hasErrors = false;
         public pushToErrorSink = false;
         public errorSink: string[] = [];
@@ -226,13 +225,9 @@ module TypeScript {
 
         public setErrOut(outerr) {
             this.outfile = outerr;
-            this.emitAsComments = false;
         }
 
         public emitPrefix() {
-            if (this.emitAsComments) {
-                this.outfile.Write("// ");
-            }
             this.outfile.Write(this.locationInfo.filename + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
         }
 

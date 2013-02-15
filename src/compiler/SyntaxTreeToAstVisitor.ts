@@ -448,6 +448,17 @@ module TypeScript {
             var extendsList = node.extendsClause ? node.extendsClause.accept(this) : null;
             this.movePast(node.body.openBraceToken);
             var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
+
+            // Fix up interface method flags
+            if (members.members) {
+                for (var i = 0; i < members.members.length; i++) {
+                    if (members.members[i].nodeType == NodeType.FuncDecl) {
+                        (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Method;
+                        (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Signature;
+                    }
+                }
+            }
+
             this.movePast(node.body.closeBraceToken);
 
             var result = new InterfaceDeclaration(name, typeParameters, members, extendsList, null);

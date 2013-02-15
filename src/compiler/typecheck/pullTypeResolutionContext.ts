@@ -35,11 +35,31 @@ module TypeScript {
         public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol, fix: bool) {
             var info = this.getInferenceInfo(param);
 
-            info.addCandidate(candidate);
+            if (candidate) {
+                info.addCandidate(candidate);
+            }
 
             if (!info.isFixed) {
                 info.isFixed = fix;
             }
+        }
+        
+        public getInferenceCandidates(): any[] {
+            var inferenceCandidates: any[] = [];
+            var info: CandidateInferenceInfo;
+            var val;
+
+            for (var infoKey in this.candidateCache) {
+                info = <CandidateInferenceInfo>this.candidateCache[infoKey];
+
+                for (var i = 0; i < info.inferenceCandidates.length; i++) {
+                    val = {};
+                    val[info.typeParameter.getSymbolID().toString()] = info.inferenceCandidates[i];
+                    inferenceCandidates[inferenceCandidates.length] = val;
+                }
+            }
+
+            return inferenceCandidates;
         }
 
         public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: bool; } {
@@ -87,7 +107,8 @@ module TypeScript {
         public provisionallyTypedSymbols: PullSymbol[] = [];
 
         constructor (public contextualType: PullTypeSymbol,
-                     public provisional: bool) { }
+                     public provisional: bool,
+                     public substitutions: any) { }
 
         public recordProvisionallyTypedSymbol(symbol: PullSymbol) {
             this.provisionallyTypedSymbols[this.provisionallyTypedSymbols.length] = symbol;
@@ -110,8 +131,8 @@ module TypeScript {
 
         public searchTypeSpace = false;
         
-        public pushContextualType(type: PullTypeSymbol, provisional: bool) {
-            this.contextStack.push(new PullContextualTypeContext(type, provisional));
+        public pushContextualType(type: PullTypeSymbol, provisional: bool, substitutions: any) {
+            this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
         }
         
         public popContextualType(): PullContextualTypeContext {
@@ -120,6 +141,24 @@ module TypeScript {
             tc.invalidateProvisionallyTypedSymbols();
 
             return tc;
+        }
+
+        public findSubstitution(type: PullTypeSymbol) {
+            var substitution: PullTypeSymbol = null;
+            
+            if (this.contextStack.length) {
+                for (var i = this.contextStack.length - 1; i >= 0; i--) {
+                    if (this.contextStack[i].substitutions) {
+                        substitution = this.contextStack[i].substitutions[type.getSymbolID().toString()];
+
+                        if (substitution) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return substitution;
         }
         
         public getContextualType(): PullTypeSymbol {
@@ -133,7 +172,9 @@ module TypeScript {
                     type = (<PullTypeParameterSymbol>type).getConstraint();
                 }
 
-                return type;
+                var substitution = this.findSubstitution(type);
+
+                return substitution ? substitution : type;
             }
             
             return null;
@@ -144,11 +185,12 @@ module TypeScript {
         }
 
         public setTypeInContext(symbol: PullSymbol, type: PullTypeSymbol) {
+            var substitution: PullTypeSymbol = this.findSubstitution(type);
 
-            symbol.setType(type);
+            symbol.setType(substitution ? substitution : type);
 
             if (this.contextStack.length && this.inProvisionalResolution()) {
-                this.contextStack[this.contextStack.length].recordProvisionallyTypedSymbol(symbol);
+                this.contextStack[this.contextStack.length - 1].recordProvisionallyTypedSymbol(symbol);
             }
         }
 

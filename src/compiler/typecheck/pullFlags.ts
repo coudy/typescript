@@ -67,8 +67,9 @@ module TypeScript {
         FunctionType = 1 << 25,
         ConstructorType = 1 << 26,
 
-        SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor,
+        SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature,
 
+        // Warning: SomeValue and SomeType (along with their constituents) must be disjoint
         SomeValue = Variable | Parameter | Property | SomeFunction,
 
         SomeType =  Script | Global | Primitive | Module | Class | Interface | DynamicModule | 

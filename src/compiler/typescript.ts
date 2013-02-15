@@ -1140,7 +1140,7 @@ module TypeScript {
 
                             if (varSymbol && isTypedAssignment) {
                                 var contextualType = varSymbol.getType();
-                                resolutionContext.pushContextualType(contextualType, false);
+                                resolutionContext.pushContextualType(contextualType, false, null);
                             }
 
                             if (assigningAST.init) {

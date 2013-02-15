@@ -982,18 +982,44 @@ module TypeScript {
 
         public isGeneric() { return true; }
 
-        public invalidate() {
-            super.invalidate();
+    }
+
+    export class PullArrayTypeSymbol extends PullTypeSymbol {
+        private elementType: PullTypeSymbol = null;
+
+        public isArray() { return true; }
+        public getElementType() { return this.elementType; }
+        public isGeneric() { return true; }
+
+        constructor() {
+            super("Array", PullElementKind.Array);
+        }
+
+        public setElementType(type: PullTypeSymbol) {
+            this.elementType = type;
+        }
+
+        public toString() {
+            var elementTypeName = this.elementType ? this.elementType.getName() : "T";
+            return "Array<" + elementTypeName + ">";
         }
     }
 
     // PULLTODO: This should be a part of the resolver class
-    export function specializeToArrayType(arrayInterfaceType: PullTypeSymbol, typeToReplace: PullTypeSymbol, typeToSpecializeTo: PullTypeSymbol, resolver: PullTypeResolver, context: PullTypeResolutionContext) {
+    export function specializeToArrayType(typeToReplace: PullTypeSymbol, typeToSpecializeTo: PullTypeSymbol, resolver: PullTypeResolver, context: PullTypeResolutionContext) {
+
+        var arrayInterfaceType = resolver.getCachedArrayType();
 
         // For the time-being, only specialize interface types
         // this way we can assume only public members and non-static methods
         if (!arrayInterfaceType || (arrayInterfaceType.getKind() & PullElementKind.Interface) == 0) {
             return null;
+        }
+        
+        // PULLREVIEW: Accept both generic and non-generic arrays for now
+        if (arrayInterfaceType.isGeneric()) {
+            var enclosingDecl = arrayInterfaceType.getDeclarations()[0];
+            return specializeType(arrayInterfaceType, [typeToSpecializeTo], resolver, enclosingDecl, context);
         }
 
         if (typeToSpecializeTo.getArrayType()) {
@@ -1107,8 +1133,9 @@ module TypeScript {
 
     export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
 
-        // set any slack to 'any'
         var typeParameters = typeToSpecialize.getTypeParameters();
+
+        var isArray = typeToSpecialize == resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
         if (!typeParameters.length) {
             return typeToSpecialize;
@@ -1146,10 +1173,16 @@ module TypeScript {
             return newType;
         }
 
-        newType = typeToSpecialize.isClass ? new PullClassTypeSymbol(typeToSpecialize.getName()) : new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
+        newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) :
+                    isArray ? new PullArrayTypeSymbol() :
+                        new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
         newType.addDeclaration(typeToSpecialize.getDeclarations()[0]);
 
         typeToSpecialize.addSpecialization(newType, typeArguments);
+
+        if (isArray) {
+            (<PullArrayTypeSymbol>newType).setElementType(typeArguments[0]);
+        }
 
         // create the type replacement map
 
@@ -1157,6 +1190,7 @@ module TypeScript {
 
         for (var i = 0; i < typeParameters.length; i++) {
             typeReplacementMap[typeParameters[i].getSymbolID().toString()] = typeArguments[i];
+            newType.addMember(typeParameters[i], SymbolLinkKind.TypeParameter);
         }
         
         var callSignatures = typeToSpecialize.getCallSignatures();
@@ -1168,7 +1202,7 @@ module TypeScript {
         var newSignature: PullSignatureSymbol;
 
         for (var i = 0; i < callSignatures.length; i++) {
-            newSignature = specializeSignature(callSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
+            newSignature = specializeSignature(callSignatures[i], true, typeReplacementMap, typeArguments, resolver, enclosingDecl, context);
 
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
@@ -1179,7 +1213,7 @@ module TypeScript {
 
         // specialize construct signatures
         for (var i = 0; i < constructSignatures.length; i++) {
-            newSignature = specializeSignature(constructSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
+            newSignature = specializeSignature(constructSignatures[i], true, typeReplacementMap, typeArguments, resolver, enclosingDecl, context);
 
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
@@ -1190,7 +1224,7 @@ module TypeScript {
 
         // specialize index signatures
         for (var i = 0; i < indexSignatures.length; i++) {
-            newSignature = specializeSignature(indexSignatures[i], true, typeReplacementMap, typeArguments, resolver, context);
+            newSignature = specializeSignature(indexSignatures[i], true, typeReplacementMap, typeArguments, resolver, enclosingDecl, context);
 
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
@@ -1210,9 +1244,13 @@ module TypeScript {
         
         var decl: PullDecl = null;
         var declAST: AST;
+        var unitPath: string;
 
         for (var i = 0; i < members.length; i++) {
             field = members[i];
+
+            resolver.resolveDeclaredSymbol(field, context);
+
             decl = field.getDeclarations()[0];
 
             newField = new PullSymbol(field.getName(), field.getKind());
@@ -1226,12 +1264,18 @@ module TypeScript {
                 newField.setType(replacementType);
             }
             else {
-                declAST = resolver.semanticInfoChain.getASTForDecl(decl, resolver.getUnitPath());
+                declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
 
                 // re-resolve using the current replacements
                 context.pushTypeSpecializationCache(typeReplacementMap);
+
                 field.invalidate();
+
+                unitPath = resolver.getUnitPath();
+                resolver.setUnitPath(decl.getScriptName());
                 resolver.resolveAST(declAST, false, enclosingDecl, context);
+                resolver.setUnitPath(unitPath);
+
                 context.popTypeSpecializationCache();
 
                 newFieldType = field.getType();
@@ -1262,6 +1306,7 @@ module TypeScript {
                                         typeReplacementMap: any,
                                         typeArguments: PullTypeSymbol[],
                                         resolver: PullTypeResolver,
+                                        enclosingDecl: PullDecl,
                                         context: PullTypeResolutionContext,
                                         ast?: AST): PullSignatureSymbol {
 
@@ -1281,16 +1326,22 @@ module TypeScript {
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.getReturnType();
 
-        var replacementReturnType = <PullTypeSymbol>typeReplacementMap[returnType.getSymbolID().toString()];
+        if (returnType.isGeneric()) {
+            var newReturnElementType = returnType.isArray() ? (<PullArrayTypeSymbol>returnType).getElementType() : returnType;
 
-        if (replacementReturnType) {
-            newSignature.setReturnType(replacementReturnType);
+            var replacementReturnType = <PullTypeSymbol>typeReplacementMap[newReturnElementType.getSymbolID().toString()];
+
+            var newReturnType = specializeType(returnType, [replacementReturnType], resolver, enclosingDecl, context);
+
+            newSignature.setReturnType(newReturnType);
         }
         else {
             newSignature.setReturnType(returnType);
         }
 
         var newParameter: PullSymbol;
+        var newParameterType: PullTypeSymbol;
+        var newParameterElementType: PullTypeSymbol;
         var parameterType: PullTypeSymbol;
         var replacementParameterType: PullTypeSymbol;
         var localTypeParameters: any = {};
@@ -1328,11 +1379,12 @@ module TypeScript {
             newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
 
             parameterType = parameters[k].getType();
-
-            replacementParameterType = <PullTypeSymbol>typeReplacementMap[parameterType.getSymbolID().toString()];
-
-            if (!localTypeParameters[parameterType.getName()] && parameterType == replacementParameterType) {
-                newParameter.setType(replacementParameterType);
+            newParameterElementType = parameterType.isArray() ? (<PullArrayTypeSymbol>parameterType).getElementType() : parameterType;
+            replacementParameterType = <PullTypeSymbol>typeReplacementMap[newParameterElementType.getSymbolID().toString()];
+            
+            if (!localTypeParameters[parameterType.getName()] && parameterType.isGeneric() && replacementParameterType) {
+                newParameterType = specializeType(parameterType, [replacementParameterType], resolver, enclosingDecl, context);
+                newParameter.setType(newParameterType);                
             }
             else {
                 newParameter.setType(parameterType);
