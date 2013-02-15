@@ -220,6 +220,14 @@ module TypeScript {
             modName = "";
         }
 
+        if (symbol) {
+            var modDeclAST = <ModuleDeclaration>symbol.declAST;
+            var modDeclASTIsExported = hasFlag(modDeclAST.modFlags, ModuleFlags.Exported);
+            if ((modDeclASTIsExported && !isExported) || (!modDeclASTIsExported && isExported)) {
+                context.checker.errorReporter.simpleError(moduleDecl, 'All contributions to a module must be "export" or none');
+            }
+        }
+
         if ((symbol == null) || (symbol.kind() != SymbolKind.Type)) {
 
             if (modType == null) {
