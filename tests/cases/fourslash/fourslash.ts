@@ -174,6 +174,10 @@ module FourSlashInterface {
         public baselineCurrentFileBreakpointLocations() {
             FourSlash.currentTestState.baselineCurrentFileBreakpointLocations();
         }
+
+        public nameOrDottedNameSpanTextIs(text: string) {
+            FourSlash.currentTestState.verifyCurrentNameOrDottedNameSpanText(text);
+        }
     }
     
     export class edit {

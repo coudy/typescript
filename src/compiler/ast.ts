@@ -995,7 +995,6 @@ module TypeScript {
         public boundToProperty: VarDecl = null;
         public isOverload = false;
         public innerStaticFuncs: FuncDecl[] = [];
-        public isTargetTypedAsMethod = false;
         public isInlineCallLiteral = false;
         public accessorSymbol: Symbol = null;
         public leftCurlyCount = 0;

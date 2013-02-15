@@ -54,7 +54,6 @@ module TypeScript {
                     var oldType = oldSym.getType();
                     if (oldType) {
                         paramDef.typeLink.type = oldType.specializeType(pattern, replacement, checker, false);
-                        paramSym.declAST.type = paramDef.typeLink.type;
                     }
                     else {
                         paramDef.typeLink.type = checker.anyType;

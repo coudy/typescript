@@ -26,36 +26,19 @@ module Formatting {
 
         public Run(): void {
             var parseCursor = this.fileAuthoringProxy.GetASTCursor();
-            //using (new ProxyReference(parseCursor))
             {
-                parseCursor.SeekToOffset(this.semicolonPoint.position, /*excludeEndOffset*/ true);
+                var startPos = -1;
+                var node = parseCursor.SeekToOffset(this.semicolonPoint.position, /*excludeEndOffset*/ true);
 
-                var nodes: AuthorParseNode[] = null;
-                var foundSubTree = false;
-                while (!foundSubTree) {
-                    var children = parseCursor.GetSubTree(1);
-                    //using (new ProxyReference(children))
-                    {
-                        if (children.Count() === 0)
-                            return;
-
-                        nodes = children.GetItems(0, children.Count());
-
-                        if (nodes.length === 2 && nodes[1].Details.Kind === AuthorParseNodeKind.apnkList) {
-                            parseCursor.MoveToChild(nodes[1].EdgeLabel, 0);
-                        }
-                        else {
-                            foundSubTree = true;
-                        }
+                while (node && node.Kind !== AuthorParseNodeKind.apnkEmpty && node.nodeType !== TypeScript.NodeType.List) {
+                    if ((node.EndOffset - 1) === this.semicolonPoint.position) {
+                        startPos = node.StartOffset;
                     }
+                    node = parseCursor.MoveUp();
                 }
 
-                for (var i = nodes.length - 1; i >= 0; i--) {
-                    if (nodes[i].Details.EndOffset <= this.semicolonPoint.position) {
-                        var startPos = nodes[i].Details.StartOffset;
-                        this.BlockSpan = new Span(startPos, this.semicolonPoint.position - startPos + 1);   // +1 to include the semicolon itself in the span
-                        break;
-                    }
+                if (startPos !== -1) {
+                    this.BlockSpan = new Span(startPos, this.semicolonPoint.position - startPos + 1);   // +1 to include the semicolon itself in the span
                 }
             }
         }

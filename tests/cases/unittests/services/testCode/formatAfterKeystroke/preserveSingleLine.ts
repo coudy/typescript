@@ -1,1 +1,0 @@
-function of1(b:{r:{c:number;
