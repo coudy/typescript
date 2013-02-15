@@ -1158,9 +1158,15 @@ module TypeScript {
             if (symbol.isVariable()) {
                 if (symbol.isInferenceSymbol()) {
                     var infSym = <InferenceSymbol>symbol;
-                    if (infSym.declAST &&
-                        !this.checker.typeStatusIsFinished(infSym.typeCheckStatus)) {
-                        this.inScopeTypeCheckDecl(infSym.declAST);
+                    if (infSym.declAST && !this.checker.typeStatusIsFinished(infSym.typeCheckStatus)) {
+                        if (infSym.typeCheckStatus == TypeCheckStatus.Started) {
+                            // Since we have started the declAST type check, but not finished, it must be a recursive variable reference.
+                            infSym.declAST.type = this.anyType;
+                            infSym.setType(this.anyType);
+                        }
+                        else {
+                            this.inScopeTypeCheckDecl(infSym.declAST);
+                        }
                     }
                     if (!this.checker.styleSettings.innerScopeDeclEscape) {
                         if (infSym.declAST && (infSym.declAST.nodeType == NodeType.VarDecl)) {
@@ -1366,11 +1372,6 @@ module TypeScript {
                 this.checker.errorReporter.styleError(ast, "use of " + nodeTypeTable[binex.nodeType]);
             }
 
-            if (leftType == null || rightType == null) {
-                this.checker.errorReporter.simpleError(binex, "Could not typecheck arithmetic operation.  Possible recursive typecheck error?");
-                binex.type = this.anyType;
-                return binex;
-            }
             var nodeType = binex.nodeType;
 
             if (this.checker.isNullOrUndefinedType(leftType)) {
