@@ -1242,20 +1242,22 @@ module TypeScript {
                 declPath = [enclosingDecl];
             }
 
-            var nameSymbol: PullSymbol = null
+            var typeNameSymbol: PullTypeSymbol = null
 
-            nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
+            typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
-            if (!nameSymbol) {
+            if (!typeNameSymbol) {
                 this.postSemanticError(nameAST, "Could not find type '" + id + "'");
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            if (!nameSymbol.isResolved()) {
-                this.resolveDeclaredSymbol(nameSymbol, context);
+            typeNameSymbol = context.findSpecializationForType(typeNameSymbol);
+
+            if (!typeNameSymbol.isResolved()) {
+                this.resolveDeclaredSymbol(typeNameSymbol, context);
             }
 
-            return nameSymbol;
+            return typeNameSymbol;
         }
 
         public resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
