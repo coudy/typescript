@@ -3589,23 +3589,27 @@ module TypeScript {
                 }
                 this.tryAddCandidates(signature, actuals, exactCandidates, conversionCandidates, comparisonInfo);
             }
+
+            // For error reporting, we want to use the span of just the function's name if it is a method or a field of some object, so go to the right child if the node is a dot.
+            // No need to recurse since dots are left associative
+            var apparentTarget = target.nodeType == NodeType.Dot ? (<BinaryExpression> target).operand2 : target;
             if (exactCandidates.length == 0) {
 
                 var applicableCandidates = this.checker.getApplicableSignatures(conversionCandidates, args, comparisonInfo);
                 if (applicableCandidates.length > 0) {
                     var candidateInfo = this.checker.findMostApplicableSignature(applicableCandidates, args);
                     if (candidateInfo.ambiguous) {
-                        this.checker.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
+                        this.checker.errorReporter.simpleError(apparentTarget, "Ambiguous call expression - could not choose overload");
                     }
                     candidate = candidateInfo.sig;
                 }
                 else {
                     var emsg = "Supplied parameters do not match any signature of call target";
                     if (comparisonInfo.message) {
-                        this.checker.errorReporter.simpleError(target, emsg + ":\n\t" + comparisonInfo.message);
+                        this.checker.errorReporter.simpleError(apparentTarget, emsg + ":\n\t" + comparisonInfo.message);
                     }
                     else {
-                        this.checker.errorReporter.simpleError(target, emsg);
+                        this.checker.errorReporter.simpleError(apparentTarget, emsg);
                     }
                 }
             }
@@ -3617,7 +3621,7 @@ module TypeScript {
                     }
                     var candidateInfo = this.checker.findMostApplicableSignature(applicableSigs, args);
                     if (candidateInfo.ambiguous) {
-                        this.checker.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
+                        this.checker.errorReporter.simpleError(apparentTarget, "Ambiguous call expression - could not choose overload");
                     }
                     candidate = candidateInfo.sig;
                 }
