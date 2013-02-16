@@ -121,6 +121,10 @@ module TypeScript {
             this.styleSettings.parseOptions(str);
         }
     }
+
+    export interface IHostSettings {
+        usePullLanguageService: bool;
+    }
     
     ///
     /// Preprocessing

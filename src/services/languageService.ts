@@ -73,6 +73,7 @@ module Services {
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
         getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.ScriptEditRange;
+        getHostSettings(): TypeScript.IHostSettings;
     }
 
     export function logInternalError(logger: TypeScript.ILogger, err: Error) {

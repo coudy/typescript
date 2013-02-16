@@ -4,46 +4,15 @@
 ///<reference path='typescriptServices.ts' />
 
 module Services {
-    export interface IPullLanguageService {
+    /// IPullLanguageService represent language service features that use Fidelity Syntax Tree directelly without having to
+    /// rely on the old AST format.
+    export interface IPullLanguageService extends ILanguageService {
         host: ILanguageServiceHost;
 
-        refresh(): void;
-
-
-        getErrors(maxCount: number): TypeScript.ErrorEntry[];
         getOutliningSpans(fileName: string): TextSpan[];
         getMatchingBraceSpans(fileName: string, position: number): TextSpan[];
-
-        logAST(fileName: string): void;
-
+        logSyntaxTree(fileName: string): void;
         getIndentation(fileName: string, position: number, options: Services.EditorOptions): number;
-
-        //getScriptAST(fileName: string): TypeScript.Script;
-        //getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[];
-        //getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo;
-        //getTypeAtPosition(fileName: string, pos: number): TypeInfo;
-        //getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
-        //getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo;
-        //getSignatureAtPosition(fileName: string, pos: number): SignatureInfo;
-        //getDefinitionAtPosition(fileName: string, pos: number): DefinitionInfo;
-        //getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[];
-        //getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[];
-        //getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[];
-        //getNavigateToItems(searchValue: string): NavigateToItem[];
-        //getScriptLexicalStructure(fileName: string): NavigateToItem[];
-
-        //getScriptSyntaxAST(fileName: string): ScriptSyntaxAST;
-        //getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
-        //getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
-        //getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
-        //getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[];
-        //getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: Services.EditorOptions): number;
-
-        //getAstPathToPosition(script: TypeScript.AST, pos: number, options: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
-        //getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath;
-
-        //getSymbolTree(): Services.ISymbolTree;
-        //getEmitOutput(fileName: string): IOutputFile[];
     }
 
     export class PullLanguageService implements IPullLanguageService {
@@ -458,16 +427,7 @@ module Services {
         // Given a script name and position in the script, return a pair of text range if the 
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
-        public getMatchingBraceSpans(fileName: string, position: number): TextSpan[] {
-            this.refresh();
-
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("getMatchingBraceSpans is only available when useFidelity flag is set.");
-            }
-
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            return BraceMatcher.getMatchSpans(syntaxTree, position);
-        }
+    
 
         public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
             this.minimalRefresh();
@@ -601,7 +561,7 @@ module Services {
         }
 
         public getOutliningRegions(fileName: string): NavigateToItem[] {
-            this.refresh();
+            this.minimalRefresh();
 
             var script = this.pullCompilerState.getScriptAST(fileName);
 
@@ -674,43 +634,13 @@ module Services {
             return this.getASTItems(script.locationInfo.unitIndex, script, match, findMinChar, findLimChar);
         }
 
-        public getOutliningSpans(fileName: string): TextSpan[] {
-            this.refresh();
-
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("getOutliningSpans is only available when useFidelity flag is set.");
-            }
-
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            return OutliningElementsCollector.collectElements(syntaxTree.sourceUnit());
-        }
-
-
-        public getIndentation(fileName: string, position: number, options: Services.EditorOptions): number {
-            this.refresh();
-
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("getIndentation is only available when useFidelity flag is set.");
-            }
-
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            var sourceText = this.pullCompilerState.getSourceText2(fileName, /* cached */ true);
-            return Indenter.getIndentation(syntaxTree.sourceUnit(), sourceText, position, options);
-        }
-        
         /// LOG AST
         ///
         public logAST(fileName: string): void {
             this.refresh();
 
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("logAST is only available when useFidelity flag is set.");
-            }
-
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            var serializedTree = SyntaxNodeSerializer.serialize(syntaxTree.sourceUnit());
-            this.logger.log("");
-            this.logger.log(serializedTree);
+            var script = this.pullCompilerState.getScriptAST(fileName);
+            new TypeScript.AstLogger(this.logger).logScript(script);
         }
 
         /// LOG SYNTAX AST
@@ -1159,6 +1089,59 @@ module Services {
             return completions;
         }
 
+        // 
+        // New IPullLanguageService features using Fiedlity Syntax Tree directelly
+        //
+        public getOutliningSpans(fileName: string): TextSpan[] {
+            this.refresh();
+
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("getOutliningSpans is only available when useFidelity flag is set.");
+            }
+
+            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            return OutliningElementsCollector.collectElements(syntaxTree.sourceUnit());
+        }
+
+        public getMatchingBraceSpans(fileName: string, position: number): TextSpan[] {
+            this.refresh();
+
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("getMatchingBraceSpans is only available when useFidelity flag is set.");
+            }
+
+            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            return BraceMatcher.getMatchSpans(syntaxTree, position);
+        }
+
+        public getIndentation(fileName: string, position: number, options: Services.EditorOptions): number {
+            this.refresh();
+
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("getIndentation is only available when useFidelity flag is set.");
+            }
+
+            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            var sourceText = this.pullCompilerState.getSourceText2(fileName, /* cached */ true);
+            return Indenter.getIndentation(syntaxTree.sourceUnit(), sourceText, position, options);
+        }
+
+        public logSyntaxTree(fileName: string): void {
+            this.refresh();
+
+            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
+                throw new Error("logSyntaxTree is only available when useFidelity flag is set.");
+            }
+
+            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            var serializedTree = SyntaxNodeSerializer.serialize(syntaxTree.sourceUnit());
+            this.logger.log("");
+            this.logger.log(serializedTree);
+        }
+
+        //
+        // Private methods
+        //
         private logFormatCodeOptions(options: FormatCodeOptions) {
             if (this.logger.information()) {
                 this.logger.log("options.InsertSpaceAfterCommaDelimiter=" + options.InsertSpaceAfterCommaDelimiter);

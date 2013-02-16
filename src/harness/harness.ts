@@ -1664,6 +1664,10 @@ module Harness {
             return result;
         }
 
+        public getHostSettings(): string {
+            return "";
+        }
+
     }
 
     // Describe/it definitions
