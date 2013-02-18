@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Strada VS</title>
+
+</head>
+<body>
+<h1> Strada VS Testbed </h1>
+
+
+<script src='perfCompiler.js'></script>
+<script>
+
+    if (!batch) {
+        batch = new BatchCompiler();
+    }
+
+    
+    document.body.onmousemove = function () {
+        var date1 = new Date();
+        var milliseconds1 = date1.getTime();
+        batch.reTypeCheck();
+        var date2 = new Date();
+        var milliseconds2 = date2.getTime();
+        var res = "ReTypeCheck speed: " + (milliseconds2 - milliseconds1);
+        var div = document.createElement('div');
+        div.innerText = res;
+        document.body.appendChild(div); // bug: nothing printed here
+    }
+//    for (var i = 0; i < 500; i++) {
+//        service.refresh();
+//        var res = service.getTypeAtPosition(5);
+//        document.write(res); // bug: nothing printed here
+//        document.write("<br>");
+//        document.write("<br>");
+//    }
+
+</script>
+</body>
+</html>
