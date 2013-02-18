@@ -105,6 +105,20 @@ module Formatting {
                     }
                     break;
 
+                case AuthorParseNodeKind.apnkTryCatch:
+                case AuthorParseNodeKind.apnkTryFinally:
+                    {
+                        // virtual block, still check its children.  Note, must do this one recursively, see below comment.
+                        ParseNodeExtensions.ForAllChildren(node, function(child) { FillIndentationLevels(child); });
+
+                        // TryCatch and TryFinally nodes are treated as virtual blocks, and hold indentation for try/Catch/Finally nodes.
+                        // They should have no indentation. Reset it after calling the children, in case a child
+                        // needs to know where its parent stands, i.e., in the cases of try/catch/finally
+                        node.IndentationDelta = null;
+                        node.ChildrenIndentationDelta = null;
+                    }
+                    break;
+
                 case AuthorParseNodeKind.apnkFncDecl:
                     {
                         // Indent function body
