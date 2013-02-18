@@ -248,6 +248,10 @@ interface Function {
     
     prototype: any;
     length: number;
+
+    // Non-standard extensions
+    arguments: any;
+    caller: Function;
 }
 
 declare var Function: {
@@ -807,10 +811,25 @@ interface RegExp {
     multiline: bool;
 
     lastIndex: number;
+
+    // Non-standard extensions
+    compile(): RegExp;
 }
 declare var RegExp: {
     new (pattern: string, flags?: string): RegExp;
     (pattern: string, flags?: string): RegExp;
+
+    // Non-standard extensions
+    $1: string;
+    $2: string;
+    $3: string;
+    $4: string;
+    $5: string;
+    $6: string;
+    $7: string;
+    $8: string;
+    $9: string;
+    lastMatch: string;
 }
 
 interface Error {
