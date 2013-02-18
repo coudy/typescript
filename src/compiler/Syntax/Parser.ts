@@ -1581,7 +1581,7 @@ module Parser1 {
             return token.withTrailingTrivia(Syntax.triviaList(trailingTrivia));
         }
 
-        private addSkippedTokenToTriviaArray(array: ISyntaxTrivia[], skippedToken: ISyntaxToken, ): void {
+        private addSkippedTokenToTriviaArray(array: ISyntaxTrivia[], skippedToken: ISyntaxToken): void {
             Debug.assert(skippedToken.text().length > 0);
             
             // first, add the leading trivia of the skipped token to the array

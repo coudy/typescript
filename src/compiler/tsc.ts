@@ -18,13 +18,15 @@
 ///<reference path='optionsParser.ts'/>
 
 class DiagnosticsLogger implements TypeScript.ILogger {
+    constructor(public ioHost: IIO) {
+    }
     public information(): bool { return false; }
     public debug(): bool { return false; }
     public warning(): bool { return false; }
     public error(): bool { return false; }
     public fatal(): bool { return false; }
     public log(s: string): void {
-        WScript.Echo(s);
+        this.ioHost.stdout.WriteLine(s);
     }
 }
 
@@ -61,7 +63,7 @@ class CommandLineHost implements TypeScript.IResolverHost {
     constructor(public compilationSettings: TypeScript.CompilationSettings, public errorReporter: (err:string)=>void) { 
     }
 
-    public getPathIdentifier(path: string) { 
+    public getPathIdentifier(path: string) {
         return this.compilationSettings.useCaseSensitiveFileResolution ? path : path.toLocaleUpperCase();
     }
 
@@ -145,7 +147,7 @@ class BatchCompiler {
     public compile(): bool {
         var compiler: TypeScript.TypeScriptCompiler;
         
-        var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger() : new TypeScript.NullLogger();
+        var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
         compiler = new TypeScript.TypeScriptCompiler(
             this.errorReporter, logger, this.compilationSettings);
         compiler.setErrorOutput(this.errorReporter);

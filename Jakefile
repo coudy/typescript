@@ -61,6 +61,7 @@ var compilerSources = [
 	"typecheck/pullDeclCollection.ts",
 	"typecheck/pullSymbolBinder.ts",
 	"typecheck/pullSymbolGraph.ts",
+	"typecheck/pullEmitter.ts",	
 	"typescript.ts"
 ].map(function (f) {
 	return path.join(compilerDirectory, f);

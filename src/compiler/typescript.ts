@@ -61,6 +61,7 @@
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
+///<reference path='typecheck\pullEmitter.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
 ///<reference path='Core\Timer.ts' />
 

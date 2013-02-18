@@ -1900,49 +1900,51 @@ module TypeScript {
             // next, walk the available signatures
             // if any are generic, and we don't have type arguments, try to infer
             // otherwise, try to specialize to the type arguments above
-            var resolvedSignatures: PullSignatureSymbol[] = [];
-            var inferredTypeArgs: PullTypeSymbol[];
-            var specializedSignature: PullSignatureSymbol;
-            var typeParameters: PullTypeParameterSymbol[];
-            var typeReplacementMap: any;
+            if (targetSymbol.isGeneric) {
 
-            for (var i = 0; i < signatures.length; i++) {
-                if (signatures[i].isGeneric()) {
-                    if (typeArgs) {
-                        inferredTypeArgs = typeArgs;
+                var resolvedSignatures: PullSignatureSymbol[] = [];
+                var inferredTypeArgs: PullTypeSymbol[];
+                var specializedSignature: PullSignatureSymbol;
+                var typeParameters: PullTypeParameterSymbol[];
+                var typeReplacementMap: any;
+
+                for (var i = 0; i < signatures.length; i++) {
+                    if (signatures[i].isGeneric()) {
+                        if (typeArgs) {
+                            inferredTypeArgs = typeArgs;
+                        }
+                        else {
+                            inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
+                        }
+
+                        // if we could infer Args, or we have type arguments, then attempt to specialize the signature
+                        if (inferredTypeArgs) {
+                            typeParameters = signatures[i].getTypeParameters();
+
+                            if (inferredTypeArgs.length != typeParameters.length) {
+                                continue;
+                            }
+
+                            typeReplacementMap = {};
+
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
+                            }
+
+                            specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
+
+                            if (specializedSignature) {
+                                resolvedSignatures[resolvedSignatures.length] = specializedSignature;
+                            }
+                        }
                     }
                     else {
-                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
-                    }
-
-                    // if we could infer Args, or we have type arguments, then attempt to specialize the signature
-                    if (inferredTypeArgs) {
-                        typeParameters = signatures[i].getTypeParameters();
-
-                        if (inferredTypeArgs.length != typeParameters.length) {
-                            continue;
-                        }
-
-                        typeReplacementMap = {};
-
-                        for (var j = 0; j < typeParameters.length; j++) {
-                            typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
-                        }
-
-                        specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
-
-                        if (specializedSignature) {
-                            resolvedSignatures[resolvedSignatures.length] = specializedSignature;
-                        }
+                        resolvedSignatures[resolvedSignatures.length] = signatures[i];
                     }
                 }
-                else {
-                    resolvedSignatures[resolvedSignatures.length] = signatures[i];
-                }
+                // PULLTODO: Try to avoid copying here...
+                signatures = resolvedSignatures;
             }
-
-            // PULLTODO: Try to avoid copying here...
-            signatures = resolvedSignatures;
 
             // the target should be a function
             //if (!targetSymbol.isType()) {
