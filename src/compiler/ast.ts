@@ -2106,6 +2106,7 @@ module TypeScript {
     export class CaseStatement extends Statement {
         public expr: AST = null;
         public body: ASTList;
+        public colonSpan: ASTSpan = new ASTSpan();
 
         constructor () {
             super(NodeType.Case);
@@ -2121,7 +2122,9 @@ module TypeScript {
             else {
                 emitter.writeToOutput("default");
             }
+            emitter.recordSourceMappingStart(this.colonSpan);
             emitter.writeToOutput(":");
+            emitter.recordSourceMappingEnd(this.colonSpan);
             if (this.body.members.length == 1 && this.body.members[0].nodeType == NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
                 emitter.emitJavascriptStatements(this.body, false);

@@ -3886,7 +3886,8 @@ module TypeScript {
                                                             OperatorPrecedence.None, true,
                                                             TypeContext.NoTypes);
                                 }
-
+                                caseStmt.colonSpan.minChar = this.scanner.startPos;
+                                caseStmt.colonSpan.limChar = this.scanner.pos;
                                 this.checkCurrentToken(TokenID.Colon, errorRecoverySet | ErrorRecoverySet.StmtStart);
                                 caseStmt.body = new ASTList();
                                 this.parseStatementList(errorRecoverySet | ErrorRecoverySet.RCurly,
