@@ -17,6 +17,8 @@
 ///<reference path='io.ts'/>
 ///<reference path='optionsParser.ts'/>
 
+declare var localizedDiagnosticMessages: TypeScript.TypeScriptDiagnosticMessages;
+
 class DiagnosticsLogger implements TypeScript.ILogger {
     constructor(public ioHost: IIO) {
     }
@@ -146,10 +148,14 @@ class BatchCompiler {
     /// writing to output file(s).
     public compile(): bool {
         var compiler: TypeScript.TypeScriptCompiler;
+
+        if (typeof localizedDiagnosticMessages == "undefined") {
+            localizedDiagnosticMessages = null;
+        }
         
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
         compiler = new TypeScript.TypeScriptCompiler(
-            this.errorReporter, logger, this.compilationSettings);
+            this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
         compiler.setErrorOutput(this.errorReporter);
 
         compiler.setErrorCallback(

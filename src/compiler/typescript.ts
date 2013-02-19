@@ -63,6 +63,8 @@
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='typecheck\pullEmitter.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
+///<reference path='resources.ts' />
+///<reference path='resourceStrings.ts' />
 ///<reference path='Core\Timer.ts' />
 
 module TypeScript {
@@ -170,7 +172,8 @@ module TypeScript {
 
         constructor(public errorOutput: ITextWriter,
                     public logger: ILogger = new NullLogger(),
-                    public settings: CompilationSettings = defaultSettings) {
+                    public settings: CompilationSettings = defaultSettings,
+                    public diagnosticMessages: TypeScriptDiagnosticMessages = null) {
             this.errorReporter = new ErrorReporter(this.errorOutput);
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
             this.persistentTypeState = new PersistentGlobalTypeState(this.errorReporter);
@@ -182,6 +185,10 @@ module TypeScript {
             this.parser.style_funcInLoop = this.settings.styleSettings.funcInLoop;
             this.parser.inferPropertiesFromThisAssignment = this.settings.inferPropertiesFromThisAssignment;
             this.emitSettings = new EmitOptions(this.settings);
+
+            if (this.diagnosticMessages) {
+                typescriptDiagnosticMessages = diagnosticMessages
+            }
 
             codeGenTarget = settings.codeGenTarget;
         }

@@ -162,4 +162,46 @@ module TypeScript {
         }
         return result;
     }
+
+    export function getDiagnosticMessage(diagnosticType: DiagnosticMessages, args: any[]): string {
+        var diagnosticName: string = (<any>DiagnosticMessages)._map[diagnosticType];
+
+        var diagnostic = <Diagnostic> typescriptDiagnosticMessages[diagnosticName];
+
+        if (!diagnostic) {
+            throw new Error("Invalid diagnostic");
+        }
+        else {
+            var components = diagnosticName.split("_");
+
+            if (components.length) {
+                var argCount = parseInt(components[1]);
+
+                if (argCount != args.length) {
+                    throw new Error("Expected " + argCount + " arguments to diagnostic, got " + args.length + " instead");
+                }
+            }
+        }
+
+        var diagnosticMessage = diagnostic.message.replace(/{(\d+)}/g, function (match, num) {
+            return typeof args[num] !== 'undefined'
+                ? args[num]
+                : match;
+        });
+
+        var message: string;
+
+        if (diagnosticType != DiagnosticMessages.error_2 && diagnosticType != DiagnosticMessages.warning_2) {
+            var errorOrWarning = diagnostic.category == DiagnosticCategory.Error ?
+                                    DiagnosticMessages.error_2 :
+                                    DiagnosticMessages.warning_2;
+
+            message = getDiagnosticMessage(errorOrWarning, [diagnostic.code, diagnosticMessage]);
+        }
+        else {
+            message = diagnosticMessage;
+        }
+
+        return message;
+    }
 }

@@ -153,7 +153,7 @@ module TypeScript {
 
             if (moduleSymbol && moduleSymbol.getKind() != PullElementKind.Module) {
                 // duplicate symbol error
-                this.postError(moduleAST, "Duplicate identifier '" + modName + "'");
+                this.postError(moduleAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [modName]));
 
                 moduleSymbol = null;
             }
@@ -226,7 +226,7 @@ module TypeScript {
             }
 
             if (enumSymbol && (enumSymbol.getKind() != PullElementKind.Enum || enumSymbol.getSymbolID() > this.startingSymbolForRebind)) {
-                this.postError(enumAST, "Duplicate identifier '" + enumName + "'");
+                this.postError(enumAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [enumName]));
                 enumSymbol = null;
             }
 
@@ -302,7 +302,7 @@ module TypeScript {
             }
 
             if (classSymbol && (classSymbol.getKind() != PullElementKind.Class || classSymbol.getSymbolID() > this.startingSymbolForRebind)) {
-                this.postError(classAST, "Duplicate identifier '" + className + "'");
+                this.postError(classAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [className]));
                 classSymbol = null;
             }
             else if (classSymbol) {
@@ -456,7 +456,7 @@ module TypeScript {
             }
 
             if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface)) {
-                this.postError(interfaceAST, "Duplicate identifier '" + interfaceName + "'");
+                this.postError(interfaceAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [interfaceName]));
                 interfaceSymbol = null;
             }
 
@@ -609,7 +609,7 @@ module TypeScript {
             }
 
             if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
-                this.postError(varDeclAST, "Duplicate identifier '" + declName + "'");
+                this.postError(varDeclAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName]));
                 variableSymbol = null;
             }
 
@@ -715,7 +715,7 @@ module TypeScript {
             propertySymbol = parent.findMember(declName);
 
             if (propertySymbol && (propertySymbol.getSymbolID() > this.startingSymbolForRebind)) {
-                this.postError(propDeclAST, "Duplicate identifier '" + declName + "'");
+                this.postError(propDeclAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName]));
 
                 propertySymbol = null;
             }
@@ -823,7 +823,7 @@ module TypeScript {
                     parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Variable);
 
                     if (params[argDecl.id.actualText]) {
-                        this.postError(argDecl, "Duplicate identifier '" + argDecl.id.actualText + "'");
+                        this.postError(argDecl, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [argDecl.id.actualText]));
                     }
                     else {
                         params[argDecl.id.actualText] = true;
@@ -892,7 +892,7 @@ module TypeScript {
             }
 
             if (functionSymbol && functionSymbol.getKind() != PullElementKind.Function) {
-                this.postError(funcDeclAST, "Duplicate identifier '" + funcName + "'");
+                this.postError(funcDeclAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [funcName]));
                 functionSymbol = null;
             }
 
@@ -1107,7 +1107,7 @@ module TypeScript {
             methodSymbol = parent.isClass() && isStatic && (<PullClassTypeSymbol>parent).getConstructorMethod() ? (<PullClassTypeSymbol>parent).getConstructorMethod().getType().findMember(methodName) : parent.findMember(methodName);
 
             if (methodSymbol && methodSymbol.getKind() != PullElementKind.Method) {
-                this.postError(methodAST, "Duplicate identifier '" + methodName + "'");
+                this.postError(methodAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [methodName]));
                 methodSymbol = null;
             }
 

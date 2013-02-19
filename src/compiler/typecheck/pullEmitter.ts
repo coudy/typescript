@@ -17,23 +17,10 @@
 
 module TypeScript {
 
-    export class PullEmitter {
-        public prologueEmitted = false;
-        public thisClassNode: TypeDeclaration = null;
-        public thisFnc: FuncDecl = null;
-        public moduleDeclList: ModuleDeclaration[] = [];
-        public moduleName = "";
-        public emitState = new EmitState();
-        public indenter = new Indenter();
-        public ambientModule = false;
-        public modAliasId: string = null;
-        public firstModAlias: string = null;
-        public allSourceMappers: SourceMapper[] = [];
-        public sourceMapper: SourceMapper = null;
-        public captureThisStmtString = "var _this = this;";
-        private varListCountStack: number[] = [0];
+    export class PullEmitter extends Emitter {
 
-        constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
+        constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions, public errorReporter: ErrorReporter, public semanticInfoChain: SemanticInfoChain) {
+            super(checker, emittingFileName, outfile, emitOptions, errorReporter);
         }
 
         public setSourceMappings(mapper: SourceMapper) {
@@ -212,6 +199,7 @@ module TypeScript {
             }
         }
 
+        // PULLTODO
         private getConstantValue(init: AST): number {
             if (init) {
                 if (init.nodeType === NodeType.NumberLit) {
@@ -237,6 +225,7 @@ module TypeScript {
             return null;
         }
 
+        // PULLTODO
         public tryEmitConstant(dotExpr: BinaryExpression) {
             if (!this.emitOptions.propagateConstants) {
                 return false;
@@ -301,6 +290,7 @@ module TypeScript {
             }
         }
 
+        // PULLTODO
         public emitConstructorCalls(bases: ASTList, classDecl: TypeDeclaration) {
             if (bases == null) {
                 return;
@@ -343,6 +333,7 @@ module TypeScript {
             this.recordSourceMappingEnd(classDecl);
         }
 
+        // PULLTODO
         public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
             bases: ASTList, hasSelfRef: bool, classDecl: TypeDeclaration) {
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
@@ -564,6 +555,7 @@ module TypeScript {
             //}           
         }
 
+        // PULLTODO
         public emitJavascriptModule(moduleDecl: ModuleDeclaration) {
             var modName = moduleDecl.name.actualText;
             if (isTSFile(modName)) {
@@ -796,6 +788,7 @@ module TypeScript {
             this.writeToOutput(text);
         }
 
+        // PULLTODO
         public emitJavascriptFunction(funcDecl: FuncDecl) {
             if (hasFlag(funcDecl.fncFlags, FncFlags.Signature) || funcDecl.isOverload) {
                 return;
@@ -901,6 +894,7 @@ module TypeScript {
             }
         }
 
+        // PULLTODO
         public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
             if ((varDecl.varFlags & VarFlags.Ambient) == VarFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
@@ -997,6 +991,7 @@ module TypeScript {
             return false;
         }
 
+        // PULLTODO
         public emitJavascriptName(name: Identifier, addThis: bool) {
             var sym = name.sym;
             this.emitParensAndCommentsInPlace(name, true);
@@ -1334,8 +1329,7 @@ module TypeScript {
                 }
             }
 
-            // PULLTODO: IEmitter
-            //ast.emit(this, tokenId, startLine);
+            ast.emit(this, tokenId, startLine);
 
             if ((tokenId == TokenID.Semicolon) && (ast.nodeType < NodeType.GeneralNode)) {
                 this.writeToOutput(";");
@@ -1414,6 +1408,7 @@ module TypeScript {
             }
         }
 
+        // PULLTODO
         public emitAddBaseMethods(className: string, base: Type, classDecl: TypeDeclaration): void {
             if (base.members) {
                 var baseSymbol = base.symbol;
@@ -1438,6 +1433,7 @@ module TypeScript {
             }
         }
 
+        // PULLTODO
         public emitJavascriptClass(classDecl: ClassDeclaration) {
             if (!hasFlag(classDecl.varFlags, VarFlags.Ambient)) {
                 var svClassNode = this.thisClassNode;
@@ -1620,6 +1616,7 @@ module TypeScript {
             }
         }
 
+        // PULLTODO
         public emitPrologue(reqInherits: bool) {
             if (!this.prologueEmitted) {
                 if (reqInherits) {

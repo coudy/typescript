@@ -118,7 +118,7 @@ module TypeScript {
         public allSourceMappers: SourceMapper[] = [];
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
-        private varListCountStack: number[] = [0]; 
+        public varListCountStack: number[] = [0]; 
 
         constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
         }
@@ -964,12 +964,12 @@ module TypeScript {
             }
         }
 
-        private varListCount(): number {
+        public varListCount(): number {
             return this.varListCountStack[this.varListCountStack.length - 1];
         }
 
         // Emits "var " if it is allowed
-        private emitVarDeclVar() {
+        public emitVarDeclVar() {
             // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
             // If it is var list of form  var a = varList count will be 0
             if (this.varListCount() >= 0) {
@@ -979,7 +979,7 @@ module TypeScript {
             return true;
         }
 
-        private onEmitVar() {
+        public onEmitVar() {
             if (this.varListCount() > 0) {
                 this.setInVarBlock(this.varListCount() - 1);
             }
@@ -1759,7 +1759,7 @@ module TypeScript {
             return func.hasSelfReference() || func.hasSuperReferenceInFatArrowFunction();
         }
 
-        private createFile(fileName: string, useUTF8: bool): ITextWriter {
+        public createFile(fileName: string, useUTF8: bool): ITextWriter {
             try {
                 return this.emitOptions.ioHost.createFile(fileName, useUTF8);
             } catch (ex) {

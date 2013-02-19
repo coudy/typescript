@@ -303,7 +303,7 @@ module TypeScript {
         }
 
         public duplicateIdentifier(ast: AST, name: string) {
-            this.reportError(ast, "Duplicate identifier '" + name + "'");
+            this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [name]));
         }
 
         public showRef(ast: AST, text: string, symbol: Symbol) {
@@ -315,11 +315,11 @@ module TypeScript {
         }
 
         public unresolvedSymbol(ast: AST, name: string) {
-            this.reportError(ast, "The name '" + name + "' does not exist in the current scope");
+            this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.unresolvedSymbol_1, [name]));
         }
 
         public symbolDoesNotReferToAValue(ast: AST, name: string): void {
-            this.reportError(ast, "The name '" + name + "' does not refer to a value");
+            this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.symbolDoesNotReferToAValue_1, [name]));
         }
 
         public styleError(ast: AST, msg: string): void {
@@ -338,29 +338,33 @@ module TypeScript {
         }
 
         public invalidSuperReference(ast: AST) {
-            this.simpleError(ast, "Keyword 'super' can only be used inside a class instance method");
+            this.simpleError(ast, getDiagnosticMessage(DiagnosticMessages.invalidSuperReference, []));
         }
 
         public valueCannotBeModified(ast: AST) {
-            this.simpleError(ast, "The left-hand side of an assignment expression must be a variable, property or indexer");
+            this.simpleError(ast, getDiagnosticMessage(DiagnosticMessages.valueCannotBeModified, []));
         }
 
         public invalidCall(ast: CallExpression, nodeType: number, scope: SymbolScope): void {
             var targetType = ast.target.type;
             var typeName = targetType.getScopedTypeName(scope);
             if (targetType.construct && (nodeType == NodeType.Call)) {
-                this.reportError(ast, "Value of type '" + typeName + "' is not callable.  Did you mean to include 'new'?");
+                this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.usedCallInsteadOfNew_1, [typeName]));
             } else {
-                var catString = (nodeType == NodeType.Call) ? "callable" : "newable";
-
-                this.reportError(ast, "Value of type '" + typeName + "' is not " + catString);
+                if (nodeType == NodeType.Call) {
+                    this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.valueIsNotCallable_1, [typeName]))
+                }
+                else {
+                    this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.valueIsNotNewable_1, [typeName]))
+                }
             }
         }
 
         public indexLHS(ast: BinaryExpression, scope: SymbolScope): void {
             var targetType = ast.operand1.type.getScopedTypeName(scope);
             var indexType = ast.operand2.type.getScopedTypeName(scope);
-            this.simpleError(ast, "Value of type '" + targetType + "' is not indexable by type '" + indexType + "'");
+
+            this.simpleError(ast, getDiagnosticMessage(DiagnosticMessages.invalidIndexLHS_2, [targetType, indexType]));
         }
 
         public incompatibleTypes(ast: AST, t1: Type, t2: Type, op: string, scope: SymbolScope, comparisonInfo?:TypeComparisonInfo) {
@@ -382,22 +386,31 @@ module TypeScript {
             }
 
             var reason = comparisonInfo ? comparisonInfo.message : "";
+
             if (op) {
-                this.reportError(ast, "Operator '" + op + "' cannot be applied to types '" + t1Name +
-                                  "' and '" + t2Name + "'" + (reason ? ": " + reason : ""));
+                if (reason != "") {
+                    this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.incompatibleTypesForOperatorWithReason_4, [op, t1Name, t2Name, reason]));
+                }
+                else {
+                    this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.incompatibleTypesForOperator_3, [op, t1Name, t2Name]));
+                }
             }
             else {
-                this.reportError(ast, "Cannot convert '" + t1Name +
-                                  "' to '" + t2Name + "'" + (reason ? ": " + reason : ""));
+                if (reason != "") {
+                    this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [t1Name, t2Name]));
+                }
+                else {
+                    this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.incompatibleTypesWithReason_3, [t1Name, t2Name, reason]));
+                }
             }
         }
 
         public expectedClassOrInterface(ast: AST): void {
-            this.simpleError(ast, "Expected var, class, interface, or module");
+            this.simpleError(ast, getDiagnosticMessage(DiagnosticMessages.expectedClassOrInterface, []));
         }
 
         public unaryOperatorTypeError(ast: AST, op: string, type: Type) {
-            this.reportError(ast, "Operator '" + op + "' cannot be applied to type '" + type.getTypeName() + "'");
+            this.reportError(ast, getDiagnosticMessage(DiagnosticMessages.unaryOperatorTypeError_2, [op, type.getTypeName()]));
         }
     }
 }
