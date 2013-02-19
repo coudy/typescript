@@ -1052,41 +1052,134 @@ module Services {
         }
 
         public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {
-            //this.minimalRefresh();
             this.refresh();
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
-
-            var info = this.pullCompilerState.getPullTypeInfoAtPosition(pos, script);
-
-            var type = info.typeSymbol;
-
-            //if (isMemberCompletion && type.hasBrand()) {
-            //    type = (<TypeScript.PullClassSymbol>type).getInstanceType();
-            //}
-
             var completions = new CompletionInfo();
-            
-            // PULLREVIEW: Always enabling this for now, to reduce noise in the completion lists
-            completions.isMemberCompletion = true;
-            
-            var members = type.getMembers();
-            var completionEntry: CompletionEntry;
 
-            for (var i = 0; i < members.length; i++) {
-                completionEntry = new CompletionEntry;
-                completionEntry.name = members[i].getName();
-                if (members[i].getType()) {
-                    completionEntry.type = members[i].getType().toString();
-                }
-                else {
-                    completionEntry.type = "Not sure what the type is...";
-                }
+            var script = this.pullCompilerState.getScriptAST(fileName);
+            var path = this.getAstPathToPosition(script, pos);
+            if (this.isCompletionListBlocker(path)) {
+                this.logger.log("Returning an empty list because position is inside a comment");
+            }
+            // Special case for object literals
+            //else if (this.isObjectLiteralMemberNameCompletion(enclosingScopeContext)) {
+            //    this.logger.log("Completion list for members of object literal");
+            //    return getCompletions(true);
+            //}
+            else if (this.isRightOfDot(path, pos)) {
+                var parentDot = path.asts[path.top].nodeType === TypeScript.NodeType.Dot ? path.asts[path.top] : path.asts[path.top - 1];
+                var operand = (<TypeScript.BinaryExpression>parentDot).operand1;
+                var info = this.pullCompilerState.getPullTypeInfoAtPosition(operand.limChar, script);
+                var type = info.typeSymbol;
 
-                completions.entries[completions.entries.length] = completionEntry;
+                completions.isMemberCompletion = true;
+                var members = type.getMembers();
+                members.forEach((x) => {
+                    var entry = new CompletionEntry();
+                    entry.name = x.getName();
+                    entry.type = x.getType()? x.getType().toString() : "unkown type";
+                    entry.kind = this.mapPullElementKind(x.getKind());
+                    //entry.fullSymbolName = this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
+                    //entry.docComment = this.getDocCommentOfSymbol(x.sym);
+                    //entry.kindModifiers = x. this.getSymbolElementKindModifiers(x.sym);
+                    completions.entries.push(entry);
+                });
+
+            }
+            // Ensure we are in a position where it is ok to provide a completion list
+            else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
+                //return getCompletions(enclosingScopeContext.isMemberCompletion);
+                // get scope memebers
             }
 
             return completions;
+        }
+
+        private isRightOfDot(path: TypeScript.AstPath, position: number): bool {
+            return (path.count() >= 1 && path.asts[path.top].nodeType === TypeScript.NodeType.Dot && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) ||
+                   (path.count() >= 2 && path.asts[path.top].nodeType === TypeScript.NodeType.Name && path.asts[path.top - 1].nodeType === TypeScript.NodeType.Dot && (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]);
+        }
+
+        private isCompletionListBlocker(path: TypeScript.AstPath): bool {
+            var asts = path.asts;
+            var node = path.count() >= 1 && path.ast();
+            if (node) {
+                if (node.nodeType === TypeScript.NodeType.Comment ||
+                    node.nodeType === TypeScript.NodeType.Regex ||
+                    node.nodeType === TypeScript.NodeType.QString) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private isCompletionListTriggerPoint(path: TypeScript.AstPath): bool {
+            if (path.isNameOfVariable() // var <here>
+                || path.isNameOfFunction() // function <here>
+                || path.isNameOfArgument() // function foo(<here>
+                || path.isNameOfInterface() // interface <here>
+                || path.isNameOfClass() // class <here>
+                || path.isNameOfModule() // module <here>
+                ) {
+                return false;
+            }
+
+            //var node = path.count() >= 1 && path.ast();
+            //if (node) {
+            //    if (node.nodeType === TypeScript.NodeType.Member) // class C() { property <here>
+            //    || isNodeType(TypeScript.NodeType.TryCatch) // try { } catch(<here>
+            //    || isNodeType(TypeScript.NodeType.Catch) // try { } catch(<here>
+            //    //|| isNodeType(Tools.NodeType.Class) // doesn't work
+            //    || isNodeType(TypeScript.NodeType.Comment)
+            //    || isNodeType(TypeScript.NodeType.Regex)
+            //    || isNodeType(TypeScript.NodeType.QString)
+            //    ) {
+            //    return false
+            //}
+
+            return true;
+        }
+
+        private mapPullElementKind(kind: TypeScript.PullElementKind): string {
+            switch (kind)
+            {
+                case TypeScript.PullElementKind.Script:
+                    return ScriptElementKind.scriptElement;
+                case TypeScript.PullElementKind.Module:
+                    return ScriptElementKind.moduleElement;
+                case TypeScript.PullElementKind.Interface:
+                    return ScriptElementKind.interfaceElement;
+                case TypeScript.PullElementKind.Class:
+                    return ScriptElementKind.classElement;
+                case TypeScript.PullElementKind.Enum:
+                    return ScriptElementKind.enumElement;
+                case TypeScript.PullElementKind.Variable:
+                    return ScriptElementKind.variableElement;
+                case TypeScript.PullElementKind.Parameter:
+                    return ScriptElementKind.parameterElement;
+                case TypeScript.PullElementKind.Property:
+                    return ScriptElementKind.memberVariableElement;
+                case TypeScript.PullElementKind.Function:
+                    return ScriptElementKind.functionElement;
+                case TypeScript.PullElementKind.ConstructorMethod:
+                    return ScriptElementKind.constructorImplementationElement;
+                case TypeScript.PullElementKind.Method:
+                    return ScriptElementKind.memberFunctionElement;
+                case TypeScript.PullElementKind.FunctionExpression:
+                    return ScriptElementKind.functionElement;
+                case TypeScript.PullElementKind.GetAccessor:
+                    return ScriptElementKind.memberGetAccessorElement;
+                case TypeScript.PullElementKind.SetAccessor:
+                    return ScriptElementKind.memberSetAccessorElement;
+                case TypeScript.PullElementKind.CallSignature:
+                    return ScriptElementKind.callSignatureElement;
+                case TypeScript.PullElementKind.ConstructSignature:
+                    return ScriptElementKind.constructSignatureElement;
+                case TypeScript.PullElementKind.IndexSignature:
+                    return ScriptElementKind.indexSignatureElement;
+            }
+
+            return ScriptElementKind.unknown;
         }
 
         // 

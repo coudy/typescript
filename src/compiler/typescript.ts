@@ -1112,7 +1112,9 @@ module TypeScript {
                     // since those will give us the right typing
                     if (foundAST.nodeType == NodeType.Name && resultASTs.length > 1) {
                         for (var i = resultASTs.length - 2; i >= 0; i--) {
-                            if (resultASTs[i].nodeType == NodeType.Dot || resultASTs[i].nodeType == NodeType.VarDecl) {
+                            if ((resultASTs[i].nodeType == NodeType.VarDecl) ||
+                                ((resultASTs[i].nodeType == NodeType.Call || resultASTs[i].nodeType == NodeType.New) && (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) ||
+                                (resultASTs[i].nodeType == NodeType.Dot && (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1])) {
                                 foundAST = resultASTs[i];
                             }
                             else {
