@@ -375,7 +375,7 @@ module TypeScript {
             pushAssignScope(locals, context, thisType, null, funcDecl);
         }
 
-        if (funcDecl.name && hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression)) {
+        if (funcDecl.name && hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) && !funcDecl.isAccessor()) {
             // If the function is an expression, the name will not be visible in the enclosing scope.
             // Add the function symbol under its name to the local scope to allow for recursive calls.
             if (funcDecl.name.sym) {

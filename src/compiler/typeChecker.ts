@@ -794,7 +794,7 @@ module TypeScript {
                     symbol = containingType.ambientMembers.allMembers.lookup(name);
                 }
             }
-            if (symbol == null) {
+            if (symbol == null || !symbol.isType()) {
                 var typeMembers = containingType.getAllEnclosedTypes();
                 var ambientTypeMembers = containingType.getAllAmbientEnclosedTypes();
                 if (typeMembers) {
