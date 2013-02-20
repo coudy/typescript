@@ -44,6 +44,14 @@ foo({
 //@ sourceMappingURL=0.js.map
 ////[0.js.map]
 {"version":3,"file":"0.js","sources":["0.ts"],"names":["EnumNumbers","foo"],"mappings":"AAAA,IAAK,WAAW;AAOf,CAPD,UAAK,WAAW;;IAGZA,YAAAA,GAAGA,GAAGA,CAACA,CAAAA;;IACPA,YAAAA,GAAGA,KAAAA;;IACHA,YAAAA,KAAKA,KAAAA;IACLA,YAAAA,GAAGA,GAAGA,EAAEA,CAAAA;AACZA,CAACA,qCAAA;AAED,SAAS,GAAG,CAAC,CAAiB;IAE1BC,OAAQA,CAACA,CAACA,CAACA,CAACA;QACRA,KAAKA,WAAWA,CAACA,GAAGA,CAACA;YACjBA,OAAOA,CAACA,IAAIA,CAACA,CAACA,CAACA;YACfA,KAAMA;AAAAA,QAEVA,KAAKA,WAAWA,CAACA,GAAGA,CAACA;YACjBA,OAAOA,CAACA,IAAIA,CAACA,iBAAiBA,CAACA;YAC/BA,KAAMA;AAAAA,QAEVA,KAAKA,WAAWA,CAACA,KAAKA,CAACA;YACnBA,OAAOA,CAACA,IAAIA,CAACA,WAAWA,CAACA;YACzBA,KAAMA;AAAAA,QAEVA,KAAKA,WAAWA,CAACA,GAAGA,CAACA;YACjBA,OAAOA,CAACA,IAAIA,CAACA,YAAYA,CAACA;AAACA,QAE/BA,OAAOA,CAACA;YACJA,OAAOA,CAACA,IAAIA,CAACA,UAAUA,GAAGA,CAACA,CAACA;YAC5BA,KAAMA;AAAAA,KACbA;AAELA,CAACA;AAED,GAAG,CAAC;IAAE,CAAC,EAAE,CAAC;CAAE,CAAC;AACb,GAAG,CAAC;IAAE,CAAC,EAAE,CAAC;CAAE,CAAC;AACb,GAAG,CAAC;IAAE,CAAC,EAAE,CAAC;CAAE,CAAC;AACb,GAAG,CAAC;IAAE,CAAC,EAAE,EAAE;CAAE,CAAC;AACd,GAAG,CAAC;IAAE,CAAC,EAAE,EAAE;CAAE,CAAC"}
+////[strings.js]
+//@ sourceMappingURL=strings.js.map
+////[strings.js.map]
+{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
+////[test.js]
+//@ sourceMappingURL=test.js.map
+////[test.js.map]
+{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]
@@ -76,10 +84,6 @@ foo({
 //@ sourceMappingURL=module2.js.map
 ////[module2.js.map]
 {"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
-////[test.js]
-//@ sourceMappingURL=test.js.map
-////[test.js.map]
-{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[importInsideModule_file1.js.map]
