@@ -1579,6 +1579,7 @@ module TypeScript {
                 var memberExprType: PullSymbol;
                 var assigningSymbol: PullSymbol = null;
                 var acceptedContextualType = false;
+                var span: DeclSpan;
 
                 for (var i = 0, len = memberDecls.members.length; i < len; i++) {
                     binex = <BinaryExpression>memberDecls.members[i];
@@ -1596,8 +1597,21 @@ module TypeScript {
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
-                    memberSymbol = new PullSymbol(text, PullElementKind.Property);
+                    // PULLTODO: Collect these at decl collection time, add them to the var decl
+                    span = new DeclSpan();
+                    span.minChar = binex.minChar;
+                    span.limChar = binex.limChar;
 
+                    var decl = new PullDecl(text, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
+
+                    if (enclosingDecl) {
+                        enclosingDecl.addChildDecl(decl);
+                    }
+                    this.semanticInfoChain.getUnit(this.unitPath).setDeclForAST(binex, decl);
+                    this.semanticInfoChain.getUnit(this.unitPath).setASTForDecl(decl, binex);
+
+                    memberSymbol = new PullSymbol(text, PullElementKind.Property);
+                    
                     if (contextualType) {
                         assigningSymbol = contextualType.findMember(text);
 
@@ -1878,7 +1892,14 @@ module TypeScript {
                 return targetSymbol;
             }
 
-            var signatures = (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
+            var isSuperCall = false;
+
+            if (callEx.target.nodeType == NodeType.Super) {
+                isSuperCall = true;
+                targetSymbol = (<PullClassTypeSymbol>targetSymbol).getConstructorMethod().getType();
+            }
+
+            var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
 
             var typeArgs: PullTypeSymbol[] = null;
 

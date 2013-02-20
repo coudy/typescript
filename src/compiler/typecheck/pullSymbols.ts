@@ -896,7 +896,8 @@ module TypeScript {
                 }
             }
 
-            return memberSymbol;
+            // when all else fails, look for a nested type name
+            return this.findNestedType(name);
         }
 
         public findNestedType(name: string): PullTypeSymbol {

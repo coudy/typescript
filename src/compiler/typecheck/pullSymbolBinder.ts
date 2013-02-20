@@ -396,6 +396,7 @@ module TypeScript {
                 constructorTypeSymbol = new PullConstructorTypeSymbol();
 
                 constructorSymbol.setType(constructorTypeSymbol);
+                constructorSymbol.addDeclaration(classDecl);
                 classSymbol.setConstructorMethod(constructorSymbol);
                 
                 var constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
@@ -603,6 +604,10 @@ module TypeScript {
 
             if (parent) {
                 variableSymbol = parent.findMember(declName);
+
+                if (variableSymbol) {
+                    parentHadSymbol = true;
+                }
             }
             else if (!(variableDeclaration.getFlags() & PullElementFlags.Exported)) {
                 variableSymbol = this.findSymbolInContext(declName, PullElementKind.SomeValue, []);

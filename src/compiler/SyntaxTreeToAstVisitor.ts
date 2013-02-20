@@ -602,6 +602,10 @@ module TypeScript {
                 moduleDecl.modFlags |= ModuleFlags.Ambient;
             }
 
+            if (node.exportKeyword) {
+                moduleDecl.modFlags |= ModuleFlags.Exported;
+            }
+
             //if (hasFlag(modifiers, Modifiers.Exported)) {
             //    moduleDecl.modFlags |= ModuleFlags.Exported;
             //} else if (svAmbient) {
