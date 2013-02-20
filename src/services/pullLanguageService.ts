@@ -398,11 +398,224 @@ module Services {
         }
 
         public getSignatureAtPosition(fileName: string, pos: number): SignatureInfo {
-            return null;
+            this.refresh();
+
+            var script = this.pullCompilerState.getScriptAST(fileName);
+
+            // If "pos" is the "EOF" position
+            var atEOF = (pos === script.limChar);
+
+            var path = this.getAstPathToPosition(script, pos);
+            if (path.count() == 0)
+                return null;
+
+            // First check whether we are in a comment where quick info should not be displayed
+            if (path.nodeType() === TypeScript.NodeType.Comment) {
+                this.logger.log("position is inside a comment");
+                return null;
+            }
+
+            // Find call expression
+            var callExpr: TypeScript.CallExpression = null;
+            while (path.count() >= 2) {
+                // Path we are looking for...
+                if (path.isArgumentListOfCall() || path.isArgumentListOfNew()) {
+                    // The caret position should be *after* the opening "(" of the argument list
+                    if (atEOF || pos >= path.ast().minChar) {
+                        path.pop();
+                        callExpr = <TypeScript.CallExpression>path.pop();
+                    }
+                    break;
+                } else if (path.ast().nodeType === TypeScript.NodeType.Call || path.ast().nodeType === TypeScript.NodeType.New) {
+                    callExpr = <TypeScript.CallExpression>path.ast();
+                    break;
+                }
+
+                // Path that should make us stop looking up..
+                if (pos > path.ast().minChar) {  // If cursor is on the "{" of the body, we may wat to display param help
+                    if (path.ast().nodeType !== TypeScript.NodeType.List && path.ast().nodeType !== TypeScript.NodeType.Error) { 
+                        break;
+                    }
+                }
+                path.pop();
+            }
+
+            if (!callExpr || !callExpr.target) {
+                this.logger.log("No call expression for the given position");
+                return null;
+            }
+
+            // Resolve symbol
+            var symbolInfo = this.pullCompilerState.getPullSymbolAtPosition(callExpr.target.limChar, script);
+            if (symbolInfo == null || symbolInfo.symbol == null) {
+                this.logger.log("No identifier at the specified location.");
+                return null;
+            }            // Get the type            var symbol = symbolInfo.symbol;            var typeSymbol = symbol.getType();            if (typeSymbol == null || typeSymbol.getName() === "any") {
+                this.logger.log("Call expression has unkown type or of type 'any'");
+                return null;
+            }
+
+            // get signatures
+            var signatures = null;
+            var isNew = false;
+            if (callExpr.nodeType === TypeScript.NodeType.New) {
+                signatures = typeSymbol.getConstructSignatures();
+                isNew = true;
+            }
+            else if (callExpr.nodeType === TypeScript.NodeType.Call) {
+                if (callExpr.target.nodeType === TypeScript.NodeType.Super) {
+                    if (!typeSymbol.isClass()) {
+                        this.logger.log("Super type is not a class type");
+                        return null;
+                    }
+
+                    var constructorMethod = (<TypeScript.PullClassTypeSymbol>typeSymbol).getConstructorMethod();
+                    if (constructorMethod == null) {
+                        this.logger.log("Super type has no constructor method");
+                        return null;
+                    }
+
+                    var constructorTypeSymbol = constructorMethod.getType();
+                    if (constructorTypeSymbol == null || constructorTypeSymbol.getName() === "any") {
+                        this.logger.log("Super has unkown type or of type 'any'");
+                        return null;
+                    }
+
+                    signatures = constructorTypeSymbol.getConstructSignatures();
+                    isNew = true;
+                }
+                else {
+                    signatures = typeSymbol.getCallSignatures();
+                    isNew = false;
+                }
+            }
+
+            if (signatures === null) {
+                this.logger.log("No signature group found for the target of the call expression");
+                return null;
+            }
+
+            // Build the result
+            var result = new SignatureInfo();
+
+            result.formal = this.convertSignatureSymbolToSignatureInfo(symbol, isNew, signatures);
+            result.actual = this.convertCallExprToActualSignatureInfo(callExpr, pos, atEOF);
+            result.activeFormal = this.getSignatureIndex(callExpr);
+
+            if (result.actual == null || result.formal == null || result.activeFormal == null) {
+                this.logger.log("Can't compute actual and/or formal signature of the call expression");
+                return null;
+            }
+
+            return result;
+        }
+
+        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: bool, signatures: TypeScript.PullSignatureSymbol[]) {
+            var result = new FormalSignatureInfo();
+            result.isNew = isNew;
+            result.name = symbol.getName();
+            result.docComment = ""; //getDocCommentFromSymbol(symbol);
+            result.openParen = "(";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "[" : "(");
+            result.closeParen = ")";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "]" : ")");
+
+            var hasOverloads = signatures.length > 1;
+            signatures
+                // Same test as in "typeFlow.str: resolveOverload()": filter out the definition signature if there are overloads
+                //.filter(signature => !(hasOverloads && signature === group.definitionSignature && !this.compilerState.getCompilationSettings().canCallDefinitionSignature))
+                .forEach(signature => {
+                    var signatureGroupInfo = new FormalSignatureItemInfo();
+                    signatureGroupInfo.docComment = "";//(signature.declAST != null) ? TypeScript.Comment.getDocCommentText(signature.declAST.getDocComments()) : "";
+                    signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getName(); //signature.returnType.type.getScopedTypeName(enclosingScopeContext.getScope()));
+                    var parameters = signature.getParameters();
+                    parameters.forEach((p, i) => {
+                        var signatureParameterInfo = new FormalParameterInfo();
+                        signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
+                        signatureParameterInfo.isOptional = p.getIsOptional(); 
+                        signatureParameterInfo.name = p.getName();
+                        signatureParameterInfo.docComment = "";// p.getParameterDocComments();
+                        signatureParameterInfo.type = p.getType() ? p.getType().getName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
+                        signatureGroupInfo.parameters.push(signatureParameterInfo);
+                    });
+                    result.signatureGroup.push(signatureGroupInfo);
+                });
+            return result;
+        }
+
+        private convertCallExprToActualSignatureInfo(ast: TypeScript.CallExpression, caretPosition: number, atEOF: bool): ActualSignatureInfo {
+            if (!TypeScript.isValidAstNode(ast))
+                return null;
+
+            if (!TypeScript.isValidAstNode(ast.arguments))
+                return null;
+
+            var result = new ActualSignatureInfo();
+            result.currentParameter = -1;
+            result.openParenMinChar = ast.arguments.minChar;
+            result.closeParenLimChar = Math.max(ast.arguments.minChar, ast.arguments.limChar);
+            ast.arguments.members.forEach((arg, index) => {
+                var parameter = new ActualParameterInfo();
+                parameter.minChar = arg.minChar;
+                parameter.limChar = Math.max(arg.minChar, arg.limChar);
+                result.parameters.push(parameter);
+            });
+
+            result.parameters.forEach((parameter, index) => {
+                var minChar = (index == 0 ? result.openParenMinChar : result.parameters[index - 1].limChar + 1);
+                var limChar = (index == result.parameters.length - 1 ? result.closeParenLimChar : result.parameters[index + 1].minChar);
+                if (caretPosition >= minChar && (atEOF ? caretPosition <= limChar : caretPosition < limChar)) {
+                    result.currentParameter = index;
+                }
+            });
+            return result;
+        }
+
+        private getSignatureIndex(ast: TypeScript.CallExpression) {
+            /// TODO: find the signature index
+            return 0;
         }
 
         public getDefinitionAtPosition(fileName: string, pos: number): DefinitionInfo {
-            return null;
+            this.refresh();
+
+            var result: DefinitionInfo = null;
+
+            var script = this.pullCompilerState.getScriptAST(fileName);
+
+            var symbolInfo = this.pullCompilerState.getPullSymbolAtPosition(pos, script);
+            if (symbolInfo == null || symbolInfo.symbol == null) {
+                this.logger.log("No identifier at the specified location.");
+                return result;
+            }
+
+            var declarations = symbolInfo.symbol.getDeclarations();
+            if (declarations == null || declarations.length === 0) {
+                this.logger.log("Could not find declaration for symbol.");
+                return result;
+            }
+
+            var symbolName = symbolInfo.symbol.getName();
+            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.getKind());//this.getSymbolElementKind(sym),
+            var container = symbolInfo.symbol.getContainer();
+            var containerName = container ? container.getName() : "<global>";//this.getSymbolContainerName(sym)
+            var containerKind = "";//this.getSymbolContainerKind(sym)
+
+            for (var i = 0, n = declarations.length; i < n; i++) {
+                var declaration = declarations[i];
+                var unitIndex = this.pullCompilerState.getUnitIndex(declaration.getScriptName());
+                var span = declaration.getSpan();
+
+                var entry = new DefinitionInfo(this.pullCompilerState.mapToHostUnitIndex(unitIndex), span.minChar, span.limChar, symbolKind, symbolName, containerKind, containerName, null);
+
+                if (result === null) {
+                    // TODO: find a better way of selecting the main entry instead of selecting the first one
+                    result = entry;
+                }
+                else {
+                    result.overloads.push(entry);
+                }
+            }
+
+            return result;
         }
 
         // Given a script name and position in the script, return a string representing 
@@ -1033,22 +1246,23 @@ module Services {
 
             var script = this.pullCompilerState.getScriptAST(fileName);
 
-            var info = this.pullCompilerState.getPullTypeInfoAtPosition(pos, script);
-            var minChar = -1;
-            var limChar = -1;
-
-            if (info.ast) {
-                minChar = info.ast.minChar;
-                limChar = info.ast.limChar;
-            }
-
+            var typeInfoAtPosition = this.pullCompilerState.getPullTypeInfoAtPosition(pos, script);
+            
             // PULLTODO: use typeInfo for now, since I want to see more info for debugging;
             //  we'll want to switch to typeName later, though
-            var memberName = TypeScript.MemberName.create(info.typeInfo);
+            var memberName = TypeScript.MemberName.create(typeInfoAtPosition.typeInfo);
+            var minChar = -1;
+            var limChar = -1;
+            var kind = this.mapPullElementKind(typeInfoAtPosition.typeSymbol.getKind());
+            var docComment = "";
+            var symbolName = "";
 
-            var typeInfo = new TypeInfo(memberName, null, "", "", minChar, limChar);
+            if (typeInfoAtPosition.ast) {
+                minChar = typeInfoAtPosition.ast.minChar;
+                limChar = typeInfoAtPosition.ast.limChar;
+            }
 
-            return typeInfo;
+            return new TypeInfo(memberName, docComment, symbolName, kind, minChar, limChar);
         }
 
         public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {

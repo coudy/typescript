@@ -408,6 +408,10 @@ module Services {
             return this.compiler.pullGetTypeInfoAtPosition(pos, script);
         }
 
+        public getPullSymbolAtPosition(pos: number, script: TypeScript.Script) {
+            return this.compiler.resolvePosition(pos, script);
+        }
+
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): bool {
             var scriptId = this.hostCache.getScriptId(hostUnitIndex);
 

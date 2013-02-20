@@ -1040,6 +1040,7 @@ module TypeScript {
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: UnaryExpression[] = [];
             var resolutionContext = new PullTypeResolutionContext();
+            var inTypeReference = false;
 
             var pre = (cur: AST, parent: AST): AST => {
                 if (isValidAstNode(cur)) {
@@ -1070,6 +1071,9 @@ module TypeScript {
                             }
                             else if (cur.nodeType == NodeType.Asg) {
                                 asgAST = <BinaryExpression>cur;
+                            }
+                            else if (cur.nodeType == NodeType.TypeRef) {
+                                inTypeReference = true;
                             }
 
                             resultASTs[resultASTs.length] = cur;
@@ -1112,10 +1116,10 @@ module TypeScript {
                     // since those will give us the right typing
                     if (foundAST.nodeType == NodeType.Name && resultASTs.length > 1) {
                         for (var i = resultASTs.length - 2; i >= 0; i--) {
-                            if ((resultASTs[i].nodeType == NodeType.VarDecl) ||
-                                ((resultASTs[i].nodeType == NodeType.Call || resultASTs[i].nodeType == NodeType.New) && (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) ||
-                                (resultASTs[i].nodeType == NodeType.Dot && (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1])) {
-                                foundAST = resultASTs[i];
+                            if ((resultASTs[i].nodeType === NodeType.VarDecl && (<VarDecl>resultASTs[i]).id === resultASTs[i + 1]) ||
+                                //((resultASTs[i].nodeType === NodeType.Call || resultASTs[i].nodeType == NodeType.New) && (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) ||
+                                (resultASTs[i].nodeType === NodeType.Dot && (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1])) {
+                                foundAST = resultASTs[i];   
                             }
                             else {
                                 break;
@@ -1134,6 +1138,8 @@ module TypeScript {
                     }
 
                     resolutionContext.resolveAggressively = true;
+                    resolutionContext.searchTypeSpace = inTypeReference;
+
                     var isTypedAssignment = false;
 
                     if (declarationInitASTs.length) {

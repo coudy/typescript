@@ -297,8 +297,8 @@ module Services {
             public kind: string,
             public name: string,
             public containerKind: string,
-            public containerName: string
-            /*TODO*//*public overloads:DefinitionInfo[]*/) {
+            public containerName: string,
+            public overloads:DefinitionInfo[]) {
         }
     }
 
@@ -1178,7 +1178,8 @@ module Services {
                 this.getSymbolElementKind(sym),
                 sym.name,
                 this.getSymbolContainerKind(sym),
-                this.getSymbolContainerName(sym));
+                this.getSymbolContainerName(sym),
+                null);
         }
 
         // Given a script name and position in the script, return a string representing 
