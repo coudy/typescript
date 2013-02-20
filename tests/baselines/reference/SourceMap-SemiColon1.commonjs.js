@@ -1,3 +1,11 @@
+////[strings.js]
+//@ sourceMappingURL=strings.js.map
+////[strings.js.map]
+{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
+////[test.js]
+//@ sourceMappingURL=test.js.map
+////[test.js.map]
+{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]
@@ -30,10 +38,6 @@
 //@ sourceMappingURL=module2.js.map
 ////[module2.js.map]
 {"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
-////[test.js]
-//@ sourceMappingURL=test.js.map
-////[test.js.map]
-{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[importInsideModule_file1.js.map]

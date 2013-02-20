@@ -1,11 +1,3 @@
-////[module1.js]
-define(["require", "exports"], function(require, exports) {
-    exports.q1 = 3;
-})
-////[module2.js]
-define(["require", "exports"], function(require, exports) {
-    exports.q2 = 3;
-})
 ////[test.js]
 define(["require", "exports", "module1", 'module2', 'module3', "module3", 'module4', "module4"], function(require, exports, __m1__, __m2__, __m3__, __m4__, __m5__, __m6__) {
     var m1 = __m1__;
@@ -27,4 +19,12 @@ define(["require", "exports", "module1", 'module2', 'module3', "module3", 'modul
     m4.q3 = q;
     m5.q4 = q;
     m6.q4 = q;
+})
+////[module1.js]
+define(["require", "exports"], function(require, exports) {
+    exports.q1 = 3;
+})
+////[module2.js]
+define(["require", "exports"], function(require, exports) {
+    exports.q2 = 3;
 })

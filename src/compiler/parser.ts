@@ -3446,7 +3446,7 @@ module TypeScript {
                                 needTerminator = true;
                             }
                             ast = fnOrVar;
-                            if (this.parsingDeclareFile || this.ambientModule && ast.nodeType == NodeType.FuncDecl) {
+                            if (hasFlag(modifiers, Modifiers.Exported) || this.parsingDeclareFile || this.ambientModule && ast.nodeType == NodeType.FuncDecl) {
                                 (<FuncDecl>ast).fncFlags |= FncFlags.Exported;
                             }
                         }

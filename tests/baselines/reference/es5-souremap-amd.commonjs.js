@@ -9,6 +9,14 @@ var A = (function () {
 //@ sourceMappingURL=0.js.map
 ////[0.js.map]
 {"version":3,"file":"0.js","sources":["0.ts"],"names":["A","A.constructor","A.B"],"mappings":"AACA;IAEIA,SAFEA,CAACA;IAKHC,CAACA;IAEDD,gBAAAA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;IACLF;AAACA,CAAAA,IAAA"}
+////[strings.js]
+//@ sourceMappingURL=strings.js.map
+////[strings.js.map]
+{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
+////[test.js]
+//@ sourceMappingURL=test.js.map
+////[test.js.map]
+{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]

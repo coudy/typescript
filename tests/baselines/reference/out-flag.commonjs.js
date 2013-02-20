@@ -14,6 +14,14 @@ var MyClass = (function () {
 //@ sourceMappingURL=0.js.map
 ////[bin/0.js.map]
 {"version":3,"file":"0.js","sources":["0.ts"],"names":["MyClass","MyClass.constructor","MyClass.Count","MyClass.SetCount"],"mappings":"AACA,oBAAoB;AACpB;IAAAA;AAYCA,IATGA,0BADAA,uBAAuBA;IACvBA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;IAEDF,6BAAAA,UAAgBA,KAAaA;QAEzBG,EAAEA;YACNA,CAACA;IACLH;AAACA,CAAAA,IAAA"}
+////[bin/strings.js]
+//@ sourceMappingURL=strings.js.map
+////[bin/strings.js.map]
+{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
+////[bin/test.js]
+//@ sourceMappingURL=test.js.map
+////[bin/test.js.map]
+{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[bin/comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[bin/comments_ExternalModules_0.js.map]
@@ -46,10 +54,6 @@ var MyClass = (function () {
 //@ sourceMappingURL=module2.js.map
 ////[bin/module2.js.map]
 {"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
-////[bin/test.js]
-//@ sourceMappingURL=test.js.map
-////[bin/test.js.map]
-{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
 ////[bin/importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[bin/importInsideModule_file1.js.map]
