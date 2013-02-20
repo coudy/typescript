@@ -410,7 +410,7 @@ module Formatting {
                     var caret = new SnapshotPoint(this.snapshot, caretPosition);
                     var mappedPoint = this.MapDownSnapshotPoint(caret);
                     return this.Format(span, FormattingRequestKind.FormatOnEnter,
-                        (tokens, requestKind) => { return this.IsValidFormatOnEnterSpan(mappedPoint, tokens) });
+                        (tokens, requestKind) => { return !this.IsInsideStringLiteralOrComment(mappedPoint, tokens); });
                 }
             }
 
@@ -493,25 +493,6 @@ module Formatting {
             }
 
             return false;
-        }
-
-        private IsValidFormatOnEnterSpan(point: SnapshotPoint, tokens: IList_TokenSpan): bool {
-            if (point !== null) {
-                var span = new Span(point.position, 1);
-                for (var i = 0; i < tokens.count() ; i++) {
-                    var token = tokens.get(i);
-                    if (token.Span.OverlapsWith(span)) {
-                        // Can not be inside comment or string literal
-                        return token.Token !== AuthorTokenKind.atkString && token.Token !== AuthorTokenKind.atkComment;
-                    } else if (point.position >= token.Span.endPosition() && token.Token == AuthorTokenKind.atkString) {
-                        // Can not follow unterminated string literal
-                        var stringText = token.Span.GetText();
-                        return !(stringText && stringText.length > 0 && stringText.charAt(0) !== stringText.charAt(stringText.length - 1));
-                    }
-                }
-            }
-
-            return true;
         }
 
         private Format(span: SnapshotSpan, formattingRequestKind: FormattingRequestKind, prerequisiteTokenTest: (a: IList_TokenSpan, b: FormattingRequestKind) => bool): Services.TextEdit[]
