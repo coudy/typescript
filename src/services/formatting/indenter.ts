@@ -85,6 +85,11 @@ module Formatting {
                 return result;
             }
 
+            // Don't indent multi-line strings
+            if (!sameLineIndent && this.IsMultiLineString(token)) {
+                return result;
+            }
+
             // Special cases for the tokens that don't show up in the tree, such as curly braces and comments
             indentationInfo = this.GetSpecialCaseIndentation(token, node);
             if (indentationInfo == null) {
@@ -725,6 +730,11 @@ module Formatting {
             if (updateStartOffset) {
                 ParseNodeExtensions.SetNodeSpan(node, token.Span.startPosition(), node.AuthorNode.Details.EndOffset);
             }
+        }
+
+        private IsMultiLineString(token: TokenSpan): bool {
+            return token.tokenID === TypeScript.TokenID.StringLiteral &&
+                this.snapshot.GetLineNumberFromPosition(token.Span.endPosition()) > this.snapshot.GetLineNumberFromPosition(token.Span.startPosition());
         }
     }
 }
