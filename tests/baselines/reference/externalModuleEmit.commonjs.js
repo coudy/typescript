@@ -1,7 +1,3 @@
-////[module1.js]
-exports.q1 = 3;
-////[module2.js]
-exports.q2 = 3;
 ////[test.js]
 var m1 = require("./module1")
 var m2 = require('./module2')
@@ -16,3 +12,7 @@ m3.q3 = q;
 m4.q3 = q;
 m5.q4 = q;
 m6.q4 = q;
+////[module1.js]
+exports.q1 = 3;
+////[module2.js]
+exports.q2 = 3;
