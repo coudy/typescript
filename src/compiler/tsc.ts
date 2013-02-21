@@ -223,7 +223,10 @@ class BatchCompiler {
             }
             else {
                 compiler.typeCheck();
-                compiler.emit(emitterIOHost);
+                var mapInputToOutput = (unitIndex: number, outFile: string): void => {
+                    this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
+                };
+                compiler.emit(emitterIOHost, mapInputToOutput);
                 compiler.emitDeclarations();
             }
         } catch (err) {
@@ -239,15 +242,8 @@ class BatchCompiler {
 
     // Execute the provided inputs
     public run() {
-        for (var i = 0; i < this.compilationEnvironment.code.length; i++) {
-            var unit = this.compilationEnvironment.code[i];
-            
-            var outputFileName: string = unit.path;
-            if (TypeScript.isTSFile(outputFileName)) {
-                outputFileName = outputFileName.replace(/\.ts$/, ".js");
-            } else if (TypeScript.isSTRFile(outputFileName)) {
-                outputFileName = outputFileName.replace(/\.str$/, ".js");
-            }
+        for (var i in this.compilationEnvironment.code) {
+            var outputFileName: string = this.compilationEnvironment.inputOutputMap[i];
             if (this.ioHost.fileExists(outputFileName)) {
                 var unitRes = this.ioHost.readFile(outputFileName)
                 this.ioHost.run(unitRes, outputFileName);

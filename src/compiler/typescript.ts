@@ -776,7 +776,7 @@ module TypeScript {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
-        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter) {
+        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
             if (!script.emitRequired(this.emitSettings)) {
                 return null;
             }
@@ -788,6 +788,10 @@ module TypeScript {
                 emitter = new Emitter(this.typeChecker, outFname, outFile, this.emitSettings, this.errorReporter);
                 if (this.settings.mapSourceFiles) {
                     emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
+                }
+                if (inputOutputMapper) {
+                    // Remember the name of the outfile for this source file
+                    inputOutputMapper(script.locationInfo.unitIndex, outFname);
                 }
             } else if (this.settings.mapSourceFiles) {
                 emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
@@ -803,14 +807,14 @@ module TypeScript {
             }
         }
 
-        public emit(ioHost: EmitterIOHost) {
+        public emit(ioHost: EmitterIOHost, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
             this.parseEmitOption(ioHost);
 
             var emitter: Emitter = null;
             for (var i = 0, len = this.scripts.members.length; i < len; i++) {
                 var script = <Script>this.scripts.members[i];
                 if (this.emitSettings.outputMany || emitter == null) {
-                    emitter = this.emitUnit(script, !this.emitSettings.outputMany);
+                    emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, inputOutputMapper);
                 } else {
                     this.emitUnit(script, true, emitter);
                 }
