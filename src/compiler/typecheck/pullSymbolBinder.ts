@@ -340,6 +340,8 @@ module TypeScript {
             var className = classDecl.getName();
             var classSymbol: PullClassTypeSymbol = null;
 
+            var constructorSymbol: PullSymbol = null;
+
             var classAST = <ClassDeclaration>this.semanticInfo.getASTForDecl(classDecl);
             var parentHadSymbol = false;
 
@@ -373,11 +375,13 @@ module TypeScript {
                     }
                 }
 
-                decls = classSymbol.getDeclarations();
+                constructorSymbol = classSymbol.getConstructorMethod();
+
+                decls = constructorSymbol.getDeclarations();
 
                 for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
-                        classSymbol.removeDeclaration(decls[j]);
+                        constructorSymbol.removeDeclaration(decls[j]);
 
                         cleanedPreviousDecls = true;
                     }
@@ -406,9 +410,12 @@ module TypeScript {
                 }
             }
 
+            constructorSymbol = classSymbol.getConstructorMethod();
+            var constructorTypeSymbol: PullConstructorTypeSymbol = <PullConstructorTypeSymbol>(constructorSymbol ? constructorSymbol.getType() : null);
+
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
             // incremental parsing comes online
-            // PULLTODO: For now, classes should have none of these
+            // PULLTODO: For now, classes should have none of these, though a pre-existing constructor might
             if (parentHadSymbol && cleanedPreviousDecls) {
                 var callSigs = classSymbol.getCallSignatures();
                 var constructSigs = classSymbol.getConstructSignatures();
@@ -422,6 +429,14 @@ module TypeScript {
                 }
                 for (var i = 0; i < indexSigs.length; i++) {
                     classSymbol.removeIndexSignature(indexSigs[i], false);
+                }
+
+                if (constructorTypeSymbol) {
+                    constructSigs = constructorTypeSymbol.getConstructSignatures();
+
+                    for (var i = 0; i < constructSigs.length; i++) {
+                        constructorTypeSymbol.removeConstructSignature(constructSigs[i], false);
+                    }
                 }
 
                 // just invalidate this once, so we don't pay the cost of rebuilding caches
@@ -440,8 +455,6 @@ module TypeScript {
             this.popParent();
 
             // create the default constructor symbol, if necessary
-            var constructorSymbol = classSymbol.getConstructorMethod();
-            var constructorTypeSymbol: PullConstructorTypeSymbol = null;
 
             if (!constructorSymbol) {
                 constructorSymbol = new PullSymbol(className, PullElementKind.ConstructorMethod);
@@ -456,7 +469,7 @@ module TypeScript {
                 constructorTypeSymbol.addSignature(constructorSignature);
             }
 
-            constructorTypeSymbol = <PullConstructorTypeSymbol>constructorSymbol.getType();
+            //constructorTypeSymbol = <PullConstructorTypeSymbol>constructorSymbol.getType();
 
             // bind statics to the constructor symbol
             if (this.staticClassMembers.length) {
@@ -659,14 +672,14 @@ module TypeScript {
 
             if (parent) {
                 variableSymbol = parent.findMember(declName);
-
-                if (variableSymbol && !variableSymbol.isType()) {
-                    parentHadSymbol = true;
-                }
             }
             else if (!(variableDeclaration.getFlags() & PullElementFlags.Exported)) {
                 variableSymbol = this.findSymbolInContext(declName, PullElementKind.SomeValue, []);
             }
+
+            if (variableSymbol && !variableSymbol.isType()) {
+                parentHadSymbol = true;
+            }            
 
             if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
 
@@ -734,18 +747,6 @@ module TypeScript {
                     if (classTypeSymbol) {
                         variableSymbol = classTypeSymbol.getConstructorMethod();
                         variableDeclaration.setSymbol(variableSymbol);
-
-                        var decls = variableSymbol.getDeclarations();
-
-                        for (var i = 0; i < decls.length; i++) {
-                            if (decls[i].getDeclID() > this.startingDeclForRebind) {
-                                break;
-                            }
-                        }
-
-                        if (i != decls.length) {
-                            parentHadSymbol = true;
-                        }
                     }
                     else {
                         // PULLTODO: Raise an Error here
