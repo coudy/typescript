@@ -450,7 +450,12 @@ module Services {
             if (symbolInfo == null || symbolInfo.symbol == null) {
                 this.logger.log("No identifier at the specified location.");
                 return null;
-            }            // Get the type            var symbol = symbolInfo.symbol;            var typeSymbol = symbol.getType();            if (typeSymbol == null || typeSymbol.getName() === "any") {
+            }
+
+            // Get the type
+            var symbol = symbolInfo.symbol;
+            var typeSymbol = symbol.getType();
+            if (typeSymbol == null || typeSymbol.getName() === "any") {
                 this.logger.log("Call expression has unkown type or of type 'any'");
                 return null;
             }
@@ -1359,7 +1364,7 @@ module Services {
             {
                 case TypeScript.PullElementKind.Script:
                     return ScriptElementKind.scriptElement;
-                case TypeScript.PullElementKind.Module:
+                case TypeScript.PullElementKind.Container:
                     return ScriptElementKind.moduleElement;
                 case TypeScript.PullElementKind.Interface:
                     return ScriptElementKind.interfaceElement;
