@@ -867,6 +867,23 @@ module TypeScript {
         // Pull typecheck infrastructure
         //
 
+        public pullResolveFile(filename: string): bool {
+            if (!this.pullTypeChecker) {
+                return false;
+            }
+
+            var unit = this.semanticInfoChain.getUnit(filename);
+
+            if (!unit) {
+                return false;
+            }
+
+            this.pullTypeChecker.setUnit(filename);
+            this.pullTypeChecker.resolver.resolveBoundDecls(unit.getTopLevelDecls()[0], new PullTypeResolutionContext());
+
+            return true;
+        }
+
         public pullTypeCheck(refresh = false) {
             return this.timeFunction("pullTypeCheck()", () => {
 
@@ -912,10 +929,9 @@ module TypeScript {
                 var bindEndTime = new Date().getTime();
                 var typeCheckStartTime = new Date().getTime();
 
-                // typecheck
+                // resolve symbols
                 for (i = 0; i < this.scripts.members.length; i++) {
-                    this.pullTypeChecker.setUnit(this.units[i].filename);
-                    this.pullTypeChecker.resolver.resolveBoundDecls(this.semanticInfoChain.units[i + 1].getTopLevelDecls()[0], new PullTypeResolutionContext());
+                    this.pullResolveFile(this.units[i].filename);
                 }
 
                 var typeCheckEndTime = new Date().getTime();
