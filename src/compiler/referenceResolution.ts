@@ -54,6 +54,7 @@ module TypeScript {
         constructor (public compilationSettings: CompilationSettings, public ioHost: IFileSystemObject) { }
         public residentCode: SourceUnit[] = [];
         public code: SourceUnit[] = [];
+        public inputOutputMap = [];
     }
 
     export interface IResolutionDispatcher {
