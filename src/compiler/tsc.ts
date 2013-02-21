@@ -224,7 +224,7 @@ class BatchCompiler {
             else {
                 compiler.typeCheck();
                 var mapInputToOutput = (unitIndex: number, outFile: string): void => {
-                    this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
+                   this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
                 };
                 compiler.emit(emitterIOHost, mapInputToOutput);
                 compiler.emitDeclarations();
