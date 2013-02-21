@@ -247,7 +247,7 @@ module TypeScript {
             var decls: PullDecl[] = [];
             var path: string;
             var foundDecls: PullDecl[] = [];
-            var keepSearching = (declKind & PullElementKind.Module) || (declKind & PullElementKind.Interface);
+            var keepSearching = (declKind & PullElementKind.Container) || (declKind & PullElementKind.Interface);
 
             for (var i = 0; i < declPath.length; i++) {
                 path = declPath[i];

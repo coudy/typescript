@@ -24,10 +24,10 @@ module TypeScript {
         FatArrow = 1 << 14,
         
         ClassConstructorVariable = 1 << 15,
-        InitializedModuleVariable = 1 << 16,
+        InitializedModule = 1 << 16,
         EnumVariable = 1 << 17,
 
-        ImplicitVariable = ClassConstructorVariable | InitializedModuleVariable | EnumVariable,
+        ImplicitVariable = ClassConstructorVariable | InitializedModule, /* | EnumVariable, */
     }
 
     export enum PullElementKind {
@@ -37,7 +37,7 @@ module TypeScript {
         Global = 1 << 1,
         Primitive = 1 << 2,
 
-        Module = 1 << 3,
+        Container = 1 << 3,
         Class = 1 << 4,
         Interface = 1 << 5,
         DynamicModule = 1 << 6,
@@ -72,7 +72,7 @@ module TypeScript {
         // Warning: SomeValue and SomeType (along with their constituents) must be disjoint
         SomeValue = Variable | Parameter | Property | SomeFunction,
 
-        SomeType =  Script | Global | Primitive | Module | Class | Interface | DynamicModule | 
+        SomeType =  Script | Global | Primitive | Container | Class | Interface | DynamicModule | 
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter,
         
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,

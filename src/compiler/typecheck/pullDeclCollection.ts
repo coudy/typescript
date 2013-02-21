@@ -18,6 +18,8 @@ module TypeScript {
         public pushParent(parentDecl: PullDecl) { if (parentDecl) { this.parentChain[this.parentChain.length] = parentDecl; } }
 
         public popParent() { this.parentChain.length--; }
+
+        public foundValueDecl = false;
     }
 
     export function preCollectImportDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
@@ -35,7 +37,7 @@ module TypeScript {
 
         context.semanticInfo.setDeclForAST(ast, decl);
 
-        context.semanticInfo.setASTForDecl(decl,ast);
+        context.semanticInfo.setASTForDecl(decl, ast);
 
         return false;
     }
@@ -45,7 +47,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).text;
         var isDynamic = isQuoted(modName);
-        var kind: PullElementKind = PullElementKind.Module;
+        var kind: PullElementKind = PullElementKind.Container;
 
         if (hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {
             declFlags |= PullElementFlags.Ambient;
@@ -60,7 +62,7 @@ module TypeScript {
             kind = PullElementKind.Enum;
         }
         else {
-            kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Module;
+            kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Container;
         }
 
         var span = new DeclSpan();
@@ -106,7 +108,7 @@ module TypeScript {
         
         var constructorDecl = new PullDecl(classDecl.name.text, constructorDeclKind, declFlags | PullElementFlags.ClassConstructorVariable, span, context.scriptName);
 
-        decl.setValDecl(constructorDecl);
+        decl.setValueDecl(constructorDecl);
 
         context.getParent().addChildDecl(decl);
         context.getParent().addChildDecl(constructorDecl);
@@ -1019,21 +1021,59 @@ module TypeScript {
 
     export function postCollectDecls(ast: AST, parent: AST, walker: IAstWalker) {
         var context: DeclCollectionContext = walker.state;
+        var parentDecl: PullDecl;
 
         // Note that we never pop the Script - after the traversal, it should be the
         // one parent left in the context
 
         if (ast.nodeType == NodeType.ModuleDeclaration) {
+            var thisModule = context.getParent();
             context.popParent();
+            parentDecl = context.getParent();
+            if (thisModule.getFlags() & PullElementFlags.InitializedModule) {
+                if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
+                    parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+                }
+
+                // create the value decl
+                var valueDecl = new PullDecl(thisModule.getName(), PullElementKind.Variable, thisModule.getFlags(), thisModule.getSpan(), context.scriptName);
+
+                thisModule.setValueDecl(valueDecl);
+
+                context.semanticInfo.setASTForDecl(valueDecl, ast);
+
+                if (parentDecl) {
+                    parentDecl.addChildDecl(valueDecl);
+                }
+            }
         }
         else if (ast.nodeType == NodeType.ClassDeclaration) {
             context.popParent();
+
+            parentDecl = context.getParent();
+
+            if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
+                parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+            }
         }
         else if (ast.nodeType == NodeType.InterfaceDeclaration) {
             context.popParent();
         }
         else if (ast.nodeType == NodeType.FuncDecl) {
             context.popParent();
+            
+            parentDecl = context.getParent();
+
+            if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
+                parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+            }
+        }
+        else if (ast.nodeType == NodeType.VarDecl) { // PULLREVIEW: What if we just have a for loop in a module body?
+            parentDecl = context.getParent();
+
+            if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {
+                parentDecl.setFlags(parentDecl.getFlags() | PullElementFlags.InitializedModule);
+            }
         }
 
         return ast;

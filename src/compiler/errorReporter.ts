@@ -127,8 +127,7 @@ module TypeScript {
             var defLineCol = { line: -1, col: -1 };
             // TODO: multiple def locations
             this.parser.getSourceLineCol(defLineCol, symbol.location);
-            this.reportError(ast, "symbol " + text + " defined at (" + defLineCol.line + "," +
-                              defLineCol.col + ")");
+            this.reportError(ast, "symbol " + text + " defined at (" + defLineCol.line + "," + defLineCol.col + ")");
         }
 
         public unresolvedSymbol(ast: AST, name: string) {

@@ -441,6 +441,7 @@ module TypeScript {
         public hasMembers() { return this.memberLinks && this.memberLinks.length != 0; }
         public isFunction() { return false; }
         public isTypeParameter() { return false; }
+        public isContainer() { return false; }
 
         public setIsSpecialized() { this.isSpecialized = true; }
 
@@ -873,6 +874,10 @@ module TypeScript {
 
             memberSymbol = this.memberNameCache[name];
 
+            if (memberSymbol) {
+                return memberSymbol;
+            }
+
             // check parents
             if (!memberSymbol && this.extendedTypeLinks) {
 
@@ -880,7 +885,7 @@ module TypeScript {
                     memberSymbol = (<PullTypeSymbol>this.extendedTypeLinks[i].end).findMember(name);
 
                     if (memberSymbol) {
-                        break;
+                        return memberSymbol;
                     }
                 }
             }
@@ -891,7 +896,7 @@ module TypeScript {
                     memberSymbol = (<PullTypeSymbol>this.implementedTypeLinks[i].end).findMember(name);
 
                     if (memberSymbol) {
-                        break;
+                        return memberSymbol;
                     }
                 }
             }
@@ -1017,6 +1022,8 @@ module TypeScript {
         }
     }
 
+    // PULLTODO: Unify concepts of constructor method and container
+    // type instance types
     export class PullClassTypeSymbol extends PullTypeSymbol {
 
         private constructorMethod: PullSymbol = null;
@@ -1041,6 +1048,33 @@ module TypeScript {
 
             if (this.constructorMethod) {
                 this.constructorMethod.invalidate();
+            }
+
+            super.invalidate();
+        }
+    }
+
+    // represents the module "namespace" type
+    export class PullContainerTypeSymbol extends PullTypeSymbol {
+        public instanceSymbol: PullSymbol  = null;
+
+        constructor(name: string) {
+            super(name, PullElementKind.Container);
+        }
+
+        public isContainer() { return true; }
+
+        public setInstanceSymbol(symbol: PullSymbol) {
+            this.instanceSymbol = symbol;
+        }
+
+        public getInstanceSymbol(): PullSymbol {
+            return this.instanceSymbol;
+        }
+
+        public invalidate() {
+            if (this.instanceSymbol) {
+                this.instanceSymbol.invalidate();
             }
 
             super.invalidate();

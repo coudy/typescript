@@ -77,6 +77,7 @@ module TypeScript {
         public getSignatureSymbol() { return this.signatureSymbol; }
 
         public getFlags() { return this.declFlags; }
+        public setFlags(flags: PullElementFlags) { this.declFlags = flags; }
         
         public getSpan() { return this.span; }
         public setSpan(span: DeclSpan) { this.span = span; }
@@ -92,8 +93,8 @@ module TypeScript {
         public getDependentDecls() { return this.dependentDecls; }
         public addDependentDecl(dependentDecl: PullDecl) { this.dependentDecls[this.dependentDecls.length] = dependentDecl; }
 
-        public setValDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
-        public getValDecl() { return this.synthesizedValDecl; }
+        public setValueDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
+        public getValueDecl() { return this.synthesizedValDecl; }
 
         // returns 'true' if the child decl was successfully added
         // ('false' is returned if addIfDuplicate is false and there is a collision)

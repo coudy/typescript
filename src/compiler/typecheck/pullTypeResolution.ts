@@ -288,7 +288,7 @@ module TypeScript {
                 decl = declPath[i];
                 pathDeclKind = decl.getKind();
 
-                if (pathDeclKind & PullElementKind.Module) {
+                if (pathDeclKind & PullElementKind.Container) {
                     // first check locally
                     childDecls = decl.findChildDecls(symbolName, declSearchKind);
 
@@ -2148,7 +2148,7 @@ module TypeScript {
                         this.resolveBoundDecls(childDecls[i], context);
                     }
                     break;
-                case PullElementKind.Module:
+                case PullElementKind.Container:
                     var moduleDecl = <ModuleDeclaration>this.semanticInfoChain.getASTForDecl(decl, this.unitPath);
                     this.resolveModuleDeclaration(moduleDecl, context);
                     break;

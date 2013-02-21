@@ -151,7 +151,7 @@ module TypeScript {
 
             // if we're removing a class, enum, etc., remove the implicit
             // value decl as well
-            var valDecl = declToRemove.getValDecl();
+            var valDecl = declToRemove.getValueDecl();
 
             if (valDecl) {
                 this.removeDecl(valDecl);
