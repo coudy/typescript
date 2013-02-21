@@ -341,6 +341,7 @@ module TypeScript {
             var classSymbol: PullClassTypeSymbol = null;
 
             var constructorSymbol: PullSymbol = null;
+            var constructorTypeSymbol: PullConstructorTypeSymbol = null;
 
             var classAST = <ClassDeclaration>this.semanticInfo.getASTForDecl(classDecl);
             var parentHadSymbol = false;
@@ -410,9 +411,6 @@ module TypeScript {
                 }
             }
 
-            constructorSymbol = classSymbol.getConstructorMethod();
-            var constructorTypeSymbol: PullConstructorTypeSymbol = <PullConstructorTypeSymbol>(constructorSymbol ? constructorSymbol.getType() : null);
-
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
             // incremental parsing comes online
             // PULLTODO: For now, classes should have none of these, though a pre-existing constructor might
@@ -430,6 +428,9 @@ module TypeScript {
                 for (var i = 0; i < indexSigs.length; i++) {
                     classSymbol.removeIndexSignature(indexSigs[i], false);
                 }
+
+                constructorSymbol = classSymbol.getConstructorMethod();
+                constructorTypeSymbol = <PullConstructorTypeSymbol>(constructorSymbol ? constructorSymbol.getType() : null);
 
                 if (constructorTypeSymbol) {
                     constructSigs = constructorTypeSymbol.getConstructSignatures();
@@ -455,6 +456,10 @@ module TypeScript {
             this.popParent();
 
             // create the default constructor symbol, if necessary
+
+            // even if we've already tried to set these, we want to try again after we've walked the class members
+            constructorSymbol = classSymbol.getConstructorMethod();
+            constructorTypeSymbol = <PullConstructorTypeSymbol>(constructorSymbol ? constructorSymbol.getType() : null);
 
             if (!constructorSymbol) {
                 constructorSymbol = new PullSymbol(className, PullElementKind.ConstructorMethod);
