@@ -265,6 +265,9 @@ task("tests", [run, serviceFile].concat(libraryTargets), function() {
 	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);
 });
 
+desc("Builds the test sources and automation in debug mode");
+task("tests-debug", ["setDebugMode", "tests"]);
+
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='. Both parameters are optional.");
