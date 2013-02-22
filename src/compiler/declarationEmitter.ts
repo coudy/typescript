@@ -429,7 +429,11 @@ module TypeScript {
                 var id = funcDecl.getNameText();
                 if (!isInterfaceMember) {
                     this.emitDeclFlags(ToDeclFlags(funcDecl.fncFlags), "function");
-                    this.declFile.Write(id);
+                    if (id != "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
+                        this.declFile.Write(id);
+                    } else if (funcDecl.isConstructMember()) {
+                        this.declFile.Write("new");
+                    }
                 } else {
                     this.emitIndent();
                     if (funcDecl.isConstructMember()) {
