@@ -36,8 +36,10 @@ module TypeScript {
     export function getErrorsFromEnclosingDecl(enclosingDecl: PullDecl, errors: SemanticError[]) {
         var declErrors = enclosingDecl.getErrors();
 
-        for (var i = 0; i < errors.length; i++) {
-            errors[errors.length] = declErrors[i];
+        if (declErrors) {
+            for (var i = 0; i < declErrors.length; i++) {
+                errors[errors.length] = declErrors[i];
+            }
         }
 
         var childDecls = enclosingDecl.getChildDecls();
@@ -66,7 +68,7 @@ module TypeScript {
         public reportError(error: SemanticError) {
             var locationInfo = this.locationInfoCache[error.filename];
 
-            if (locationInfo) {
+            if (locationInfo && locationInfo.lineMap) {
                 getSourceLineColFromMap(this.lineCol, error.getOffset(), locationInfo.lineMap);
 
                 this.textWriter.Write(locationInfo.filename + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");

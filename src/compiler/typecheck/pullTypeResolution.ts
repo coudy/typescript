@@ -147,12 +147,23 @@ module TypeScript {
         // PULLTODO: Don't bother using spans - obtain cached Decls from syntax nodes
         public getPathToDecl(decl: PullDecl): PullDecl[] {
 
-            if (!decl) {
-                return [];
-            }
+            //if (!decl) {
+            //    return [];
+            //}
+
+            //var parentDecl: PullDecl = decl.getParentDecl();
+            //var decls: PullDecl[] = [];
+
+            //while (parentDecl) {
+            //    decls[decls.length] = parentDecl;
+            //    parentDecl = parentDecl.getParentDecl();
+            //}
+
+            //return decls;
             
-            var searchDecls = this.semanticInfoChain.getUnit(decl.getScriptName()).getTopLevelDecls();
             var decls: PullDecl[] = [];
+            var searchDecls = this.semanticInfoChain.getUnit(decl.getScriptName()).getTopLevelDecls();
+            
             var spanToFind = decl.getSpan();
             var candidateSpan: DeclSpan = null;
             var searchKinds = PullElementKind.SomeType | PullElementKind.SomeFunction;
@@ -166,9 +177,9 @@ module TypeScript {
 
                     if (spanToFind.minChar >= candidateSpan.minChar && spanToFind.limChar <= candidateSpan.limChar) {
                         if (searchDecls[i].getKind() & searchKinds) { // only consider types, which have scopes
-                            if (!(searchDecls[i].getKind() & PullElementKind.Script)) {
+                            //if (!(searchDecls[i].getKind() & PullElementKind.Script)) {
                                 decls[decls.length] = searchDecls[i];
-                            }
+                            //}
                             searchDecls = searchDecls[i].getChildDecls();
                             found = true;
                         }
@@ -1537,6 +1548,7 @@ module TypeScript {
         public resolveObjectLiteralExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var typeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(expressionAST);
+            var span: DeclSpan;
 
             if (typeSymbol && typeSymbol.isResolved()) {
                 return typeSymbol.getType();
@@ -1547,7 +1559,21 @@ module TypeScript {
             // walk the members of the object literal,
             // create fields for each based on the value assigned in
             var objectLitAST = <UnaryExpression>expressionAST;
+
+            span = new DeclSpan();
+
+            span.minChar = objectLitAST.minChar;
+            span.limChar = objectLitAST.limChar;
+
+            var objectLitDecl = new PullDecl("", PullElementKind.ObjectType, PullElementFlags.None, span, this.unitPath);
+
+            this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
+            this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
+
             typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
+            typeSymbol.addDeclaration(objectLitDecl);
+            objectLitDecl.setSymbol(typeSymbol);
+            
             var memberDecls = <ASTList>objectLitAST.operand;
 
             var contextualType: PullTypeSymbol = null;
@@ -1567,7 +1593,6 @@ module TypeScript {
                 var memberExprType: PullSymbol;
                 var assigningSymbol: PullSymbol = null;
                 var acceptedContextualType = false;
-                var span: DeclSpan;
 
                 for (var i = 0, len = memberDecls.members.length; i < len; i++) {
                     binex = <BinaryExpression>memberDecls.members[i];
@@ -1592,9 +1617,8 @@ module TypeScript {
 
                     var decl = new PullDecl(text, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
 
-                    if (enclosingDecl) {
-                        enclosingDecl.addChildDecl(decl);
-                    }
+                    objectLitDecl.addChildDecl(decl);
+
                     this.semanticInfoChain.getUnit(this.unitPath).setDeclForAST(binex, decl);
                     this.semanticInfoChain.getUnit(this.unitPath).setASTForDecl(decl, binex);
 

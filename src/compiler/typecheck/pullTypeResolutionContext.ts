@@ -226,7 +226,7 @@ module TypeScript {
             return type;
         }
 
-        public postError(offset: number, length: number, message: string, filename: string, enclosingDecl: PullDecl) {
+        public postError(offset: number, length: number, filename: string, message: string, enclosingDecl: PullDecl) {
             var error = new PullError(offset, length, filename, message);
 
             if (this.inProvisionalResolution()) {

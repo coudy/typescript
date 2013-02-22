@@ -43,6 +43,8 @@ module TypeScript {
 
         private errors: PullError[] = null;
 
+        private parentDecl: PullDecl = null;
+
         // In the case of classes, initialized modules and enums, we need to track the implicit
         // value set to the constructor or instance type.  We can use this field to make sure that on
         // edits and updates we don't leak the val decl or symbol
@@ -80,6 +82,10 @@ module TypeScript {
 
         public setValueDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
         public getValueDecl() { return this.synthesizedValDecl; }
+
+        public getParentDecl() {
+            return this.parentDecl;
+        }
 
         public addError(error: PullError) {
             if (!this.errors) {
