@@ -3288,8 +3288,9 @@ var TypeScript;
         DebuggerStatement.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeLineToOutput("debugger;");
+            emitter.writeToOutput("debugger");
             emitter.recordSourceMappingEnd(this);
+            emitter.writeLineToOutput(";");
             emitter.emitParensAndCommentsInPlace(this, false);
         };
         return DebuggerStatement;
