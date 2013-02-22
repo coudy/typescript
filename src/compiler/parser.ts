@@ -2139,7 +2139,8 @@ module TypeScript {
             errorRecoverySet: ErrorRecoverySet,
             modifiers: Modifiers,
             requireSignature: bool,
-            isStatic: bool): AST {
+            isStatic: bool,
+            unnamedAmbientFunctionOk?: bool): AST {
 
             var text: Identifier = null;
             var minChar = this.scanner.startPos;
@@ -2251,6 +2252,9 @@ module TypeScript {
                 if (isIndexer) {
                     ers = errorRecoverySet | ErrorRecoverySet.RBrack;
                 }
+                if (!text && unnamedAmbientFunctionOk && !isIndexer) {
+                    text = new MissingIdentifier();
+                }
                 var ast = this.parseFncDecl(ers, true, requireSignature,
                                        this.currentClassDefinition || this.inInterfaceDecl, text, isIndexer, isStatic, (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)), modifiers, null, true);
                 var funcDecl: FuncDecl;
@@ -2293,7 +2297,7 @@ module TypeScript {
                     }
                 }
 
-                if (text == null) {
+                if (text == null || (text.isMissing() && unnamedAmbientFunctionOk && !isIndexer)) {
                     if (isNew) {
                         funcDecl.fncFlags |= FncFlags.ConstructMember;
                         funcDecl.hint = "_construct";
@@ -3420,7 +3424,7 @@ module TypeScript {
                         if (this.parsingDeclareFile || isAmbient() || this.ambientModule) {
                             this.currentToken = this.scanner.scan();
                             fnOrVar = this.parsePropertyDeclaration(errorRecoverySet | ErrorRecoverySet.SColon,
-                                                      modifiers, true, false);
+                                                      modifiers, true, false, true);
                             if (fnOrVar.nodeType == NodeType.VarDecl) {
                                 this.reportParseError("function keyword can only introduce function declaration");
                             }
@@ -3433,7 +3437,7 @@ module TypeScript {
                             }
                         }
                         else {
-                            ast = this.parseFncDecl(errorRecoverySet, true, false, false, null, false, false, isAmbient(), modifiers, null, true);
+                            ast = this.parseFncDecl(errorRecoverySet, true, false, false, null, false, false, false, modifiers, null, true);
                             if (hasFlag((<FuncDecl>ast).fncFlags, FncFlags.IsFatArrowFunction)) {
                                 needTerminator = true;
                             }
