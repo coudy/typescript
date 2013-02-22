@@ -105,7 +105,8 @@ module TypeScript {
     }
 
     export class Emitter {
-        public prologueEmitted = false;
+        public globalThisCapturePrologueEmitted = false;
+        public extendsPrologueEmitted = false;
         public thisClassNode: TypeDeclaration = null;
         public thisFnc: FuncDecl = null;
         public moduleDeclList: ModuleDeclaration[] = [];
@@ -1711,17 +1712,20 @@ module TypeScript {
         }
 
         public emitPrologue(reqInherits: bool) {
-            if (!this.prologueEmitted) {
+            if (!this.extendsPrologueEmitted) {
                 if (reqInherits) {
-                    this.prologueEmitted = true;
+                    this.extendsPrologueEmitted = true;
                     this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
                     this.writeLineToOutput("    function __() { this.constructor = d; }");
                     this.writeLineToOutput("    __.prototype = b.prototype;");
                     this.writeLineToOutput("    d.prototype = new __();");
                     this.writeLineToOutput("};");
                 }
+            }
+
+            if (!this.globalThisCapturePrologueEmitted) {
                 if (this.checker.mustCaptureGlobalThis) {
-                    this.prologueEmitted = true;
+                    this.globalThisCapturePrologueEmitted = true;
                     this.writeLineToOutput(this.captureThisStmtString);
                 }
             }
