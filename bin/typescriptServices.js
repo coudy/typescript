@@ -4899,7 +4899,8 @@ var TypeScript;
             this.outfile = outfile;
             this.emitOptions = emitOptions;
             this.errorReporter = errorReporter;
-            this.prologueEmitted = false;
+            this.globalThisCapturePrologueEmitted = false;
+            this.extendsPrologueEmitted = false;
             this.thisClassNode = null;
             this.thisFnc = null;
             this.moduleDeclList = [];
@@ -6182,17 +6183,19 @@ var TypeScript;
             }
         };
         Emitter.prototype.emitPrologue = function (reqInherits) {
-            if(!this.prologueEmitted) {
+            if(!this.extendsPrologueEmitted) {
                 if(reqInherits) {
-                    this.prologueEmitted = true;
+                    this.extendsPrologueEmitted = true;
                     this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
                     this.writeLineToOutput("    function __() { this.constructor = d; }");
                     this.writeLineToOutput("    __.prototype = b.prototype;");
                     this.writeLineToOutput("    d.prototype = new __();");
                     this.writeLineToOutput("};");
                 }
+            }
+            if(!this.globalThisCapturePrologueEmitted) {
                 if(this.checker.mustCaptureGlobalThis) {
-                    this.prologueEmitted = true;
+                    this.globalThisCapturePrologueEmitted = true;
                     this.writeLineToOutput(this.captureThisStmtString);
                 }
             }

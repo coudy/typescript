@@ -1464,7 +1464,7 @@ class ProjectRunner extends RunnerBase {
             });
 
 
-	    tests.push({
+            tests.push({
                 scenario: "Visibility of type used across modules"
                     , projectRoot: 'tests/cases/projects/InvalidReferences'
                     , inputFiles: ['main.ts']
@@ -1475,6 +1475,17 @@ class ProjectRunner extends RunnerBase {
                     , errors: [TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + '/tests/cases/projects/InvalidReferences/main.ts(1,1): Incorrect reference: File contains reference to itself.'
                         , TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + '/tests/cases/projects/InvalidReferences/main.ts(2,1): Incorrect reference: referenced file: "nonExistingFile1.ts" cannot be resolved.'
                         , TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + '/tests/cases/projects/InvalidReferences/main.ts(3,1): Incorrect reference: referenced file: "nonExistingFile2.ts" cannot be resolved.']
+            });
+
+            tests.push({
+                scenario: "Prologue emit"
+                    , projectRoot: 'tests/cases/projects/PrologueEmit'
+                    , inputFiles: ['globalThisCapture.ts', '__extends.ts']
+                    , collectedFiles: ['globalThisCapture.ts', '__extends.ts']
+                    , outputFiles: ['out.js']
+                    , outputOption: 'out.js'
+                    , verifyEmitFiles: true
+                    , skipRun: true
             });
 
             var amdDriverTemplate = "var requirejs = require('../r.js');\n\n" +
