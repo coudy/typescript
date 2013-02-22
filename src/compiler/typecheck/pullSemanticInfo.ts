@@ -20,14 +20,10 @@ module TypeScript {
     export var symbolCacheHit = 0;
     export var symbolCacheMiss = 0;
 
-    export class SemanticError {
-        constructor (public ast: AST, public message: string) { }
-    }
-
     export class SemanticInfo {
-        private compilationUnitPath: string;  // the "file" this is tied to
-        private decls: PullDecl[] = []; // top-level decls
-        //private symbols: PullSymbol[] = []; // top-level symbols
+        private compilationUnitPath: string;  // the "file" this is associated with
+
+        private topLevelDecls: PullDecl[] = [];
         
         private astDeclMap: DataMap = new DataMap();
         private declASTMap: DataMap = new DataMap();
@@ -43,21 +39,15 @@ module TypeScript {
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
-        private semanticErrors: SemanticError[] = [];
-
         constructor (compilationUnitPath: string, public locationInfo: LocationInfo = null) {
             this.compilationUnitPath = compilationUnitPath;
         }
 
         public addTopLevelDecl(decl: PullDecl) {
-            this.decls[this.decls.length] = decl;
+            this.topLevelDecls[this.topLevelDecls.length] = decl;
         }
-        public getTopLevelDecls() { return this.decls; }
 
-        //public addTopLevelSymbol(symbol: PullSymbol) {
-        //    this.symbols[this.symbols.length] = symbol;
-        //}
-        //public getTopLevelSymbols() { return this.symbols; }
+        public getTopLevelDecls() { return this.topLevelDecls; }
 
         public getPath(): string { 
             return this.compilationUnitPath; 
@@ -77,7 +67,7 @@ module TypeScript {
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
             this.declASTMap.link(decl.getDeclID().toString() + decl.getKind().toString(), ast);
-        }       
+        }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
             this.astSymbolMap.link(ast.getID().toString(), symbol);
@@ -121,11 +111,11 @@ module TypeScript {
             this.symbolSyntaxElementMap.link(symbol.getSymbolID().toString(), syntaxElement);
         }
 
-        public postSemanticError(error: SemanticError) {
-            this.semanticErrors[this.semanticErrors.length] = error;
+        public getErrors(semanticErrors: SemanticError[]) {
+            for (var i = 0; i < this.topLevelDecls.length; i++) {
+                getErrorsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
+            }
         }
-
-        public getSemanticErrors() { return this.semanticErrors; }
     }
 
     export class SemanticInfoChain {
@@ -383,20 +373,14 @@ module TypeScript {
             }
         }
 
-        public postErrors(errorReporter: PullErrorReporter) {
-            var errors: SemanticError[]
+        public postErrors(): SemanticError[] {
+            var errors: PullError[] = [];
             
             for (var i = 1; i < this.units.length; i++) {
-                errors = this.units[i].getSemanticErrors();
-
-                if (errors.length) {
-                    errorReporter.locationInfo = this.units[i].locationInfo;
-
-                    for (var j = 0; j < errors.length; j++) {
-                        errorReporter.simpleError(errors[j].ast, errors[j].message);
-                    }
-                }
+                this.units[i].getErrors(errors);
             }
+
+            return errors;
         }
     }
 }

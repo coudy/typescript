@@ -103,9 +103,9 @@ module TypeScript {
 
     export class PullContextualTypeContext {
 
-        public hadProvisionalErrors = false;
         public provisionallyTypedSymbols: PullSymbol[] = [];
-
+        public provisionalErrors: PullError[] = [];
+        
         constructor (public contextualType: PullTypeSymbol,
                      public provisional: bool,
                      public substitutions: any) { }
@@ -118,6 +118,14 @@ module TypeScript {
             for (var i = 0; i < this.provisionallyTypedSymbols.length; i++) {
                 this.provisionallyTypedSymbols[i].invalidate();
             }
+        }
+
+        public postError(error: PullError) {
+            this.provisionalErrors[this.provisionalErrors.length] = error;
+        }
+
+        public hadProvisionalErrors() {
+            return this.provisionalErrors.length > 0;
         }
     }
 
@@ -216,6 +224,17 @@ module TypeScript {
             }
 
             return type;
+        }
+
+        public postError(offset: number, length: number, message: string, filename: string, enclosingDecl: PullDecl) {
+            var error = new PullError(offset, length, filename, message);
+
+            if (this.inProvisionalResolution()) {
+                (this.contextStack[this.contextStack.length - 1]).postError(error);
+            }
+            else {
+                enclosingDecl.addError(error);
+            }
         }
     }
 

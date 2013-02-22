@@ -42,6 +42,8 @@ module TypeScript {
             super();
         }
 
+        public getLength() { return this.limChar - this.minChar; }
+
         public getID() { return this.astID; }
 
         public isExpression() { return false; }

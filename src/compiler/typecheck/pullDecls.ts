@@ -25,8 +25,6 @@ module TypeScript {
 
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
-
-        private containedExpressionSymbols: PullSymbol[] = [];
         
         private childDecls: PullDecl[] = [];
         private typeParameters: PullDecl[] = [];
@@ -42,12 +40,8 @@ module TypeScript {
         private span: DeclSpan;
         
         private scriptName: string;
-        
-        private aliasTo: string; // PULLTODO: Prune
-        
-        private dependentDecls: PullDecl[] = []; // decls that depend on this decl to know their type
-        
-        private dependencies: PullDecl[] = []; // decls that this decl depends on to know its type
+
+        private errors: PullError[] = null;
 
         // In the case of classes, initialized modules and enums, we need to track the implicit
         // value set to the constructor or instance type.  We can use this field to make sure that on
@@ -83,18 +77,37 @@ module TypeScript {
         public setSpan(span: DeclSpan) { this.span = span; }
         
         public getScriptName() { return this.scriptName; }
-        
-        public setAlias(alias: string) { this.aliasTo = alias; }
-        public getAlias() { return this.aliasTo; }
-
-        public getDependencies() { return this.dependencies; }
-        public addDependency(dependency: PullDecl) { this.dependencies[this.dependencies.length] = dependency; }
-        
-        public getDependentDecls() { return this.dependentDecls; }
-        public addDependentDecl(dependentDecl: PullDecl) { this.dependentDecls[this.dependentDecls.length] = dependentDecl; }
 
         public setValueDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
         public getValueDecl() { return this.synthesizedValDecl; }
+
+        public addError(error: PullError) {
+            if (!this.errors) {
+                this.errors = [];
+            }
+
+            error.adjustOffset(this.span.minChar);
+
+            this.errors[this.errors.length] = error;
+        }
+
+        public getErrors(): PullError[]{
+            return this.errors;
+        }
+
+        public setErrors(errors: PullError[]) {
+            this.errors = [];
+            
+            // adjust the spans as we parent the errors to the new decl
+            for (var i = 0; i < errors.length; i++) {
+                errors[i].adjustOffset(this.span.minChar);
+                this.errors[this.errors.length] = errors[i];
+            }
+        }
+
+        public resetErrors() {
+            this.errors = [];
+        }
 
         // returns 'true' if the child decl was successfully added
         // ('false' is returned if addIfDuplicate is false and there is a collision)
@@ -157,13 +170,5 @@ module TypeScript {
 
         public getChildDecls() { return this.childDecls; }
         public getTypeParameters() { return this.typeParameters; }
-
-        public addContainedExpressionSymbol(symbol: PullSymbol) {
-            this.containedExpressionSymbols[this.containedExpressionSymbols.length] = symbol;
-        }
-
-        public getContainedExpressionSymbols() {
-            return this.containedExpressionSymbols;
-        }
     }
 }

@@ -215,6 +215,9 @@ module TypeScript {
             this.cachedContainerLink = null;
 
             this.hasBeenResolved = false;
+
+            // reset the errors for its decl
+            this.declarations.update((pullDecl: PullDecl) => pullDecl.resetErrors(), null);
         }
 
         public toString() {
@@ -1356,7 +1359,7 @@ module TypeScript {
             if (typeConstraint) {
                 if (!resolver.sourceIsAssignableToTarget(typeArguments[iArg], typeConstraint, context)) {
                     if (ast) {
-                        resolver.postSemanticError(ast, "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'");
+                        context.postError(ast.minChar, ast.getLength(), resolver.getUnitPath(), "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'", enclosingDecl);
                     }
 
                     return resolver.semanticInfoChain.anyTypeSymbol;
@@ -1505,7 +1508,7 @@ module TypeScript {
         resolver: PullTypeResolver,
         enclosingDecl: PullDecl,
         context: PullTypeResolutionContext,
-                                        ast?: AST): PullSignatureSymbol {
+        ast?: AST): PullSignatureSymbol {
 
 
         var newSignature = signature.getSpecialization(typeArguments);
@@ -1554,7 +1557,7 @@ module TypeScript {
             if (typeConstraint) {
                 if (!resolver.sourceIsAssignableToTarget(typeArguments[iArg], typeConstraint, context)) {
                     if (ast) {
-                        resolver.postSemanticError(ast, "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'");
+                        context.postError(ast.minChar, ast.getLength(), resolver.getUnitPath(), "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'", enclosingDecl);
                     }
 
                     return null;

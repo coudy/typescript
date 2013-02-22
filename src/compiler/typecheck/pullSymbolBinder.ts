@@ -24,10 +24,6 @@ module TypeScript {
             this.semanticInfo = this.semanticInfoChain.getUnit(fileName);
         }
 
-        public postError(ast: AST, message: string) {
-            this.semanticInfo.postSemanticError(new SemanticError(ast, message));
-        }
-
         public getParent(returnInstanceType=false): PullTypeSymbol {
             var parent = this.parentChain ? this.parentChain[this.parentChain.length-1] : null;
 
@@ -161,7 +157,7 @@ module TypeScript {
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.getKind() != PullElementKind.Container) {
                 // duplicate symbol error
-                this.postError(moduleAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [modName]));
+                moduleContainerDecl.addError(new PullError(moduleAST.minChar, moduleAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [modName])));
 
                 moduleContainerTypeSymbol = null;
             }
@@ -278,7 +274,7 @@ module TypeScript {
             }
 
             if (enumSymbol && (enumSymbol.getKind() != PullElementKind.Enum || enumSymbol.getSymbolID() > this.startingSymbolForRebind)) {
-                this.postError(enumAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [enumName]));
+                enumDeclaration.addError(new PullError(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [enumName])));
                 enumSymbol = null;
             }
 
@@ -357,7 +353,7 @@ module TypeScript {
             }
 
             if (classSymbol && (classSymbol.getKind() != PullElementKind.Class || classSymbol.getSymbolID() > this.startingSymbolForRebind)) {
-                this.postError(classAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [className]));
+                classDecl.addError(new PullError(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [className])));
                 classSymbol = null;
             }
             else if (classSymbol) {
@@ -527,7 +523,7 @@ module TypeScript {
             }
 
             if (interfaceSymbol && (interfaceSymbol.getKind() != PullElementKind.Interface)) {
-                this.postError(interfaceAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [interfaceName]));
+                interfaceDecl.addError(new PullError(interfaceAST.minChar, interfaceAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [interfaceName])));
                 interfaceSymbol = null;
             }
 
@@ -691,7 +687,7 @@ module TypeScript {
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
                 if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
-                    this.postError(varDeclAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName]));
+                    variableDeclaration.addError(new PullError(varDeclAST.minChar, varDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
                     variableSymbol = null;
                 }
             }
@@ -842,7 +838,7 @@ module TypeScript {
             propertySymbol = parent.findMember(declName);
 
             if (propertySymbol && (propertySymbol.getSymbolID() > this.startingSymbolForRebind)) {
-                this.postError(propDeclAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName]));
+                propertyDeclaration.addError(new PullError(propDeclAST.minChar, propDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
 
                 propertySymbol = null;
             }
@@ -930,6 +926,82 @@ module TypeScript {
             }
         }
 
+        public bindImportDeclaration(importDeclaration: PullDecl) {
+            var declFlags = importDeclaration.getFlags();
+            var declKind = importDeclaration.getKind();
+            var importDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(importDeclaration);
+
+            var isExported = false;
+
+            var linkKind = SymbolLinkKind.PrivateMember;
+
+            var importSymbol: PullSymbol = null;
+
+            var declName = importDeclaration.getName();
+
+            var parentHadSymbol = false;
+
+            var parent = this.getParent(true);
+
+            // The code below accounts for the variable symbol being a type because
+            // modules may create instance variables
+
+            if (parent) {
+                importSymbol = parent.findMember(declName);
+            }
+            else if (!(importDeclaration.getFlags() & PullElementFlags.Exported)) {
+                importSymbol = this.findSymbolInContext(declName, PullElementKind.SomeValue, []);
+            }
+
+            if (importSymbol) {
+                parentHadSymbol = true;
+            }
+
+            if (importSymbol && (importSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+
+                // if it's an implicit variable, then this variable symbol will actually be a class constructor
+                // or container type that was just defined, so we don't want to raise an error
+                if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
+                    importDeclaration.addError(new PullError(importDeclAST.minChar, importDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                    importSymbol = null;
+                }
+            }
+
+            if (this.reBindingAfterChange && importSymbol) {
+
+                // prune out-of-date decls...
+                var decls = importSymbol.getDeclarations();
+                var scriptName = importDeclaration.getScriptName();
+
+                for (var j = 0; j < decls.length; j++) {
+                    if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                        importSymbol.removeDeclaration(decls[j]);
+                    }
+                }
+            }
+
+            if (!importSymbol) {
+                importSymbol = new PullSymbol(declName, declKind);
+            }
+
+            importSymbol.addDeclaration(importDeclaration);
+            importDeclaration.setSymbol(importSymbol);
+
+            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
+            this.semanticInfo.setSymbolForAST(importDeclAST.id, importSymbol);
+            
+
+            if (parent && !parentHadSymbol) {
+
+                if (declFlags & PullElementFlags.Exported) {
+                    parent.addMember(importSymbol, SymbolLinkKind.PublicMember);
+                }
+                else {
+                    importSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
+                }
+            }
+        }
+
         // parameters
         public bindParameterSymbols(funcDecl: FuncDecl, signatureSymbol: PullSignatureSymbol) {
             // create a symbol for each ast
@@ -950,7 +1022,7 @@ module TypeScript {
                     parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Variable);
 
                     if (params[argDecl.id.actualText]) {
-                        this.postError(argDecl, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [argDecl.id.actualText]));
+                        decl.addError(new PullError(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [argDecl.id.actualText])));
                     }
                     else {
                         params[argDecl.id.actualText] = true;
@@ -1019,7 +1091,7 @@ module TypeScript {
             }
 
             if (functionSymbol && functionSymbol.getKind() != PullElementKind.Function) {
-                this.postError(funcDeclAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [funcName]));
+                functionDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [funcName])));
                 functionSymbol = null;
             }
 
@@ -1234,7 +1306,7 @@ module TypeScript {
             methodSymbol = parent.isClass() && isStatic && (<PullClassTypeSymbol>parent).getConstructorMethod() ? (<PullClassTypeSymbol>parent).getConstructorMethod().getType().findMember(methodName) : parent.findMember(methodName);
 
             if (methodSymbol && methodSymbol.getKind() != PullElementKind.Method) {
-                this.postError(methodAST, getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [methodName]));
+                methodDeclaration.addError(new PullError(methodAST.minChar, methodAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [methodName])));
                 methodSymbol = null;
             }
 

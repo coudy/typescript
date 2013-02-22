@@ -62,6 +62,7 @@
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='typecheck\pullEmitter.ts' />
+///<reference path='typecheck\pullErrors.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
 ///<reference path='resources.ts' />
 ///<reference path='resourceStrings.ts' />
@@ -170,6 +171,8 @@ module TypeScript {
 
         public syntaxTrees: SyntaxTree[] = [];
 
+
+
         constructor(public errorOutput: ITextWriter,
                     public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = defaultSettings,
@@ -178,7 +181,6 @@ module TypeScript {
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
             this.persistentTypeState = new PersistentGlobalTypeState(this.errorReporter);
             this.errorReporter.parser = this.parser;
-            this.pullErrorReporter.parser = this.parser;
             this.initTypeChecker(this.errorOutput);
 
             this.parser.style_requireSemi = this.settings.styleSettings.requireSemi;
@@ -884,6 +886,19 @@ module TypeScript {
             return true;
         }
 
+        public pullGetErrorsForFile(filename: string): SemanticError[]{
+
+            var errors: PullError[] = [];
+
+            var unit = this.semanticInfoChain.getUnit(filename);
+
+            if (unit) {
+                unit.getErrors(errors);
+            }
+
+            return errors;
+        }
+
         public pullTypeCheck(refresh = false) {
             return this.timeFunction("pullTypeCheck()", () => {
 
@@ -891,6 +906,8 @@ module TypeScript {
                     this.semanticInfoChain = new SemanticInfoChain();
                     this.pullTypeChecker = new PullTypeChecker(this.semanticInfoChain);
                 }
+
+                this.pullErrorReporter.setUnits(this.units);
 
                 var declCollectionContext: DeclCollectionContext = null;
                 var semanticInfo: SemanticInfo = null;
@@ -942,7 +959,7 @@ module TypeScript {
                 this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
                 this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
 
-                this.semanticInfoChain.postErrors(this.pullErrorReporter);
+                this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
             });
         }
         
@@ -1026,12 +1043,16 @@ module TypeScript {
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
 
-                    this.semanticInfoChain.postErrors(this.pullErrorReporter);
+                    this.pullErrorReporter.setUnits(this.units);
+
+                    this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors())
 
                     return true;
                 }
 
-                this.semanticInfoChain.postErrors(this.pullErrorReporter);
+                this.pullErrorReporter.setUnits(this.units);
+
+                this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors())
                 return false;
             });
         }

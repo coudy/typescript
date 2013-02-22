@@ -38,12 +38,14 @@ module TypeScript {
             var oldDeclChildren = oldDecl.getChildDecls();
             var newDeclChildren = newDecl.getChildDecls();
             var foundDecls: PullDecl[];
+            var foundDiff = false;
 
             for (var i = 0; i < oldDeclChildren.length; i++) {
                 foundDecls = newDecl.findChildDecls(oldDeclChildren[i].getName(), oldDeclChildren[i].getKind());
 
                 if (!foundDecls.length) {
                     diffs[diffs.length] = new PullDeclDiff(oldDeclChildren[i], null, PullDeclEdit.DeclRemoved);
+                    foundDiff = true;
                 }
                 else if (foundDecls.length == 1) { // just care about non-split entities for now
                     this.diffDecls(oldDeclChildren[i], foundDecls[0], diffs);
@@ -55,7 +57,12 @@ module TypeScript {
 
                 if (!foundDecls.length) {
                     diffs[diffs.length] = new PullDeclDiff(oldDecl, newDeclChildren[i], PullDeclEdit.DeclAdded);
+                    foundDiff = true;
                 }
+            }
+
+            if (!foundDiff) {
+                newDecl.setErrors(oldDecl.getErrors());
             }
         }
     }

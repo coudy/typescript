@@ -62,6 +62,10 @@ var compilerSources = [
 	"typecheck/pullSymbolBinder.ts",
 	"typecheck/pullSymbolGraph.ts",
 	"typecheck/pullEmitter.ts",	
+	"typecheck/pullErrors.ts",
+	"SyntaxTreeToAstVisitor.ts",
+	"resources.ts",
+	"resourceStrings.ts",
 	"typescript.ts"
 ].map(function (f) {
 	return path.join(compilerDirectory, f);
@@ -113,11 +117,13 @@ var servicesSources = [
 	"coreServices.ts",
 	"scriptSyntaxAST.ts",
 	"compilerState.ts",
+	"pullCompilerState.ts",
 	"braceMatchingManager.ts",
 	"symbolSet.ts",
 	"symbolTree.ts",
 	"overridesCollector.ts",
 	"languageService.ts",
+	"pullLanguageService.ts",
 	"shims.ts",
 	"outliningElementsCollector.ts",
 	"braceMatcher.ts",
