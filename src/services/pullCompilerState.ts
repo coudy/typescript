@@ -285,50 +285,8 @@ module Services {
             return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext);
         }
 
-        public old_getErrorEntries(maxCount: number, filter: (unitIndex: number, error: TypeScript.ErrorEntry) =>bool): TypeScript.ErrorEntry[] {
-            var entries: TypeScript.ErrorEntry[] = [];
-            var count = 0;
-
-            var addError = (error: TypeScript.ErrorEntry): bool => {
-                entries.push(error);
-                count++;
-                return (count < maxCount);
-            }
-
-            for (var unitIndex = 0, len = this.errorCollector.fileMap.length; unitIndex < len; unitIndex++) {
-                var errors = this.errorCollector.fileMap[unitIndex];
-                if (errors !== undefined) {
-                    for (var i = 0; i < errors.parseErrors.length; i++) {
-                        var error = errors.parseErrors[i];
-                        if (filter(unitIndex, error)) {
-                            if (!addError(error))
-                                break;
-                        }
-                    }
-                    for (var i = 0; i < errors.typeCheckErrors.length; i++) {
-                        var error = errors.typeCheckErrors[i];
-                        if (filter(unitIndex, error)) {
-                            if (!addError(error)) {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Convert "unitIndex" into host units
-            var result: TypeScript.ErrorEntry[] = [];
-            for (var i = 0; i < entries.length; i++) {
-                var e = entries[i];
-                var ne = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(e.unitIndex), e.minChar, e.limChar, "OLD => " + e.message);
-                result.push(ne);
-            }
-            return result;
-        }
-
         public getErrorEntries(maxCount: number, filter: (unitIndex: number, error: SyntaxDiagnostic) => bool): TypeScript.ErrorEntry[] {
-            // Add errors from the old engine to the list untill type errors are available
-            var entries: TypeScript.ErrorEntry[] = this.old_getErrorEntries(maxCount, (u, e) => true);
+            var entries: TypeScript.ErrorEntry[] = [];
             var count = 0;
 
             var addError = (unitIndex: number, error: SyntaxDiagnostic): bool => {
@@ -337,8 +295,17 @@ module Services {
                 count++;
                 return (count < maxCount);
             }
+    
+            var addTypeError = (unitIndex: number, error: TypeScript.SemanticError): bool => {
+                var entry = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(unitIndex), error.getOffset(), error.length, error.message);
+                entries.push(entry);
+                count++;
+                return (count < maxCount);
+            }
 
-            for (var unitIndex = 0, len = this.errorCollector.fileMap.length; unitIndex < len; unitIndex++) {
+            for (var hostUnitIndex = 0, len = this.host.getScriptCount() ; hostUnitIndex < len; hostUnitIndex++) {
+                var fileName = this.hostCache.getScriptId(hostUnitIndex);
+                var unitIndex = this.compilerCache.getUnitIndex(fileName);
                 if (this.compiler.syntaxTrees[unitIndex]) {
                     var errors = (<SyntaxTree>this.compiler.syntaxTrees[unitIndex]).diagnostics();
                     if (errors !== undefined) {
@@ -350,7 +317,21 @@ module Services {
                                 }
                             }
                         }
-                        // TODO: Type checker errors
+                    }
+                }
+
+                
+                //this.compiler.pullResolveFile(fileName);
+
+                var typeErrors = this.compiler.pullGetErrorsForFile(fileName);
+                if (typeErrors !== undefined) {
+                    for (var i = 0; i < typeErrors.length; i++) {
+                        var e = typeErrors[i];
+                        //if (filter(unitIndex, e)) {
+                            if (!addTypeError(unitIndex, e)) {
+                                break;
+                            }
+                        //}
                     }
                 }
             }
