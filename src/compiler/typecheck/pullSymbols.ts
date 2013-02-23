@@ -31,6 +31,8 @@ module TypeScript {
 
         private isOptional = false;
 
+        private inResolution = false;
+
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
@@ -197,8 +199,18 @@ module TypeScript {
             return this.getType() != null;
         }
 
-        public setResolved() { this.hasBeenResolved = true; }
+        public setResolved() {
+            this.hasBeenResolved = true;
+            this.inResolution = false;
+        }
         public isResolved() { return this.hasBeenResolved; }
+
+        public startResolving() {
+            this.inResolution = true;
+        }
+        public isResolving() {
+            return this.inResolution;
+        }
 
         // helper methods:
         // cacheInfo?

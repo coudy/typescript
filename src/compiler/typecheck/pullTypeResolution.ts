@@ -755,6 +755,14 @@ module TypeScript {
                 return declSymbol.getType();
             }
 
+            if (declSymbol.isResolving()) {
+                // PULLTODO: Error or warning?
+                declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                declSymbol.setResolved();
+            }
+
+            declSymbol.startResolving();
+
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
 
@@ -930,11 +938,21 @@ module TypeScript {
 
             var hadError = false;
 
-            if (signature.isResolved()) {
-                return funcSymbol;
-            }
-
             if (signature) {
+
+                if (signature.isResolved()) {
+                    return funcSymbol;
+                }
+
+                if (signature.isResolving()) {
+                    // PULLTODO: Error or warning?
+                    signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                    signature.setResolved();
+
+                    return funcSymbol;
+                }
+
+                signature.startResolving();
                 
                 // resolve parameter type annotations as necessary
                 if (funcDeclAST.arguments) {
