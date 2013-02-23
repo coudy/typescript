@@ -220,6 +220,21 @@ module TypeScript {
             this.declarations.update((pullDecl: PullDecl) => pullDecl.resetErrors(), null);
         }
 
+        public getDocComments(): string {
+            return "";
+        }
+
+        public hasFlag(flag: PullElementFlags): bool {
+            var declarations = this.getDeclarations();
+            for (var i = 0, n = declarations.length; i < n; i++) {
+                var declaration = declarations[i];
+                if ((declaration.getFlags() & flag) !== PullElementFlags.None) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public toString() {
             var str = this.name;
 

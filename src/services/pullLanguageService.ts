@@ -515,11 +515,11 @@ module Services {
             return result;
         }
 
-        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: bool, signatures: TypeScript.PullSignatureSymbol[]) {
+        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: bool, signatures: TypeScript.PullSignatureSymbol[]): FormalSignatureInfo {
             var result = new FormalSignatureInfo();
             result.isNew = isNew;
             result.name = symbol.getName();
-            result.docComment = ""; //getDocCommentFromSymbol(symbol);
+            result.docComment = symbol.getDocComments(); //getDocCommentFromSymbol(symbol);
             result.openParen = "(";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "[" : "(");
             result.closeParen = ")";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "]" : ")");
 
@@ -529,15 +529,15 @@ module Services {
                 //.filter(signature => !(hasOverloads && signature === group.definitionSignature && !this.compilerState.getCompilationSettings().canCallDefinitionSignature))
                 .forEach(signature => {
                     var signatureGroupInfo = new FormalSignatureItemInfo();
-                    signatureGroupInfo.docComment = "";//(signature.declAST != null) ? TypeScript.Comment.getDocCommentText(signature.declAST.getDocComments()) : "";
+                    signatureGroupInfo.docComment = signature.getDocComments();//(signature.declAST != null) ? TypeScript.Comment.getDocCommentText(signature.declAST.getDocComments()) : "";
                     signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getName(); //signature.returnType.type.getScopedTypeName(enclosingScopeContext.getScope()));
                     var parameters = signature.getParameters();
                     parameters.forEach((p, i) => {
                         var signatureParameterInfo = new FormalParameterInfo();
                         signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
-                        signatureParameterInfo.isOptional = p.getIsOptional(); 
+                        signatureParameterInfo.isOptional = p.hasFlag(TypeScript.PullElementFlags.Optional);
                         signatureParameterInfo.name = p.getName();
-                        signatureParameterInfo.docComment = "";// p.getParameterDocComments();
+                        signatureParameterInfo.docComment = p.getDocComments();// p.getParameterDocComments();
                         signatureParameterInfo.type = p.getType() ? p.getType().getName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
                     });
@@ -1259,8 +1259,8 @@ module Services {
             var minChar = -1;
             var limChar = -1;
             var kind = this.mapPullElementKind(typeInfoAtPosition.typeSymbol.getKind());
-            var docComment = "";
-            var symbolName = "";
+            var docComment = typeInfoAtPosition.typeSymbol.getDocComments();
+            var symbolName = typeInfoAtPosition.typeSymbol.getName();
 
             if (typeInfoAtPosition.ast) {
                 minChar = typeInfoAtPosition.ast.minChar;
@@ -1299,8 +1299,8 @@ module Services {
                     entry.type = x.getType()? x.getType().toString() : "unkown type";
                     entry.kind = this.mapPullElementKind(x.getKind());
                     //entry.fullSymbolName = this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
-                    //entry.docComment = this.getDocCommentOfSymbol(x.sym);
-                    //entry.kindModifiers = x. this.getSymbolElementKindModifiers(x.sym);
+                    entry.docComment = x.getDocComments();
+                    entry.kindModifiers = this.getScriptElementKindModifiers(x);
                     completions.entries.push(entry);
                 });
 
@@ -1308,7 +1308,7 @@ module Services {
             // Ensure we are in a position where it is ok to provide a completion list
             else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
                 //return getCompletions(enclosingScopeContext.isMemberCompletion);
-                // get scope memebers
+                // TODO: get scope memebers
             }
 
             return completions;
@@ -1399,6 +1399,28 @@ module Services {
             }
 
             return ScriptElementKind.unknown;
+        }
+
+        private getScriptElementKindModifiers(symbol: TypeScript.PullSymbol): string {
+            var result = [];
+
+            if (symbol.hasFlag(TypeScript.PullElementFlags.Exported)) {
+                result.push(ScriptElementKindModifier.exportedModifier);
+            }
+            if (symbol.hasFlag(TypeScript.PullElementFlags.Ambient)) {
+                result.push(ScriptElementKindModifier.ambientModifier);
+            }
+            if (symbol.hasFlag(TypeScript.PullElementFlags.Public)) {
+                result.push(ScriptElementKindModifier.publicMemberModifier);
+            }
+            if (symbol.hasFlag(TypeScript.PullElementFlags.Private)) {
+                result.push(ScriptElementKindModifier.privateMemberModifier);
+            }
+            if (symbol.hasFlag(TypeScript.PullElementFlags.Static)) {
+                result.push(ScriptElementKindModifier.staticModifier);
+            }
+
+            return result.length > 0 ? result.join(',') : ScriptElementKindModifier.none;
         }
 
         // 
