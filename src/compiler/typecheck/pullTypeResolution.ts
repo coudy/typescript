@@ -147,9 +147,9 @@ module TypeScript {
         // PULLTODO: Don't bother using spans - obtain cached Decls from syntax nodes
         public getPathToDecl(decl: PullDecl): PullDecl[] {
 
-            //if (!decl) {
-            //    return [];
-            //}
+            if (!decl) {
+                return [];
+            }
 
             //var parentDecl: PullDecl = decl.getParentDecl();
             //var decls: PullDecl[] = [];
@@ -978,6 +978,8 @@ module TypeScript {
                     signature.setResolved();
                 }
             }
+
+            // don't resolve anything here that's not relevant to the type of the function!
 
             return funcSymbol;
         }
