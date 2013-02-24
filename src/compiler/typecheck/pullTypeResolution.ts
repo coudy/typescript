@@ -4,14 +4,6 @@
 ///<reference path='..\typescript.ts' />
 
 
-/*
-
-Architectural TODO:
-
-- More consistent use of PullSymbol subtyping.  (Basically, audit all return and param types)
-- Move enclosing decl to pull resolution context
-
-*/
 module TypeScript {
 
     export interface IPullTypeCollection {
@@ -1178,9 +1170,9 @@ module TypeScript {
             if (!nameSymbol) {
                 nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
-                if (nameSymbol && nameSymbol.getKind() == PullElementKind.Interface) {
-                    nameSymbol = null;
-                }
+                //if (nameSymbol && nameSymbol.getKind() == PullElementKind.Interface) {
+                //    nameSymbol = null;
+                //}
             }
 
             if (!nameSymbol) {
@@ -1934,6 +1926,7 @@ module TypeScript {
             var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
 
             var typeArgs: PullTypeSymbol[] = null;
+            var typeReplacementMap: any = null;
 
             // resolve the type arguments, specializing if necessary
             if (callEx.typeArguments) {
@@ -1959,7 +1952,6 @@ module TypeScript {
                 var inferredTypeArgs: PullTypeSymbol[];
                 var specializedSignature: PullSignatureSymbol;
                 var typeParameters: PullTypeParameterSymbol[];
-                var typeReplacementMap: any;
 
                 for (var i = 0; i < signatures.length; i++) {
                     if (signatures[i].isGeneric()) {
@@ -2027,6 +2019,13 @@ module TypeScript {
                 for (var i = 0; i < len; i++) {
 
                     if (params.length && i < params.length) {
+                        if (typeReplacementMap) {
+                            context.pushTypeSpecializationCache(typeReplacementMap);
+                        }
+                        this.resolveDeclaredSymbol(params[i], context);
+                        if (typeReplacementMap) {
+                            context.popTypeSpecializationCache();
+                        }
                         contextualType = params[i].getType();
                     }
                     else if (params.length) {
@@ -3419,6 +3418,9 @@ module TypeScript {
                         this.relateTypeToTypeParameters(argSym.getType(), parameterType, false, argContext, enclosingDecl, context);
 
                         cxt = context.popContextualType();
+
+                        argSym.invalidate();
+
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
                     }
                 }
@@ -3429,6 +3431,9 @@ module TypeScript {
                     this.relateTypeToTypeParameters(argSym.getType(), parameterType, false, argContext, enclosingDecl, context);
 
                     cxt = context.popContextualType();
+
+                    argSym.invalidate();
+
                     hadProvisionalErrors = cxt.hadProvisionalErrors();
                 }
             }
@@ -3582,11 +3587,17 @@ module TypeScript {
             this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
         }
 
-        public specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            return specializeType(typeToSpecialize, [], this, enclosingDecl, context);
+        public specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            var prevSpecialize = context.specializingToAny;
+
+            context.specializingToAny = true;
+            var type = specializeType(typeToSpecialize, [], this, enclosingDecl, context);
+            context.specializingToAny = prevSpecialize;
+
+            return type;
         }
 
-        public specializeSignatureToAny(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public specializeSignatureToAny(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
             var typeParameters = signatureToSpecialize.getTypeParameters();
             var typeReplacementMap: any = {};
             var typeArguments: PullTypeSymbol[] = []; // PULLTODO - may be expensive, but easy to cache

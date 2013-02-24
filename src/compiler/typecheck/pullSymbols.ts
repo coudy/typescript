@@ -1226,8 +1226,12 @@ module TypeScript {
             this.elementType = type;
         }
 
+        public getName() {
+            return this.toString();
+        }
+
         public toString() {
-            var elementTypeName = this.elementType ? this.elementType.getName() : "T";
+            var elementTypeName = this.elementType ? this.elementType.getName() : "TypeArg";
             return "Array<" + elementTypeName + ">";
         }
     }
@@ -1360,13 +1364,43 @@ module TypeScript {
 
     export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
 
+        if (typeToSpecialize.isTypeParameter()) {
+
+            if (context.specializingToAny) {
+                return resolver.semanticInfoChain.anyTypeSymbol;
+            }
+
+            var subsitution = context.findSpecializationForType(typeToSpecialize);
+
+            if (subsitution) {
+                return subsitution;
+            }
+
+            if (typeArguments.length) {
+                return typeArguments[0];
+            }
+        }
+
+        // In this case, we have an array type that may have been specialized to a type variable
+        if (typeToSpecialize.isArray()) {
+
+            var elementType = (<PullArrayTypeSymbol>typeToSpecialize).getElementType();
+
+            var newElementType = specializeType(elementType, typeArguments, resolver, enclosingDecl, context, ast);
+
+            // we re-specialize so that we can re-use any cached array type symbols
+            var newArrayType = specializeType(resolver.getCachedArrayType(), [newElementType], resolver, enclosingDecl, context);
+
+            return newArrayType;
+        }
+
         var typeParameters = typeToSpecialize.getTypeParameters();
 
         var isArray = typeToSpecialize == resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
-        if (!typeParameters.length) {
-            return typeToSpecialize;
-        }
+        //if (!typeParameters.length) {
+        //    return typeToSpecialize;
+        //}
 
         if (!typeArguments.length) {
             for (var i = 0; i < typeParameters.length; i++) {
@@ -1377,7 +1411,7 @@ module TypeScript {
         var typeToReplace: PullTypeParameterSymbol = null;
         var typeConstraint: PullTypeSymbol = null;
 
-        for (var iArg = 0; iArg < typeArguments.length; iArg++) {
+        for (var iArg = 0; (iArg < typeArguments.length) && (iArg < typeParameters.length); iArg++) {
             typeToReplace = <PullTypeParameterSymbol>typeParameters[iArg];
 
             typeConstraint = typeToReplace.getConstraint();
@@ -1521,6 +1555,13 @@ module TypeScript {
 
             newConstructorMethod.setType(newConstructorType);
 
+            var constructorDecls: PullDecl[] = constructorMethod.getDeclarations();
+
+            for (var i = 0; i < constructorDecls.length; i++) {
+                newConstructorMethod.addDeclaration(constructorDecls[i]);
+                newConstructorType.addDeclaration(constructorDecls[i]);
+            }            
+
             (<PullClassTypeSymbol>newType).setConstructorMethod(newConstructorMethod);
         }
 
@@ -1537,7 +1578,6 @@ module TypeScript {
         context: PullTypeResolutionContext,
         ast?: AST): PullSignatureSymbol {
 
-
         var newSignature = signature.getSpecialization(typeArguments);
 
         if (newSignature) {
@@ -1553,18 +1593,30 @@ module TypeScript {
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.getReturnType();
 
-        if (returnType.isGeneric()) {
-            var newReturnElementType = returnType.isArray() ? (<PullArrayTypeSymbol>returnType).getElementType() : returnType;
+        context.pushTypeSpecializationCache(typeReplacementMap);
+        var newReturnType = specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast);
+        context.popTypeSpecializationCache();
 
-            var replacementReturnType = <PullTypeSymbol>typeReplacementMap[newReturnElementType.getSymbolID().toString()];
-
-            var newReturnType = specializeType(returnType, [replacementReturnType], resolver, enclosingDecl, context);
-
-            newSignature.setReturnType(newReturnType);
+        if (newReturnType != returnType) {
+            newReturnType.addDeclaration(returnType.getDeclarations()[0]);
         }
-        else {
-            newSignature.setReturnType(returnType);
-        }
+
+        newSignature.setReturnType(newReturnType);
+
+        //if (returnType.isGeneric()) {
+        //    var newReturnElementType = returnType.isArray() ? (<PullArrayTypeSymbol>returnType).getElementType() : returnType;
+
+        //    var replacementReturnType = <PullTypeSymbol>typeReplacementMap[newReturnElementType.getSymbolID().toString()];
+
+        //    replacementReturnType = replacementReturnType ? replacementReturnType : newReturnElementType;
+
+        //    var newReturnType = specializeType(returnType, [replacementReturnType], resolver, enclosingDecl, context);
+
+        //    newSignature.setReturnType(newReturnType);
+        //}
+        //else {
+        //    newSignature.setReturnType(returnType);
+        //}
 
         var newParameter: PullSymbol;
         var newParameterType: PullTypeSymbol;
@@ -1575,7 +1627,7 @@ module TypeScript {
         var typeToReplace: PullTypeParameterSymbol;
         var typeConstraint: PullTypeSymbol;
 
-        for (var iArg = 0; iArg < typeArguments.length; iArg++) {
+        for (var iArg = 0; (iArg < typeArguments.length) && (iArg < typeParameters.length); iArg++) {
             typeToReplace = <PullTypeParameterSymbol>typeParameters[iArg];
 
             typeConstraint = typeToReplace.getConstraint();
@@ -1604,18 +1656,34 @@ module TypeScript {
 
         for (var k = 0; k < parameters.length; k++) {
             newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
+            newParameter.addDeclaration(parameters[k].getDeclarations()[0]);
 
             parameterType = parameters[k].getType();
-            newParameterElementType = parameterType.isArray() ? (<PullArrayTypeSymbol>parameterType).getElementType() : parameterType;
-            replacementParameterType = <PullTypeSymbol>typeReplacementMap[newParameterElementType.getSymbolID().toString()];
 
-            if (!localTypeParameters[parameterType.getName()] && parameterType.isGeneric() && replacementParameterType) {
-                newParameterType = specializeType(parameterType, [replacementParameterType], resolver, enclosingDecl, context);
-                newParameter.setType(newParameterType);
+            context.pushTypeSpecializationCache(typeReplacementMap);
+            var newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, typeArguments, resolver, enclosingDecl, context, ast) : parameterType;
+            context.popTypeSpecializationCache();
+
+            if (newParameterType != parameterType) {
+                newParameterType.addDeclaration(parameterType.getDeclarations()[0]);
             }
-            else {
-                newParameter.setType(parameterType);
-            }
+
+            newParameter.setType(newParameterType);
+
+            //// check for array type
+            //newParameterElementType = parameterType.isArray() ? (<PullArrayTypeSymbol>parameterType).getElementType() : parameterType;
+
+            //replacementParameterType = <PullTypeSymbol>typeReplacementMap[newParameterElementType.getSymbolID().toString()];
+
+            //replacementParameterType = replacementParameterType ? replacementParameterType : newParameterElementType;
+
+            //if (!localTypeParameters[parameterType.getName()] && parameterType.isGeneric() && replacementParameterType) {
+            //    newParameterType = specializeType(parameterType, [replacementParameterType], resolver, enclosingDecl, context);
+            //    newParameter.setType(newParameterType);
+            //}
+            //else {
+            //    newParameter.setType(parameterType);
+            //}
 
             newSignature.addParameter(newParameter);
         }
