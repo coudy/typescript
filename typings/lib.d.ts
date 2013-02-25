@@ -7266,10 +7266,7 @@ interface IDBKeyRange {
     lowerBound(bound: any, open?: bool): IDBKeyRange;
     upperBound(bound: any, open?: bool): IDBKeyRange;
 }
-declare var IDBKeyRange: {
-    prototype: IDBKeyRange;
-    new(): IDBKeyRange;
-}
+declare var IDBKeyRange: IDBKeyRange;
 
 interface WindowConsole {
     console: Console;
@@ -8261,4 +8258,3 @@ declare var WScript : {
     ScriptFullName: string;
     Quit(exitCode?: number);
 }
-
