@@ -102,12 +102,14 @@ module TypeScript {
         }
 
         public setErrors(errors: PullError[]) {
-            this.errors = [];
-            
-            // adjust the spans as we parent the errors to the new decl
-            for (var i = 0; i < errors.length; i++) {
-                errors[i].adjustOffset(this.span.minChar);
-                this.errors[this.errors.length] = errors[i];
+            if (errors) {
+                this.errors = [];
+                
+                // adjust the spans as we parent the errors to the new decl
+                for (var i = 0; i < errors.length; i++) {
+                    errors[i].adjustOffset(this.span.minChar);
+                    this.errors[this.errors.length] = errors[i];
+                }
             }
         }
 

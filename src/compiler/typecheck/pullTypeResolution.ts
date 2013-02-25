@@ -4,14 +4,6 @@
 ///<reference path='..\typescript.ts' />
 
 
-/*
-
-Architectural TODO:
-
-- More consistent use of PullSymbol subtyping.  (Basically, audit all return and param types)
-- Move enclosing decl to pull resolution context
-
-*/
 module TypeScript {
 
     export interface IPullTypeCollection {
@@ -147,9 +139,9 @@ module TypeScript {
         // PULLTODO: Don't bother using spans - obtain cached Decls from syntax nodes
         public getPathToDecl(decl: PullDecl): PullDecl[] {
 
-            //if (!decl) {
-            //    return [];
-            //}
+            if (!decl) {
+                return [];
+            }
 
             //var parentDecl: PullDecl = decl.getParentDecl();
             //var decls: PullDecl[] = [];
@@ -414,7 +406,7 @@ module TypeScript {
             if (classDeclAST.extendsList) {
                 var parentType: PullTypeSymbol = null;
                 for (var i = 0; i < classDeclAST.extendsList.members.length; i++) {
-                    parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), enclosingDecl, context);
+                    parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
                     classDeclSymbol.addExtendedType(parentType);
                 }
             }
@@ -422,7 +414,7 @@ module TypeScript {
             if (classDeclAST.implementsList) {
                 var implementedType: PullTypeSymbol = null;
                 for (var i = 0; i < classDeclAST.implementsList.members.length; i++) {
-                    implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), enclosingDecl, context);
+                    implementedType = this.resolveTypeReference(new TypeReference(classDeclAST.implementsList.members[i], 0), classDecl, context);
                     classDeclSymbol.addImplementedType(implementedType);
                 }
             }
@@ -460,7 +452,7 @@ module TypeScript {
             if (interfaceDeclAST.extendsList) {
                 var parentType: PullTypeSymbol = null;
                 for (var i = 0; i < interfaceDeclAST.extendsList.members.length; i++) {
-                    parentType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.extendsList.members[i], 0), enclosingDecl, context);
+                    parentType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.extendsList.members[i], 0), interfaceDecl, context);
                     interfaceDeclSymbol.addExtendedType(parentType);
                 }
             }
@@ -468,7 +460,7 @@ module TypeScript {
             if (interfaceDeclAST.implementsList) {
                 var implementedType: PullTypeSymbol = null;
                 for (var i = 0; i < interfaceDeclAST.implementsList.members.length; i++) {
-                    implementedType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.implementsList.members[i], 0), enclosingDecl, context);
+                    implementedType = this.resolveTypeReference(new TypeReference(interfaceDeclAST.implementsList.members[i], 0), interfaceDecl, context);
                     interfaceDeclSymbol.addImplementedType(implementedType);
                 }
             }
@@ -755,6 +747,14 @@ module TypeScript {
                 return declSymbol.getType();
             }
 
+            if (declSymbol.isResolving()) {
+                // PULLTODO: Error or warning?
+                declSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                declSymbol.setResolved();
+            }
+
+            declSymbol.startResolving();
+
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
 
@@ -930,11 +930,21 @@ module TypeScript {
 
             var hadError = false;
 
-            if (signature.isResolved()) {
-                return funcSymbol;
-            }
-
             if (signature) {
+
+                if (signature.isResolved()) {
+                    return funcSymbol;
+                }
+
+                if (signature.isResolving()) {
+                    // PULLTODO: Error or warning?
+                    signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
+                    signature.setResolved();
+
+                    return funcSymbol;
+                }
+
+                signature.startResolving();
                 
                 // resolve parameter type annotations as necessary
                 if (funcDeclAST.arguments) {
@@ -978,6 +988,8 @@ module TypeScript {
                     signature.setResolved();
                 }
             }
+
+            // don't resolve anything here that's not relevant to the type of the function!
 
             return funcSymbol;
         }
@@ -1158,9 +1170,9 @@ module TypeScript {
             if (!nameSymbol) {
                 nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
-                if (nameSymbol && nameSymbol.getKind() == PullElementKind.Interface) {
-                    nameSymbol = null;
-                }
+                //if (nameSymbol && nameSymbol.getKind() == PullElementKind.Interface) {
+                //    nameSymbol = null;
+                //}
             }
 
             if (!nameSymbol) {
@@ -1914,6 +1926,7 @@ module TypeScript {
             var signatures = isSuperCall ? (<PullFunctionTypeSymbol>targetSymbol).getConstructSignatures() : (<PullFunctionTypeSymbol>targetSymbol).getCallSignatures();
 
             var typeArgs: PullTypeSymbol[] = null;
+            var typeReplacementMap: any = null;
 
             // resolve the type arguments, specializing if necessary
             if (callEx.typeArguments) {
@@ -1939,7 +1952,6 @@ module TypeScript {
                 var inferredTypeArgs: PullTypeSymbol[];
                 var specializedSignature: PullSignatureSymbol;
                 var typeParameters: PullTypeParameterSymbol[];
-                var typeReplacementMap: any;
 
                 for (var i = 0; i < signatures.length; i++) {
                     if (signatures[i].isGeneric()) {
@@ -2007,6 +2019,13 @@ module TypeScript {
                 for (var i = 0; i < len; i++) {
 
                     if (params.length && i < params.length) {
+                        if (typeReplacementMap) {
+                            context.pushTypeSpecializationCache(typeReplacementMap);
+                        }
+                        this.resolveDeclaredSymbol(params[i], context);
+                        if (typeReplacementMap) {
+                            context.popTypeSpecializationCache();
+                        }
                         contextualType = params[i].getType();
                     }
                     else if (params.length) {
@@ -3399,6 +3418,9 @@ module TypeScript {
                         this.relateTypeToTypeParameters(argSym.getType(), parameterType, false, argContext, enclosingDecl, context);
 
                         cxt = context.popContextualType();
+
+                        argSym.invalidate();
+
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
                     }
                 }
@@ -3409,6 +3431,9 @@ module TypeScript {
                     this.relateTypeToTypeParameters(argSym.getType(), parameterType, false, argContext, enclosingDecl, context);
 
                     cxt = context.popContextualType();
+
+                    argSym.invalidate();
+
                     hadProvisionalErrors = cxt.hadProvisionalErrors();
                 }
             }
@@ -3562,11 +3587,17 @@ module TypeScript {
             this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
         }
 
-        public specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            return specializeType(typeToSpecialize, [], this, enclosingDecl, context);
+        public specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            var prevSpecialize = context.specializingToAny;
+
+            context.specializingToAny = true;
+            var type = specializeType(typeToSpecialize, [], this, enclosingDecl, context);
+            context.specializingToAny = prevSpecialize;
+
+            return type;
         }
 
-        public specializeSignatureToAny(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        public specializeSignatureToAny(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
             var typeParameters = signatureToSpecialize.getTypeParameters();
             var typeReplacementMap: any = {};
             var typeArguments: PullTypeSymbol[] = []; // PULLTODO - may be expensive, but easy to cache
