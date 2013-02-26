@@ -1156,7 +1156,7 @@ module TypeScript {
             
             var id = nameAST.actualText;
 
-            var declPath = this.getPathToDecl(enclosingDecl);
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -1252,7 +1252,7 @@ module TypeScript {
             
             var id = nameAST.actualText;
 
-            var declPath = this.getPathToDecl(enclosingDecl);
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -1280,7 +1280,7 @@ module TypeScript {
             var nameAST = <Identifier> genericTypeAST.name;
             var id = nameAST.actualText;
 
-            var declPath = this.getPathToDecl(enclosingDecl);
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -1490,7 +1490,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var declPath = this.getPathToDecl(enclosingDecl);
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
             var decl: PullDecl;
             var classSymbol: PullClassTypeSymbol;
 
@@ -1517,7 +1517,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var declPath = this.getPathToDecl(enclosingDecl);
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
             var decl: PullDecl;
             var declFlags: PullElementFlags;
             var classSymbol: PullClassTypeSymbol = null;

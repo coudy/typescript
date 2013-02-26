@@ -1132,6 +1132,20 @@ module TypeScript {
 
                 foundAST = resultASTs[resultASTs.length - 1];
 
+                // Check if is a name of a container
+                if (foundAST.nodeType == NodeType.Name && resultASTs.length > 1) {
+                    var previousAST = resultASTs[resultASTs.length - 2];
+                    switch (previousAST.nodeType) {
+                        case NodeType.InterfaceDeclaration:
+                        case NodeType.ClassDeclaration:
+                        case NodeType.ModuleDeclaration:
+                            if (foundAST === (<NamedDeclaration>previousAST).name) {
+                                foundAST = previousAST;
+                            }
+                            break;
+                    }
+                }
+
                 // are we within a decl?  if so, just grab its symbol
                 if (lastDeclAST == foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
@@ -1230,6 +1244,66 @@ module TypeScript {
             }
 
             return { symbol : symbol, ast : foundAST};
+        }
+
+        public resolveSymbolForPath(path: AstPath, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; } {
+            if (!scriptName) {
+                scriptName = script.locationInfo.filename;
+            }
+
+            var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
+            var symbol: PullSymbol = null;
+            var lambdaAST: FuncDecl = null;
+            var searchTypeSpace = false;
+            var enclosingDecl: PullDecl = null;
+            var resolutionContext = new PullTypeResolutionContext();
+
+            for (var i = path.top; i >= 0 ; i--) {
+                var current = path.asts[i];
+                if (enclosingDecl === null) {
+                    var decl = semanticInfo.getDeclForAST(current);
+                    if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
+                        enclosingDecl = decl;
+                        break;
+                    }
+                }
+
+                if (current.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>current).fncFlags, FncFlags.IsFunctionExpression)) {
+                    lambdaAST = <FuncDecl>current;
+                } else if (current.nodeType == NodeType.TypeRef || current.nodeType == NodeType.TypeParameter || current.nodeType == NodeType.TypeAssertion) {
+                    resolutionContext.searchTypeSpace = true;
+                }
+            }
+
+            if (path.isNameOfInterface() || path.isInClassImplementsList() || path.isInInterfaceExtendsList()) {
+                resolutionContext.searchTypeSpace = true;
+            }
+
+            resolutionContext.resolveAggressively = true;
+
+
+            // if the found AST is a named, we want to check for previous dotted expressions,
+            // since those will give us the right typing
+            if (path.ast().nodeType === NodeType.Name && path.count() > 1) {
+                for (var i = path.count() - 1; i >= 0; i--) {
+                    if (path.asts[path.top - 1].nodeType === NodeType.Dot &&
+                        (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
+                        path.pop();
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+
+            if (lambdaAST) {
+                this.pullTypeChecker.resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
+                enclosingDecl = semanticInfo.getDeclForAST(lambdaAST);
+            }
+
+            symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), false /*isTypedAssignment*/, enclosingDecl, resolutionContext);
+
+            return { symbol: symbol, ast: path.ast() };
         }
 
         public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): { ast: AST; typeName: string; typeInfo: string; typeSymbol: PullTypeSymbol; } {

@@ -53,15 +53,109 @@ module Services {
         }
 
         public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
-            return [];
+            this.refresh();
+
+            var result: ReferenceEntry[] = [];
+
+            var script = this.pullCompilerState.getScriptAST(fileName);
+              
+            /// TODO: this does not allow getting references on "constructor"
+
+            var path = this.getAstPathToPosition(script, pos);
+            if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
+                this.logger.log("No name found at the given position");
+                return result;
+            }
+
+            var symbolInfoAtPosition = this.pullCompilerState.getPullSymbolFromPath(path, script);
+            if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
+                this.logger.log("No symbol found at the given position");
+                return result;
+            }
+
+            var symbol = symbolInfoAtPosition.symbol;
+            
+            for (var i = 0, len = this.pullCompilerState.getScriptCount() ; i < len; i++) {
+                result = result.concat(this.getReferencesInFile(i, symbol));
+            }
+
+            return result;
         }
 
         public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
-            return [];
+            this.refresh();
+
+            var result: ReferenceEntry[] = [];
+
+            var script = this.pullCompilerState.getScriptAST(fileName);
+
+            /// TODO: this does not allow getting references on "constructor"
+
+            var path = this.getAstPathToPosition(script, pos);
+            if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
+                this.logger.log("No name found at the given position");
+                return result;
+            }
+
+            var symbolInfoAtPosition = this.pullCompilerState.getPullSymbolFromPath(path, script);
+            if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
+                this.logger.log("No symbol found at the given position");
+                return result;
+            }
+
+           
+            var symbol = symbolInfoAtPosition.symbol;
+
+            return this.getReferencesInFile(this.pullCompilerState.getUnitIndex(fileName), symbol);
         }
 
         public getImplementorsAtPosition(fileName: string, position: number): ReferenceEntry[] {
             return [];
+        }
+
+        private getReferencesInFile(unitIndex: number, symbol: TypeScript.PullSymbol): ReferenceEntry[] {
+            var result: ReferenceEntry[] = [];
+            var symbolName = symbol.getName();
+            
+            var possiblePositions = this.getPossibleSymbolReferencePositions(unitIndex, symbol);
+            if (possiblePositions && possiblePositions.length > 0) {
+                var searchScript = this.pullCompilerState.getScript(unitIndex);
+
+                possiblePositions.forEach(p => {
+                    var path = this.getAstPathToPosition(searchScript, p);
+                    if (path.ast() === null || path.ast().nodeType !== TypeScript.NodeType.Name) {
+                        return;
+                    }
+
+                    var searchSymbolInfoAtPosition = this.pullCompilerState.getPullSymbolFromPath(path, searchScript);
+                    if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
+                        var isWriteAccess = false; // this.isWriteAccess(searchSymbolInfoAtPosition.ast, searchSymbolInfoAtPosition.parentAST);
+                        result.push(new ReferenceEntry(unitIndex, searchSymbolInfoAtPosition.ast, isWriteAccess));
+                    }
+                });
+            }
+            
+
+            return result;
+        }
+
+        private getPossibleSymbolReferencePositions(unitIndex: number, symbol: TypeScript.PullSymbol): number []{
+            var positions: number[] = [];
+
+            /// TODO: Cache symbol existence for files to save text search
+            /// TODO: Use a smarter search mechanism to avoid picking up partial matches, matches in comments and in string literals
+
+            var sourceText = this.pullCompilerState.getSourceText3(unitIndex);
+            var text = sourceText.getText(0, sourceText.getLength());
+            var symbolName = symbol.getName();
+
+            var position = text.indexOf(symbolName);
+            while (position >= 0) {
+                positions.push(position);
+                position = text.indexOf(symbolName, position + symbolName.length + 1);
+            }
+
+            return positions;
         }
 
         private _getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {

@@ -439,6 +439,34 @@ module TypeScript {
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.Block &&
                 (<TypeScript.Block>this.asts[this.top - 0]).isStatementBlock === false;
         }
+
+        public isInClassImplementsList(): bool {
+            if (this.ast() === null || this.parent() === null)
+                return false;
+
+            return (this.parent().nodeType === TypeScript.NodeType.ClassDeclaration) &&
+                (this.isMemberOfList((<TypeScript.ClassDeclaration>this.parent()).implementsList, this.ast()));
+        }
+
+        public isInInterfaceExtendsList(): bool {
+            if (this.ast() === null || this.parent() === null)
+                return false;
+
+            return (this.parent().nodeType === TypeScript.NodeType.InterfaceDeclaration) &&
+                (this.isMemberOfList((<TypeScript.InterfaceDeclaration>this.parent()).extendsList, this.ast()));
+        }
+
+        private isMemberOfList(list: ASTList, item: AST): bool {
+            if (list && list.members) {
+                for (var i = 0, n = list.members.length; i < n; i++) {
+                    if (list.members[i] === item) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 
     export function isValidAstNode(ast: TypeScript.ASTSpan): bool {

@@ -367,6 +367,10 @@ module Services {
             return this.hostCache.getSourceText(this.hostCache.getUnitIndex(fileName), cached);
         }
 
+        public getSourceText3(unitIndex: number, cached: bool = false) {
+            return this.hostCache.getSourceText(unitIndex, cached);
+        }
+
         // Since we don't have incremental parsing or typecheck, we resort to parsing the whole source text
         // and return a "syntax only" AST. For example, we use this for formatting engine.
         // We will change this when we have incremental parsing.
@@ -391,6 +395,10 @@ module Services {
 
         public getPullSymbolAtPosition(pos: number, script: TypeScript.Script) {
             return this.compiler.resolvePosition(pos, script);
+        }
+
+        public getPullSymbolFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
+            return this.compiler.resolveSymbolForPath(path, script);
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): bool {
