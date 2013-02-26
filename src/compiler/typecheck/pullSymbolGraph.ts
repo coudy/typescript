@@ -23,13 +23,12 @@ module TypeScript {
             if (!this.head) {
                 this.head = new IListItem(item);
                 this.last = this.head;
-                this.length++;
-                return;
             }
-            
-            this.last.next = new IListItem(item);
-            this.last.next.prev = this.last;
-            this.last = this.last.next;
+            else {
+                this.last.next = new IListItem(item);
+                this.last.next.prev = this.last;
+                this.last = this.last.next;
+            }
 
             this.length++;
         }
@@ -80,6 +79,10 @@ module TypeScript {
                         }
                         if (next) {
                             next.prev = prev;
+                        }
+
+                        if (node == this.last) {
+                            this.last = prev;
                         }
                     }
 
