@@ -193,7 +193,7 @@ function prependFile(prefixFile, destinationFile) {
 function compileFile(outFile, sources, prereqs, prefixes, useBuiltCompiler) {
 	file(outFile, prereqs, function() {
 		var dir = useBuiltCompiler ? builtLocalDirectory : LKGDirectory;
-		var cmd = (process.env.TYPESCRIPT_HOST || "Node") + " " + dir + "tsc.js -cflowu -const " + sources.join(" ") + " -out " + outFile;
+		var cmd = (process.env.TYPESCRIPT_HOST || "Node") + " " + dir + "tsc.js -cflowu " + sources.join(" ") + " -out " + outFile;
 		console.log(cmd);
 		jake.exec([cmd], function() {
 			if (prefixes) {
