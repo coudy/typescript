@@ -9,6 +9,8 @@ var servicesDirectory = "src/services/";
 var harnessDirectory = "src/harness/";
 var runnersDirectory = "tests/runners/";
 var libraryDirectory = "typings/";
+var genericLibraryDirectory = "typings/generic";
+var nongenericLibraryDirectory = "typings/non-generic";
 var builtDirectory = "built/";
 var builtLocalDirectory = "built/local/";
 var builtTestDirectory = "built/localtest/";
@@ -252,6 +254,18 @@ task("default", ["local"]);
 desc("Cleans the compiler output, declare files, and tests");
 task("clean", function() {
 	jake.rmRf(builtDirectory);
+});
+
+// Copies generic lib.d.ts to built\bin
+desc("Copies generic lib.d.ts to built\bin for use by compiler");
+task("generic", function() {
+	jake.cpR(path.join(genericLibraryDirectory, "lib.d.ts"), builtLocalDirectory);
+});
+
+// Copies non-generic lib.d.ts to built\bin
+desc("Copies non-generic lib.d.ts to built\bin for use by compiler");
+task("nongeneric", function() {
+	jake.cpR(path.join(nongenericLibraryDirectory, "lib.d.ts"), builtLocalDirectory);
 });
 	
 // Makes a new LKG. This target does not build anything, but errors if not all the outputs are present in the built/local directory
