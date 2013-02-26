@@ -240,7 +240,11 @@ module TypeScript {
 
                     // add the current module decl to the declaration list, to make up for the ones we just deleted
                     moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
+
+                    moduleInstanceSymbol.invalidate();
                 }
+
+                moduleContainerTypeSymbol.invalidate();
             }
 
             this.pushParent(moduleContainerTypeSymbol);
@@ -369,6 +373,8 @@ module TypeScript {
                 for (var j = 0; j < decls.length; j++) {
                     if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
                         classSymbol.removeDeclaration(decls[j]);
+
+                        cleanedPreviousDecls = true;
                     }
                 }
 
@@ -382,6 +388,30 @@ module TypeScript {
 
                         cleanedPreviousDecls = true;
                     }
+                }
+
+                if (classSymbol.isGeneric()) {
+                    //classSymbol.invalidateSpecializations();
+                    
+                    var specializations = classSymbol.getKnownSpecializations();
+                    var specialization: PullTypeSymbol = null;
+
+                    for (var i = 0; i < specializations.length; i++) {
+                        specialization = specializations[i];
+
+                        decls = specialization.getDeclarations();
+
+                        for (var j = 0; j < decls.length; j++) {
+                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                                specialization.removeDeclaration(decls[j]);
+
+                                cleanedPreviousDecls = true;
+                            }
+                        }
+
+                        specialization.addDeclaration(classDecl);                
+                    }
+                    
                 }
             }
 
@@ -464,10 +494,16 @@ module TypeScript {
                 constructorSymbol.setType(constructorTypeSymbol);
                 constructorSymbol.addDeclaration(classDecl);
                 classSymbol.setConstructorMethod(constructorSymbol);
+
+                constructorTypeSymbol.addDeclaration(classDecl);
+
+                // set the class decl's AST to the class declaration
+                this.semanticInfo.setASTForDecl(classDecl, classAST);
                 
                 var constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                 constructorSignature.setReturnType(classSymbol);
                 constructorTypeSymbol.addSignature(constructorSignature);
+                constructorSignature.addDeclaration(classDecl)
             }
 
             //constructorTypeSymbol = <PullConstructorTypeSymbol>constructorSymbol.getType();
@@ -492,14 +528,31 @@ module TypeScript {
 
             var typeParameters = classDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = classSymbol.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+                    constructorTypeSymbol.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-
-                classSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
-                constructorTypeSymbol.addTypeParameter(typeParameter);
             }
         }
 
@@ -561,6 +614,30 @@ module TypeScript {
                         interfaceSymbol.removeDeclaration(decls[i]);
                     }
                 }
+
+                if (interfaceSymbol.isGeneric()) {
+
+                    //interfaceSymbol.invalidateSpecializations();
+
+                    
+                    var specializations = interfaceSymbol.getKnownSpecializations();
+                    var specialization: PullTypeSymbol = null;
+
+                    for (var i = 0; i < specializations.length; i++) {
+                        specialization = specializations[i];
+
+                        decls = specialization.getDeclarations();
+
+                        for (var j = 0; j < decls.length; j++) {
+                            if (decls[j].getScriptName() == scriptName && decls[j].getDeclID() < this.startingDeclForRebind) {
+                                specialization.removeDeclaration(decls[j]);
+                            }
+                        }
+
+                        specialization.addDeclaration(interfaceDecl);
+                    }
+                    
+                }
             }
 
             this.pushParent(interfaceSymbol);
@@ -575,13 +652,32 @@ module TypeScript {
 
             var typeParameters = interfaceDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = interfaceSymbol.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    interfaceSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                interfaceSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
             }
+
         }
 
         public bindObjectTypeDeclarationToPullSymbol(objectDecl: PullDecl) {
@@ -606,13 +702,32 @@ module TypeScript {
 
             var typeParameters = objectDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = objectSymbol.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    objectSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                objectSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
             }
+
         }
 
         public bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
@@ -641,13 +756,31 @@ module TypeScript {
 
             var typeParameters = constructorTypeDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = constructorTypeSymbol.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    constructorTypeSymbol.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                constructorTypeSymbol.addMember(typeParameter, SymbolLinkKind.TypeParameter);
-            }
+            }            
         }
 
         // variables
@@ -748,6 +881,19 @@ module TypeScript {
                     if (classTypeSymbol) {
                         variableSymbol = classTypeSymbol.getConstructorMethod();
                         variableDeclaration.setSymbol(variableSymbol);
+
+                        // set the AST to the constructor method's if possible
+                        var decls = classTypeSymbol.getDeclarations();
+
+                        if (decls.length) {
+
+                            var decl = decls[decls.length - 1];
+                            var ast = this.semanticInfo.getASTForDecl(decl);
+
+                            if (ast) {
+                                this.semanticInfo.setASTForDecl(variableDeclaration, ast);
+                            }
+                        }
                     }
                     else {
                         // PULLTODO: Raise an Error here
@@ -782,6 +928,19 @@ module TypeScript {
 
                         variableSymbol.addDeclaration(variableDeclaration);
                         variableDeclaration.setSymbol(variableSymbol);
+
+                        // set the AST to the constructor method's if possible
+                        var decls = moduleContainerTypeSymbol.getDeclarations();
+
+                        if (decls.length) {
+
+                            var decl = decls[decls.length - 1];
+                            var ast = this.semanticInfo.getASTForDecl(decl);
+
+                            if (ast) {
+                                this.semanticInfo.setASTForDecl(variableDeclaration, ast);
+                            }
+                        }                        
                         
                         // we added the variable to the parent when binding the module
                         parentHadSymbol = true;
@@ -858,6 +1017,8 @@ module TypeScript {
                         propertySymbol.removeDeclaration(decls[j]);
                     }
                 }
+
+                propertySymbol.invalidate();
             }
 
             if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
@@ -1113,6 +1274,8 @@ module TypeScript {
                         cleanedPreviousDecls = true;
                     }
                 }
+
+                functionSymbol.invalidate();
             } 
 
             if (!functionSymbol) {
@@ -1166,13 +1329,31 @@ module TypeScript {
 
             var typeParameters = functionDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = signature.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    signature.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                signature.addTypeParameter(typeParameter);
-            }
+            }            
 
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
@@ -1216,13 +1397,31 @@ module TypeScript {
 
             var typeParameters = functionExpressionDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = signature.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    signature.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                signature.addTypeParameter(typeParameter);
-            }
+            }            
 
             signature.addDeclaration(functionExpressionDeclaration);
             functionExpressionDeclaration.setSignatureSymbol(signature);
@@ -1261,13 +1460,31 @@ module TypeScript {
 
             var typeParameters = functionTypeDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = signature.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    signature.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                signature.addTypeParameter(typeParameter);
-            }
+            }            
 
             signature.addDeclaration(functionTypeDeclaration);
             functionTypeDeclaration.setSignatureSymbol(signature);
@@ -1328,6 +1545,8 @@ module TypeScript {
                         cleanedPreviousDecls = true;
                     }
                 }
+
+                methodSymbol.invalidate();
             }
 
             if (!methodSymbol) {
@@ -1382,13 +1601,31 @@ module TypeScript {
 
             var typeParameters = methodDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = signature.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    signature.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                signature.addTypeParameter(typeParameter);
-            }
+            }            
 
             signature.addDeclaration(methodDeclaration);
             methodDeclaration.setSignatureSymbol(signature);
@@ -1484,17 +1721,6 @@ module TypeScript {
 
             constructSignature.setReturnType(parent);
 
-            // PULLREVIEW: A class constructor doesn't declare it's own type parameters
-            //var typeParameters = constructorDeclaration.getTypeParameters();
-            //var typeParameter: PullTypeParameterSymbol;
-
-            //for (var i = 0; i < typeParameters.length; i++) {
-            //    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
-            //    typeParameter.addDeclaration(typeParameters[i]);
-            //    typeParameters[i].setSymbol(typeParameter);
-            //    constructSignature.addTypeParameter(typeParameter);
-            //}
-
             constructSignature.addDeclaration(constructorDeclaration);
             constructorDeclaration.setSignatureSymbol(constructSignature);
 
@@ -1524,19 +1750,37 @@ module TypeScript {
                 parent.removeConstructSignature(constructSigs[i], false);
             }
 
-            parent.invalidate();
+            //parent.invalidate();
             
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
             var typeParameters = constructSignatureDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = constructSignature.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    constructSignature.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                constructSignature.addTypeParameter(typeParameter);
-            }
+            }            
 
             constructSignature.addDeclaration(constructSignatureDeclaration);
             constructSignatureDeclaration.setSignatureSymbol(constructSignature);
@@ -1558,20 +1802,37 @@ module TypeScript {
             for (var i = 0; i < callSigs.length; i++) {
                 parent.removeConstructSignature(callSigs[i], false);
             }
-
-            parent.invalidate();
             
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
             var typeParameters = callSignatureDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
+
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = callSignature.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    callSignature.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                callSignature.addTypeParameter(typeParameter);
-            }
+            }            
 
             callSignature.addDeclaration(callSignatureDeclaration);
             callSignatureDeclaration.setSignatureSymbol(callSignature);
@@ -1591,20 +1852,36 @@ module TypeScript {
             for (var i = 0; i < indexSigs.length; i++) {
                 parent.removeIndexSignature(indexSigs[i], false);
             }
-
-            parent.invalidate();
             
             var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
 
             var typeParameters = indexSignatureDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
+            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                typeParameter = indexSignature.findTypeParameter(typeParameters[i].getName());
+
+                if (!typeParameter) {
+                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
+
+                    indexSignature.addTypeParameter(typeParameter);
+                }
+                else {
+                    // clean the decls
+                    typeParameterDecls = typeParameter.getDeclarations();
+
+                    for (var j = 0; j < typeParameterDecls.length; j++) {
+                        if (typeParameterDecls[j].getDeclID() < this.startingDeclForRebind) {
+                            typeParameter.removeDeclaration(typeParameterDecls[j]);
+                        }
+                    }
+                }
+
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-                indexSignature.addTypeParameter(typeParameter);
-            }
+            }            
 
             indexSignature.addDeclaration(indexSignatureDeclaration);
             indexSignatureDeclaration.setSignatureSymbol(indexSignature);

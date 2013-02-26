@@ -1034,6 +1034,7 @@ module TypeScript {
                             graphUpdater.removeDecl(diff.oldDecl);
                         }
                         else if (diff.kind == PullDeclEdit.DeclAdded) {
+                            graphUpdater.addDecl(diff.newDecl);                        
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
                             this.resolvePosition(diff.newDecl.getSpan().minChar, newScript);
                         }
@@ -1149,7 +1150,7 @@ module TypeScript {
                 // are we within a decl?  if so, just grab its symbol
                 if (lastDeclAST == foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
-                    this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, resolutionContext);
+                    this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, resolutionContext);
                 }
                 else {
                     // otherwise, it's an expression that needs to be resolved, so we must pull...

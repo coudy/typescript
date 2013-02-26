@@ -182,6 +182,12 @@ module TypeScript {
             symbolToRemove.updateOutgoingLinks(propagateRemovalToOutgoingLinks, new PullSymbolUpdate(GraphUpdateKind.SymbolRemoved, symbolToRemove, this));
 
             symbolToRemove.updateIncomingLinks(propagateRemovalToIncomingLinks, new PullSymbolUpdate(GraphUpdateKind.SymbolRemoved, symbolToRemove, this));
+
+            var container = symbolToRemove.getContainer();
+
+            if (container) {
+                container.removeMember(symbolToRemove);
+            }            
         }
         
         public addSymbol(symbolToAdd: PullSymbol) {
@@ -209,11 +215,11 @@ module TypeScript {
 
             symbolWhoseTypeChanged.typeChangeUpdateVersion = this.updateVersion;
 
-            symbolWhoseTypeChanged.unsetType();
-
             symbolWhoseTypeChanged.updateOutgoingLinks(propagateChangedTypeToOutgoingLinks, new PullSymbolUpdate(GraphUpdateKind.TypeChanged, symbolWhoseTypeChanged, this));
             
             symbolWhoseTypeChanged.updateIncomingLinks(propagateChangedTypeToIncomingLinks, new PullSymbolUpdate(GraphUpdateKind.TypeChanged, symbolWhoseTypeChanged, this));
+
+            symbolWhoseTypeChanged.invalidate();            
 
         }
     }
@@ -245,7 +251,7 @@ module TypeScript {
             // no action...
         }
         else if (link.kind == SymbolLinkKind.SpecializedTo) {
-            // no action...
+            update.updater.removeSymbol(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeConstraint) {
             // no action...
@@ -514,7 +520,7 @@ module TypeScript {
 
     export function propagateChangedTypeToOutgoingLinks(link: PullSymbolLink, update: PullSymbolUpdate) { 
         var symbolWhoseTypeChanged = update.symbolToUpdate;
-        var affectedSymbol = link.start;
+        var affectedSymbol = link.end;
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
@@ -545,7 +551,7 @@ module TypeScript {
             // do nothing...
         }
         else if (link.kind == SymbolLinkKind.PublicMember) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.PrivateMember) {
             // do nothing...
@@ -642,7 +648,7 @@ module TypeScript {
             // do nothing...
         }
         else if (link.kind == SymbolLinkKind.ReturnType) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.CallSignature) {
             // do nothing...
