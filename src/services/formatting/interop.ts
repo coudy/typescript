@@ -729,7 +729,7 @@ module Formatting {
                             return funcDecl.minChar; // TODO: Is this really the "function" keyword?
 
                         case AuthorParseNodeProperty.apnpLCurlyMin:
-                            if (bod !== null) {
+                            if (bod !== null && bod.minChar > 0) {
                                 return bod.minChar;
                             }
                             else {
@@ -737,7 +737,7 @@ module Formatting {
                             }
 
                         case AuthorParseNodeProperty.apnpRCurlyMin:
-                            if (bod !== null) {
+                            if (bod !== null && bod.limChar > 0) {
                                 return bod.limChar - 1; // need to return *starting* position of curly
                             }
                             else {
@@ -745,7 +745,7 @@ module Formatting {
                             }
 
                         case AuthorParseNodeProperty.apnpRParenMin:
-                            if (funcDecl.arguments != null) {
+                            if (funcDecl.arguments != null && funcDecl.arguments.limChar > 0) {
                                 return funcDecl.arguments.limChar - 1; // need to return *starting* position of curly
                             }
                     }

@@ -51,6 +51,15 @@ module Formatting {
             var caretSpan = this.snapshotSpan.span;
             var context = ParseTree.FindCommonParentNode(caretSpan, caretSpan, tree.Root);
 
+            if (context && context.AuthorNode.Details.nodeType == TypeScript.NodeType.QString) {
+                var nodeSpan = Span.FromBounds(context.AuthorNode.Details.StartOffset, context.AuthorNode.Details.EndOffset);
+                if (nodeSpan.Contains(caretSpan)) {
+                    // this is a multi-line string literal, do not attempt to indent it
+                    this.DesiredIndentation = "";
+                    return;
+                }
+            }
+
             // The context should never point to the beginning of a node. If this happened then we are pointing to the next node
             // as opposed to the parent node, so move to the parent since we are interested in children indentation.
             // The only exception is when the node points to a non-synthetic block, since { should be indented based on the block not the parent

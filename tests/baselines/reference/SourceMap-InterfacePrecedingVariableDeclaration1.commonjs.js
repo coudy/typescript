@@ -50,3 +50,7 @@ var x = 0;
 //@ sourceMappingURL=importInsideModule_file2.js.map
 ////[importInsideModule_file2.js.map]
 {"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
+////[moduleWithAmbientCallSignatureTest.js]
+//@ sourceMappingURL=moduleWithAmbientCallSignatureTest.js.map
+////[moduleWithAmbientCallSignatureTest.js.map]
+{"version":3,"file":"moduleWithAmbientCallSignatureTest.js","sources":["moduleWithAmbientCallSignatureTest.ts"],"names":[],"mappings":""}

@@ -202,6 +202,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.baselineCurrentFileBreakpointLocations();
         }
 
+        public nameOrDottedNameSpanTextIs(text: string) {
+            FourSlash.currentTestState.verifyCurrentNameOrDottedNameSpanText(text);
+        }
+
         public outliningSpansInCurrentFile(spans: TextSpan[]) {
             FourSlash.currentTestState.verifyOutliningSpans(spans);
         }

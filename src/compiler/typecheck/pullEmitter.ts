@@ -1618,9 +1618,9 @@ module TypeScript {
 
         // PULLTODO
         public emitPrologue(reqInherits: bool) {
-            if (!this.prologueEmitted) {
+            if (!this.extendsPrologueEmitted) {
                 if (reqInherits) {
-                    this.prologueEmitted = true;
+                    this.extendsPrologueEmitted = true;
                     this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
                     this.writeLineToOutput("    function __() { this.constructor = d; }");
                     this.writeLineToOutput("    __.prototype = b.prototype;");
@@ -1628,7 +1628,7 @@ module TypeScript {
                     this.writeLineToOutput("};");
                 }
                 if (this.checker.mustCaptureGlobalThis) {
-                    this.prologueEmitted = true;
+                    this.globalThisCapturePrologueEmitted = true;
                     this.writeLineToOutput(this.captureThisStmtString);
                 }
             }

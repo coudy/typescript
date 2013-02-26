@@ -630,6 +630,22 @@ module FourSlash {
             }
         }
 
+        public verifyCurrentNameOrDottedNameSpanText(text: string) {
+            var span = this.realLangSvc.getNameOrDottedNameSpan(this.activeFile.name, this.currentCaretPosition, this.currentCaretPosition);
+            if (span === null) {
+                throw new Error('verifyCurrentNameOrDottedNameSpanText\n' +
+                           '\tExpected: "' + text + '"\n' +
+                           '\t  Actual: null');
+            }
+
+            var actual = this.langSvc.getScriptSourceText(this.getActiveFileIndex(), span.minChar, span.limChar);
+            if (actual !== text) {
+                throw new Error('verifyCurrentNameOrDottedNameSpanText\n' +
+                               '\tExpected: "' + text + '"\n' +
+                               '\t  Actual: "' + actual + '"');
+            }
+        }
+
         public verifyOutliningSpans(spans: TextSpan[]) {
             var actual = this.pullLanguageService.getOutliningSpans(this.activeFile.name);
 

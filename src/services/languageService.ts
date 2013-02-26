@@ -1764,7 +1764,8 @@ module Services {
 
             if (path.isNameOfVariable() // var <here>
                 || path.isNameOfFunction() // function <here>
-                || path.isNameOfArgument() // function foo(<here>
+                || path.isNameOfArgument() // function foo(a<here>
+                || path.isArgumentListOfFunction() // function foo(<here>
                 || path.isNameOfInterface() // interface <here>
                 || path.isNameOfClass() // class <here>
                 || path.isNameOfModule() // module <here>

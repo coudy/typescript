@@ -26,3 +26,15 @@ var s9 = '\'';
 var s10 = "\"";
 var s11 = "\b\0\n\t\f\r\v\\\251\"\'";
 var s12 = '\b\0\n\t\f\r\v\\\251\"\'';
+
+
+// empty multiLine string
+var s13 = '\
+';
+var s14 = '\
+\
+\
+\
+';
+var s15 = 'string\
+';

@@ -931,10 +931,13 @@ module TypeScript {
             bod.minChar = bodMinChar;
             bod.limChar = this.scanner.pos;
             this.inFunction = savedInFunction;
-            var ec = new EndCode();
-            ec.minChar = bod.limChar;
-            ec.limChar = ec.minChar;
-            bod.append(ec);
+            if (bod.limChar > bod.minChar) {
+                // bod could be empty due to error recovery (e.g. 'function foo ('); do not add the EndCode node for these cases
+                var ec = new EndCode();
+                ec.minChar = bod.limChar;
+                ec.limChar = ec.minChar;
+                bod.append(ec);
+            }
         }
 
         private parseFunctionStatements(errorRecoverySet: ErrorRecoverySet,
@@ -1002,11 +1005,10 @@ module TypeScript {
                     bod.limChar = retExpr.limChar;
                     bod.append(retStmt);
                 }
-                else {
+                else if (this.currentToken.tokenId != TokenID.EndOfFile) {
                     isAnonLambda = wasShorthand;
                     this.parseFunctionBlock(errorRecoverySet, allowedElements, parentModifiers, bod, bodMinChar);
                 }
-
                 limChar = this.scanner.pos;
             }
 
@@ -1309,8 +1311,8 @@ module TypeScript {
             else if (expectClosingRParen) {
                 this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet | ErrorRecoverySet.LCurly | ErrorRecoverySet.SColon);
             }
-
-            formals.limChar = this.scanner.lastTokenLimChar(); // ')' or ']'
+            // Extend the formals to catch EOF if it was encountered
+            formals.limChar = this.currentToken.tokenId == TokenID.EndOfFile ? this.scanner.pos : this.scanner.lastTokenLimChar(); // ')' or ']'
             return sawEllipsis;
         }
 
@@ -2146,7 +2148,8 @@ module TypeScript {
             errorRecoverySet: ErrorRecoverySet,
             modifiers: Modifiers,
             requireSignature: bool,
-            isStatic: bool): AST {
+            isStatic: bool,
+            unnamedAmbientFunctionOk?: bool): AST {
 
             var text: Identifier = null;
             var minChar = this.scanner.startPos;
@@ -2258,6 +2261,9 @@ module TypeScript {
                 if (isIndexer) {
                     ers = errorRecoverySet | ErrorRecoverySet.RBrack;
                 }
+                if (!text && unnamedAmbientFunctionOk && !isIndexer) {
+                    text = new MissingIdentifier();
+                }
                 var ast = this.parseFncDecl(ers, true, requireSignature,
                                        this.currentClassDefinition || this.inInterfaceDecl, text, isIndexer, isStatic, (this.parsingDeclareFile || hasFlag(modifiers, Modifiers.Ambient)), modifiers, null, true);
                 var funcDecl: FuncDecl;
@@ -2300,7 +2306,7 @@ module TypeScript {
                     }
                 }
 
-                if (text == null) {
+                if (text == null || (text.isMissing() && unnamedAmbientFunctionOk && !isIndexer)) {
                     if (isNew) {
                         funcDecl.fncFlags |= FncFlags.ConstructMember;
                         funcDecl.hint = "_construct";
@@ -2755,7 +2761,6 @@ module TypeScript {
                     ast.minChar = minChar;
                     break;
                 case TokenID.New:
-                    minChar = this.scanner.pos;
                     this.currentToken = this.scanner.scan();
                     var target = this.parseTerm(errorRecoverySet, false, TypeContext.AllSimpleTypes, inCast);
 
@@ -3438,7 +3443,7 @@ module TypeScript {
                         if (this.parsingDeclareFile || isAmbient() || this.ambientModule) {
                             this.currentToken = this.scanner.scan();
                             fnOrVar = this.parsePropertyDeclaration(errorRecoverySet | ErrorRecoverySet.SColon,
-                                                      modifiers, true, false);
+                                                      modifiers, true, false, true);
                             if (fnOrVar.nodeType == NodeType.VarDecl) {
                                 this.reportParseError("function keyword can only introduce function declaration");
                             }
@@ -3451,7 +3456,7 @@ module TypeScript {
                             }
                         }
                         else {
-                            ast = this.parseFncDecl(errorRecoverySet, true, false, false, null, false, false, isAmbient(), modifiers, null, true);
+                            ast = this.parseFncDecl(errorRecoverySet, true, false, false, null, false, false, false, modifiers, null, true);
                             if (hasFlag((<FuncDecl>ast).fncFlags, FncFlags.IsFatArrowFunction)) {
                                 needTerminator = true;
                             }

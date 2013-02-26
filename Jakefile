@@ -183,6 +183,7 @@ function prependFile(prefixFile, destinationFile) {
 	fs.renameSync(temp, destinationFile);
 }
 
+var useDebugMode = false;
 /* Compiles a file from a list of sources
 	* @param outFile: the target file name
 	* @param sources: an array of the names of the source files
@@ -194,9 +195,12 @@ function compileFile(outFile, sources, prereqs, prefixes, useBuiltCompiler) {
 	file(outFile, prereqs, function() {
 		var dir = useBuiltCompiler ? builtLocalDirectory : LKGDirectory;
 		var cmd = (process.env.TYPESCRIPT_HOST || "Node") + " " + dir + "tsc.js -cflowu " + sources.join(" ") + " -out " + outFile;
+		if (useDebugMode) {
+			cmd = cmd + " -sourcemap -fullSourceMapPath";
+		}
 		console.log(cmd);
 		jake.exec([cmd], function() {
-			if (prefixes) {
+			if (!useDebugMode && prefixes) {
 				for (var i in prefixes) {
 					prependFile(prefixes[i], outFile);
 				}
@@ -230,6 +234,16 @@ compileFile(serviceFile, compilerSources.concat(servicesSources), [builtLocalDir
 // Local target to build the compiler and services
 desc("Builds the full compiler and services");
 task("local", libraryTargets.concat([typescriptFile, tscFile, serviceFile]));
+
+// Local target to build the compiler and services
+desc("Emit debug mode files with sourcemaps");
+task("setDebugMode", function() {
+    useDebugMode = true;
+});
+
+// Local target to build the compiler and services
+desc("Builds the full compiler and services in debug mode");
+task("local-debug", ["setDebugMode", "local"]);
 
 // Set the default task to "local"
 task("default", ["local"]);
