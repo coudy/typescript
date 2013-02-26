@@ -4,7 +4,7 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
 License at http://www.apache.org/licenses/LICENSE-2.0  
  
-THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
 WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE, 
 MERCHANTABLITY OR NON-INFRINGEMENT. 
@@ -229,7 +229,7 @@ interface Function {
       * @param thisArg The object to be used as the this object.
       * @param argArray A set of arguments to be passed to the function.
       */
-    apply(thisArg: any, argArray?: any[]): any;
+    apply(thisArg: any, argArray?: any): any;
 
     /**
       * Calls a method of an object, substituting another object for the current object.
@@ -248,6 +248,10 @@ interface Function {
     
     prototype: any;
     length: number;
+
+    // Non-standard extensions
+    arguments: any;
+    caller: Function;
 }
 
 declare var Function: {
@@ -807,10 +811,25 @@ interface RegExp {
     multiline: bool;
 
     lastIndex: number;
+
+    // Non-standard extensions
+    compile(): RegExp;
 }
 declare var RegExp: {
     new (pattern: string, flags?: string): RegExp;
     (pattern: string, flags?: string): RegExp;
+
+    // Non-standard extensions
+    $1: string;
+    $2: string;
+    $3: string;
+    $4: string;
+    $5: string;
+    $6: string;
+    $7: string;
+    $8: string;
+    $9: string;
+    lastMatch: string;
 }
 
 interface Error {
