@@ -1747,10 +1747,13 @@ module TypeScript {
             var constructSigs = parent.getConstructSignatures();
 
             for (var i = 0; i < constructSigs.length; i++) {
-                parent.removeConstructSignature(constructSigs[i], false);
+                if (constructSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    parent.removeConstructSignature(constructSigs[i], false);
+                }
             }
 
-            //parent.invalidate();
+            // update the construct signature list
+            parent.recomputeConstructSignatures();
             
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
@@ -1800,8 +1803,13 @@ module TypeScript {
             var callSigs = parent.getCallSignatures();
 
             for (var i = 0; i < callSigs.length; i++) {
-                parent.removeCallSignature(callSigs[i], false);
+                if (callSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    parent.removeCallSignature(callSigs[i], false);
+                }
             }
+
+            // update the call signature list
+            parent.recomputeCallSignatures();
             
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
@@ -1850,8 +1858,13 @@ module TypeScript {
             var indexSigs = parent.getIndexSignatures();
 
             for (var i = 0; i < indexSigs.length; i++) {
-                parent.removeIndexSignature(indexSigs[i], false);
+                if (indexSigs[i].getSymbolID() < this.startingSymbolForRebind) {
+                    parent.removeIndexSignature(indexSigs[i], false);
+                }
             }
+
+            // update the index signature list
+            parent.recomputeIndexSignatures();         
             
             var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
 

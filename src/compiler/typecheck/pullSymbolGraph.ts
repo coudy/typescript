@@ -435,16 +435,16 @@ module TypeScript {
             // do nothing...
         }
         else if (link.kind == SymbolLinkKind.ReturnType) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.CallSignature) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructSignature) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.IndexSignature) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
     }
 
@@ -524,13 +524,13 @@ module TypeScript {
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
@@ -575,16 +575,16 @@ module TypeScript {
             // do nothing...
         }
         else if (link.kind == SymbolLinkKind.ReturnType) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.CallSignature) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructSignature) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.IndexSignature) {
-            // do nothing...
+            update.updater.invalidateType(affectedSymbol);
         }
     }
 

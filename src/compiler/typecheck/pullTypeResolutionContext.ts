@@ -234,7 +234,7 @@ module TypeScript {
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postError(error);
             }
-            else {
+            else if (enclosingDecl) {
                 enclosingDecl.addError(error);
             }
         }

@@ -846,6 +846,10 @@ module TypeScript {
             }
         }
 
+        public recomputeCallSignatures() {
+            this.callSignatureLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.CallSignature);
+        }
+
         public removeConstructSignature(signature: PullSignatureSymbol, invalidate = true) {
             var signatureLink: PullSymbolLink;
 
@@ -864,6 +868,10 @@ module TypeScript {
             }
         }
 
+        public recomputeConstructSignatures() {
+            this.constructSignatureLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.ConstructSignature);         
+        }
+
         public removeIndexSignature(signature: PullSignatureSymbol, invalidate = true) {
             var signatureLink: PullSymbolLink;
 
@@ -880,6 +888,10 @@ module TypeScript {
             if (invalidate) {
                 this.invalidate();
             }
+        }
+
+        public recomputeIndexSignatures() {
+            this.indexSignatureLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.IndexSignature);            
         }
 
         public addImplementedType(interfaceType: PullTypeSymbol) {

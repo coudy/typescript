@@ -372,6 +372,14 @@ module TypeScript {
                 
                 ast = this.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
 
+                if (!ast) {
+                    //var span = decl.getSpan();
+                    //context.postError(span.minChar, span.limChar - span.minChar, this.unitPath, "Could not resolve location for symbol '" + symbol.getName() +"'", enclosingDecl);
+
+                    // We'll return the cached results, and let the decl be corrected on the next invalidation
+                    return symbol;
+                }
+
                 this.setUnitPath(decl.getScriptName());
                 this.resolveDeclaration(ast, context);
             }
@@ -1668,6 +1676,8 @@ module TypeScript {
                     this.semanticInfoChain.getUnit(this.unitPath).setASTForDecl(decl, binex);
 
                     memberSymbol = new PullSymbol(text, PullElementKind.Property);
+
+                    decl.setSymbol(memberSymbol);
                     
                     if (contextualType) {
                         assigningSymbol = contextualType.findMember(text);
