@@ -1797,10 +1797,10 @@ module TypeScript {
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
             // incremental parsing comes online
-            var callSigs = parent.getConstructSignatures();
+            var callSigs = parent.getCallSignatures();
 
             for (var i = 0; i < callSigs.length; i++) {
-                parent.removeConstructSignature(callSigs[i], false);
+                parent.removeCallSignature(callSigs[i], false);
             }
             
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
