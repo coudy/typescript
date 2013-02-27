@@ -3,7 +3,7 @@ var Accessor = (function () {
     return Accessor;
 })();
 function attr(nameOrMap, value) {
-    if(nameOrMap && typeof nameOrMap === "object") {
+    if (nameOrMap && typeof nameOrMap === "object") {
         return new Accessor();
     } else {
         return "s";

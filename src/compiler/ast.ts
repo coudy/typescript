@@ -1666,7 +1666,7 @@ module TypeScript {
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
-            emitter.writeToOutput("if(");
+            emitter.writeToOutput("if (");
             emitter.emitJavascript(this.cond, TokenID.If, false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);

@@ -33,27 +33,27 @@ var TestRunner = (function () {
             } catch (e) {
                 exception = true;
                 testResult = false;
-                if(typeof testcase.errorMessageRegEx === "string") {
-                    if(testcase.errorMessageRegEx === "") {
+                if (typeof testcase.errorMessageRegEx === "string") {
+                    if (testcase.errorMessageRegEx === "") {
                         testResult = true;
-                    } else if(e.message) {
+                    } else if (e.message) {
                         var regex = new RegExp(testcase.errorMessageRegEx);
                         testResult = regex.test(e.message);
                     }
                 }
-                if(testResult === false) {
+                if (testResult === false) {
                     console.log(e.message);
                 }
             }
-            if((testcase.errorMessageRegEx !== undefined) && !exception) {
+            if ((testcase.errorMessageRegEx !== undefined) && !exception) {
                 console.log("*** Expected exception and none occurred! ***");
                 success = false;
-            } else if(!testResult) {
+            } else if (!testResult) {
                 console.log("*** TEST FAILED ***");
                 success = false;
             }
         }
-        if(success) {
+        if (success) {
             console.log("Test run completed successfully.");
         } else {
             console.log("!!!Test run completed with FAILURES!!!");
@@ -237,7 +237,7 @@ exports.tests = (function () {
         });
         fb.save(filename);
         var savedFile = new FileManager.FileBuffer(filename);
-        if(savedFile.encoding !== 'utf16le') {
+        if (savedFile.encoding !== 'utf16le') {
             throw Error("Incorrect encoding");
         }
         var expectedBytes = [
@@ -259,7 +259,7 @@ exports.tests = (function () {
         savedFile.index = 0;
         expectedBytes.forEach(function (val) {
             var byteVal = savedFile.readByte();
-            if(byteVal !== val) {
+            if (byteVal !== val) {
                 throw Error("Incorrect byte value");
             }
         });
@@ -277,7 +277,7 @@ exports.tests = (function () {
     }, "write beyond buffer length"));
     testRunner.addTest(new TestCase("Read non-BMP utf16 chars", function () {
         var savedFile = new FileManager.FileBuffer(TestFileDir + "\\utf16leNonBmp.txt");
-        if(savedFile.encoding !== 'utf16le') {
+        if (savedFile.encoding !== 'utf16le') {
             throw Error("Incorrect encoding");
         }
         var codePoints = [];
@@ -296,7 +296,7 @@ exports.tests = (function () {
     }));
     testRunner.addTest(new TestCase("Read non-BMP utf8 chars", function () {
         var savedFile = new FileManager.FileBuffer(TestFileDir + "\\utf8NonBmp.txt");
-        if(savedFile.encoding !== 'utf8') {
+        if (savedFile.encoding !== 'utf8') {
             throw Error("Incorrect encoding");
         }
         var codePoints = [];
@@ -329,7 +329,7 @@ exports.tests = (function () {
         });
         fb.save(filename);
         var savedFile = new FileManager.FileBuffer(filename);
-        if(savedFile.encoding !== 'utf8') {
+        if (savedFile.encoding !== 'utf8') {
             throw Error("Incorrect encoding");
         }
         var expectedBytes = [
@@ -351,7 +351,7 @@ exports.tests = (function () {
         ];
         expectedBytes.forEach(function (val) {
             var byteVal = savedFile.readByte();
-            if(byteVal !== val) {
+            if (byteVal !== val) {
                 throw Error("Incorrect byte value");
             }
         });

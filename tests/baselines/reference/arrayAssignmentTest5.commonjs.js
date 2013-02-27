@@ -5,7 +5,7 @@ var Test;
         Bug.prototype.onEnter = function (line, state, offset) {
             var lineTokens = this.tokenize(line, state, true);
             var tokens = lineTokens.tokens;
-            if(tokens.length === 0) {
+            if (tokens.length === 0) {
                 return this.onEnter(line, tokens, offset);
             }
         };

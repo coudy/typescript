@@ -50,7 +50,7 @@ var F = (function (_super) {
     return F;
 })(C);
 function f() {
-    if(x < 10) {
+    if (x < 10) {
         x = 11;
     } else {
         x = 12;

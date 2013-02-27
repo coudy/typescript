@@ -33,7 +33,7 @@ var GetSetMonster = (function () {
     });
     Object.defineProperty(GetSetMonster.prototype, "health", {
         set: function (value) {
-            if(value < 0) {
+            if (value < 0) {
                 throw new Error('Health must be non-negative.');
             }
             this.health = value;

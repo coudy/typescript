@@ -8,7 +8,7 @@
 var Foo = exports.Foo;
 (function (Foo) {
     function Bar() {
-        if(true) {
+        if (true) {
             return Bar();
         }
         return new Foo.C();

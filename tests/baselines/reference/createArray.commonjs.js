@@ -9,6 +9,6 @@ var sa = new Array();
 function f(s) {
     return 0;
 }
-if(ba[14]) {
+if (ba[14]) {
     na[2] = f(sa[3]);
 }
