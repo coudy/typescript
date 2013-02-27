@@ -685,8 +685,7 @@ module TypeScript {
 
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (binTokenId != undefined) {
-
+            if (this.nodeType != NodeType.Comma && binTokenId != undefined) {
                 emitter.emitJavascript(this.operand1, binTokenId, false);
 
                 if (tokenTable[binTokenId].text == "instanceof") {
@@ -737,7 +736,7 @@ module TypeScript {
                             emitter.writeLineToOutput(", ");
                         }
                         else {
-                            emitter.writeToOutput(",");
+                            emitter.writeToOutput(", ");
                         }
                         emitter.emitJavascript(this.operand2, TokenID.Comma, false);
                         break;
