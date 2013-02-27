@@ -1735,10 +1735,9 @@ module Harness {
             return result;
         }
 
-        public getHostSettings(): TypeScript.IHostSettings {
-            return { usePullLanguageService: usePull };
+        public getHostSettings(): string {
+            return JSON2.stringify({ usePullLanguageService: usePull });
         }
-
     }
 
     // Describe/it definitions
