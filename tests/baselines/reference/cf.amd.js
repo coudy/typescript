@@ -37,7 +37,7 @@ if(x < y) {
         }
     } catch (e) {
         x++;
-    }finally {
+    } finally {
         x += 3;
     }
     y++;
