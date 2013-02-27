@@ -256,6 +256,11 @@ module TypeScript {
 
         // TODO: emit accessor pattern
         public emitObjectLiteral(content: ASTList) {
+            if (content.members.length === 0) {
+                this.writeToOutput("{}");
+                return;
+            }
+
             this.writeLineToOutput("{");
             this.indenter.increaseIndent();
             var inObjectLiteral = this.setInObjectLiteral(true);

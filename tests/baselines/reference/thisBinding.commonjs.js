@@ -6,8 +6,7 @@ var M;
             ({
                 z: 10,
                 f: this.f
-            }).f(({
-            }));
+            }).f(({}));
         }
         C.prototype.f = function (x) {
             x.e;

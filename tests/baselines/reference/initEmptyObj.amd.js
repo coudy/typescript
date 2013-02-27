@@ -1,8 +1,7 @@
 define(["require", "exports"], function(require, exports) {
     var Emitter = (function () {
         function Emitter() {
-            this.listeners = {
-            };
+            this.listeners = {};
         }
         return Emitter;
     })();    

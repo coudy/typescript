@@ -3,10 +3,8 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var s = ({
-});
-var x = {
-};
+var s = ({});
+var x = {};
 var C1 = (function () {
     function C1() { }
     return C1;
@@ -21,5 +19,4 @@ var C2 = (function (_super) {
 })(C1);
 var y1 = new C2();
 var y2 = new C2();
-var y3 = {
-};
+var y3 = {};
