@@ -30,6 +30,10 @@ class Program {
             // return;
         }
 
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
+
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
@@ -37,10 +41,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
-
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
@@ -310,7 +310,7 @@ class Program {
             TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
             TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
 
-            //this.checkResult(filePath, tree, verify, generateBaseline, false);
+            this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
 
         totalTime += timer.time;
