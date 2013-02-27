@@ -66,7 +66,7 @@ module Services {
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
         getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
-        getHostSettings(): TypeScript.IHostSettings;
+        getHostSettings(): string;
     }
 
     export class LanguageServiceShimHostAdapter implements Services.ILanguageServiceHost {
@@ -145,8 +145,8 @@ module Services {
             if (settingsJson == null) {
                 return null;
             }
-            //var settings: TypeScript.IHostSettings = JSON.parse(<any>settingsJson);
-            return settingsJson;
+            var settings: TypeScript.IHostSettings = JSON.parse(<any>settingsJson);
+            return settings;
         }
     }
 
