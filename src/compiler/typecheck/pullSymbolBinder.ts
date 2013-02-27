@@ -28,7 +28,11 @@ module TypeScript {
             var parent = this.parentChain ? this.parentChain[this.parentChain.length-1] : null;
 
             if (parent && parent.isContainer() && returnInstanceType) {
-                parent = (<PullContainerTypeSymbol>parent).getInstanceSymbol().getType();
+                var instanceSymbol = (<PullContainerTypeSymbol>parent).getInstanceSymbol();
+
+                if (instanceSymbol) {
+                    parent = instanceSymbol.getType();
+                }
             }
 
             return parent;
@@ -168,18 +172,18 @@ module TypeScript {
             else { 
                 var moduleContainerTypeSymbol = new PullContainerTypeSymbol(modName);
                 createdNewSymbol = true;
-
-                if (moduleContainerDecl.getFlags() & PullElementFlags.InitializedModule) {
-                    moduleInstanceTypeSymbol = new PullTypeSymbol(modName, PullElementKind.ObjectType);
-                    moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
-
-                    // The instance symbol is further set up in bindVariableDeclaration
-                    moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
-                    moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
-
-                    moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
-                }
             }
+
+            if (!moduleInstanceSymbol && (moduleContainerDecl.getFlags() & PullElementFlags.InitializedModule)) {
+                moduleInstanceTypeSymbol = new PullTypeSymbol(modName, PullElementKind.ObjectType);
+                moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
+
+                // The instance symbol is further set up in bindVariableDeclaration
+                moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
+                moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
+
+                moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
+            }            
 
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
             moduleContainerDecl.setSymbol(moduleContainerTypeSymbol);
@@ -896,7 +900,13 @@ module TypeScript {
                         }
                     }
                     else {
-                        // PULLTODO: Raise an Error here
+                        // PULLTODO: Clodules/Interfaces on classes
+                        if (!variableSymbol) {
+                            variableSymbol = new PullSymbol(declName, declKind);
+                        }
+
+                        variableSymbol.addDeclaration(variableDeclaration);
+                        variableDeclaration.setSymbol(variableSymbol);                       
                         variableSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     }
                 }
@@ -997,7 +1007,11 @@ module TypeScript {
             propertySymbol = parent.findMember(declName);
 
             if (propertySymbol && (!this.reBindingAfterChange || (propertySymbol.getSymbolID() > this.startingSymbolForRebind))) {
-                propertyDeclaration.addError(new PullError(propDeclAST.minChar, propDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+
+                // use the span, since we may not have an AST if this is a class constructor property for a class
+                // with an implicit constructor...
+                var span = propertyDeclaration.getSpan();
+                propertyDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
 
                 propertySymbol = null;
             }

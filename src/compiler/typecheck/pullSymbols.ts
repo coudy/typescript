@@ -1599,7 +1599,7 @@ module TypeScript {
 
         if (extendedTypesToSpecialize.length) {
             var typeDecl = typeToSpecialize.getDeclarations()[0];
-            var typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, resolver.getUnitPath());
+            var typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
             var unitPath = resolver.getUnitPath();
             resolver.setUnitPath(typeDecl.getScriptName());
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -1613,7 +1613,7 @@ module TypeScript {
 
         if (implementedTypesToSpecialize.length) {
             var typeDecl = typeToSpecialize.getDeclarations()[0];
-            var typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, resolver.getUnitPath());
+            var typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
             var unitPath = resolver.getUnitPath();
             resolver.setUnitPath(typeDecl.getScriptName());
             context.pushTypeSpecializationCache(typeReplacementMap);

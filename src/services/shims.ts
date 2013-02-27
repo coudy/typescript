@@ -145,6 +145,7 @@ module Services {
             if (settingsJson == null) {
                 return null;
             }
+
             var settings: TypeScript.IHostSettings = JSON.parse(<any>settingsJson);
             return settings;
         }

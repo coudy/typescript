@@ -372,10 +372,12 @@ module TypeScript {
                 
                 ast = this.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
 
-                if (!ast) {
+                // if it's an object literal member, just return the symbol and wait for
+                // the object lit to be resolved
+                if (!ast || ast.nodeType == NodeType.Member) {
                     //var span = decl.getSpan();
                     //context.postError(span.minChar, span.limChar - span.minChar, this.unitPath, "Could not resolve location for symbol '" + symbol.getName() +"'", enclosingDecl);
-
+                    
                     // We'll return the cached results, and let the decl be corrected on the next invalidation
                     return symbol;
                 }
@@ -1677,6 +1679,7 @@ module TypeScript {
 
                     memberSymbol = new PullSymbol(text, PullElementKind.Property);
 
+                    memberSymbol.addDeclaration(decl);
                     decl.setSymbol(memberSymbol);
                     
                     if (contextualType) {
@@ -2133,6 +2136,10 @@ module TypeScript {
 
                 if (!returnType) {
                     returnType = signature.getReturnType();
+
+                    if (!returnType) {
+                        returnType = targetTypeSymbol;
+                    }
                 }
 
                 // contextually type arguments
