@@ -1573,7 +1573,7 @@ var TypeScript;
             var binTokenId = TypeScript.nodeTypeToTokTable[this.nodeType];
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if(binTokenId != undefined) {
+            if(this.nodeType != 13 /* Comma */  && binTokenId != undefined) {
                 emitter.emitJavascript(this.operand1, binTokenId, false);
                 if(TypeScript.tokenTable[binTokenId].text == "instanceof") {
                     emitter.writeToOutput(" instanceof ");
@@ -1615,7 +1615,7 @@ var TypeScript;
                         if(emitter.emitState.inObjectLiteral) {
                             emitter.writeLineToOutput(", ");
                         } else {
-                            emitter.writeToOutput(",");
+                            emitter.writeToOutput(", ");
                         }
                         emitter.emitJavascript(this.operand2, 61 /* Comma */ , false);
                         break;
@@ -2487,7 +2487,7 @@ var TypeScript;
             emitter.writeToOutput("do");
             emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingStart(this.whileAST);
-            emitter.writeToOutput("while");
+            emitter.writeToOutput(" while");
             emitter.recordSourceMappingEnd(this.whileAST);
             emitter.writeToOutput('(');
             emitter.emitJavascript(this.cond, 56 /* CloseParen */ , false);
@@ -2542,7 +2542,7 @@ var TypeScript;
             emitter.recordSourceMappingStart(this);
             var temp = emitter.setInObjectLiteral(false);
             emitter.recordSourceMappingStart(this.statement);
-            emitter.writeToOutput("if(");
+            emitter.writeToOutput("if (");
             emitter.emitJavascript(this.cond, 23 /* If */ , false);
             emitter.writeToOutput(")");
             emitter.recordSourceMappingEnd(this.statement);
@@ -3259,7 +3259,7 @@ var TypeScript;
         Finally.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            emitter.writeToOutput("finally");
+            emitter.writeToOutput(" finally");
             emitter.emitJavascript(this.body, 18 /* Finally */ , false);
             emitter.recordSourceMappingEnd(this);
             emitter.emitParensAndCommentsInPlace(this, false);
@@ -5210,6 +5210,10 @@ var TypeScript;
             }
         };
         Emitter.prototype.emitObjectLiteral = function (content) {
+            if(content.members.length === 0) {
+                this.writeToOutput("{}");
+                return;
+            }
             this.writeLineToOutput("{");
             this.indenter.increaseIndent();
             var inObjectLiteral = this.setInObjectLiteral(true);
@@ -46302,10 +46306,10 @@ var TypeScript;
         return PullSymbolUpdate;
     })();
     TypeScript.PullSymbolUpdate = PullSymbolUpdate;    
+    TypeScript.updateVersion = 0;
     var PullSymbolGraphUpdater = (function () {
         function PullSymbolGraphUpdater(semanticInfoChain) {
             this.semanticInfoChain = semanticInfoChain;
-            this.updateVersion = 0;
         }
         PullSymbolGraphUpdater.prototype.removeDecl = function (declToRemove) {
             var declSymbol = declToRemove.getSymbol();
@@ -46326,18 +46330,18 @@ var TypeScript;
             if(valDecl) {
                 this.removeDecl(valDecl);
             }
-            this.updateVersion++;
+            TypeScript.updateVersion++;
         };
         PullSymbolGraphUpdater.prototype.addDecl = function (declToAdd) {
             var symbolToAdd = declToAdd.getSymbol();
             this.addSymbol(symbolToAdd);
-            this.updateVersion++;
+            TypeScript.updateVersion++;
         };
         PullSymbolGraphUpdater.prototype.removeSymbol = function (symbolToRemove) {
-            if(symbolToRemove.removeUpdateVersion == this.updateVersion) {
+            if(symbolToRemove.removeUpdateVersion == TypeScript.updateVersion) {
                 return;
             }
-            symbolToRemove.removeUpdateVersion = this.updateVersion;
+            symbolToRemove.removeUpdateVersion = TypeScript.updateVersion;
             symbolToRemove.updateOutgoingLinks(propagateRemovalToOutgoingLinks, new PullSymbolUpdate(1 /* SymbolRemoved */ , symbolToRemove, this));
             symbolToRemove.updateIncomingLinks(propagateRemovalToIncomingLinks, new PullSymbolUpdate(1 /* SymbolRemoved */ , symbolToRemove, this));
             var container = symbolToRemove.getContainer();
@@ -46346,10 +46350,10 @@ var TypeScript;
             }
         };
         PullSymbolGraphUpdater.prototype.addSymbol = function (symbolToAdd) {
-            if(symbolToAdd.addUpdateVersion == this.updateVersion) {
+            if(symbolToAdd.addUpdateVersion == TypeScript.updateVersion) {
                 return;
             }
-            symbolToAdd.addUpdateVersion = this.updateVersion;
+            symbolToAdd.addUpdateVersion = TypeScript.updateVersion;
             symbolToAdd.updateOutgoingLinks(propagateAdditionToOutgoingLinks, new PullSymbolUpdate(2 /* SymbolAdded */ , symbolToAdd, this));
             symbolToAdd.updateIncomingLinks(propagateAdditionToIncomingLinks, new PullSymbolUpdate(2 /* SymbolAdded */ , symbolToAdd, this));
         };
@@ -46357,10 +46361,10 @@ var TypeScript;
             if(!symbolWhoseTypeChanged) {
                 return;
             }
-            if(symbolWhoseTypeChanged.typeChangeUpdateVersion == this.updateVersion) {
+            if(symbolWhoseTypeChanged.typeChangeUpdateVersion == TypeScript.updateVersion) {
                 return;
             }
-            symbolWhoseTypeChanged.typeChangeUpdateVersion = this.updateVersion;
+            symbolWhoseTypeChanged.typeChangeUpdateVersion = TypeScript.updateVersion;
             symbolWhoseTypeChanged.updateOutgoingLinks(propagateChangedTypeToOutgoingLinks, new PullSymbolUpdate(3 /* TypeChanged */ , symbolWhoseTypeChanged, this));
             symbolWhoseTypeChanged.updateIncomingLinks(propagateChangedTypeToIncomingLinks, new PullSymbolUpdate(3 /* TypeChanged */ , symbolWhoseTypeChanged, this));
             symbolWhoseTypeChanged.invalidate();
@@ -46380,6 +46384,7 @@ var TypeScript;
         } else if(link.kind == 19 /* TypeParameterSpecializedTo */ ) {
         } else if(link.kind == 20 /* SpecializedTo */ ) {
             update.updater.removeSymbol(affectedSymbol);
+            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 21 /* TypeConstraint */ ) {
         } else if(link.kind == 4 /* ArrayOf */ ) {
         } else if(link.kind == 5 /* PublicMember */ ) {
@@ -46387,7 +46392,7 @@ var TypeScript;
         } else if(link.kind == 6 /* PrivateMember */ ) {
             update.updater.removeSymbol(affectedSymbol);
         } else if(link.kind == 7 /* ConstructorMethod */ ) {
-            update.updater.removeSymbol(affectedSymbol);
+            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 8 /* Aliases */ ) {
         } else if(link.kind == 9 /* ContainedBy */ ) {
             (affectedSymbol).removeMember(symbolToRemove);
@@ -46410,7 +46415,9 @@ var TypeScript;
         var symbolToRemove = update.symbolToUpdate;
         var affectedSymbol = link.start;
         if(link.kind == 0 /* TypedAs */ ) {
+            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 1 /* ContextuallyTypedAs */ ) {
+            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 2 /* ProvidesInferredType */ ) {
         } else if(link.kind == 17 /* TypeParameter */ ) {
             update.updater.invalidateType(affectedSymbol);
@@ -46427,8 +46434,10 @@ var TypeScript;
         } else if(link.kind == 4 /* ArrayOf */ ) {
             update.updater.removeSymbol(affectedSymbol);
         } else if(link.kind == 5 /* PublicMember */ ) {
+            (affectedSymbol).removeMember(symbolToRemove);
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 6 /* PrivateMember */ ) {
+            (affectedSymbol).removeMember(symbolToRemove);
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 7 /* ConstructorMethod */ ) {
             update.updater.invalidateType(affectedSymbol);
@@ -46456,9 +46465,7 @@ var TypeScript;
         var symbolToAdd = update.symbolToUpdate;
         var affectedSymbol = link.end;
         if(link.kind == 0 /* TypedAs */ ) {
-            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 1 /* ContextuallyTypedAs */ ) {
-            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 2 /* ProvidesInferredType */ ) {
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 17 /* TypeParameter */ ) {
@@ -46502,7 +46509,6 @@ var TypeScript;
         } else if(link.kind == 1 /* ContextuallyTypedAs */ ) {
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 2 /* ProvidesInferredType */ ) {
-            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 17 /* TypeParameter */ ) {
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 18 /* TypeArgument */ ) {
@@ -46538,9 +46544,7 @@ var TypeScript;
         var symbolWhoseTypeChanged = update.symbolToUpdate;
         var affectedSymbol = link.end;
         if(link.kind == 0 /* TypedAs */ ) {
-            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 1 /* ContextuallyTypedAs */ ) {
-            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 2 /* ProvidesInferredType */ ) {
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 17 /* TypeParameter */ ) {
@@ -46582,7 +46586,6 @@ var TypeScript;
         } else if(link.kind == 1 /* ContextuallyTypedAs */ ) {
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 2 /* ProvidesInferredType */ ) {
-            update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 3 /* ArrayType */ ) {
             update.updater.invalidateType(affectedSymbol);
         } else if(link.kind == 17 /* TypeParameter */ ) {
