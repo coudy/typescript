@@ -1608,7 +1608,7 @@ module TypeScript {
             emitter.writeToOutput("do");
             emitter.emitJavascriptStatements(this.body, true);
             emitter.recordSourceMappingStart(this.whileAST);
-            emitter.writeToOutput("while");
+            emitter.writeToOutput(" while");
             emitter.recordSourceMappingEnd(this.whileAST);
             emitter.writeToOutput('(');
             emitter.emitJavascript(this.cond, TokenID.CloseParen, false);

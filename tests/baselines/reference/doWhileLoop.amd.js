@@ -1,3 +1,3 @@
 do {
-}while(false);
+} while(false);
 var n;
