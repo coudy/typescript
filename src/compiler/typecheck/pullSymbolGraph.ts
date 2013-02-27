@@ -527,10 +527,10 @@ module TypeScript {
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
@@ -603,7 +603,7 @@ module TypeScript {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayType) {
             update.updater.invalidateType(affectedSymbol);
