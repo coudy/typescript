@@ -4,7 +4,7 @@
 class UnitTestRunner extends RunnerBase {
 
     constructor(public testType?: string) {
-        super();        
+        super(testType);
     }
 
     public runTests() {
@@ -24,7 +24,7 @@ class UnitTestRunner extends RunnerBase {
             case 'samples':
                 this.tests = this.enumerateFiles('tests/cases/unittests/samples');
                 break;
-            default:               
+            default:
                 if (this.tests.length === 0) {
                     throw new Error('Unsupported test cases: ' + this.testType);
                 }
@@ -33,12 +33,13 @@ class UnitTestRunner extends RunnerBase {
 
         var outfile = new Harness.Compiler.WriterAggregator()
       , outerr = new Harness.Compiler.WriterAggregator()
+      // TODO: why isn't this just using the Harness's instance of the compiler?
       , compiler = <TypeScript.TypeScriptCompiler>new TypeScript.TypeScriptCompiler(outerr)
       , code;
 
         compiler.parser.errorRecovery = true;
-        compiler.addUnit(Harness.Compiler.libText, "lib.d.ts", true);
 
+        compiler.addUnit(Harness.Compiler.libText, "lib.d.ts", true);
         for (var i = 0; i < this.tests.length; i++) {
             try {
                 compiler.addUnit(IO.readFile(this.tests[i]), this.tests[i]);
@@ -48,7 +49,15 @@ class UnitTestRunner extends RunnerBase {
             }
         }
 
-        compiler.typeCheck();
+        if (Harness.usePull) {
+            compiler.settings.usePull = true;
+            compiler.settings.useFidelity = true;
+            compiler.pullTypeCheck(true);
+        }
+        else {
+            compiler.typeCheck();
+        }
+
         compiler.emitToOutfile(outfile);
 
         code = outfile.lines.join("\n") + ";";

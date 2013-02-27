@@ -289,12 +289,22 @@ opts.option('compiler-baselines', {
 });
 
 // for running a second copy of compiler baselines in a prototyping subdirectory for destabilizing changes
-opts.option('prototyping', {
+opts.option('compiler-prototyping', {
     experimental: true,
     set: function (str) {
         var runner = new CompilerBaselineRunner('prototyping');
         runner.options = str;
+        Harness.usePull = true;
         runners.push(runner);
+    }
+});
+
+// for running a second copy of fourslash tests in a prototyping subdirectory for destabilizing changes
+opts.option('fourslash-prototyping', {
+    experimental: true,
+    set: function (str) {
+        Harness.usePull = true;
+        runners.push(new FourslashRunner('prototyping'));
     }
 });
 

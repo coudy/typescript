@@ -3,7 +3,11 @@
 
 class RunnerBase
 {
-    constructor(public testType?: string) {}
+    constructor(public testType?: string) {
+        if (testType === 'prototyping') {
+            Harness.usePull = true;
+        }
+    }
 
     // contains the tests to run
     public tests: string[] = [];
