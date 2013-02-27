@@ -32,33 +32,22 @@ class UnitTestRunner extends RunnerBase {
         }
 
         var outfile = new Harness.Compiler.WriterAggregator()
-      , outerr = new Harness.Compiler.WriterAggregator()
-      // TODO: why isn't this just using the Harness's instance of the compiler?
-      , compiler = <TypeScript.TypeScriptCompiler>new TypeScript.TypeScriptCompiler(outerr)
-      , code;
+        var outerr = new Harness.Compiler.WriterAggregator();
+        var code;
 
-        compiler.parser.errorRecovery = true;
+        Harness.Compiler.recreate();
 
-        compiler.addUnit(Harness.Compiler.libText, "lib.d.ts", true);
         for (var i = 0; i < this.tests.length; i++) {
             try {
-                compiler.addUnit(IO.readFile(this.tests[i]), this.tests[i]);
+                Harness.Compiler.addUnit(IO.readFile(this.tests[i]), this.tests[i]);
             } catch (e) {
                 IO.printLine('FATAL ERROR COMPILING TEST: ' + this.tests[i]);
                 throw e;
             }
         }
 
-        if (Harness.usePull) {
-            compiler.settings.usePull = true;
-            compiler.settings.useFidelity = true;
-            compiler.pullTypeCheck(true);
-        }
-        else {
-            compiler.typeCheck();
-        }
-
-        compiler.emitToOutfile(outfile);
+        Harness.Compiler.compile();
+        Harness.Compiler.emitToOutfile(outfile);
 
         code = outfile.lines.join("\n") + ";";
 

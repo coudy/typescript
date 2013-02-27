@@ -294,8 +294,17 @@ opts.option('compiler-prototyping', {
     set: function (str) {
         var runner = new CompilerBaselineRunner('prototyping');
         runner.options = str;
-        Harness.usePull = true;
         runners.push(runner);
+        Harness.usePull = true;        
+    }
+});
+
+// for running a second copy of compiler baselines in a prototyping subdirectory for destabilizing changes
+opts.option('compiler-unittests-prototyping', {
+    experimental: true,
+    set: function (str) {
+        runners.push(new UnitTestRunner('compiler'));
+        Harness.usePull = true;
     }
 });
 

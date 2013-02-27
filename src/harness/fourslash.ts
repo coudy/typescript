@@ -875,12 +875,8 @@ module FourSlash {
         }
     }
 
-    var fsCompiler: TypeScript.TypeScriptCompiler;
     var fsOutput = new Harness.Compiler.WriterAggregator();
     var fsErrors = new Harness.Compiler.WriterAggregator();
-    // TODO: the harness already does a check just like this in compile(), should merge the functionality and stop having each runner
-    // use a different compiler instance (ex fsCompiler shouldn't have its own initialization code here as well)
-    var needsFullTypeCheck = true;
     export function runFourSlashTest(filename: string) {
         var content = IO.readFile(filename);
 
@@ -897,46 +893,18 @@ module FourSlash {
         }
 
         var mockFilename = 'test_input.ts';
-        if (fsCompiler === undefined) {
-            // Set up the compiler
-            var settings = new TypeScript.CompilationSettings();
-            settings.outputOption = "fourslash.js";
-            settings.resolve = true;
-            if (Harness.usePull) {
-                settings.usePull = true;
-                settings.useFidelity = true;
-            }
-
-            fsCompiler = new TypeScript.TypeScriptCompiler(fsErrors, new TypeScript.NullLogger(), settings);            
-
-            // TODO: Figure out how to make the reference tags in the input file resolve correctly?
-            var tsFn = Harness.usePull ? './tests/cases/prototyping/fourslash/fourslash.ts' : './tests/cases/fourslash/fourslash.ts';
-            fsCompiler.addUnit(IO.readFile(tsFn), tsFn);
-            fsCompiler.addUnit(content, mockFilename);
-            fsCompiler.addUnit(Harness.Compiler.libText, 'lib.d.ts', true);
-        } else {
-            // Re-use the existing compiler instance (saves ~800ms/test)
-            fsOutput.reset();
-            fsErrors.reset();
-            fsCompiler.updateUnit(content, mockFilename, false);
-        }
 
         var result = '';
-        if (Harness.usePull) {
-            // TODO: exception in PullSymbolBinder.bindPropertyDeclarationToPullSymbol causes every test to fail with a null ref trying to access minChar
-            // if we attempt a pullTypeCheck here. Will need to be smarter about using pullUpdateUnit and not a full typecheck anyway.
-            if (needsFullTypeCheck) {
-                fsCompiler.pullTypeCheck(true);
-                needsFullTypeCheck = false;
-            }
-            else {
-                // requires unit to already exist in the compiler
-                fsCompiler.pullUpdateUnit(new TypeScript.StringSourceText(content), mockFilename, true);
-            }
-        }
-        else {
-            fsCompiler.typeCheck();
-        }
+        var tsFn = Harness.usePull ? './tests/cases/prototyping/fourslash/fourslash.ts' : './tests/cases/fourslash/fourslash.ts';
+
+        // TODO: previously we set these two settings on the compiler:
+        //    settings.outputOption = "fourslash.js";
+        //    settings.resolve = true;
+        // but they appear to not affect test execution, are they still necessary? (I don't think resolve ever really worked)
+        Harness.Compiler.addUnit(IO.readFile(tsFn), tsFn);
+        //Harness.Compiler.addUnit("", mockFilename);
+        Harness.Compiler.addUnit(content, mockFilename);
+        Harness.Compiler.compile(content, mockFilename);
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
             createFile: (s) => fsOutput,
@@ -945,7 +913,7 @@ module FourSlash {
             resolvePath: (s: string)=>s
         }
 
-        fsCompiler.emit(emitterIOHost);
+        Harness.Compiler.emit(emitterIOHost);
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + filename + ': ' + fsErrors.lines.join('\r\n'));
         }

@@ -766,7 +766,6 @@ module Harness {
             compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
-
             if (Harness.usePull) {
                 compiler.settings.usePull = true;
                 compiler.settings.useFidelity = true;
@@ -1180,6 +1179,10 @@ module Harness {
                 }
             }
             if (!script) {
+                // TODO: make this toggleable, shouldn't be necessary once typecheck bugs are cleaned up
+                // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
+                // of persistent typecheck state
+                //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
                 script = compiler.addUnit(code, uName, isResident, references);
                 needsFullTypeCheck = true;
             }
@@ -1239,6 +1242,14 @@ module Harness {
             var compilationContext = Harness.Compiler.defineCompilationContextForTest(unitName, dependencies);
 
             compileUnit(lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
+        }
+
+        export function emitToOutfile(outfile: WriterAggregator) {
+            compiler.emitToOutfile(outfile);
+        }
+
+        export function emit(ioHost: TypeScript.EmitterIOHost) {
+            compiler.emit(ioHost);
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
