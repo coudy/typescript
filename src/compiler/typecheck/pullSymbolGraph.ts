@@ -124,11 +124,11 @@ module TypeScript {
 
     }
 
+    export var updateVersion = 0;
+
     export class PullSymbolGraphUpdater {
 
         constructor (public semanticInfoChain: SemanticInfoChain) { }
-
-        public updateVersion = 0;
 
         public removeDecl(declToRemove: PullDecl) {
             var declSymbol = declToRemove.getSymbol();
@@ -160,7 +160,7 @@ module TypeScript {
                 this.removeDecl(valDecl);
             }
 
-            this.updateVersion++;
+            updateVersion++;
         }
 
         public addDecl(declToAdd: PullDecl) {
@@ -170,17 +170,17 @@ module TypeScript {
 
             this.addSymbol(symbolToAdd);
 
-            this.updateVersion++;
+            updateVersion++;
         }
 
         // for now, remove all links - later on, see what happens if we leave stuff 'dangling'
         public removeSymbol(symbolToRemove: PullSymbol) {
 
-            if (symbolToRemove.removeUpdateVersion == this.updateVersion) {
+            if (symbolToRemove.removeUpdateVersion == updateVersion) {
                 return;
             }
 
-            symbolToRemove.removeUpdateVersion = this.updateVersion;
+            symbolToRemove.removeUpdateVersion = updateVersion;
 
             symbolToRemove.updateOutgoingLinks(propagateRemovalToOutgoingLinks, new PullSymbolUpdate(GraphUpdateKind.SymbolRemoved, symbolToRemove, this));
 
@@ -195,11 +195,11 @@ module TypeScript {
         
         public addSymbol(symbolToAdd: PullSymbol) {
 
-            if (symbolToAdd.addUpdateVersion == this.updateVersion) {
+            if (symbolToAdd.addUpdateVersion == updateVersion) {
                 return;
             }
 
-            symbolToAdd.addUpdateVersion = this.updateVersion;
+            symbolToAdd.addUpdateVersion = updateVersion;
 
             symbolToAdd.updateOutgoingLinks(propagateAdditionToOutgoingLinks, new PullSymbolUpdate(GraphUpdateKind.SymbolAdded, symbolToAdd, this));
 
@@ -212,11 +212,11 @@ module TypeScript {
                 return;
             }
 
-            if (symbolWhoseTypeChanged.typeChangeUpdateVersion == this.updateVersion) {
+            if (symbolWhoseTypeChanged.typeChangeUpdateVersion == updateVersion) {
                 return;
             }
 
-            symbolWhoseTypeChanged.typeChangeUpdateVersion = this.updateVersion;
+            symbolWhoseTypeChanged.typeChangeUpdateVersion = updateVersion;
 
             symbolWhoseTypeChanged.updateOutgoingLinks(propagateChangedTypeToOutgoingLinks, new PullSymbolUpdate(GraphUpdateKind.TypeChanged, symbolWhoseTypeChanged, this));
             
@@ -255,6 +255,7 @@ module TypeScript {
         }
         else if (link.kind == SymbolLinkKind.SpecializedTo) {
             update.updater.removeSymbol(affectedSymbol);
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeConstraint) {
             // no action...
@@ -271,7 +272,8 @@ module TypeScript {
             update.updater.removeSymbol(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
-            update.updater.removeSymbol(affectedSymbol);
+            //update.updater.removeSymbol(affectedSymbol);
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.Aliases) {
             // PULLTODO
@@ -310,10 +312,10 @@ module TypeScript {
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
-            // no action...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            // no action...
+            update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             // no action...
@@ -340,9 +342,11 @@ module TypeScript {
             update.updater.removeSymbol(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.PublicMember) {
+            (<PullTypeSymbol>affectedSymbol).removeMember(symbolToRemove);
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.PrivateMember) {
+            (<PullTypeSymbol>affectedSymbol).removeMember(symbolToRemove);
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ConstructorMethod) {
@@ -384,10 +388,10 @@ module TypeScript {
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
@@ -463,7 +467,7 @@ module TypeScript {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.TypeParameter) {
             update.updater.invalidateType(affectedSymbol);
@@ -527,10 +531,10 @@ module TypeScript {
 
         // carry out the update based on the update kind, the affected symbol kind and the relationship
         if (link.kind == SymbolLinkKind.TypedAs) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ContextuallyTypedAs) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
             update.updater.invalidateType(affectedSymbol);
@@ -603,7 +607,7 @@ module TypeScript {
             update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ProvidesInferredType) {
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.ArrayType) {
             update.updater.invalidateType(affectedSymbol);

@@ -56,6 +56,7 @@ module Harness {
     // Settings 
     export var userSpecifiedroot = "";
     var global = <any>Function("return this").call(null);
+    export var usePull = false;
 
     export interface ITestMetadata {
         id: string;
@@ -193,7 +194,7 @@ module Harness {
         }
     }
 
-    // Splits the given string on \r\n or on only \n if that fails
+    /** Splits the given string on \r\n or on only \n if that fails */
     export function splitContentByNewlines(content: string) {
         // Split up the input file by line
         // Note: IE JS engine incorrectly handles consecutive delimiters here when using RegExp split, so
@@ -205,7 +206,7 @@ module Harness {
         return lines;
     }
 
-    // Reads a file under tests
+    /** Reads a file under /tests */
     export function readFile(path: string) {
 
         if (path.indexOf('tests') < 0) {
@@ -288,9 +289,10 @@ module Harness {
             this.children.push(child);
         }
 
-        // Call function fn, which may take a done function and may possibly execute
-        // asynchronously, calling done when finished. Returns true or false depending
-        // on whether the function was asynchronous or not.
+        /** Call function fn, which may take a done function and may possibly execute
+         *  asynchronously, calling done when finished. Returns true or false depending
+         *  on whether the function was asynchronous or not.
+         */
         public call(fn: (done?: IDone) => void , done: IDone) {
             var isAsync = true;
 
@@ -366,8 +368,7 @@ module Harness {
             throw new Error("Testcases may not be nested inside other testcases");
         }
 
-        // Run the test case block and fail the test if it raised an error.
-        // If no error is raised, the test passes.
+        /** Run the test case block and fail the test if it raised an error. If no error is raised, the test passes. */
         public run(done: IDone) {
             var that = this;
 
@@ -395,6 +396,7 @@ module Harness {
 
         }
     }
+
     export class Scenario extends Runnable {
         public description: string;
         public block;
@@ -405,7 +407,7 @@ module Harness {
             this.block = block;
         }
 
-        // Run the block, and if the block doesn't raise an error, run the children.
+        /** Run the block, and if the block doesn't raise an error, run the children. */
         public run(done: IDone) {
             var that = this;
 
@@ -430,9 +432,10 @@ module Harness {
             });
         }
 
-        // Run the children of the scenario (other scenarios and test cases). If any fail,
-        // set this scenario to failed. Synchronous tests will run synchronously without
-        // adding stack frames.
+        /** Run the children of the scenario (other scenarios and test cases). If any fail,
+         *  set this scenario to failed. Synchronous tests will run synchronously without
+         *  adding stack frames.
+         */
         public runChildren(done: IDone, index = 0) {
             var that = this;
             var async = false;
@@ -679,10 +682,11 @@ module Harness {
 
     }
 
-    // Compiles TypeScript code
+    /** Functionality for compiling TypeScript code */
     export module Compiler {
-        // Aggregate various writes into a single array of lines. Useful for passing to the
-        // TypeScript compiler to fill with source code or errors.
+        /** Aggregate various writes into a single array of lines. Useful for passing to the
+         *  TypeScript compiler to fill with source code or errors.
+         */
         export class WriterAggregator implements ITextWriter {
             public lines: string[] = [];
             public currentLine = "";
@@ -707,12 +711,12 @@ module Harness {
             }
         }
 
-        // Mimics having multiple files, later concatenated to a single file.
+        /** Mimics having multiple files, later concatenated to a single file. */
         export class EmitterIOHost implements TypeScript.EmitterIOHost {
 
             private fileCollection = {};
 
-            // create file gets the whole path to create, so this works as expected with the --out parameter
+            /** create file gets the whole path to create, so this works as expected with the --out parameter */
             public createFile(s: string, useUTF8?: bool): ITextWriter {
 
                 if (this.fileCollection[s]) {
@@ -742,7 +746,6 @@ module Harness {
                         }
                     }
                 }
-
                 return result;
             }
         }
@@ -763,6 +766,12 @@ module Harness {
             compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
+
+            if (Harness.usePull) {
+                compiler.settings.usePull = true;
+                compiler.settings.useFidelity = true;
+            }
+
             compiler.parseEmitOption(stdout);
             TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             compiler.addUnit(Harness.Compiler.libText, "lib.d.ts", true);
@@ -771,6 +780,26 @@ module Harness {
 
         var compiler: TypeScript.TypeScriptCompiler;
         recreate();
+
+        // pullUpdateUnit is sufficient if an existing unit is updated, if a new unit is added we need to do a full typecheck
+        var needsFullTypeCheck = true;
+        export function compile(code?: string, filename?: string) {
+            if (usePull) {
+                // TODO: fails with 'Unable to get property 'getTopLevelDecls' of undefined or null reference'
+                // not sure the check for existence is necessary, or whether you first need to typecheck the world once
+                if (needsFullTypeCheck) {
+                    compiler.pullTypeCheck(true);
+                    needsFullTypeCheck = false;
+                }
+                else {
+                    // requires unit to already exist in the compiler
+                    compiler.pullUpdateUnit(new TypeScript.StringSourceText(code), filename, true);
+                }
+            }
+            else {
+                compiler.reTypeCheck();
+            }
+        }
 
         // Types
         export class Type {
@@ -927,17 +956,45 @@ module Harness {
 
                 var matchingIdentifiers = [];
 
-                // This will find the requested identifier in the first script where it's present, a naive search of each member in each script,
-                // which means this won't play nicely if the same identifier is used in multiple units, but it will enable this to work on multi-file tests.
-                // m = 1 because the first script will always be lib.d.ts which we don't want to search.                                
-                for (var m = 1; m < compiler.scripts.members.length; m++) {
-                    var script = compiler.scripts.members[m];
-                    var enclosingScopeContext = TypeScript.findEnclosingScopeAt(new TypeScript.NullLogger(), <TypeScript.Script>script, new TypeScript.StringSourceText(code), 0, false);
-                    var entries = new TypeScript.ScopeTraversal(compiler).getScopeEntries(enclosingScopeContext);
+                if (!usePull) {
+                    // This will find the requested identifier in the first script where it's present, a naive search of each member in each script,
+                    // which means this won't play nicely if the same identifier is used in multiple units, but it will enable this to work on multi-file tests.
+                    // m = 1 because the first script will always be lib.d.ts which we don't want to search.                                
+                    for (var m = 1; m < compiler.scripts.members.length; m++) {
+                        var script = compiler.scripts.members[m];
+                        var enclosingScopeContext = TypeScript.findEnclosingScopeAt(new TypeScript.NullLogger(), <TypeScript.Script>script, new TypeScript.StringSourceText(code), 0, false);
+                        var entries = new TypeScript.ScopeTraversal(compiler).getScopeEntries(enclosingScopeContext);
 
-                    for (var i = 0; i < entries.length; i++) {
-                        if (entries[i].name === identifier) {
-                            matchingIdentifiers.push(new Type(entries[i].type, code, identifier));
+                        for (var i = 0; i < entries.length; i++) {
+                            if (entries[i].name === identifier) {
+                                matchingIdentifiers.push(new Type(entries[i].type, code, identifier));
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (var m = 0; m < compiler.scripts.members.length; m++) {
+                        var script2 = <TypeScript.Script>compiler.scripts.members[m];
+
+                        for (var pos = 0; pos < code.length; pos++) {
+                            var tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
+                            switch (tyInfo.ast.nodeType) {
+                                case TypeScript.NodeType.FuncDecl:
+                                    var name = (<TypeScript.FuncDecl>tyInfo.ast).name.actualText;
+                                    if (name === identifier) {
+                                        // TODO: this adds the same identifier a bunch of times for different position values
+                                        // will fix it up once the tests are working better
+                                        matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, identifier));
+                                    }
+                                    break;
+                                default:
+                                    // TODO: other types can have specific cases as necessary when things are working better
+                                    var name = (<any>tyInfo.ast).id.actualText;
+                                    if (name === identifier) {
+                                        matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, identifier));
+                                    }
+                                    break;
+                            }
                         }
                     }
                 }
@@ -959,6 +1016,12 @@ module Harness {
             }
         }
 
+        /** Generates a .d.ts file for the given code
+          * @param verifyNoDeclFile pass true when the given code should generate no decl file, false otherwise
+          * @param unitName add the given code under thie name, else use '0.ts'
+          * @param compilationContext a set of functions to be run before and after compiling this code for doing things like adding dependencies first
+          * @param references the set of referenced files used by the given code
+          */
         export function generateDeclFile(code: string, verifyNoDeclFile: bool, unitName?: string, compilationContext?: Harness.Compiler.CompilationContext, references?: TypeScript.IFileReference[]): string {
             reset();
 
@@ -1022,12 +1085,12 @@ module Harness {
             return '';
         }
 
-        // Contains the code and errors of a compilation and some helper methods to check its status.
+        /** Contains the code and errors of a compilation and some helper methods to check its status. */
         export class CompilerResult {
             public code: string;
             public errors: CompilerError[];
 
-            // fileResults is an array of a string for the filename and an ITextWriter with its code
+            /** @param fileResults an array of strings for the filename and an ITextWriter with its code */
             constructor(public fileResults: { filename: string; file: WriterAggregator; }[], errorLines: string[], public scripts: TypeScript.Script[]) {
                 var lines = [];
                 fileResults.forEach(v => lines = lines.concat(v.file.lines));
@@ -1036,12 +1099,17 @@ module Harness {
                 this.errors = [];
 
                 for (var i = 0; i < errorLines.length; i++) {
-                    var match = errorLines[i].match(/([^\(]*)\((\d+),(\d+)\):\s+((.*[\s\r\n]*.*)+)\s*$/);
-                    if (match) {
-                        this.errors.push(new CompilerError(match[1], parseFloat(match[2]), parseFloat(match[3]), match[4]));
-                    }
-                    else {
-                        WScript.Echo("non-match on: " + errorLines[i]);
+                    if (Harness.usePull) {
+                        var err = <any>errorLines[i]; // TypeScript.PullError
+                        this.errors.push(new CompilerError(err.filename, 0, 0, err.message));
+                    } else {
+                        var match = errorLines[i].match(/([^\(]*)\((\d+),(\d+)\):\s+((.*[\s\r\n]*.*)+)\s*$/);
+                        if (match) {
+                            this.errors.push(new CompilerError(match[1], parseFloat(match[2]), parseFloat(match[3]), match[4]));
+                        }
+                        else {
+                            WScript.Echo("non-match on: " + errorLines[i]);
+                        }
                     }
                 }
             }
@@ -1068,9 +1136,15 @@ module Harness {
             }
         }
 
+        /** Create a new instance of the compiler with default settings and lib.d.ts, then typecheck */
         export function recreate() {
             compiler = makeDefaultCompilerForTest();
-            compiler.typeCheck();
+            if (usePull) {
+                compiler.pullTypeCheck(true);
+            }
+            else {
+                compiler.typeCheck();
+            }
         }
 
         export function reset() {
@@ -1107,6 +1181,7 @@ module Harness {
             }
             if (!script) {
                 script = compiler.addUnit(code, uName, isResident, references);
+                needsFullTypeCheck = true;
             }
 
             return script;
@@ -1146,8 +1221,8 @@ module Harness {
             try {
                 compileString(code, filename, callback, context, references);
             } finally {
-            // If settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
-            // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
+                // If settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
+                // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
                 if (settingsCallback) {
                     compiler.settings = oldCompilerSettings;
                     compiler.emitSettings = oldEmitSettings;
@@ -1158,13 +1233,12 @@ module Harness {
 
         export function compileUnits(units: TestCaseParser.TestUnitData[], callback: (res: Compiler.CompilerResult) => void , settingsCallback?: () => void ) {
             var lastUnit = units[units.length - 1];
-            var basePath = 'tests/cases/compiler/';
-            var unitPath = switchToForwardSlashes(basePath + lastUnit.name).match(/[^\/]*$/)[0];
+            var unitName = switchToForwardSlashes(lastUnit.name).match(/[^\/]*$/)[0];
 
             var dependencies = units.slice(0, units.length - 1);
-            var compilationContext = Harness.Compiler.defineCompilationContextForTest(unitPath, dependencies);
+            var compilationContext = Harness.Compiler.defineCompilationContextForTest(unitName, dependencies);
 
-            compileUnit(lastUnit.content, unitPath, callback, settingsCallback, compilationContext, lastUnit.references);
+            compileUnit(lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1176,25 +1250,34 @@ module Harness {
                 context.preCompile();
             }
 
+            var isDeclareFile = Harness.Compiler.isDeclareFile(unitName);
             // for single file tests just add them as using the old '0.ts' naming scheme
-            var uName = context ? unitName : '0.ts';
-            scripts.push(addUnit(code, uName, false, Harness.Compiler.isDeclareFile(unitName), references));
+            var uName = context ? unitName : ((isDeclareFile) ? '0.d.ts' : '0.ts');
+            scripts.push(addUnit(code, uName, false, isDeclareFile, references));
+            compile(code, uName);
 
-            compiler.reTypeCheck();
-            compiler.emit(stdout);
-
-            // output decl file
-            compiler.emitDeclarations();
+            var errors;
+            if (usePull) {
+                // TODO: no emit support with pull yet
+                errors = compiler.pullGetErrorsForFile(uName);
+            }
+            else {
+                errors = stderr.lines;
+                compiler.emit(stdout);
+                //output decl file
+                compiler.emitDeclarations();
+            }
 
             if (context) {
                 context.postCompile();
             }
 
-            callback(new CompilerResult(stdout.toArray(), stderr.lines, scripts));
+            callback(new CompilerResult(stdout.toArray(), errors, scripts));
         }
 
-        // Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that
-        // a file can be successfully compiled. These functions will add/remove named units and code to the compiler for each dependency.
+        /** Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that
+         *  a file can be successfully compiled. These functions will add/remove named units and code to the compiler for each dependency. 
+         */
         export function defineCompilationContextForTest(filename: string, dependencies: TestCaseParser.TestUnitData[]): CompilationContext {
             // if the given file has no dependencies, there is no context to return, it can be compiled without additional work
             if (dependencies.length == 0) {
@@ -1224,18 +1307,17 @@ module Harness {
         }
     }
 
-    // Parses the test cases files 
-    // extracts options and individual files in a multifile test
+    /** Parses the test cases files 
+     *  extracts options and individual files in a multifile test
+     */
     export module TestCaseParser {
-
-        // all the necesarry information to set the 
-        // right compiler settings
+        /** all the necesarry information to set the right compiler settings */
         export interface CompilerSetting {
             flag: string;
             value: string;
         }
 
-        // All the necessary information to turn a multi file test into useful units for later compilation
+        /** All the necessary information to turn a multi file test into useful units for later compilation */
         export interface TestUnitData {
             content: string;
             name: string;
@@ -1261,7 +1343,7 @@ module Harness {
             return opts;
         }
 
-        // Given a test file containing // @Filename directives, return an array of named units of code to be added to an existing compiler instance
+        /** Given a test file containing // @Filename directives, return an array of named units of code to be added to an existing compiler instance */
         export function makeUnitsFromTest(code: string, filename: string): { settings: CompilerSetting[]; testUnitData: TestUnitData[]; } {
 
             var settings = extractCompilerSettings(code);
@@ -1516,10 +1598,9 @@ module Harness {
             return result;
         }
 
-        //
-        // Return a new instance of the language service shim, up-to-date wrt to typecheck.
-        // To access the non-shim (i.e. actual) language service, use the "ls.languageService" property.
-        //
+        /** Return a new instance of the language service shim, up-to-date wrt to typecheck.
+         *  To access the non-shim (i.e. actual) language service, use the "ls.languageService" property.
+         */
         public getLanguageService(): Services.ILanguageServiceShim {
             var ls = new Services.TypeScriptServicesFactory().createLanguageServiceShim(this);
             ls.refresh(true);
@@ -1527,9 +1608,7 @@ module Harness {
             return ls;
         }
 
-        //
-        // Parse file given its source text
-        //
+        /** Parse file given its source text */
         public parseSourceText(fileName: string, sourceText: TypeScript.ISourceText): TypeScript.Script {
             var parser = new TypeScript.Parser();
             parser.setErrorRecovery(null);
@@ -1539,17 +1618,16 @@ module Harness {
             return script;
         }
 
-        //
-        // Parse a file on disk given its filename
-        //
+        /** Parse a file on disk given its filename */
         public parseFile(fileName: string) {
             var sourceText = new TypeScript.StringSourceText(IO.readFile(fileName))
             return this.parseSourceText(fileName, sourceText);
         }
 
-        //
-        // line and column are 1-based
-        //
+        /**
+         * @param line 1 based index
+         * @param col 1 based index
+        */
         public lineColToPosition(fileName: string, line: number, col: number): number {
             var script = this.ls.languageService.getScriptAST(fileName);
             assert.notNull(script);
@@ -1560,9 +1638,10 @@ module Harness {
             return TypeScript.getPositionFromLineColumn(script, line, col);
         }
 
-        //
-        // line and column are 1-based
-        //
+        /**
+         * @param line 1 based index
+         * @param col 1 based index
+        */
         public positionToLineCol(fileName: string, position: number): TypeScript.ILineCol {
             var script = this.ls.languageService.getScriptAST(fileName);
             assert.notNull(script);
@@ -1574,10 +1653,7 @@ module Harness {
             return result;
         }
 
-        //
-        // Verify that applying edits to "sourceFileName" result in the content of the file
-        // "baselineFileName"
-        //
+        /** Verify that applying edits to sourceFileName result in the content of the file baselineFileName */
         public checkEdits(sourceFileName: string, baselineFileName: string, edits: Services.TextEdit[]) {
             var script = readFile(sourceFileName);
             var formattedScript = this.applyEdits(script, edits);
@@ -1588,9 +1664,7 @@ module Harness {
         }
 
 
-        //
-        // Apply an array of text edits to a string, and return the resulting string.
-        //
+        /** Apply an array of text edits to a string, and return the resulting string. */
         public applyEdits(content: string, edits: Services.TextEdit[]): string {
             var result = content;
             edits = this.normalizeEdits(edits);
@@ -1605,10 +1679,7 @@ module Harness {
             return result;
         }
 
-        //
-        // Normalize an array of edits by removing overlapping entries and sorting
-        // entries on the "minChar" position.
-        //
+        /** Normalize an array of edits by removing overlapping entries and sorting entries on the minChar position. */
         private normalizeEdits(edits: Services.TextEdit[]): Services.TextEdit[] {
             var result: Services.TextEdit[] = [];
 
@@ -1664,8 +1735,8 @@ module Harness {
             return result;
         }
 
-        public getHostSettings(): string {
-            return "";
+        public getHostSettings(): TypeScript.IHostSettings {
+            return { usePullLanguageService: usePull };
         }
 
     }
@@ -1694,7 +1765,7 @@ module Harness {
         currentRun.run();
     }
 
-    // Runs TypeScript or Javascript code.
+    /** Runs TypeScript or Javascript code. */
     export module Runner {
         export function runCollateral(path: string, callback: (error: Error, result: any) => void ) {
             path = switchToForwardSlashes(path);
@@ -1735,7 +1806,7 @@ module Harness {
         }
     }
 
-    // Support class for baseline files
+    /** Support class for baseline files */
     export module Baseline {
         var reportFilename = 'baseline-report.html';
 

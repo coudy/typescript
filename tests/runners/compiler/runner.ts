@@ -14,7 +14,7 @@ class CompilerBaselineRunner extends RunnerBase {
     public options: string;
 
     constructor(public testType?: string) {
-        super();
+        super(testType);
         this.errors = true;
         this.emit = true;
         this.decl = true;
@@ -27,7 +27,7 @@ class CompilerBaselineRunner extends RunnerBase {
         }
         this.basePath += '/compiler';
     }
-    
+
     // the compiler flags which we support and functions to set the right settings
     private supportedFlags: { flag: string; setFlag: (x: TypeScript.CompilationSettings, value: string) => void; }[] = [
     { flag: 'comments', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.emitComments = value.toLowerCase() === 'true' ? true : false; } },
@@ -56,8 +56,8 @@ class CompilerBaselineRunner extends RunnerBase {
     { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.CodeGenTarget.ES3 : TypeScript.CodeGenTarget.ES5; } },
     { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
     { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
-    { flag: 'usepull', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.usePull = value.toLowerCase() === 'true'? true: false; } },
-    { flag: 'usefidelity', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.useFidelity = value.toLowerCase() === 'true'? true: false; } }
+    { flag: 'usepull', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.usePull = value.toLowerCase() === 'true' ? true : false; } },
+    { flag: 'usefidelity', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.useFidelity = value.toLowerCase() === 'true' ? true : false; } }
     ];
 
     public checkTestCodeOutput(filename: string) {
@@ -116,7 +116,7 @@ class CompilerBaselineRunner extends RunnerBase {
                 tcSettings.push({ flag: "module", value: "commonjs" });
                 setSettings(tcSettings, settings);
             });
-                    
+
             // compile as AMD module
             Harness.Compiler.compileUnits(units, function (result) {
                 for (var i = 0; i < result.errors.length; i++) {
@@ -140,21 +140,39 @@ class CompilerBaselineRunner extends RunnerBase {
             }
 
             // if the .d.ts is non-empty, confirm it compiles correctly as well
-            if (that.decl && !declFileCode) {
+            if (that.decl && declFileCode) {
                 var declErrors = '';
-                Harness.Compiler.compileString(declFileCode, declFileName, function (result) {
+                // For single file tests we don't want the baseline file to be named 0.d.ts
+                var realDeclName = (lastUnit.name === '0.ts') ? justName.replace('.ts', '.d.ts') : declFileName;
+                // For multi-file tests we need to include their dependencies in case the .d.ts has an import so we'll take the existing units and just change the relevant one to its .d.ts counterpart
+                var newUnits = units.map(unit => {
+                    if (unit.name === lastUnit.name) {
+                        var newUnit = unit;
+                        newUnit.name = realDeclName;
+                        newUnit.content = declFileCode;
+                        return newUnit;
+                    }
+                    else {
+                        return unit;
+                    }
+                });
+                Harness.Compiler.compileUnits(newUnits, function (result) {
                     for (var i = 0; i < result.errors.length; i++) {
                         declErrors += result.errors[i].file + ' line ' + result.errors[i].line + ' col ' + result.errors[i].column + ': ' + result.errors[i].message + '\r\n';
                     }
                 });
 
-                Harness.Baseline.runBaseline('.d.ts for ' + filename + ' compiles without error', declFileName.replace(/\.ts/, '.errors.txt'), () => {
+                Harness.Baseline.runBaseline('.d.ts for ' + filename + ' compiles without error', realDeclName.replace(/\.ts/, '.errors.txt'), () => {
                     return (declErrors === '') ? null : declErrors;
                 });
+
+                //Harness.Baseline.runBaseline('.d.ts for ' + filename + ' matches the baseline', realDeclName, () => {
+                //    return declFileCode;
+                //});
             }
 
             if (!Harness.Compiler.isDeclareFile(lastUnit.name)) {
-                if (that.emit) {
+                if (that.emit && !that.usepull) {
                     // check js output
                     Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + filename, justName.replace(/\.ts/, '.commonjs.js'), () => {
                         return jsOutputSync;

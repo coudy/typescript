@@ -1,10 +1,18 @@
 ///<reference path='..\..\..\src\harness\fourslash.ts' />
 ///<reference path='..\runnerbase.ts' />
 
-class FourslashRunner extends RunnerBase
-{
-    public runTests()
-    {
+class FourslashRunner extends RunnerBase {
+    private basePath = 'tests/cases/';
+    constructor(testType?: string) {
+        super(testType);
+
+        if (testType === 'prototyping') {
+            this.basePath += 'prototyping/';
+        }
+        this.basePath += 'fourslash/';
+    }
+
+    public runTests() {
         var runSingleFourslashTest = (fn: string) => {
             var justName = fn.replace(/^.*[\\\/]/, '');
 
@@ -18,9 +26,9 @@ class FourslashRunner extends RunnerBase
         }
 
         if (this.tests.length === 0) {
-            this.tests = this.enumerateFiles('tests/cases/fourslash');
+            this.tests = this.enumerateFiles(this.basePath);
         }
-        
+
         this.tests.forEach(runSingleFourslashTest);
     }
 }

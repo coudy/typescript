@@ -296,22 +296,26 @@ directory(builtTestDirectory);
 var run = path.join(builtTestDirectory, "run.js");
 compileFile(run, harnessSources, [builtTestDirectory, tscFile].concat(libraryTargets).concat(harnessSources), [], true);
 
-desc("Builds the test infrastructure using the built compiler");
-task("tests", [run, serviceFile].concat(libraryTargets), function() {
-	// Copy the language service over to the test directory
-	jake.cpR(serviceFile, builtTestDirectory);
-	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);
-});
-
-desc("Builds the test sources and automation in debug mode");
-task("tests-debug", ["setDebugMode", "tests"]);
-
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 var localPrototypingBaseline = "tests/baselines/prototyping/local/";
 var refPrototypingBaseline = "tests/baselines/prototyping/reference/";
-desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='. Both parameters are optional.");
-task("runtests", ["tests", builtTestDirectory], function() {
+
+desc("Builds the test infrastructure using the built compiler");
+task("tests", [run, serviceFile].concat(libraryTargets), function() {
+	// Copy the language service over to the test directory
+	jake.cpR(serviceFile, builtTestDirectory);
+	jake.cpR(path.join(nongenericLibraryDirectory, "lib.d.ts"), builtTestDirectory);
+});
+
+task("tests-prototyping", [run, serviceFile].concat(libraryTargets), function() {
+	// Copy the language service over to the test directory
+	jake.cpR(serviceFile, builtTestDirectory);
+	jake.cpR(path.join(genericLibraryDirectory, "lib.d.ts"), builtTestDirectory);
+});
+
+desc("Runs the tests, not meant to be called directly from the command line");
+task("doruntests", [], function() {
 	// Clean the local baselines directory
 	if (fs.exists(localBaseline)) {
 		jake.rmRf(localBaseline);
@@ -338,7 +342,19 @@ task("runtests", ["tests", builtTestDirectory], function() {
 		complete();
 	});
 	ex.run();
-}, {async: true});
+}, {async:true});
+
+desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='.");
+task("runtests", ["tests", builtTestDirectory, "doruntests"], function() {}, {async: true});
+
+desc("Runs tests against pull/fidelity using the built run.js file. Syntax is jake runtests-prototyping tests=<suitename>. Valid suitename values are --compiler-prototyping and --fourslash-prototyping. Optional parameter 'host='");
+task("runtests-prototyping", ["tests-prototyping", builtTestDirectory, "doruntests"], function() {}, {async: true});
+
+desc("Builds the test sources and automation in debug mode");
+task("tests-debug", ["setDebugMode", "tests"]);
+
+desc("Builds the prototyping test sources and automation in debug mode");
+task("tests-prototyping-debug", ["setDebugMode", "tests"]);
 
 // Makes the test results the new baseline
 desc("Makes the most recent test results the new baseline, overwriting the old baseline");

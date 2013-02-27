@@ -878,6 +878,9 @@ module FourSlash {
     var fsCompiler: TypeScript.TypeScriptCompiler;
     var fsOutput = new Harness.Compiler.WriterAggregator();
     var fsErrors = new Harness.Compiler.WriterAggregator();
+    // TODO: the harness already does a check just like this in compile(), should merge the functionality and stop having each runner
+    // use a different compiler instance (ex fsCompiler shouldn't have its own initialization code here as well)
+    var needsFullTypeCheck = true;
     export function runFourSlashTest(filename: string) {
         var content = IO.readFile(filename);
 
@@ -899,10 +902,15 @@ module FourSlash {
             var settings = new TypeScript.CompilationSettings();
             settings.outputOption = "fourslash.js";
             settings.resolve = true;
-            fsCompiler = new TypeScript.TypeScriptCompiler(fsErrors, new TypeScript.NullLogger(), settings);
-            
+            if (Harness.usePull) {
+                settings.usePull = true;
+                settings.useFidelity = true;
+            }
+
+            fsCompiler = new TypeScript.TypeScriptCompiler(fsErrors, new TypeScript.NullLogger(), settings);            
+
             // TODO: Figure out how to make the reference tags in the input file resolve correctly?
-            var tsFn = './tests/cases/fourslash/fourslash.ts';
+            var tsFn = Harness.usePull ? './tests/cases/prototyping/fourslash/fourslash.ts' : './tests/cases/fourslash/fourslash.ts';
             fsCompiler.addUnit(IO.readFile(tsFn), tsFn);
             fsCompiler.addUnit(content, mockFilename);
             fsCompiler.addUnit(Harness.Compiler.libText, 'lib.d.ts', true);
@@ -914,7 +922,21 @@ module FourSlash {
         }
 
         var result = '';
-        fsCompiler.typeCheck();
+        if (Harness.usePull) {
+            // TODO: exception in PullSymbolBinder.bindPropertyDeclarationToPullSymbol causes every test to fail with a null ref trying to access minChar
+            // if we attempt a pullTypeCheck here. Will need to be smarter about using pullUpdateUnit and not a full typecheck anyway.
+            if (needsFullTypeCheck) {
+                fsCompiler.pullTypeCheck(true);
+                needsFullTypeCheck = false;
+            }
+            else {
+                // requires unit to already exist in the compiler
+                fsCompiler.pullUpdateUnit(new TypeScript.StringSourceText(content), mockFilename, true);
+            }
+        }
+        else {
+            fsCompiler.typeCheck();
+        }
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
             createFile: (s) => fsOutput,
@@ -929,6 +951,12 @@ module FourSlash {
         }
         
         result = fsOutput.lines.join('\r\n');
+
+        // TODO: this is necessary while the Pull compiler lacks proper emit support
+        // Fourslash expects 'result' to include the results of compiling the units added above, namely 'fourslash.ts'
+        if (Harness.usePull) {
+            result = IO.readFile('./tests/cases/prototyping/fourslash/fourslash.js') + '\r\n' + result;
+        }
 
         // Compile and execute the test
         eval(result);
