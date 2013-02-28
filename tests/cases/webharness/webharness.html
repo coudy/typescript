@@ -1,39 +1,56 @@
 <html>
 <head>
-<title>TypeScript Web harness</title>
+    <title>TypeScript Web harness</title>
+    <script src='perfCompiler.js'></script>
+    <script>
+        if (!batch) {
+            batch = new BatchCompiler();
+        }
 
+        function appendTime(message, time) {
+            var res = message + ": " + time;
+            var div = document.createElement('div');
+            div.innerText = res;
+            document.body.appendChild(div);
+        }
+
+        function parse() {
+            var start = new Date().getTime();
+            batch.parse();
+            var end = new Date().getTime();
+            appendTime("Parse speed", end - start);
+        }
+
+        function convertTree() {
+            var tree = batch.parse();
+
+            var start = new Date().getTime();
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+            var end = new Date().getTime();
+            appendTime("Convert tree speed", end - start);
+        }
+
+        function typeCheck() {
+            var start = new Date().getTime();
+            batch.reTypeCheck();
+            var end = new Date().getTime();
+            appendTime("ReTypeCheck speed", end - start);
+        }
+
+        //    for (var i = 0; i < 500; i++) {
+        //        service.refresh();
+        //        var res = service.getTypeAtPosition(5);
+        //        document.write(res); // bug: nothing printed here
+        //        document.write("<br>");
+        //        document.write("<br>");
+        //    }
+
+    </script>
 </head>
 <body>
-<h1>TypeScript Perf Testbed</h1>
-
-
-<script src='perfCompiler.js'></script>
-<script>
-
-    if (!batch) {
-        batch = new BatchCompiler();
-    }
-
-    
-    document.body.onmousemove = function () {
-        var date1 = new Date();
-        var milliseconds1 = date1.getTime();
-        batch.reTypeCheck();
-        var date2 = new Date();
-        var milliseconds2 = date2.getTime();
-        var res = "ReTypeCheck speed: " + (milliseconds2 - milliseconds1);
-        var div = document.createElement('div');
-        div.innerText = res;
-        document.body.appendChild(div); // bug: nothing printed here
-    }
-//    for (var i = 0; i < 500; i++) {
-//        service.refresh();
-//        var res = service.getTypeAtPosition(5);
-//        document.write(res); // bug: nothing printed here
-//        document.write("<br>");
-//        document.write("<br>");
-//    }
-
-</script>
+    <h1>TypeScript Perf Testbed</h1>
+    <button onclick="parse()">Parse Tree</button>
+    <button onclick="convertTree()">Convert Tree</button>
+    <button onclick="typeCheck()">Type Check</button>
 </body>
 </html>

@@ -140,7 +140,7 @@ class Scanner implements ISlidingWindowSource {
 
     // Scans a subsection of 'text' as trivia.
     public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
-        Debug.assert(length > 0);
+        // Debug.assert(length > 0);
         var scanner = new Scanner(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, null, Scanner.triviaWindow);
         return scanner.scanTrivia(isTrailing);
     }
@@ -200,7 +200,7 @@ class Scanner implements ISlidingWindowSource {
                 }
             }
 
-            Debug.assert(trivia.length > 0);
+            // Debug.assert(trivia.length > 0);
             return Syntax.triviaList(trivia);
         }
     }
@@ -615,7 +615,7 @@ class Scanner implements ISlidingWindowSource {
     }
     
     private scanHexNumericLiteral(): SyntaxKind {
-        Debug.assert(this.isHexNumericLiteral());
+        // Debug.assert(this.isHexNumericLiteral());
 
         // Move past the 0x.
         this.slidingWindow.moveToNextItem();
@@ -839,7 +839,7 @@ class Scanner implements ISlidingWindowSource {
     }
 
     private tryScanRegularExpressionToken(): SyntaxKind {
-        Debug.assert(this.currentCharCode() === CharacterCodes.slash);
+        // Debug.assert(this.currentCharCode() === CharacterCodes.slash);
 
         var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
         try {
@@ -957,7 +957,7 @@ class Scanner implements ISlidingWindowSource {
 
     // Code for if we ever want the value of a string literal:
     //    private skipEscapeSequence(diagnostics: SyntaxDiagnostic[]): void {
-    //    Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
+    //    // Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
 
     //    var rewindPoint = this.slidingWindow.getAndPinAbsoluteIndex();
     //    try {
@@ -1034,7 +1034,7 @@ class Scanner implements ISlidingWindowSource {
     //}
 
     private skipEscapeSequence(diagnostics: SyntaxDiagnostic[]): void {
-        Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
+        // Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
 
         var rewindPoint = this.slidingWindow.getAndPinAbsoluteIndex();
         try {
@@ -1089,7 +1089,7 @@ class Scanner implements ISlidingWindowSource {
     private scanStringLiteral(diagnostics: SyntaxDiagnostic[]): SyntaxKind {
         var quoteCharacter = this.currentCharCode();
 
-        Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
+        // Debug.assert(quoteCharacter === CharacterCodes.singleQuote || quoteCharacter === CharacterCodes.doubleQuote);
 
         this.slidingWindow.moveToNextItem();
 
@@ -1202,11 +1202,11 @@ class Scanner implements ISlidingWindowSource {
     private scanUnicodeOrHexEscape(errors: SyntaxDiagnostic[]): number {
         var start = this.slidingWindow.absoluteIndex();
         var character = this.currentCharCode();
-        Debug.assert(character === CharacterCodes.backslash);
+        // Debug.assert(character === CharacterCodes.backslash);
         this.slidingWindow.moveToNextItem();
 
         character = this.currentCharCode();
-        Debug.assert(character === CharacterCodes.u || character === CharacterCodes.x);
+        // Debug.assert(character === CharacterCodes.u || character === CharacterCodes.x);
 
         var intChar = 0;
         this.slidingWindow.moveToNextItem();
@@ -1236,7 +1236,7 @@ class Scanner implements ISlidingWindowSource {
         var length = end - start;
         var offset = start - this.slidingWindow.windowAbsoluteStartIndex;
 
-        Debug.assert(offset >= 0);
+        // Debug.assert(offset >= 0);
         if (intern) {
             return this.stringTable.addCharArray(this.slidingWindow.window, offset, length);
         }

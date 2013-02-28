@@ -1,4 +1,5 @@
 ///<reference path='..\..\..\src\compiler\typescript.ts'/>
+///<reference path='..\..\..\src\compiler\Syntax\Parser.ts'/>
 ///<reference path='.\quotedLib.ts'/>
 ///<reference path='.\quotedCompiler.ts'/>
 
@@ -28,20 +29,14 @@ class DiagnosticsLogger implements TypeScript.ILogger {
     }
 }
 
-// var libstring = ...
-// var compiler = ...
-
-
 class BatchCompiler {
+    public compiler: TypeScript.TypeScriptCompiler;
+    private stringTable = Collections.createStringTable();
 
-	public compiler: TypeScript.TypeScriptCompiler;
     public compile() {
-
-
         var settings = new TypeScript.CompilationSettings();
         settings.usePull = true;
         settings.useFidelity = true;
-        
 
         this.compiler = new TypeScript.TypeScriptCompiler(new StringTextWriter(), new DiagnosticsLogger(), settings);
 
@@ -52,7 +47,13 @@ class BatchCompiler {
     }
 
     // use this to test "clean" re-typecheck speed
-    public reTypeCheck() { this.compiler.pullTypeCheck(true); }
+    public reTypeCheck() {
+        this.compiler.pullTypeCheck(true);
+    }
+
+    public parse(): SyntaxTree {
+        return Parser1.parse(TextFactory.createSimpleText(compilerString), LanguageVersion.EcmaScript5, this.stringTable);
+    }
 }
 
 var batch = new BatchCompiler();

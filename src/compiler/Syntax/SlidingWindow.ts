@@ -90,7 +90,7 @@ class SlidingWindow {
             // items in the window.
             var shiftCount = this.windowCount - shiftStartIndex;
 
-            Debug.assert(shiftStartIndex > 0);
+            // Debug.assert(shiftStartIndex > 0);
             if (shiftCount > 0) {
                 ArrayUtilities.copy(this.window, shiftStartIndex, this.window, 0, shiftCount);
             }
@@ -149,7 +149,7 @@ class SlidingWindow {
         var relativeIndex = absoluteIndex - this.windowAbsoluteStartIndex;
 
         // Make sure we haven't screwed anything up.
-        Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
+        // Debug.assert(relativeIndex >= 0 && relativeIndex < this.windowCount);
 
         // Set ourselves back to that point.
         this.currentRelativeItemIndex = relativeIndex;
@@ -167,7 +167,7 @@ class SlidingWindow {
 
     public peekItemN(n: number): any {
         // Assert disabled because it is actually expensive enugh to affect perf.
-        Debug.assert(n >= 0);
+        // Debug.assert(n >= 0);
         while (this.currentRelativeItemIndex + n >= this.windowCount) {
             if (!this.addMoreItemsToWindow(/*argument:*/ null)) {
                 return this.defaultValue;
@@ -197,7 +197,7 @@ class SlidingWindow {
         if (this._pinCount > 0) {
             // If we have any active pins, then the caller better be setting the index somewhere
             // inside our active window.
-            Debug.assert(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex());
+            // Debug.assert(absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex());
         }
 
         if (absoluteIndex >= this.windowAbsoluteStartIndex && absoluteIndex < this.windowAbsoluteEndIndex()) {

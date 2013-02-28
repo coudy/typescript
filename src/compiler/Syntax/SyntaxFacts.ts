@@ -115,7 +115,7 @@ module SyntaxFacts {
 
     for (var name in textToKeywordKind) {
         if (textToKeywordKind.hasOwnProperty(name)) {
-            Debug.assert(kindToText[textToKeywordKind[name]] === undefined);
+            // Debug.assert(kindToText[textToKeywordKind[name]] === undefined);
             kindToText[textToKeywordKind[name]] = name;
         }
     }
