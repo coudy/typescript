@@ -766,7 +766,6 @@ module Harness {
             compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
-
             if (Harness.usePull) {
                 compiler.settings.usePull = true;
                 compiler.settings.useFidelity = true;
@@ -1079,7 +1078,7 @@ module Harness {
                 }
 
                 var uName = unitName || '0.ts';
-                compiler.updateUnit('', uName, false/*setRecovery*/);
+                updateUnit('', uName);
             }
 
             return '';
@@ -1155,7 +1154,9 @@ module Harness {
 
             for (var i = 0; i < files.length; i++) {
                 var fname = files[i];
-                compiler.updateUnit('', fname, false/*setRecovery*/);
+                if(fname !== 'lib.d.ts') {
+                    updateUnit('', fname);
+                    }
             }
 
             compiler.errorReporter.hasErrors = false;
@@ -1175,11 +1176,15 @@ module Harness {
 
             for (var i = 0; i < compiler.units.length; i++) {
                 if (compiler.units[i].filename === uName) {
-                    compiler.updateUnit(code, uName, false/*setRecovery*/);
+                    updateUnit(code, uName);
                     script = <TypeScript.Script>compiler.scripts.members[i];
                 }
             }
             if (!script) {
+                // TODO: make this toggleable, shouldn't be necessary once typecheck bugs are cleaned up
+                // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
+                // of persistent typecheck state
+                //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
                 script = compiler.addUnit(code, uName, isResident, references);
                 needsFullTypeCheck = true;
             }
@@ -1188,7 +1193,11 @@ module Harness {
         }
 
         export function updateUnit(code: string, unitName: string, setRecovery?: bool) {
-            compiler.updateUnit(code, unitName, setRecovery);
+            if (Harness.usePull) {
+                compiler.pullUpdateUnit(new TypeScript.StringSourceText(code), unitName, setRecovery);
+            } else {
+                compiler.updateUnit(code, unitName, setRecovery);
+            }
         }
 
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1239,6 +1248,14 @@ module Harness {
             var compilationContext = Harness.Compiler.defineCompilationContextForTest(unitName, dependencies);
 
             compileUnit(lastUnit.content, unitName, callback, settingsCallback, compilationContext, lastUnit.references);
+        }
+
+        export function emitToOutfile(outfile: WriterAggregator) {
+            compiler.emitToOutfile(outfile);
+        }
+
+        export function emit(ioHost: TypeScript.EmitterIOHost) {
+            compiler.emit(ioHost);
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1294,7 +1311,7 @@ module Harness {
                 };
                 var postcompile = () => {
                     addedFiles.forEach(file => {
-                        Harness.Compiler.updateUnit('', file, false/*setRecovery*/);
+                        updateUnit('', file);
                     });
                 };
                 var context = {

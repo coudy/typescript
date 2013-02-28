@@ -1,4 +1,5 @@
 ///<reference path='..\..\..\src\harness\fourslash.ts' />
+///<reference path='..\..\..\src\harness\harness.ts'/>
 ///<reference path='..\runnerbase.ts' />
 
 class FourslashRunner extends RunnerBase {
@@ -29,6 +30,7 @@ class FourslashRunner extends RunnerBase {
             this.tests = this.enumerateFiles(this.basePath);
         }
 
+        Harness.Compiler.recreate();
         this.tests.forEach(runSingleFourslashTest);
     }
 }
