@@ -186,7 +186,7 @@ class ArrayUtilities {
         return ~low;
     }
 
-    public static createArray(length: number, defaultvalue = null): any[] {
+    public static createArray(length: number, defaultvalue: any): any[] {
         var result = [];
         for (var i = 0; i < length; i++) {
             result.push(defaultvalue);

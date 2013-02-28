@@ -32,7 +32,7 @@ module Collections {
 
         constructor(capacity) {
             var size = Hash.getPrime(capacity);
-            this.entries = ArrayUtilities.createArray(size);
+            this.entries = ArrayUtilities.createArray(size, null);
         }
 
         public addCharArray(key: number[], start: number, len: number): string {
@@ -120,7 +120,7 @@ module Collections {
             var newSize = Hash.expandPrime(this.entries.length);
 
             var oldEntries = this.entries;
-            var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newSize);
+            var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newSize, null);
 
             this.entries = newEntries;
 

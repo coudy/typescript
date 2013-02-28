@@ -23,7 +23,7 @@ module Collections {
             var size = Hash.getPrime(capacity);
             this.hash = hash;
             this.equals = equals;
-            this.entries = ArrayUtilities.createArray(size);
+            this.entries = ArrayUtilities.createArray(size, null);
         }
 
         // Maps 'key' to 'value' in this table.  Does not throw if 'key' is already in the table.
@@ -139,7 +139,7 @@ module Collections {
             var newSize = Hash.expandPrime(this.entries.length);
 
             var oldEntries = this.entries;
-            var newEntries: HashTableEntry[] = ArrayUtilities.createArray(newSize);
+            var newEntries: HashTableEntry[] = ArrayUtilities.createArray(newSize, null);
 
             this.entries = newEntries;
 
