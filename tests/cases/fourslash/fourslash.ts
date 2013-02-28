@@ -194,6 +194,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyCurrentParameterHelpType(expected);
         }
 
+        public currentSignatureParamterCountIs(expected: number) {
+            FourSlash.currentTestState.verifyCurrentSignatureHelpParameterCount(expected);
+        }
+
         public numberOfErrorsInCurrentFile(expected: number) {
             FourSlash.currentTestState.verifyNumberOfErrorsInCurrentFile(expected);
         }

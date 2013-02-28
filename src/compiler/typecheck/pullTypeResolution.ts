@@ -76,6 +76,12 @@ module TypeScript {
         hadProvisionalErrors: bool;
     }
 
+    export interface PullAdditionalCallResolutionData {
+        targetSymbol: PullSymbol;
+        signatures: PullSignatureSymbol[];
+        signature: PullSignatureSymbol;
+    }
+
     // The resolver associates types with a given AST
     export class PullTypeResolver {
 
@@ -543,6 +549,14 @@ module TypeScript {
                 var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, enclosingDecl, context);
 
                 signature.setReturnType(returnTypeSymbol);
+
+                if (returnTypeSymbol.isGeneric()) {
+                    signature.setHasGenericParameter();
+
+                    if (funcDeclSymbol) {
+                        funcDeclSymbol.getType().setHasGenericSignature();
+                    }
+                }    
             }
             else {
                 signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
@@ -554,6 +568,13 @@ module TypeScript {
                     this.resolveFunctionTypeSignatureParameter(<ArgDecl>funcDeclAST.arguments.members[i], null, enclosingDecl, context);
                 }
             }
+
+            if (signature.hasGenericParameter()) {
+                // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
+                if (funcDeclSymbol) {
+                    funcDeclSymbol.getType().setHasGenericSignature();
+                }
+            }            
 
             funcDeclSymbol.setResolved();
 
@@ -568,6 +589,12 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
                 
                 context.setTypeInContext(paramSymbol,typeRef);
+
+                // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
+                if (enclosingDecl && typeRef.isGeneric()) {
+                    var signature = enclosingDecl.getSignatureSymbol();
+                    signature.setHasGenericParameter();
+                }                
             } // PULLTODO: default values?
             else {
                 if (contextParam) {
@@ -589,6 +616,7 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 context.setTypeInContext(paramSymbol,typeRef);
+
             } // PULLTODO: default values?
             else {
                 if (contextParam) {
@@ -813,6 +841,12 @@ module TypeScript {
                     if (declPropertySymbol) {
                         declPropertySymbol.setType(typeExprSymbol);
                     }
+
+                    // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
+                    if (enclosingDecl && typeExprSymbol.isGeneric()) {
+                        var signature = enclosingDecl.getSignatureSymbol();
+                        signature.setHasGenericParameter();
+                    }
                 }
             }
 
@@ -988,6 +1022,13 @@ module TypeScript {
                     }
                 }
 
+                if (signature.hasGenericParameter()) {
+                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
+                    if (funcSymbol) {
+                        funcSymbol.getType().setHasGenericSignature();
+                    }
+                }
+
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
                     var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
@@ -1003,6 +1044,15 @@ module TypeScript {
                         hadError = true;
                     }
                     else {
+
+                        if (returnTypeSymbol.isGeneric()) {
+                            signature.setHasGenericParameter();
+
+                            if (funcSymbol) {
+                                funcSymbol.getType().setHasGenericSignature();
+                            }
+                        }
+
                         signature.setReturnType(returnTypeSymbol);
                     }
                 }
@@ -1496,6 +1546,7 @@ module TypeScript {
                 var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, enclosingDecl, context);
                 
                 signature.setReturnType(returnTypeSymbol);
+             
             }
             else {
                 if (assigningFunctionSignature) {
@@ -1952,7 +2003,7 @@ module TypeScript {
             return rightType;
         }
 
-        public resolveCallExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveCallExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
             var callEx = <CallExpression>expressionAST;
 
             // resolve the target
@@ -2094,15 +2145,21 @@ module TypeScript {
                 }
             }
 
-            if (returnType) {
-                return returnType;
+            if (!returnType) {
+                returnType = this.semanticInfoChain.anyTypeSymbol;
             }
-            else {
-                return this.semanticInfoChain.anyTypeSymbol;
+
+            // Store any additional resolution results if needed
+            if (additionalResults) {
+                additionalResults.targetSymbol = targetSymbol;
+                additionalResults.signatures = signatures;
+                additionalResults.signature = signature;
             }
+
+            return returnType;
         }
 
-        public resolveNewExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveNewExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
             
             var callEx = <CallExpression>expressionAST;
             var returnType: PullTypeSymbol = null;
@@ -2171,6 +2228,13 @@ module TypeScript {
                             contextualType = null;
                         }
                     }
+                }
+
+                // Store any additional resolution results if needed
+                if (additionalResults) {
+                    additionalResults.targetSymbol = targetTypeSymbol;
+                    additionalResults.signatures = constructSignatures;
+                    additionalResults.signature = signature;
                 }
 
                 return returnType;

@@ -397,8 +397,12 @@ module Services {
             return this.compiler.resolvePosition(pos, script);
         }
 
-        public getPullSymbolFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
-            return this.compiler.resolveSymbolForPath(path, script);
+        public getSymbolInformationFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
+            return this.compiler.pullGetSymbolInformationFromPath(path, script);
+        }
+
+        public getCallInformationFormPath(path: TypeScript.AstPath, script: TypeScript.Script) {
+            return this.compiler.pullGetCallInformationFormPath(path, script);
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): bool {

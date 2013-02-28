@@ -292,6 +292,8 @@ module TypeScript {
 
         private memberTypeParameterNameCache: any = null;
 
+        private hasAGenericParameter = false;
+
         constructor(kind: PullElementKind) {
             super("", kind);
         }
@@ -299,7 +301,10 @@ module TypeScript {
         public isDefinition() { return false; }
         public hasVariableParamList() { return this.hasOptionalParam; }
 
-        public isGeneric() { return this.typeParameterLinks && this.typeParameterLinks.length != 0; }
+        public setHasGenericParameter() { this.hasAGenericParameter = true; }
+        public hasGenericParameter() { return this.hasAGenericParameter; }
+
+        public isGeneric() { return this.hasAGenericParameter || (this.typeParameterLinks && this.typeParameterLinks.length != 0); }
 
         public addParameter(parameter: PullSymbol, isOptional = false) {
             if (!this.parameterLinks) {
@@ -434,6 +439,7 @@ module TypeScript {
             this.parameterLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.Parameter);
             this.nonOptionalParamCount = 0;
             this.hasOptionalParam = false;
+            this.hasAGenericParameter = false;
 
             // re-compute non-optional arg count, etc
             if (this.parameterLinks) {
@@ -524,6 +530,8 @@ module TypeScript {
         public setIsSpecialized() { this.isSpecialized = true; this.isBeingSpecialized = false; }
         public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
+
+        public setHasGenericSignature() { this.hasGenericSignature = true; }
 
         public getType() { return this; }
 
@@ -1489,7 +1497,7 @@ module TypeScript {
 
     export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
 
-        if (typeToSpecialize.isPrimitive()) {
+        if (typeToSpecialize.isPrimitive() || !typeToSpecialize.isGeneric()) {
             return typeToSpecialize;
         }
 
@@ -1662,6 +1670,10 @@ module TypeScript {
             newSignature.addDeclaration(decl);
 
             newType.addCallSignature(newSignature);
+
+            if (newSignature.hasGenericParameter()) {
+                newType.setHasGenericSignature();
+            }
         }
 
         // specialize construct signatures
@@ -1688,6 +1700,10 @@ module TypeScript {
             newSignature.addDeclaration(decl);
 
             newType.addConstructSignature(newSignature);
+
+            if (newSignature.hasGenericParameter()) {
+                newType.setHasGenericSignature();
+            }            
         }
 
         // specialize index signatures
@@ -1714,6 +1730,10 @@ module TypeScript {
             newSignature.addDeclaration(decl);
 
             newType.addIndexSignature(newSignature);
+
+            if (newSignature.hasGenericParameter()) {
+                newType.setHasGenericSignature();
+            }            
         }
 
         context.popTypeSpecializationCache();
@@ -1834,11 +1854,19 @@ module TypeScript {
         newSignature = new PullSignatureSymbol(signature.getKind());
         newSignature.addDeclaration(signature.getDeclarations()[0]);
 
-        signature.addSpecialization(newSignature, typeArguments);
+        signature.addSpecialization(newSignature, typeArguments);      
 
         var parameters = signature.getParameters();
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.getReturnType();
+
+        for (var i = 0; i < typeParameters.length; i++) {
+            newSignature.addTypeParameter(typeParameters[i]);
+        }
+
+        if (signature.hasGenericParameter()) {
+            newSignature.setHasGenericParameter();
+        }           
 
         context.pushTypeSpecializationCache(typeReplacementMap);
         var newReturnType = specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast);
@@ -1901,11 +1929,7 @@ module TypeScript {
 
             newParameter.setType(newParameterType);
             newSignature.addParameter(newParameter);
-        }
-
-        for (var i = 0; i < typeParameters.length; i++) {
-            newSignature.addTypeParameter(typeParameters[i]);
-        }
+        }       
 
         return newSignature;
     }

@@ -1247,41 +1247,82 @@ module TypeScript {
             return { symbol : symbol, ast : foundAST};
         }
 
-        public resolveSymbolForPath(path: AstPath, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; } {
+        private extractResolutionContextFromPath(path: AstPath, script: Script, scriptName?: string): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {
             if (!scriptName) {
                 scriptName = script.locationInfo.filename;
             }
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
-            var symbol: PullSymbol = null;
-            var lambdaAST: FuncDecl = null;
-            var searchTypeSpace = false;
             var enclosingDecl: PullDecl = null;
+            var isTypedAssignment = false;
+
             var resolutionContext = new PullTypeResolutionContext();
+            resolutionContext.resolveAggressively = true;
 
-            for (var i = path.top; i >= 0 ; i--) {
-                var current = path.asts[i];
-                if (enclosingDecl === null) {
-                    var decl = semanticInfo.getDeclForAST(current);
-                    if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
-                        enclosingDecl = decl;
-                        break;
-                    }
-                }
-
-                if (current.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>current).fncFlags, FncFlags.IsFunctionExpression)) {
-                    lambdaAST = <FuncDecl>current;
-                } else if (current.nodeType == NodeType.TypeRef || current.nodeType == NodeType.TypeParameter || current.nodeType == NodeType.TypeAssertion) {
-                    resolutionContext.searchTypeSpace = true;
-                }
+            if (path.count() == 0) {
+                return null;
             }
 
+            // Extract infromation from path
+            for (var i = 0, n = path.count(); i < n; i++) {
+                var current = path.asts[i];
+                var decl = semanticInfo.getDeclForAST(current);
+
+                if (decl && !(decl.getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
+                    enclosingDecl = decl;
+                }
+
+                switch (current.nodeType) {
+                    case NodeType.FuncDecl:
+                        if (hasFlag((<FuncDecl>current).fncFlags, FncFlags.IsFunctionExpression)) {
+                            this.pullTypeChecker.resolver.resolveAST((<FuncDecl>current), true, enclosingDecl, resolutionContext);
+                        }
+
+                        break;
+
+                    case NodeType.VarDecl:
+                        var assigningAST = <VarDecl> current;
+                        isTypedAssignment = (assigningAST.typeExpr != null);
+
+                        this.pullTypeChecker.resolver.resolveDeclaration(assigningAST, resolutionContext);
+                        var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
+
+                        if (varSymbol && isTypedAssignment) {
+                            var contextualType = varSymbol.getType();
+                            resolutionContext.pushContextualType(contextualType, false, null);
+                        }
+
+                        if (assigningAST.init) {
+                            this.pullTypeChecker.resolver.resolveAST(assigningAST.init, isTypedAssignment, enclosingDecl, resolutionContext);
+                        }
+
+                        break;
+
+                    case NodeType.ObjectLit:
+                        this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
+                        break;
+
+                    case NodeType.Asg:
+                        this.pullTypeChecker.resolver.resolveAST((<BinaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
+                        break;
+
+                    case NodeType.TypeAssertion:
+                        this.pullTypeChecker.resolver.resolveAST((<UnaryExpression>current), isTypedAssignment, enclosingDecl, resolutionContext);
+                        resolutionContext.searchTypeSpace = true;
+                        break;
+
+                    case NodeType.TypeRef:
+                    case NodeType.TypeParameter:
+                        resolutionContext.searchTypeSpace = true;
+                        break;
+                }
+
+            }
+
+            // Other possible type space references
             if (path.isNameOfInterface() || path.isInClassImplementsList() || path.isInInterfaceExtendsList()) {
                 resolutionContext.searchTypeSpace = true;
             }
-
-            resolutionContext.resolveAggressively = true;
-
 
             // if the found AST is a named, we want to check for previous dotted expressions,
             // since those will give us the right typing
@@ -1297,14 +1338,53 @@ module TypeScript {
                 }
             }
 
-            if (lambdaAST) {
-                this.pullTypeChecker.resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
-                enclosingDecl = semanticInfo.getDeclForAST(lambdaAST);
+            return {
+                ast: path.ast(),
+                enclosingDecl: enclosingDecl,
+                resolutionContext: resolutionContext,
+                isTypedAssignment: isTypedAssignment
+            };
+        }
+        
+        public pullGetSymbolInformationFromPath(path: AstPath, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; } {
+            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+            if (!context) {
+                return null;
             }
 
-            symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), false /*isTypedAssignment*/, enclosingDecl, resolutionContext);
+            var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext);
 
             return { symbol: symbol, ast: path.ast() };
+        }
+
+        public pullGetCallInformationFormPath(path: AstPath, script: Script, scriptName?: string): { targetSymbol: PullSymbol; signatures: PullSignatureSymbol[]; signature: PullSignatureSymbol; ast: AST; } {
+            // AST has to be a call expression
+            if (path.ast().nodeType !== NodeType.Call && path.ast().nodeType !== NodeType.New) {
+                return null;
+            }
+
+            var isNew = (path.ast().nodeType === NodeType.New);
+
+            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+            if (!context) {
+                return null;
+            }
+
+            var callResolutionResults = {
+                targetSymbol: null,
+                signatures: null,
+                signature: null,
+                ast: path.ast()
+            };
+
+            if (isNew) {
+                this.pullTypeChecker.resolver.resolveNewExpression(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+            }
+            else {
+                this.pullTypeChecker.resolver.resolveCallExpression(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+            }
+
+            return callResolutionResults;
         }
 
         public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): { ast: AST; typeName: string; typeInfo: string; typeSymbol: PullTypeSymbol; } {
