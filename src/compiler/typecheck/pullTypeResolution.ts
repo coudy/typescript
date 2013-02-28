@@ -543,6 +543,14 @@ module TypeScript {
                 var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, enclosingDecl, context);
 
                 signature.setReturnType(returnTypeSymbol);
+
+                if (returnTypeSymbol.isGeneric()) {
+                    signature.setHasGenericParameter();
+
+                    if (funcDeclSymbol) {
+                        funcDeclSymbol.getType().setHasGenericSignature();
+                    }
+                }    
             }
             else {
                 signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
@@ -554,6 +562,13 @@ module TypeScript {
                     this.resolveFunctionTypeSignatureParameter(<ArgDecl>funcDeclAST.arguments.members[i], null, enclosingDecl, context);
                 }
             }
+
+            if (signature.hasGenericParameter()) {
+                // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
+                if (funcDeclSymbol) {
+                    funcDeclSymbol.getType().setHasGenericSignature();
+                }
+            }            
 
             funcDeclSymbol.setResolved();
 
@@ -568,6 +583,12 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
                 
                 context.setTypeInContext(paramSymbol,typeRef);
+
+                // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
+                if (enclosingDecl && typeRef.isGeneric()) {
+                    var signature = enclosingDecl.getSignatureSymbol();
+                    signature.setHasGenericParameter();
+                }                
             } // PULLTODO: default values?
             else {
                 if (contextParam) {
@@ -589,6 +610,7 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
 
                 context.setTypeInContext(paramSymbol,typeRef);
+
             } // PULLTODO: default values?
             else {
                 if (contextParam) {
@@ -813,6 +835,12 @@ module TypeScript {
                     if (declPropertySymbol) {
                         declPropertySymbol.setType(typeExprSymbol);
                     }
+
+                    // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
+                    if (enclosingDecl && typeExprSymbol.isGeneric()) {
+                        var signature = enclosingDecl.getSignatureSymbol();
+                        signature.setHasGenericParameter();
+                    }
                 }
             }
 
@@ -988,6 +1016,13 @@ module TypeScript {
                     }
                 }
 
+                if (signature.hasGenericParameter()) {
+                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
+                    if (funcSymbol) {
+                        funcSymbol.getType().setHasGenericSignature();
+                    }
+                }
+
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
                     var returnTypeRef = <TypeReference>funcDeclAST.returnTypeAnnotation;
@@ -1003,6 +1038,15 @@ module TypeScript {
                         hadError = true;
                     }
                     else {
+
+                        if (returnTypeSymbol.isGeneric()) {
+                            signature.setHasGenericParameter();
+
+                            if (funcSymbol) {
+                                funcSymbol.getType().setHasGenericSignature();
+                            }
+                        }
+
                         signature.setReturnType(returnTypeSymbol);
                     }
                 }
@@ -1496,6 +1540,7 @@ module TypeScript {
                 var returnTypeSymbol = this.resolveTypeReference(returnTypeRef, enclosingDecl, context);
                 
                 signature.setReturnType(returnTypeSymbol);
+             
             }
             else {
                 if (assigningFunctionSignature) {
