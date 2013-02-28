@@ -1078,7 +1078,7 @@ module Harness {
                 }
 
                 var uName = unitName || '0.ts';
-                compiler.updateUnit('', uName, false/*setRecovery*/);
+                updateUnit('', uName);
             }
 
             return '';
@@ -1154,7 +1154,9 @@ module Harness {
 
             for (var i = 0; i < files.length; i++) {
                 var fname = files[i];
-                compiler.updateUnit('', fname, false/*setRecovery*/);
+                if(fname !== 'lib.d.ts') {
+                    updateUnit('', fname);
+                    }
             }
 
             compiler.errorReporter.hasErrors = false;
@@ -1174,7 +1176,7 @@ module Harness {
 
             for (var i = 0; i < compiler.units.length; i++) {
                 if (compiler.units[i].filename === uName) {
-                    compiler.updateUnit(code, uName, false/*setRecovery*/);
+                    updateUnit(code, uName);
                     script = <TypeScript.Script>compiler.scripts.members[i];
                 }
             }
@@ -1191,7 +1193,11 @@ module Harness {
         }
 
         export function updateUnit(code: string, unitName: string, setRecovery?: bool) {
-            compiler.updateUnit(code, unitName, setRecovery);
+            if (Harness.usePull) {
+                compiler.pullUpdateUnit(new TypeScript.StringSourceText(code), unitName, setRecovery);
+            } else {
+                compiler.updateUnit(code, unitName, setRecovery);
+            }
         }
 
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1305,7 +1311,7 @@ module Harness {
                 };
                 var postcompile = () => {
                     addedFiles.forEach(file => {
-                        Harness.Compiler.updateUnit('', file, false/*setRecovery*/);
+                        updateUnit('', file);
                     });
                 };
                 var context = {

@@ -875,6 +875,7 @@ module FourSlash {
         }
     }
 
+    // TOOD: should these just use the Harness's stdout/stderr?
     var fsOutput = new Harness.Compiler.WriterAggregator();
     var fsErrors = new Harness.Compiler.WriterAggregator();
     export function runFourSlashTest(filename: string) {
@@ -901,9 +902,11 @@ module FourSlash {
         //    settings.outputOption = "fourslash.js";
         //    settings.resolve = true;
         // but they appear to not affect test execution, are they still necessary? (I don't think resolve ever really worked)
-        Harness.Compiler.addUnit(IO.readFile(tsFn), tsFn);
-        //Harness.Compiler.addUnit("", mockFilename);
-        Harness.Compiler.addUnit(content, mockFilename);
+
+        fsOutput.reset();
+        fsErrors.reset();
+        Harness.Compiler.addUnit(IO.readFile(tsFn), tsFn);        
+        Harness.Compiler.addUnit(content, mockFilename);        
         Harness.Compiler.compile(content, mockFilename);
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
