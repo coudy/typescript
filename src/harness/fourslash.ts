@@ -350,6 +350,10 @@ module FourSlash {
             assert.equal(this.getActiveParameter().type, typeName);
         }
 
+        public verifyCurrentSignatureHelpParameterCount(expectedCount: number) {
+            assert.equal(this.getActiveSignatureHelp().parameters.length, expectedCount);
+        }
+
         public verifyCurrentSignatureHelpReturnType(returnTypeName: string) {
             var actualReturnType = this.getActiveSignatureHelp().returnType;
             assert.equal(actualReturnType, returnTypeName);

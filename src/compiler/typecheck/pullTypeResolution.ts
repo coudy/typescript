@@ -76,6 +76,12 @@ module TypeScript {
         hadProvisionalErrors: bool;
     }
 
+    export interface PullAdditionalCallResolutionData {
+        targetSymbol: PullSymbol;
+        signatures: PullSignatureSymbol[];
+        signature: PullSignatureSymbol;
+    }
+
     // The resolver associates types with a given AST
     export class PullTypeResolver {
 
@@ -1997,7 +2003,7 @@ module TypeScript {
             return rightType;
         }
 
-        public resolveCallExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveCallExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
             var callEx = <CallExpression>expressionAST;
 
             // resolve the target
@@ -2139,15 +2145,21 @@ module TypeScript {
                 }
             }
 
-            if (returnType) {
-                return returnType;
+            if (!returnType) {
+                returnType = this.semanticInfoChain.anyTypeSymbol;
             }
-            else {
-                return this.semanticInfoChain.anyTypeSymbol;
+
+            // Store any additional resolution results if needed
+            if (additionalResults) {
+                additionalResults.targetSymbol = targetSymbol;
+                additionalResults.signatures = signatures;
+                additionalResults.signature = signature;
             }
+
+            return returnType;
         }
 
-        public resolveNewExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        public resolveNewExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
             
             var callEx = <CallExpression>expressionAST;
             var returnType: PullTypeSymbol = null;
@@ -2216,6 +2228,13 @@ module TypeScript {
                             contextualType = null;
                         }
                     }
+                }
+
+                // Store any additional resolution results if needed
+                if (additionalResults) {
+                    additionalResults.targetSymbol = targetTypeSymbol;
+                    additionalResults.signatures = constructSignatures;
+                    additionalResults.signature = signature;
                 }
 
                 return returnType;
