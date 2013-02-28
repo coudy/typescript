@@ -137,6 +137,7 @@ module Harness {
                 result.errors.forEach(err => {
                     actual = actual + '\n     ' + err.toString();
                 });
+
                 throwAssertError(new Error("Expected compiler warning at (" + line + ", " + column + "): " + desc + "\nActual errors follow: " + actual));
             }
         }
@@ -977,22 +978,11 @@ module Harness {
 
                         for (var pos = 0; pos < code.length; pos++) {
                             var tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
-                            switch (tyInfo.ast.nodeType) {
-                                case TypeScript.NodeType.FuncDecl:
-                                    var name = (<TypeScript.FuncDecl>tyInfo.ast).name.actualText;
-                                    if (name === identifier) {
-                                        // TODO: this adds the same identifier a bunch of times for different position values
-                                        // will fix it up once the tests are working better
-                                        matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, identifier));
-                                    }
-                                    break;
-                                default:
-                                    // TODO: other types can have specific cases as necessary when things are working better
-                                    var name = (<any>tyInfo.ast).id.actualText;
-                                    if (name === identifier) {
-                                        matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, identifier));
-                                    }
-                                    break;
+                            var name = this.getTypeInfoName(tyInfo.ast);                            
+                            if (name === identifier) {
+                                // TODO: this adds the same identifier a bunch of times for different position values
+                                // will fix it up once the tests are working better
+                                matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, identifier));
                             }
                         }
                     }
@@ -1004,6 +994,57 @@ module Harness {
                 else {
                     return matchingIdentifiers[0];
                 }
+            }
+
+            private getTypeInfoName(ast : TypeScript.AST) {
+                var name = '';
+                switch (ast.nodeType) {
+                    case TypeScript.NodeType.Name: // Type Name?
+                    case TypeScript.NodeType.Null:
+                    case TypeScript.NodeType.List:
+                    case TypeScript.NodeType.Empty:
+                    case TypeScript.NodeType.EmptyExpr:
+                    case TypeScript.NodeType.Asg:
+                    case TypeScript.NodeType.True:
+                    case TypeScript.NodeType.False:
+                    case TypeScript.NodeType.ArrayLit:
+                    case TypeScript.NodeType.TypeRef:
+                        break;
+                    case TypeScript.NodeType.Super:
+                        name = (<any>ast).text;
+                        break;
+                    case TypeScript.NodeType.Regex:
+                        name = (<TypeScript.RegexLiteral>ast).text;
+                        break;
+                    case TypeScript.NodeType.QString:
+                        name = (<any>ast).text;
+                        break;
+                    case TypeScript.NodeType.NumberLit:
+                        name = (<TypeScript.NumberLiteral>ast).text;
+                        break;
+                    case TypeScript.NodeType.Return:
+                        //name = (<TypeScript.ReturnStatement>tyInfo.ast).returnExpression.actualText; // why is this complaining?
+                        break;
+                    case TypeScript.NodeType.InterfaceDeclaration:
+                        name = (<TypeScript.InterfaceDeclaration>ast).name.actualText;
+                        break;
+                    case TypeScript.NodeType.ModuleDeclaration:
+                        name = (<TypeScript.ModuleDeclaration>ast).name.actualText;
+                        break;
+                    case TypeScript.NodeType.ClassDeclaration:
+                        name = (<TypeScript.ClassDeclaration>ast).name.actualText;
+                        break;
+                    case TypeScript.NodeType.FuncDecl:
+                        name = (<TypeScript.FuncDecl>ast).name.actualText;
+                        break;
+                    default:
+                        // TODO: is there a reason to mess with all the special cases above and not just do this (ie take whatever property is there and works?)
+                        var a = <any>ast;
+                        name = (a.id) ? (a.id.actualText) : (a.name) ? a.name.actualText : (a.text) ? a.text : '';
+                        break;
+                }
+
+                return name;
             }
 
             public isOfType(expr: string, expectedType: string) {

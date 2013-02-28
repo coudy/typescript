@@ -70,7 +70,7 @@ module TypeScript {
         public getPropertySymbol() { return this.propertySymbol; }
 
         public setSignatureSymbol(signature: PullSignatureSymbol) { this.signatureSymbol = signature; }
-        public getSignatureSymbol() { return this.signatureSymbol; }
+        public getSignatureSymbol():PullSignatureSymbol { return this.signatureSymbol; }
 
         public getFlags() { return this.declFlags; }
         public setFlags(flags: PullElementFlags) { this.declFlags = flags; }
