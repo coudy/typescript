@@ -1,6 +1,7 @@
 <html>
 <head>
     <title>TypeScript Web harness</title>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.js"></script>
     <script src='perfCompiler.js'></script>
     <script>
         if (!batch) {
@@ -12,6 +13,10 @@
             var div = document.createElement('div');
             div.innerText = res;
             document.body.appendChild(div);
+        }
+
+        function clear1() {
+            $("div").remove();
         }
 
         function parse() {
@@ -52,5 +57,6 @@
     <button onclick="parse()">Parse Tree</button>
     <button onclick="convertTree()">Convert Tree</button>
     <button onclick="typeCheck()">Type Check</button>
+    <button onclick="clear1()">Clear</button>
 </body>
 </html>
