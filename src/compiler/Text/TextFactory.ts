@@ -525,9 +525,14 @@ module TextFactory {
             StringUtilities.copyTo(this.value, sourceIndex, destination, destinationIndex, count);
         }
 
+        private static charArray: number[] = ArrayUtilities.createArray(1024, 0);
+
         public substr(start: number, length: number, intern: bool): string {
             if (intern) {
-                var array = ArrayUtilities.createArray(length, 0);
+                // use a shared array instance of the length of this substring isn't too large.
+                var array = length <= SimpleStringText.charArray.length
+                    ? SimpleStringText.charArray
+                    : ArrayUtilities.createArray(length, /*defaultValue:*/0);
                 this.copyTo(start, array, 0, length);
                 return stringTable.addCharArray(array, 0, length);
             }

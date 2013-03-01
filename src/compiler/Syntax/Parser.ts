@@ -4616,7 +4616,7 @@ module Parser1 {
         }
 
         private returnArray(array: any[]) {
-            array .length = 0;
+            array.length = 0;
             this.arrayPool.push(array);
         }
 

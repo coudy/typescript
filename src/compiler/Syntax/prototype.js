@@ -38321,9 +38321,10 @@ var TextFactory;
         SimpleStringText.prototype.copyTo = function (sourceIndex, destination, destinationIndex, count) {
             StringUtilities.copyTo(this.value, sourceIndex, destination, destinationIndex, count);
         };
+        SimpleStringText.charArray = ArrayUtilities.createArray(1024, 0);
         SimpleStringText.prototype.substr = function (start, length, intern) {
             if (intern) {
-                var array = ArrayUtilities.createArray(length, 0);
+                var array = length <= SimpleStringText.charArray.length ? SimpleStringText.charArray : ArrayUtilities.createArray(length, 0);
                 this.copyTo(start, array, 0, length);
                 return stringTable.addCharArray(array, 0, length);
             }
