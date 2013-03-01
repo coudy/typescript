@@ -569,6 +569,10 @@ module TypeScript {
             var link = this.addOutgoingLink(memberSymbol, linkKind);
 
             memberSymbol.setContainer(this, linkKind);
+            
+            if (!this.memberCache) {
+                this.memberCache = [];
+            }
 
             if (!this.memberNameCache) {
                 this.memberNameCache = new BlockIntrinsics();
@@ -581,9 +585,6 @@ module TypeScript {
             if (!memberSymbol.isType()) {
                 this.memberLinks[this.memberLinks.length] = link;
 
-                if (!this.memberCache) {
-                    this.memberCache = [];
-                }
                 this.memberCache[this.memberCache.length] = memberSymbol;
 
                 if (!this.memberNameCache) {
