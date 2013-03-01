@@ -77,8 +77,6 @@ module TypeScript {
                         var endTime = new Date().getTime();
                         time_in_findSymbol += endTime - startTime;
 
-                        symbol.setDeclPath(nestedSymbolPath);
-
                         return symbol;
                     }
                     nestedSymbolPath.length -= 2;
@@ -106,8 +104,6 @@ module TypeScript {
                         var endTime = new Date().getTime();
                         time_in_findSymbol += endTime - startTime;
 
-                        symbol.setDeclPath(copyOfContextSymbolPath);
-
                         return symbol;
                     }
                     copyOfContextSymbolPath.length -= 2;
@@ -117,10 +113,6 @@ module TypeScript {
 
             // finally, try searching globally
             symbol = this.semanticInfoChain.findSymbol([name], declKind);
-
-            if (symbol) {
-                symbol.setDeclPath([name]);
-            }
 
             var endTime = new Date().getTime();
             time_in_findSymbol += endTime - startTime;
@@ -819,15 +811,26 @@ module TypeScript {
                 parentHadSymbol = true;
             }            
 
+            // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
             if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
 
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
                 if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
-                    variableDeclaration.addError(new PullError(varDeclAST.minChar, varDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                    var span = variableDeclaration.getSpan();
+
+                    variableDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
                     variableSymbol = null;
-                }
-            }
+                    parentHadSymbol = false;
+                 }
+             }
+             else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable)) {
+                var span = variableDeclaration.getSpan();
+
+                variableDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                variableSymbol = null;
+                parentHadSymbol = false;                
+             }
 
             if (this.reBindingAfterChange && variableSymbol && !variableSymbol.isType()) {
    
@@ -960,6 +963,10 @@ module TypeScript {
                         variableSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     }
                 }
+            }
+            else {
+                variableSymbol.addDeclaration(variableDeclaration);
+                variableDeclaration.setSymbol(variableSymbol);                
             }
 
             if (parent && !parentHadSymbol) {

@@ -793,6 +793,7 @@ module Harness {
                 }
                 else {
                     // requires unit to already exist in the compiler
+                    compiler.pullUpdateUnit(new TypeScript.StringSourceText(""), filename, true);
                     compiler.pullUpdateUnit(new TypeScript.StringSourceText(code), filename, true);
                 }
             }
@@ -1035,7 +1036,7 @@ module Harness {
                         name = (<TypeScript.ClassDeclaration>ast).name.actualText;
                         break;
                     case TypeScript.NodeType.FuncDecl:
-                        name = (<TypeScript.FuncDecl>ast).name.actualText;
+                        name = !(<TypeScript.FuncDecl>ast).name ? "" : (<TypeScript.FuncDecl>ast).name.actualText;
                         break;
                     default:
                         // TODO: is there a reason to mess with all the special cases above and not just do this (ie take whatever property is there and works?)
@@ -1048,7 +1049,7 @@ module Harness {
             }
 
             public isOfType(expr: string, expectedType: string) {
-                var actualType = this.get('var x = ' + expr, 'x');
+                var actualType = this.get('var _v_a_r_ = ' + expr, '_v_a_r_');
 
                 it('Expression "' + expr + '" is of type "' + expectedType + '"', function () {
                     assert.equal(actualType.type, expectedType);

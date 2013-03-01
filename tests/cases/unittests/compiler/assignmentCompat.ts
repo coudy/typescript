@@ -3,6 +3,9 @@
 describe("Assignment compatibility", function() {
     var typeFactory = new Harness.Compiler.TypeFactory();
 
+    var xxx = typeFactory.get('class Bar {}; var b = new Bar();', 'b');
+    var xxx2 = typeFactory.get('class Bar {};', 'Bar');       
+
     var any     = typeFactory.any;
     var number  = typeFactory.number;
     var string  = typeFactory.string;
@@ -13,6 +16,10 @@ describe("Assignment compatibility", function() {
     var someObject   = typeFactory.get('var obj = {one: 1}', 'obj');
     var someClass    = typeFactory.get('class Foo {};', 'Foo');
     var someInstance = typeFactory.get('class Foo {}; var f = new Foo();', 'f');
+
+
+                                     
+
 
     describe("any type", function() {
         it("is assignment compatible with everything", function() {

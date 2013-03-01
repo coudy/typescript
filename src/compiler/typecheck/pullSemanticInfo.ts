@@ -296,6 +296,8 @@ module TypeScript {
 
                 if (symbol) {
                     this.symbolCache[cacheID] = symbol;
+
+                    symbol.addCacheID(cacheID);
                 }
             }
 
@@ -360,17 +362,17 @@ module TypeScript {
 
         public removeSymbolFromCache(symbol: PullSymbol) {
             
-            var path = symbol.getDeclPath();
 
-            if (path) {
-                var kind = (symbol.getKind() & PullElementKind.SomeType) != 0 ? PullElementKind.SomeType: PullElementKind.SomeValue;
+            var path = [symbol.getName()];
+            var kind = (symbol.getKind() & PullElementKind.SomeType) != 0 ? PullElementKind.SomeType: PullElementKind.SomeValue;
 
-                var kindID = this.getDeclPathCacheID(path, kind);
-                var symID = this.getDeclPathCacheID(path, symbol.getKind());
+            var kindID = this.getDeclPathCacheID(path, kind);
+            var symID = this.getDeclPathCacheID(path, symbol.getKind());
 
-                this.symbolCache[kindID] = undefined;
-                this.symbolCache[symID] = undefined;
-            }
+            symbol.addCacheID(kindID);
+            symbol.addCacheID(symID);
+
+            symbol.invalidateCachedIDs(this.symbolCache);
         }
 
         public postErrors(): SemanticError[] {

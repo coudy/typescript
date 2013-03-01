@@ -903,6 +903,12 @@ module TypeScript {
             var typeParameterDecl = this.getDeclForAST(typeParameterAST);
             var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
 
+            if (typeParameterSymbol.isResolved() || typeParameterSymbol.isResolving()) {
+                return typeParameterSymbol;
+            }
+
+            typeParameterSymbol.startResolving();
+
             if (typeParameterAST.constraint) {
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, this.getEnclosingDecl(typeParameterDecl), context);
 

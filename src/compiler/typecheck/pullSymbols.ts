@@ -19,7 +19,8 @@ module TypeScript {
 
         private name: string;
 
-        private cachedDeclPath: string[];
+        private cachedPathIDs: any = {};
+
 
         private declKind: PullElementKind;
 
@@ -69,8 +70,19 @@ module TypeScript {
         public setIsOptional() { this.isOptional = true; }
         public getIsOptional() { return this.isOptional; }
 
-        public setDeclPath(declPath: string[]) { this.cachedDeclPath = declPath; }
-        public getDeclPath() { return this.cachedDeclPath; }
+        public addCacheID(cacheID: string) {
+            if (!this.cachedPathIDs[cacheID]) {
+                this.cachedPathIDs[cacheID] = true;
+            }
+        }
+
+        public invalidateCachedIDs(cache: any) {
+            for (var id in this.cachedPathIDs) {
+                if (cache[id]) {
+                    cache[id] = undefined;
+                }
+            }
+        }
 
         // declaration methods
         public addDeclaration(decl: PullDecl) { this.declarations.addItem(decl); }
