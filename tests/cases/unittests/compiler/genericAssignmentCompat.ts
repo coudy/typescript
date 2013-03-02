@@ -43,34 +43,34 @@ describe("Assignment compatibility", function() {
     });
 
     describe("Test generic interface in modules (knockout)", () => {
-        it("generic type flows through call 1", function() {
-            var t = typeFactory.get(knockOutCode, "x_v");
+        it("generic type flows through call 1", function () {
+            var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("x_v"));
             t.assertIdenticalTo(number);
         });
 
-        it("generic type flows through call 2", function() {
-            var t = typeFactory.get(knockOutCode, "age_v");
+        it("generic type flows through call 2", function () {
+            var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("age_v"));
             t.assertIdenticalTo(number);
         });
 
-        it("generic type flows through call 3", function() {
-            var t = typeFactory.get(knockOutCode, "name_v");
+        it("generic type flows through call 3", function () {
+            var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("name_v"));
             t.assertIdenticalTo(any);
         });
 
-        it("generic type flows through field 1", function() {
-            var t = typeFactory.get(knockOutCode, "zz_v");
+        it("generic type flows through field 1", function () {
+            var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("zz_v"));
             t.assertIdenticalTo(number);
         });
 
-        it("generic type flows through field 2", function() {
-            var t = typeFactory.get(knockOutCode, "yy_v");
+        it("generic type flows through field 2", function () {
+            var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("yy_v"));
             t.assertIdenticalTo(bool);
         });
 
-        it("generic type flows through field 3", function() {
-            var t = typeFactory.get(knockOutCode, "rr_v");
+        it("generic type flows through field 3", function () {
+            var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("rr_v"));
             t.assertIdenticalTo(bool);
-        });         
+        });
     });
 });

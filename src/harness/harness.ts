@@ -946,7 +946,19 @@ module Harness {
                 this.bool = this.get('var x : bool', 'x');
             }
 
-            public get (code: string, identifier: string) {
+            public get (code: string, target: any) {
+                var targetIdentifier = '';
+                var targetPosition = -1;
+                if (typeof target === "string") {
+                    targetIdentifier = target;
+                }
+                else if (typeof target === "number") {
+                    targetPosition = target;
+                }
+                else {
+                    throw new Error("Expected string or number not " + (typeof target));
+                }
+
                 var errors = null;
                 compileString(code, 'test.ts', function (compilerResult) {
                     errors = compilerResult.errors;
@@ -967,8 +979,8 @@ module Harness {
                         var entries = new TypeScript.ScopeTraversal(compiler).getScopeEntries(enclosingScopeContext);
 
                         for (var i = 0; i < entries.length; i++) {
-                            if (entries[i].name === identifier) {
-                                matchingIdentifiers.push(new Type(entries[i].type, code, identifier));
+                            if (entries[i].name === targetIdentifier) {
+                                matchingIdentifiers.push(new Type(entries[i].type, code, targetIdentifier));
                             }
                         }
                     }
@@ -977,20 +989,32 @@ module Harness {
                     for (var m = 0; m < compiler.scripts.members.length; m++) {
                         var script2 = <TypeScript.Script>compiler.scripts.members[m];
 
-                        for (var pos = 0; pos < code.length; pos++) {
-                            var tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
-                            var name = this.getTypeInfoName(tyInfo.ast);                            
-                            if (name === identifier) {
-                                // TODO: this adds the same identifier a bunch of times for different position values
-                                // will fix it up once the tests are working better
-                                matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, identifier));
+                        if (targetPosition > -1) {
+                            var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
+                            var name = this.getTypeInfoName(tyInfo.ast);
+                            matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, name));
+                        }
+                        else {
+                            for (var pos = 0; pos < code.length; pos++) {
+                                var tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
+                                var name = this.getTypeInfoName(tyInfo.ast);
+                                if (name === targetIdentifier) {
+                                    // TODO: this adds the same identifier a bunch of times for different position values
+                                    // will fix it up once the tests are working better
+                                    matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, targetIdentifier));
+                                }
                             }
                         }
                     }
                 }
 
                 if (matchingIdentifiers.length === 0) {
-                    throw new Error("Could not find an identifier " + identifier + " in any known scopes");
+                    if (targetPosition > -1) {
+                        throw new Error("Could not find an identifier at position " + targetPosition);
+                    }
+                    else {
+                        throw new Error("Could not find an identifier " + targetIdentifier + " in any known scopes");
+                    }
                 }
                 else {
                     return matchingIdentifiers[0];
@@ -1036,7 +1060,7 @@ module Harness {
                         name = (<TypeScript.ClassDeclaration>ast).name.actualText;
                         break;
                     case TypeScript.NodeType.FuncDecl:
-                        name = !(<TypeScript.FuncDecl>ast).name ? "" : (<TypeScript.FuncDecl>ast).name.actualText;
+                        name = !(<TypeScript.FuncDecl>ast).name ? "" : (<TypeScript.FuncDecl>ast).name.actualText; // name == null for lambdas
                         break;
                     default:
                         // TODO: is there a reason to mess with all the special cases above and not just do this (ie take whatever property is there and works?)
