@@ -517,6 +517,22 @@ module TypeScript {
                 this.resolveDeclaredSymbol(interfaceTypeParameters[i], interfaceDecl, context);
             }
 
+            var callSignatures = interfaceDeclSymbol.getCallSignatures();
+            var constructSignatures = interfaceDeclSymbol.getConstructSignatures();
+            var indexSignatures = interfaceDeclSymbol.getIndexSignatures();
+
+            for (var i = 0; i < callSignatures.length; i++) {
+                this.resolveDeclaredSymbol(callSignatures[i], interfaceDecl, context);
+            }
+
+            for (var i = 0; i < constructSignatures.length; i++) {
+                this.resolveDeclaredSymbol(constructSignatures[i], interfaceDecl, context);
+            }
+
+            for (var i = 0; i < indexSignatures.length; i++) {
+                this.resolveDeclaredSymbol(indexSignatures[i], interfaceDecl, context);
+            }            
+
             return interfaceDeclSymbol;
         }
         
@@ -1876,8 +1892,8 @@ module TypeScript {
 
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context);
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context);
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
 
             if (this.sourceIsSubtypeOfTarget(leftType, this.semanticInfoChain.numberTypeSymbol, context) &&
                 this.sourceIsSubtypeOfTarget(rightType, this.semanticInfoChain.numberTypeSymbol, context)) {
@@ -1911,8 +1927,8 @@ module TypeScript {
         public resolveArithmeticExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context);
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context);
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
             
             // PULLREVIEW: Eh?  I've preserved the logic from the current implementation, but it could use cleaning up
             if (this.isNullOrUndefinedType(leftType)) {
@@ -1960,8 +1976,8 @@ module TypeScript {
         public resolveLogicalOrExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context);
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context);
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
             
             if (leftType == this.semanticInfoChain.anyTypeSymbol || rightType == this.semanticInfoChain.anyTypeSymbol) {
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -2003,8 +2019,8 @@ module TypeScript {
         public resolveLogicalAndExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var binex = <BinaryExpression>expressionAST;
 
-            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context);
-            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context);
+            var leftType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand1, isTypedAssignment, enclosingDecl, context).getType();
+            var rightType = <PullTypeSymbol>this.resolveStatementOrExpression(binex.operand2, isTypedAssignment, enclosingDecl, context).getType();
             
             return rightType;
         }
@@ -2529,7 +2545,7 @@ module TypeScript {
                     t1MemberSymbol = t1Members[iMember];
                     t2MemberSymbol = t2.findMember(t1MemberSymbol.getName());
 
-                    if (t1MemberSymbol.getIsOptional() != t2MemberSymbol.getIsOptional()) {
+                    if (!t2MemberSymbol || (t1MemberSymbol.getIsOptional() != t2MemberSymbol.getIsOptional())) {
                         this.identicalCache[comboId] = undefined;
                         return false;
                     }

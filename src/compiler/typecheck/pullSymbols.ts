@@ -21,7 +21,6 @@ module TypeScript {
 
         private cachedPathIDs: any = {};
 
-
         private declKind: PullElementKind;
 
         // caches - free these on invalidate
@@ -33,6 +32,8 @@ module TypeScript {
         private isOptional = false;
 
         private inResolution = false;
+
+        private isSynthesized = false;
 
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
@@ -69,6 +70,9 @@ module TypeScript {
 
         public setIsOptional() { this.isOptional = true; }
         public getIsOptional() { return this.isOptional; }
+
+        public setIsSynthesized() { this.isSynthesized = true; }
+        public getIsSynthesized() { return this.isSynthesized; }
 
         public addCacheID(cacheID: string) {
             if (!this.cachedPathIDs[cacheID]) {
@@ -473,7 +477,24 @@ module TypeScript {
         }
 
         public toString() {
-            var sigString = "(";
+            var typeParameters = this.getTypeParameters();
+            var typeParameterString = "";
+            
+            if (typeParameters && typeParameters.length) {
+                typeParameterString = "<";
+
+                for (var i = 0; i < typeParameters.length; i++) {
+                    if (i) {
+                        typeParameterString += ",";
+                    }
+
+                    typeParameterString += typeParameters[i].getName();
+                }
+
+                typeParameterString += ">";
+            }
+
+            var sigString = typeParameterString + "(";
             var params = this.getParameters();
             var paramType: PullTypeSymbol;
 
@@ -1114,7 +1135,7 @@ module TypeScript {
         public setResolved() {
             this.invalidatedSpecializations = true;
             super.setResolved();
-        }        
+        }
 
         public invalidate() {
 
@@ -1142,7 +1163,30 @@ module TypeScript {
         }
 
         public toString() {
-            var tstring = this.getName() + " { "
+            var tstring = this.getName();
+            var typarString = "";
+
+            var typars = this.getTypeArguments();
+
+            if (!typars || !typars.length) {
+                typars = this.getTypeParameters();
+            }
+
+            if (typars && typars.length) {
+                typarString = "<";
+
+                for (var i = 0; i < typars.length; i++) {
+                    if (i) {
+                        typarString += ",";
+                    }
+
+                    typarString += typars[i].getName();
+                }
+
+                typarString += ">";
+            }
+
+            tstring += typarString ? typarString + "{ " : " {";
             var members = this.getMembers();
             var callSigs = this.getCallSignatures();
             var constructSigs = this.getConstructSignatures();

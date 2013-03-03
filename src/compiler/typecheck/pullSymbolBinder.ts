@@ -386,6 +386,10 @@ module TypeScript {
                     }
                 }
 
+                if (constructorSymbol.getIsSynthesized()) {
+                    constructorSymbol.addDeclaration(classDecl);
+                }
+
                 if (classSymbol.isGeneric()) {
                     //classSymbol.invalidateSpecializations();
                     
@@ -486,6 +490,8 @@ module TypeScript {
             if (!constructorSymbol) {
                 constructorSymbol = new PullSymbol(className, PullElementKind.ConstructorMethod);
                 constructorTypeSymbol = new PullConstructorTypeSymbol();
+
+                constructorSymbol.setIsSynthesized();
 
                 constructorSymbol.setType(constructorTypeSymbol);
                 constructorSymbol.addDeclaration(classDecl);

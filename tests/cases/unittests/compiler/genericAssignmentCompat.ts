@@ -37,6 +37,7 @@ describe("Assignment compatibility", function() {
         "var zz_v = o.name.N;" + // should be 'number'
         "var yy_v = o.name.g;" + // should be 'bool'
         "var rr_v = o.name.r;" + // should be 'string'
+
     
     describe("Test generic array specialization and contextual typing", () => {
         typeFactory.isOfType(genericMapCode, "Array<number>");
@@ -73,4 +74,5 @@ describe("Assignment compatibility", function() {
             t.assertIdenticalTo(bool);
         });
     });
+
 });

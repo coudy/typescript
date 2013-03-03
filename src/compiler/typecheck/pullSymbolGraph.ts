@@ -212,6 +212,10 @@ module TypeScript {
                 return;
             }
 
+            if (symbolWhoseTypeChanged.isPrimitive()) {
+                return;
+            }
+
             if (symbolWhoseTypeChanged.typeChangeUpdateVersion == updateVersion) {
                 return;
             }
