@@ -1410,28 +1410,58 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
+            if (genericTypeSymbol.isResolving()) {
+                return genericTypeSymbol;
+            }
+
             if (!genericTypeSymbol.isResolved()) {
+                genericTypeSymbol.startResolving();
                 this.resolveDeclaredSymbol(genericTypeSymbol, enclosingDecl, context);
+                genericTypeSymbol.setResolved();
             }
 
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
             var typeArg: PullTypeSymbol = null;
 
-            if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
-                for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                    typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
-                    typeArgs[i] = context.findSpecializationForType(typeArg);
+            if (!genericTypeSymbol.isResolvingTypeArguments()) {
+
+                genericTypeSymbol.startResolvingTypeArguments();
+
+                if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
+                    for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
+                        typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
+                        typeArgs[i] = context.findSpecializationForType(typeArg);
+                    }
                 }
+
+                genericTypeSymbol.doneResolvingTypeArguments();
             }
 
-            if (typeArgs.length && typeArgs.length != genericTypeSymbol.getTypeParameters().length) {
+            var typeParameters = genericTypeSymbol.getTypeParameters();
+
+            if (typeArgs.length && typeArgs.length != typeParameters.length) {
                 context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.unitPath, "Generic type '"+ genericTypeSymbol.getName() +"' expects " + genericTypeSymbol.getTypeParameters().length + " type arguments, but " + typeArgs.length + " arguments were supplied", enclosingDecl);
 
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
+            
+            // check constraints, if appropriate
+            var typeConstraint: PullTypeSymbol = null;
+
+            for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
+
+                typeConstraint = typeParameters[iArg].getConstraint();
+
+                // test specialization type for assignment compatibility with the constraint
+                if (typeConstraint) {
+                    if (!this.sourceIsAssignableToTarget(typeArgs[iArg], typeConstraint, context)) {
+                        context.postError(genericTypeAST.minChar, genericTypeAST.getLength(), this.getUnitPath(), "Type '" + typeArgs[iArg].getName() + "' does not satisfy the constraint '" + typeConstraint.getName() +"' for type parameter '" + typeParameters[iArg].getName() + "'", enclosingDecl);
+                    }
+                }      
+            }            
 
             return specializedSymbol;
         }
@@ -2071,6 +2101,7 @@ module TypeScript {
                 var inferredTypeArgs: PullTypeSymbol[];
                 var specializedSignature: PullSignatureSymbol;
                 var typeParameters: PullTypeParameterSymbol[];
+                var typeConstraint: PullTypeSymbol = null;
 
                 for (var i = 0; i < signatures.length; i++) {
                     if (signatures[i].isGeneric()) {
@@ -2093,6 +2124,15 @@ module TypeScript {
 
                             for (var j = 0; j < typeParameters.length; j++) {
                                 typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
+
+                                typeConstraint = typeParameters[j].getConstraint();
+
+                                // test specialization type for assignment compatibility with the constraint
+                                if (typeConstraint) {
+                                    if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
+                                        context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].getName() + "' does not satisfy the constraint '" + typeConstraint.getName() +"' for type parameter '" + typeParameters[j].getName() + "'", enclosingDecl);
+                                    }
+                                }                                        
                             }
 
                             specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);

@@ -35,6 +35,8 @@ module TypeScript {
 
         private isSynthesized = false;
 
+        private resolvingTypeArguments = false;
+
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
@@ -239,6 +241,18 @@ module TypeScript {
             return this.inResolution;
         }
 
+        public startResolvingTypeArguments() {
+            this.resolvingTypeArguments = true;
+        }
+
+        public isResolvingTypeArguments() {
+            return this.resolvingTypeArguments;
+        }
+
+        public doneResolvingTypeArguments() {
+            this.resolvingTypeArguments = false;
+        }
+
         // helper methods:
         // cacheInfo?
 
@@ -383,7 +397,7 @@ module TypeScript {
             return params;
         }
 
-        public getTypeParameters() {
+        public getTypeParameters(): PullTypeParameterSymbol[] {
             var params: PullTypeParameterSymbol[] = [];
 
             if (this.typeParameterLinks) {
@@ -678,12 +692,12 @@ module TypeScript {
             }
         }
 
-        public getTypeParameters(): PullTypeSymbol[] {
-            var members: PullTypeSymbol[] = [];
+        public getTypeParameters(): PullTypeParameterSymbol[] {
+            var members: PullTypeParameterSymbol[] = [];
 
             if (this.typeParameterLinks) {
                 for (var i = 0; i < this.typeParameterLinks.length; i++) {
-                    members[members.length] = <PullTypeSymbol>this.typeParameterLinks[i].end;
+                    members[members.length] = <PullTypeParameterSymbol>this.typeParameterLinks[i].end;
                 }
             }
 
@@ -1606,26 +1620,6 @@ module TypeScript {
             }
         }
 
-        var typeToReplace: PullTypeParameterSymbol = null;
-        var typeConstraint: PullTypeSymbol = null;
-
-        for (var iArg = 0; (iArg < typeArguments.length) && (iArg < typeParameters.length); iArg++) {
-            typeToReplace = <PullTypeParameterSymbol>typeParameters[iArg];
-
-            typeConstraint = typeToReplace.getConstraint();
-
-            // test specialization type for assignment compatibility with the constraint
-            if (typeConstraint) {
-                if (!resolver.sourceIsAssignableToTarget(typeArguments[iArg], typeConstraint, context)) {
-                    if (ast) {
-                        context.postError(ast.minChar, ast.getLength(), resolver.getUnitPath(), "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'", enclosingDecl);
-                    }
-
-                    return resolver.semanticInfoChain.anyTypeSymbol;
-                }
-            }
-        }
-
         var newType: PullTypeSymbol = typeToSpecialize.getSpecialization(typeArguments);
 
         if (newType) {
@@ -1941,25 +1935,6 @@ module TypeScript {
         var parameterType: PullTypeSymbol;
         var replacementParameterType: PullTypeSymbol;
         var localTypeParameters: any = {};
-        var typeToReplace: PullTypeParameterSymbol;
-        var typeConstraint: PullTypeSymbol;
-
-        for (var iArg = 0; (iArg < typeArguments.length) && (iArg < typeParameters.length); iArg++) {
-            typeToReplace = <PullTypeParameterSymbol>typeParameters[iArg];
-
-            typeConstraint = typeToReplace.getConstraint();
-
-            // test specialization type for assignment compatibility with the constraint
-            if (typeConstraint) {
-                if (!resolver.sourceIsAssignableToTarget(typeArguments[iArg], typeConstraint, context)) {
-                    if (ast) {
-                        context.postError(ast.minChar, ast.getLength(), resolver.getUnitPath(), "Type '" + typeArguments[iArg].getName() + "' does not satisfy the constraint for type parameter '" + typeToReplace.getName() + "'", enclosingDecl);
-                    }
-
-                    return null;
-                }
-            }
-        }
 
         // if we specialize the signature recursive (through, say, the specialization of a method whilst specializing
         // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the
