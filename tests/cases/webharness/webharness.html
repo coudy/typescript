@@ -4,6 +4,8 @@
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.js"></script>
     <script src='perfCompiler.js'></script>
     <script>
+        var repeat = 10;
+
         if (!batch) {
             batch = new BatchCompiler();
         }
@@ -19,27 +21,88 @@
             $("div").remove();
         }
 
-        function parse() {
+        function run(f) {
             var start = new Date().getTime();
-            batch.parse();
+            for (var i = 0; i < repeat; i++) {
+                f();
+            }
+
             var end = new Date().getTime();
-            appendTime("Parse speed", end - start);
+            if (repeat > 1) {
+                appendTime("Average", (end - start) / repeat);
+            }
         }
 
-        function convertTree() {
-            var tree = batch.parse();
+        function oldParse() {
+            run(function() {
+                var start = new Date().getTime();
+                batch.oldParse();
+                var end = new Date().getTime();
+                appendTime("Old Parse", end - start);
+            });
+        }
 
-            var start = new Date().getTime();
+        function oldIncrementalParse() {
+            var script = batch.oldParse();
+
+            run(function () {
+                var start = new Date().getTime();
+                script = batch.oldIncrementalParse(script);
+                var end = new Date().getTime();
+                appendTime("Old Parse", end - start);
+            });
+        }
+
+        function newParse() {
+            run(function () {
+                var start = new Date().getTime();
+                batch.newParse();
+                var end = new Date().getTime();
+                appendTime("New Parse", end - start);
+            });
+        }
+
+        function newParseAndAST() {
+            run(function () {
+                var start = new Date().getTime();
+
+                var tree = batch.newParse();
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+
+                var end = new Date().getTime();
+                appendTime("AST", end - start);
+            });
+        }
+
+        function newIncrementalParse() {
+            var tree = batch.newParse();
+
+            run(function () {
+                var start = new Date().getTime();
+                tree = batch.incrementalParse(tree);
+                var end = new Date().getTime();
+                appendTime("Incremental Parse", end - start);
+            });
+        }
+
+        function newIncrementalParseAndAST() {
+            var tree = batch.newParse();
             TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
-            var end = new Date().getTime();
-            appendTime("Convert tree speed", end - start);
+
+            run(function () {
+                var start = new Date().getTime();
+                tree = batch.incrementalParse(tree);
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+                var end = new Date().getTime();
+                appendTime("Incremental Parse and AST", end - start);
+            });
         }
 
         function typeCheck() {
             var start = new Date().getTime();
             batch.reTypeCheck();
             var end = new Date().getTime();
-            appendTime("ReTypeCheck speed", end - start);
+            appendTime("Type Check", end - start);
         }
 
         //    for (var i = 0; i < 500; i++) {
@@ -54,8 +117,12 @@
 </head>
 <body>
     <h1>TypeScript Perf Testbed</h1>
-    <button onclick="parse()">Parse Tree</button>
-    <button onclick="convertTree()">Convert Tree</button>
+    <button onclick="oldParse()">Old Parse</button>
+    <button onclick="oldIncrementalParse()">Old Incremental Parse</button>
+    <button onclick="newParse()">New Parse</button>
+    <button onclick="newParseAndAST()">New Parse + AST</button>
+    <button onclick="newIncrementalParse()">New Incremental Parse</button>
+    <button onclick="newIncrementalParseAndAST()">New Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
     <button onclick="clear1()">Clear</button>
 </body>

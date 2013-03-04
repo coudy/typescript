@@ -29723,7 +29723,7 @@ class ArrayUtilities {
         return ~low;
     }
 
-    public static createArray(length: number, defaultvalue = null): any[] {
+    public static createArray(length: number, defaultvalue: any): any[] {
         var result = [];
         for (var i = 0; i < length; i++) {
             result.push(defaultvalue);
@@ -30862,7 +30862,7 @@ module Collections {
 
         constructor(capacity) {
             var size = Hash.getPrime(capacity);
-            this.entries = ArrayUtilities.createArray(size);
+            this.entries = ArrayUtilities.createArray(size, null);
         }
 
         public addCharArray(key: number[], start: number, len: number): string {
@@ -30950,7 +30950,7 @@ module Collections {
             var newSize = Hash.expandPrime(this.entries.length);
 
             var oldEntries = this.entries;
-            var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newSize);
+            var newEntries: StringTableEntry[] = ArrayUtilities.createArray(newSize, null);
 
             this.entries = newEntries;
 
@@ -47244,7 +47244,7 @@ module Parser1 {
         }
 
         private returnArray(array: any[]) {
-            array .length = 0;
+            array.length = 0;
             this.arrayPool.push(array);
         }
 
@@ -48532,9 +48532,14 @@ module TextFactory {
             StringUtilities.copyTo(this.value, sourceIndex, destination, destinationIndex, count);
         }
 
+        private static charArray: number[] = ArrayUtilities.createArray(1024, 0);
+
         public substr(start: number, length: number, intern: bool): string {
             if (intern) {
-                var array = ArrayUtilities.createArray(length, 0);
+                // use a shared array instance of the length of this substring isn't too large.
+                var array = length <= SimpleStringText.charArray.length
+                    ? SimpleStringText.charArray
+                    : ArrayUtilities.createArray(length, /*defaultValue:*/0);
                 this.copyTo(start, array, 0, length);
                 return stringTable.addCharArray(array, 0, length);
             }
@@ -55276,7 +55281,7 @@ module Collections {
             var size = Hash.getPrime(capacity);
             this.hash = hash;
             this.equals = equals;
-            this.entries = ArrayUtilities.createArray(size);
+            this.entries = ArrayUtilities.createArray(size, null);
         }
 
         // Maps 'key' to 'value' in this table.  Does not throw if 'key' is already in the table.
@@ -55392,7 +55397,7 @@ module Collections {
             var newSize = Hash.expandPrime(this.entries.length);
 
             var oldEntries = this.entries;
-            var newEntries: HashTableEntry[] = ArrayUtilities.createArray(newSize);
+            var newEntries: HashTableEntry[] = ArrayUtilities.createArray(newSize, null);
 
             this.entries = newEntries;
 
