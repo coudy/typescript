@@ -207,6 +207,7 @@ function runTests(tests: RunnerBase[]) {
 }
 
 var runners: RunnerBase[] = [];
+global.runners = runners;
 var reverse: bool = false;
 var iterations: number = 1;
 

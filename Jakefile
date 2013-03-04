@@ -314,7 +314,7 @@ task("tests", [run, serviceFile, fsJS].concat(libraryTargets), function() {
 	jake.cpR(path.join(nongenericLibraryDirectory, "lib.d.ts"), builtTestDirectory);	
 });
 
-task("tests-prototyping", [run, serviceFile].concat(libraryTargets), function() {
+task("tests-prototyping", [run, serviceFile, fsJS].concat(libraryTargets), function() {
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
 	jake.cpR(path.join(genericLibraryDirectory, "lib.d.ts"), builtTestDirectory);
