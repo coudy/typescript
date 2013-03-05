@@ -46,32 +46,32 @@ describe("Assignment compatibility", function() {
     describe("Test generic interface in modules (knockout)", () => {
         it("generic type flows through call 1", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("x_v"));
-            t.assertIdenticalTo(number);
+            Harness.Assert.equal(t.type, 'number');
         });
 
         it("generic type flows through call 2", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("age_v"));
-            t.assertIdenticalTo(number);
+            Harness.Assert.equal(t.type, 'number');
         });
 
         it("generic type flows through call 3", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("name_v"));
-            t.assertIdenticalTo(any);
+            Harness.Assert.equal(t.type, 'any');
         });
 
         it("generic type flows through field 1", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("zz_v"));
-            t.assertIdenticalTo(number);
+            Harness.Assert.equal(t.type, 'number');
         });
 
         it("generic type flows through field 2", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("yy_v"));
-            t.assertIdenticalTo(bool);
+            Harness.Assert.equal(t.type, 'bool');
         });
 
         it("generic type flows through field 3", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("rr_v"));
-            t.assertIdenticalTo(bool);
+            Harness.Assert.equal(t.type, 'bool');
         });
     });
 

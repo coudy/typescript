@@ -840,23 +840,23 @@ module Harness {
             }
 
             // TODO: Find an implementation of isIdenticalTo that works.
-            public isIdenticalTo(other: Type) {
-                var testCode = 'module __test1__ {\n';
-                testCode += '    ' + this.code + ';\n';
-                testCode += '    export var __val__ = ' + this.identifier + ';\n';
-                testCode += '}\n';
-                testCode += 'var __test1__val__ = __test1__.__val__;\n';
+            //public isIdenticalTo(other: Type) {
+            //    var testCode = 'module __test1__ {\n';
+            //    testCode += '    ' + this.code + ';\n';
+            //    testCode += '    export var __val__ = ' + this.identifier + ';\n';
+            //    testCode += '}\n';
+            //    testCode += 'var __test1__val__ = __test1__.__val__;\n';
 
-                testCode += 'module __test2__ {\n';
-                testCode += '    ' + other.code + ';\n';
-                testCode += '    export var __val__ = ' + other.identifier + ';\n';
-                testCode += '}\n';
-                testCode += 'var __test2__val__ = __test2__.__val__;\n';
+            //    testCode += 'module __test2__ {\n';
+            //    testCode += '    ' + other.code + ';\n';
+            //    testCode += '    export var __val__ = ' + other.identifier + ';\n';
+            //    testCode += '}\n';
+            //    testCode += 'var __test2__val__ = __test2__.__val__;\n';
 
-                testCode += 'function __test__function__() { if(true) { return __test1__val__ }; return __test2__val__; }';
+            //    testCode += 'function __test__function__() { if(true) { return __test1__val__ }; return __test2__val__; }';
 
-                return this.compilesOk(testCode);
-            }
+            //    return this.compilesOk(testCode);
+            //}
 
             public assertSubtypeOf(others: any) {
                 others = this.normalizeToArray(others);
@@ -878,17 +878,17 @@ module Harness {
                 }
             }
 
-            public assertIdenticalTo(other: Type) {
-                if (!this.isIdenticalTo(other)) {
-                    throw new Error("Expected " + this.type + " to be identical to " + other.type);
-                }
-            }
+            //public assertIdenticalTo(other: Type) {
+            //    if (!this.isIdenticalTo(other)) {
+            //        throw new Error("Expected " + this.type + " to be identical to " + other.type);
+            //    }
+            //}
 
-            public assertNotIdenticalTo(other: Type) {
-                if (!this.isIdenticalTo(other)) {
-                    throw new Error("Expected " + this.type + " to not be identical to " + other.type);
-                }
-            }
+            //public assertNotIdenticalTo(other: Type) {
+            //    if (!this.isIdenticalTo(other)) {
+            //        throw new Error("Expected " + this.type + " to not be identical to " + other.type);
+            //    }
+            //}
 
             public isAssignmentCompatibleWith(other: Type) {
                 var testCode = 'module __test1__ {\n';
@@ -1911,7 +1911,7 @@ module Harness {
         }
 
         function localPath(filename: string) {
-            if (this.runners[0].testType === 'prototyping') {
+            if (global.runners[0].testType === 'prototyping') {
                 return Harness.userSpecifiedroot + 'tests/baselines/prototyping/local/' + filename;
             }
             else {
@@ -1920,7 +1920,7 @@ module Harness {
         }
 
         function referencePath(filename: string) {
-            if (this.runners[0].testType === 'prototyping') {
+            if (global.runners[0].testType === 'prototyping') {
                 return Harness.userSpecifiedroot + 'tests/baselines/prototyping/reference/' + filename;
             }
             else {
