@@ -78,8 +78,8 @@ module TypeScript {
 
     export interface PullAdditionalCallResolutionData {
         targetSymbol: PullSymbol;
-        signatures: PullSignatureSymbol[];
-        signature: PullSignatureSymbol;
+        resolvedSignatures: PullSignatureSymbol[];
+        candidateSignature: PullSignatureSymbol;
     }
 
     // The resolver associates types with a given AST
@@ -339,6 +339,93 @@ module TypeScript {
             symbol = this.semanticInfoChain.findSymbol([symbolName], declSearchKind);
 
             return symbol;
+        }
+
+        public getVisibleSymbolsFromDeclPath(declPath: PullDecl[], searchTypeSpace: bool): PullSymbol[]{
+            var symbols: PullSymbol[] = [];
+
+            var decl: PullDecl = null;
+            var childDecls: PullDecl[];
+            var pathDeclKind: PullElementKind;
+            var declSearchKind: PullElementKind = searchTypeSpace ? PullElementKind.SomeType : PullElementKind.SomeValue;
+
+            var addSymbolsFromDecls = (decls: PullDecl[]) => {
+                if (decls.length) {
+                    for (var j = 0, n = decls.length; j < n; j++) {
+                        if (decls[j].getKind() & declSearchKind) {
+                            symbols.push(decls[j].getSymbol());
+                        }
+                    }
+                }
+            };
+
+            for (var i = declPath.length - 1; i >= 0; i--) {
+                decl = declPath[i];
+                pathDeclKind = decl.getKind();
+
+                if (pathDeclKind & PullElementKind.Container) {
+                    // Add locals
+                    addSymbolsFromDecls(decl.getChildDecls())
+
+                    // Add members
+                    var declSymbol = <PullTypeSymbol>decl.getSymbol();
+                    var searchSymbol: PullTypeSymbol = null;
+                    if (searchTypeSpace) {
+                        // Look up all symbols on the module type
+                        searchSymbol = declSymbol;
+                    }
+                    else {
+                        // Look up all symbols on the module instance type if it exists
+                        var instanceSymbol = (<PullContainerTypeSymbol > declSymbol).getInstanceSymbol();
+                        searchSymbol = instanceSymbol && instanceSymbol.getType();
+                    }
+
+                    if (searchSymbol) {
+                        var members = searchSymbol.getMembers();
+                        for (var j = 0; j < members.length; j++) {
+                            // PULLTODO: declkind should equal declkind, or is it ok to just mask the value?
+                            if ((members[j].getKind() & declSearchKind) != 0) {
+                                symbols.push(members[j]);
+                            }
+                        }
+                    }
+                }
+                else /*if (pathDeclKind & DeclKind.Function)*/ {
+                    addSymbolsFromDecls(decl.getChildDecls())
+                }
+            }
+
+            // Get the global symbols
+            var units = this.semanticInfoChain.units;
+            for (var i = 0, n = units.length; i < n; i++) {
+                var unit = units[i];
+                if (unit === this.currentUnit) {
+                    // Current unit has already been processed. skip it.
+                    continue;
+                }
+                var topLevelDecls = unit.getTopLevelDecls();
+                if (topLevelDecls.length) {
+                    for (var j = 0, m = topLevelDecls.length; j < m; j++) {
+                        var topLevelDecl = topLevelDecls[j];
+                        if (topLevelDecl.getKind() === PullElementKind.Script || topLevelDecl.getKind() === PullElementKind.Global) {
+                            addSymbolsFromDecls(topLevelDecl.getChildDecls());
+                        }
+                    }
+                }
+            }
+
+            return symbols;
+        }
+
+        public getVisibleSymbols(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
+
+            var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
+
+            if (enclosingDecl && !declPath.length) {
+                declPath = [enclosingDecl];
+            }
+
+            return this.getVisibleSymbolsFromDeclPath(declPath, context.searchTypeSpace);
         }
 
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
@@ -2261,8 +2348,8 @@ module TypeScript {
             // Store any additional resolution results if needed
             if (additionalResults) {
                 additionalResults.targetSymbol = targetSymbol;
-                additionalResults.signatures = signatures;
-                additionalResults.signature = signature;
+                additionalResults.resolvedSignatures  = signatures;
+                additionalResults.candidateSignature  = signature;
             }
 
             return returnType;
@@ -2342,8 +2429,8 @@ module TypeScript {
                 // Store any additional resolution results if needed
                 if (additionalResults) {
                     additionalResults.targetSymbol = targetTypeSymbol;
-                    additionalResults.signatures = constructSignatures;
-                    additionalResults.signature = signature;
+                    additionalResults.resolvedSignatures = constructSignatures;
+                    additionalResults.candidateSignature = signature;
                 }
 
                 return returnType;

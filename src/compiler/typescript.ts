@@ -1365,7 +1365,7 @@ module TypeScript {
             return { symbol: symbol, ast: path.ast() };
         }
 
-        public pullGetCallInformationFormPath(path: AstPath, script: Script, scriptName?: string): { targetSymbol: PullSymbol; signatures: PullSignatureSymbol[]; signature: PullSignatureSymbol; ast: AST; } {
+        public pullGetCallInformationFromPath(path: AstPath, script: Script, scriptName?: string): { targetSymbol: PullSymbol; resolvedSignatures: PullSignatureSymbol[]; candidateSignature: PullSignatureSymbol; ast: AST; } {
             // AST has to be a call expression
             if (path.ast().nodeType !== NodeType.Call && path.ast().nodeType !== NodeType.New) {
                 return null;
@@ -1380,8 +1380,8 @@ module TypeScript {
 
             var callResolutionResults = {
                 targetSymbol: null,
-                signatures: null,
-                signature: null,
+                resolvedSignatures: null,
+                candidateSignature: null,
                 ast: path.ast()
             };
 
@@ -1393,6 +1393,57 @@ module TypeScript {
             }
 
             return callResolutionResults;
+        }
+
+        public pullGetVisibleMemberSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbol[] {
+            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+            if (!context) {
+                return null;
+            }
+
+            var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext);
+            if (!symbol) {
+                return null;
+            }
+
+            var type = symbol.getType();
+            if (!type || type === this.semanticInfoChain.anyTypeSymbol) {
+                return null;
+            }
+
+            // Figure out if privates are available under the current scope
+            var includePrivate = false;
+            var containerSymbol = type;
+            if (type.getKind() === PullElementKind.ConstructorType) {
+                containerSymbol = type.getConstructSignatures()[0].getReturnType();
+            }
+
+            if (containerSymbol && containerSymbol.isClass()) {
+                var declPath = this.pullTypeChecker.resolver.getPathToDecl(context.enclosingDecl);
+                if (declPath && declPath.length) {
+                    var declarations = containerSymbol.getDeclarations();
+                    for (var i = 0, n = declarations.length; i < n; i++) {
+                        var declaration = declarations[i];
+                        if (declPath.indexOf(declaration) >= 0) {
+                            includePrivate = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            var searchKind = context.resolutionContext.searchTypeSpace ? PullElementKind.SomeType : PullElementKind.SomeValue;
+            return type.getAllMemebers(searchKind, includePrivate);
+        }
+
+        public pullGetVisibleSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbol[] {
+
+            var context = this.extractResolutionContextFromPath(path, script, scriptName);
+            if (!context) {
+                return null;
+            }
+
+            return this.pullTypeChecker.resolver.getVisibleSymbols(context.enclosingDecl, context.resolutionContext);
         }
 
         public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): { ast: AST; typeName: string; typeInfo: string; typeSymbol: PullTypeSymbol; enclosingDecl: PullDecl; } {

@@ -401,8 +401,16 @@ module Services {
             return this.compiler.pullGetSymbolInformationFromPath(path, script);
         }
 
-        public getCallInformationFormPath(path: TypeScript.AstPath, script: TypeScript.Script) {
-            return this.compiler.pullGetCallInformationFormPath(path, script);
+        public getCallInformationFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
+            return this.compiler.pullGetCallInformationFromPath(path, script);
+        }
+
+        public getVisibleMemberSymbolsFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
+            return this.compiler.pullGetVisibleMemberSymbolsFromPath(path, script);
+        }
+
+        public getVisibleSymbolsFromPath(path: TypeScript.AstPath, script: TypeScript.Script) {
+            return this.compiler.pullGetVisibleSymbolsFromPath(path, script);
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): bool {

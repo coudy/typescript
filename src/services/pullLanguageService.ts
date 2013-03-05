@@ -216,7 +216,7 @@ module Services {
 
         // Gets breakpoint span in the statement depending on context
         private getBreakpointInStatement(pos: number, astSpan: TypeScript.IASTSpan, verifyASTPos: bool,
-                                         existingResult: TypeScript.IASTSpan, forceFirstStatement: bool, isAst: bool): TypeScript.IASTSpan {
+            existingResult: TypeScript.IASTSpan, forceFirstStatement: bool, isAst: bool): TypeScript.IASTSpan {
             if (existingResult || !astSpan || (verifyASTPos && pos > astSpan.limChar)) {
                 return existingResult;
             }
@@ -543,8 +543,8 @@ module Services {
             var isNew = (callExpression.nodeType === TypeScript.NodeType.New);
 
             // Resolve symbol
-            var callSymbolInfo = this.pullCompilerState.getCallInformationFormPath(path, script);
-            if (!callSymbolInfo || !callSymbolInfo.targetSymbol || !callSymbolInfo.signatures) {
+            var callSymbolInfo = this.pullCompilerState.getCallInformationFromPath(path, script);
+            if (!callSymbolInfo || !callSymbolInfo.targetSymbol || !callSymbolInfo.resolvedSignatures) {
                 this.logger.log("Could not find symbol for call expression");
                 return null;
             }
@@ -552,9 +552,9 @@ module Services {
             // Build the result
             var result = new SignatureInfo();
 
-            result.formal = this.convertSignatureSymbolToSignatureInfo(callSymbolInfo.targetSymbol, isNew, callSymbolInfo.signatures);
+            result.formal = this.convertSignatureSymbolToSignatureInfo(callSymbolInfo.targetSymbol, isNew, callSymbolInfo.resolvedSignatures);
             result.actual = this.convertCallExprToActualSignatureInfo(callExpression, position, atEOF);
-            result.activeFormal = (callSymbolInfo.signatures && callSymbolInfo.signature) ? callSymbolInfo.signatures.indexOf(callSymbolInfo.signature) : -1;
+            result.activeFormal = (callSymbolInfo.resolvedSignatures && callSymbolInfo.candidateSignature) ? callSymbolInfo.resolvedSignatures.indexOf(callSymbolInfo.candidateSignature) : -1;
             
             if (result.actual === null || result.formal === null || result.activeFormal === null) {
                 this.logger.log("Can't compute actual and/or formal signature of the call expression");
@@ -1330,13 +1330,13 @@ module Services {
             return new TypeInfo(memberName, docComment, symbolName, kind, minChar, limChar);
         }
 
-        public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {
+        public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: bool): CompletionInfo {
             this.refresh();
 
             var completions = new CompletionInfo();
 
             var script = this.pullCompilerState.getScriptAST(fileName);
-            var path = this.getAstPathToPosition(script, pos);
+            var path = this.getAstPathToPosition(script, position);
             if (this.isCompletionListBlocker(path)) {
                 this.logger.log("Returning an empty list because position is inside a comment");
             }
@@ -1345,33 +1345,56 @@ module Services {
             //    this.logger.log("Completion list for members of object literal");
             //    return getCompletions(true);
             //}
-            else if (this.isRightOfDot(path, pos)) {
-                var parentDot = path.asts[path.top].nodeType === TypeScript.NodeType.Dot ? path.asts[path.top] : path.asts[path.top - 1];
-                var operand = (<TypeScript.BinaryExpression>parentDot).operand1;
-                var info = this.pullCompilerState.getPullTypeInfoAtPosition(operand.limChar, script);
-                var type = info.typeSymbol;
 
+            var isRightOfDot = false;
+            if (path.count() >= 1 &&
+                path.asts[path.top].nodeType === TypeScript.NodeType.Dot
+                && (<TypeScript.BinaryExpression>path.asts[path.top]).operand1.limChar < position) {
+                isRightOfDot = true;
+                path.push((<TypeScript.BinaryExpression>path.asts[path.top]).operand1);
+            }
+            else if (path.count() >= 2 &&
+                    path.asts[path.top].nodeType === TypeScript.NodeType.Name &&
+                    path.asts[path.top - 1].nodeType === TypeScript.NodeType.Dot &&
+                    (<TypeScript.BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
+                isRightOfDot = true;
+                path.pop();
+                path.push((<TypeScript.BinaryExpression>path.asts[path.top]).operand1);
+            }
+
+            if (isRightOfDot) {
+                var members = this.pullCompilerState.getVisibleMemberSymbolsFromPath(path, script);
+                if (!members) {
+                    return null;
+                }
                 completions.isMemberCompletion = true;
-                var members = type.getMembers();
-                members.forEach((x) => {
-                    var entry = new CompletionEntry();
-                    entry.name = x.getName();
-                    entry.type = x.getType()? x.getType().toString() : "unkown type";
-                    entry.kind = this.mapPullElementKind(x.getKind());
-                    //entry.fullSymbolName = this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
-                    entry.docComment = x.getDocComments();
-                    entry.kindModifiers = this.getScriptElementKindModifiers(x);
-                    completions.entries.push(entry);
-                });
-
+                completions.entries = this.getCompletionEntriesFromSymbols(members);
             }
             // Ensure we are in a position where it is ok to provide a completion list
             else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
-                //return getCompletions(enclosingScopeContext.isMemberCompletion);
-                // TODO: get scope memebers
+                // Get scope memebers
+                completions.isMemberCompletion = false;
+                var symbols = this.pullCompilerState.getVisibleSymbolsFromPath(path, script);
+                completions.entries = this.getCompletionEntriesFromSymbols(symbols);
             }
 
             return completions;
+        }
+
+        private getCompletionEntriesFromSymbols(symbols: TypeScript.PullSymbol[]): CompletionEntry[] {
+            var result: CompletionEntry[] = [];
+
+            symbols.forEach((symbol) => {
+                var entry = new CompletionEntry();
+                entry.name = symbol.getName();
+                entry.type = symbol.getType() ? symbol.getType().toString() : "unkown type";
+                entry.kind = this.mapPullElementKind(symbol.getKind());
+                entry.fullSymbolName = entry.name;//this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
+                entry.docComment = symbol.getDocComments();
+                entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
+                result.push(entry);
+            });
+            return result;
         }
 
         private isRightOfDot(path: TypeScript.AstPath, position: number): bool {
@@ -1393,9 +1416,19 @@ module Services {
         }
 
         private isCompletionListTriggerPoint(path: TypeScript.AstPath): bool {
+
+            if (path.isNameOfVariable() // var <here>
+                || path.isNameOfArgument() // function foo(a, b<here>
+                || path.isArgumentListOfFunction() // function foo(<here>
+                || path.ast().nodeType === TypeScript.NodeType.ArgDecl // function foo(a <here>
+                ) {
+                return false;
+            }
+
             if (path.isNameOfVariable() // var <here>
                 || path.isNameOfFunction() // function <here>
                 || path.isNameOfArgument() // function foo(<here>
+                || path.isArgumentListOfFunction() // function foo(<here>
                 || path.isNameOfInterface() // interface <here>
                 || path.isNameOfClass() // class <here>
                 || path.isNameOfModule() // module <here>
@@ -1405,15 +1438,12 @@ module Services {
 
             //var node = path.count() >= 1 && path.ast();
             //if (node) {
-            //    if (node.nodeType === TypeScript.NodeType.Member) // class C() { property <here>
-            //    || isNodeType(TypeScript.NodeType.TryCatch) // try { } catch(<here>
-            //    || isNodeType(TypeScript.NodeType.Catch) // try { } catch(<here>
-            //    //|| isNodeType(Tools.NodeType.Class) // doesn't work
-            //    || isNodeType(TypeScript.NodeType.Comment)
-            //    || isNodeType(TypeScript.NodeType.Regex)
-            //    || isNodeType(TypeScript.NodeType.QString)
+            //    if (node.nodeType === TypeScript.NodeType.Member // class C() { property <here>
+            //    || node.nodeType === TypeScript.NodeType.TryCatch // try { } catch(<here>
+            //    || node.nodeType === TypeScript.NodeType.Catch // try { } catch(<here>
             //    ) {
-            //    return false
+            //        return false
+            //    }
             //}
 
             return true;

@@ -226,7 +226,9 @@ module TypeScript {
         if (hasFlag(argDecl.varFlags, VarFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
-
+        else {
+            declFlags |= PullElementFlags.Public;
+        }
 
         if (hasFlag(argDecl.flags, ASTFlags.OptionalName) || hasFlag(argDecl.id.flags, ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
@@ -337,11 +339,14 @@ module TypeScript {
 
     // class member variables
     export function createMemberVariableDeclaration(memberDecl: VarDecl, context: DeclCollectionContext) {
-        var declFlags = PullElementFlags.Public;
+        var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Property;
 
         if (hasFlag(memberDecl.varFlags, VarFlags.Private)) {
-            declFlags = PullElementFlags.Private;
+            declFlags |= PullElementFlags.Private;
+        }
+        else {
+            declFlags |= PullElementFlags.Public;
         }
 
         if (hasFlag(memberDecl.varFlags, VarFlags.Static)) {
@@ -614,6 +619,9 @@ module TypeScript {
 
         if (hasFlag(memberFunctionDeclAST.fncFlags, FncFlags.Private)) {
             declFlags |= PullElementFlags.Private;
+        }
+        else {
+            declFlags |= PullElementFlags.Public;
         }
 
         if (!memberFunctionDeclAST.bod || !memberFunctionDeclAST.bod.members.length) {
