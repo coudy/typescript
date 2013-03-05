@@ -26640,13 +26640,15 @@ var Unicode = (function () {
     return Unicode;
 })();
 var Scanner = (function () {
-    function Scanner(text, languageVersion, stringTable, window) {
+    function Scanner(text, languageVersion, stringTable, lineMap, window) {
         if (typeof window === "undefined") { window = ArrayUtilities.createArray(2048, 0); }
+        this.text = text;
+        this.languageVersion = languageVersion;
+        this.stringTable = stringTable;
+        this.lineMap = lineMap;
         Scanner.initializeStaticData();
         this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
-        this.text = text;
-        this.stringTable = stringTable;
-        this.languageVersion = languageVersion;
+        this.lineMap.push(0);
     }
     Scanner.isKeywordStartCharacter = [];
     Scanner.isIdentifierStartCharacter = [];
@@ -26687,7 +26689,13 @@ var Scanner = (function () {
         return this.slidingWindow.currentItem(null);
     };
     Scanner.prototype.setAbsoluteIndex = function (index) {
+        while(ArrayUtilities.last(this.lineMap) > index) {
+            this.lineMap.pop();
+        }
         this.slidingWindow.setAbsoluteIndex(index);
+    };
+    Scanner.prototype.pushNewLine = function () {
+        this.lineMap.push(this.slidingWindow.absoluteIndex());
     };
     Scanner.prototype.scan = function (diagnostics, allowRegularExpression) {
         var fullStart = this.slidingWindow.absoluteIndex();
@@ -26803,6 +26811,7 @@ var Scanner = (function () {
                 case 8232 /* lineSeparator */ :
                     hasCommentOrNewLine |= 1 /* TriviaNewLineMask */ ;
                     width += this.scanLineTerminatorSequenceLength(ch);
+                    this.pushNewLine();
                     if (!isTrailing) {
                         continue;
                     }
@@ -26882,6 +26891,15 @@ var Scanner = (function () {
                 return width;
             }
             var ch = this.currentCharCode();
+            switch(ch) {
+                case 13 /* carriageReturn */ :
+                case 10 /* lineFeed */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ :
+                    width += this.scanLineTerminatorSequenceLength(ch);
+                    this.pushNewLine();
+                    continue;
+            }
             if (ch === 42 /* asterisk */  && this.slidingWindow.peekItemN(1) === 47 /* slash */ ) {
                 this.slidingWindow.moveToNextItem();
                 this.slidingWindow.moveToNextItem();
@@ -27316,6 +27334,10 @@ var Scanner = (function () {
                     if (this.currentCharCode() === 10 /* lineFeed */ ) {
                         this.slidingWindow.moveToNextItem();
                     }
+                case 10 /* lineFeed */ :
+                case 8233 /* paragraphSeparator */ :
+                case 8232 /* lineSeparator */ :
+                    this.pushNewLine();
                     return;
                 default:
                     return;
@@ -35041,11 +35063,12 @@ var Parser1;
         function NormalParserSource(text, languageVersion, stringTable) {
             this._previousToken = null;
             this._absolutePosition = 0;
+            this.scannerLineMap = [];
             this._tokenDiagnostics = [];
             this.rewindPointPool = [];
             this.rewindPointPoolCount = 0;
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(32, null), null);
-            this.scanner = new Scanner(text, languageVersion, stringTable);
+            this.scanner = new Scanner(text, languageVersion, stringTable, this.scannerLineMap);
         }
         NormalParserSource.prototype.currentNode = function () {
             return null;
@@ -59296,7 +59319,7 @@ var Program = (function () {
         }
         var contents = Environment.readFile(filePath, true);
         var text = TextFactory.createText(contents);
-        var scanner = new Scanner(text, languageVersion, stringTable);
+        var scanner = new Scanner(text, languageVersion, stringTable, []);
         var tokens = [];
         var textArray = [];
         var diagnostics = [];
@@ -59315,7 +59338,7 @@ var Program = (function () {
         }
         var contents = Environment.readFile(filePath, true);
         var text = TextFactory.createText(contents);
-        var scanner = new Scanner(text, languageVersion, stringTable);
+        var scanner = new Scanner(text, languageVersion, stringTable, []);
         var tokens = [];
         var textArray = [];
         var diagnostics = [];
