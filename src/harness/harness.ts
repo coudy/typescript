@@ -940,10 +940,11 @@ module Harness {
             public bool: Type;
 
             constructor() {
-                this.any = this.get('var x : any', 'x');
-                this.number = this.get('var x : number', 'x');
-                this.string = this.get('var x : string', 'x');
-                this.bool = this.get('var x : bool', 'x');
+                var xPosition = 4;
+                this.any = this.get('var x : any', xPosition);
+                this.number = this.get('var x : number', xPosition);
+                this.string = this.get('var x : string', xPosition);
+                this.bool = this.get('var x : bool', xPosition);
             }
 
             public get (code: string, target: any) {
@@ -988,20 +989,25 @@ module Harness {
                 else {
                     for (var m = 0; m < compiler.scripts.members.length; m++) {
                         var script2 = <TypeScript.Script>compiler.scripts.members[m];
-
-                        if (targetPosition > -1) {
-                            var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
-                            var name = this.getTypeInfoName(tyInfo.ast);
-                            matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, name));
-                        }
-                        else {
-                            for (var pos = 0; pos < code.length; pos++) {
-                                var tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
+                        if (script2.locationInfo.filename !== 'lib.d.ts') {
+                            if (targetPosition > -1) {
+                                var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
                                 var name = this.getTypeInfoName(tyInfo.ast);
-                                if (name === targetIdentifier) {
-                                    // TODO: this adds the same identifier a bunch of times for different position values
-                                    // will fix it up once the tests are working better
-                                    matchingIdentifiers.push(new Type(tyInfo.typeInfo, code, targetIdentifier));
+                                var foundValue = new Type(tyInfo.typeInfo, code, name);
+                                if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
+                                    matchingIdentifiers.push(foundValue);
+                                }
+                            }
+                            else {
+                                for (var pos = 0; pos < code.length; pos++) {
+                                    var tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
+                                    var name = this.getTypeInfoName(tyInfo.ast);
+                                    if (name === targetIdentifier) {
+                                        var foundValue = new Type(tyInfo.typeInfo, code, targetIdentifier);
+                                        if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
+                                            matchingIdentifiers.push(foundValue);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1015,6 +1021,9 @@ module Harness {
                     else {
                         throw new Error("Could not find an identifier " + targetIdentifier + " in any known scopes");
                     }
+                }
+                else if (matchingIdentifiers.length > 1) {
+                    throw new Error("Found multiple matching identifiers for " + target);
                 }
                 else {
                     return matchingIdentifiers[0];
