@@ -959,11 +959,11 @@ var TypeScript;
     })();
     TypeScript.ASTSpan = ASTSpan;    
     TypeScript.astID = 0;
-    var AST = (function (_super) {
-        __extends(AST, _super);
+    var AST = (function () {
         function AST(nodeType) {
-                _super.call(this);
             this.nodeType = nodeType;
+            this.minChar = -1;
+            this.limChar = -1;
             this.type = null;
             this.flags = 4 /* Writeable */ ;
             this.astID = TypeScript.astID++;
@@ -1151,7 +1151,7 @@ var TypeScript;
             return this.docComments;
         };
         return AST;
-    })(ASTSpan);
+    })();
     TypeScript.AST = AST;    
     var IncompleteAST = (function (_super) {
         __extends(IncompleteAST, _super);
