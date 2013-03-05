@@ -88,7 +88,7 @@ module TypeScript {
         }
 
         public pathToRoot() {
-            var path = new Symbol[];
+            var path: Symbol[] = [];
             var node = this;
             while (node && (node.name != globalId)) {
                 path[path.length] = node;
@@ -97,9 +97,9 @@ module TypeScript {
             return path;
         }
 
-        public findCommonAncestorPath(b: Symbol) {
+        public findCommonAncestorPath(b: Symbol): Symbol[] {
             if (this.container == null) {
-                return new Symbol[];
+                return [];
             }
             var aPath = this.container.pathToRoot();
             var bPath: Symbol[];
@@ -107,7 +107,7 @@ module TypeScript {
                 bPath = b.pathToRoot();
             }
             else {
-                bPath = new Symbol[];
+                bPath = [];
             }
             var commonNodeIndex = -1;
             for (var i = 0, aLen = aPath.length; i < aLen; i++) {

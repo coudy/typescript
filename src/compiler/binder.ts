@@ -22,7 +22,7 @@ module TypeScript {
         public resolveBaseTypeLinks(typeLinks: TypeLink[], scope: SymbolScope) {
             var extendsList: Type[] = null;
             if (typeLinks) {
-                extendsList = new Type[];
+                extendsList = [];
                 for (var i = 0, len = typeLinks.length; i < len; i++) {
                     extendsList[i] = this.checker.resolveBaseTypeLink(typeLinks[i], scope);
                 }

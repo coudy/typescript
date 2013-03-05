@@ -20,9 +20,6 @@ module TypeScript {
 
         private symbol: PullSymbol = null;
 
-        // use this to store the symbol for a parameter property
-        private propertySymbol: PullSymbol = null;
-
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
         
@@ -65,9 +62,6 @@ module TypeScript {
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
         public getSymbol() { return this.symbol; }
-
-        public setPropertySymbol(symbol: PullSymbol) { this.propertySymbol = symbol; }
-        public getPropertySymbol() { return this.propertySymbol; }
 
         public setSignatureSymbol(signature: PullSignatureSymbol) { this.signatureSymbol = signature; }
         public getSignatureSymbol():PullSignatureSymbol { return this.signatureSymbol; }

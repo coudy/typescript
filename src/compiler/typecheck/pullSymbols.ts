@@ -567,6 +567,8 @@ module TypeScript {
 
         private invalidatedSpecializations = false;
 
+        private associatedContainerTypeSymbol: PullTypeSymbol = null;
+
         public isType() { return true; }
         public isClass() { return false; }
         public hasMembers() { return this.memberLinks && this.memberLinks.length != 0; }
@@ -579,6 +581,14 @@ module TypeScript {
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
 
         public setHasGenericSignature() { this.hasGenericSignature = true; }
+
+        public setAssociatedContainerType(type: PullTypeSymbol) {
+            this.associatedContainerTypeSymbol = type;
+        }
+
+        public getAssociatedContainerType() {
+            return this.associatedContainerTypeSymbol;
+        }
 
         public getType() { return this; }
 
@@ -1029,6 +1039,14 @@ module TypeScript {
                 }
             }
 
+            var implementedTypes = this.getImplementedTypes();
+
+            for (var i = 0; i < implementedTypes.length; i++) {
+                if (implementedTypes[i].hasBase(potentialBase)) {
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -1052,15 +1070,7 @@ module TypeScript {
             var memberSymbol: PullSymbol;
 
             if (!this.memberNameCache) {
-                this.memberNameCache = new BlockIntrinsics();
-                this.memberCache = [];
-
-                if (this.memberLinks) {
-                    for (var i = 0; i < this.memberLinks.length; i++) {
-                        this.memberNameCache[this.memberLinks[i].end.getName()] = this.memberLinks[i].end;
-                        this.memberCache[this.memberCache.length] = this.memberLinks[i].end;
-                    }
-                }
+                this.populateMemberCache();
             }
 
             memberSymbol = this.memberNameCache[name];
@@ -1100,12 +1110,37 @@ module TypeScript {
             var memberSymbol: PullTypeSymbol;
 
             if (!this.memberTypeNameCache) {
+                this.populateMemberTypeCache();
+            }
+
+            memberSymbol = this.memberTypeNameCache[name];
+
+            return memberSymbol;
+        }
+
+        private populateMemberCache() {
+            if (!this.memberNameCache) {
+                this.memberNameCache = new BlockIntrinsics();
+                this.memberCache = [];
+
+                if (this.memberLinks) {
+                    for (var i = 0; i < this.memberLinks.length; i++) {
+                        this.memberNameCache[this.memberLinks[i].end.getName()] = this.memberLinks[i].end;
+                        this.memberCache[this.memberCache.length] = this.memberLinks[i].end;
+                    }
+                }
+            }
+        }
+
+        private populateMemberTypeCache() {
+            if (!this.memberTypeNameCache) {
                 this.memberTypeNameCache = new BlockIntrinsics();
 
                 var setAll = false;
 
                 if (!this.memberCache) {
                     this.memberCache = [];
+                    this.memberNameCache = new BlockIntrinsics();
                     setAll = true;
                 }
 
@@ -1122,10 +1157,55 @@ module TypeScript {
                     }
                 }
             }
+        }
 
-            memberSymbol = this.memberTypeNameCache[name];
+        public getAllMemebers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[]{
 
-            return memberSymbol;
+            var allMembers: PullSymbol[] = [];
+
+            // Update the cache id needed
+            if (!this.memberTypeNameCache) {
+                this.populateMemberTypeCache();
+            }
+
+            // Add members
+            for (var i = 0, n = this.memberCache.length; i < n; i++) {
+                var member = this.memberCache[i];
+                if ((member.getKind() & searchDeclKind) && (includePrivate || !member.hasFlag(PullElementFlags.Private))) {
+                    allMembers[allMembers.length] = member;
+                }
+            }
+
+            // Add parent members
+            if (this.extendedTypeLinks) {
+
+                for (var i = 0, n = this.extendedTypeLinks.length; i < n; i++) {
+                    var extendedMemebers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMemebers(searchDeclKind, includePrivate);
+
+                    for (var j = 0, m = extendedMemebers.length; j < m; j++) {
+                        var extendedMember = extendedMemebers[j];
+                        if (!this.memberNameCache[extendedMember.getName()]) {
+                            allMembers[allMembers.length] = extendedMember;
+                        }
+                    }
+                }
+            }
+
+            if (this.implementedTypeLinks) {
+
+                for (var i = 0 ; i < this.implementedTypeLinks.length; i++) {
+                    var implementedMemebers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMemebers(searchDeclKind, includePrivate);
+
+                    for (var j = 0, m = implementedMemebers.length; j < m; j++) {
+                        var implementedMemeber = implementedMemebers[j];
+                        if (!this.memberNameCache[implementedMemeber.getName()]) {
+                            allMembers[allMembers.length] = implementedMemeber;
+                        }
+                    }
+                }
+            }
+
+            return allMembers;
         }
 
         public findTypeParameter(name: string): PullTypeParameterSymbol {
@@ -1155,6 +1235,7 @@ module TypeScript {
 
             this.memberNameCache = null;
             this.memberCache = null;
+            this.memberTypeNameCache = null;
 
             this.invalidatedSpecializations = false;
 
@@ -1527,6 +1608,8 @@ module TypeScript {
                         newParameter = new PullSymbol(parameters[k].getName(), parameters[k].getKind());
 
                         parameterType = parameters[k].getType();
+
+                        if (parameterType === null) { continue; }
 
                         if (parameterType == typeToReplace) {
                             newParameter.setType(typeToSpecializeTo);

@@ -36,8 +36,22 @@ describe("Assignment compatibility", function() {
         "var name_v = o.name(\"Robert\");" + // should be 'any'
         "var zz_v = o.name.N;" + // should be 'number'
         "var yy_v = o.name.g;" + // should be 'bool'
-        "var rr_v = o.name.r;" + // should be 'string'
+        "var rr_v = o.name.r;"; // should be 'string'
 
+    var respecializeCode =
+        "class Cell {" +
+        "}" +
+        "class Ship {" +
+        "   isSunk: bool;" +
+        "}" +
+        "var shipVar: Ship;" +
+        "class Board {" +
+        "   ships: Ship[];" +
+        "   cells: Cell[];" +
+        "   private allShipsSunk() {" +
+        "       return this.ships.every(function (val) { return val.isSunk; });" +
+        "   }" +    
+        "}";    
     
     describe("Test generic array specialization and contextual typing", () => {
         typeFactory.isOfType(genericMapCode, "Array<number>");
@@ -75,4 +89,11 @@ describe("Assignment compatibility", function() {
         });
     });
 
+    describe("Test re-specialization of Arrays", () => {
+        it("re-specialization of Arrays 1", function() {
+            var t1 = typeFactory.get(respecializeCode, respecializeCode.indexOf("val"));
+            var t2 = typeFactory.get(respecializeCode, respecializeCode.indexOf("shipVar"));
+            t1.assertIdenticalTo(t2);
+        });
+    });
 });

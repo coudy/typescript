@@ -47,7 +47,6 @@ module TypeScript {
         incompatibleTypesWithReason_3,
         expectedClassOrInterface,
         unaryOperatorTypeError_2,
-
     }
 
     export interface TypeScriptDiagnosticMessages {

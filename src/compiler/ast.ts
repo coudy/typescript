@@ -244,7 +244,7 @@ module TypeScript {
 
     export class ASTList extends AST {
         public enclosingScope: SymbolScope = null;
-        public members: AST[] = new AST[];
+        public members: AST[] = [];
 
         constructor () {
             super(NodeType.List);
@@ -1054,7 +1054,7 @@ module TypeScript {
 
         public addCloRef(id: Identifier, sym: Symbol): number {
             if (this.envids == null) {
-                this.envids = new Identifier[];
+                this.envids = [];
             }
             this.envids[this.envids.length] = id;
             var outerFnc = this.enclosingFnc;
@@ -1069,7 +1069,7 @@ module TypeScript {
 
         public addJumpRef(sym: Symbol): void {
             if (this.jumpRefs == null) {
-                this.jumpRefs = new Identifier[];
+                this.jumpRefs = [];
             }
             var id = new Identifier(sym.name);
             this.jumpRefs[this.jumpRefs.length] = id;

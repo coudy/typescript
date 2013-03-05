@@ -136,10 +136,10 @@ module TypeScript {
         LimKeyword = Yield,
     }
 
-    export var tokenTable = new TokenInfo[];
-    export var nodeTypeTable = new string[];
-    export var nodeTypeToTokTable = new number[];
-    export var noRegexTable = new bool[];
+    export var tokenTable: TokenInfo[] = [];
+    export var nodeTypeTable: string[] = [];
+    export var nodeTypeToTokTable: number[] = [];
+    export var noRegexTable: bool[] = [];
 
     noRegexTable[TokenID.Identifier] = true;
     noRegexTable[TokenID.StringLiteral] = true;
@@ -460,7 +460,7 @@ module TypeScript {
     }
 
     // TODO: new with length TokenID.LimFixed
-    export var staticTokens = new Token[];
+    export var staticTokens: Token[] = [];
     export function initializeStaticTokens() {
         for (var i = 0; i <= TokenID.LimFixed; i++) {
             staticTokens[i] = new Token(i);

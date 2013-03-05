@@ -226,9 +226,11 @@ module TypeScript {
         if (hasFlag(argDecl.varFlags, VarFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
+        else {
+            declFlags |= PullElementFlags.Public;
+        }
 
-
-        if (hasFlag(argDecl.flags, ASTFlags.OptionalName)) {
+        if (hasFlag(argDecl.flags, ASTFlags.OptionalName) || hasFlag(argDecl.id.flags, ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
@@ -244,6 +246,7 @@ module TypeScript {
         // if it's a property type, we'll need to add it to the parent's parent as well
         if (hasFlag(argDecl.varFlags, VarFlags.Property)) {
             var propDecl = new PullDecl(argDecl.id.text, PullElementKind.Property, declFlags, span, context.scriptName);
+            propDecl.setValueDecl(decl);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             context.semanticInfo.setASTForDecl(propDecl, ast);
             context.semanticInfo.setDeclForAST(ast, propDecl);
@@ -336,11 +339,14 @@ module TypeScript {
 
     // class member variables
     export function createMemberVariableDeclaration(memberDecl: VarDecl, context: DeclCollectionContext) {
-        var declFlags = PullElementFlags.Public;
+        var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Property;
 
         if (hasFlag(memberDecl.varFlags, VarFlags.Private)) {
-            declFlags = PullElementFlags.Private;
+            declFlags |= PullElementFlags.Private;
+        }
+        else {
+            declFlags |= PullElementFlags.Public;
         }
 
         if (hasFlag(memberDecl.varFlags, VarFlags.Static)) {
@@ -614,8 +620,11 @@ module TypeScript {
         if (hasFlag(memberFunctionDeclAST.fncFlags, FncFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
+        else {
+            declFlags |= PullElementFlags.Public;
+        }
 
-        if (!memberFunctionDeclAST.bod) {
+        if (!memberFunctionDeclAST.bod || !memberFunctionDeclAST.bod.members.length) {
             declFlags |= PullElementFlags.Signature;
         }
 

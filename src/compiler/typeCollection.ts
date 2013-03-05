@@ -25,7 +25,7 @@ module TypeScript {
         if (bases) {
             var len = bases.members.length;
             if (baseTypeLinks == null) {
-                baseTypeLinks = new TypeLink[];
+                baseTypeLinks = [];
             }
             for (var i = 0; i < len; i++) {
                 var baseExpr = bases.members[i];

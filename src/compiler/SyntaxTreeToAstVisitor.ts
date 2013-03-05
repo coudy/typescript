@@ -1100,10 +1100,13 @@ module TypeScript {
                 left = (<TypeReference>left).term;
             }
 
-            var result = new BinaryExpression(NodeType.Dot, left, right);
+            var term = new BinaryExpression(NodeType.Dot, left, right);
+            this.setSpan(term, start, this.position);
+
+            var result = new TypeReference(term, 0);
             this.setSpan(result, start, this.position);
 
-            return new TypeReference(result, 0);
+            return result;
         }
 
         private visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
@@ -1184,6 +1187,15 @@ module TypeScript {
             var start = this.position;
             this.movePast(node.openBraceToken);
             var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
+
+            if (typeMembers.members) {
+                for (var i = 0; i < typeMembers.members.length; i++) {
+                    if (typeMembers.members[i].nodeType == NodeType.FuncDecl) {
+                        (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Method;
+                        (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Signature;
+                    }
+                }
+            }
             this.movePast(node.closeBraceToken);
 
             var result = new InterfaceDeclaration(
@@ -1229,6 +1241,7 @@ module TypeScript {
         private visitGenericType(node: GenericTypeSyntax): TypeReference {
             this.assertElementAtPosition(node);
 
+            var start = this.position;
             var underlying = this.visitType(node.name);
             var typeArguments = node.typeArgumentList.accept(this);
 
@@ -1240,7 +1253,10 @@ module TypeScript {
 
             genericType.flags |= ASTFlags.TypeReference;
 
-            return new TypeReference(genericType, 0);
+            var result = new TypeReference(genericType, 0);
+            this.setSpan(result, start, this.position);
+
+            return result;
         }
 
         private visitTypeAnnotation(node: TypeAnnotationSyntax): AST {
@@ -1289,6 +1305,10 @@ module TypeScript {
                 else {
                     result.varFlags |= VarFlags.Private;
                 }
+            }
+
+            if (node.equalsValueClause || node.dotDotDotToken) {
+                result.flags |= ASTFlags.OptionalName;
             }
 
             return result;
@@ -1874,7 +1894,7 @@ module TypeScript {
                 }
             }
 
-            varDecl.varFlags |= VarFlags.Property;
+            varDecl.varFlags |= VarFlags.ClassProperty;
 
             // this.currentClassDefinition.knownMemberNames[text.actualText] = true;
 
