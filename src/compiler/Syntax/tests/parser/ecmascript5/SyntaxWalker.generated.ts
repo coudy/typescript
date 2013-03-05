@@ -1,4 +1,4 @@
-declare module "fs" {
+﻿declare module "fs" {
     export class File {
         constructor(filename: string);
         public ReadAllText(): string;
@@ -69,8 +69,8 @@ module TypeScriptAllInOne {
             var nan = Number.NaN;
             var undef = undefined;
 
-            var привет = local;
-            var мир = local;
+            var п = local;
+            var м = local;
 
             var local5 = <fs.File>null;
             var local6 = local5 instanceof fs.File;

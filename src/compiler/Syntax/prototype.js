@@ -36665,14 +36665,27 @@ var Parser1;
             var typeAnnotation = null;
             if (identifier.width() > 0) {
                 typeAnnotation = this.parseOptionalTypeAnnotation();
-                if (this.isEqualsValueClause()) {
+                if (this.isEqualsValueClause(false)) {
                     equalsValueClause = this.parseEqualsValuesClause(allowIn);
                 }
             }
             return this.factory.variableDeclarator(identifier, typeAnnotation, equalsValueClause);
         };
-        ParserImpl.prototype.isEqualsValueClause = function () {
-            return this.currentToken().tokenKind === 107 /* EqualsToken */ ;
+        ParserImpl.prototype.isEqualsValueClause = function (inParameter) {
+            var token0 = this.currentToken();
+            if (token0.tokenKind === 107 /* EqualsToken */ ) {
+                return true;
+            }
+            if (!this.previousToken().hasTrailingNewLine()) {
+                if (token0.tokenKind === 85 /* EqualsGreaterThanToken */ ) {
+                    return false;
+                }
+                if (token0.tokenKind === 70 /* OpenBraceToken */  && inParameter) {
+                    return false;
+                }
+                return this.isExpression();
+            }
+            return false;
         };
         ParserImpl.prototype.parseEqualsValuesClause = function (allowIn) {
             var equalsToken = this.eatToken(107 /* EqualsToken */ );
@@ -37429,7 +37442,7 @@ var Parser1;
             var questionToken = this.tryEatToken(105 /* QuestionToken */ );
             var typeAnnotation = this.parseOptionalTypeAnnotation();
             var equalsValueClause = null;
-            if (this.isEqualsValueClause()) {
+            if (this.isEqualsValueClause(true)) {
                 equalsValueClause = this.parseEqualsValuesClause(true);
             }
             return this.factory.parameter(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
@@ -41659,9 +41672,11 @@ var TypeScript;
             }
             if (shouldContextuallyType) {
                 assigningFunctionTypeSymbol = context.getContextualType();
-                this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, enclosingDecl, context);
                 if (assigningFunctionTypeSymbol) {
-                    assigningFunctionSignature = assigningFunctionTypeSymbol.getCallSignatures()[0];
+                    this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, enclosingDecl, context);
+                    if (assigningFunctionTypeSymbol) {
+                        assigningFunctionSignature = assigningFunctionTypeSymbol.getCallSignatures()[0];
+                    }
                 }
             }
             if (!funcDeclSymbol) {
@@ -42679,7 +42694,7 @@ var TypeScript;
         PullTypeResolver.prototype.signatureIsRelatableToTarget = function (sourceSig, targetSig, assignableTo, comparisonCache, context, comparisonInfo) {
             var sourceParameters = sourceSig.getParameters();
             var targetParameters = targetSig.getParameters();
-            if (!sourceParameters.length || !targetParameters.length) {
+            if (!sourceParameters || !targetParameters) {
                 return false;
             }
             var targetVarArgCount = targetSig.hasVariableParamList() ? targetSig.getNonOptionalParameterCount() - 1 : targetSig.getNonOptionalParameterCount();
@@ -43428,15 +43443,17 @@ var TypeScript;
             var assignmentAST = ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
             var leftType = this.resolver.resolveAST(assignmentAST.operand1, false, enclosingDecl, this.context).getType();
-            var rightType = this.resolver.resolveAST(assignmentAST.operand2, false, enclosingDecl, this.context).getType();
+            this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
+            var rightType = this.resolver.resolveAST(assignmentAST.operand2, true, enclosingDecl, this.context).getType();
+            this.context.popContextualType();
             var comparisonInfo = new TypeScript.TypeComparisonInfo();
             var isAssignable = this.resolver.sourceIsAssignableToTarget(rightType, leftType, this.context, comparisonInfo);
             if (!isAssignable) {
                 var errorMessage = comparisonInfo.message;
                 var span = enclosingDecl.getSpan();
                 var message = TypeScript.getDiagnosticMessage(13 /* incompatibleTypes_2 */ , [
-                    rightType.getName(), 
-                    leftType.getName()
+                    rightType.toString(), 
+                    leftType.toString()
                 ]);
                 this.context.postError(assignmentAST.operand1.minChar - span.minChar, span.limChar - span.minChar, typeCheckContext.scriptName, message, enclosingDecl);
             }
@@ -51051,8 +51068,6 @@ var TypeScript;
                     binder.bindDeclsForUnit(_this.semanticInfoChain.units[i].getPath());
                 }
                 var bindEndTime = new Date().getTime();
-                var typeCheckStartTime = new Date().getTime();
-                var typeCheckEndTime = new Date().getTime();
                 var findErrorsStartTime = new Date().getTime();
                 for(i = 0; i < _this.scripts.members.length; i++) {
                     _this.logger.log("Type checking " + _this.units[i].filename);
@@ -51062,8 +51077,6 @@ var TypeScript;
                 _this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
                 _this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 _this.logger.log("    Time in findSymbol: " + TypeScript.time_in_findSymbol);
-                _this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
-                _this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
                 _this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
                 _this.pullErrorReporter.reportErrors(_this.semanticInfoChain.postErrors());
             });
@@ -59016,7 +59029,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, generate);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (filePath) {

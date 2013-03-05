@@ -3252,7 +3252,7 @@ module Parser1 {
             if (identifier.width() > 0) {
                 typeAnnotation = this.parseOptionalTypeAnnotation();
 
-                if (this.isEqualsValueClause()) {
+                if (this.isEqualsValueClause(/*inParameter*/ false)) {
                     equalsValueClause = this.parseEqualsValuesClause(allowIn);
                 }
             }
@@ -3260,8 +3260,41 @@ module Parser1 {
             return this.factory.variableDeclarator(identifier, typeAnnotation, equalsValueClause);
         }
 
-        private isEqualsValueClause(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.EqualsToken;
+        private isEqualsValueClause(inParameter: bool): bool {
+            var token0 = this.currentToken();
+            if (token0.tokenKind === SyntaxKind.EqualsToken) {
+                return true;
+            }
+
+            // It's not uncommon during typing for the user to miss writing the '=' token.  Check if
+            // there is no newline after the last token and if we're on an expression.  If so, parse
+            // this as an equals-value clause with a missing equals.
+            if (!this.previousToken().hasTrailingNewLine()) {
+
+                // The 'isExpression' call below returns true for "=>".  That's because it smartly
+                // assumes that there is just a missing identifier and the user wanted a lambda.  
+                // While this is sensible, we don't want to allow that here as that would mean we're
+                // glossing over multiple erorrs and we're probably making things worse.  So don't
+                // treat this as an equals value clause and let higher up code handle things.
+                if (token0.tokenKind === SyntaxKind.EqualsGreaterThanToken) {
+                    return false;
+                }
+
+
+                // There are two places where we allow equals-value clauses.  The first is in a 
+                // variable declarator.  The second is with a parameter.  For variable declarators
+                // it's more likely that a { would be a allowed (as an object literal).  While this
+                // is also allowed for parameters, the risk is that we consume the { as an object
+                // literal when it really will be for the block following the parameter.
+                if (token0.tokenKind === SyntaxKind.OpenBraceToken &&
+                    inParameter) {
+                    return false;
+                }
+
+                return this.isExpression();
+            }
+
+            return false;
         }
 
         private parseEqualsValuesClause(allowIn: bool): EqualsValueClauseSyntax {
@@ -4525,7 +4558,7 @@ module Parser1 {
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
             var equalsValueClause: EqualsValueClauseSyntax = null;
-            if (this.isEqualsValueClause()) {
+            if (this.isEqualsValueClause(/*inParameter*/ true)) {
                 equalsValueClause = this.parseEqualsValuesClause(/*allowIn:*/ true);
             }
 
