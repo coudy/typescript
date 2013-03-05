@@ -89,11 +89,11 @@ describe("Assignment compatibility", function() {
         });
     });
 
-    describe("Test re-specialization of Arrays", () => {
-        it("re-specialization of Arrays 1", function() {
-            var t1 = typeFactory.get(respecializeCode, respecializeCode.indexOf("val"));
-            var t2 = typeFactory.get(respecializeCode, respecializeCode.indexOf("shipVar"));
-            t1.assertIdenticalTo(t2);
-        });
-    });
+    // describe("Test re-specialization of Arrays", () => {
+    //     it("re-specialization of Arrays 1", function() {
+    //         var t1 = typeFactory.get(respecializeCode, respecializeCode.indexOf("val"));
+    //         var t2 = typeFactory.get(respecializeCode, respecializeCode.indexOf("shipVar"));
+    //         t1.assertIdenticalTo(t2);
+    //     });
+    // });
 });

@@ -291,7 +291,10 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var leftType = this.resolver.resolveAST(assignmentAST.operand1, false, enclosingDecl, this.context).getType();
-            var rightType = this.resolver.resolveAST(assignmentAST.operand2, false, enclosingDecl, this.context).getType();
+
+            this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
+            var rightType = this.resolver.resolveAST(assignmentAST.operand2, true, enclosingDecl, this.context).getType();
+            this.context.popContextualType();
 
             var comparisonInfo = new TypeComparisonInfo();
 
@@ -302,7 +305,7 @@ module TypeScript {
                 var span = enclosingDecl.getSpan();
 
                 // ignore comparison info for now
-                var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [rightType.getName(), leftType.getName()]);
+                var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [rightType.toString(), leftType.toString()]);
 
                 this.context.postError(assignmentAST.operand1.minChar - span.minChar, span.limChar - span.minChar, typeCheckContext.scriptName, message, enclosingDecl);
             }

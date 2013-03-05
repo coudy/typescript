@@ -1678,10 +1678,12 @@ module TypeScript {
 
                 assigningFunctionTypeSymbol = <PullFunctionTypeSymbol>context.getContextualType();
 
-                this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, enclosingDecl, context);
-
                 if (assigningFunctionTypeSymbol) {
-                    assigningFunctionSignature = assigningFunctionTypeSymbol.getCallSignatures()[0];
+                    this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, enclosingDecl, context);
+
+                    if (assigningFunctionTypeSymbol) {
+                        assigningFunctionSignature = assigningFunctionTypeSymbol.getCallSignatures()[0];
+                    }
                 }
             }
 
@@ -3166,7 +3168,7 @@ module TypeScript {
             var sourceParameters = sourceSig.getParameters();
             var targetParameters = targetSig.getParameters();
 
-            if (!sourceParameters.length || !targetParameters.length) {
+            if (!sourceParameters || !targetParameters) {
                 return false;
             }
 

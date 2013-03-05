@@ -948,14 +948,14 @@ module TypeScript {
                 }
                 
                 var bindEndTime = new Date().getTime();
-                var typeCheckStartTime = new Date().getTime();
+                //var typeCheckStartTime = new Date().getTime();
 
-                // resolve symbols
-                //for (i = 0; i < this.scripts.members.length; i++) {
-                //    this.pullResolveFile(this.units[i].filename);
-                //}
+                //// resolve symbols
+                ////for (i = 0; i < this.scripts.members.length; i++) {
+                ////    this.pullResolveFile(this.units[i].filename);
+                ////}
 
-                var typeCheckEndTime = new Date().getTime();
+                //var typeCheckEndTime = new Date().getTime();
 
                 var findErrorsStartTime = new Date().getTime();
                 // type check
@@ -968,8 +968,6 @@ module TypeScript {
                 this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
-                this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
-                this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
 
                 this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
