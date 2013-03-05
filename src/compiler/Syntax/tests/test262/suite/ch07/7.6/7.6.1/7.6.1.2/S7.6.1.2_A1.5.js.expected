@@ -11,7 +11,18 @@
         {
             "_position": 325,
             "_width": 1,
-            "_diagnosticCode": "Identifier_expected"
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "identifier"
+            ]
+        },
+        {
+            "_position": 327,
+            "_width": 1,
+            "_diagnosticCode": "Unexpected_token__0_expected",
+            "_arguments": [
+                "identifier"
+            ]
         }
     ],
     "_sourceUnit": {
@@ -22,20 +33,23 @@
         "moduleElements": [
             {
                 "kind": "VariableStatement",
-                "fullWidth": 319,
+                "fullWidth": 327,
+                "hasSkippedText": true,
                 "hasZeroWidthToken": true,
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
-                    "fullWidth": 319,
+                    "fullWidth": 327,
+                    "hasSkippedText": true,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 319,
+                        "fullWidth": 327,
                         "text": "var",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
                         "hasLeadingNewLine": true,
                         "hasTrailingTrivia": true,
+                        "hasTrailingSkippedText": true,
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
@@ -74,6 +88,22 @@
                             {
                                 "kind": "WhitespaceTrivia",
                                 "text": " "
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "class"
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
+                            },
+                            {
+                                "kind": "SkippedTextTrivia",
+                                "text": "="
+                            },
+                            {
+                                "kind": "WhitespaceTrivia",
+                                "text": " "
                             }
                         ]
                     },
@@ -81,50 +111,6 @@
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",
-                    "width": 0,
-                    "text": ""
-                }
-            },
-            {
-                "kind": "ClassDeclaration",
-                "fullWidth": 8,
-                "hasSkippedText": true,
-                "hasZeroWidthToken": true,
-                "classKeyword": {
-                    "kind": "ClassKeyword",
-                    "width": 5,
-                    "fullWidth": 8,
-                    "text": "class",
-                    "hasTrailingTrivia": true,
-                    "hasTrailingSkippedText": true,
-                    "trailingTrivia": [
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        },
-                        {
-                            "kind": "SkippedTextTrivia",
-                            "text": "="
-                        },
-                        {
-                            "kind": "WhitespaceTrivia",
-                            "text": " "
-                        }
-                    ]
-                },
-                "identifier": {
-                    "kind": "IdentifierName",
-                    "width": 0,
-                    "text": ""
-                },
-                "openBraceToken": {
-                    "kind": "OpenBraceToken",
-                    "width": 0,
-                    "text": ""
-                },
-                "classElements": [],
-                "closeBraceToken": {
-                    "kind": "CloseBraceToken",
                     "width": 0,
                     "text": ""
                 }

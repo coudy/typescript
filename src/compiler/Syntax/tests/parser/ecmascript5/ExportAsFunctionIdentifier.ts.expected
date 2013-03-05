@@ -1,24 +1,12 @@
 {
-    "_diagnostics": [
-        {
-            "_position": 24,
-            "_width": 6,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "call, construct, index, property or function signature"
-            ]
-        }
-    ],
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 82,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "InterfaceDeclaration",
                 "fullWidth": 46,
-                "hasSkippedText": true,
                 "interfaceKeyword": {
                     "kind": "InterfaceKeyword",
                     "width": 9,
@@ -49,69 +37,76 @@
                 "body": {
                     "kind": "ObjectType",
                     "fullWidth": 32,
-                    "hasSkippedText": true,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
-                        "fullWidth": 16,
+                        "fullWidth": 3,
                         "text": "{",
                         "hasTrailingTrivia": true,
                         "hasTrailingNewLine": true,
-                        "hasTrailingSkippedText": true,
                         "trailingTrivia": [
                             {
                                 "kind": "NewLineTrivia",
                                 "text": "\r\n"
-                            },
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": "       "
-                            },
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "export"
                             }
                         ]
                     },
                     "typeMembers": [
                         {
-                            "kind": "CallSignature",
-                            "fullWidth": 10,
-                            "parameterList": {
-                                "kind": "ParameterList",
-                                "fullWidth": 2,
-                                "openParenToken": {
-                                    "kind": "OpenParenToken",
-                                    "width": 1,
-                                    "text": "("
-                                },
-                                "parameters": [],
-                                "closeParenToken": {
-                                    "kind": "CloseParenToken",
-                                    "width": 1,
-                                    "text": ")"
-                                }
+                            "kind": "FunctionSignature",
+                            "fullWidth": 23,
+                            "identifier": {
+                                "kind": "ExportKeyword",
+                                "width": 6,
+                                "fullWidth": 13,
+                                "text": "export",
+                                "hasLeadingTrivia": true,
+                                "leadingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": "       "
+                                    }
+                                ]
                             },
-                            "typeAnnotation": {
-                                "kind": "TypeAnnotation",
-                                "fullWidth": 8,
-                                "colonToken": {
-                                    "kind": "ColonToken",
-                                    "width": 1,
+                            "callSignature": {
+                                "kind": "CallSignature",
+                                "fullWidth": 10,
+                                "parameterList": {
+                                    "kind": "ParameterList",
                                     "fullWidth": 2,
-                                    "text": ":",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
+                                    "openParenToken": {
+                                        "kind": "OpenParenToken",
+                                        "width": 1,
+                                        "text": "("
+                                    },
+                                    "parameters": [],
+                                    "closeParenToken": {
+                                        "kind": "CloseParenToken",
+                                        "width": 1,
+                                        "text": ")"
+                                    }
                                 },
-                                "type": {
-                                    "kind": "StringKeyword",
-                                    "width": 6,
-                                    "text": "string"
+                                "typeAnnotation": {
+                                    "kind": "TypeAnnotation",
+                                    "fullWidth": 8,
+                                    "colonToken": {
+                                        "kind": "ColonToken",
+                                        "width": 1,
+                                        "fullWidth": 2,
+                                        "text": ":",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "kind": "StringKeyword",
+                                        "width": 6,
+                                        "text": "string"
+                                    }
                                 }
                             }
                         },

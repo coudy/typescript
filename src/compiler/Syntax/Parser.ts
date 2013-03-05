@@ -1850,12 +1850,16 @@ module Parser1 {
         }
 
         private isEnumDeclaration(): bool {
-            if (this.currentToken().tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.EnumKeyword) {
+            var index = 0;
+            var token0 = this.peekToken(index);
+
+            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
+                this.peekToken(index + 1).tokenKind === SyntaxKind.EnumKeyword) {
                 return true;
             }
 
-            return this.currentToken().tokenKind === SyntaxKind.EnumKeyword;
+            return token0.tokenKind === SyntaxKind.EnumKeyword &&
+                   this.isIdentifier(this.peekToken(index + 1));
         }
 
         private parseEnumDeclaration(): EnumDeclarationSyntax {
@@ -1881,19 +1885,21 @@ module Parser1 {
         }
 
         private isClassDeclaration(): bool {
-            var token0 = this.currentToken();
+            var index = 0;
+            var token0 = this.peekToken(index);
 
             if (token0.tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.ClassKeyword) {
+                this.peekToken(index + 1).tokenKind === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
             if (token0.tokenKind === SyntaxKind.DeclareKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.ClassKeyword) {
+                this.peekToken(index + 1).tokenKind === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
-            return token0.tokenKind === SyntaxKind.ClassKeyword;
+            return token0.tokenKind === SyntaxKind.ClassKeyword &&
+                   this.isIdentifier(this.peekToken(index + 1));
         }
 
         private parseClassDeclaration(): ClassDeclarationSyntax {
@@ -2008,9 +2014,10 @@ module Parser1 {
 
         private isMemberVariableDeclaration(): bool {
             var index = 0;
+            var token0 = this.peekToken(index);
 
-            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
+            if (token0.tokenKind === SyntaxKind.PublicKeyword ||
+                token0.tokenKind === SyntaxKind.PrivateKeyword) {
                 index++;
 
                 // ERROR RECOVERY: 
@@ -2034,7 +2041,44 @@ module Parser1 {
                 }
             }
 
-            return this.isIdentifier(this.peekToken(index));
+            // We must at least have an identifier name at this point.
+            if (!ParserImpl.isIdentifierName(this.peekToken(index))) {
+                return false;
+            }
+
+            // Now, according to the grammar, we've got a member variable.  However, in practice 
+            // this can be a bit too permissive (especially in error contexts).  Do some additional
+            // checking to make sure we don't try to parse what's next as a member when it clearly
+            // is not.
+
+            // For example, if we see a keyword, it is very likely that the user is not actually
+            // typing a member name there, but is actually typing some other construct.  For example:
+            //
+            //   class C { class D { }
+            //
+            // THe second 'class' is technically an identifier name, but we really don't want to 
+            // parse a member variable here.
+
+            // So, if we see a keyword, we do a more rigorous check that this is actually a variable
+            // declaration.  If not, we do not parse it as such.
+            if (this.isIdentifier(this.peekToken(index))) {
+                // It's a real identifier.  We can be confident this is a member.
+                return true;
+            }
+
+            // We have a keyword.  only allow this as a member if it's of the form:
+            //
+            //      keyword;
+            //      keyword = 
+            //      keyword:
+            switch (this.peekToken(index + 1).tokenKind) {
+                case SyntaxKind.SemicolonToken:
+                case SyntaxKind.EqualsToken:
+                case SyntaxKind.ColonToken:
+                    return true;
+            }
+
+            return false;
         }
 
         private isClassElement(): bool {
@@ -2120,7 +2164,7 @@ module Parser1 {
             }
 
             var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
-            var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true);
+            var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ true);
             var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
             return this.factory.memberVariableDeclaration(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
@@ -2188,45 +2232,25 @@ module Parser1 {
         }
 
         private isModuleDeclaration(): bool {
-            var token0 = this.currentToken();
+            var index = 0;
+            var token0 = this.peekToken(index);
 
             // export module
             if (token0.tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.ModuleKeyword) {
+                this.peekToken(index + 1).tokenKind === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
             // declare module
             if (token0.tokenKind === SyntaxKind.DeclareKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.ModuleKeyword) {
+                this.peekToken(index + 1).tokenKind === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
             // Module is not a javascript keyword.  So we need to use a bit of lookahead here to ensure
             // that we're actually looking at a module construct and not some javascript expression.
-            if (token0.tokenKind === SyntaxKind.ModuleKeyword) {
-                // module {
-                var token1 = this.peekToken(1);
-                if (token1.tokenKind === SyntaxKind.OpenBraceToken) {
-                    return true;
-                }
-
-                if (ParserImpl.isIdentifierName(token1)) {
-                    var token2 = this.peekToken(2);
-
-                    // module id {
-                    if (token2.tokenKind === SyntaxKind.OpenBraceToken) {
-                        return true;
-                    }
-
-                    // module id.
-                    if (token2.tokenKind === SyntaxKind.DotToken) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return token0.tokenKind === SyntaxKind.ModuleKeyword &&
+                   this.isIdentifier(this.peekToken(index + 1));
         }
 
         private parseModuleDeclaration(): ModuleDeclarationSyntax {
@@ -2263,15 +2287,18 @@ module Parser1 {
         }
 
         private isInterfaceDeclaration(): bool {
+            var index = 0;
+            var token0 = this.peekToken(index);
+
             // export interface
-            if (this.currentToken().tokenKind === SyntaxKind.ExportKeyword &&
-                this.peekToken(1).tokenKind === SyntaxKind.InterfaceKeyword) {
+            if (token0.tokenKind === SyntaxKind.ExportKeyword &&
+                this.peekToken(index + 1).tokenKind === SyntaxKind.InterfaceKeyword) {
                 return true
             }
 
             // interface foo
-            return this.currentToken().tokenKind === SyntaxKind.InterfaceKeyword &&
-                   this.isIdentifier(this.peekToken(1));
+            return token0.tokenKind === SyntaxKind.InterfaceKeyword &&
+                   this.isIdentifier(this.peekToken(index + 1));
         }
 
         private parseInterfaceDeclaration(): InterfaceDeclarationSyntax {
@@ -2366,7 +2393,7 @@ module Parser1 {
         }
 
         private parseFunctionSignature(): FunctionSignatureSyntax {
-            var identifier = this.eatIdentifierToken();
+            var identifier = this.eatIdentifierNameToken();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
@@ -2376,7 +2403,7 @@ module Parser1 {
         private parsePropertySignature(): PropertySignatureSyntax {
             // Debug.assert(this.isPropertySignature());
 
-            var identifier = this.eatIdentifierToken();
+            var identifier = this.eatIdentifierNameToken();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
@@ -2397,7 +2424,7 @@ module Parser1 {
         }
 
         private isFunctionSignature(tokenIndex: number): bool {
-            if (this.isIdentifier(this.peekToken(tokenIndex))) {
+            if (ParserImpl.isIdentifierName(this.peekToken(tokenIndex))) {
                 // id(
                 if (this.isCallSignature(tokenIndex + 1)) {
                     return true;
@@ -2416,7 +2443,7 @@ module Parser1 {
         private isPropertySignature(): bool {
             // Note: identifiers also start function signatures.  So it's important that we call this
             // after we calll isFunctionSignature.
-            return this.isIdentifier(this.currentToken());
+            return ParserImpl.isIdentifierName(this.currentToken());
         }
 
         private isExtendsClause(): bool {
@@ -3213,12 +3240,12 @@ module Parser1 {
             return this.isIdentifier(this.currentToken());
         }
 
-        private parseVariableDeclarator(allowIn: bool): VariableDeclaratorSyntax {
+        private parseVariableDeclarator(allowIn: bool, allowIdentifierName: bool): VariableDeclaratorSyntax {
             if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.VariableDeclarator) {
                 return <VariableDeclaratorSyntax>this.eatNode();
             }
 
-            var identifier = this.eatIdentifierToken();
+            var identifier = allowIdentifierName ? this.eatIdentifierNameToken() : this.eatIdentifierToken();
             var equalsValueClause: EqualsValueClauseSyntax = null;
             var typeAnnotation: TypeAnnotationSyntax = null;
 
@@ -5262,7 +5289,7 @@ module Parser1 {
                     return this.parseStatement();
 
                 case ListParsingState.EnumDeclaration_VariableDeclarators:
-                    return this.parseVariableDeclarator(/*allowIn:*/ true);
+                    return this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ true);
 
                 case ListParsingState.ObjectType_TypeMembers:
                     return this.parseTypeMember();
@@ -5274,10 +5301,10 @@ module Parser1 {
                     return this.parseNameOrGenericType();
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
-                    return this.parseVariableDeclarator(/*allowIn:*/ true);
+                    return this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ false);
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                    return this.parseVariableDeclarator(/*allowIn:*/ false);
+                    return this.parseVariableDeclarator(/*allowIn:*/ false, /*allowIdentifierName:*/ false);
 
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                     return this.parsePropertyAssignment();
