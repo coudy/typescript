@@ -279,7 +279,7 @@ module TypeScript {
 
         public addParentScope(parent: SymbolScope): void {
             if (this.parents == null) {
-                this.parents = new SymbolScope[];
+                this.parents = [];
             }
             this.parents[this.parents.length] = parent;
         }

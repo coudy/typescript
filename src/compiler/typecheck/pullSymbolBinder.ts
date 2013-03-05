@@ -170,6 +170,8 @@ module TypeScript {
                 moduleInstanceTypeSymbol = new PullTypeSymbol(modName, PullElementKind.ObjectType);
                 moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
 
+                moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
+
                 // The instance symbol is further set up in bindVariableDeclaration
                 moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
                 moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
@@ -508,7 +510,7 @@ module TypeScript {
                 constructorSignature.addDeclaration(classDecl)
             }
 
-            //constructorTypeSymbol = <PullConstructorTypeSymbol>constructorSymbol.getType();
+            constructorTypeSymbol.setAssociatedContainerType(classSymbol);
 
             // bind statics to the constructor symbol
             if (this.staticClassMembers.length) {
@@ -1209,6 +1211,10 @@ module TypeScript {
                     isProperty = hasFlag(argDecl.varFlags, VarFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Variable);
 
+                    if (decl.getFlags() & PullElementFlags.Optional) {
+                        parameterSymbol.setIsOptional();
+                    }
+
                     if (params[argDecl.id.actualText]) {
                         decl.addError(new PullError(argDecl.minChar, argDecl.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [argDecl.id.actualText])));
                     }
@@ -1219,12 +1225,21 @@ module TypeScript {
                     if (decl) {
                         parameterSymbol.addDeclaration(decl);
                         decl.setSymbol(parameterSymbol);
+
+                        var valDecl = decl.getValueDecl();
+
+                        // if this is a parameter property, we still need to set the value decl
+                        // for the function parameter
+                        if (valDecl) {
+                            valDecl.setSymbol(parameterSymbol);
+                            parameterSymbol.addDeclaration(valDecl);
+                        }
                     }
                     
                     this.semanticInfo.setSymbolForAST(argDecl, parameterSymbol);
                     this.semanticInfo.setSymbolForAST(argDecl.id, parameterSymbol);
 
-                    signatureSymbol.addParameter(parameterSymbol);
+                    signatureSymbol.addParameter(parameterSymbol, parameterSymbol.getIsOptional());
 
                     // PULLREVIEW: Shouldn't need this, since parameters are created off of decl collection
                     // add a member to the parent type

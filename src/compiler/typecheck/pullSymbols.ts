@@ -567,6 +567,8 @@ module TypeScript {
 
         private invalidatedSpecializations = false;
 
+        private associatedContainerTypeSymbol: PullTypeSymbol = null;
+
         public isType() { return true; }
         public isClass() { return false; }
         public hasMembers() { return this.memberLinks && this.memberLinks.length != 0; }
@@ -579,6 +581,14 @@ module TypeScript {
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
 
         public setHasGenericSignature() { this.hasGenericSignature = true; }
+
+        public setAssociatedContainerType(type: PullTypeSymbol) {
+            this.associatedContainerTypeSymbol = type;
+        }
+
+        public getAssociatedContainerType() {
+            return this.associatedContainerTypeSymbol;
+        }
 
         public getType() { return this; }
 
@@ -1025,6 +1035,14 @@ module TypeScript {
 
             for (var i = 0; i < extendedTypes.length; i++) {
                 if (extendedTypes[i].hasBase(potentialBase)) {
+                    return true;
+                }
+            }
+
+            var implementedTypes = this.getImplementedTypes();
+
+            for (var i = 0; i < implementedTypes.length; i++) {
+                if (implementedTypes[i].hasBase(potentialBase)) {
                     return true;
                 }
             }

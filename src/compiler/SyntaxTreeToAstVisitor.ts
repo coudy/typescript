@@ -1184,6 +1184,15 @@ module TypeScript {
             var start = this.position;
             this.movePast(node.openBraceToken);
             var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
+
+            if (typeMembers.members) {
+                for (var i = 0; i < typeMembers.members.length; i++) {
+                    if (typeMembers.members[i].nodeType == NodeType.FuncDecl) {
+                        (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Method;
+                        (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Signature;
+                    }
+                }
+            }
             this.movePast(node.closeBraceToken);
 
             var result = new InterfaceDeclaration(
@@ -1289,6 +1298,10 @@ module TypeScript {
                 else {
                     result.varFlags |= VarFlags.Private;
                 }
+            }
+
+            if (node.equalsValueClause || node.dotDotDotToken) {
+                result.flags |= ASTFlags.OptionalName;
             }
 
             return result;
@@ -1874,7 +1887,7 @@ module TypeScript {
                 }
             }
 
-            varDecl.varFlags |= VarFlags.Property;
+            varDecl.varFlags |= VarFlags.ClassProperty;
 
             // this.currentClassDefinition.knownMemberNames[text.actualText] = true;
 

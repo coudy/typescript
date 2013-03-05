@@ -158,7 +158,7 @@ module TypeScript {
         public typeChecker: TypeChecker;
         public typeFlow: TypeFlow = null;
         public scripts = new ASTList();
-        public units: LocationInfo[] = new LocationInfo[];
+        public units: LocationInfo[] = [];
         public errorReporter: ErrorReporter;
         public pullErrorReporter: PullErrorReporter;
 
@@ -533,7 +533,7 @@ module TypeScript {
                 else if (ast.nodeType == NodeType.FuncDecl) {
                     var funcdecl = <FuncDecl>ast;
                     funcdecl.signature = null;
-                    funcdecl.freeVariables = new Symbol[]
+                    funcdecl.freeVariables = []
                     funcdecl.symbols = null;
                     funcdecl.accessorSymbol = null;
                     funcdecl.scopeType = null;
@@ -946,22 +946,31 @@ module TypeScript {
                 for (i = 1; i < this.semanticInfoChain.units.length; i++) {
                     binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
                 }
-
+                
                 var bindEndTime = new Date().getTime();
                 var typeCheckStartTime = new Date().getTime();
 
                 // resolve symbols
-                for (i = 0; i < this.scripts.members.length; i++) {
-                    this.pullResolveFile(this.units[i].filename);
-                }
+                //for (i = 0; i < this.scripts.members.length; i++) {
+                //    this.pullResolveFile(this.units[i].filename);
+                //}
 
                 var typeCheckEndTime = new Date().getTime();
+
+                var findErrorsStartTime = new Date().getTime();
+                // type check
+                for (i = 0; i < this.scripts.members.length; i++) {
+                    this.logger.log("Type checking " + this.units[i].filename);
+                    this.pullTypeChecker.typeCheckScript(<Script>this.scripts.members[i], this.units[i].filename, this);
+                }
+                var findErrorsEndTime = new Date().getTime();                
 
                 this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
                 this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
                 this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
+                this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
 
                 this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
             });
@@ -1062,7 +1071,7 @@ module TypeScript {
             });
         }
 
-        public resolvePosition(pos: number, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; } {
+        public resolvePosition(pos: number, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; enclosingDecl: PullDecl; } {
 
             // find the enclosing decl
             var declStack: PullDecl[] = [];
@@ -1083,6 +1092,7 @@ module TypeScript {
             var typeAssertionASTs: UnaryExpression[] = [];
             var resolutionContext = new PullTypeResolutionContext();
             var inTypeReference = false;
+            var enclosingDecl: PullDecl = null;
 
             var pre = (cur: AST, parent: AST): AST => {
                 if (isValidAstNode(cur)) {
@@ -1156,8 +1166,6 @@ module TypeScript {
                     // otherwise, it's an expression that needs to be resolved, so we must pull...
 
                     // first, find the enclosing decl
-                    var enclosingDecl: PullDecl = null;
-
                     for (var i = declStack.length - 1; i >= 0; i--) {
                         if (!(declStack[i].getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
                             enclosingDecl = declStack[i];
@@ -1244,7 +1252,7 @@ module TypeScript {
                 }
             }
 
-            return { symbol : symbol, ast : foundAST};
+            return { symbol : symbol, ast : foundAST, enclosingDecl: enclosingDecl};
         }
 
         private extractResolutionContextFromPath(path: AstPath, script: Script, scriptName?: string): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {
@@ -1387,7 +1395,7 @@ module TypeScript {
             return callResolutionResults;
         }
 
-        public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): { ast: AST; typeName: string; typeInfo: string; typeSymbol: PullTypeSymbol; } {
+        public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): { ast: AST; typeName: string; typeInfo: string; typeSymbol: PullTypeSymbol; enclosingDecl: PullDecl; } {
             return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", () => {
                 
                 var info = this.resolvePosition(pos, script, scriptName);
@@ -1395,11 +1403,11 @@ module TypeScript {
                 if (info.symbol) {
                     var type = info.symbol.getType();
                     if (type) {
-                        return { ast: info.ast, typeName: type.getName(), typeInfo: type.toString(), typeSymbol: type };
+                        return { ast: info.ast, typeName: type.getName(), typeInfo: type.toString(), typeSymbol: type, enclosingDecl: info.enclosingDecl };
                     }
                 }
 
-                return { ast: info.ast, typeName: "couldn't find the type...", typeInfo: "couldn't find members...", typeSymbol: null };
+                return { ast: info.ast, typeName: "couldn't find the type...", typeInfo: "couldn't find members...", typeSymbol: null, enclosingDecl: null };
             });
         }
 

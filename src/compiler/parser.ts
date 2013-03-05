@@ -67,7 +67,7 @@ module TypeScript {
         private allowImportDeclaration = true;
         private currentUnitIndex = (-1);
         private prevIDTok: Token = null;
-        private statementInfoStack: IStatementInfo[] = new IStatementInfo[];
+        private statementInfoStack: IStatementInfo[] = [];
         private hasTopLevelImportOrExport = false; // for imports, only true if it's a dynamic module
         private strictMode = false;
         private nestingLevel = 0;
@@ -80,7 +80,7 @@ module TypeScript {
         public requiresExtendsBlock = false;
 
         private resetStmtStack() {
-            this.statementInfoStack = new IStatementInfo[];
+            this.statementInfoStack = [];
         }
 
         private inLoop() {
@@ -279,7 +279,7 @@ module TypeScript {
 
         private parseCommentsInner(comments: CommentToken[]): Comment[] {
             if (comments) {
-                var commentASTs: Comment[] = new Comment[];
+                var commentASTs: Comment[] = [];
                 for (var i = 0; i < comments.length; i++) {
                     commentASTs.push(this.parseComment(comments[i]));
                 }
@@ -655,7 +655,7 @@ module TypeScript {
             }
 
             if (this.currentToken.tokenId == TokenID.Dot) {
-                enclosedList = new AST[];
+                enclosedList = [];
                 this.parseDottedName(enclosedList);
             }
 
@@ -4312,7 +4312,7 @@ module TypeScript {
             this.topLevel = true;
             this.allowImportDeclaration = true;
             this.prevIDTok = null;
-            this.statementInfoStack = new IStatementInfo[];
+            this.statementInfoStack = [];
             this.hasTopLevelImportOrExport = false;
             this.strictMode = false;
             this.nestingLevel = 0;

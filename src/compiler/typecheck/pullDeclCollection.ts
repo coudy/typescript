@@ -228,7 +228,7 @@ module TypeScript {
         }
 
 
-        if (hasFlag(argDecl.flags, ASTFlags.OptionalName)) {
+        if (hasFlag(argDecl.flags, ASTFlags.OptionalName) || hasFlag(argDecl.id.flags, ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
@@ -244,6 +244,7 @@ module TypeScript {
         // if it's a property type, we'll need to add it to the parent's parent as well
         if (hasFlag(argDecl.varFlags, VarFlags.Property)) {
             var propDecl = new PullDecl(argDecl.id.text, PullElementKind.Property, declFlags, span, context.scriptName);
+            propDecl.setValueDecl(decl);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             context.semanticInfo.setASTForDecl(propDecl, ast);
             context.semanticInfo.setDeclForAST(ast, propDecl);
@@ -615,7 +616,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Private;
         }
 
-        if (!memberFunctionDeclAST.bod) {
+        if (!memberFunctionDeclAST.bod || !memberFunctionDeclAST.bod.members.length) {
             declFlags |= PullElementFlags.Signature;
         }
 

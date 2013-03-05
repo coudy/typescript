@@ -133,7 +133,7 @@ module TypeScript {
         public flags: SignatureFlags = SignatureFlags.None;
         public addSignature(signature: Signature) {
             if (this.signatures == null) {
-                this.signatures = new Signature[];
+                this.signatures = [];
             }
             this.signatures[this.signatures.length] = signature;
             

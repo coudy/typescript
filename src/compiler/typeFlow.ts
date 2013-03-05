@@ -27,12 +27,12 @@ module TypeScript {
     }
 
     export class BBUseDefInfo {
-        public defsBySymbol = new bool[];
+        public defsBySymbol: bool[] = [];
         public gen: BitVector;
         public kill: BitVector;
         public top: BitVector;
         // use lists by symbol 
-        public useIndexBySymbol = new number[][];
+        public useIndexBySymbol: number[][] = [];
 
         constructor (public bb: BasicBlock) { }
 
@@ -57,7 +57,7 @@ module TypeScript {
                 if (context.isLocalSym(sym)) {
                     var index = context.getSymbolIndex(sym);
                     // clear pending uses
-                    this.useIndexBySymbol[index] = new number[];
+                    this.useIndexBySymbol[index] = [];
                     this.defsBySymbol[index] = true;
                 }
             }
@@ -66,7 +66,7 @@ module TypeScript {
                 if (context.isLocalSym(sym)) {
                     var symIndex = context.getSymbolIndex(sym);
                     if (this.useIndexBySymbol[symIndex] == undefined) {
-                        this.useIndexBySymbol[symIndex] = new number[];
+                        this.useIndexBySymbol[symIndex] = [];
                     }
                     var symUses = this.useIndexBySymbol[symIndex];
                     var astIndex = context.getUseIndex(ast);
@@ -159,10 +159,10 @@ module TypeScript {
 
     export class UseDefContext {
         // global use lists by symbol
-        public useIndexBySymbol = new number[][];
+        public useIndexBySymbol: number[][] = [];
         // global list of uses (flat)
-        public uses = new AST[];
-        public symbols = new VariableSymbol[];
+        public uses: AST[] = [];
+        public symbols: VariableSymbol[] = [];
         public symbolMap = new StringHashTable();
         public symbolCount = 0;
         public func: Symbol;
@@ -184,7 +184,7 @@ module TypeScript {
         public addUse(symIndex: number, astIndex: number) {
             var useBySym = this.useIndexBySymbol[symIndex];
             if (useBySym == undefined) {
-                useBySym = new number[];
+                useBySym = [];
                 this.useIndexBySymbol[symIndex] = useBySym;
             }
             useBySym[useBySym.length] = astIndex;
@@ -213,7 +213,7 @@ module TypeScript {
 
         constructor (public bitCount: number) {
             if (this.bitCount > BitVector.packBits) {
-                this.restOfBits = new number[];
+                this.restOfBits = [];
                 var len = Math.floor(this.bitCount / BitVector.packBits);
                 for (var i = 0; i < len; i++) {
                     this.restOfBits[i] = 0;
@@ -326,14 +326,14 @@ module TypeScript {
 
     export class BasicBlock {
         // blocks that branch to the block after this one
-        public predecessors = new BasicBlock[];
+        public predecessors: BasicBlock[] = [];
         public index = -1;
         public markValue = 0;
         public marked(markBase: number) { return this.markValue > markBase; }
         public mark() {
             this.markValue++;
         }
-        public successors = new BasicBlock[];
+        public successors: BasicBlock[] = [];
         public useDef: BBUseDefInfo = null;
         public content = new ASTList();
         public addSuccessor(successor: BasicBlock): void {
@@ -354,8 +354,8 @@ module TypeScript {
         public unreachable: AST[] = null;
         public noContinuation = false;
         // statements enclosing the current statement
-        public statementStack = new ITargetInfo[];
-        public currentSwitch = new BasicBlock[];
+        public statementStack: ITargetInfo[] = [];
+        public currentSwitch: BasicBlock[] = [];
         public walker: IAstWalker;
 
         constructor (public current: BasicBlock,
@@ -410,7 +410,7 @@ module TypeScript {
         public bfs(nodeFunc: (bb: BasicBlock) =>void , edgeFunc: (node1: BasicBlock, node2: BasicBlock) =>void ,
             preEdges: () =>void , postEdges: () =>void ) {
             var markValue = this.markBase++;
-            var q = new BasicBlock[];
+            var q: BasicBlock[] = [];
             q[q.length] = this.entry;
 
             while (q.length > 0) {
@@ -442,7 +442,7 @@ module TypeScript {
             }
         }
 
-        public linearBBs = new BasicBlock[];
+        public linearBBs: BasicBlock[] = [];
 
         public useDef(er: ErrorReporter, funcSym: Symbol) {
             var useDefContext = new UseDefContext();
@@ -532,7 +532,7 @@ module TypeScript {
 
         public addUnreachable(ast: AST) {
             if (this.unreachable === null) {
-                this.unreachable = new AST[];
+                this.unreachable = [];
             }
             this.unreachable[this.unreachable.length] = ast;
         }
@@ -579,9 +579,9 @@ module TypeScript {
         constructor () {
             for (var i = 0; i < this.cacheSize; i++) {
                 this.rdCache[i] = {
-                    actuals: new Type[],
-                    exactCandidates: new Signature[],
-                    conversionCandidates: new Signature[],
+                    actuals: [],
+                    exactCandidates: [],
+                    conversionCandidates: [],
                     id: i
                 };
             }
@@ -597,9 +597,9 @@ module TypeScript {
             if (rd == null) {
                 this.cacheSize++;
                 rd = {
-                    actuals: new Type[],
-                    exactCandidates: new Signature[],
-                    conversionCandidates: new Signature[],
+                    actuals: [],
+                    exactCandidates: [],
+                    conversionCandidates: [],
                     id: this.cacheSize
                 };
                 this.rdCache[this.cacheSize] = rd;

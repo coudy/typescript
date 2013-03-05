@@ -444,7 +444,7 @@ module TypeScript {
         public lexStateByLine: LexState[];
         public previousToken(): Token { return this.prevToken; }
         public currentToken = 0;
-        public tokens = new SavedToken[];
+        public tokens: SavedToken[] = [];
         public startPos: number;
         public pos: number;
         public seenUnicodeChar: bool = false;
@@ -458,7 +458,7 @@ module TypeScript {
         public rightCurlyCount: number;
 
         public lexState = LexState.Start;
-        public commentStack: CommentToken[] = new CommentToken[];
+        public commentStack: CommentToken[] = [];
 
         public lineMap: number[] = [];
 
@@ -569,7 +569,7 @@ module TypeScript {
         private interveningWhitespacePos = 0; //  If yes, this contains the start position of the whitespace
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
-        public commentStack: CommentToken[] = new CommentToken[];
+        public commentStack: CommentToken[] = [];
         public saveScan: SavedTokens = null;
         public seenUnicodeChar: bool = false;
         seenUnicodeCharInComment: bool = false;

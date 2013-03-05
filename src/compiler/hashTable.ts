@@ -204,7 +204,7 @@ module TypeScript {
 
     export class HashTable {
         public itemCount: number = 0;
-        public table = new HashEntry[];
+        public table: HashEntry[] = [];
 
         constructor (public size: number, public hashFn: (key) =>number,
                     public equalsFn: (key1, key2) =>bool) {
