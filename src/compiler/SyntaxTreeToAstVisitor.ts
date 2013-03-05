@@ -99,7 +99,7 @@ module TypeScript {
             this.moveTo2(element2, element3);
         }
 
-        private setSpan(span: ASTSpan, start: number, end: number): void {
+        private setSpan(span: IASTSpan, start: number, end: number): void {
             span.minChar = start;
             span.limChar = end;
         }

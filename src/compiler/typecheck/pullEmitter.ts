@@ -1157,7 +1157,7 @@ module TypeScript {
             }
         }
 
-        public recordSourceMappingStart(ast: ASTSpan) {
+        public recordSourceMappingStart(ast: IASTSpan) {
             if (this.sourceMapper && isValidAstNode(ast)) {
                 var lineCol = { line: -1, col: -1 };
                 var sourceMapping = new SourceMapping();
@@ -1180,7 +1180,7 @@ module TypeScript {
             }
         }
 
-        public recordSourceMappingEnd(ast: ASTSpan) {
+        public recordSourceMappingEnd(ast: IASTSpan) {
             if (this.sourceMapper && isValidAstNode(ast)) {
                 // Pop source mapping childs
                 this.sourceMapper.currentMappings.pop();

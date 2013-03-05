@@ -16,14 +16,22 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export class ASTSpan {
+    export interface IASTSpan {
+        minChar: number;
+        limChar: number;
+    }
+
+    export class ASTSpan implements IASTSpan {
         public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
     }
 
     export var astID = 0;
 
-    export class AST extends ASTSpan {
+    export class AST implements IASTSpan {
+        public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
+        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"   
+
         public type: Type = null;
         public flags = ASTFlags.Writeable;
 
@@ -39,7 +47,6 @@ module TypeScript {
         public isParenthesized = false;
 
         constructor (public nodeType: NodeType) {
-            super();
         }
 
         public getLength() { return this.limChar - this.minChar; }

@@ -116,9 +116,9 @@ export interface IDiagnosticWriter {
 }
 
 var batch = new BatchCompiler();
-// batch.compile();
+batch.compile();
 
-for (var i = 0; i < 2; i++) {
-    var tree = batch.newParse();
-    TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
-}
+// for (var i = 0; i < 2; i++) {
+//    var tree = batch.newParse();
+//    TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+// }

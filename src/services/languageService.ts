@@ -655,8 +655,8 @@ module Services {
         }
 
         // Gets breakpoint span in the statement depending on context
-        private getBreakpointInStatement(pos: number, astSpan: TypeScript.ASTSpan, verifyASTPos: bool,
-            existingResult: TypeScript.ASTSpan, forceFirstStatement: bool, isAst: bool): TypeScript.ASTSpan {
+        private getBreakpointInStatement(pos: number, astSpan: TypeScript.IASTSpan, verifyASTPos: bool,
+                                         existingResult: TypeScript.IASTSpan, forceFirstStatement: bool, isAst: bool): TypeScript.IASTSpan {
             if (existingResult || !astSpan || (verifyASTPos && pos > astSpan.limChar)) {
                 return existingResult;
             }
@@ -763,7 +763,7 @@ module Services {
 
             // We have container list in resultAST
             // Use it to determine where to set the breakpoint
-            var resultAST: TypeScript.ASTSpan = null;
+            var resultAST: TypeScript.IASTSpan = null;
             var cur = containerASTs[containerASTs.length - 1];
             var customSpan: TypeScript.ASTSpan = null;
 
