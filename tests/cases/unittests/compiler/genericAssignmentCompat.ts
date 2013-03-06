@@ -85,7 +85,7 @@ describe("Assignment compatibility", function() {
 
         it("generic type flows through field 3", function () {
             var t = typeFactory.get(knockOutCode, knockOutCode.indexOf("rr_v"));
-            Harness.Assert.equal(t.type, 'bool');
+            Harness.Assert.equal(t.type, 'string');
         });
     });
 

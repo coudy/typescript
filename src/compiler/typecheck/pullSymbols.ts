@@ -1609,7 +1609,8 @@ module TypeScript {
 
                         parameterType = parameters[k].getType();
 
-                        if (parameterType === null) { continue; }
+                        if (parameterType === null) { continue; }
+
 
                         if (parameterType == typeToReplace) {
                             newParameter.setType(typeToSpecializeTo);

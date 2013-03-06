@@ -1052,6 +1052,8 @@ module TypeScript {
 
                     var traceEndTime = new Date().getTime();
 
+                    this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.filename, this);
+
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
 
