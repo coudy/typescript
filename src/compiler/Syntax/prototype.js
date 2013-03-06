@@ -59096,7 +59096,7 @@ var IncrementalParserTests = (function () {
 var timer = new Timer();
 var stringTable = Collections.createStringTable();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (useTypeScript, verify) {
