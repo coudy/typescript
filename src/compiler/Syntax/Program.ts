@@ -412,7 +412,7 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
         var text = TextFactory.createText(contents);
-        var scanner = new Scanner(text, languageVersion, stringTable, []);
+        var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
         var textArray: string[] = [];
@@ -438,7 +438,7 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
         var text = TextFactory.createText(contents);
-        var scanner = new Scanner(text, languageVersion, stringTable, []);
+        var scanner = new Scanner(text, languageVersion, stringTable);
 
         var tokens: ISyntaxToken[] = [];
         var textArray: string[] = [];

@@ -5,7 +5,7 @@
             "_width": 2,
             "_diagnosticCode": "_0_expected",
             "_arguments": [
-                "="
+                ","
             ]
         },
         {
@@ -21,11 +21,11 @@
         "moduleElements": [
             {
                 "kind": "VariableStatement",
-                "fullWidth": 417,
+                "fullWidth": 413,
                 "hasZeroWidthToken": true,
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
-                    "fullWidth": 415,
+                    "fullWidth": 413,
                     "hasZeroWidthToken": true,
                     "varKeyword": {
                         "kind": "VarKeyword",
@@ -96,41 +96,45 @@
                     "variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
-                            "fullWidth": 3,
-                            "hasZeroWidthToken": true,
+                            "fullWidth": 1,
                             "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
                                 "text": "x",
                                 "valueText": "x"
-                            },
-                            "equalsValueClause": {
-                                "kind": "EqualsValueClause",
-                                "fullWidth": 2,
-                                "hasZeroWidthToken": true,
-                                "equalsToken": {
-                                    "kind": "EqualsToken",
-                                    "width": 0,
-                                    "text": ""
-                                },
-                                "value": {
-                                    "kind": "PreIncrementExpression",
-                                    "fullWidth": 2,
-                                    "hasZeroWidthToken": true,
-                                    "operatorToken": {
-                                        "kind": "PlusPlusToken",
-                                        "width": 2,
-                                        "text": "++"
-                                    },
-                                    "operand": {
-                                        "kind": "IdentifierName",
-                                        "width": 0,
-                                        "text": ""
-                                    }
-                                }
                             }
+                        },
+                        {
+                            "kind": "CommaToken",
+                            "width": 0,
+                            "text": ""
                         }
                     ]
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExpressionStatement",
+                "fullWidth": 4,
+                "hasZeroWidthToken": true,
+                "expression": {
+                    "kind": "PreIncrementExpression",
+                    "fullWidth": 2,
+                    "hasZeroWidthToken": true,
+                    "operatorToken": {
+                        "kind": "PlusPlusToken",
+                        "width": 2,
+                        "text": "++"
+                    },
+                    "operand": {
+                        "kind": "IdentifierName",
+                        "width": 0,
+                        "text": ""
+                    }
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",
