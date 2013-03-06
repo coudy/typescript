@@ -23,6 +23,8 @@ class SyntaxTree {
         }
 
         result._sourceUnit = this._sourceUnit;
+        result._lineMap = this._lineMap;
+
         return result;
     }
 

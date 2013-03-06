@@ -34958,6 +34958,7 @@ var SyntaxTree = (function () {
             result._diagnostics = this._diagnostics;
         }
         result._sourceUnit = this._sourceUnit;
+        result._lineMap = this._lineMap;
         return result;
     };
     SyntaxTree.prototype.sourceUnit = function () {
@@ -59095,7 +59096,7 @@ var IncrementalParserTests = (function () {
 var timer = new Timer();
 var stringTable = Collections.createStringTable();
 var specificFile = undefined;
-var generate = false;
+var generate = true;
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (useTypeScript, verify) {
