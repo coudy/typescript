@@ -244,16 +244,14 @@ module FourSlash {
         }
 
         public verifyMemberListIsEmpty(negative: bool) {
-            var members = this.getMemberListAtCaret().entries;
-            if ((members.length === 0) && negative) {
-
+            var members = this.getMemberListAtCaret();
+            if ((!members || members.entries.length === 0) && negative) {
                 throw new Error("Member list is empty at Caret");
+            } else if ((members && members.entries.length !== 0) && !negative) {
 
-            } else if ((members.length !== 0) && !negative) {
-
-                var errorMsg = "\n" + "Member List contains: [" + members[0].name;
-                for (var i = 1; i < members.length; i++) {
-                    errorMsg += ", " + members[i].name;
+                var errorMsg = "\n" + "Member List contains: [" + members.entries[0].name;
+                for (var i = 1; i < members.entries.length; i++) {
+                    errorMsg += ", " + members.entries[i].name;
                 }
                 errorMsg += "]\n";
 
@@ -264,16 +262,14 @@ module FourSlash {
         }
 
         public verifyCompletionListIsEmpty(negative: bool) {
-            var completions = this.getCompletionListAtCaret().entries;
-            if ((completions.length === 0) && negative) {
-
+            var completions = this.getCompletionListAtCaret();
+            if ((!completions || completions.entries.length === 0) && negative) {
                 throw new Error("Completion list is empty at Caret");
+            } else if ((completions && completions.entries.length !== 0) && !negative) {
 
-            } else if ((completions.length !== 0) && !negative) {
-
-                var errorMsg = "\n" + "Completion List contains: [" + completions[0].name;
-                for (var i = 1; i < completions.length; i++) {
-                    errorMsg += ", " + completions[i].name;
+                var errorMsg = "\n" + "Completion List contains: [" + completions.entries[0].name;
+                for (var i = 1; i < completions.entries.length; i++) {
+                    errorMsg += ", " + completions.entries[i].name;
                 }
                 errorMsg += "]\n";
 
