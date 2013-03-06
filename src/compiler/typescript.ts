@@ -1052,6 +1052,8 @@ module TypeScript {
 
                     var traceEndTime = new Date().getTime();
 
+                    this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.filename, this);
+
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
 
@@ -1399,39 +1401,7 @@ module TypeScript {
                 return null;
             }
 
-            var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext);
-            if (!symbol) {
-                return null;
-            }
-
-            var type = symbol.getType();
-            if (!type || type === this.semanticInfoChain.anyTypeSymbol) {
-                return null;
-            }
-
-            // Figure out if privates are available under the current scope
-            var includePrivate = false;
-            var containerSymbol = type;
-            if (type.getKind() === PullElementKind.ConstructorType) {
-                containerSymbol = type.getConstructSignatures()[0].getReturnType();
-            }
-
-            if (containerSymbol && containerSymbol.isClass()) {
-                var declPath = this.pullTypeChecker.resolver.getPathToDecl(context.enclosingDecl);
-                if (declPath && declPath.length) {
-                    var declarations = containerSymbol.getDeclarations();
-                    for (var i = 0, n = declarations.length; i < n; i++) {
-                        var declaration = declarations[i];
-                        if (declPath.indexOf(declaration) >= 0) {
-                            includePrivate = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            var searchKind = context.resolutionContext.searchTypeSpace ? PullElementKind.SomeType : PullElementKind.SomeValue;
-            return type.getAllMemebers(searchKind, includePrivate);
+            return this.pullTypeChecker.resolver.getVisibleMembersFromExpresion(path.ast(), context.enclosingDecl, context.resolutionContext);
         }
 
         public pullGetVisibleSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbol[] {

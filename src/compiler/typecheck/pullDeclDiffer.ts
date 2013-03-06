@@ -33,12 +33,13 @@ module TypeScript {
 
         // For now, just check for there/not there - we'll invalidate the inference symbols anyway
         // next up, we'll want to use this data to find the decl that changed
-        public diffDecls(oldDecl: PullDecl, newDecl: PullDecl, diffs: PullDeclDiff[]) {
+        public diffDecls(oldDecl: PullDecl, newDecl: PullDecl, diffs: PullDeclDiff[]): bool {
             // check the children
             var oldDeclChildren = oldDecl.getChildDecls();
             var newDeclChildren = newDecl.getChildDecls();
             var foundDecls: PullDecl[];
             var foundDiff = false;
+            var childFoundDiff = true;
 
             for (var i = 0; i < oldDeclChildren.length; i++) {
                 foundDecls = newDecl.findChildDecls(oldDeclChildren[i].getName(), oldDeclChildren[i].getKind());
@@ -48,7 +49,11 @@ module TypeScript {
                     foundDiff = true;
                 }
                 else if (foundDecls.length == 1) { // just care about non-split entities for now
-                    this.diffDecls(oldDeclChildren[i], foundDecls[0], diffs);
+                    childFoundDiff = this.diffDecls(oldDeclChildren[i], foundDecls[0], diffs);
+
+                    if (childFoundDiff) {
+                        foundDiff = true;
+                    }
                 }
             }
 
@@ -64,6 +69,8 @@ module TypeScript {
             if (!foundDiff) {
                 newDecl.setErrors(oldDecl.getErrors());
             }
+
+            return foundDiff;
         }
     }
 

@@ -1159,7 +1159,7 @@ module TypeScript {
             }
         }
 
-        public getAllMemebers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[]{
+        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[]{
 
             var allMembers: PullSymbol[] = [];
 
@@ -1180,10 +1180,10 @@ module TypeScript {
             if (this.extendedTypeLinks) {
 
                 for (var i = 0, n = this.extendedTypeLinks.length; i < n; i++) {
-                    var extendedMemebers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMemebers(searchDeclKind, includePrivate);
+                    var extendedMembers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (var j = 0, m = extendedMemebers.length; j < m; j++) {
-                        var extendedMember = extendedMemebers[j];
+                    for (var j = 0, m = extendedMembers.length; j < m; j++) {
+                        var extendedMember = extendedMembers[j];
                         if (!this.memberNameCache[extendedMember.getName()]) {
                             allMembers[allMembers.length] = extendedMember;
                         }
@@ -1194,12 +1194,12 @@ module TypeScript {
             if (this.implementedTypeLinks) {
 
                 for (var i = 0 ; i < this.implementedTypeLinks.length; i++) {
-                    var implementedMemebers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMemebers(searchDeclKind, includePrivate);
+                    var implementedMembers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (var j = 0, m = implementedMemebers.length; j < m; j++) {
-                        var implementedMemeber = implementedMemebers[j];
-                        if (!this.memberNameCache[implementedMemeber.getName()]) {
-                            allMembers[allMembers.length] = implementedMemeber;
+                    for (var j = 0, m = implementedMembers.length; j < m; j++) {
+                        var implementedMember = implementedMembers[j];
+                        if (!this.memberNameCache[implementedMember.getName()]) {
+                            allMembers[allMembers.length] = implementedMember;
                         }
                     }
                 }
@@ -1609,7 +1609,8 @@ module TypeScript {
 
                         parameterType = parameters[k].getType();
 
-                        if (parameterType === null) { continue; }
+                        if (parameterType === null) { continue; }
+
 
                         if (parameterType == typeToReplace) {
                             newParameter.setType(typeToSpecializeTo);

@@ -1338,13 +1338,9 @@ module Services {
             var script = this.pullCompilerState.getScriptAST(fileName);
             var path = this.getAstPathToPosition(script, position);
             if (this.isCompletionListBlocker(path)) {
-                this.logger.log("Returning an empty list because position is inside a comment");
+                this.logger.log("Returning an empty list because position is inside a comment, string or regular expression");
+                return null;
             }
-            // Special case for object literals
-            //else if (this.isObjectLiteralMemberNameCompletion(enclosingScopeContext)) {
-            //    this.logger.log("Completion list for members of object literal");
-            //    return getCompletions(true);
-            //}
 
             var isRightOfDot = false;
             if (path.count() >= 1 &&

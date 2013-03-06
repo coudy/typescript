@@ -428,6 +428,84 @@ module TypeScript {
             return this.getVisibleSymbolsFromDeclPath(declPath, context.searchTypeSpace);
         }
 
+
+        public getVisibleMembersFromExpresion(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
+            var lhs: PullSymbol = this.resolveStatementOrExpression(expression, false, enclosingDecl, context);
+            var lhsType = lhs.getType();
+
+            if (!lhsType) {
+                return null;
+            }
+
+            if (lhsType == this.semanticInfoChain.anyTypeSymbol) {
+                return null;
+            }
+
+            // Figure out if privates are available under the current scope
+            var includePrivate = false;
+            var containerSymbol = lhsType;
+            if (containerSymbol.getKind() === PullElementKind.ConstructorType) {
+                containerSymbol = containerSymbol.getConstructSignatures()[0].getReturnType();
+            }
+
+            if (containerSymbol && containerSymbol.isClass()) {
+                var declPath = this.getPathToDecl(enclosingDecl);
+                if (declPath && declPath.length) {
+                    var declarations = containerSymbol.getDeclarations();
+                    for (var i = 0, n = declarations.length; i < n; i++) {
+                        var declaration = declarations[i];
+                        if (declPath.indexOf(declaration) >= 0) {
+                            includePrivate = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (context.searchTypeSpace) {
+                return lhsType.getAllMembers(PullElementKind.SomeType, includePrivate);
+            }
+            else {
+                if (lhsType == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+                    lhsType = this.cachedNumberInterfaceType;
+                }
+                else if (lhsType == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
+                    lhsType = this.cachedStringInterfaceType;
+                }
+                else if (lhsType == this.semanticInfoChain.boolTypeSymbol && this.cachedBooleanInterfaceType) {
+                    lhsType = this.cachedBooleanInterfaceType;
+                }
+
+                if (!lhsType.isResolved()) {
+                    var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, enclosingDecl, context);
+
+                    if (potentiallySpecializedType != lhsType) {
+                        if (!lhs.isType()) {
+                            context.setTypeInContext(lhs, potentiallySpecializedType);
+                        }
+
+                        lhsType = potentiallySpecializedType;
+                    }
+                }
+
+
+                var members = lhsType.getAllMembers(PullElementKind.SomeValue, includePrivate);
+
+                // Add any additional members
+                /// TODO: add "prototype" for classes
+                //if (lhsType.isClass()) {
+                //    memebers.push("prototype");
+                //}
+
+                // could be an enum
+                if ((lhsType.getKind() == PullElementKind.Enum) && this.cachedNumberInterfaceType) {
+                    members = members.concat(this.cachedNumberInterfaceType.getAllMembers(PullElementKind.SomeValue, false));
+                }
+
+                return members;
+            }
+        }
+
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
             if (!type.isGeneric()) {
                 return false;
@@ -1413,6 +1491,7 @@ module TypeScript {
 
             return nameSymbol;
         }
+
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             
