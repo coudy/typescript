@@ -32359,10 +32359,6 @@ class Unicode {
 class Scanner implements ISlidingWindowSource {
     private slidingWindow: SlidingWindow;
 
-    private text: ISimpleText;
-    private stringTable: Collections.StringTable;
-    private languageVersion: LanguageVersion;
-
     private static isKeywordStartCharacter: bool[] = [];
     private static isIdentifierStartCharacter: bool[] = [];
     public static isIdentifierPartCharacter: bool[] = [];
@@ -32401,16 +32397,17 @@ class Scanner implements ISlidingWindowSource {
         }
     }
 
-    constructor(text: ISimpleText,
-                languageVersion: LanguageVersion,
-                stringTable: Collections.StringTable,
+    constructor(private text: ISimpleText,
+                private languageVersion: LanguageVersion,
+                private stringTable: Collections.StringTable,
+                private lineMap: number[],
                 window: number[] = ArrayUtilities.createArray(2048, 0)) {
         Scanner.initializeStaticData();
         
         this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
-        this.text = text;
-        this.stringTable = stringTable;
-        this.languageVersion = languageVersion;
+
+        // Line 0 starts at position 0.
+        this.lineMap.push(0);
     }
 
     private fetchMoreItems(argument: any, sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
@@ -32426,7 +32423,17 @@ class Scanner implements ISlidingWindowSource {
 
     // Set's the scanner to a specific position in the text.
     public setAbsoluteIndex(index: number): void {
+        // If we're setting our index before a line we've put into the line map, hten pop that line
+        // off since we're going to rescan it.
+        while (ArrayUtilities.last(this.lineMap) > index) {
+            this.lineMap.pop();
+        }
+
         this.slidingWindow.setAbsoluteIndex(index);
+    }
+
+    private pushNewLine(): void {
+        this.lineMap.push(this.slidingWindow.absoluteIndex());
     }
 
     // Scans a token starting at the current position.  Any errors encountered will be added to 
@@ -32589,6 +32596,7 @@ class Scanner implements ISlidingWindowSource {
                 case CharacterCodes.lineSeparator:
                     hasCommentOrNewLine |= SyntaxConstants.TriviaNewLineMask;
                     width += this.scanLineTerminatorSequenceLength(ch);
+                    this.pushNewLine();
 
                     // If we're consuming leading trivia, then we will continue consuming more 
                     // trivia (including newlines) up to the first token we see.  If we're 
@@ -32701,6 +32709,16 @@ class Scanner implements ISlidingWindowSource {
             }
 
             var ch = this.currentCharCode();
+            switch (ch) {
+                case CharacterCodes.carriageReturn:
+                case CharacterCodes.lineFeed:
+                case CharacterCodes.paragraphSeparator:
+                case CharacterCodes.lineSeparator:
+                    width += this.scanLineTerminatorSequenceLength(ch);
+                    this.pushNewLine();
+                    continue;
+            }
+
             if (ch === CharacterCodes.asterisk && this.slidingWindow.peekItemN(1) === CharacterCodes.slash) {
                 this.slidingWindow.moveToNextItem();
                 this.slidingWindow.moveToNextItem();
@@ -33396,6 +33414,12 @@ class Scanner implements ISlidingWindowSource {
                     if (this.currentCharCode() === CharacterCodes.lineFeed) {
                         this.slidingWindow.moveToNextItem();
                     }
+
+                    // fall through:
+                case CharacterCodes.lineFeed:
+                case CharacterCodes.paragraphSeparator:
+                case CharacterCodes.lineSeparator:
+                    this.pushNewLine();
                     return;
 
                 // We don't have to do anything special about these characters.  I'm including them
@@ -33410,9 +33434,6 @@ class Scanner implements ISlidingWindowSource {
                 //case CharacterCodes.r:
                 //case CharacterCodes.t:
                 //case CharacterCodes.v:
-                //case CharacterCodes.lineFeed:
-                //case CharacterCodes.paragraphSeparator:
-                //case CharacterCodes.lineSeparator:
                 default:
                     // Any other character is ok as well.  As per rule:
                     // EscapeSequence :: CharacterEscapeSequence
@@ -43061,6 +43082,9 @@ module Parser1 {
         // The absolute position we're at in the text we're reading from.
         private _absolutePosition: number = 0;
 
+        // The line map for the scanner to fill in.
+        private scannerLineMap: number[] = [];
+
         // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
         // in the token stream we're pointing at.  However, it will get modified if we we decide to
@@ -43075,7 +43099,7 @@ module Parser1 {
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
-            this.scanner = new Scanner(text, languageVersion, stringTable);
+            this.scanner = new Scanner(text, languageVersion, stringTable, this.scannerLineMap);
         }
 
         private currentNode(): SyntaxNode {
@@ -45888,7 +45912,7 @@ module Parser1 {
             if (identifier.width() > 0) {
                 typeAnnotation = this.parseOptionalTypeAnnotation();
 
-                if (this.isEqualsValueClause()) {
+                if (this.isEqualsValueClause(/*inParameter*/ false)) {
                     equalsValueClause = this.parseEqualsValuesClause(allowIn);
                 }
             }
@@ -45896,8 +45920,41 @@ module Parser1 {
             return this.factory.variableDeclarator(identifier, typeAnnotation, equalsValueClause);
         }
 
-        private isEqualsValueClause(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.EqualsToken;
+        private isEqualsValueClause(inParameter: bool): bool {
+            var token0 = this.currentToken();
+            if (token0.tokenKind === SyntaxKind.EqualsToken) {
+                return true;
+            }
+
+            // It's not uncommon during typing for the user to miss writing the '=' token.  Check if
+            // there is no newline after the last token and if we're on an expression.  If so, parse
+            // this as an equals-value clause with a missing equals.
+            if (!this.previousToken().hasTrailingNewLine()) {
+
+                // The 'isExpression' call below returns true for "=>".  That's because it smartly
+                // assumes that there is just a missing identifier and the user wanted a lambda.  
+                // While this is sensible, we don't want to allow that here as that would mean we're
+                // glossing over multiple erorrs and we're probably making things worse.  So don't
+                // treat this as an equals value clause and let higher up code handle things.
+                if (token0.tokenKind === SyntaxKind.EqualsGreaterThanToken) {
+                    return false;
+                }
+
+
+                // There are two places where we allow equals-value clauses.  The first is in a 
+                // variable declarator.  The second is with a parameter.  For variable declarators
+                // it's more likely that a { would be a allowed (as an object literal).  While this
+                // is also allowed for parameters, the risk is that we consume the { as an object
+                // literal when it really will be for the block following the parameter.
+                if (token0.tokenKind === SyntaxKind.OpenBraceToken &&
+                    inParameter) {
+                    return false;
+                }
+
+                return this.isExpression();
+            }
+
+            return false;
         }
 
         private parseEqualsValuesClause(allowIn: bool): EqualsValueClauseSyntax {
@@ -47161,7 +47218,7 @@ module Parser1 {
             var typeAnnotation = this.parseOptionalTypeAnnotation();
 
             var equalsValueClause: EqualsValueClauseSyntax = null;
-            if (this.isEqualsValueClause()) {
+            if (this.isEqualsValueClause(/*inParameter*/ true)) {
                 equalsValueClause = this.parseEqualsValuesClause(/*allowIn:*/ true);
             }
 
@@ -53045,10 +53102,12 @@ module TypeScript {
 
                 assigningFunctionTypeSymbol = <PullFunctionTypeSymbol>context.getContextualType();
 
-                this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, enclosingDecl, context);
-
                 if (assigningFunctionTypeSymbol) {
-                    assigningFunctionSignature = assigningFunctionTypeSymbol.getCallSignatures()[0];
+                    this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, enclosingDecl, context);
+
+                    if (assigningFunctionTypeSymbol) {
+                        assigningFunctionSignature = assigningFunctionTypeSymbol.getCallSignatures()[0];
+                    }
                 }
             }
 
@@ -54533,7 +54592,7 @@ module TypeScript {
             var sourceParameters = sourceSig.getParameters();
             var targetParameters = targetSig.getParameters();
 
-            if (!sourceParameters.length || !targetParameters.length) {
+            if (!sourceParameters || !targetParameters) {
                 return false;
             }
 
@@ -55582,7 +55641,10 @@ module TypeScript {
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
             var leftType = this.resolver.resolveAST(assignmentAST.operand1, false, enclosingDecl, this.context).getType();
-            var rightType = this.resolver.resolveAST(assignmentAST.operand2, false, enclosingDecl, this.context).getType();
+
+            this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
+            var rightType = this.resolver.resolveAST(assignmentAST.operand2, true, enclosingDecl, this.context).getType();
+            this.context.popContextualType();
 
             var comparisonInfo = new TypeComparisonInfo();
 
@@ -55593,7 +55655,7 @@ module TypeScript {
                 var span = enclosingDecl.getSpan();
 
                 // ignore comparison info for now
-                var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [rightType.getName(), leftType.getName()]);
+                var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [rightType.toString(), leftType.toString()]);
 
                 this.context.postError(assignmentAST.operand1.minChar - span.minChar, span.limChar - span.minChar, typeCheckContext.scriptName, message, enclosingDecl);
             }
@@ -66110,14 +66172,14 @@ module TypeScript {
                 }
                 
                 var bindEndTime = new Date().getTime();
-                var typeCheckStartTime = new Date().getTime();
+                //var typeCheckStartTime = new Date().getTime();
 
-                // resolve symbols
-                //for (i = 0; i < this.scripts.members.length; i++) {
-                //    this.pullResolveFile(this.units[i].filename);
-                //}
+                //// resolve symbols
+                ////for (i = 0; i < this.scripts.members.length; i++) {
+                ////    this.pullResolveFile(this.units[i].filename);
+                ////}
 
-                var typeCheckEndTime = new Date().getTime();
+                //var typeCheckEndTime = new Date().getTime();
 
                 var findErrorsStartTime = new Date().getTime();
                 // type check
@@ -66130,8 +66192,6 @@ module TypeScript {
                 this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
                 this.logger.log("Binding: " + (bindEndTime - bindStartTime));
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
-                this.logger.log("Type resolution: " + (typeCheckEndTime - typeCheckStartTime));
-                this.logger.log("Total: " + (typeCheckEndTime - createDeclsStartTime));
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
 
                 this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());

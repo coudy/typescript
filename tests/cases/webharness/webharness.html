@@ -33,6 +33,16 @@
             }
         }
 
+        function lineMap() {
+            run(function () {
+                var text = TextFactory.createText(compilerString.substr(0, IntegerUtilities.integerDivide(compilerString.length, 10)));
+                var start = new Date().getTime();
+                text.lineCount();
+                var end = new Date().getTime();
+                appendTime("Line map", end - start);
+            });
+        }
+
         function oldParse() {
             run(function() {
                 var start = new Date().getTime();
@@ -123,6 +133,7 @@
     <button onclick="newParseAndAST()">New Parse + AST</button>
     <button onclick="newIncrementalParse()">New Incremental Parse</button>
     <button onclick="newIncrementalParseAndAST()">New Incremental Parse + AST</button>
+    <button onclick="lineMap()">Line Map</button>
     <button onclick="typeCheck()">Type Check</button>
     <button onclick="clear1()">Clear</button>
 </body>
