@@ -19,6 +19,10 @@
 class Scanner implements ISlidingWindowSource {
     private slidingWindow: SlidingWindow;
 
+    private text: ISimpleText;
+    private stringTable: Collections.StringTable;
+    private languageVersion: LanguageVersion;
+
     private static isKeywordStartCharacter: bool[] = [];
     private static isIdentifierStartCharacter: bool[] = [];
     public static isIdentifierPartCharacter: bool[] = [];
@@ -57,17 +61,16 @@ class Scanner implements ISlidingWindowSource {
         }
     }
 
-    constructor(private text: ISimpleText,
-                private languageVersion: LanguageVersion,
-                private stringTable: Collections.StringTable,
-                private lineMap: number[],
+    constructor(text: ISimpleText,
+                languageVersion: LanguageVersion,
+                stringTable: Collections.StringTable,
                 window: number[] = ArrayUtilities.createArray(2048, 0)) {
         Scanner.initializeStaticData();
         
         this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
-
-        // Line 0 starts at position 0.
-        this.lineMap.push(0);
+        this.text = text;
+        this.stringTable = stringTable;
+        this.languageVersion = languageVersion;
     }
 
     private fetchMoreItems(argument: any, sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
@@ -83,17 +86,7 @@ class Scanner implements ISlidingWindowSource {
 
     // Set's the scanner to a specific position in the text.
     public setAbsoluteIndex(index: number): void {
-        // If we're setting our index before a line we've put into the line map, hten pop that line
-        // off since we're going to rescan it.
-        while (ArrayUtilities.last(this.lineMap) > index) {
-            this.lineMap.pop();
-        }
-
         this.slidingWindow.setAbsoluteIndex(index);
-    }
-
-    private pushNewLine(): void {
-        this.lineMap.push(this.slidingWindow.absoluteIndex());
     }
 
     // Scans a token starting at the current position.  Any errors encountered will be added to 
@@ -256,7 +249,6 @@ class Scanner implements ISlidingWindowSource {
                 case CharacterCodes.lineSeparator:
                     hasCommentOrNewLine |= SyntaxConstants.TriviaNewLineMask;
                     width += this.scanLineTerminatorSequenceLength(ch);
-                    this.pushNewLine();
 
                     // If we're consuming leading trivia, then we will continue consuming more 
                     // trivia (including newlines) up to the first token we see.  If we're 
@@ -369,16 +361,6 @@ class Scanner implements ISlidingWindowSource {
             }
 
             var ch = this.currentCharCode();
-            switch (ch) {
-                case CharacterCodes.carriageReturn:
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    width += this.scanLineTerminatorSequenceLength(ch);
-                    this.pushNewLine();
-                    continue;
-            }
-
             if (ch === CharacterCodes.asterisk && this.slidingWindow.peekItemN(1) === CharacterCodes.slash) {
                 this.slidingWindow.moveToNextItem();
                 this.slidingWindow.moveToNextItem();
@@ -1074,12 +1056,6 @@ class Scanner implements ISlidingWindowSource {
                     if (this.currentCharCode() === CharacterCodes.lineFeed) {
                         this.slidingWindow.moveToNextItem();
                     }
-
-                    // fall through:
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    this.pushNewLine();
                     return;
 
                 // We don't have to do anything special about these characters.  I'm including them
@@ -1094,6 +1070,9 @@ class Scanner implements ISlidingWindowSource {
                 //case CharacterCodes.r:
                 //case CharacterCodes.t:
                 //case CharacterCodes.v:
+                //case CharacterCodes.lineFeed:
+                //case CharacterCodes.paragraphSeparator:
+                //case CharacterCodes.lineSeparator:
                 default:
                     // Any other character is ok as well.  As per rule:
                     // EscapeSequence :: CharacterEscapeSequence
