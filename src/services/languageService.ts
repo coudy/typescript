@@ -92,6 +92,24 @@ module Services {
         public getLength(): number {
             return this.host.getScriptSourceLength(this.scriptIndex);
         }
+
+        // cache last received text for perf.
+        private lastText: string = null;
+        private lastTextStart: number = 0;
+        
+        public charCodeAt(index: number): number {
+            if (this.lastText === null ||
+                index < this.lastTextStart ||
+                index >= this.lastTextStart + this.lastText.length) {
+
+                // Bite off a 1k chunk as the caller may call charCodeAt again very quickly and 
+                // we don't want to call back into the host for that.
+                this.lastText = this.getText(index, Math.min(this.getLength(), index + 1024));
+                this.lastTextStart = index;
+            }
+
+            return this.lastText.charCodeAt(index - this.lastTextStart);
+        }
     }
 
     // Provide a ISourceText implementation over a host script where the implementation minimizes the 
@@ -112,6 +130,10 @@ module Services {
         public getLength(): number {
             return this.length;
         }
+
+        public charCodeAt(index: number): number {
+            return this.text.charCodeAt(index);
+        }
     }
 
     // Provides ISourceText implementation over a text range of another ISourceText
@@ -129,6 +151,10 @@ module Services {
 
         public getLength(): number {
             return this.limChar - this.minChar;
+        }
+
+        public charCodeAt(index: number): number {
+            return this.sourceText.charCodeAt(index + this.minChar);
         }
     }
 

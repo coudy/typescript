@@ -1057,6 +1057,7 @@ module Parser1 {
     class ParserImpl {
         // Underlying source where we pull nodes and tokens from.
         private source: IParserSource;
+        private lineMap: LineMap;
 
         // Parsing options.
         private options: ParseOptions;
@@ -1086,7 +1087,8 @@ module Parser1 {
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
-        constructor(source: IParserSource, options?: ParseOptions) {
+        constructor(lineMap: LineMap, source: IParserSource, options?: ParseOptions) {
+            this.lineMap = lineMap;
             this.source = source;
             this.options = options;
         }
@@ -1124,7 +1126,7 @@ module Parser1 {
             if (this.previousToken() === null) {
                 return 0;
             }
-
+            
             return this.source.absolutePosition() -
                    this.previousToken().fullWidth() +
                    this.previousToken().leadingTriviaWidth();
@@ -1606,7 +1608,7 @@ module Parser1 {
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.position() - b.position());
 
-            return new SyntaxTree(sourceUnit, allDiagnostics);
+            return new SyntaxTree(sourceUnit, allDiagnostics, this.lineMap);
         }
 
         private setStrictMode(isInStrictMode: bool) {
@@ -5421,7 +5423,7 @@ module Parser1 {
         var source = new NormalParserSource(text, languageVersion, stringTable);
         options = options || new ParseOptions();
 
-        return new ParserImpl(source, options).parseSyntaxTree();
+        return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree();
     }
 
     export function incrementalParse(oldSourceUnit: SourceUnitSyntax,
@@ -5434,6 +5436,6 @@ module Parser1 {
             oldSourceUnit, textChangeRanges, newText, languageVersion, stringTable);
         options = options || new ParseOptions();
 
-        return new ParserImpl(source, options).parseSyntaxTree();
+        return new ParserImpl(newText.lineMap(), source, options).parseSyntaxTree();
     }
 }

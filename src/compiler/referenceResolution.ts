@@ -38,6 +38,10 @@ module TypeScript {
         public getLength(): number {
             return this.content.length;
         }
+
+        public charCodeAt(index: number): number {
+            return this.content.charCodeAt(index);
+        }
     }
 
     export interface IFileReference {

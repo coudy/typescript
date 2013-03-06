@@ -22,6 +22,9 @@ interface ISimpleText {
     /// Gets the a new IText that corresponds to the contents of this IText for the given span.
     /// </summary>
     subText(span: TextSpan): ISimpleText;
+
+    charCodeAt(index: number): number;
+    lineMap(): LineMap;
 }
 
 /// <summary>

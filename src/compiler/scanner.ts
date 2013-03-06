@@ -283,6 +283,7 @@ module TypeScript {
     export interface ISourceText {
         getText(start: number, end: number): string;
         getLength(): number;
+        charCodeAt(index: number): number;
     }
 
     export class SourceSimpleText implements ISimpleText {
@@ -305,6 +306,14 @@ module TypeScript {
         public subText(span: TextSpan): ISimpleText {
             return TextFactory.createSimpleSubText(this, span);
         }
+
+        public charCodeAt(index: number): number {
+            return this.text.charCodeAt(index);
+        }
+
+        public lineMap(): LineMap {
+            return LineMap.createFrom(this);
+        }
     }
 
     // Implementation on top of a contiguous string
@@ -318,6 +327,10 @@ module TypeScript {
 
         public getLength(): number {
             return this.text.length;
+        }
+
+        public charCodeAt(index: number): number {
+            return this.text.charCodeAt(index);
         }
     }
 

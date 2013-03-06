@@ -1,14 +1,18 @@
 ///<reference path='SyntaxNodes.generated.ts' />
 ///<reference path='SyntaxDiagnostic.ts' />
+///<reference path='..\Text\LineMap.ts' />
 
 class SyntaxTree {
     private _sourceUnit: SourceUnitSyntax;
     private _diagnostics: SyntaxDiagnostic[];
+    private _lineMap: LineMap;
 
     constructor(sourceUnit: SourceUnitSyntax,
-                diagnostics: SyntaxDiagnostic[]) {
+                diagnostics: SyntaxDiagnostic[],
+                lineMap: LineMap) {
         this._sourceUnit = sourceUnit;
         this._diagnostics = diagnostics;
+        this._lineMap = lineMap;
     }
 
     public toJSON(key) {
