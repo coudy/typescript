@@ -24,7 +24,7 @@ interface ISimpleText {
     subText(span: TextSpan): ISimpleText;
 
     charCodeAt(index: number): number;
-    lineMap(): LineMap;
+    lineMap(): ILineMap;
 }
 
 /// <summary>

@@ -3,7 +3,13 @@
 ///<reference path='LinePosition.ts' />
 ///<reference path='TextUtilities.ts' />
 
-class LineMap {
+interface ILineMap {
+    lineCount(): number;
+    getLineNumberFromPosition(position: number): number;
+    getLinePosition(position: number): LinePosition;
+}
+
+class LineMap implements ILineMap {
     public static empty = new LineMap([0], 0);
 
     constructor(private lineStarts: number[], private length: number) {

@@ -5,11 +5,11 @@
 class SyntaxTree {
     private _sourceUnit: SourceUnitSyntax;
     private _diagnostics: SyntaxDiagnostic[];
-    private _lineMap: LineMap;
+    private _lineMap: ILineMap;
 
     constructor(sourceUnit: SourceUnitSyntax,
                 diagnostics: SyntaxDiagnostic[],
-                lineMap: LineMap) {
+                lineMap: ILineMap) {
         this._sourceUnit = sourceUnit;
         this._diagnostics = diagnostics;
         this._lineMap = lineMap;
@@ -34,6 +34,10 @@ class SyntaxTree {
 
     public diagnostics(): SyntaxDiagnostic[] {
         return this._diagnostics;
+    }
+
+    public lineMap(): ILineMap {
+        return this._lineMap;
     }
 
     public structuralEquals(tree: SyntaxTree): bool {

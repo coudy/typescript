@@ -1057,7 +1057,7 @@ module Parser1 {
     class ParserImpl {
         // Underlying source where we pull nodes and tokens from.
         private source: IParserSource;
-        private lineMap: LineMap;
+        private lineMap: ILineMap;
 
         // Parsing options.
         private options: ParseOptions;
@@ -1087,7 +1087,7 @@ module Parser1 {
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
-        constructor(lineMap: LineMap, source: IParserSource, options?: ParseOptions) {
+        constructor(lineMap: ILineMap, source: IParserSource, options?: ParseOptions) {
             this.lineMap = lineMap;
             this.source = source;
             this.options = options;
