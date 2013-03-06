@@ -425,6 +425,9 @@ module Parser1 {
         // The absolute position we're at in the text we're reading from.
         private _absolutePosition: number = 0;
 
+        // The line map for the scanner to fill in.
+        private scannerLineMap: number[] = [];
+
         // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
         // in the token stream we're pointing at.  However, it will get modified if we we decide to
@@ -439,7 +442,7 @@ module Parser1 {
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
-            this.scanner = new Scanner(text, languageVersion, stringTable);
+            this.scanner = new Scanner(text, languageVersion, stringTable, this.scannerLineMap);
         }
 
         private currentNode(): SyntaxNode {
