@@ -1,7 +1,7 @@
 var Debug = (function () {
     function Debug() { }
     Debug.assert = function assert(expression) {
-        if(!expression) {
+        if (!expression) {
             throw new Error("Debug Failure. False expression.");
         }
     };
@@ -35,17 +35,17 @@ var ArrayUtilities = (function () {
         return Object.prototype.toString.apply(value, []) === '[object Array]';
     };
     ArrayUtilities.sequenceEquals = function sequenceEquals(array1, array2, equals) {
-        if(array1 === array2) {
+        if (array1 === array2) {
             return true;
         }
-        if(array1 === null || array2 === null) {
+        if (array1 === null || array2 === null) {
             return false;
         }
-        if(array1.length !== array2.length) {
+        if (array1.length !== array2.length) {
             return false;
         }
         for(var i = 0, n = array1.length; i < n; i++) {
-            if(!equals(array1[i], array2[i])) {
+            if (!equals(array1[i], array2[i])) {
                 return false;
             }
         }
@@ -53,15 +53,14 @@ var ArrayUtilities = (function () {
     };
     ArrayUtilities.contains = function contains(array, value) {
         for(var i = 0; i < array.length; i++) {
-            if(array[i] === value) {
+            if (array[i] === value) {
                 return true;
             }
         }
         return false;
     };
     ArrayUtilities.groupBy = function groupBy(array, func) {
-        var result = {
-        };
+        var result = {};
         for(var i = 0, n = array.length; i < n; i++) {
             var v = array[i];
             var k = func(v);
@@ -72,29 +71,27 @@ var ArrayUtilities = (function () {
         return result;
     };
     ArrayUtilities.min = function min(array, func) {
-        Debug.assert(array.length > 0);
         var min = func(array[0]);
         for(var i = 1; i < array.length; i++) {
             var next = func(array[i]);
-            if(next < min) {
+            if (next < min) {
                 min = next;
             }
         }
         return min;
     };
     ArrayUtilities.max = function max(array, func) {
-        Debug.assert(array.length > 0);
         var max = func(array[0]);
         for(var i = 1; i < array.length; i++) {
             var next = func(array[i]);
-            if(next > max) {
+            if (next > max) {
                 max = next;
             }
         }
         return max;
     };
     ArrayUtilities.last = function last(array) {
-        if(array.length === 0) {
+        if (array.length === 0) {
             throw Errors.argumentOutOfRange('array');
         }
         return array[array.length - 1];
@@ -102,7 +99,7 @@ var ArrayUtilities = (function () {
     ArrayUtilities.firstOrDefault = function firstOrDefault(array, func) {
         for(var i = 0, n = array.length; i < n; i++) {
             var value = array[i];
-            if(func(value)) {
+            if (func(value)) {
                 return value;
             }
         }
@@ -119,7 +116,7 @@ var ArrayUtilities = (function () {
         var result = [];
         for(var i = 0; i < array.length; i++) {
             var value = array[i];
-            if(value !== null) {
+            if (value !== null) {
                 result.push(value);
             }
         }
@@ -135,7 +132,7 @@ var ArrayUtilities = (function () {
     ArrayUtilities.where = function where(values, func) {
         var result = [];
         for(var i = 0; i < values.length; i++) {
-            if(func(values[i])) {
+            if (func(values[i])) {
                 result.push(values[i]);
             }
         }
@@ -143,7 +140,7 @@ var ArrayUtilities = (function () {
     };
     ArrayUtilities.any = function any(array, func) {
         for(var i = 0, n = array.length; i < n; i++) {
-            if(func(array[i])) {
+            if (func(array[i])) {
                 return true;
             }
         }
@@ -151,7 +148,7 @@ var ArrayUtilities = (function () {
     };
     ArrayUtilities.all = function all(array, func) {
         for(var i = 0, n = array.length; i < n; i++) {
-            if(!func(array[i])) {
+            if (!func(array[i])) {
                 return false;
             }
         }
@@ -163,9 +160,9 @@ var ArrayUtilities = (function () {
         while(low <= high) {
             var middle = low + ((high - low) >> 1);
             var midValue = array[middle];
-            if(midValue === value) {
+            if (midValue === value) {
                 return middle;
-            } else if(midValue > value) {
+            } else if (midValue > value) {
                 high = middle - 1;
             } else {
                 low = middle + 1;
@@ -174,7 +171,6 @@ var ArrayUtilities = (function () {
         return ~low;
     };
     ArrayUtilities.createArray = function createArray(length, defaultvalue) {
-        if (typeof defaultvalue === "undefined") { defaultvalue = null; }
         var result = [];
         for(var i = 0; i < length; i++) {
             result.push(defaultvalue);
@@ -203,7 +199,7 @@ var Environment = (function () {
         }
         var streamObjectPool = [];
         function getStreamObject() {
-            if(streamObjectPool.length > 0) {
+            if (streamObjectPool.length > 0) {
                 return streamObjectPool.pop();
             } else {
                 return new ActiveXObject("ADODB.Stream");
@@ -230,9 +226,9 @@ var Environment = (function () {
                     streamObj.LoadFromFile(path);
                     var bomChar = streamObj.ReadText(2);
                     streamObj.Position = 0;
-                    if((bomChar.charCodeAt(0) === 254 && bomChar.charCodeAt(1) === 255) || (bomChar.charCodeAt(0) === 255 && bomChar.charCodeAt(1) === 254)) {
+                    if ((bomChar.charCodeAt(0) === 0xFE && bomChar.charCodeAt(1) === 0xFF) || (bomChar.charCodeAt(0) === 0xFF && bomChar.charCodeAt(1) === 0xFE)) {
                         streamObj.Charset = 'unicode';
-                    } else if(bomChar.charCodeAt(0) === 239 && bomChar.charCodeAt(1) === 187) {
+                    } else if (bomChar.charCodeAt(0) === 0xEF && bomChar.charCodeAt(1) === 0xBB) {
                         streamObj.Charset = 'utf-8';
                     } else {
                         streamObj.Charset = useUTF8 ? 'utf-8' : 'x-ansi';
@@ -255,7 +251,7 @@ var Environment = (function () {
                 return fso.FileExists(path);
             },
             deleteFile: function (path) {
-                if(fso.FileExists(path)) {
+                if (fso.FileExists(path)) {
                     fso.DeleteFile(path, true);
                 }
             },
@@ -263,12 +259,11 @@ var Environment = (function () {
                 return fso.FolderExists(path);
             },
             listFiles: function (path, spec, options) {
-                options = options || {
-                };
+                options = options || {};
                 function filesInFolder(folder, root) {
                     var paths = [];
                     var fc;
-                    if(options.recursive) {
+                    if (options.recursive) {
                         fc = new Enumerator(folder.subfolders);
                         for(; !fc.atEnd(); fc.moveNext()) {
                             paths = paths.concat(filesInFolder(fc.item(), root + "\\" + fc.item().Name));
@@ -276,7 +271,7 @@ var Environment = (function () {
                     }
                     fc = new Enumerator(folder.files);
                     for(; !fc.atEnd(); fc.moveNext()) {
-                        if(!spec || fc.item().Name.match(spec)) {
+                        if (!spec || fc.item().Name.match(spec)) {
                             paths.push(root + "\\" + fc.item().Name);
                         }
                     }
@@ -326,8 +321,8 @@ var Environment = (function () {
             readFile: function (file, useUTF8) {
                 var buffer = _fs.readFileSync(file);
                 switch(buffer[0]) {
-                    case 254:
-                        if(buffer[1] === 255) {
+                    case 0xFE:
+                        if (buffer[1] === 0xFF) {
                             var i = 0;
                             while((i + 1) < buffer.length) {
                                 var temp = buffer[i];
@@ -338,20 +333,20 @@ var Environment = (function () {
                             return buffer.toString("ucs2", 2);
                         }
                         break;
-                    case 255:
-                        if(buffer[1] === 254) {
+                    case 0xFF:
+                        if (buffer[1] === 0xFE) {
                             return buffer.toString("ucs2", 2);
                         }
                         break;
-                    case 239:
-                        if(buffer[1] === 187) {
+                    case 0xEF:
+                        if (buffer[1] === 0xBB) {
                             return buffer.toString("utf8", 3);
                         }
                 }
                 return useUTF8 ? buffer.toString("utf8", 0) : buffer.toString();
             },
             writeFile: function (path, contents, useUTF) {
-                if(useUTF) {
+                if (useUTF) {
                     _fs.writeFileSync(path, contents, "utf8");
                 } else {
                     _fs.writeFileSync(path, contents);
@@ -370,16 +365,15 @@ var Environment = (function () {
                 return _fs.existsSync(path) && _fs.lstatSync(path).isDirectory();
             },
             listFiles: function dir(path, spec, options) {
-                options = options || {
-                };
+                options = options || {};
                 function filesInFolder(folder) {
                     var paths = [];
                     var files = _fs.readdirSync(folder);
                     for(var i = 0; i < files.length; i++) {
                         var stat = _fs.statSync(folder + "\\" + files[i]);
-                        if(options.recursive && stat.isDirectory()) {
+                        if (options.recursive && stat.isDirectory()) {
                             paths = paths.concat(filesInFolder(folder + "\\" + files[i]));
-                        } else if(stat.isFile() && (!spec || files[i].match(spec))) {
+                        } else if (stat.isFile() && (!spec || files[i].match(spec))) {
                             paths.push(folder + "\\" + files[i]);
                         }
                     }
@@ -390,13 +384,13 @@ var Environment = (function () {
             createFile: function (path, useUTF8) {
                 function mkdirRecursiveSync(path) {
                     var stats = _fs.statSync(path);
-                    if(stats.isFile()) {
+                    if (stats.isFile()) {
                         throw "\"" + path + "\" exists but isn't a directory.";
-                    } else if(stats.isDirectory()) {
+                    } else if (stats.isDirectory()) {
                         return;
                     } else {
                         mkdirRecursiveSync(_path.dirname(path));
-                        _fs.mkdirSync(path, 509);
+                        _fs.mkdirSync(path, 0775);
                     }
                 }
                 mkdirRecursiveSync(_path.dirname(path));
@@ -428,9 +422,9 @@ var Environment = (function () {
         };
     }
     ;
-    if(typeof ActiveXObject === "function") {
+    if (typeof ActiveXObject === "function") {
         return getWindowsScriptHostEnvironment();
-    } else if(typeof require === "function") {
+    } else if (typeof require === "function") {
         return getNodeEnvironment();
     } else {
         return null;
@@ -1076,14 +1070,13 @@ var SyntaxFacts;
     };
     var kindToText = [];
     for(var name in textToKeywordKind) {
-        if(textToKeywordKind.hasOwnProperty(name)) {
-            Debug.assert(kindToText[textToKeywordKind[name]] === undefined);
+        if (textToKeywordKind.hasOwnProperty(name)) {
             kindToText[textToKeywordKind[name]] = name;
         }
     }
     kindToText[63 /* ConstructorKeyword */ ] = "constructor";
     function getTokenKind(text) {
-        if(textToKeywordKind.hasOwnProperty(text)) {
+        if (textToKeywordKind.hasOwnProperty(text)) {
             return textToKeywordKind[text];
         }
         return 0 /* None */ ;
@@ -3555,7 +3548,7 @@ var definitions = [
     }
 ];
 function getStringWithoutSuffix(definition) {
-    if(StringUtilities.endsWith(definition, "Syntax")) {
+    if (StringUtilities.endsWith(definition, "Syntax")) {
         return definition.substring(0, definition.length - "Syntax".length);
     }
     return definition;
@@ -3564,11 +3557,11 @@ function getNameWithoutSuffix(definition) {
     return getStringWithoutSuffix(definition.name);
 }
 function getType(child) {
-    if(child.isToken) {
+    if (child.isToken) {
         return "ISyntaxToken";
-    } else if(child.isSeparatedList) {
+    } else if (child.isSeparatedList) {
         return "ISeparatedSyntaxList";
-    } else if(child.isList) {
+    } else if (child.isList) {
         return "ISyntaxList";
     } else {
         return child.type;
@@ -3582,13 +3575,13 @@ function camelCase(value) {
     return value.substr(0, 1).toLowerCase() + value.substr(1);
 }
 function getSafeName(child) {
-    if(child.name === "arguments") {
+    if (child.name === "arguments") {
         return "_" + child.name;
     }
     return child.name;
 }
 function getPropertyAccess(child) {
-    if(child.type === "SyntaxKind") {
+    if (child.type === "SyntaxKind") {
         return "this._kind";
     }
     return "this." + child.name;
@@ -3597,12 +3590,12 @@ function generateProperties(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(getType(child) === "SyntaxKind") {
+        if (getType(child) === "SyntaxKind") {
             result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
         }
         hasKind = hasKind || (getType(child) === "SyntaxKind");
     }
-    if(definition.children.length > 0) {
+    if (definition.children.length > 0) {
         result += "\r\n";
     }
     return result;
@@ -3611,7 +3604,7 @@ function generateNullChecks(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(!child.isOptional && !child.isToken) {
+        if (!child.isOptional && !child.isToken) {
             result += "        if (" + child.name + " === null) { throw Errors.argumentNull('" + child.name + "'); }\r\n";
         }
     }
@@ -3621,11 +3614,11 @@ function generateIfKindCheck(child, tokenKinds, indent) {
     var result = "";
     result += indent + "        if (";
     for(var j = 0; j < tokenKinds.length; j++) {
-        if(j > 0) {
+        if (j > 0) {
             result += " && ";
         }
         var tokenKind = tokenKinds[j];
-        if(tokenKind === "IdentifierName") {
+        if (tokenKind === "IdentifierName") {
             result += "!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)";
         } else {
             result += child.name + ".tokenKind !== SyntaxKind." + tokenKind;
@@ -3646,7 +3639,7 @@ function generateSwitchCases(tokenKinds, indent) {
         var tokenKind = tokenKinds[j];
         result += generateSwitchCase(tokenKind, indent);
     }
-    if(tokenKinds.length > 0) {
+    if (tokenKinds.length > 0) {
         result += generateBreakStatement(indent);
     }
     return result;
@@ -3658,7 +3651,7 @@ function generateDefaultCase(child, indent) {
     return result;
 }
 function generateSwitchKindCheck(child, tokenKinds, indent) {
-    if(tokenKinds.length === 0) {
+    if (tokenKinds.length === 0) {
         return "";
     }
     var result = "";
@@ -3668,24 +3661,24 @@ function generateSwitchKindCheck(child, tokenKinds, indent) {
     var notIdentifierName = ArrayUtilities.where(tokenKinds, function (v) {
         return v.indexOf("IdentifierName") < 0;
     });
-    if(identifierName.length > 0) {
+    if (identifierName.length > 0) {
         result += indent + "        if (!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)) {\r\n";
-        if(notIdentifierName.length === 0) {
+        if (notIdentifierName.length === 0) {
             result += indent + "            throw Errors.argument('" + child.name + "');\r\n";
             result += indent + "        }\r\n";
             return result;
         }
         indent += "    ";
     }
-    if(notIdentifierName.length <= 2) {
+    if (notIdentifierName.length <= 2) {
         result += generateIfKindCheck(child, notIdentifierName, indent);
-    } else if(notIdentifierName.length > 2) {
+    } else if (notIdentifierName.length > 2) {
         result += indent + "        switch (" + child.name + ".tokenKind) {\r\n";
         result += generateSwitchCases(notIdentifierName, indent);
         result += generateDefaultCase(child, indent);
         result += indent + "        }\r\n";
     }
-    if(identifierName.length > 0) {
+    if (identifierName.length > 0) {
         result += indent + "    }\r\n";
     }
     return result;
@@ -3698,17 +3691,17 @@ function tokenKinds(child) {
 function generateKindCheck(child) {
     var indent = "";
     var result = "";
-    if(child.isOptional) {
+    if (child.isOptional) {
         indent = "    ";
         result += "        if (" + child.name + " !== null) {\r\n";
     }
     var kinds = tokenKinds(child);
-    if(kinds.length <= 2) {
+    if (kinds.length <= 2) {
         result += generateIfKindCheck(child, kinds, indent);
     } else {
         result += generateSwitchKindCheck(child, kinds, indent);
     }
-    if(child.isOptional) {
+    if (child.isOptional) {
         result += "        }\r\n";
     }
     return result;
@@ -3717,7 +3710,7 @@ function generateKindChecks(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child.isToken) {
+        if (child.isToken) {
             result += generateKindCheck(child);
         }
     }
@@ -3725,17 +3718,17 @@ function generateKindChecks(definition) {
 }
 function generateArgumentChecks(definition) {
     var result = "";
-    if(argumentChecks) {
+    if (argumentChecks) {
         result += generateNullChecks(definition);
         result += generateKindChecks(definition);
-        if(definition.children.length > 0) {
+        if (definition.children.length > 0) {
             result += "\r\n";
         }
     }
     return result;
 }
 function generateConstructor(definition) {
-    if(definition.isAbstract) {
+    if (definition.isAbstract) {
     }
     var base = baseType(definition);
     var subchildren = childrenInAllSubclasses(definition);
@@ -3746,12 +3739,12 @@ function generateConstructor(definition) {
     var result = "";
     result += "    constructor(";
     var children = definition.children;
-    if(subchildren.length > 0) {
+    if (subchildren.length > 0) {
         children = subchildren;
     }
     for(var i = 0; i < children.length; i++) {
         var child = children[i];
-        if(getType(child) !== "SyntaxKind" && !ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
+        if (getType(child) !== "SyntaxKind" && !ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
             result += "public ";
         }
         result += child.name + ": " + getType(child);
@@ -3763,13 +3756,13 @@ function generateConstructor(definition) {
         result += baseSubchildrenNames[i] + ", ";
     }
     result += "parsedInStrictMode); \r\n";
-    if(definition.children.length > 0) {
+    if (definition.children.length > 0) {
         result += "\r\n";
     }
     result += generateArgumentChecks(definition);
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child.type === "SyntaxKind") {
+        if (child.type === "SyntaxKind") {
             result += "        " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
         }
     }
@@ -3777,13 +3770,13 @@ function generateConstructor(definition) {
     return result;
 }
 function isOptional(child) {
-    if(child.isOptional) {
+    if (child.isOptional) {
         return true;
     }
-    if(child.isList && !child.requiresAtLeastOneItem) {
+    if (child.isList && !child.requiresAtLeastOneItem) {
         return true;
     }
-    if(child.isSeparatedList && !child.requiresAtLeastOneItem) {
+    if (child.isSeparatedList && !child.requiresAtLeastOneItem) {
         return true;
     }
     return false;
@@ -3792,14 +3785,14 @@ function generateFactory1Method(definition) {
     var mandatoryChildren = ArrayUtilities.where(definition.children, function (c) {
         return !isOptional(c);
     });
-    if(mandatoryChildren.length === definition.children.length) {
+    if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
     var result = "\r\n    public static create(";
     for(var i = 0; i < mandatoryChildren.length; i++) {
         var child = mandatoryChildren[i];
         result += child.name + ": " + getType(child);
-        if(i < mandatoryChildren.length - 1) {
+        if (i < mandatoryChildren.length - 1) {
             result += ",\r\n                         ";
         }
     }
@@ -3807,11 +3800,11 @@ function generateFactory1Method(definition) {
     result += "        return new " + definition.name + "(";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(!isOptional(child)) {
+        if (!isOptional(child)) {
             result += child.name;
-        } else if(child.isList) {
+        } else if (child.isList) {
             result += "Syntax.emptyList";
-        } else if(child.isSeparatedList) {
+        } else if (child.isSeparatedList) {
             result += "Syntax.emptySeparatedList";
         } else {
             result += "null";
@@ -3823,33 +3816,33 @@ function generateFactory1Method(definition) {
     return result;
 }
 function isKeywordOrPunctuation(kind) {
-    if(StringUtilities.endsWith(kind, "Keyword")) {
+    if (StringUtilities.endsWith(kind, "Keyword")) {
         return true;
     }
-    if(StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierName" && kind !== "EndOfFileToken") {
+    if (StringUtilities.endsWith(kind, "Token") && kind !== "IdentifierName" && kind !== "EndOfFileToken") {
         return true;
     }
     return false;
 }
 function isDefaultConstructable(definition) {
-    if(definition === null || definition.isAbstract) {
+    if (definition === null || definition.isAbstract) {
         return false;
     }
     for(var i = 0; i < definition.children.length; i++) {
-        if(isMandatory(definition.children[i])) {
+        if (isMandatory(definition.children[i])) {
             return false;
         }
     }
     return true;
 }
 function isMandatory(child) {
-    if(isOptional(child)) {
+    if (isOptional(child)) {
         return false;
     }
-    if(child.type === "SyntaxKind" || child.isList || child.isSeparatedList) {
+    if (child.type === "SyntaxKind" || child.isList || child.isSeparatedList) {
         return true;
     }
-    if(child.isToken) {
+    if (child.isToken) {
         var kinds = tokenKinds(child);
         var isFixed = kinds.length === 1 && isKeywordOrPunctuation(kinds[0]);
         return !isFixed;
@@ -3858,14 +3851,14 @@ function isMandatory(child) {
 }
 function generateFactory2Method(definition) {
     var mandatoryChildren = ArrayUtilities.where(definition.children, isMandatory);
-    if(mandatoryChildren.length === definition.children.length) {
+    if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
     var result = "\r\n    public static create1(";
     for(var i = 0; i < mandatoryChildren.length; i++) {
         var child = mandatoryChildren[i];
         result += child.name + ": " + getType(child);
-        if(i < mandatoryChildren.length - 1) {
+        if (i < mandatoryChildren.length - 1) {
             result += ",\r\n                          ";
         }
     }
@@ -3873,15 +3866,15 @@ function generateFactory2Method(definition) {
     result += "        return new " + definition.name + "(";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(isMandatory(child)) {
+        if (isMandatory(child)) {
             result += child.name;
-        } else if(child.isList) {
+        } else if (child.isList) {
             result += "Syntax.emptyList";
-        } else if(child.isSeparatedList) {
+        } else if (child.isSeparatedList) {
             result += "Syntax.emptySeparatedList";
-        } else if(isOptional(child)) {
+        } else if (isOptional(child)) {
             result += "null";
-        } else if(child.isToken) {
+        } else if (child.isToken) {
             result += "Syntax.token(SyntaxKind." + tokenKinds(child)[0] + ")";
         } else {
             result += child.type + ".create1()";
@@ -3897,7 +3890,7 @@ function generateFactoryMethod(definition) {
 }
 function generateAcceptMethods(definition) {
     var result = "";
-    if(!definition.isAbstract) {
+    if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public accept(visitor: ISyntaxVisitor): any {\r\n";
         result += "        return visitor.visit" + getNameWithoutSuffix(definition) + "(this);\r\n";
@@ -3907,12 +3900,12 @@ function generateAcceptMethods(definition) {
 }
 function generateIsMethod(definition) {
     var result = "";
-    if(definition.interfaces) {
+    if (definition.interfaces) {
         var ifaces = definition.interfaces.slice(0);
         for(var i = 0; i < ifaces.length; i++) {
             var current = ifaces[i];
             while(current !== undefined) {
-                if(!ArrayUtilities.contains(ifaces, current)) {
+                if (!ArrayUtilities.contains(ifaces, current)) {
                     ifaces.push(current);
                 }
                 current = interfaces[current];
@@ -3921,7 +3914,7 @@ function generateIsMethod(definition) {
         for(var i = 0; i < ifaces.length; i++) {
             var type = ifaces[i];
             type = getStringWithoutSuffix(type);
-            if(isInterface(type)) {
+            if (isInterface(type)) {
                 type = type.substr(1);
             }
             result += "\r\n";
@@ -3934,8 +3927,8 @@ function generateIsMethod(definition) {
 }
 function generateKindMethod(definition) {
     var result = "";
-    if(!definition.isAbstract) {
-        if(!hasKind) {
+    if (!definition.isAbstract) {
+        if (!hasKind) {
             result += "\r\n";
             result += "    public kind(): SyntaxKind {\r\n";
             result += "        return SyntaxKind." + getNameWithoutSuffix(definition) + ";\r\n";
@@ -3946,21 +3939,21 @@ function generateKindMethod(definition) {
 }
 function generateSlotMethods(definition) {
     var result = "";
-    if(!definition.isAbstract) {
+    if (!definition.isAbstract) {
         result += "\r\n";
-        result += "    private childCount(): number {\r\n";
+        result += "    public childCount(): number {\r\n";
         var slotCount = hasKind ? (definition.children.length - 1) : definition.children.length;
         result += "        return " + slotCount + ";\r\n";
         result += "    }\r\n\r\n";
-        result += "    private childAt(slot: number): ISyntaxElement {\r\n";
-        if(slotCount === 0) {
+        result += "    public childAt(slot: number): ISyntaxElement {\r\n";
+        if (slotCount === 0) {
             result += "        throw Errors.invalidOperation();\r\n";
         } else {
             result += "        switch (slot) {\r\n";
             var index = 0;
             for(var i = 0; i < definition.children.length; i++) {
                 var child = definition.children[i];
-                if(child.type === "SyntaxKind") {
+                if (child.type === "SyntaxKind") {
                     continue;
                 }
                 result += "            case " + index + ": return this." + definition.children[i].name + ";\r\n";
@@ -3975,23 +3968,23 @@ function generateSlotMethods(definition) {
 }
 function generateFirstTokenMethod(definition) {
     var result = "";
-    if(!definition.isAbstract) {
+    if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public firstToken(): ISyntaxToken {\r\n";
         result += "        var token = null;\r\n";
         for(var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
-            if(getType(child) === "SyntaxKind") {
+            if (getType(child) === "SyntaxKind") {
                 continue;
             }
-            if(child.name === "endOfFileToken") {
+            if (child.name === "endOfFileToken") {
                 continue;
             }
             result += "        if (";
-            if(child.isOptional) {
+            if (child.isOptional) {
                 result += getPropertyAccess(child) + " !== null && ";
             }
-            if(child.isToken) {
+            if (child.isToken) {
                 result += getPropertyAccess(child) + ".width() > 0";
                 result += ") { return " + getPropertyAccess(child) + "; }\r\n";
             } else {
@@ -3999,7 +3992,7 @@ function generateFirstTokenMethod(definition) {
                 result += ") { return token; }\r\n";
             }
         }
-        if(definition.name === "SourceUnitSyntax") {
+        if (definition.name === "SourceUnitSyntax") {
             result += "        return this._endOfFileToken;\r\n";
         } else {
             result += "        return null;\r\n";
@@ -4010,26 +4003,26 @@ function generateFirstTokenMethod(definition) {
 }
 function generateLastTokenMethod(definition) {
     var result = "";
-    if(!definition.isAbstract) {
+    if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public lastToken(): ISyntaxToken {\r\n";
-        if(definition.name === "SourceUnitSyntax") {
+        if (definition.name === "SourceUnitSyntax") {
             result += "        return this._endOfFileToken;\r\n";
         } else {
             result += "        var token = null;\r\n";
             for(var i = definition.children.length - 1; i >= 0; i--) {
                 var child = definition.children[i];
-                if(getType(child) === "SyntaxKind") {
+                if (getType(child) === "SyntaxKind") {
                     continue;
                 }
-                if(child.name === "endOfFileToken") {
+                if (child.name === "endOfFileToken") {
                     continue;
                 }
                 result += "        if (";
-                if(child.isOptional) {
+                if (child.isOptional) {
                     result += getPropertyAccess(child) + " !== null && ";
                 }
-                if(child.isToken) {
+                if (child.isToken) {
                     result += getPropertyAccess(child) + ".width() > 0";
                     result += ") { return " + getPropertyAccess(child) + "; }\r\n";
                 } else {
@@ -4045,17 +4038,17 @@ function generateLastTokenMethod(definition) {
 }
 function generateInsertChildrenIntoMethod(definition) {
     var result = "";
-    if(!definition.isAbstract) {
+    if (!definition.isAbstract) {
         result += "\r\n";
         result += "    public insertChildrenInto(array: ISyntaxElement[], index: number) {\r\n";
         for(var i = definition.children.length - 1; i >= 0; i--) {
             var child = definition.children[i];
-            if(child.type === "SyntaxKind") {
+            if (child.type === "SyntaxKind") {
                 continue;
             }
-            if(child.isList || child.isSeparatedList) {
+            if (child.isList || child.isSeparatedList) {
                 result += "        " + getPropertyAccess(child) + ".insertChildrenInto(array, index);\r\n";
-            } else if(child.isOptional) {
+            } else if (child.isOptional) {
                 result += "        if (" + getPropertyAccess(child) + " !== null) { array.splice(index, 0, " + getPropertyAccess(child) + "); }\r\n";
             } else {
                 result += "        array.splice(index, 0, " + getPropertyAccess(child) + ");\r\n";
@@ -4079,7 +4072,7 @@ function derivesFrom(def1, def2) {
     var current = def1;
     while(current !== null) {
         var base = baseType(current);
-        if(base === def2) {
+        if (base === def2) {
             return true;
         }
         current = base;
@@ -4093,15 +4086,15 @@ function contains(definition, child) {
 }
 function childrenInAllSubclasses(definition) {
     var result = [];
-    if(definition !== null && definition.isAbstract) {
+    if (definition !== null && definition.isAbstract) {
         var subclasses = ArrayUtilities.where(definitions, function (d) {
             return !d.isAbstract && derivesFrom(d, definition);
         });
-        if(subclasses.length > 0) {
+        if (subclasses.length > 0) {
             var firstSubclass = subclasses[0];
             for(var i = 0; i < firstSubclass.children.length; i++) {
                 var child = firstSubclass.children[i];
-                if(ArrayUtilities.all(subclasses, function (s) {
+                if (ArrayUtilities.all(subclasses, function (s) {
                     return contains(s, child);
                 })) {
                     result.push(child);
@@ -4115,7 +4108,7 @@ function generateAccessors(definition) {
     var result = "";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child.type === "SyntaxKind") {
+        if (child.type === "SyntaxKind") {
             result += "\r\n";
             result += "    public " + child.name + "(): " + getType(child) + " {\r\n";
             result += "        return " + getPropertyAccess(child) + ";\r\n";
@@ -4130,10 +4123,10 @@ function generateWithMethod(definition, child) {
     result += "    public with" + pascalCase(child.name) + "(" + getSafeName(child) + ": " + getType(child) + "): " + definition.name + " {\r\n";
     result += "        return this.update(";
     for(var i = 0; i < definition.children.length; i++) {
-        if(i > 0) {
+        if (i > 0) {
             result += ", ";
         }
-        if(definition.children[i] === child) {
+        if (definition.children[i] === child) {
             result += getSafeName(child);
         } else {
             result += getPropertyAccess(definition.children[i]);
@@ -4141,8 +4134,8 @@ function generateWithMethod(definition, child) {
     }
     result += ");\r\n";
     result += "    }\r\n";
-    if(child.isList || child.isSeparatedList) {
-        if(StringUtilities.endsWith(child.name, "s")) {
+    if (child.isList || child.isSeparatedList) {
+        if (StringUtilities.endsWith(child.name, "s")) {
             var pascalName = pascalCase(child.name);
             pascalName = pascalName.substring(0, pascalName.length - 1);
             var argName = getSafeName(child);
@@ -4150,7 +4143,7 @@ function generateWithMethod(definition, child) {
             result += "\r\n";
             result += "    public with" + pascalName + "(" + argName + ": " + child.elementType + "): " + definition.name + " {\r\n";
             result += "        return this.with" + pascalCase(child.name) + "(";
-            if(child.isList) {
+            if (child.isList) {
                 result += "Syntax.list([" + argName + "])";
             } else {
                 result += "Syntax.separatedList([" + argName + "])";
@@ -4180,7 +4173,7 @@ function generateTriviaMethods(definition) {
     return result;
 }
 function generateUpdateMethod(definition) {
-    if(definition.isAbstract) {
+    if (definition.isAbstract) {
         return "";
     }
     var result = "";
@@ -4190,18 +4183,18 @@ function generateUpdateMethod(definition) {
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
         result += getSafeName(child) + ": " + getType(child);
-        if(i < definition.children.length - 1) {
+        if (i < definition.children.length - 1) {
             result += ",\r\n                  ";
         }
     }
     result += "): " + definition.name + " {\r\n";
-    if(definition.children.length === 0) {
+    if (definition.children.length === 0) {
         result += "        return this;\r\n";
     } else {
         result += "        if (";
         for(var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
-            if(i !== 0) {
+            if (i !== 0) {
                 result += " && ";
             }
             result += getPropertyAccess(child) + " === " + getSafeName(child);
@@ -4221,23 +4214,23 @@ function generateUpdateMethod(definition) {
     return result;
 }
 function generateIsTypeScriptSpecificMethod(definition) {
-    var result = "\r\n    private isTypeScriptSpecific(): bool {\r\n";
-    if(definition.isTypeScriptSpecific) {
+    var result = "\r\n    public isTypeScriptSpecific(): bool {\r\n";
+    if (definition.isTypeScriptSpecific) {
         result += "        return true;\r\n";
     } else {
         for(var i = 0; i < definition.children.length; i++) {
             var child = definition.children[i];
-            if(child.type === "SyntaxKind") {
+            if (child.type === "SyntaxKind") {
                 continue;
             }
-            if(child.isTypeScriptSpecific) {
+            if (child.isTypeScriptSpecific) {
                 result += "        if (" + getPropertyAccess(child) + " !== null) { return true; }\r\n";
                 continue;
             }
-            if(child.isToken) {
+            if (child.isToken) {
                 continue;
             }
-            if(child.isOptional) {
+            if (child.isOptional) {
                 result += "        if (" + getPropertyAccess(child) + " !== null && " + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
             } else {
                 result += "        if (" + getPropertyAccess(child) + ".isTypeScriptSpecific()) { return true; }\r\n";
@@ -4253,7 +4246,7 @@ function couldBeRegularExpressionToken(child) {
     return ArrayUtilities.contains(kinds, "SlashToken") || ArrayUtilities.contains(kinds, "SlashEqualsToken") || ArrayUtilities.contains(kinds, "RegularExpressionLiteral");
 }
 function generateComputeDataMethod(definition) {
-    if(definition.isAbstract) {
+    if (definition.isAbstract) {
         return "";
     }
     var result = "\r\n    private computeData(): number {\r\n";
@@ -4264,11 +4257,11 @@ function generateComputeDataMethod(definition) {
     result += "        var hasRegularExpressionToken = false;\r\n";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child.type === "SyntaxKind") {
+        if (child.type === "SyntaxKind") {
             continue;
         }
         var indent = "";
-        if(child.isOptional) {
+        if (child.isOptional) {
             result += "\r\n        if (" + getPropertyAccess(child) + " !== null) {\r\n";
             indent = "    ";
         } else {
@@ -4277,16 +4270,16 @@ function generateComputeDataMethod(definition) {
         result += indent + "        childWidth = " + getPropertyAccess(child) + ".fullWidth();\r\n";
         result += indent + "        fullWidth += childWidth;\r\n";
         result += indent + "        hasSkippedText = hasSkippedText || " + getPropertyAccess(child) + ".hasSkippedText();\r\n";
-        if(child.isToken) {
+        if (child.isToken) {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || (childWidth === 0);\r\n";
-            if(couldBeRegularExpressionToken(child)) {
+            if (couldBeRegularExpressionToken(child)) {
                 result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || SyntaxFacts.isAnyDivideOrRegularExpressionToken(" + getPropertyAccess(child) + ".tokenKind);\r\n";
             }
         } else {
             result += indent + "        hasZeroWidthToken = hasZeroWidthToken || " + getPropertyAccess(child) + ".hasZeroWidthToken();\r\n";
             result += indent + "        hasRegularExpressionToken = hasRegularExpressionToken || " + getPropertyAccess(child) + ".hasRegularExpressionToken();\r\n";
         }
-        if(child.isOptional) {
+        if (child.isOptional) {
             result += "        }\r\n";
         }
     }
@@ -4298,7 +4291,7 @@ function generateComputeDataMethod(definition) {
     return result;
 }
 function generateStructuralEqualsMethod(definition) {
-    if(definition.isAbstract) {
+    if (definition.isAbstract) {
         return "";
     }
     var result = "\r\n    private structuralEquals(node: SyntaxNode): bool {\r\n";
@@ -4308,14 +4301,14 @@ function generateStructuralEqualsMethod(definition) {
     result += "        var other = <" + definition.name + ">node;\r\n";
     for(var i = 0; i < definition.children.length; i++) {
         var child = definition.children[i];
-        if(child.type !== "SyntaxKind") {
-            if(child.isList) {
+        if (child.type !== "SyntaxKind") {
+            if (child.isList) {
                 result += "        if (!Syntax.listStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
-            } else if(child.isSeparatedList) {
+            } else if (child.isSeparatedList) {
                 result += "        if (!Syntax.separatedListStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
-            } else if(child.isToken) {
+            } else if (child.isToken) {
                 result += "        if (!Syntax.tokenStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
-            } else if(isNodeOrToken(child)) {
+            } else if (isNodeOrToken(child)) {
                 result += "        if (!Syntax.nodeOrTokenStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
             } else {
                 result += "        if (!Syntax.nodeStructuralEquals(" + getPropertyAccess(child) + ", other._" + child.name + ")) { return false; }\r\n";
@@ -4328,7 +4321,7 @@ function generateStructuralEqualsMethod(definition) {
 }
 function generateNode(definition) {
     var result = "class " + definition.name + " extends " + definition.baseType;
-    if(definition.interfaces) {
+    if (definition.interfaces) {
         result += " implements " + definition.interfaces.join(", ");
     }
     result += " {\r\n";
@@ -4341,7 +4334,7 @@ function generateNode(definition) {
     result += generateIsMethod(definition);
     result += generateAccessors(definition);
     result += generateUpdateMethod(definition);
-    if(!forPrettyPrinter) {
+    if (!forPrettyPrinter) {
         result += generateFactoryMethod(definition);
         result += generateTriviaMethods(definition);
         result += generateWithMethods(definition);
@@ -4378,12 +4371,12 @@ function generateRewriter() {
     result += "\r\nclass SyntaxRewriter implements ISyntaxVisitor {\r\n" + "    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" + "        return token;\r\n" + "    }\r\n" + "\r\n" + "    public visitNode(node: SyntaxNode): SyntaxNode {\r\n" + "        return node.accept(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" + "        return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): ISyntaxList {\r\n" + "        var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "            var item = list.childAt(i);\r\n" + "            var newItem = this.visitNodeOrToken(item);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.childAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "        return newItems === null ? list : Syntax.list(newItems);\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" + "        var newItems: ISyntaxNodeOrToken[] = null;\r\n" + "\r\n" + "        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "            var item = list.childAt(i);\r\n" + "            var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" + "\r\n" + "            if (item !== newItem && newItems === null) {\r\n" + "                newItems = [];\r\n" + "                for (var j = 0; j < i; j++) {\r\n" + "                    newItems.push(list.childAt(j));\r\n" + "                }\r\n" + "            }\r\n" + "\r\n" + "            if (newItems) {\r\n" + "                newItems.push(newItem);\r\n" + "            }\r\n" + "        }\r\n" + "\r\n" + "        // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" + "        return newItems === null ? list : Syntax.separatedList(newItems);\r\n" + "    }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(definition.isAbstract) {
+        if (definition.isAbstract) {
             continue;
         }
         result += "\r\n";
         result += "    public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
-        if(definition.children.length === 0) {
+        if (definition.children.length === 0) {
             result += "        return node;\r\n";
             result += "    }\r\n";
             continue;
@@ -4392,23 +4385,23 @@ function generateRewriter() {
         for(var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
             result += "            ";
-            if(child.isOptional) {
+            if (child.isOptional) {
                 result += "node." + child.name + " === null ? null : ";
             }
-            if(child.isToken) {
+            if (child.isToken) {
                 result += "this.visitToken(node." + child.name + ")";
-            } else if(child.isList) {
+            } else if (child.isList) {
                 result += "this.visitList(node." + child.name + ")";
-            } else if(child.isSeparatedList) {
+            } else if (child.isSeparatedList) {
                 result += "this.visitSeparatedList(node." + child.name + ")";
-            } else if(child.type === "SyntaxKind") {
+            } else if (child.type === "SyntaxKind") {
                 result += "node.kind()";
-            } else if(isNodeOrToken(child)) {
+            } else if (isNodeOrToken(child)) {
                 result += "<" + child.type + ">this.visitNodeOrToken(node." + child.name + ")";
             } else {
                 result += "<" + child.type + ">this.visitNode(node." + child.name + ")";
             }
-            if(j < definition.children.length - 1) {
+            if (j < definition.children.length - 1) {
                 result += ",\r\n";
             }
         }
@@ -4427,67 +4420,67 @@ function generateToken(isFixedWidth, leading, trailing) {
     className += leading && trailing ? "WithLeadingAndTrailingTrivia" : leading && !trailing ? "WithLeadingTrivia" : !leading && trailing ? "WithTrailingTrivia" : "WithNoTrivia";
     result += className;
     result += " implements ISyntaxToken {\r\n";
-    if(needsSourcetext) {
+    if (needsSourcetext) {
         result += "        private _sourceText: ISimpleText;\r\n";
         result += "        private _fullStart: number;\r\n";
     }
     result += "        public tokenKind: SyntaxKind;\r\n";
-    if(leading) {
+    if (leading) {
         result += "        private _leadingTriviaInfo: number;\r\n";
     }
-    if(isVariableWidth) {
+    if (isVariableWidth) {
         result += "        private _textOrWidth: any;\r\n";
         result += "        private _value: any = null;\r\n";
     }
-    if(trailing) {
+    if (trailing) {
         result += "        private _trailingTriviaInfo: number;\r\n";
     }
     result += "\r\n";
-    if(needsSourcetext) {
+    if (needsSourcetext) {
         result += "        constructor(sourceText: ISimpleText, fullStart: number,";
     } else {
         result += "        constructor(";
     }
     result += "kind: SyntaxKind";
-    if(leading) {
+    if (leading) {
         result += ", leadingTriviaInfo: number";
     }
-    if(isVariableWidth) {
+    if (isVariableWidth) {
         result += ", textOrWidth: any";
     }
-    if(trailing) {
+    if (trailing) {
         result += ", trailingTriviaInfo: number";
     }
     result += ") {\r\n";
-    if(needsSourcetext) {
+    if (needsSourcetext) {
         result += "            this._sourceText = sourceText;\r\n";
         result += "            this._fullStart = fullStart;\r\n";
     }
     result += "            this.tokenKind = kind;\r\n";
-    if(leading) {
+    if (leading) {
         result += "            this._leadingTriviaInfo = leadingTriviaInfo;\r\n";
     }
-    if(isVariableWidth) {
+    if (isVariableWidth) {
         result += "            this._textOrWidth = textOrWidth;\r\n";
     }
-    if(trailing) {
+    if (trailing) {
         result += "            this._trailingTriviaInfo = trailingTriviaInfo;\r\n";
     }
     result += "        }\r\n\r\n";
     result += "        public clone(): ISyntaxToken {\r\n";
     result += "            return new " + className + "(\r\n";
-    if(needsSourcetext) {
+    if (needsSourcetext) {
         result += "                this._sourceText,\r\n";
         result += "                this._fullStart,\r\n";
     }
     result += "                this.tokenKind";
-    if(leading) {
+    if (leading) {
         result += ",\r\n                this._leadingTriviaInfo";
     }
-    if(isVariableWidth) {
+    if (isVariableWidth) {
         result += ",\r\n                this._textOrWidth";
     }
-    if(trailing) {
+    if (trailing) {
         result += ",\r\n                this._trailingTriviaInfo";
     }
     result += ");\r\n";
@@ -4498,29 +4491,29 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public childAt(index: number): ISyntaxElement { throw Errors.argumentOutOfRange('index'); }\r\n\r\n";
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
-    if(leading && trailing) {
+    if (leading && trailing) {
         result += "        public fullWidth(): number { return " + leadingTriviaWidth + " + this.width() + " + trailingTriviaWidth + "; }\r\n";
-    } else if(leading) {
+    } else if (leading) {
         result += "        public fullWidth(): number { return " + leadingTriviaWidth + " + this.width(); }\r\n";
-    } else if(trailing) {
+    } else if (trailing) {
         result += "        public fullWidth(): number { return this.width() + " + trailingTriviaWidth + "; }\r\n";
     } else {
         result += "        public fullWidth(): number { return this.width(); }\r\n";
     }
-    if(needsSourcetext) {
-        if(leading) {
+    if (needsSourcetext) {
+        if (leading) {
             result += "        private start(): number { return this._fullStart + " + leadingTriviaWidth + "; }\r\n";
         } else {
             result += "        private start(): number { return this._fullStart; }\r\n";
         }
         result += "        private end(): number { return this.start() + this.width(); }\r\n\r\n";
     }
-    if(isFixedWidth) {
+    if (isFixedWidth) {
         result += "        public width(): number { return this.text().length; }\r\n";
     } else {
         result += "        public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }\r\n";
     }
-    if(isFixedWidth) {
+    if (isFixedWidth) {
         result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     } else {
         result += "\r\n";
@@ -4533,12 +4526,12 @@ function generateToken(isFixedWidth, leading, trailing) {
         result += "            return this._textOrWidth;\r\n";
         result += "        }\r\n\r\n";
     }
-    if(needsSourcetext) {
+    if (needsSourcetext) {
         result += "        public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }\r\n\r\n";
     } else {
         result += "        public fullText(): string { return this.text(); }\r\n\r\n";
     }
-    if(isFixedWidth) {
+    if (isFixedWidth) {
         result += "        public value(): any { return null; }\r\n";
     } else {
         result += "        public value(): any { return this._value || (this._value = value(this)); }\r\n";
@@ -4556,7 +4549,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedText(): bool { return false; }\r\n";
-    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        private firstToken() { return this; }\r\n" + "        private lastToken() { return this; }\r\n" + "        private isTypeScriptSpecific() { return false; }\r\n" + "        private hasZeroWidthToken() { return this.fullWidth() === 0; }\r\n" + "        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        private realize(): ISyntaxToken { return realize(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): bool { return false; }\r\n" + "        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        private realize(): ISyntaxToken { return realize(this); }\r\n" + "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
     result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
     result += "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" + "        }\r\n" + "\r\n" + "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" + "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" + "        }\r\n";
     result += "    }\r\n";
@@ -4590,31 +4583,31 @@ function generateWalker() {
     result += "///<reference path='SyntaxVisitor.generated.ts' />\r\n" + "\r\n" + "class SyntaxWalker implements ISyntaxVisitor {\r\n" + "    public visitToken(token: ISyntaxToken): void {\r\n" + "    }\r\n" + "\r\n" + "    public visitNode(node: SyntaxNode): void {\r\n" + "        node.accept(this);\r\n" + "    }\r\n" + "\r\n" + "    public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "        if (nodeOrToken.isToken()) { \r\n" + "            this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" + "        }\r\n" + "        else {\r\n" + "            this.visitNode(<SyntaxNode>nodeOrToken);\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    private visitOptionalToken(token: ISyntaxToken): void {\r\n" + "        if (token === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitToken(token);\r\n" + "    }\r\n" + "\r\n" + "    public visitOptionalNode(node: SyntaxNode): void {\r\n" + "        if (node === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitNode(node);\r\n" + "    }\r\n" + "\r\n" + "    public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" + "        if (nodeOrToken === null) {\r\n" + "            return;\r\n" + "        }\r\n" + "\r\n" + "        this.visitNodeOrToken(nodeOrToken);\r\n" + "    }\r\n" + "\r\n" + "    public visitList(list: ISyntaxList): void {\r\n" + "        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "           this.visitNodeOrToken(list.childAt(i));\r\n" + "        }\r\n" + "    }\r\n" + "\r\n" + "    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" + "        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" + "            var item = list.childAt(i);\r\n" + "            this.visitNodeOrToken(item);\r\n" + "        }\r\n" + "    }\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(definition.isAbstract) {
+        if (definition.isAbstract) {
             continue;
         }
         result += "\r\n";
         result += "    public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): void {\r\n";
         for(var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
-            if(child.isToken) {
-                if(child.isOptional) {
+            if (child.isToken) {
+                if (child.isOptional) {
                     result += "        this.visitOptionalToken(node." + child.name + ");\r\n";
                 } else {
                     result += "        this.visitToken(node." + child.name + ");\r\n";
                 }
-            } else if(child.isList) {
+            } else if (child.isList) {
                 result += "        this.visitList(node." + child.name + ");\r\n";
-            } else if(child.isSeparatedList) {
+            } else if (child.isSeparatedList) {
                 result += "        this.visitSeparatedList(node." + child.name + ");\r\n";
-            } else if(isNodeOrToken(child)) {
-                if(child.isOptional) {
+            } else if (isNodeOrToken(child)) {
+                if (child.isOptional) {
                     result += "        this.visitOptionalNodeOrToken(node." + child.name + ");\r\n";
                 } else {
                     result += "        this.visitNodeOrToken(node." + child.name + ");\r\n";
                 }
-            } else if(child.type !== "SyntaxKind") {
-                if(child.isOptional) {
+            } else if (child.type !== "SyntaxKind") {
+                if (child.isOptional) {
                     result += "        this.visitOptionalNode(node." + child.name + ");\r\n";
                 } else {
                     result += "        this.visitNode(node." + child.name + ");\r\n";
@@ -4629,15 +4622,15 @@ function generateWalker() {
 function generateKeywordCondition(keywords, currentCharacter, indent) {
     var length = keywords[0].text.length;
     var result = "";
-    if(keywords.length === 1) {
+    if (keywords.length === 1) {
         var keyword = keywords[0];
-        if(currentCharacter === length) {
+        if (currentCharacter === length) {
             return indent + "return SyntaxKind." + (SyntaxKind)._map[keyword.kind] + ";\r\n";
         }
         var keywordText = keywords[0].text;
         var result = indent + "return (";
         for(var i = currentCharacter; i < length; i++) {
-            if(i > currentCharacter) {
+            if (i > currentCharacter) {
                 result += " && ";
             }
             var index = i === 0 ? "startIndex" : ("startIndex + " + i);
@@ -4651,7 +4644,7 @@ function generateKeywordCondition(keywords, currentCharacter, indent) {
             return k.text.substr(currentCharacter, 1);
         });
         for(var c in groupedKeywords) {
-            if(groupedKeywords.hasOwnProperty(c)) {
+            if (groupedKeywords.hasOwnProperty(c)) {
                 result += indent + "case CharacterCodes." + c + ":\r\n";
                 result += indent + "    // " + ArrayUtilities.select(groupedKeywords[c], function (k) {
                     return k.text;
@@ -4686,7 +4679,7 @@ function generateScannerUtilities() {
         var keywordsOfLengthI = ArrayUtilities.where(keywords, function (k) {
             return k.text.length === i;
         });
-        if(keywordsOfLengthI.length > 0) {
+        if (keywordsOfLengthI.length > 0) {
             result += "        case " + i + ":\r\n";
             result += "            // " + ArrayUtilities.select(keywordsOfLengthI, function (k) {
                 return k.text;
@@ -4708,12 +4701,12 @@ function generateVisitor() {
     result += "    visitToken(token: ISyntaxToken): any;\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(!definition.isAbstract) {
+        if (!definition.isAbstract) {
             result += "    visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
         }
     }
     result += "}\r\n\r\n";
-    if(!forPrettyPrinter) {
+    if (!forPrettyPrinter) {
         result += "class SyntaxVisitor implements ISyntaxVisitor {\r\n";
         result += "    public defaultVisit(node: ISyntaxNodeOrToken): any {\r\n";
         result += "        return null;\r\n";
@@ -4724,7 +4717,7 @@ function generateVisitor() {
         result += "    }\r\n";
         for(var i = 0; i < definitions.length; i++) {
             var definition = definitions[i];
-            if(!definition.isAbstract) {
+            if (!definition.isAbstract) {
                 result += "\r\n    private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
                 result += "        return this.defaultVisit(node);\r\n";
                 result += "    }\r\n";
@@ -4740,12 +4733,12 @@ function generateFactory() {
     result += "    export interface IFactory {\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(definition.isAbstract) {
+        if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
         for(var j = 0; j < definition.children.length; j++) {
-            if(j > 0) {
+            if (j > 0) {
                 result += ", ";
             }
             var child = definition.children[j];
@@ -4757,12 +4750,12 @@ function generateFactory() {
     result += "    class NormalModeFactory implements IFactory {\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(definition.isAbstract) {
+        if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
         for(var j = 0; j < definition.children.length; j++) {
-            if(j > 0) {
+            if (j > 0) {
                 result += ", ";
             }
             var child = definition.children[j];
@@ -4782,12 +4775,12 @@ function generateFactory() {
     result += "    class StrictModeFactory implements IFactory {\r\n";
     for(var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
-        if(definition.isAbstract) {
+        if (definition.isAbstract) {
             continue;
         }
         result += "        " + camelCase(getNameWithoutSuffix(definition)) + "(";
         for(var j = 0; j < definition.children.length; j++) {
-            if(j > 0) {
+            if (j > 0) {
                 result += ", ";
             }
             var child = definition.children[j];

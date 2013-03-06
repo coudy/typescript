@@ -73,7 +73,7 @@ class Scanner implements ISlidingWindowSource {
         this.languageVersion = languageVersion;
     }
 
-    private fetchMoreItems(argument: any, sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
+    public fetchMoreItems(argument: any, sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
         var charactersRemaining = this.text.length() - sourceIndex;
         var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
         this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);

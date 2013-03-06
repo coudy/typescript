@@ -1,4 +1,4 @@
-﻿///<reference path='ISyntaxNodeOrToken.ts' />
+///<reference path='ISyntaxNodeOrToken.ts' />
 
 class SyntaxRewriter implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): ISyntaxToken {

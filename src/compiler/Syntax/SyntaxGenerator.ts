@@ -1539,13 +1539,13 @@ function generateSlotMethods(definition: ITypeDefinition): string {
 
     if (!definition.isAbstract) {
         result += "\r\n";
-        result += "    private childCount(): number {\r\n";
+        result += "    public childCount(): number {\r\n";
         var slotCount = hasKind ? (definition.children.length - 1) : definition.children.length;
 
         result += "        return " + slotCount + ";\r\n";
         result += "    }\r\n\r\n";
 
-        result += "    private childAt(slot: number): ISyntaxElement {\r\n";
+        result += "    public childAt(slot: number): ISyntaxElement {\r\n";
 
         if (slotCount === 0) {
             result += "        throw Errors.invalidOperation();\r\n";
@@ -1918,7 +1918,7 @@ function generateUpdateMethod(definition: ITypeDefinition): string {
 }
 
 function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string {
-    var result = "\r\n    private isTypeScriptSpecific(): bool {\r\n";
+    var result = "\r\n    public isTypeScriptSpecific(): bool {\r\n";
 
     if (definition.isTypeScriptSpecific) {
         result += "        return true;\r\n";
@@ -2470,12 +2470,12 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 
     result +=
 "        public toJSON(key) { return tokenToJSON(this); }\r\n" +
-"        private firstToken() { return this; }\r\n" +
-"        private lastToken() { return this; }\r\n" +
-"        private isTypeScriptSpecific() { return false; }\r\n" +
-"        private hasZeroWidthToken() { return this.fullWidth() === 0; }\r\n" +
-"        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
-"        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
+"        public firstToken(): ISyntaxToken { return this; }\r\n" +
+"        public lastToken(): ISyntaxToken { return this; }\r\n" +
+"        public isTypeScriptSpecific(): bool { return false; }\r\n" +
+"        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }\r\n" +
+"        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
+"        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
 "        private realize(): ISyntaxToken { return realize(this); }\r\n" +
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 

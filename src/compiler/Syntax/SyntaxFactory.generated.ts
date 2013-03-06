@@ -1,4 +1,4 @@
-﻿///<reference path='ISyntaxList.ts' />
+///<reference path='ISyntaxList.ts' />
 
 module Syntax {
     export interface IFactory {

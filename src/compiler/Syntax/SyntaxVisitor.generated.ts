@@ -1,4 +1,4 @@
-﻿///<reference path='SyntaxNodes.generated.ts' />
+///<reference path='SyntaxNodes.generated.ts' />
 
 interface ISyntaxVisitor {
     visitToken(token: ISyntaxToken): any;

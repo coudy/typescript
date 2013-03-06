@@ -1,4 +1,4 @@
-﻿///<reference path='..\Text\CharacterCodes.ts' />
+///<reference path='..\Text\CharacterCodes.ts' />
 ///<reference path='SyntaxKind.ts' />
 
 class ScannerUtilities {

@@ -1,4 +1,4 @@
-﻿///<reference path='SyntaxNode.ts' />
+///<reference path='SyntaxNode.ts' />
 ///<reference path='ISyntaxList.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
@@ -23,11 +23,11 @@ class SourceUnitSyntax extends SyntaxNode {
         return SyntaxKind.SourceUnit;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.moduleElements;
             case 1: return this.endOfFileToken;
@@ -72,7 +72,7 @@ class SourceUnitSyntax extends SyntaxNode {
         return this.update(this.moduleElements, endOfFileToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.moduleElements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -95,7 +95,7 @@ class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax
         return <ModuleReferenceSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -119,11 +119,11 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ExternalModuleReference;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.moduleKeyword;
             case 1: return this.openParenToken;
@@ -172,7 +172,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return this.update(this.moduleKeyword, this.openParenToken, this.stringLiteral, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -193,11 +193,11 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ModuleNameModuleReference;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 1;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.moduleName;
             default: throw Errors.invalidOperation();
@@ -224,7 +224,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return this.update(moduleName);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -249,11 +249,11 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ImportDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.importKeyword;
             case 1: return this.identifier;
@@ -313,7 +313,7 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return this.update(this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -343,11 +343,11 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         return SyntaxKind.ClassDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 10;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -447,7 +447,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -473,11 +473,11 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return SyntaxKind.InterfaceDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.interfaceKeyword;
@@ -548,7 +548,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return this.update(this.exportKeyword, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, body);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -570,11 +570,11 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ExtendsClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.extendsKeyword;
             case 1: return this.typeNames;
@@ -615,7 +615,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -637,11 +637,11 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ImplementsClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.implementsKeyword;
             case 1: return this.typeNames;
@@ -682,7 +682,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -710,11 +710,11 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ModuleDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 8;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -801,7 +801,7 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return this.update(this.exportKeyword, this.declareKeyword, this.moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -827,11 +827,11 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.FunctionDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -905,7 +905,7 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.exportKeyword !== null) { return true; }
         if (this.declareKeyword !== null) { return true; }
         if (this.functionSignature.isTypeScriptSpecific()) { return true; }
@@ -933,11 +933,11 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.VariableStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -999,7 +999,7 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.exportKeyword, this.declareKeyword, this.variableDeclaration, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.exportKeyword !== null) { return true; }
         if (this.declareKeyword !== null) { return true; }
         if (this.variableDeclaration.isTypeScriptSpecific()) { return true; }
@@ -1024,11 +1024,11 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.varKeyword;
             case 1: return this.variableDeclarators;
@@ -1069,7 +1069,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return this.withVariableDeclarators(Syntax.separatedList([variableDeclarator]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.variableDeclarators.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1093,11 +1093,11 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclarator;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.typeAnnotation;
@@ -1144,7 +1144,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return this.update(this.identifier, this.typeAnnotation, equalsValueClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.typeAnnotation !== null) { return true; }
         if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) { return true; }
         return false;
@@ -1168,11 +1168,11 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return SyntaxKind.EqualsValueClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.equalsToken;
             case 1: return this.value;
@@ -1209,7 +1209,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return this.update(this.equalsToken, value);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.value.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1231,11 +1231,11 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         return visitor.visitPrefixUnaryExpression(this);
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.operatorToken;
             case 1: return this.operand;
@@ -1285,7 +1285,7 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         return this.update(this._kind, this.operatorToken, operand);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1309,11 +1309,11 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.ArrayLiteralExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBracketToken;
             case 1: return this.expressions;
@@ -1373,7 +1373,7 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this.openBracketToken, this.expressions, closeBracketToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expressions.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1392,11 +1392,11 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return SyntaxKind.OmittedExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 0;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         throw Errors.invalidOperation();
     }
 
@@ -1416,7 +1416,7 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return <OmittedExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -1439,11 +1439,11 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ParenthesizedExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openParenToken;
             case 1: return this.expression;
@@ -1494,7 +1494,7 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this.openParenToken, this.expression, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -1523,7 +1523,7 @@ class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return <ArrowFunctionExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -1546,11 +1546,11 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return SyntaxKind.SimpleArrowFunctionExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.equalsGreaterThanToken;
@@ -1594,7 +1594,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return this.update(this.identifier, this.equalsGreaterThanToken, body);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -1617,11 +1617,11 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return SyntaxKind.ParenthesizedArrowFunctionExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.callSignature;
             case 1: return this.equalsGreaterThanToken;
@@ -1664,7 +1664,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return this.update(this.callSignature, this.equalsGreaterThanToken, body);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -1687,11 +1687,11 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return SyntaxKind.QualifiedName;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.left;
             case 1: return this.dotToken;
@@ -1751,7 +1751,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return this.update(this.left, this.dotToken, right);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -1774,11 +1774,11 @@ class TypeArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.TypeArgumentList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.lessThanToken;
             case 1: return this.typeArguments;
@@ -1830,7 +1830,7 @@ class TypeArgumentListSyntax extends SyntaxNode {
         return this.update(this.lessThanToken, this.typeArguments, greaterThanToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -1855,11 +1855,11 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ConstructorType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.newKeyword;
             case 1: return this.typeParameterList;
@@ -1933,7 +1933,7 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.newKeyword, this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -1957,11 +1957,11 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.FunctionType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeParameterList;
             case 1: return this.parameterList;
@@ -2028,7 +2028,7 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -2051,11 +2051,11 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ObjectType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBraceToken;
             case 1: return this.typeMembers;
@@ -2119,7 +2119,7 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.openBraceToken, this.typeMembers, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -2142,11 +2142,11 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ArrayType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.type;
             case 1: return this.openBracketToken;
@@ -2201,7 +2201,7 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.type, this.openBracketToken, closeBracketToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -2223,11 +2223,11 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.GenericType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.name;
             case 1: return this.typeArgumentList;
@@ -2276,7 +2276,7 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.name, typeArgumentList);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -2298,11 +2298,11 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return SyntaxKind.TypeAnnotation;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.colonToken;
             case 1: return this.type;
@@ -2339,7 +2339,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return this.update(this.colonToken, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -2362,11 +2362,11 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.Block;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBraceToken;
             case 1: return this.statements;
@@ -2426,7 +2426,7 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.openBraceToken, this.statements, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -2453,11 +2453,11 @@ class ParameterSyntax extends SyntaxNode {
         return SyntaxKind.Parameter;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.dotDotDotToken;
             case 1: return this.publicOrPrivateKeyword;
@@ -2522,7 +2522,7 @@ class ParameterSyntax extends SyntaxNode {
         return this.update(this.dotDotDotToken, this.publicOrPrivateKeyword, this.identifier, this.questionToken, this.typeAnnotation, equalsValueClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.dotDotDotToken !== null) { return true; }
         if (this.publicOrPrivateKeyword !== null) { return true; }
         if (this.questionToken !== null) { return true; }
@@ -2550,11 +2550,11 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.MemberAccessExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.dotToken;
@@ -2606,7 +2606,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this.expression, this.dotToken, name);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -2628,11 +2628,11 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return visitor.visitPostfixUnaryExpression(this);
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.operand;
             case 1: return this.operatorToken;
@@ -2682,7 +2682,7 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this._kind, this.operand, operatorToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -2707,11 +2707,11 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ElementAccessExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.openBracketToken;
@@ -2769,7 +2769,7 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this.expression, this.openBracketToken, this.argumentExpression, closeBracketToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentExpression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2793,11 +2793,11 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return SyntaxKind.InvocationExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.argumentList;
@@ -2842,7 +2842,7 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return this.update(this.expression, argumentList);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2868,11 +2868,11 @@ class ArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.ArgumentList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeArgumentList;
             case 1: return this.openParenToken;
@@ -2930,7 +2930,7 @@ class ArgumentListSyntax extends SyntaxNode {
         return this.update(this.typeArgumentList, this.openParenToken, this.arguments, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.typeArgumentList !== null && this.typeArgumentList.isTypeScriptSpecific()) { return true; }
         if (this.arguments.isTypeScriptSpecific()) { return true; }
         return false;
@@ -2954,11 +2954,11 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return visitor.visitBinaryExpression(this);
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.left;
             case 1: return this.operatorToken;
@@ -3010,7 +3010,7 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return this.update(this._kind, this.left, this.operatorToken, right);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.left.isTypeScriptSpecific()) { return true; }
         if (this.right.isTypeScriptSpecific()) { return true; }
         return false;
@@ -3037,11 +3037,11 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return SyntaxKind.ConditionalExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.condition;
             case 1: return this.questionToken;
@@ -3102,7 +3102,7 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return this.update(this.condition, this.questionToken, this.whenTrue, this.colonToken, whenFalse);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.whenTrue.isTypeScriptSpecific()) { return true; }
         if (this.whenFalse.isTypeScriptSpecific()) { return true; }
@@ -3127,7 +3127,7 @@ class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
         return <TypeMemberSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -3149,11 +3149,11 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.ConstructSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.newKeyword;
             case 1: return this.callSignature;
@@ -3190,7 +3190,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.newKeyword, callSignature);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -3213,11 +3213,11 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.FunctionSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.questionToken;
@@ -3265,7 +3265,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.identifier, this.questionToken, callSignature);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -3290,11 +3290,11 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.IndexSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBracketToken;
             case 1: return this.parameter;
@@ -3349,7 +3349,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.openBracketToken, this.parameter, this.closeBracketToken, typeAnnotation);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -3372,11 +3372,11 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.PropertySignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.questionToken;
@@ -3423,7 +3423,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return this.update(this.identifier, this.questionToken, typeAnnotation);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -3446,11 +3446,11 @@ class ParameterListSyntax extends SyntaxNode {
         return SyntaxKind.ParameterList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openParenToken;
             case 1: return this.parameters;
@@ -3502,7 +3502,7 @@ class ParameterListSyntax extends SyntaxNode {
         return this.update(this.openParenToken, this.parameters, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.parameters.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -3526,11 +3526,11 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.CallSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeParameterList;
             case 1: return this.parameterList;
@@ -3577,7 +3577,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.typeParameterList !== null) { return true; }
         if (this.parameterList.isTypeScriptSpecific()) { return true; }
         if (this.typeAnnotation !== null) { return true; }
@@ -3603,11 +3603,11 @@ class TypeParameterListSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameterList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.lessThanToken;
             case 1: return this.typeParameters;
@@ -3659,7 +3659,7 @@ class TypeParameterListSyntax extends SyntaxNode {
         return this.update(this.lessThanToken, this.typeParameters, greaterThanToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -3681,11 +3681,11 @@ class TypeParameterSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameter;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.constraint;
@@ -3726,7 +3726,7 @@ class TypeParameterSyntax extends SyntaxNode {
         return this.update(this.identifier, constraint);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -3748,11 +3748,11 @@ class ConstraintSyntax extends SyntaxNode {
         return SyntaxKind.Constraint;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.extendsKeyword;
             case 1: return this.type;
@@ -3789,7 +3789,7 @@ class ConstraintSyntax extends SyntaxNode {
         return this.update(this.extendsKeyword, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -3811,11 +3811,11 @@ class ElseClauseSyntax extends SyntaxNode {
         return SyntaxKind.ElseClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.elseKeyword;
             case 1: return this.statement;
@@ -3852,7 +3852,7 @@ class ElseClauseSyntax extends SyntaxNode {
         return this.update(this.elseKeyword, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -3879,11 +3879,11 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.IfStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.ifKeyword;
             case 1: return this.openParenToken;
@@ -3961,7 +3961,7 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.ifKeyword, this.openParenToken, this.condition, this.closeParenToken, this.statement, elseClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         if (this.elseClause !== null && this.elseClause.isTypeScriptSpecific()) { return true; }
@@ -3986,11 +3986,11 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ExpressionStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.semicolonToken;
@@ -4035,7 +4035,7 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.expression, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -4060,11 +4060,11 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         return SyntaxKind.ConstructorDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.constructorKeyword;
             case 1: return this.parameterList;
@@ -4122,7 +4122,7 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         return this.update(this.constructorKeyword, this.parameterList, this.block, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -4147,11 +4147,11 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberFunctionDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -4218,7 +4218,7 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -4249,7 +4249,7 @@ class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return <MemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -4276,11 +4276,11 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.GetMemberAccessorDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 7;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -4354,7 +4354,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -4380,11 +4380,11 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.SetMemberAccessorDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -4452,7 +4452,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, this.parameterList, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -4476,11 +4476,11 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberVariableDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -4542,7 +4542,7 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.variableDeclarator, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -4565,11 +4565,11 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ThrowStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.throwKeyword;
             case 1: return this.expression;
@@ -4620,7 +4620,7 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.throwKeyword, this.expression, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -4644,11 +4644,11 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ReturnStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.returnKeyword;
             case 1: return this.expression;
@@ -4704,7 +4704,7 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.returnKeyword, this.expression, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression !== null && this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -4728,11 +4728,11 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return SyntaxKind.ObjectCreationExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.newKeyword;
             case 1: return this.expression;
@@ -4788,7 +4788,7 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return this.update(this.newKeyword, this.expression, argumentList);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentList !== null && this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
@@ -4817,11 +4817,11 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.SwitchStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 7;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.switchKeyword;
             case 1: return this.openParenToken;
@@ -4909,7 +4909,7 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.switchKeyword, this.openParenToken, this.expression, this.closeParenToken, this.openBraceToken, this.switchClauses, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.switchClauses.isTypeScriptSpecific()) { return true; }
         return false;
@@ -4935,7 +4935,7 @@ class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
         return <SwitchClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -4959,11 +4959,11 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.CaseSwitchClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.caseKeyword;
             case 1: return this.expression;
@@ -5022,7 +5022,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
@@ -5047,11 +5047,11 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.DefaultSwitchClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.defaultKeyword;
             case 1: return this.colonToken;
@@ -5103,7 +5103,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -5127,11 +5127,11 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.BreakStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.breakKeyword;
             case 1: return this.identifier;
@@ -5187,7 +5187,7 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.breakKeyword, this.identifier, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -5210,11 +5210,11 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ContinueStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.continueKeyword;
             case 1: return this.identifier;
@@ -5270,7 +5270,7 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.continueKeyword, this.identifier, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -5299,7 +5299,7 @@ class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return <IterationStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -5322,7 +5322,7 @@ class BaseForStatementSyntax extends IterationStatementSyntax {
         return <BaseForStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -5352,11 +5352,11 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 10;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
@@ -5450,7 +5450,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this.initializer !== null && this.initializer.isTypeScriptSpecific()) { return true; }
         if (this.condition !== null && this.condition.isTypeScriptSpecific()) { return true; }
@@ -5483,11 +5483,11 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForInStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 8;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
@@ -5570,7 +5570,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.left, this.inKeyword, this.expression, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this.left !== null && this.left.isTypeScriptSpecific()) { return true; }
         if (this.expression.isTypeScriptSpecific()) { return true; }
@@ -5599,11 +5599,11 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.WhileStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.whileKeyword;
             case 1: return this.openParenToken;
@@ -5659,7 +5659,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return this.update(this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
@@ -5686,11 +5686,11 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.WithStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.withKeyword;
             case 1: return this.openParenToken;
@@ -5754,7 +5754,7 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.withKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
@@ -5782,11 +5782,11 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return SyntaxKind.EnumDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.enumKeyword;
@@ -5862,7 +5862,7 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -5886,11 +5886,11 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.CastExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.lessThanToken;
             case 1: return this.type;
@@ -5948,7 +5948,7 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return this.update(this.lessThanToken, this.type, this.greaterThanToken, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -5971,11 +5971,11 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ObjectLiteralExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBraceToken;
             case 1: return this.propertyAssignments;
@@ -6035,7 +6035,7 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this.openBraceToken, this.propertyAssignments, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.propertyAssignments.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6055,7 +6055,7 @@ class PropertyAssignmentSyntax extends SyntaxNode {
         return <PropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -6078,11 +6078,11 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return SyntaxKind.SimplePropertyAssignment;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.propertyName;
             case 1: return this.colonToken;
@@ -6126,7 +6126,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return this.update(this.propertyName, this.colonToken, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6149,7 +6149,7 @@ class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return <AccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -6174,11 +6174,11 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.GetAccessorPropertyAssignment;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.getKeyword;
             case 1: return this.propertyName;
@@ -6233,7 +6233,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6260,11 +6260,11 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.SetAccessorPropertyAssignment;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.setKeyword;
             case 1: return this.propertyName;
@@ -6326,7 +6326,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameterName, this.closeParenToken, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6351,11 +6351,11 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return SyntaxKind.FunctionExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.functionKeyword;
             case 1: return this.identifier;
@@ -6418,7 +6418,7 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return this.update(this.functionKeyword, this.identifier, this.callSignature, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -6441,11 +6441,11 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.EmptyStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 1;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.semicolonToken;
             default: throw Errors.invalidOperation();
@@ -6484,7 +6484,7 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -6508,11 +6508,11 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.TryStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.tryKeyword;
             case 1: return this.block;
@@ -6574,7 +6574,7 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.tryKeyword, this.block, this.catchClause, finallyClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         if (this.catchClause !== null && this.catchClause.isTypeScriptSpecific()) { return true; }
         if (this.finallyClause !== null && this.finallyClause.isTypeScriptSpecific()) { return true; }
@@ -6602,11 +6602,11 @@ class CatchClauseSyntax extends SyntaxNode {
         return SyntaxKind.CatchClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.catchKeyword;
             case 1: return this.openParenToken;
@@ -6661,7 +6661,7 @@ class CatchClauseSyntax extends SyntaxNode {
         return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6684,11 +6684,11 @@ class FinallyClauseSyntax extends SyntaxNode {
         return SyntaxKind.FinallyClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.finallyKeyword;
             case 1: return this.block;
@@ -6725,7 +6725,7 @@ class FinallyClauseSyntax extends SyntaxNode {
         return this.update(this.finallyKeyword, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6749,11 +6749,11 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.LabeledStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.colonToken;
@@ -6805,7 +6805,7 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.identifier, this.colonToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -6833,11 +6833,11 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.DoStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 7;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.doKeyword;
             case 1: return this.statement;
@@ -6905,7 +6905,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return this.update(this.doKeyword, this.statement, this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         if (this.condition.isTypeScriptSpecific()) { return true; }
         return false;
@@ -6929,11 +6929,11 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.TypeOfExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeOfKeyword;
             case 1: return this.expression;
@@ -6978,7 +6978,7 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return this.update(this.typeOfKeyword, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -7001,11 +7001,11 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.DeleteExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.deleteKeyword;
             case 1: return this.expression;
@@ -7050,7 +7050,7 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return this.update(this.deleteKeyword, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -7073,11 +7073,11 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.VoidExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.voidKeyword;
             case 1: return this.expression;
@@ -7122,7 +7122,7 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return this.update(this.voidKeyword, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -7145,11 +7145,11 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.DebuggerStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.debuggerKeyword;
             case 1: return this.semicolonToken;
@@ -7194,7 +7194,7 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.debuggerKeyword, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }

@@ -1,4 +1,4 @@
-﻿///<reference path='ISyntaxToken.ts' />
+///<reference path='ISyntaxToken.ts' />
 ///<reference path='..\Text\IText.ts' />
 ///<reference path='SyntaxToken.ts' />
 
@@ -69,12 +69,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -160,12 +160,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -251,12 +251,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -345,12 +345,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -411,12 +411,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -489,12 +489,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -567,12 +567,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -648,12 +648,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
