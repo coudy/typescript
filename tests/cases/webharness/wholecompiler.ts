@@ -1080,8 +1080,8 @@ module TypeScript {
             var lineCol = { line: -1, col: -1 };
             var limLineCol = { line: -1, col: -1 };
             if (context.parser !== null) {
-                context.parser.getSourceLineCol(lineCol, this.minChar);
-                context.parser.getSourceLineCol(limLineCol, this.limChar);
+                context.parser.getZeroBasedSourceLineCol(lineCol, this.minChar);
+                context.parser.getZeroBasedSourceLineCol(limLineCol, this.limChar);
                 context.write("(" + lineCol.line + "," + lineCol.col + ")--" +
                               "(" + limLineCol.line + "," + limLineCol.col + "): ");
             }
@@ -2081,7 +2081,8 @@ module TypeScript {
     export class LocationInfo {
         constructor(public filename: string,
                     public lineMap: number[],
-                    public unitIndex) { }
+                    public unitIndex) {
+        }
     }
 
     export var unknownLocationInfo = new LocationInfo("unknown", null, -1);
@@ -5114,8 +5115,10 @@ module TypeScript {
         public logLinemap(linemap: number[]) {
             var result = "[";
             for (var i = 0; i < linemap.length; i++) {
-                if (i > 0)
+                if (i > 0) {
                     result += ",";
+                }
+
                 result += linemap[i];
             }
             result += "]";
@@ -5133,15 +5136,8 @@ module TypeScript {
 
         private addLineColumn(script: TypeScript.Script, position: number): string {
             // just for calling getSourceLineColFromMap
-            var lineInfo = {
-                line: -1,
-                col: -1
-            }
-            TypeScript.getSourceLineColFromMap(lineInfo, position, script.locationInfo.lineMap);
-
-            if (lineInfo.col !== -1) {
-                lineInfo.col++; //TODO: function above seems to consider line as 1-based, and column as 0-based
-            }
+            var lineInfo = { line: -1, col: -1 };
+            TypeScript.getZeroBasedSourceLineColFromMap(lineInfo, position, script.locationInfo.lineMap);
 
             return "(" + lineInfo.line + ", " + lineInfo.col + ")";
         }
@@ -6342,8 +6338,15 @@ module TypeScript {
             this.recordSourceMappingEnd(classDecl);
         }
 
+        public getClassPropertiesMustComeAfterSuperCall(funcDecl: FuncDecl, classDecl: TypeDeclaration) {
+            var isClassConstructor = funcDecl.isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod);
+            var hasNonObjectBaseType = isClassConstructor && hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseType) && !hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
+            var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor);
+            return classPropertiesMustComeAfterSuperCall;
+        }
+
         public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
-            bases: ASTList, hasSelfRef: bool, classDecl: TypeDeclaration) {
+            hasSelfRef: bool, classDecl: TypeDeclaration) {
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
             /// such as: 
             ///     Foo.prototype.bar = 
@@ -6357,9 +6360,7 @@ module TypeScript {
             //    emitIndent();
             //}
 
-            var isClassConstructor = funcDecl.isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod);
-            var hasNonObjectBaseType = isClassConstructor && hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseType) && !hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
-            var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor);
+            var classPropertiesMustComeAfterSuperCall = this.getClassPropertiesMustComeAfterSuperCall(funcDecl, classDecl);
 
             // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
             // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
@@ -6438,7 +6439,7 @@ module TypeScript {
                 this.recordSourceMappingEnd(arg);
             }
 
-            if (funcDecl.isConstructor && ((<ClassDeclaration>funcDecl.classDecl).varFlags & VarFlags.MustCaptureThis)) {
+            if (funcDecl.isConstructor && this.shouldCaptureThis(funcDecl.classDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
@@ -6461,11 +6462,6 @@ module TypeScript {
                             this.recordSourceMappingEnd(arg);
                         }
                     }
-                }
-
-                // For classes, the constructor needs to be explicitly called
-                if (!hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
-                    this.emitConstructorCalls(bases, classDecl);
                 }
             }
             if (hasSelfRef) {
@@ -6563,6 +6559,65 @@ module TypeScript {
             //}           
         }
 
+        public getModuleImportAndDepencyList(moduleDecl: ModuleDeclaration) {
+            var importList = "";
+            var dependencyList = "";
+
+            // all dependencies are quoted
+            for (var i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
+                var importStatement = (<ModuleType>moduleDecl.mod).importedModules[i]
+
+                // if the imported module is only used in a type position, do not add it as a requirement
+                if (importStatement.id.sym &&
+                    !(<TypeSymbol>importStatement.id.sym).onlyReferencedAsTypeRef) {
+                    if (i <= (<ModuleType>moduleDecl.mod).importedModules.length - 1) {
+                        dependencyList += ", ";
+                        importList += ", ";
+                    }
+
+                    importList += "__" + importStatement.id.actualText + "__";
+                    dependencyList += importStatement.firstAliasedModToString();
+                }
+            }
+
+            // emit any potential amd dependencies
+            for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
+                dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
+            }
+
+            return {
+                importList: importList,
+                dependencyList: dependencyList
+            };
+        }
+
+        public isParentDynamicModule(moduleDecl: ModuleDeclaration) {
+            var containingMod: ModuleDeclaration = null;
+            if (moduleDecl.type && moduleDecl.type.symbol.container && moduleDecl.type.symbol.container.declAST) {
+                containingMod = <ModuleDeclaration>moduleDecl.type.symbol.container.declAST;
+            }
+            var parentIsDynamic = containingMod && hasFlag(containingMod.modFlags, ModuleFlags.IsDynamic);
+            return parentIsDynamic;
+        }
+
+        public shouldCaptureThis(ast: AST) {
+            if (ast == null) {
+                return this.checker.mustCaptureGlobalThis;
+            }
+
+            if (ast.nodeType == NodeType.ModuleDeclaration) {
+                return hasFlag((<ModuleDeclaration>ast).modFlags,  ModuleFlags.MustCaptureThis);
+            } else if (ast.nodeType == NodeType.ClassDeclaration) {
+                return hasFlag((<ClassDeclaration>ast).varFlags, VarFlags.MustCaptureThis);
+            } else if (ast.nodeType == NodeType.FuncDecl) {
+                var func = <FuncDecl>ast;
+                // Super calls use 'this' reference. If super call is in a lambda, 'this' value needs to be captured in the parent.
+                return func.hasSelfReference() || func.hasSuperReferenceInFatArrowFunction();
+            }
+
+            return false;
+        }
+
         public emitJavascriptModule(moduleDecl: ModuleDeclaration) {
             var modName = moduleDecl.name.actualText;
             if (isTSFile(modName)) {
@@ -6621,31 +6676,10 @@ module TypeScript {
                     if (moduleGenTarget == ModuleGenTarget.Asynchronous) { // AMD
                         var dependencyList = "[\"require\", \"exports\"";
                         var importList = "require, exports";
-                        var importStatement: ImportDeclaration = null;
 
-                        // all dependencies are quoted
-                        for (var i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
-                            importStatement = (<ModuleType>moduleDecl.mod).importedModules[i]
-
-                            // if the imported module is only used in a type position, do not add it as a requirement
-                            if (importStatement.id.sym &&
-                                !(<TypeSymbol>importStatement.id.sym).onlyReferencedAsTypeRef) {
-                                if (i <= (<ModuleType>moduleDecl.mod).importedModules.length - 1) {
-                                    dependencyList += ", ";
-                                    importList += ", ";
-                                }
-
-                                importList += "__" + importStatement.id.actualText + "__";
-                                dependencyList += importStatement.firstAliasedModToString();
-                            }
-                        }
-
-                        // emit any potential amd dependencies
-                        for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
-                            dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
-                        }
-
-                        dependencyList += "]";
+                        var importAndDependencyList = this.getModuleImportAndDepencyList(moduleDecl);
+                        importList += importAndDependencyList.importList;
+                        dependencyList += importAndDependencyList.dependencyList + "]";
 
                         this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
                     }
@@ -6684,7 +6718,7 @@ module TypeScript {
                     this.indenter.increaseIndent();
                 }
 
-                if (moduleDecl.modFlags & ModuleFlags.MustCaptureThis) {
+                if (this.shouldCaptureThis(moduleDecl)) {
                     this.writeCaptureThisStatement(moduleDecl);
                 }
 
@@ -6720,12 +6754,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    var containingMod: ModuleDeclaration = null;
-                    if (moduleDecl.type && moduleDecl.type.symbol.container && moduleDecl.type.symbol.container.declAST) {
-                        containingMod = <ModuleDeclaration>moduleDecl.type.symbol.container.declAST;
-                    }
-                    var parentIsDynamic = containingMod && hasFlag(containingMod.modFlags, ModuleFlags.IsDynamic);
-
+                    var parentIsDynamic = this.isParentDynamicModule(moduleDecl);
                     this.recordSourceMappingStart(moduleDecl.endingToken);
                     if (temp == EmitContainer.Prog && isExported) {
                         this.writeToOutput("}");
@@ -6810,7 +6839,6 @@ module TypeScript {
                 temp = this.setContainer(EmitContainer.Function);
             }
 
-            var bases: ASTList = null;
             var hasSelfRef = false;
             var funcName = funcDecl.getNameText();
 
@@ -6818,18 +6846,9 @@ module TypeScript {
                 ((temp != EmitContainer.Constructor) ||
                 ((funcDecl.fncFlags & FncFlags.Method) == FncFlags.None))) {
                 var tempLit = this.setInObjectLiteral(false);
-                if (this.thisClassNode) {
-                    bases = this.thisClassNode.extendsList;
-                }
-                hasSelfRef = Emitter.shouldCaptureThis(funcDecl);
+                hasSelfRef = this.shouldCaptureThis(funcDecl);
                 this.recordSourceMappingStart(funcDecl);
-                if (hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported) && funcDecl.type.symbol.container == this.checker.gloMod && !funcDecl.isConstructor) {
-                    this.writeToOutput("this." + funcName + " = ");
-                    this.emitInnerFunction(funcDecl, false, false, bases, hasSelfRef, this.thisClassNode);
-                }
-                else {
-                    this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()), false, bases, hasSelfRef, this.thisClassNode);
-                }
+                this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()), false, hasSelfRef, this.thisClassNode);
                 this.setInObjectLiteral(tempLit);
             }
             this.setContainer(temp);
@@ -6900,60 +6919,71 @@ module TypeScript {
             }
         }
 
+        public isContainedInClassDeclaration(varDecl: VarDecl) {
+            var sym = varDecl.sym;
+            if (sym && sym.isMember() && sym.container &&
+                    (sym.container.kind() == SymbolKind.Type)) {
+                var type = (<TypeSymbol>sym.container).type;
+                if (type.isClass() && (!hasFlag(sym.flags, SymbolFlags.ModuleMember))) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public isContainedInModuleOrEnumDeclaration(varDecl: VarDecl) {
+            var sym = varDecl.sym;
+            if (sym && sym.isMember() && sym.container &&
+                    (sym.container.kind() == SymbolKind.Type)) {
+                var type = (<TypeSymbol>sym.container).type;
+                if (type.hasImplementation()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public getContainedSymbolName(varDecl: VarDecl) {
+            return varDecl.sym.container.name;
+        }
+
         public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
             if ((varDecl.varFlags & VarFlags.Ambient) == VarFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
                 this.onEmitVar();
             }
             else {
-                var sym = varDecl.sym;
-                var hasInitializer = (varDecl.init != null);
                 this.emitParensAndCommentsInPlace(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
-                if (sym && sym.isMember() && sym.container &&
-                    (sym.container.kind() == SymbolKind.Type)) {
-                    var type = (<TypeSymbol>sym.container).type;
-                    if (type.isClass() && (!hasFlag(sym.flags, SymbolFlags.ModuleMember))) {
-                        // class
-                        if (this.emitState.container != EmitContainer.Args) {
-                            if (hasFlag(sym.flags, SymbolFlags.Static)) {
-                                this.writeToOutput(sym.container.name + ".");
-                            }
-                            else {
-                                this.writeToOutput("this.");
-                            }
-                        }
-                    }
-                    else if (type.hasImplementation()) {
-                        // module
-                        if (!hasFlag(sym.flags, SymbolFlags.Exported) && (sym.container == this.checker.gloMod || !hasFlag(sym.flags, SymbolFlags.Property))) {
-                            this.emitVarDeclVar();
-                        }
-                        else if (hasFlag(varDecl.varFlags, VarFlags.LocalStatic)) {
-                            this.writeToOutput(".");
+                if (this.isContainedInClassDeclaration(varDecl)) {
+                    // class
+                    if (this.emitState.container != EmitContainer.Args) {
+                        if (varDecl.isStatic()) {
+                            this.writeToOutput(this.getContainedSymbolName(varDecl) + ".");
                         }
                         else {
-                            if (this.emitState.container == EmitContainer.DynamicModule) {
-                                this.writeToOutput("exports.");
-                            }
-                            else {
-                                this.writeToOutput(this.moduleName + ".");
-                            }
+                            this.writeToOutput("this.");
                         }
                     }
+                }
+                else if (this.isContainedInModuleOrEnumDeclaration(varDecl)) {
+                    // module
+                    if (!varDecl.isExported() && !varDecl.isProperty()) {
+                        this.emitVarDeclVar();
+                    }
                     else {
-                        // function, constructor, method etc.
-                        if (tokenId != TokenID.OpenParen) {
-                            if (hasFlag(sym.flags, SymbolFlags.Exported) && sym.container == this.checker.gloMod) {
-                                this.writeToOutput("this.");
-                            }
-                            else {
-                                this.emitVarDeclVar();
-                            }
+                        if (this.emitState.container == EmitContainer.DynamicModule) {
+                            this.writeToOutput("exports.");
+                        }
+                        else {
+                            this.writeToOutput(this.moduleName + ".");
                         }
                     }
                 }
                 else {
+                    // function, constructor, method etc.
                     if (tokenId != TokenID.OpenParen) {
                         this.emitVarDeclVar();
                     }
@@ -6961,6 +6991,7 @@ module TypeScript {
                 this.recordSourceMappingStart(varDecl.id);
                 this.writeToOutput(varDecl.id.actualText);
                 this.recordSourceMappingEnd(varDecl.id);
+                var hasInitializer = (varDecl.init != null);
                 if (hasInitializer) {
                     this.writeToOutputTrimmable(" = ");
 
@@ -7165,6 +7196,10 @@ module TypeScript {
             }
         }
 
+        public getLineMap() {
+            return this.checker.locationInfo.lineMap;
+        }
+
         public recordSourceMappingStart(ast: IASTSpan) {
             if (this.sourceMapper && isValidAstNode(ast)) {
                 var lineCol = { line: -1, col: -1 };
@@ -7172,12 +7207,13 @@ module TypeScript {
                 sourceMapping.start.emittedColumn = this.emitState.column;
                 sourceMapping.start.emittedLine = this.emitState.line;
                 // REVIEW: check time consumed by this binary search (about two per leaf statement)
-                getSourceLineColFromMap(lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                var lineMap = this.getLineMap();
+                getZeroBasedSourceLineColFromMap(lineCol, ast.minChar, lineMap);
                 sourceMapping.start.sourceColumn = lineCol.col;
-                sourceMapping.start.sourceLine = lineCol.line;
-                getSourceLineColFromMap(lineCol, ast.limChar, this.checker.locationInfo.lineMap);
+                sourceMapping.start.sourceLine = lineCol.line + 1;
+                getZeroBasedSourceLineColFromMap(lineCol, ast.limChar, lineMap);
                 sourceMapping.end.sourceColumn = lineCol.col;
-                sourceMapping.end.sourceLine = lineCol.line;
+                sourceMapping.end.sourceLine = lineCol.line + 1;
                 if (this.sourceMapper.currentNameIndex.length > 0) {
                     sourceMapping.nameIndex = this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1];
                 }
@@ -7358,7 +7394,7 @@ module TypeScript {
                     this.emitIndent();
                     this.recordSourceMappingStart(getter);
                     this.writeToOutput("get: ");
-                    this.emitInnerFunction(getter, false, isProto, null, Emitter.shouldCaptureThis(getter), null);
+                    this.emitInnerFunction(getter, false, isProto, this.shouldCaptureThis(getter), null);
                     this.writeLineToOutput(",");
                 }
 
@@ -7368,7 +7404,7 @@ module TypeScript {
                     this.emitIndent();
                     this.recordSourceMappingStart(setter);
                     this.writeToOutput("set: ");
-                    this.emitInnerFunction(setter, false, isProto, null, Emitter.shouldCaptureThis(setter), null);
+                    this.emitInnerFunction(setter, false, isProto, this.shouldCaptureThis(setter), null);
                     this.writeLineToOutput(",");
                 }
 
@@ -7395,7 +7431,7 @@ module TypeScript {
                     this.emitIndent();
                     this.recordSourceMappingStart(funcDecl);
                     this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
-                    this.emitInnerFunction(funcDecl, false, true, null, Emitter.shouldCaptureThis(funcDecl), null);
+                    this.emitInnerFunction(funcDecl, false, true, this.shouldCaptureThis(funcDecl), null);
                     this.writeLineToOutput(";");
                 }
             }
@@ -7416,30 +7452,6 @@ module TypeScript {
             }
         }
 
-        public emitAddBaseMethods(className: string, base: Type, classDecl: TypeDeclaration): void {
-            if (base.members) {
-                var baseSymbol = base.symbol;
-                var baseName = baseSymbol.name;
-                if (baseSymbol.declModule != classDecl.type.symbol.declModule) {
-                    baseName = baseSymbol.fullName();
-                }
-                base.members.allMembers.map(function(key, s, c) {
-                    var sym = <Symbol>s;
-                    if ((sym.kind() == SymbolKind.Type) && (<TypeSymbol>sym).type.call) {
-                        this.recordSourceMappingStart(sym.declAST);
-                        this.writeLineToOutput(className + ".prototype." + sym.name + " = " +
-                                          baseName + ".prototype." + sym.name + ";");
-                        this.recordSourceMappingEnd(sym.declAST);
-                    }
-                }, null);
-            }
-            if (base.extendsList) {
-                for (var i = 0, len = base.extendsList.length; i < len; i++) {
-                    this.emitAddBaseMethods(className, base.extendsList[i], classDecl);
-                }
-            }
-        }
-
         public emitJavascriptClass(classDecl: ClassDeclaration) {
             if (!hasFlag(classDecl.varFlags, VarFlags.Ambient)) {
                 var svClassNode = this.thisClassNode;
@@ -7450,12 +7462,7 @@ module TypeScript {
                 var temp = this.setContainer(EmitContainer.Class);
 
                 this.recordSourceMappingStart(classDecl);
-                if (hasFlag(classDecl.varFlags, VarFlags.Exported) && classDecl.type.symbol.container == this.checker.gloMod) {
-                    this.writeToOutput("this." + className);
-                }
-                else {
-                    this.writeToOutput("var " + className);
-                }
+                this.writeToOutput("var " + className);
 
                 //if (hasFlag(classDecl.varFlags, VarFlags.Exported) && (temp == EmitContainer.Module || temp == EmitContainer.DynamicModule)) {
                 //    var modName = temp == EmitContainer.Module ? this.moduleName : "exports";
@@ -7560,7 +7567,7 @@ module TypeScript {
                                     this.recordSourceMappingStart(fn)
                                     this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
                                     this.emitInnerFunction(fn, (fn.name && !fn.name.isMissing()), true,
-                                            null, Emitter.shouldCaptureThis(fn), null);
+                                            this.shouldCaptureThis(fn), null);
                                     this.writeLineToOutput(";");
                                 }
                             }
@@ -7635,7 +7642,7 @@ module TypeScript {
             }
 
             if (!this.globalThisCapturePrologueEmitted) {
-                if (this.checker.mustCaptureGlobalThis) {
+                if (this.shouldCaptureThis(null)) {
                     this.globalThisCapturePrologueEmitted = true;
                     this.writeLineToOutput(this.captureThisStmtString);
                 }
@@ -7671,11 +7678,6 @@ module TypeScript {
             else {
                 this.writeToOutput("this");
             }
-        }
-
-        private static shouldCaptureThis(func: FuncDecl): bool {
-            // Super calls use 'this' reference. If super call is in a lambda, 'this' value needs to be captured in the parent.
-            return func.hasSelfReference() || func.hasSuperReferenceInFatArrowFunction();
         }
 
         public createFile(fileName: string, useUTF8: bool): ITextWriter {
@@ -7750,8 +7752,11 @@ module TypeScript {
 
         public writePrefixFromSym(symbol: Symbol): void {
             if (symbol && this.checker.locationInfo.lineMap) {
-                getSourceLineColFromMap(this.lineCol, symbol.location,
+                getZeroBasedSourceLineColFromMap(this.lineCol, symbol.location,
                                         this.checker.locationInfo.lineMap);
+                if (this.lineCol.line >= 0) {
+                    this.lineCol.line++;
+                }
             }
             else {
                 this.lineCol.line = -1;
@@ -7764,7 +7769,10 @@ module TypeScript {
             if (ast) {
                 ast.flags |= ASTFlags.Error;
                 if (this.checker.locationInfo.lineMap) {
-                    getSourceLineColFromMap(this.lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                    getZeroBasedSourceLineColFromMap(this.lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                    if (this.lineCol.line >= 0) {
+                        this.lineCol.line++;
+                    }
                 }
             }
         }
@@ -7815,8 +7823,8 @@ module TypeScript {
         public showRef(ast: AST, text: string, symbol: Symbol) {
             var defLineCol = { line: -1, col: -1 };
             // TODO: multiple def locations
-            this.parser.getSourceLineCol(defLineCol, symbol.location);
-            this.reportError(ast, "symbol " + text + " defined at (" + defLineCol.line + "," + defLineCol.col + ")");
+            this.parser.getZeroBasedSourceLineCol(defLineCol, symbol.location);
+            this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.col + ")");
         }
 
         public unresolvedSymbol(ast: AST, name: string) {
@@ -8046,8 +8054,8 @@ module TypeScript {
             this.errorRecovery = true;
         }
 
-        public getSourceLineCol(lineCol: ILineCol, minChar: number): void {
-            getSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap);
+        public getZeroBasedSourceLineCol(lineCol: ILineCol, minChar: number): void {
+            getZeroBasedSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap);
         }
 
         private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
@@ -8067,9 +8075,9 @@ module TypeScript {
             }
             else if (this.errorRecovery) {
                 var lineCol = { line: -1, col: -1 };
-                this.getSourceLineCol(lineCol, startPos);
+                this.getZeroBasedSourceLineCol(lineCol, startPos);
                 if (this.outfile) {
-                    this.outfile.WriteLine("// " + this.fname + " (" + lineCol.line + "," + lineCol.col + "): " + message);
+                    this.outfile.WriteLine("// " + this.fname + " (" + (lineCol.line + 1) + "," + lineCol.col + "): " + message);
                 }
             }
             else {
@@ -8151,9 +8159,9 @@ module TypeScript {
                 c.minChar = comment.startPos;
                 c.limChar = comment.startPos + comment.value.length;
                 var lineCol = { line: -1, col: -1 };
-                this.getSourceLineCol(lineCol, c.minChar);
+                this.getZeroBasedSourceLineCol(lineCol, c.minChar);
                 c.minLine = lineCol.line;
-                this.getSourceLineCol(lineCol, c.limChar);
+                this.getZeroBasedSourceLineCol(lineCol, c.limChar);
                 c.limLine = lineCol.line;
 
                 if (!comment.isBlock && comment.value.length > 3 && comment.value.substring(0, 3) == "///") {
@@ -12684,6 +12692,7 @@ module TypeScript {
     export interface ISourceText {
         getText(start: number, end: number): string;
         getLength(): number;
+        charCodeAt(index: number): number;
     }
 
     export class SourceSimpleText implements ISimpleText {
@@ -12706,6 +12715,14 @@ module TypeScript {
         public subText(span: TextSpan): ISimpleText {
             return TextFactory.createSimpleSubText(this, span);
         }
+
+        public charCodeAt(index: number): number {
+            return this.text.charCodeAt(index);
+        }
+
+        public lineMap(): LineMap {
+            return LineMap.createFrom(this);
+        }
     }
 
     // Implementation on top of a contiguous string
@@ -12719,6 +12736,10 @@ module TypeScript {
 
         public getLength(): number {
             return this.text.length;
+        }
+
+        public charCodeAt(index: number): number {
+            return this.text.charCodeAt(index);
         }
     }
 
@@ -12852,8 +12873,8 @@ module TypeScript {
         seenUnicodeCharInComment: bool = false;
 
         public startLine: number;
-        public prevLine = 1;
-        public line = 1;
+        public prevLine = 0;
+        public line = 0;
         public col = 0;
         public leftCurlyCount: number;
         public rightCurlyCount: number;
@@ -12951,8 +12972,8 @@ module TypeScript {
         // REVIEW: When adding new variables make sure to handle storing them in getLookAheadToken. 
         //         The method works by storing the state before scanning and restoring it later on,
         //         missing a member variable could result in an inconsistent state.
-        public prevLine = 1;
-        public line = 1;
+        public prevLine = 0;
+        public line = 0;
         public col = 0;
         public pos = 0;
         public startPos = 0;
@@ -12982,7 +13003,7 @@ module TypeScript {
         constructor() {
             this.startCol = this.col;
             this.startLine = this.line;
-            this.lineMap[1] = 0;
+            this.lineMap[0] = 0;
 
             if (!LexKeywordTable) {
                 LexInitialize();
@@ -12997,7 +13018,7 @@ module TypeScript {
             this.pos = 0;
             this.interveningWhitespacePos = 0;
             this.startPos = 0;
-            this.line = 1;
+            this.line = 0;
             this.col = 0;
             this.startCol = this.col;
             this.startLine = this.line;
@@ -13005,7 +13026,7 @@ module TypeScript {
             this.src = newSrc.getText(0, newSrc.getLength());
             this.len = this.src.length;
             this.lineMap = [];
-            this.lineMap[1] = 0;
+            this.lineMap[0] = 0;
             this.commentStack = [];
             this.leftCurlyCount = 0;
             this.rightCurlyCount = 0;
@@ -14059,10 +14080,11 @@ module TypeScript {
         }
     }
 
-    // Return the (1-based) line number from a character offset using the provided linemap.
-    export function getLineNumberFromPosition(lineMap: number[], position: number): number {
-        if (position === -1)
-            return 0;
+    // Return the (0-based) line number from a character offset using the provided linemap.
+    export function getZeroBasedLineNumberFromPosition(lineMap: number[], position: number): number {
+        if (position === -1) {
+            return -1;
+        }
 
         // Binary search
         var min = 0;
@@ -14084,31 +14106,28 @@ module TypeScript {
     }
 
     /// Return the [line, column] data for a given offset and a lineMap.
-    /// Note that the returned line is 1-based, while the column is 0-based.
-    export function getSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap: number[]): void {
-        var line = getLineNumberFromPosition(lineMap, minChar);
+    /// Note that the returned line is 0-based, while the column is 0-based.
+    export function getZeroBasedSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap: number[]): void {
+        var line = getZeroBasedLineNumberFromPosition(lineMap, minChar);
 
-        if (line > 0) {
+        if (line >= 0) {
             lineCol.line = line;
             lineCol.col = (minChar - lineMap[line]);
         }
     }
 
-    // Return the [line, column] (both 1 based) corresponding to a given position in a given script.
-    export function getLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
+    // Return the [line, column] (both 0 based) corresponding to a given position in a given script.
+    export function getZeroBasedLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
         var result = { line: -1, col: -1 };
-        getSourceLineColFromMap(result, position, script.locationInfo.lineMap);
-        if (result.col >= 0) {
-            result.col++;   // Make it 1-based
-        }
+        getZeroBasedSourceLineColFromMap(result, position, script.locationInfo.lineMap);
         return result;
     }
 
     //
-    // Return the position (offset) corresponding to a given [line, column] (both 1-based) in a given script.
+    // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
     //
-    export function getPositionFromLineColumn(script: TypeScript.Script, line: number, column: number): number {
-        return script.locationInfo.lineMap[line] + (column - 1);
+    export function getPositionFromZeroBasedLineColumn(script: TypeScript.Script, line: number, column: number): number {
+        return script.locationInfo.lineMap[line] + column;
     }
 
     // Return true if the token is a primitive type
@@ -24757,6 +24776,10 @@ module TypeScript {
         public getLength(): number {
             return this.content.length;
         }
+
+        public charCodeAt(index: number): number {
+            return this.content.charCodeAt(index);
+        }
     }
 
     export interface IFileReference {
@@ -25253,7 +25276,10 @@ module TypeScript {
                     referencedCode.limChar = referencedCode.minChar + comment.value.length;
                     // Get the startLine and startCol
                     var result = { line: -1, col: -1 };
-                    getSourceLineColFromMap(result, comment.startPos, scanner.lineMap);
+                    getZeroBasedSourceLineColFromMap(result, comment.startPos, scanner.lineMap);
+                    if (result.line >= 0) {
+                        result.line++;   // Make it 1-based
+                    }
                     if (result.col >= 0) {
                         result.col++;   // Make it 1-based
                     }
@@ -25487,8 +25513,8 @@ module TypeScript {
             }
 
             // Skip entries < minChar
-            var i1 = 2; // lineMap[0] is always undefined, lineMap[1] is always 0.
-            var i2 = 2; // lineMap[0] is always undefined, lineMap[1] is always 0.
+            var i1 = 1; // lineMap[0] is always 0.
+            var i2 = 1; // lineMap[0] is always 0.
             var len1 = lineMap1.length;
             var len2 = lineMap2.length;
             while (i1 < len1) {
@@ -26721,7 +26747,7 @@ interface ISyntaxTriviaList {
 
     collectTextElements(elements: string[]): void;
 }
-﻿///<reference path='ISyntaxNodeOrToken.ts' />
+///<reference path='ISyntaxNodeOrToken.ts' />
 
 class SyntaxRewriter implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): ISyntaxToken {
@@ -27518,11 +27544,11 @@ class SyntaxNode implements ISyntaxNodeOrToken {
         throw Errors.abstract();
     }
 
-    private childCount(): number {
+    public childCount(): number {
         throw Errors.abstract();
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         throw Errors.abstract();
     }
 
@@ -30452,6 +30478,9 @@ interface ISimpleText {
     /// Gets the a new IText that corresponds to the contents of this IText for the given span.
     /// </summary>
     subText(span: TextSpan): ISimpleText;
+
+    charCodeAt(index: number): number;
+    lineMap(): ILineMap;
 }
 
 /// <summary>
@@ -30504,7 +30533,7 @@ interface IText extends ISimpleText {
     /// </summary>
     subText(span: TextSpan): IText;
 }
-﻿///<reference path='..\Text\CharacterCodes.ts' />
+///<reference path='..\Text\CharacterCodes.ts' />
 ///<reference path='SyntaxKind.ts' />
 
 class ScannerUtilities {
@@ -31133,7 +31162,7 @@ class SyntaxDiagnostic extends Diagnostic {
                Diagnostic.equals(diagnostic1, diagnostic2);
     }
 }
-﻿///<reference path='ISyntaxToken.ts' />
+///<reference path='ISyntaxToken.ts' />
 ///<reference path='..\Text\IText.ts' />
 ///<reference path='SyntaxToken.ts' />
 
@@ -31204,12 +31233,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -31295,12 +31324,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -31386,12 +31415,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -31480,12 +31509,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -31546,12 +31575,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -31624,12 +31653,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -31702,12 +31731,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -31783,12 +31812,12 @@ module Syntax {
 
         public hasSkippedText(): bool { return false; }
         public toJSON(key) { return tokenToJSON(this); }
-        private firstToken() { return this; }
-        private lastToken() { return this; }
-        private isTypeScriptSpecific() { return false; }
-        private hasZeroWidthToken() { return this.fullWidth() === 0; }
-        private accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
-        private hasRegularExpressionToken() { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
+        public firstToken(): ISyntaxToken { return this; }
+        public lastToken(): ISyntaxToken { return this; }
+        public isTypeScriptSpecific(): bool { return false; }
+        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }
+        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
+        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }
         private realize(): ISyntaxToken { return realize(this); }
         private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }
 
@@ -32359,6 +32388,10 @@ class Unicode {
 class Scanner implements ISlidingWindowSource {
     private slidingWindow: SlidingWindow;
 
+    private text: ISimpleText;
+    private stringTable: Collections.StringTable;
+    private languageVersion: LanguageVersion;
+
     private static isKeywordStartCharacter: bool[] = [];
     private static isIdentifierStartCharacter: bool[] = [];
     public static isIdentifierPartCharacter: bool[] = [];
@@ -32397,20 +32430,19 @@ class Scanner implements ISlidingWindowSource {
         }
     }
 
-    constructor(private text: ISimpleText,
-                private languageVersion: LanguageVersion,
-                private stringTable: Collections.StringTable,
-                private lineMap: number[],
+    constructor(text: ISimpleText,
+                languageVersion: LanguageVersion,
+                stringTable: Collections.StringTable,
                 window: number[] = ArrayUtilities.createArray(2048, 0)) {
         Scanner.initializeStaticData();
         
         this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
-
-        // Line 0 starts at position 0.
-        this.lineMap.push(0);
+        this.text = text;
+        this.stringTable = stringTable;
+        this.languageVersion = languageVersion;
     }
 
-    private fetchMoreItems(argument: any, sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
+    public fetchMoreItems(argument: any, sourceIndex: number, window: number[], destinationIndex: number, spaceAvailable: number): number {
         var charactersRemaining = this.text.length() - sourceIndex;
         var amountToRead = MathPrototype.min(charactersRemaining, spaceAvailable);
         this.text.copyTo(sourceIndex, window, destinationIndex, amountToRead);
@@ -32423,17 +32455,7 @@ class Scanner implements ISlidingWindowSource {
 
     // Set's the scanner to a specific position in the text.
     public setAbsoluteIndex(index: number): void {
-        // If we're setting our index before a line we've put into the line map, hten pop that line
-        // off since we're going to rescan it.
-        while (ArrayUtilities.last(this.lineMap) > index) {
-            this.lineMap.pop();
-        }
-
         this.slidingWindow.setAbsoluteIndex(index);
-    }
-
-    private pushNewLine(): void {
-        this.lineMap.push(this.slidingWindow.absoluteIndex());
     }
 
     // Scans a token starting at the current position.  Any errors encountered will be added to 
@@ -32596,7 +32618,6 @@ class Scanner implements ISlidingWindowSource {
                 case CharacterCodes.lineSeparator:
                     hasCommentOrNewLine |= SyntaxConstants.TriviaNewLineMask;
                     width += this.scanLineTerminatorSequenceLength(ch);
-                    this.pushNewLine();
 
                     // If we're consuming leading trivia, then we will continue consuming more 
                     // trivia (including newlines) up to the first token we see.  If we're 
@@ -32709,16 +32730,6 @@ class Scanner implements ISlidingWindowSource {
             }
 
             var ch = this.currentCharCode();
-            switch (ch) {
-                case CharacterCodes.carriageReturn:
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    width += this.scanLineTerminatorSequenceLength(ch);
-                    this.pushNewLine();
-                    continue;
-            }
-
             if (ch === CharacterCodes.asterisk && this.slidingWindow.peekItemN(1) === CharacterCodes.slash) {
                 this.slidingWindow.moveToNextItem();
                 this.slidingWindow.moveToNextItem();
@@ -33414,12 +33425,6 @@ class Scanner implements ISlidingWindowSource {
                     if (this.currentCharCode() === CharacterCodes.lineFeed) {
                         this.slidingWindow.moveToNextItem();
                     }
-
-                    // fall through:
-                case CharacterCodes.lineFeed:
-                case CharacterCodes.paragraphSeparator:
-                case CharacterCodes.lineSeparator:
-                    this.pushNewLine();
                     return;
 
                 // We don't have to do anything special about these characters.  I'm including them
@@ -33434,6 +33439,9 @@ class Scanner implements ISlidingWindowSource {
                 //case CharacterCodes.r:
                 //case CharacterCodes.t:
                 //case CharacterCodes.v:
+                //case CharacterCodes.lineFeed:
+                //case CharacterCodes.paragraphSeparator:
+                //case CharacterCodes.lineSeparator:
                 default:
                     // Any other character is ok as well.  As per rule:
                     // EscapeSequence :: CharacterEscapeSequence
@@ -33906,7 +33914,7 @@ module Syntax {
         return token(SyntaxKind.IdentifierName, info);
     }
 }
-﻿///<reference path='ISyntaxList.ts' />
+///<reference path='ISyntaxList.ts' />
 
 module Syntax {
     export interface IFactory {
@@ -34756,7 +34764,7 @@ module Syntax {
         return Syntax.normalModeFactory.binaryExpression(SyntaxKind.AssignmentExpression, left, token, right);
     }
 }
-﻿///<reference path='SyntaxNode.ts' />
+///<reference path='SyntaxNode.ts' />
 ///<reference path='ISyntaxList.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
@@ -34781,11 +34789,11 @@ class SourceUnitSyntax extends SyntaxNode {
         return SyntaxKind.SourceUnit;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.moduleElements;
             case 1: return this.endOfFileToken;
@@ -34830,7 +34838,7 @@ class SourceUnitSyntax extends SyntaxNode {
         return this.update(this.moduleElements, endOfFileToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.moduleElements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -34853,7 +34861,7 @@ class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax
         return <ModuleReferenceSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -34877,11 +34885,11 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ExternalModuleReference;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.moduleKeyword;
             case 1: return this.openParenToken;
@@ -34930,7 +34938,7 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
         return this.update(this.moduleKeyword, this.openParenToken, this.stringLiteral, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -34951,11 +34959,11 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return SyntaxKind.ModuleNameModuleReference;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 1;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.moduleName;
             default: throw Errors.invalidOperation();
@@ -34982,7 +34990,7 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
         return this.update(moduleName);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -35007,11 +35015,11 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ImportDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.importKeyword;
             case 1: return this.identifier;
@@ -35071,7 +35079,7 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return this.update(this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -35101,11 +35109,11 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         return SyntaxKind.ClassDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 10;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -35205,7 +35213,7 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
         return this.update(this.exportKeyword, this.declareKeyword, this.classKeyword, this.identifier, this.typeParameterList, this.extendsClause, this.implementsClause, this.openBraceToken, this.classElements, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -35231,11 +35239,11 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return SyntaxKind.InterfaceDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.interfaceKeyword;
@@ -35306,7 +35314,7 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
         return this.update(this.exportKeyword, this.interfaceKeyword, this.identifier, this.typeParameterList, this.extendsClause, body);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -35328,11 +35336,11 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ExtendsClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.extendsKeyword;
             case 1: return this.typeNames;
@@ -35373,7 +35381,7 @@ class ExtendsClauseSyntax extends SyntaxNode {
         return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -35395,11 +35403,11 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return SyntaxKind.ImplementsClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.implementsKeyword;
             case 1: return this.typeNames;
@@ -35440,7 +35448,7 @@ class ImplementsClauseSyntax extends SyntaxNode {
         return this.withTypeNames(Syntax.separatedList([typeName]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -35468,11 +35476,11 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return SyntaxKind.ModuleDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 8;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -35559,7 +35567,7 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
         return this.update(this.exportKeyword, this.declareKeyword, this.moduleKeyword, this.moduleName, this.stringLiteral, this.openBraceToken, this.moduleElements, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -35585,11 +35593,11 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.FunctionDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -35663,7 +35671,7 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.exportKeyword !== null) { return true; }
         if (this.declareKeyword !== null) { return true; }
         if (this.functionSignature.isTypeScriptSpecific()) { return true; }
@@ -35691,11 +35699,11 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.VariableStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
@@ -35757,7 +35765,7 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.exportKeyword, this.declareKeyword, this.variableDeclaration, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.exportKeyword !== null) { return true; }
         if (this.declareKeyword !== null) { return true; }
         if (this.variableDeclaration.isTypeScriptSpecific()) { return true; }
@@ -35782,11 +35790,11 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.varKeyword;
             case 1: return this.variableDeclarators;
@@ -35827,7 +35835,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
         return this.withVariableDeclarators(Syntax.separatedList([variableDeclarator]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.variableDeclarators.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -35851,11 +35859,11 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return SyntaxKind.VariableDeclarator;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.typeAnnotation;
@@ -35902,7 +35910,7 @@ class VariableDeclaratorSyntax extends SyntaxNode {
         return this.update(this.identifier, this.typeAnnotation, equalsValueClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.typeAnnotation !== null) { return true; }
         if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) { return true; }
         return false;
@@ -35926,11 +35934,11 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return SyntaxKind.EqualsValueClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.equalsToken;
             case 1: return this.value;
@@ -35967,7 +35975,7 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         return this.update(this.equalsToken, value);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.value.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -35989,11 +35997,11 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         return visitor.visitPrefixUnaryExpression(this);
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.operatorToken;
             case 1: return this.operand;
@@ -36043,7 +36051,7 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         return this.update(this._kind, this.operatorToken, operand);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -36067,11 +36075,11 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.ArrayLiteralExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBracketToken;
             case 1: return this.expressions;
@@ -36131,7 +36139,7 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this.openBracketToken, this.expressions, closeBracketToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expressions.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -36150,11 +36158,11 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return SyntaxKind.OmittedExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 0;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         throw Errors.invalidOperation();
     }
 
@@ -36174,7 +36182,7 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return <OmittedExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -36197,11 +36205,11 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ParenthesizedExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openParenToken;
             case 1: return this.expression;
@@ -36252,7 +36260,7 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this.openParenToken, this.expression, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -36281,7 +36289,7 @@ class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return <ArrowFunctionExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36304,11 +36312,11 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return SyntaxKind.SimpleArrowFunctionExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.equalsGreaterThanToken;
@@ -36352,7 +36360,7 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
         return this.update(this.identifier, this.equalsGreaterThanToken, body);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36375,11 +36383,11 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return SyntaxKind.ParenthesizedArrowFunctionExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.callSignature;
             case 1: return this.equalsGreaterThanToken;
@@ -36422,7 +36430,7 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
         return this.update(this.callSignature, this.equalsGreaterThanToken, body);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36445,11 +36453,11 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return SyntaxKind.QualifiedName;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.left;
             case 1: return this.dotToken;
@@ -36509,7 +36517,7 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
         return this.update(this.left, this.dotToken, right);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36532,11 +36540,11 @@ class TypeArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.TypeArgumentList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.lessThanToken;
             case 1: return this.typeArguments;
@@ -36588,7 +36596,7 @@ class TypeArgumentListSyntax extends SyntaxNode {
         return this.update(this.lessThanToken, this.typeArguments, greaterThanToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36613,11 +36621,11 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ConstructorType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.newKeyword;
             case 1: return this.typeParameterList;
@@ -36691,7 +36699,7 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.newKeyword, this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36715,11 +36723,11 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.FunctionType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeParameterList;
             case 1: return this.parameterList;
@@ -36786,7 +36794,7 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.typeParameterList, this.parameterList, this.equalsGreaterThanToken, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36809,11 +36817,11 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ObjectType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBraceToken;
             case 1: return this.typeMembers;
@@ -36877,7 +36885,7 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.openBraceToken, this.typeMembers, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36900,11 +36908,11 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.ArrayType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.type;
             case 1: return this.openBracketToken;
@@ -36959,7 +36967,7 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.type, this.openBracketToken, closeBracketToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -36981,11 +36989,11 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return SyntaxKind.GenericType;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.name;
             case 1: return this.typeArgumentList;
@@ -37034,7 +37042,7 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
         return this.update(this.name, typeArgumentList);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -37056,11 +37064,11 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return SyntaxKind.TypeAnnotation;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.colonToken;
             case 1: return this.type;
@@ -37097,7 +37105,7 @@ class TypeAnnotationSyntax extends SyntaxNode {
         return this.update(this.colonToken, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -37120,11 +37128,11 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.Block;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBraceToken;
             case 1: return this.statements;
@@ -37184,7 +37192,7 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.openBraceToken, this.statements, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -37211,11 +37219,11 @@ class ParameterSyntax extends SyntaxNode {
         return SyntaxKind.Parameter;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.dotDotDotToken;
             case 1: return this.publicOrPrivateKeyword;
@@ -37280,7 +37288,7 @@ class ParameterSyntax extends SyntaxNode {
         return this.update(this.dotDotDotToken, this.publicOrPrivateKeyword, this.identifier, this.questionToken, this.typeAnnotation, equalsValueClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.dotDotDotToken !== null) { return true; }
         if (this.publicOrPrivateKeyword !== null) { return true; }
         if (this.questionToken !== null) { return true; }
@@ -37308,11 +37316,11 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return SyntaxKind.MemberAccessExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.dotToken;
@@ -37364,7 +37372,7 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this.expression, this.dotToken, name);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -37386,11 +37394,11 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return visitor.visitPostfixUnaryExpression(this);
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.operand;
             case 1: return this.operatorToken;
@@ -37440,7 +37448,7 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         return this.update(this._kind, this.operand, operatorToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -37465,11 +37473,11 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ElementAccessExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.openBracketToken;
@@ -37527,7 +37535,7 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this.expression, this.openBracketToken, this.argumentExpression, closeBracketToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentExpression.isTypeScriptSpecific()) { return true; }
         return false;
@@ -37551,11 +37559,11 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return SyntaxKind.InvocationExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.argumentList;
@@ -37600,7 +37608,7 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         return this.update(this.expression, argumentList);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
@@ -37626,11 +37634,11 @@ class ArgumentListSyntax extends SyntaxNode {
         return SyntaxKind.ArgumentList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeArgumentList;
             case 1: return this.openParenToken;
@@ -37688,7 +37696,7 @@ class ArgumentListSyntax extends SyntaxNode {
         return this.update(this.typeArgumentList, this.openParenToken, this.arguments, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.typeArgumentList !== null && this.typeArgumentList.isTypeScriptSpecific()) { return true; }
         if (this.arguments.isTypeScriptSpecific()) { return true; }
         return false;
@@ -37712,11 +37720,11 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return visitor.visitBinaryExpression(this);
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.left;
             case 1: return this.operatorToken;
@@ -37768,7 +37776,7 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         return this.update(this._kind, this.left, this.operatorToken, right);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.left.isTypeScriptSpecific()) { return true; }
         if (this.right.isTypeScriptSpecific()) { return true; }
         return false;
@@ -37795,11 +37803,11 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return SyntaxKind.ConditionalExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.condition;
             case 1: return this.questionToken;
@@ -37860,7 +37868,7 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         return this.update(this.condition, this.questionToken, this.whenTrue, this.colonToken, whenFalse);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.whenTrue.isTypeScriptSpecific()) { return true; }
         if (this.whenFalse.isTypeScriptSpecific()) { return true; }
@@ -37885,7 +37893,7 @@ class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
         return <TypeMemberSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -37907,11 +37915,11 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.ConstructSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.newKeyword;
             case 1: return this.callSignature;
@@ -37948,7 +37956,7 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.newKeyword, callSignature);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -37971,11 +37979,11 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.FunctionSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.questionToken;
@@ -38023,7 +38031,7 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.identifier, this.questionToken, callSignature);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -38048,11 +38056,11 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.IndexSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBracketToken;
             case 1: return this.parameter;
@@ -38107,7 +38115,7 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.openBracketToken, this.parameter, this.closeBracketToken, typeAnnotation);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -38130,11 +38138,11 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.PropertySignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.questionToken;
@@ -38181,7 +38189,7 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
         return this.update(this.identifier, this.questionToken, typeAnnotation);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -38204,11 +38212,11 @@ class ParameterListSyntax extends SyntaxNode {
         return SyntaxKind.ParameterList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openParenToken;
             case 1: return this.parameters;
@@ -38260,7 +38268,7 @@ class ParameterListSyntax extends SyntaxNode {
         return this.update(this.openParenToken, this.parameters, closeParenToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.parameters.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -38284,11 +38292,11 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return SyntaxKind.CallSignature;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeParameterList;
             case 1: return this.parameterList;
@@ -38335,7 +38343,7 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.typeParameterList !== null) { return true; }
         if (this.parameterList.isTypeScriptSpecific()) { return true; }
         if (this.typeAnnotation !== null) { return true; }
@@ -38361,11 +38369,11 @@ class TypeParameterListSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameterList;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.lessThanToken;
             case 1: return this.typeParameters;
@@ -38417,7 +38425,7 @@ class TypeParameterListSyntax extends SyntaxNode {
         return this.update(this.lessThanToken, this.typeParameters, greaterThanToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -38439,11 +38447,11 @@ class TypeParameterSyntax extends SyntaxNode {
         return SyntaxKind.TypeParameter;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.constraint;
@@ -38484,7 +38492,7 @@ class TypeParameterSyntax extends SyntaxNode {
         return this.update(this.identifier, constraint);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -38506,11 +38514,11 @@ class ConstraintSyntax extends SyntaxNode {
         return SyntaxKind.Constraint;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.extendsKeyword;
             case 1: return this.type;
@@ -38547,7 +38555,7 @@ class ConstraintSyntax extends SyntaxNode {
         return this.update(this.extendsKeyword, type);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -38569,11 +38577,11 @@ class ElseClauseSyntax extends SyntaxNode {
         return SyntaxKind.ElseClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.elseKeyword;
             case 1: return this.statement;
@@ -38610,7 +38618,7 @@ class ElseClauseSyntax extends SyntaxNode {
         return this.update(this.elseKeyword, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -38637,11 +38645,11 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.IfStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.ifKeyword;
             case 1: return this.openParenToken;
@@ -38719,7 +38727,7 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.ifKeyword, this.openParenToken, this.condition, this.closeParenToken, this.statement, elseClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         if (this.elseClause !== null && this.elseClause.isTypeScriptSpecific()) { return true; }
@@ -38744,11 +38752,11 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ExpressionStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.expression;
             case 1: return this.semicolonToken;
@@ -38793,7 +38801,7 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.expression, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -38818,11 +38826,11 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         return SyntaxKind.ConstructorDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.constructorKeyword;
             case 1: return this.parameterList;
@@ -38880,7 +38888,7 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
         return this.update(this.constructorKeyword, this.parameterList, this.block, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -38905,11 +38913,11 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberFunctionDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -38976,7 +38984,7 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -39007,7 +39015,7 @@ class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return <MemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -39034,11 +39042,11 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.GetMemberAccessorDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 7;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -39112,7 +39120,7 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.getKeyword, this.identifier, this.parameterList, this.typeAnnotation, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -39138,11 +39146,11 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return SyntaxKind.SetMemberAccessorDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -39210,7 +39218,7 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.setKeyword, this.identifier, this.parameterList, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -39234,11 +39242,11 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return SyntaxKind.MemberVariableDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
@@ -39300,7 +39308,7 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
         return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.variableDeclarator, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -39323,11 +39331,11 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ThrowStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.throwKeyword;
             case 1: return this.expression;
@@ -39378,7 +39386,7 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.throwKeyword, this.expression, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -39402,11 +39410,11 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ReturnStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.returnKeyword;
             case 1: return this.expression;
@@ -39462,7 +39470,7 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.returnKeyword, this.expression, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression !== null && this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -39486,11 +39494,11 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return SyntaxKind.ObjectCreationExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.newKeyword;
             case 1: return this.expression;
@@ -39546,7 +39554,7 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         return this.update(this.newKeyword, this.expression, argumentList);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.argumentList !== null && this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
@@ -39575,11 +39583,11 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.SwitchStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 7;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.switchKeyword;
             case 1: return this.openParenToken;
@@ -39667,7 +39675,7 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.switchKeyword, this.openParenToken, this.expression, this.closeParenToken, this.openBraceToken, this.switchClauses, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.switchClauses.isTypeScriptSpecific()) { return true; }
         return false;
@@ -39693,7 +39701,7 @@ class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
         return <SwitchClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -39717,11 +39725,11 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.CaseSwitchClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.caseKeyword;
             case 1: return this.expression;
@@ -39780,7 +39788,7 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
@@ -39805,11 +39813,11 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return SyntaxKind.DefaultSwitchClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.defaultKeyword;
             case 1: return this.colonToken;
@@ -39861,7 +39869,7 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         return this.withStatements(Syntax.list([statement]));
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -39885,11 +39893,11 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.BreakStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.breakKeyword;
             case 1: return this.identifier;
@@ -39945,7 +39953,7 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.breakKeyword, this.identifier, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -39968,11 +39976,11 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.ContinueStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.continueKeyword;
             case 1: return this.identifier;
@@ -40028,7 +40036,7 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.continueKeyword, this.identifier, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -40057,7 +40065,7 @@ class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return <IterationStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -40080,7 +40088,7 @@ class BaseForStatementSyntax extends IterationStatementSyntax {
         return <BaseForStatementSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -40110,11 +40118,11 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 10;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
@@ -40208,7 +40216,7 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.initializer, this.firstSemicolonToken, this.condition, this.secondSemicolonToken, this.incrementor, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this.initializer !== null && this.initializer.isTypeScriptSpecific()) { return true; }
         if (this.condition !== null && this.condition.isTypeScriptSpecific()) { return true; }
@@ -40241,11 +40249,11 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return SyntaxKind.ForInStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 8;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.forKeyword;
             case 1: return this.openParenToken;
@@ -40328,7 +40336,7 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         return this.update(this.forKeyword, this.openParenToken, this.variableDeclaration, this.left, this.inKeyword, this.expression, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.variableDeclaration !== null && this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         if (this.left !== null && this.left.isTypeScriptSpecific()) { return true; }
         if (this.expression.isTypeScriptSpecific()) { return true; }
@@ -40357,11 +40365,11 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.WhileStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.whileKeyword;
             case 1: return this.openParenToken;
@@ -40417,7 +40425,7 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         return this.update(this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
@@ -40444,11 +40452,11 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.WithStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.withKeyword;
             case 1: return this.openParenToken;
@@ -40512,7 +40520,7 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.withKeyword, this.openParenToken, this.condition, this.closeParenToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
@@ -40540,11 +40548,11 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return SyntaxKind.EnumDeclaration;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.exportKeyword;
             case 1: return this.enumKeyword;
@@ -40620,7 +40628,7 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
         return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -40644,11 +40652,11 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.CastExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.lessThanToken;
             case 1: return this.type;
@@ -40706,7 +40714,7 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return this.update(this.lessThanToken, this.type, this.greaterThanToken, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return true;
     }
 }
@@ -40729,11 +40737,11 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return SyntaxKind.ObjectLiteralExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.openBraceToken;
             case 1: return this.propertyAssignments;
@@ -40793,7 +40801,7 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         return this.update(this.openBraceToken, this.propertyAssignments, closeBraceToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.propertyAssignments.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -40813,7 +40821,7 @@ class PropertyAssignmentSyntax extends SyntaxNode {
         return <PropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -40836,11 +40844,11 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return SyntaxKind.SimplePropertyAssignment;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.propertyName;
             case 1: return this.colonToken;
@@ -40884,7 +40892,7 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return this.update(this.propertyName, this.colonToken, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -40907,7 +40915,7 @@ class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         return <AccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -40932,11 +40940,11 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.GetAccessorPropertyAssignment;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.getKeyword;
             case 1: return this.propertyName;
@@ -40991,7 +40999,7 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41018,11 +41026,11 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return SyntaxKind.SetAccessorPropertyAssignment;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 6;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.setKeyword;
             case 1: return this.propertyName;
@@ -41084,7 +41092,7 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameterName, this.closeParenToken, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41109,11 +41117,11 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return SyntaxKind.FunctionExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.functionKeyword;
             case 1: return this.identifier;
@@ -41176,7 +41184,7 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         return this.update(this.functionKeyword, this.identifier, this.callSignature, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -41199,11 +41207,11 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.EmptyStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 1;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.semicolonToken;
             default: throw Errors.invalidOperation();
@@ -41242,7 +41250,7 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
@@ -41266,11 +41274,11 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.TryStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 4;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.tryKeyword;
             case 1: return this.block;
@@ -41332,7 +41340,7 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.tryKeyword, this.block, this.catchClause, finallyClause);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         if (this.catchClause !== null && this.catchClause.isTypeScriptSpecific()) { return true; }
         if (this.finallyClause !== null && this.finallyClause.isTypeScriptSpecific()) { return true; }
@@ -41360,11 +41368,11 @@ class CatchClauseSyntax extends SyntaxNode {
         return SyntaxKind.CatchClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 5;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.catchKeyword;
             case 1: return this.openParenToken;
@@ -41419,7 +41427,7 @@ class CatchClauseSyntax extends SyntaxNode {
         return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41442,11 +41450,11 @@ class FinallyClauseSyntax extends SyntaxNode {
         return SyntaxKind.FinallyClause;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.finallyKeyword;
             case 1: return this.block;
@@ -41483,7 +41491,7 @@ class FinallyClauseSyntax extends SyntaxNode {
         return this.update(this.finallyKeyword, block);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41507,11 +41515,11 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.LabeledStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 3;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.identifier;
             case 1: return this.colonToken;
@@ -41563,7 +41571,7 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.identifier, this.colonToken, statement);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41591,11 +41599,11 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return SyntaxKind.DoStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 7;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.doKeyword;
             case 1: return this.statement;
@@ -41663,7 +41671,7 @@ class DoStatementSyntax extends IterationStatementSyntax {
         return this.update(this.doKeyword, this.statement, this.whileKeyword, this.openParenToken, this.condition, this.closeParenToken, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         if (this.condition.isTypeScriptSpecific()) { return true; }
         return false;
@@ -41687,11 +41695,11 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.TypeOfExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.typeOfKeyword;
             case 1: return this.expression;
@@ -41736,7 +41744,7 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return this.update(this.typeOfKeyword, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41759,11 +41767,11 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return SyntaxKind.DeleteExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.deleteKeyword;
             case 1: return this.expression;
@@ -41808,7 +41816,7 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         return this.update(this.deleteKeyword, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41831,11 +41839,11 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return SyntaxKind.VoidExpression;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.voidKeyword;
             case 1: return this.expression;
@@ -41880,7 +41888,7 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         return this.update(this.voidKeyword, expression);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
@@ -41903,11 +41911,11 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return SyntaxKind.DebuggerStatement;
     }
 
-    private childCount(): number {
+    public childCount(): number {
         return 2;
     }
 
-    private childAt(slot: number): ISyntaxElement {
+    public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.debuggerKeyword;
             case 1: return this.semicolonToken;
@@ -41952,11 +41960,11 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
         return this.update(this.debuggerKeyword, semicolonToken);
     }
 
-    private isTypeScriptSpecific(): bool {
+    public isTypeScriptSpecific(): bool {
         return false;
     }
 }
-﻿///<reference path='SyntaxNodes.generated.ts' />
+///<reference path='SyntaxNodes.generated.ts' />
 
 interface ISyntaxVisitor {
     visitToken(token: ISyntaxToken): any;
@@ -42544,15 +42552,19 @@ class Strings {
 }
 ///<reference path='SyntaxNodes.generated.ts' />
 ///<reference path='SyntaxDiagnostic.ts' />
+///<reference path='..\Text\LineMap.ts' />
 
 class SyntaxTree {
     private _sourceUnit: SourceUnitSyntax;
     private _diagnostics: SyntaxDiagnostic[];
+    private _lineMap: ILineMap;
 
     constructor(sourceUnit: SourceUnitSyntax,
-                diagnostics: SyntaxDiagnostic[]) {
+                diagnostics: SyntaxDiagnostic[],
+                lineMap: ILineMap) {
         this._sourceUnit = sourceUnit;
         this._diagnostics = diagnostics;
+        this._lineMap = lineMap;
     }
 
     public toJSON(key) {
@@ -42563,6 +42575,8 @@ class SyntaxTree {
         }
 
         result._sourceUnit = this._sourceUnit;
+        result._lineMap = this._lineMap;
+
         return result;
     }
 
@@ -42572,6 +42586,10 @@ class SyntaxTree {
 
     public diagnostics(): SyntaxDiagnostic[] {
         return this._diagnostics;
+    }
+
+    public lineMap(): ILineMap {
+        return this._lineMap;
     }
 
     public structuralEquals(tree: SyntaxTree): bool {
@@ -43082,9 +43100,6 @@ module Parser1 {
         // The absolute position we're at in the text we're reading from.
         private _absolutePosition: number = 0;
 
-        // The line map for the scanner to fill in.
-        private scannerLineMap: number[] = [];
-
         // The diagnostics we get while scanning.  Note: this never gets rewound when we do a normal
         // rewind.  That's because rewinding doesn't affect the tokens created.  It only affects where
         // in the token stream we're pointing at.  However, it will get modified if we we decide to
@@ -43099,7 +43114,7 @@ module Parser1 {
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
-            this.scanner = new Scanner(text, languageVersion, stringTable, this.scannerLineMap);
+            this.scanner = new Scanner(text, languageVersion, stringTable);
         }
 
         private currentNode(): SyntaxNode {
@@ -43717,6 +43732,7 @@ module Parser1 {
     class ParserImpl {
         // Underlying source where we pull nodes and tokens from.
         private source: IParserSource;
+        private lineMap: ILineMap;
 
         // Parsing options.
         private options: ParseOptions;
@@ -43746,7 +43762,8 @@ module Parser1 {
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
-        constructor(source: IParserSource, options?: ParseOptions) {
+        constructor(lineMap: ILineMap, source: IParserSource, options?: ParseOptions) {
+            this.lineMap = lineMap;
             this.source = source;
             this.options = options;
         }
@@ -43784,7 +43801,7 @@ module Parser1 {
             if (this.previousToken() === null) {
                 return 0;
             }
-
+            
             return this.source.absolutePosition() -
                    this.previousToken().fullWidth() +
                    this.previousToken().leadingTriviaWidth();
@@ -44266,7 +44283,7 @@ module Parser1 {
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.position() - b.position());
 
-            return new SyntaxTree(sourceUnit, allDiagnostics);
+            return new SyntaxTree(sourceUnit, allDiagnostics, this.lineMap);
         }
 
         private setStrictMode(isInStrictMode: bool) {
@@ -48081,7 +48098,7 @@ module Parser1 {
         var source = new NormalParserSource(text, languageVersion, stringTable);
         options = options || new ParseOptions();
 
-        return new ParserImpl(source, options).parseSyntaxTree();
+        return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree();
     }
 
     export function incrementalParse(oldSourceUnit: SourceUnitSyntax,
@@ -48094,7 +48111,7 @@ module Parser1 {
             oldSourceUnit, textChangeRanges, newText, languageVersion, stringTable);
         options = options || new ParseOptions();
 
-        return new ParserImpl(source, options).parseSyntaxTree();
+        return new ParserImpl(newText.lineMap(), source, options).parseSyntaxTree();
     }
 }
 ///<reference path='..\Core\ArrayUtilities.ts' />
@@ -48104,38 +48121,6 @@ module Parser1 {
 ///<reference path='..\Core\StringTable.ts' />
 
 module TextFactory {
-    function getLengthOfLineBreakSlow(text: IText, index: number, c: number): number {
-        if (c === CharacterCodes.carriageReturn) {
-            var next = index + 1;
-            return (next < text.length()) && CharacterCodes.lineFeed === text.charCodeAt(next) ? 2 : 1;
-        }
-        else if (isAnyLineBreakCharacter(c)) {
-            return 1;
-        }
-        else {
-            return 0;
-        }
-    }
-
-    function getLengthOfLineBreak(text: IText, index: number): number {
-        var c = text.charCodeAt(index);
-
-        // common case - ASCII & not a line break
-        if (c > CharacterCodes.carriageReturn && c <= 127) {
-            return 0;
-        }
-
-        return getLengthOfLineBreakSlow(text, index, c);
-    }
-
-    function isAnyLineBreakCharacter(c: number): bool {
-        return c === CharacterCodes.lineFeed ||
-               c === CharacterCodes.carriageReturn ||
-               c === CharacterCodes.nextLine ||
-               c === CharacterCodes.lineSeparator ||
-               c === CharacterCodes.paragraphSeparator;
-    }
-
     /// <summary>
     /// Return startLineBreak = index-1, lengthLineBreak = 2   if there is a \r\n at index-1
     /// Return startLineBreak = index,   lengthLineBreak = 1   if there is a 1-char newline at index
@@ -48156,7 +48141,7 @@ module TextFactory {
                 info.length = 1;
             }
         }
-        else if (isAnyLineBreakCharacter(c)) {
+        else if (TextUtilities.isAnyLineBreakCharacter(c)) {
             info.startPosition = index;
             info.length = 1;
         }
@@ -48293,9 +48278,13 @@ module TextFactory {
             return lines;
         }
 
+        public lineMap(): LineMap {
+            return new LineMap(this.lineStarts(), this.length());
+        }
+
         private lineStarts(): number[] {
             if (this.lazyLineStarts === null) {
-                this.lazyLineStarts = this.parseLineStarts();
+                this.lazyLineStarts = TextUtilities.parseLineStarts(this);
             }
 
             return this.lazyLineStarts;
@@ -48369,60 +48358,6 @@ module TextFactory {
             var lineNumber = this.getLineNumberFromPosition(position);
 
             return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
-        }
-
-        private parseLineStarts(): number[] {
-            var length = this.length();
-
-            // Corner case check
-            if (0 === this.length()) {
-                var result: number[] = [];
-                result.push(0);
-                return result;
-            }
-
-            var position = 0;
-            var index = 0;
-            var arrayBuilder: number[] = [];
-            var lineNumber = 0;
-
-            // The following loop goes through every character in the text. It is highly
-            // performance critical, and thus inlines knowledge about common line breaks
-            // and non-line breaks.
-            while (index < length) {
-                var c = this.charCodeAt(index);
-                var lineBreakLength;
-
-                // common case - ASCII & not a line break
-                if (c > CharacterCodes.carriageReturn && c <= 127) {
-                    index++;
-                    continue;
-                }
-                else if (c === CharacterCodes.carriageReturn && index + 1 < length && this.charCodeAt(index + 1) === CharacterCodes.lineFeed) {
-                    lineBreakLength = 2;
-                }
-                else if (c === CharacterCodes.lineFeed) {
-                    lineBreakLength = 1;
-                }
-                else {
-                    lineBreakLength = getLengthOfLineBreak(this, index);
-                }
-
-                if (0 === lineBreakLength) {
-                    index++;
-                }
-                else {
-                    arrayBuilder.push(position);
-                    index += lineBreakLength;
-                    position = index;
-                    lineNumber++;
-                }
-            }
-
-            // Create a start for the final line.  
-            arrayBuilder.push(position);
-
-            return arrayBuilder;
         }
     }
 
@@ -48554,8 +48489,6 @@ module TextFactory {
 
     var stringTable = Collections.createStringTable();
 
-
-
     /// <summary>
     /// An IText that represents a subrange of another IText.
     /// </summary>
@@ -48585,6 +48518,12 @@ module TextFactory {
             }
         }
 
+        private checkSubPosition(position: number): void {
+            if (position < 0 || position >= this.length()) {
+                throw Errors.argumentOutOfRange("position");
+            }
+        }
+
         public length(): number {
             return this.span.length();
         }
@@ -48609,6 +48548,15 @@ module TextFactory {
             var compositeStart = MathPrototype.min(this.text.length(), this.span.start() + start);
             var compositeEnd = MathPrototype.min(this.text.length(), compositeStart + length);
             return new TextSpan(compositeStart, compositeEnd - compositeStart);
+        }
+
+        public charCodeAt(index: number): number {
+            this.checkSubPosition(index);
+            return this.text.charCodeAt(this.span.start() + index);
+        }
+
+        public lineMap(): LineMap {
+            return LineMap.createFrom(this);
         }
     }
 
@@ -48641,6 +48589,14 @@ module TextFactory {
 
         public subText(span: TextSpan): ISimpleText {
             return new SimpleSubText(this, span);
+        }
+
+        public charCodeAt(index: number): number {
+            return this.value.charCodeAt(index);
+        }
+
+        public lineMap(): LineMap {
+            return LineMap.createFrom(this);
         }
     }
 
@@ -48752,6 +48708,8 @@ module TypeScript {
         ClassConstructorVariable = 1 << 15,
         InitializedModule = 1 << 16,
         EnumVariable = 1 << 17,
+
+        MustCaptureThis = 1 << 18,
 
         ImplicitVariable = ClassConstructorVariable | InitializedModule, /* | EnumVariable, */
     }
@@ -50175,7 +50133,7 @@ module TypeScript {
             }
         }
 
-        public getAllMemebers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[]{
+        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[]{
 
             var allMembers: PullSymbol[] = [];
 
@@ -50196,10 +50154,10 @@ module TypeScript {
             if (this.extendedTypeLinks) {
 
                 for (var i = 0, n = this.extendedTypeLinks.length; i < n; i++) {
-                    var extendedMemebers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMemebers(searchDeclKind, includePrivate);
+                    var extendedMembers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (var j = 0, m = extendedMemebers.length; j < m; j++) {
-                        var extendedMember = extendedMemebers[j];
+                    for (var j = 0, m = extendedMembers.length; j < m; j++) {
+                        var extendedMember = extendedMembers[j];
                         if (!this.memberNameCache[extendedMember.getName()]) {
                             allMembers[allMembers.length] = extendedMember;
                         }
@@ -50210,12 +50168,12 @@ module TypeScript {
             if (this.implementedTypeLinks) {
 
                 for (var i = 0 ; i < this.implementedTypeLinks.length; i++) {
-                    var implementedMemebers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMemebers(searchDeclKind, includePrivate);
+                    var implementedMembers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (var j = 0, m = implementedMemebers.length; j < m; j++) {
-                        var implementedMemeber = implementedMemebers[j];
-                        if (!this.memberNameCache[implementedMemeber.getName()]) {
-                            allMembers[allMembers.length] = implementedMemeber;
+                    for (var j = 0, m = implementedMembers.length; j < m; j++) {
+                        var implementedMember = implementedMembers[j];
+                        if (!this.memberNameCache[implementedMember.getName()]) {
+                            allMembers[allMembers.length] = implementedMember;
                         }
                     }
                 }
@@ -50625,7 +50583,8 @@ module TypeScript {
 
                         parameterType = parameters[k].getType();
 
-                        if (parameterType === null) { continue; }
+                        if (parameterType === null) { continue; }
+
 
                         if (parameterType == typeToReplace) {
                             newParameter.setType(typeToSpecializeTo);
@@ -51321,7 +51280,7 @@ module TypeScript {
         public searchTypeSpace = false;
 
         public specializingToAny = false;
-        
+
         public pushContextualType(type: PullTypeSymbol, provisional: bool, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
         }
@@ -51850,6 +51809,84 @@ module TypeScript {
             }
 
             return this.getVisibleSymbolsFromDeclPath(declPath, context.searchTypeSpace);
+        }
+
+
+        public getVisibleMembersFromExpresion(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
+            var lhs: PullSymbol = this.resolveStatementOrExpression(expression, false, enclosingDecl, context);
+            var lhsType = lhs.getType();
+
+            if (!lhsType) {
+                return null;
+            }
+
+            if (lhsType == this.semanticInfoChain.anyTypeSymbol) {
+                return null;
+            }
+
+            // Figure out if privates are available under the current scope
+            var includePrivate = false;
+            var containerSymbol = lhsType;
+            if (containerSymbol.getKind() === PullElementKind.ConstructorType) {
+                containerSymbol = containerSymbol.getConstructSignatures()[0].getReturnType();
+            }
+
+            if (containerSymbol && containerSymbol.isClass()) {
+                var declPath = this.getPathToDecl(enclosingDecl);
+                if (declPath && declPath.length) {
+                    var declarations = containerSymbol.getDeclarations();
+                    for (var i = 0, n = declarations.length; i < n; i++) {
+                        var declaration = declarations[i];
+                        if (declPath.indexOf(declaration) >= 0) {
+                            includePrivate = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (context.searchTypeSpace) {
+                return lhsType.getAllMembers(PullElementKind.SomeType, includePrivate);
+            }
+            else {
+                if (lhsType == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+                    lhsType = this.cachedNumberInterfaceType;
+                }
+                else if (lhsType == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
+                    lhsType = this.cachedStringInterfaceType;
+                }
+                else if (lhsType == this.semanticInfoChain.boolTypeSymbol && this.cachedBooleanInterfaceType) {
+                    lhsType = this.cachedBooleanInterfaceType;
+                }
+
+                if (!lhsType.isResolved()) {
+                    var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, enclosingDecl, context);
+
+                    if (potentiallySpecializedType != lhsType) {
+                        if (!lhs.isType()) {
+                            context.setTypeInContext(lhs, potentiallySpecializedType);
+                        }
+
+                        lhsType = potentiallySpecializedType;
+                    }
+                }
+
+
+                var members = lhsType.getAllMembers(PullElementKind.SomeValue, includePrivate);
+
+                // Add any additional members
+                /// TODO: add "prototype" for classes
+                //if (lhsType.isClass()) {
+                //    memebers.push("prototype");
+                //}
+
+                // could be an enum
+                if ((lhsType.getKind() == PullElementKind.Enum) && this.cachedNumberInterfaceType) {
+                    members = members.concat(this.cachedNumberInterfaceType.getAllMembers(PullElementKind.SomeValue, false));
+                }
+
+                return members;
+            }
         }
 
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
@@ -52838,6 +52875,7 @@ module TypeScript {
             return nameSymbol;
         }
 
+
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             
             // assemble the dotted name path
@@ -53189,9 +53227,13 @@ module TypeScript {
             return funcDeclSymbol;
         }
 
+        static setSelfReferenceOnDecl(pullDecl: PullDecl) {
+            pullDecl.setFlags(pullDecl.getFlags() | PullElementFlags.MustCaptureThis);
+            return true;
+        }
+
         // PULLTODO: Optimization: cache this for a given decl path
         public resolveThisExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-
             if (!enclosingDecl) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -53203,13 +53245,52 @@ module TypeScript {
             // work back up the decl path, until you can find a class
             // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
             if (declPath.length) {
+                var isFatArrowFunction = declPath[declPath.length - 1].getKind() == PullElementKind.FunctionExpression && (declPath[declPath.length - 1].getFlags() & PullElementFlags.FatArrow);
+                var hasSetSelfReference = !isFatArrowFunction;
+                var firstFncDecl: PullDecl = null;
+                if (!hasSetSelfReference) {
+                    for (var i = declPath.length - 2; i >= 0; i--) {
+                        decl = declPath[i];
+                        var declKind = decl.getKind();
+                        if (declKind == PullElementKind.Function || declKind == PullElementKind.Method) {
+                            hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                        } else if (declKind == PullElementKind.FunctionExpression) {
+                            if (!(decl.getFlags() & PullElementFlags.FatArrow)) {
+                                hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                            } else if (decl.getFlags() & PullElementFlags.MustCaptureThis) {
+                                firstFncDecl = null;
+                                break;
+                            } else if (!firstFncDecl) {
+                                firstFncDecl = decl;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (!hasSetSelfReference && firstFncDecl) {
+                        hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(firstFncDecl);
+                    }
+                }
+
                 for (var i = declPath.length - 1; i >= 0; i--) {
                     decl = declPath[i];
-
-                    if (decl.getKind() == PullElementKind.Class) {
+                    var declKind = decl.getKind();
+                    if (declKind == PullElementKind.Class) {
                         classSymbol = <PullClassTypeSymbol>decl.getSymbol();
                         
+                        if (!hasSetSelfReference) {
+                            hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                        }
                         return classSymbol;
+                    }
+
+                    if (!hasSetSelfReference &&
+                        (declKind == PullElementKind.Container ||
+                        declKind == PullElementKind.DynamicModule ||
+                        declKind == PullElementKind.Script)) {
+                        hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                        break;
                     }
                 }
             }
@@ -55766,12 +55847,13 @@ module TypeScript {
 
         // For now, just check for there/not there - we'll invalidate the inference symbols anyway
         // next up, we'll want to use this data to find the decl that changed
-        public diffDecls(oldDecl: PullDecl, newDecl: PullDecl, diffs: PullDeclDiff[]) {
+        public diffDecls(oldDecl: PullDecl, newDecl: PullDecl, diffs: PullDeclDiff[]): bool {
             // check the children
             var oldDeclChildren = oldDecl.getChildDecls();
             var newDeclChildren = newDecl.getChildDecls();
             var foundDecls: PullDecl[];
             var foundDiff = false;
+            var childFoundDiff = true;
 
             for (var i = 0; i < oldDeclChildren.length; i++) {
                 foundDecls = newDecl.findChildDecls(oldDeclChildren[i].getName(), oldDeclChildren[i].getKind());
@@ -55781,7 +55863,11 @@ module TypeScript {
                     foundDiff = true;
                 }
                 else if (foundDecls.length == 1) { // just care about non-split entities for now
-                    this.diffDecls(oldDeclChildren[i], foundDecls[0], diffs);
+                    childFoundDiff = this.diffDecls(oldDeclChildren[i], foundDecls[0], diffs);
+
+                    if (childFoundDiff) {
+                        foundDiff = true;
+                    }
                 }
             }
 
@@ -55797,6 +55883,8 @@ module TypeScript {
             if (!foundDiff) {
                 newDecl.setErrors(oldDecl.getErrors());
             }
+
+            return foundDiff;
         }
     }
 
@@ -55873,9 +55961,9 @@ module TypeScript {
             var locationInfo = this.locationInfoCache[error.filename];
 
             if (locationInfo && locationInfo.lineMap) {
-                getSourceLineColFromMap(this.lineCol, error.getOffset(), locationInfo.lineMap);
+                getZeroBasedSourceLineColFromMap(this.lineCol, error.getOffset(), locationInfo.lineMap);
 
-                this.textWriter.Write(locationInfo.filename + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
+                this.textWriter.Write(locationInfo.filename + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
             }
             else {
                 this.textWriter.Write(error.filename + "(0,0): ");
@@ -56456,7 +56544,7 @@ module TypeScript {
         }
     }
 }
-﻿///<reference path='SyntaxVisitor.generated.ts' />
+///<reference path='SyntaxVisitor.generated.ts' />
 
 class SyntaxWalker implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): void {
@@ -58280,6 +58368,15 @@ module TypeScript {
             return symbol;
         }
 
+
+        private recordNonInterfaceParentModule() {
+            var parent = this.getParent();
+            var ast = this.semanticInfo.getASTForSymbol(parent);
+            if (ast && ast.nodeType == NodeType.ModuleDeclaration) {
+                (<ModuleDeclaration>ast).recordNonInterface();
+            }
+        }
+
         //
         // decl binding
         //
@@ -58299,7 +58396,7 @@ module TypeScript {
 
             var parent = this.getParent();
             var parentInstanceSymbol = this.getParent(true);
-
+            
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleContainerDecl);
 
             var createdNewSymbol = false;
@@ -58342,9 +58439,9 @@ module TypeScript {
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
             moduleContainerDecl.setSymbol(moduleContainerTypeSymbol);
 
-            this.semanticInfo.setSymbolForAST(moduleAST, moduleContainerTypeSymbol);
             this.semanticInfo.setSymbolForAST(moduleAST.name, moduleContainerTypeSymbol);
-        
+            this.semanticInfo.setSymbolForAST(moduleAST, moduleContainerTypeSymbol);
+
             if (createdNewSymbol) {
 
                 if (parent) {
@@ -58364,6 +58461,8 @@ module TypeScript {
                             moduleInstanceSymbol.addOutgoingLink(parentInstanceSymbol, SymbolLinkKind.ContainedBy);
                         }
                     }
+
+                    this.recordNonInterfaceParentModule();
                 }
             }
             else if (this.reBindingAfterChange) {
@@ -58452,8 +58551,8 @@ module TypeScript {
             enumSymbol.addDeclaration(enumDeclaration);
             enumDeclaration.setSymbol(enumSymbol);            
             
-            this.semanticInfo.setSymbolForAST(enumAST, enumSymbol);
             this.semanticInfo.setSymbolForAST(enumAST.name, enumSymbol);
+            this.semanticInfo.setSymbolForAST(enumAST, enumSymbol);
         
             if (createdNewSymbol) {
                 var parent = this.getParent();
@@ -58467,6 +58566,7 @@ module TypeScript {
                     else {
                         enumSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                     }
+                    this.recordNonInterfaceParentModule();
                 }
             }
             else if (this.reBindingAfterChange) {
@@ -58585,8 +58685,8 @@ module TypeScript {
             
             classDecl.setSymbol(classSymbol);
 
-            this.semanticInfo.setSymbolForAST(classAST, classSymbol);
             this.semanticInfo.setSymbolForAST(classAST.name, classSymbol);
+            this.semanticInfo.setSymbolForAST(classAST, classSymbol);
         
             if (parent && !parentHadSymbol) {
                 var linkKind = classDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
@@ -58597,6 +58697,7 @@ module TypeScript {
                 else {
                     classSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
@@ -58752,8 +58853,8 @@ module TypeScript {
             interfaceSymbol.addDeclaration(interfaceDecl);
             interfaceDecl.setSymbol(interfaceSymbol);
 
-            this.semanticInfo.setSymbolForAST(interfaceAST, interfaceSymbol);
             this.semanticInfo.setSymbolForAST(interfaceAST.name, interfaceSymbol);
+            this.semanticInfo.setSymbolForAST(interfaceAST, interfaceSymbol);
 
             if (createdNewSymbol) {
 
@@ -59021,8 +59122,8 @@ module TypeScript {
                 variableSymbol.addDeclaration(variableDeclaration);
                 variableDeclaration.setSymbol(variableSymbol);
 
-                this.semanticInfo.setSymbolForAST(varDeclAST, variableSymbol);
                 this.semanticInfo.setSymbolForAST(varDeclAST.id, variableSymbol);
+                this.semanticInfo.setSymbolForAST(varDeclAST, variableSymbol);
             }
             else if (!parentHadSymbol) {
 
@@ -59145,6 +59246,7 @@ module TypeScript {
                 else {
                     variableSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
         }
 
@@ -59218,8 +59320,8 @@ module TypeScript {
                 propertySymbol.addDeclaration(propertyDeclaration);
                 propertyDeclaration.setSymbol(propertySymbol);
 
-                this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
                 this.semanticInfo.setSymbolForAST(propDeclAST.id, propertySymbol);
+                this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
             }
             else {
                 // it's really an implicit class decl, so we need to set the type of the symbol to
@@ -59337,8 +59439,8 @@ module TypeScript {
             importSymbol.addDeclaration(importDeclaration);
             importDeclaration.setSymbol(importSymbol);
 
-            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
             this.semanticInfo.setSymbolForAST(importDeclAST.id, importSymbol);
+            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
             
 
             if (parent && !parentHadSymbol) {
@@ -59349,6 +59451,7 @@ module TypeScript {
                 else {
                     importSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
         }
 
@@ -59396,8 +59499,8 @@ module TypeScript {
                         }
                     }
                     
-                    this.semanticInfo.setSymbolForAST(argDecl, parameterSymbol);
                     this.semanticInfo.setSymbolForAST(argDecl.id, parameterSymbol);
+                    this.semanticInfo.setSymbolForAST(argDecl, parameterSymbol);
 
                     signatureSymbol.addParameter(parameterSymbol, parameterSymbol.getIsOptional());
 
@@ -59491,9 +59594,9 @@ module TypeScript {
             functionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionDeclaration);
             
-            this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
             this.semanticInfo.setSymbolForAST(funcDeclAST.name, functionSymbol);
-        
+            this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
+
             if (parent && !parentHadSymbol) {
                 if (isExported) {
                     parent.addMember(functionSymbol, SymbolLinkKind.PublicMember);
@@ -59501,6 +59604,7 @@ module TypeScript {
                 else {
                     functionSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
 
             if (!isSignature) {
@@ -59587,12 +59691,11 @@ module TypeScript {
             functionExpressionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionExpressionDeclaration);
 
-            this.semanticInfo.setSymbolForAST(funcExpAST, functionSymbol);
-
             if (funcExpAST.name) {
                 this.semanticInfo.setSymbolForAST(funcExpAST.name, functionSymbol);
             }
-        
+            this.semanticInfo.setSymbolForAST(funcExpAST, functionSymbol);
+
             this.pushParent(functionTypeSymbol);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
@@ -59761,9 +59864,9 @@ module TypeScript {
 
             methodDeclaration.setSymbol(methodSymbol);
             methodSymbol.addDeclaration(methodDeclaration);
-            this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
             this.semanticInfo.setSymbolForAST(methodAST.name, methodSymbol);
-        
+            this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
+
             if (!parentHadSymbol) {
 
                 if (isStatic) {
@@ -60915,185 +61018,21 @@ module TypeScript {
 module TypeScript {
 
     export class PullEmitter extends Emitter {
+        public locationInfo: LocationInfo = null;
+        private declStack: PullDecl[] = [];
 
-        constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions, public errorReporter: ErrorReporter, public semanticInfoChain: SemanticInfoChain) {
-            super(checker, emittingFileName, outfile, emitOptions, errorReporter);
+        constructor(emittingFileName: string, outfile: ITextWriter, emitOptions: EmitOptions, errorReporter: ErrorReporter, private semanticInfoChain: SemanticInfoChain) {
+            super(null, emittingFileName, outfile, emitOptions, errorReporter);
         }
 
-        public setSourceMappings(mapper: SourceMapper) {
-            this.allSourceMappers.push(mapper);
-            this.sourceMapper = mapper;
+        public setUnit(locationInfo: LocationInfo) {
+            this.locationInfo = locationInfo;
         }
 
-        public writeToOutput(s: string) {
-            this.outfile.Write(s);
-            // TODO: check s for newline
-            this.emitState.column += s.length;
-        }
-
-        public writeToOutputTrimmable(s: string) {
-            if (this.emitOptions.minWhitespace) {
-                s = s.replace(/[\s]*/g, '');
-            }
-            this.writeToOutput(s);
-        }
-
-        public writeLineToOutput(s: string) {
-            if (this.emitOptions.minWhitespace) {
-                this.writeToOutput(s);
-                var c = s.charCodeAt(s.length - 1);
-                if (!((c == LexCodeSpace) || (c == LexCodeSMC) || (c == LexCodeLBR))) {
-                    this.writeToOutput(' ');
-                }
-            }
-            else {
-                this.outfile.WriteLine(s);
-                this.emitState.column = 0
-                this.emitState.line++;
-            }
-        }
-
-        public writeCaptureThisStatement(ast: AST) {
-            this.emitIndent();
-            this.recordSourceMappingStart(ast);
-            this.writeToOutput(this.captureThisStmtString);
-            this.recordSourceMappingEnd(ast);
-            this.writeLineToOutput("");
-        }
-
-        public setInVarBlock(count: number) {
-            this.varListCountStack[this.varListCountStack.length - 1] = count;
-        }
-
-        public setInObjectLiteral(val: bool): bool {
-            var temp = this.emitState.inObjectLiteral;
-            this.emitState.inObjectLiteral = val;
-            return temp;
-        }
-
-        public setContainer(c: number): number {
-            var temp = this.emitState.container;
-            this.emitState.container = c;
-            return temp;
-        }
-
-        private getIndentString() {
-            if (this.emitOptions.minWhitespace) {
-                return "";
-            }
-            else {
-                return this.indenter.getIndent();
-            }
-        }
-
-        public emitIndent() {
-            this.writeToOutput(this.getIndentString());
-        }
-
-        public emitCommentInPlace(comment: Comment) {
-            var text = comment.getText();
-            var hadNewLine = false;
-
-            if (comment.isBlockComment) {
-                if (this.emitState.column == 0) {
-                    this.emitIndent();
-                }
-                this.recordSourceMappingStart(comment);
-                this.writeToOutput(text[0]);
-
-                if (text.length > 1 || comment.endsLine) {
-                    for (var i = 1; i < text.length; i++) {
-                        this.writeLineToOutput("");
-                        this.emitIndent();
-                        this.writeToOutput(text[i]);
-                    }
-                    this.recordSourceMappingEnd(comment);
-                    this.writeLineToOutput("");
-                    hadNewLine = true;
-                } else {
-                    this.recordSourceMappingEnd(comment);
-                }
-            }
-            else {
-                if (this.emitState.column == 0) {
-                    this.emitIndent();
-                }
-                this.recordSourceMappingStart(comment);
-                this.writeToOutput(text[0]);
-                this.recordSourceMappingEnd(comment);
-                this.writeLineToOutput("");
-                hadNewLine = true;
-            }
-
-            if (hadNewLine) {
-                this.emitIndent();
-            }
-            else {
-                this.writeToOutput(" ");
-            }
-        }
-
-        public emitParensAndCommentsInPlace(ast: AST, pre: bool) {
-            var comments = pre ? ast.preComments : ast.postComments;
-
-            // comments should be printed before the LParen, but after the RParen
-            if (ast.isParenthesized && !pre) {
-                this.writeToOutput(")");
-            }
-            if (this.emitOptions.emitComments && comments && comments.length != 0) {
-                for (var i = 0; i < comments.length; i++) {
-                    this.emitCommentInPlace(comments[i]);
-                }
-            }
-            if (ast.isParenthesized && pre) {
-                this.writeToOutput("(");
-            }
-        }
-
-        // TODO: emit accessor pattern
-        public emitObjectLiteral(content: ASTList) {
-            this.writeLineToOutput("{");
-            this.indenter.increaseIndent();
-            var inObjectLiteral = this.setInObjectLiteral(true);
-            this.emitJavascriptList(content, ",", TokenID.Comma, true, false, false);
-            this.setInObjectLiteral(inObjectLiteral);
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutput("}");
-        }
-
-        public emitArrayLiteral(content: ASTList) {
-            this.writeToOutput("[");
-            if (content) {
-                this.writeLineToOutput("");
-                this.indenter.increaseIndent();
-                this.emitJavascriptList(content, ", ", TokenID.Comma, true, false, false);
-                this.indenter.decreaseIndent();
-                this.emitIndent();
-            }
-            this.writeToOutput("]");
-        }
-
-        public emitNew(target: AST, args: ASTList) {
-            this.writeToOutput("new ");
-            if (target.nodeType == NodeType.TypeRef) {
-                var typeRef = <TypeReference>target;
-                if (typeRef.arrayCount) {
-                    this.writeToOutput("Array()");
-                }
-                else {
-                    this.emitJavascript(typeRef.term, TokenID.Tilde, false);
-                    this.writeToOutput("()");
-                }
-            }
-            else {
-                this.emitJavascript(target, TokenID.Tilde, false);
-                this.recordSourceMappingStart(args);
-                this.writeToOutput("(");
-                this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
-                this.writeToOutput(")");
-                this.recordSourceMappingEnd(args);
-            }
+        private getEnclosingDecl() {
+            var declStackLen = this.declStack.length;
+            var enclosingDecl = declStackLen > 0 ? this.declStack[declStackLen - 1] : null;
+            return enclosingDecl;
         }
 
         // PULLTODO
@@ -61148,822 +61087,198 @@ module TypeScript {
             return false;
         }
 
-        public emitCall(callNode: CallExpression, target: AST, args: ASTList) {
-            if (!this.emitSuperCall(callNode)) {
-                if (!hasFlag(callNode.flags, ASTFlags.ClassBaseConstructorCall)) {
-                    if (target.nodeType == NodeType.FuncDecl && !target.isParenthesized) {
-                        this.writeToOutput("(");
-                    }
-                    if (callNode.target.nodeType == NodeType.Super && this.emitState.container == EmitContainer.Constructor) {
-                        this.writeToOutput("_super.call");
-                    }
-                    else {
-                        this.emitJavascript(target, TokenID.OpenParen, false);
-                    }
-                    if (target.nodeType == NodeType.FuncDecl && !target.isParenthesized) {
-                        this.writeToOutput(")");
-                    }
-                    this.recordSourceMappingStart(args);
-                    this.writeToOutput("(");
-                    if (callNode.target.nodeType == NodeType.Super && this.emitState.container == EmitContainer.Constructor) {
-                        this.writeToOutput("this");
-                        if (args && args.members.length) {
-                            this.writeToOutput(", ");
-                        }
-                    }
-                    this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
-                    this.writeToOutput(")");
-                    this.recordSourceMappingEnd(args);
-                }
-                else {
-                    this.indenter.decreaseIndent();
-                    this.indenter.decreaseIndent();
-                    var constructorCall = new ASTList();
-                    constructorCall.members[0] = callNode;
-                    this.emitConstructorCalls(constructorCall, this.thisClassNode);
-                    this.indenter.increaseIndent();
-                    this.indenter.increaseIndent();
-                }
-            }
-        }
-
-        // PULLTODO
-        public emitConstructorCalls(bases: ASTList, classDecl: TypeDeclaration) {
-            if (bases == null) {
-                return;
-            }
-            var basesLen = bases.members.length;
-            this.recordSourceMappingStart(classDecl);
-            for (var i = 0; i < basesLen; i++) {
-                var baseExpr = bases.members[i];
-                var baseSymbol: Symbol = null;
-                if (baseExpr.nodeType == NodeType.Call) {
-                    baseSymbol = (<CallExpression>baseExpr).target.type.symbol;
-                }
-                else {
-                    baseSymbol = baseExpr.type.symbol;
-                }
-                var baseName = baseSymbol.name;
-                if (baseSymbol.declModule != classDecl.type.symbol.declModule) {
-                    baseName = baseSymbol.fullName();
-                }
-                if (baseExpr.nodeType == NodeType.Call) {
-                    this.emitIndent();
-                    this.writeToOutput("_super.call(this");
-                    var args = (<CallExpression>baseExpr).arguments;
-                    if (args && (args.members.length > 0)) {
-                        this.writeToOutput(", ");
-                        this.emitJavascriptList(args, ", ", TokenID.Comma, false, false, false);
-                    }
-                    this.writeToOutput(")");
-                }
-                else {
-                    if (baseExpr.type && (baseExpr.type.isClassInstance())) {
-                        // parameterless constructor call;
-                        this.emitIndent();
-                        this.writeToOutput(classDecl.name.actualText + "._super.constructor");
-                        //emitJavascript(baseExpr,TokenID.LParen,false);
-                        this.writeToOutput(".call(this)");
-                    }
-                }
-            }
-            this.recordSourceMappingEnd(classDecl);
-        }
-
-        // PULLTODO
-        public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
-            bases: ASTList, hasSelfRef: bool, classDecl: TypeDeclaration) {
-            /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
-            /// such as: 
-            ///     Foo.prototype.bar = 
-            ///         function() {
-            ///         };
-            /// Once we start emitting comments, we should pull this code out to place on the outer context where the function
-            /// is used.
-            //if (funcDecl.preComments!=null && funcDecl.preComments.length>0) {
-            //    this.writeLineToOutput("");
-            //    this.increaseIndent();
-            //    emitIndent();
-            //}
-
+        public getClassPropertiesMustComeAfterSuperCall(funcDecl: FuncDecl, classDecl: TypeDeclaration) {
             var isClassConstructor = funcDecl.isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod);
-            var hasNonObjectBaseType = isClassConstructor && hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseType) && !hasFlag(this.thisClassNode.type.instanceType.typeFlags, TypeFlags.HasBaseTypeOfObject);
-            var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType && hasFlag((<ClassDeclaration>this.thisClassNode).varFlags, VarFlags.ClassSuperMustBeFirstCallInConstructor);
+            var hasNonObjectBaseType = isClassConstructor && classDecl.extendsList && classDecl.extendsList.members.length > 0;
+            var classPropertiesMustComeAfterSuperCall = hasNonObjectBaseType;
+            return classPropertiesMustComeAfterSuperCall;
+        }
 
-            // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
-            // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
-            var shouldParenthesize = hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) && !funcDecl.isParenthesized && !funcDecl.isAccessor() && (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon));
-
-            this.emitParensAndCommentsInPlace(funcDecl, true);
-            if (shouldParenthesize) {
-                this.writeToOutput("(");
-            }
-            this.recordSourceMappingStart(funcDecl);
-            if (!(funcDecl.isAccessor() && (<FieldSymbol>funcDecl.accessorSymbol).isObjectLitField)) {
-                this.writeToOutput("function ");
-            }
-            if (printName) {
-                var id = funcDecl.getNameText();
-                if (id && !funcDecl.isAccessor()) {
-                    if (funcDecl.name) {
-                        this.recordSourceMappingStart(funcDecl.name);
-                    }
-                    this.writeToOutput(id);
-                    if (funcDecl.name) {
-                        this.recordSourceMappingEnd(funcDecl.name);
-                    }
-                }
-            }
-
-            this.writeToOutput("(");
-            var argsLen = 0;
-            var i = 0;
-            var arg: ArgDecl;
-            var defaultArgs: ArgDecl[] = [];
-            if (funcDecl.arguments) {
-                var tempContainer = this.setContainer(EmitContainer.Args);
-                argsLen = funcDecl.arguments.members.length;
-                var printLen = argsLen;
-                if (funcDecl.variableArgList) {
-                    printLen--;
-                }
-                for (i = 0; i < printLen; i++) {
-                    arg = <ArgDecl>funcDecl.arguments.members[i];
-                    if (arg.init) {
-                        defaultArgs.push(arg);
-                    }
-                    this.emitJavascript(arg, TokenID.OpenParen, false);
-                    if (i < (printLen - 1)) {
-                        this.writeToOutput(", ");
-                    }
-                }
-                this.setContainer(tempContainer);
-            }
-            this.writeLineToOutput(") {");
-
-            if (funcDecl.isConstructor) {
-                this.recordSourceMappingNameStart("constructor");
-            } else if (funcDecl.isGetAccessor()) {
-                this.recordSourceMappingNameStart("get_" + funcDecl.getNameText());
-            } else if (funcDecl.isSetAccessor()) {
-                this.recordSourceMappingNameStart("set_" + funcDecl.getNameText());
-            } else {
-                this.recordSourceMappingNameStart(funcDecl.getNameText());
-            }
-            this.indenter.increaseIndent();
-
-            // set default args first
-            for (i = 0; i < defaultArgs.length; i++) {
-                var arg = defaultArgs[i];
-                this.emitIndent();
-                this.recordSourceMappingStart(arg);
-                this.writeToOutput("if (typeof " + arg.id.actualText + " === \"undefined\") { ");//
-                this.recordSourceMappingStart(arg.id);
-                this.writeToOutput(arg.id.actualText);
-                this.recordSourceMappingEnd(arg.id);
-                this.writeToOutput(" = ");
-                this.emitJavascript(arg.init, TokenID.OpenParen, false);
-                this.writeLineToOutput("; }")
-                this.recordSourceMappingEnd(arg);
-            }
-
-            if (funcDecl.isConstructor && ((<ClassDeclaration>funcDecl.classDecl).varFlags & VarFlags.MustCaptureThis)) {
-                this.writeCaptureThisStatement(funcDecl);
-            }
-
-            if (funcDecl.isConstructor && !classPropertiesMustComeAfterSuperCall) {
-                if (funcDecl.arguments) {
-                    argsLen = funcDecl.arguments.members.length;
-                    for (i = 0; i < argsLen; i++) {
-                        arg = <ArgDecl>funcDecl.arguments.members[i];
-                        if ((arg.varFlags & VarFlags.Property) != VarFlags.None) {
-                            this.emitIndent();
-                            this.recordSourceMappingStart(arg);
-                            this.recordSourceMappingStart(arg.id);
-                            this.writeToOutput("this." + arg.id.actualText);
-                            this.recordSourceMappingEnd(arg.id);
-                            this.writeToOutput(" = ");
-                            this.recordSourceMappingStart(arg.id);
-                            this.writeToOutput(arg.id.actualText);
-                            this.recordSourceMappingEnd(arg.id);
-                            this.writeLineToOutput(";");
-                            this.recordSourceMappingEnd(arg);
-                        }
-                    }
-                }
-
-                // For classes, the constructor needs to be explicitly called
-                if (!hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod)) {
-                    this.emitConstructorCalls(bases, classDecl);
-                }
-            }
-            if (hasSelfRef) {
-                this.writeCaptureThisStatement(funcDecl);
-            }
-            if (funcDecl.variableArgList) {
-                argsLen = funcDecl.arguments.members.length;
-                var lastArg = <ArgDecl>funcDecl.arguments.members[argsLen - 1];
-                this.emitIndent();
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("var ");
-                this.recordSourceMappingStart(lastArg.id);
-                this.writeToOutput(lastArg.id.actualText);
-                this.recordSourceMappingEnd(lastArg.id);
-                this.writeLineToOutput(" = [];");
-                this.recordSourceMappingEnd(lastArg);
-                this.emitIndent();
-                this.writeToOutput("for (")
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("var _i = 0;");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeToOutput(" ");
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("_i < (arguments.length - " + (argsLen - 1) + ")");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeToOutput("; ");
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput("_i++");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeLineToOutput(") {");
-                this.indenter.increaseIndent();
-                this.emitIndent();
-
-                this.recordSourceMappingStart(lastArg);
-                this.writeToOutput(lastArg.id.actualText + "[_i] = arguments[_i + " + (argsLen - 1) + "];");
-                this.recordSourceMappingEnd(lastArg);
-                this.writeLineToOutput("");
-                this.indenter.decreaseIndent();
-                this.emitIndent();
-                this.writeLineToOutput("}");
-            }
-
-            // if it's a class, emit the uninitializedMembers, first emit the non-proto class body members
-            if (funcDecl.isConstructor && hasFlag(funcDecl.fncFlags, FncFlags.ClassMethod) && !classPropertiesMustComeAfterSuperCall) {
-
-                var nProps = (<ASTList>this.thisClassNode.members).members.length;
-
-                for (var i = 0; i < nProps; i++) {
-                    if ((<ASTList>this.thisClassNode.members).members[i].nodeType == NodeType.VarDecl) {
-                        var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[i];
-                        if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
-                            this.emitIndent();
-                            this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
-                            this.writeLineToOutput("");
-                        }
-                    }
-                }
-                //this.writeLineToOutput("");
-            }
-
-            this.emitBareJavascriptStatements(funcDecl.bod, classPropertiesMustComeAfterSuperCall);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.recordSourceMappingStart(funcDecl.endingToken);
-            this.writeToOutput("}");
-
-            this.recordSourceMappingNameEnd();
-            this.recordSourceMappingEnd(funcDecl.endingToken);
-            this.recordSourceMappingEnd(funcDecl);
-
-            if (shouldParenthesize) {
-                this.writeToOutput(")");
-            }
-
-            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
-            this.recordSourceMappingEnd(funcDecl);
-
-            this.emitParensAndCommentsInPlace(funcDecl, false);
-
-            if (!isMember &&
-                //funcDecl.name != null &&
-                !hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression) &&
-                (!hasFlag(funcDecl.fncFlags, FncFlags.Signature) || funcDecl.isConstructor)) {
-                this.writeLineToOutput("");
-            } else if (hasFlag(funcDecl.fncFlags, FncFlags.IsFunctionExpression)) {
-                if (hasFlag(funcDecl.flags, ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.flags, ASTFlags.AutomaticSemicolon)) {
-                    // If either of these two flags are set, then the function expression is a statement. Terminate it.
-                    this.writeLineToOutput(";");
-                }
-            }
-            /// TODO: See the other part of this at the beginning of function
-            //if (funcDecl.preComments!=null && funcDecl.preComments.length>0) {
-            //    this.decreaseIndent();
-            //}           
+        public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
+            hasSelfRef: bool, classDecl: TypeDeclaration) {
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.locationInfo.filename);
+            this.declStack.push(pullDecl);
+            super.emitInnerFunction(funcDecl, printName, isMember, hasSelfRef, classDecl);
+            this.declStack.pop();
         }
 
         // PULLTODO
-        public emitJavascriptModule(moduleDecl: ModuleDeclaration) {
-            var modName = moduleDecl.name.actualText;
-            if (isTSFile(modName)) {
-                moduleDecl.name.setText(modName.substring(0, modName.length - 3));
+        public getModuleImportAndDepencyList(moduleDecl: ModuleDeclaration) {
+            var importList = "";
+            var dependencyList = "";
+
+            // all dependencies are quoted
+            for (var i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
+                var importStatement = (<ModuleType>moduleDecl.mod).importedModules[i]
+
+                // if the imported module is only used in a type position, do not add it as a requirement
+                if (importStatement.id.sym &&
+                    !(<TypeSymbol>importStatement.id.sym).onlyReferencedAsTypeRef) {
+                    if (i <= (<ModuleType>moduleDecl.mod).importedModules.length - 1) {
+                        dependencyList += ", ";
+                        importList += ", ";
+                    }
+
+                    importList += "__" + importStatement.id.actualText + "__";
+                    dependencyList += importStatement.firstAliasedModToString();
+                }
             }
-            else if (isSTRFile(modName)) {
-                moduleDecl.name.setText(modName.substring(0, modName.length - 4));
+
+            // emit any potential amd dependencies
+            for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
+                dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
             }
 
-            if (!hasFlag(moduleDecl.modFlags, ModuleFlags.Ambient)) {
-                var isDynamicMod = hasFlag(moduleDecl.modFlags, ModuleFlags.IsDynamic);
-                var prevOutFile = this.outfile;
-                var prevOutFileName = this.emittingFileName;
-                var prevAllSourceMappers = this.allSourceMappers;
-                var prevSourceMapper = this.sourceMapper;
-                var prevColumn = this.emitState.column;
-                var prevLine = this.emitState.line;
-                var temp = this.setContainer(EmitContainer.Module);
-                var svModuleName = this.moduleName;
-                var isExported = hasFlag(moduleDecl.modFlags, ModuleFlags.Exported);
-                this.moduleDeclList[this.moduleDeclList.length] = moduleDecl;
-                var isWholeFile = hasFlag(moduleDecl.modFlags, ModuleFlags.IsWholeFile);
-                this.moduleName = moduleDecl.name.actualText;
-
-                // prologue
-                if (isDynamicMod) {
-                    // create the new outfile for this module
-                    var tsModFileName = stripQuotes(moduleDecl.name.actualText);
-                    var modFilePath = trimModName(tsModFileName) + ".js";
-                    modFilePath = this.emitOptions.mapOutputFileName(modFilePath, TypeScriptCompiler.mapToJSFileName);
-
-                    if (this.emitOptions.ioHost) {
-                        // Ensure that the slashes are normalized so that the comparison is fair
-                        // REVIEW: Note that modFilePath is normalized to forward slashes in Parser.parse, so the 
-                        // first call to switchToForwardSlashes is technically a no-op, but it will prevent us from
-                        // regressing if the parser changes
-                        if (switchToForwardSlashes(modFilePath) != switchToForwardSlashes(this.emittingFileName)) {
-                            this.emittingFileName = modFilePath;
-                            var useUTF8InOutputfile = moduleDecl.containsUnicodeChar || (this.emitOptions.emitComments && moduleDecl.containsUnicodeCharInComment);
-                            this.outfile = this.createFile(this.emittingFileName, useUTF8InOutputfile);
-                            if (prevSourceMapper != null) {
-                                this.allSourceMappers = [];
-                                var sourceMappingFile = this.createFile(this.emittingFileName + SourceMapper.MapFileExtension, false);
-                                this.setSourceMappings(new TypeScript.SourceMapper(tsModFileName, this.emittingFileName, this.outfile, sourceMappingFile, this.errorReporter, this.emitOptions.emitFullSourceMapPath));
-                                this.emitState.column = 0;
-                                this.emitState.line = 0;
-                            }
-                        } else {
-                            CompilerDiagnostics.assert(this.emitOptions.outputMany, "Cannot have dynamic modules compiling into single file");
-                        }
-                    }
-
-                    this.setContainer(EmitContainer.DynamicModule); // discard the previous 'Module' container
-
-                    this.recordSourceMappingStart(moduleDecl);
-                    if (moduleGenTarget == ModuleGenTarget.Asynchronous) { // AMD
-                        var dependencyList = "[\"require\", \"exports\"";
-                        var importList = "require, exports";
-                        var importStatement: ImportDeclaration = null;
-
-                        // all dependencies are quoted
-                        for (var i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
-                            importStatement = (<ModuleType>moduleDecl.mod).importedModules[i]
-
-                            // if the imported module is only used in a type position, do not add it as a requirement
-                            if (importStatement.id.sym &&
-                                !(<TypeSymbol>importStatement.id.sym).onlyReferencedAsTypeRef) {
-                                if (i <= (<ModuleType>moduleDecl.mod).importedModules.length - 1) {
-                                    dependencyList += ", ";
-                                    importList += ", ";
-                                }
-
-                                importList += "__" + importStatement.id.actualText + "__";
-                                dependencyList += importStatement.firstAliasedModToString();
-                            }
-                        }
-
-                        // emit any potential amd dependencies
-                        for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
-                            dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
-                        }
-
-                        dependencyList += "]";
-
-                        this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
-                    }
-                    else { // Node
-
-                    }
-                }
-                else {
-
-                    if (!isExported) {
-                        this.recordSourceMappingStart(moduleDecl);
-                        this.writeToOutput("var ");
-                        this.recordSourceMappingStart(moduleDecl.name);
-                        this.writeToOutput(this.moduleName);
-                        this.recordSourceMappingEnd(moduleDecl.name);
-                        this.writeLineToOutput(";");
-                        this.recordSourceMappingEnd(moduleDecl);
-                        this.emitIndent();
-                    }
-
-                    this.writeToOutput("(");
-                    this.recordSourceMappingStart(moduleDecl);
-                    this.writeToOutput("function (");
-                    this.recordSourceMappingStart(moduleDecl.name);
-                    this.writeToOutput(this.moduleName);
-                    this.recordSourceMappingEnd(moduleDecl.name);
-                    this.writeLineToOutput(") {");
-                }
-
-                if (!isWholeFile) {
-                    this.recordSourceMappingNameStart(this.moduleName);
-                }
-
-                // body - don't indent for Node
-                if (!isDynamicMod || moduleGenTarget == ModuleGenTarget.Asynchronous) {
-                    this.indenter.increaseIndent();
-                }
-
-                if (moduleDecl.modFlags & ModuleFlags.MustCaptureThis) {
-                    this.writeCaptureThisStatement(moduleDecl);
-                }
-
-                this.emitJavascriptList(moduleDecl.members, null, TokenID.Semicolon, true, false, false);
-                if (!isDynamicMod || moduleGenTarget == ModuleGenTarget.Asynchronous) {
-                    this.indenter.decreaseIndent();
-                }
-                this.emitIndent();
-
-                // epilogue
-                if (isDynamicMod) {
-                    if (moduleGenTarget == ModuleGenTarget.Asynchronous) { // AMD
-                        this.writeLineToOutput("})");
-                    }
-                    else { // Node
-                    }
-                    if (!isWholeFile) {
-                        this.recordSourceMappingNameEnd();
-                    }
-                    this.recordSourceMappingEnd(moduleDecl);
-
-                    // close the module outfile, and restore the old one
-                    if (this.outfile != prevOutFile) {
-                        this.Close();
-                        if (prevSourceMapper != null) {
-                            this.allSourceMappers = prevAllSourceMappers;
-                            this.sourceMapper = prevSourceMapper;
-                            this.emitState.column = prevColumn;
-                            this.emitState.line = prevLine;
-                        }
-                        this.outfile = prevOutFile;
-                        this.emittingFileName = prevOutFileName;
-                    }
-                }
-                else {
-                    var containingMod: ModuleDeclaration = null;
-                    if (moduleDecl.type && moduleDecl.type.symbol.container && moduleDecl.type.symbol.container.declAST) {
-                        containingMod = <ModuleDeclaration>moduleDecl.type.symbol.container.declAST;
-                    }
-                    var parentIsDynamic = containingMod && hasFlag(containingMod.modFlags, ModuleFlags.IsDynamic);
-
-                    this.recordSourceMappingStart(moduleDecl.endingToken);
-                    if (temp == EmitContainer.Prog && isExported) {
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
-                    }
-                    else if (isExported || temp == EmitContainer.Prog) {
-                        var dotMod = svModuleName != "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
-                    }
-                    else if (!isExported && temp != EmitContainer.Prog) {
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")(" + this.moduleName + " || (" + this.moduleName + " = {}));");
-                    }
-                    else {
-                        this.writeToOutput("}");
-                        if (!isWholeFile) {
-                            this.recordSourceMappingNameEnd();
-                        }
-                        this.recordSourceMappingEnd(moduleDecl.endingToken);
-                        this.writeToOutput(")();");
-                    }
-                    this.recordSourceMappingEnd(moduleDecl);
-                    this.writeLineToOutput("");
-                    if (temp != EmitContainer.Prog && isExported) {
-                        this.emitIndent();
-                        this.recordSourceMappingStart(moduleDecl);
-                        if (parentIsDynamic) {
-                            this.writeLineToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
-                        } else {
-                            this.writeLineToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
-                        }
-                        this.recordSourceMappingEnd(moduleDecl);
-                    }
-                }
-
-                this.setContainer(temp);
-                this.moduleName = svModuleName;
-                this.moduleDeclList.length--;
-            }
+            return {
+                importList: importList,
+                dependencyList: dependencyList
+            };
         }
 
-        public emitIndex(operand1: AST, operand2: AST) {
-            var temp = this.setInObjectLiteral(false);
-            this.emitJavascript(operand1, TokenID.Tilde, false);
-            this.writeToOutput("[");
-            this.emitJavascriptList(operand2, ", ", TokenID.Comma, false, false, false);
-            this.writeToOutput("]");
-            this.setInObjectLiteral(temp);
-        }
-
-        public emitStringLiteral(text: string) {
-            // should preserve escape etc.
-            // TODO: simplify object literal simple name
-            this.writeToOutput(text);
-        }
-
-        // PULLTODO
-        public emitJavascriptFunction(funcDecl: FuncDecl) {
-            if (hasFlag(funcDecl.fncFlags, FncFlags.Signature) || funcDecl.isOverload) {
-                return;
-            }
-            var temp: number;
-            var tempFnc = this.thisFnc;
-            this.thisFnc = funcDecl;
-
-            if (funcDecl.isConstructor) {
-                temp = this.setContainer(EmitContainer.Constructor);
-            }
-            else {
-                temp = this.setContainer(EmitContainer.Function);
-            }
-
-            var bases: ASTList = null;
-            var hasSelfRef = false;
-            var funcName = funcDecl.getNameText();
-
-            if ((this.emitState.inObjectLiteral || !funcDecl.isAccessor()) &&
-                ((temp != EmitContainer.Constructor) ||
-                ((funcDecl.fncFlags & FncFlags.Method) == FncFlags.None))) {
-                var tempLit = this.setInObjectLiteral(false);
-                if (this.thisClassNode) {
-                    bases = this.thisClassNode.extendsList;
-                }
-                hasSelfRef = Emitter.shouldCaptureThis(funcDecl);
-                this.recordSourceMappingStart(funcDecl);
-                if (hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported) && funcDecl.type.symbol.container == this.checker.gloMod && !funcDecl.isConstructor) {
-                    this.writeToOutput("this." + funcName + " = ");
-                    this.emitInnerFunction(funcDecl, false, false, bases, hasSelfRef, this.thisClassNode);
-                }
-                else {
-                    this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()), false, bases, hasSelfRef, this.thisClassNode);
-                }
-                this.setInObjectLiteral(tempLit);
-            }
-            this.setContainer(temp);
-            this.thisFnc = tempFnc;
-
-            if (!hasFlag(funcDecl.fncFlags, FncFlags.Signature)) {
-                if (hasFlag(funcDecl.fncFlags, FncFlags.Static)) {
-                    if (this.thisClassNode) {
-                        if (funcDecl.isAccessor()) {
-                            this.emitPropertyAccessor(funcDecl, this.thisClassNode.name.actualText, false);
-                        }
-                        else {
-                            this.emitIndent();
-                            this.recordSourceMappingStart(funcDecl);
-                            this.writeLineToOutput(this.thisClassNode.name.actualText + "." + funcName +
-                                          " = " + funcName + ";");
-                            this.recordSourceMappingEnd(funcDecl);
-                        }
-                    }
-                }
-                else if ((this.emitState.container == EmitContainer.Module || this.emitState.container == EmitContainer.DynamicModule) && hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported)) {
-                    this.emitIndent();
-                    var modName = this.emitState.container == EmitContainer.Module ? this.moduleName : "exports";
-                    this.recordSourceMappingStart(funcDecl);
-                    this.writeLineToOutput(modName + "." + funcName +
-                                      " = " + funcName + ";");
-                    this.recordSourceMappingEnd(funcDecl);
-                }
-            }
-        }
-
-        public emitAmbientVarDecl(varDecl: VarDecl) {
-            if (varDecl.init) {
-                this.emitParensAndCommentsInPlace(varDecl, true);
-                this.recordSourceMappingStart(varDecl);
-                this.recordSourceMappingStart(varDecl.id);
-                this.writeToOutput(varDecl.id.actualText);
-                this.recordSourceMappingEnd(varDecl.id);
-                this.writeToOutput(" = ");
-                this.emitJavascript(varDecl.init, TokenID.Comma, false);
-                this.recordSourceMappingEnd(varDecl);
-                this.writeToOutput(";");
-                this.emitParensAndCommentsInPlace(varDecl, false);
-            }
-        }
-
-        private varListCount(): number {
-            return this.varListCountStack[this.varListCountStack.length - 1];
-        }
-
-        // Emits "var " if it is allowed
-        private emitVarDeclVar() {
-            // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
-            // If it is var list of form  var a = varList count will be 0
-            if (this.varListCount() >= 0) {
-                this.writeToOutput("var ");
-                this.setInVarBlock(-this.varListCount());
-            }
-            return true;
-        }
-
-        private onEmitVar() {
-            if (this.varListCount() > 0) {
-                this.setInVarBlock(this.varListCount() - 1);
-            }
-            else if (this.varListCount() < 0) {
-                this.setInVarBlock(this.varListCount() + 1);
-            }
-        }
-
-        // PULLTODO
-        public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
-            if ((varDecl.varFlags & VarFlags.Ambient) == VarFlags.Ambient) {
-                this.emitAmbientVarDecl(varDecl);
-                this.onEmitVar();
-            }
-            else {
-                var sym = varDecl.sym;
-                var hasInitializer = (varDecl.init != null);
-                this.emitParensAndCommentsInPlace(varDecl, true);
-                this.recordSourceMappingStart(varDecl);
-                if (sym && sym.isMember() && sym.container &&
-                    (sym.container.kind() == SymbolKind.Type)) {
-                    var type = (<TypeSymbol>sym.container).type;
-                    if (type.isClass() && (!hasFlag(sym.flags, SymbolFlags.ModuleMember))) {
-                        // class
-                        if (this.emitState.container != EmitContainer.Args) {
-                            if (hasFlag(sym.flags, SymbolFlags.Static)) {
-                                this.writeToOutput(sym.container.name + ".");
-                            }
-                            else {
-                                this.writeToOutput("this.");
-                            }
-                        }
-                    }
-                    else if (type.hasImplementation()) {
-                        // module
-                        if (!hasFlag(sym.flags, SymbolFlags.Exported) && (sym.container == this.checker.gloMod || !hasFlag(sym.flags, SymbolFlags.Property))) {
-                            this.emitVarDeclVar();
-                        }
-                        else if (hasFlag(varDecl.varFlags, VarFlags.LocalStatic)) {
-                            this.writeToOutput(".");
-                        }
-                        else {
-                            if (this.emitState.container == EmitContainer.DynamicModule) {
-                                this.writeToOutput("exports.");
-                            }
-                            else {
-                                this.writeToOutput(this.moduleName + ".");
-                            }
-                        }
-                    }
-                    else {
-                        // function, constructor, method etc.
-                        if (tokenId != TokenID.OpenParen) {
-                            if (hasFlag(sym.flags, SymbolFlags.Exported) && sym.container == this.checker.gloMod) {
-                                this.writeToOutput("this.");
-                            }
-                            else {
-                                this.emitVarDeclVar();
-                            }
-                        }
-                    }
-                }
-                else {
-                    if (tokenId != TokenID.OpenParen) {
-                        this.emitVarDeclVar();
-                    }
-                }
-                this.recordSourceMappingStart(varDecl.id);
-                this.writeToOutput(varDecl.id.actualText);
-                this.recordSourceMappingEnd(varDecl.id);
-                if (hasInitializer) {
-                    this.writeToOutputTrimmable(" = ");
-
-                    // Ensure we have a fresh var list count when recursing into the variable 
-                    // initializer.  We don't want our current list of variables to affect how we
-                    // emit nested variable lists.
-                    this.varListCountStack.push(0);
-                    this.emitJavascript(varDecl.init, TokenID.Comma, false);
-                    this.varListCountStack.pop();
-                }
-                this.onEmitVar();
-                if ((tokenId != TokenID.OpenParen)) {
-                    if (this.varListCount() < 0) {
-                        this.writeToOutput(", ");
-                    } else if (tokenId != TokenID.For) {
-                        this.writeToOutputTrimmable(";");
-                    }
-                }
-                this.recordSourceMappingEnd(varDecl);
-                this.emitParensAndCommentsInPlace(varDecl, false);
-            }
-        }
-
-        public declEnclosed(moduleDecl: ModuleDeclaration): bool {
-            if (moduleDecl == null) {
+        public isParentDynamicModule(moduleDecl: ModuleDeclaration) {
+            var symbol = this.semanticInfoChain.getSymbolForAST(moduleDecl, this.locationInfo.filename);
+            var parentSymbol = symbol.getContainer();
+            var parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+            if (parentSymbol && parentSymbol.getKind() == PullElementKind.DynamicModule) {
                 return true;
             }
-            for (var i = 0, len = this.moduleDeclList.length; i < len; i++) {
-                if (this.moduleDeclList[i] == moduleDecl) {
-                    return true;
-                }
-            }
+
             return false;
         }
 
-        // PULLTODO
+        public shouldCaptureThis(ast: AST) {
+            if (ast == null) {
+                var scriptDecl = this.semanticInfoChain.getUnit(this.locationInfo.filename).getTopLevelDecls()[0];
+                return (scriptDecl.getFlags() & PullElementFlags.MustCaptureThis) == PullElementFlags.MustCaptureThis;
+            }
+
+            var decl = this.semanticInfoChain.getDeclForAST(ast, this.locationInfo.filename);
+            if (decl) {
+                return (decl.getFlags() & PullElementFlags.MustCaptureThis) == PullElementFlags.MustCaptureThis;
+            }
+
+            return false;
+        }
+
+        public emitJavascriptModule(moduleDecl: ModuleDeclaration) {
+            var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl, this.locationInfo.filename);
+            this.declStack.push(pullDecl);
+            super.emitJavascriptModule(moduleDecl);
+            this.declStack.pop();
+        }
+
+        public isContainedInClassDeclaration(varDecl: VarDecl) {
+            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.locationInfo.filename);
+            if (symbol) {
+                var parentSymbol = symbol.getContainer();
+                if (parentSymbol) {
+                    var parentKind = parentSymbol.getKind();
+                    if (parentKind == PullElementKind.Class) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public isContainedInModuleOrEnumDeclaration(varDecl: VarDecl) {
+            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.locationInfo.filename);
+            if (symbol) {
+                var parentSymbol = symbol.getContainer();
+                if (parentSymbol && parentSymbol.getKind() == PullElementKind.Enum) {
+                    return true;
+                }
+
+                var parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+                if (parentSymbol) {
+                    var parentKind = parentSymbol.getKind();
+                    if (parentKind == PullElementKind.Container || parentKind == PullElementKind.DynamicModule || parentKind == PullElementKind.Enum) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public getContainedSymbolName(varDecl: VarDecl) {
+            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.locationInfo.filename);
+            var parentSymbol = symbol.getContainer();
+            return parentSymbol.getName();
+        }
+
+        public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
+            var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.locationInfo.filename);
+            this.declStack.push(pullDecl);
+            super.emitJavascriptVarDecl(varDecl, tokenId);
+            this.declStack.pop();
+        }
+
         public emitJavascriptName(name: Identifier, addThis: bool) {
             var sym = name.sym;
             this.emitParensAndCommentsInPlace(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
-                if (addThis && (this.emitState.container != EmitContainer.Args) && sym) {
-                    // TODO: flag global module with marker other than string name
-                    if (sym.container && (sym.container.name != globalId)) {
-                        if (hasFlag(sym.flags, SymbolFlags.Static) && (hasFlag(sym.flags, SymbolFlags.Property))) {
-                            if (sym.declModule && hasFlag(sym.declModule.modFlags, ModuleFlags.IsDynamic)) {
+                var resolvingContext = new PullTypeResolutionContext();
+                var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.filename);
+                var pullSymbol = typeResolver.resolveNameExpression(name,
+                    this.getEnclosingDecl(), resolvingContext);
+                var pullSymbolKind = pullSymbol.getKind();
+                if (addThis && (this.emitState.container != EmitContainer.Args) && pullSymbol) {
+                    var pullSymbolContainer = pullSymbol.getContainer();
+                    if (pullSymbolContainer) {
+                        var pullSymbolContainerKind = pullSymbolContainer.getKind();
+                        if (pullSymbolContainerKind == PullElementKind.Class) {
+                            if (pullSymbol.hasFlag(PullElementFlags.Static)) {
+                                // This is static symbol
+                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                            }
+                            else if (pullSymbolKind == PullElementKind.Property) {
+                                this.emitThis();
+                                this.writeToOutput(".");
+                            }
+                        }
+                        else if (pullSymbolContainerKind == PullElementKind.Container || pullSymbolContainerKind == PullElementKind.Enum) {
+                            // If property
+                            if (pullSymbolKind == PullElementKind.Property || pullSymbol.hasFlag(PullElementFlags.Exported)) {
+                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                            }
+                        }
+                        else if (pullSymbolContainerKind == PullElementKind.DynamicModule) {
+                            if (pullSymbolKind == PullElementKind.Property || pullSymbol.hasFlag(PullElementFlags.Exported)) {
+                                // If dynamic module
                                 this.writeToOutput("exports.");
                             }
-                            else {
-                                this.writeToOutput(sym.container.name + ".");
-                            }
                         }
-                        else if (sym.kind() == SymbolKind.Field) {
-                            var fieldSym = <FieldSymbol>sym;
-                            if (hasFlag(fieldSym.flags, SymbolFlags.ModuleMember)) {
-                                if ((sym.container != this.checker.gloMod) && ((hasFlag(sym.flags, SymbolFlags.Property)) || hasFlag(sym.flags, SymbolFlags.Exported))) {
-                                    if (hasFlag(sym.declModule.modFlags, ModuleFlags.IsDynamic)) {
-                                        this.writeToOutput("exports.");
-                                    }
-                                    else {
-                                        this.writeToOutput(sym.container.name + ".");
-                                    }
+                        else if (pullSymbolKind == PullElementKind.Property) {
+                            this.emitThis();
+                            this.writeToOutput(".");
+                        }
+                        else {
+                            var pullDecls = pullSymbol.getDeclarations();
+                            var emitContainerName = true;
+                            for (var i = 0 ; i < pullDecls.length; i++) {
+                                if (pullDecls[i].getScriptName() == this.locationInfo.filename) {
+                                    emitContainerName = false;
                                 }
                             }
-                            else {
-                                if (sym.isInstanceProperty()) {
-                                    this.emitThis();
-                                    this.writeToOutput(".");
-                                }
+                            if (emitContainerName) {
+                                this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                         }
-                        else if (sym.kind() == SymbolKind.Type) {
-                            if (sym.isInstanceProperty()) {
-                                var typeSym = <TypeSymbol>sym;
-                                var type = typeSym.type;
-                                if (type.call && !hasFlag(sym.flags, SymbolFlags.ModuleMember)) {
-                                    this.emitThis();
-                                    this.writeToOutput(".");
-                                }
-                            }
-                            else if ((sym.unitIndex != this.checker.locationInfo.unitIndex) || (!this.declEnclosed(sym.declModule))) {
-                                this.writeToOutput(sym.container.name + ".")
-                            }
-                        }
-                    }
-                    else if (sym.container == this.checker.gloMod &&
-                                hasFlag(sym.flags, SymbolFlags.Exported) &&
-                                !hasFlag(sym.flags, SymbolFlags.Ambient) &&
-                        // check that it's a not a member of an ambient module...
-                                !((sym.isType() || sym.isMember()) &&
-                                    sym.declModule &&
-                                    hasFlag(sym.declModule.modFlags, ModuleFlags.Ambient)) &&
-                                this.emitState.container == EmitContainer.Prog &&
-                                sym.declAST.nodeType != NodeType.FuncDecl) {
-                        this.writeToOutput("this.");
                     }
                 }
 
                 // If it's a dynamic module, we need to print the "require" invocation
-                if (sym &&
-                    sym.declAST &&
-                    sym.declAST.nodeType == NodeType.ModuleDeclaration &&
-                    (hasFlag((<ModuleDeclaration>sym.declAST).modFlags, ModuleFlags.IsDynamic))) {
-                    var moduleDecl: ModuleDeclaration = <ModuleDeclaration>sym.declAST;
-
+                if (pullSymbol && pullSymbolKind == PullElementKind.DynamicModule) {
                     if (moduleGenTarget == ModuleGenTarget.Asynchronous) {
                         this.writeLineToOutput("__" + this.modAliasId + "__;");
                     }
                     else {
-                        var modPath = name.actualText;//(<ModuleDecl>moduleDecl.mod.symbol.declAST).name.actualText;
-                        var isAmbient = moduleDecl.mod.symbol.declAST && hasFlag((<ModuleDeclaration>moduleDecl.mod.symbol.declAST).modFlags, ModuleFlags.Ambient);
+                        var moduleDecl: ModuleDeclaration = <ModuleDeclaration>this.semanticInfoChain.getASTForSymbol(pullSymbol, this.locationInfo.filename);
+                        var modPath = name.actualText;
+                        var isAmbient = pullSymbol.hasFlag(PullElementFlags.Ambient);
                         modPath = isAmbient ? modPath : this.firstModAlias ? this.firstModAlias : quoteBaseName(modPath);
                         modPath = isAmbient ? modPath : (!isRelative(stripQuotes(modPath)) ? quoteStr("./" + stripQuotes(modPath)) : modPath);
                         this.writeToOutput("require(" + modPath + ")");
@@ -61977,262 +61292,11 @@ module TypeScript {
             this.emitParensAndCommentsInPlace(name, false);
         }
 
-        public emitJavascriptStatements(stmts: AST, emitEmptyBod: bool) {
-            if (stmts) {
-                if (stmts.nodeType != NodeType.Block) {
-                    var hasContents = (stmts && (stmts.nodeType != NodeType.List || ((<ASTList>stmts).members.length > 0)));
-                    if (emitEmptyBod || hasContents) {
-                        var hasOnlyBlockStatement = ((stmts.nodeType == NodeType.Block) ||
-                            ((stmts.nodeType == NodeType.List) && ((<ASTList>stmts).members.length == 1) && ((<ASTList>stmts).members[0].nodeType == NodeType.Block)));
-
-                        this.recordSourceMappingStart(stmts);
-                        if (!hasOnlyBlockStatement) {
-                            this.writeLineToOutput(" {");
-                            this.indenter.increaseIndent();
-                        }
-                        this.emitJavascriptList(stmts, null, TokenID.Semicolon, true, false, false);
-                        if (!hasOnlyBlockStatement) {
-                            this.writeLineToOutput("");
-                            this.indenter.decreaseIndent();
-                            this.emitIndent();
-                            this.writeToOutput("}");
-                        }
-                        this.recordSourceMappingEnd(stmts);
-                    }
-                }
-                else {
-                    this.emitJavascript(stmts, TokenID.Semicolon, true);
-                }
-            }
-            else if (emitEmptyBod) {
-                this.writeToOutput("{ }");
-            }
+        public getLineMap() {
+            return this.locationInfo.lineMap;
         }
 
-        public emitBareJavascriptStatements(stmts: AST, emitClassPropertiesAfterSuperCall: bool = false) {
-            // just the statements without enclosing curly braces
-            if (stmts.nodeType != NodeType.Block) {
-                if (stmts.nodeType == NodeType.List) {
-                    var stmtList = <ASTList>stmts;
-                    if ((stmtList.members.length == 2) &&
-                        (stmtList.members[0].nodeType == NodeType.Block) &&
-                        (stmtList.members[1].nodeType == NodeType.EndCode)) {
-                        this.emitJavascript(stmtList.members[0], TokenID.Semicolon, true);
-                        this.writeLineToOutput("");
-                    }
-                    else {
-                        this.emitJavascriptList(stmts, null, TokenID.Semicolon, true, false, emitClassPropertiesAfterSuperCall);
-                    }
-                }
-                else {
-                    this.emitJavascript(stmts, TokenID.Semicolon, true);
-                }
-            }
-            else {
-                this.emitJavascript(stmts, TokenID.Semicolon, true);
-            }
-        }
-
-        public recordSourceMappingNameStart(name: string) {
-            if (this.sourceMapper) {
-                var finalName = name;
-                if (!name) {
-                    finalName = "";
-                } else if (this.sourceMapper.currentNameIndex.length > 0) {
-                    finalName = this.sourceMapper.names[this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1]] + "." + name;
-                }
-
-                // We are currently not looking for duplicate but that is possible.
-                this.sourceMapper.names.push(finalName);
-                this.sourceMapper.currentNameIndex.push(this.sourceMapper.names.length - 1);
-            }
-        }
-
-        public recordSourceMappingNameEnd() {
-            if (this.sourceMapper) {
-                this.sourceMapper.currentNameIndex.pop();
-            }
-        }
-
-        public recordSourceMappingStart(ast: IASTSpan) {
-            if (this.sourceMapper && isValidAstNode(ast)) {
-                var lineCol = { line: -1, col: -1 };
-                var sourceMapping = new SourceMapping();
-                sourceMapping.start.emittedColumn = this.emitState.column;
-                sourceMapping.start.emittedLine = this.emitState.line;
-                // REVIEW: check time consumed by this binary search (about two per leaf statement)
-                getSourceLineColFromMap(lineCol, ast.minChar, this.checker.locationInfo.lineMap);
-                sourceMapping.start.sourceColumn = lineCol.col;
-                sourceMapping.start.sourceLine = lineCol.line;
-                getSourceLineColFromMap(lineCol, ast.limChar, this.checker.locationInfo.lineMap);
-                sourceMapping.end.sourceColumn = lineCol.col;
-                sourceMapping.end.sourceLine = lineCol.line;
-                if (this.sourceMapper.currentNameIndex.length > 0) {
-                    sourceMapping.nameIndex = this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1];
-                }
-                // Set parent and child relationship
-                var siblings = this.sourceMapper.currentMappings[this.sourceMapper.currentMappings.length - 1];
-                siblings.push(sourceMapping);
-                this.sourceMapper.currentMappings.push(sourceMapping.childMappings);
-            }
-        }
-
-        public recordSourceMappingEnd(ast: IASTSpan) {
-            if (this.sourceMapper && isValidAstNode(ast)) {
-                // Pop source mapping childs
-                this.sourceMapper.currentMappings.pop();
-
-                // Get the last source mapping from sibling list = which is the one we are recording end for
-                var siblings = this.sourceMapper.currentMappings[this.sourceMapper.currentMappings.length - 1];
-                var sourceMapping = siblings[siblings.length - 1];
-
-                sourceMapping.end.emittedColumn = this.emitState.column;
-                sourceMapping.end.emittedLine = this.emitState.line;
-            }
-        }
-
-        public Close() {
-            if (this.sourceMapper != null) {
-                SourceMapper.EmitSourceMapping(this.allSourceMappers);
-            }
-                try {
-                    // Closing files could result in exceptions, report them if they occur
-                    this.outfile.Close();
-                } catch (ex) {
-                    this.errorReporter.emitterError(null, ex.message);
-                }
-        }
-
-        public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
-            if (ast == null) {
-                return;
-            }
-            else if (ast.nodeType != NodeType.List) {
-                this.emitPrologue(emitPrologue);
-                this.emitJavascript(ast, tokenId, startLine);
-            }
-            else {
-                var list = <ASTList>ast;
-                this.emitParensAndCommentsInPlace(ast, true);
-                if (list.members.length == 0) {
-                    this.emitParensAndCommentsInPlace(ast, false);
-                    return;
-                }
-
-                var len = list.members.length;
-                for (var i = 0; i < len; i++) {
-                    if (emitPrologue) {
-                        // If the list has Strict mode flags, emit prologue after first statement
-                        // otherwise emit before first statement
-                        if (i == 1 || !hasFlag(list.flags, ASTFlags.StrictMode)) {
-                            this.emitPrologue(requiresExtendsBlock);
-                            emitPrologue = false;
-                        }
-                    }
-
-                    // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
-                    // call which, in these cases, must be the first statement in the constructor body
-                    if (i == 1 && emitClassPropertiesAfterSuperCall) {
-
-                        // emit any parameter properties first
-                        var constructorDecl = (<ClassDeclaration>this.thisClassNode).constructorDecl;
-
-                        if (constructorDecl && constructorDecl.arguments) {
-                            var argsLen = constructorDecl.arguments.members.length;
-                            for (var iArg = 0; iArg < argsLen; iArg++) {
-                                var arg = <BoundDecl>constructorDecl.arguments.members[iArg];
-                                if ((arg.varFlags & VarFlags.Property) != VarFlags.None) {
-                                    this.emitIndent();
-                                    this.recordSourceMappingStart(arg);
-                                    this.recordSourceMappingStart(arg.id);
-                                    this.writeToOutput("this." + arg.id.actualText);
-                                    this.recordSourceMappingEnd(arg.id);
-                                    this.writeToOutput(" = ");
-                                    this.recordSourceMappingStart(arg.id);
-                                    this.writeToOutput(arg.id.actualText);
-                                    this.recordSourceMappingEnd(arg.id);
-                                    this.writeLineToOutput(";");
-                                    this.recordSourceMappingEnd(arg);
-                                }
-                            }
-                        }
-
-                        var nProps = (<ASTList>this.thisClassNode.members).members.length;
-
-                        for (var iMember = 0; iMember < nProps; iMember++) {
-                            if ((<ASTList>this.thisClassNode.members).members[iMember].nodeType == NodeType.VarDecl) {
-                                var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[iMember];
-                                if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
-                                    this.emitIndent();
-                                    this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
-                                    this.writeLineToOutput("");
-                                }
-                            }
-                        }
-                    }
-
-                    var emitNode = list.members[i];
-
-                    var isStaticDecl =
-                                (emitNode.nodeType == NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).fncFlags, FncFlags.Static)) ||
-                                (emitNode.nodeType == NodeType.VarDecl && hasFlag((<VarDecl>emitNode).varFlags, VarFlags.Static))
-
-                    if (onlyStatics ? !isStaticDecl : isStaticDecl) {
-                        continue;
-                    }
-                    this.emitJavascript(emitNode, tokenId, startLine);
-
-                    if (delimiter && (i < (len - 1))) {
-                        if (startLine) {
-                            this.writeLineToOutput(delimiter);
-                        }
-                        else {
-                            this.writeToOutput(delimiter);
-                        }
-                    }
-                    else if (startLine &&
-                             (emitNode.nodeType != NodeType.ModuleDeclaration) &&
-                             (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
-                             (!((emitNode.nodeType == NodeType.VarDecl) &&
-                                ((((<VarDecl>emitNode).varFlags) & VarFlags.Ambient) == VarFlags.Ambient) &&
-                                (((<VarDecl>emitNode).init) == null)) && this.varListCount() >= 0) &&
-                             (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
-                             (emitNode.nodeType != NodeType.EndCode) &&
-                             (emitNode.nodeType != NodeType.FuncDecl)) {
-                        this.writeLineToOutput("");
-                    }
-                }
-                this.emitParensAndCommentsInPlace(ast, false);
-            }
-        }
-
-        // tokenId is the id the preceding token
-        public emitJavascript(ast: AST, tokenId: TokenID, startLine: bool) {
-            if (ast == null) {
-                return;
-            }
-
-            // REVIEW: simplify rules for indenting
-            if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) &&
-                (ast.nodeType != NodeType.Block)) {
-                if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
-                    (!((ast.nodeType == NodeType.VarDecl) &&
-                       ((((<VarDecl>ast).varFlags) & VarFlags.Ambient) == VarFlags.Ambient) &&
-                       (((<VarDecl>ast).init) == null)) && this.varListCount() >= 0) &&
-                    (ast.nodeType != NodeType.EndCode) &&
-                    ((ast.nodeType != NodeType.FuncDecl) ||
-                     (this.emitState.container != EmitContainer.Constructor))) {
-                    this.emitIndent();
-                }
-            }
-
-            ast.emit(this, tokenId, startLine);
-
-            if ((tokenId == TokenID.Semicolon) && (ast.nodeType < NodeType.GeneralNode)) {
-                this.writeToOutput(";");
-            }
-        }
-
+        //PULLTODO
         public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: bool) {
             if (!(<FieldSymbol>funcDecl.accessorSymbol).hasBeenEmitted) {
                 var accessorSymbol = <FieldSymbol>funcDecl.accessorSymbol;
@@ -62247,7 +61311,7 @@ module TypeScript {
                     this.emitIndent();
                     this.recordSourceMappingStart(getter);
                     this.writeToOutput("get: ");
-                    this.emitInnerFunction(getter, false, isProto, null, Emitter.shouldCaptureThis(getter), null);
+                    this.emitInnerFunction(getter, false, isProto, this.shouldCaptureThis(getter), null);
                     this.writeLineToOutput(",");
                 }
 
@@ -62257,7 +61321,7 @@ module TypeScript {
                     this.emitIndent();
                     this.recordSourceMappingStart(setter);
                     this.writeToOutput("set: ");
-                    this.emitInnerFunction(setter, false, isProto, null, Emitter.shouldCaptureThis(setter), null);
+                    this.emitInnerFunction(setter, false, isProto, this.shouldCaptureThis(setter), null);
                     this.writeLineToOutput(",");
                 }
 
@@ -62269,310 +61333,16 @@ module TypeScript {
                 this.emitIndent();
                 this.writeLineToOutput("});");
                 this.recordSourceMappingEnd(funcDecl);
-
+                
                 accessorSymbol.hasBeenEmitted = true;
             }
         }
 
-        public emitPrototypeMember(member: AST, className: string) {
-            if (member.nodeType == NodeType.FuncDecl) {
-                var funcDecl = <FuncDecl>member;
-                if (funcDecl.isAccessor()) {
-                    this.emitPropertyAccessor(funcDecl, className, true);
-                }
-                else {
-                    this.emitIndent();
-                    this.recordSourceMappingStart(funcDecl);
-                    this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
-                    this.emitInnerFunction(funcDecl, false, true, null, Emitter.shouldCaptureThis(funcDecl), null);
-                    this.writeLineToOutput(";");
-                }
-            }
-            else if (member.nodeType == NodeType.VarDecl) {
-                var varDecl = <VarDecl>member;
-
-                if (varDecl.init) {
-                    this.emitIndent();
-                    this.recordSourceMappingStart(varDecl);
-                    this.recordSourceMappingStart(varDecl.id);
-                    this.writeToOutput(className + ".prototype." + varDecl.id.actualText);
-                    this.recordSourceMappingEnd(varDecl.id);
-                    this.writeToOutput(" = ");
-                    this.emitJavascript(varDecl.init, TokenID.Equals, false);
-                    this.recordSourceMappingEnd(varDecl);
-                    this.writeLineToOutput(";");
-                }
-            }
-        }
-
-        // PULLTODO
-        public emitAddBaseMethods(className: string, base: Type, classDecl: TypeDeclaration): void {
-            if (base.members) {
-                var baseSymbol = base.symbol;
-                var baseName = baseSymbol.name;
-                if (baseSymbol.declModule != classDecl.type.symbol.declModule) {
-                    baseName = baseSymbol.fullName();
-                }
-                base.members.allMembers.map(function (key, s, c) {
-                    var sym = <Symbol>s;
-                    if ((sym.kind() == SymbolKind.Type) && (<TypeSymbol>sym).type.call) {
-                        this.recordSourceMappingStart(sym.declAST);
-                        this.writeLineToOutput(className + ".prototype." + sym.name + " = " +
-                                          baseName + ".prototype." + sym.name + ";");
-                        this.recordSourceMappingEnd(sym.declAST);
-                    }
-                }, null);
-            }
-            if (base.extendsList) {
-                for (var i = 0, len = base.extendsList.length; i < len; i++) {
-                    this.emitAddBaseMethods(className, base.extendsList[i], classDecl);
-                }
-            }
-        }
-
-        // PULLTODO
         public emitJavascriptClass(classDecl: ClassDeclaration) {
-            if (!hasFlag(classDecl.varFlags, VarFlags.Ambient)) {
-                var svClassNode = this.thisClassNode;
-                var i = 0;
-                this.thisClassNode = classDecl;
-                var className = classDecl.name.actualText;
-                this.emitParensAndCommentsInPlace(classDecl, true);
-                var temp = this.setContainer(EmitContainer.Class);
-
-                this.recordSourceMappingStart(classDecl);
-                if (hasFlag(classDecl.varFlags, VarFlags.Exported) && classDecl.type.symbol.container == this.checker.gloMod) {
-                    this.writeToOutput("this." + className);
-                }
-                else {
-                    this.writeToOutput("var " + className);
-                }
-
-                //if (hasFlag(classDecl.varFlags, VarFlags.Exported) && (temp == EmitContainer.Module || temp == EmitContainer.DynamicModule)) {
-                //    var modName = temp == EmitContainer.Module ? this.moduleName : "exports";
-                //    this.writeToOutput(" = " + modName + "." + className);
-                //}
-
-                var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
-                var baseNameDecl: AST = null;
-                var baseName: AST = null;
-
-                if (hasBaseClass) {
-                    this.writeLineToOutput(" = (function (_super) {");
-                } else {
-                    this.writeLineToOutput(" = (function () {");
-                }
-
-                this.recordSourceMappingNameStart(className);
-                this.indenter.increaseIndent();
-
-                if (hasBaseClass) {
-                    baseNameDecl = classDecl.extendsList.members[0];
-                    baseName = baseNameDecl.nodeType == NodeType.Call ? (<CallExpression>baseNameDecl).target : baseNameDecl;
-                    this.emitIndent();
-                    this.writeLineToOutput("__extends(" + className + ", _super);");
-                }
-
-                this.emitIndent();
-
-                var constrDecl = classDecl.constructorDecl;
-
-                // output constructor
-                if (constrDecl) {
-                    // declared constructor
-                    this.emitJavascript(classDecl.constructorDecl, TokenID.OpenParen, false);
-
-                }
-                else {
-                    var wroteProps = 0;
-
-                    this.recordSourceMappingStart(classDecl);
-                    // default constructor
-                    this.indenter.increaseIndent();
-                    this.writeToOutput("function " + classDecl.name.actualText + "() {");
-                    this.recordSourceMappingNameStart("constructor");
-                    if (hasBaseClass) {
-                        this.writeLineToOutput("");
-                        this.emitIndent();
-                        this.writeLineToOutput("_super.apply(this, arguments);");
-                        wroteProps++;
-                    }
-
-                    if (classDecl.varFlags & VarFlags.MustCaptureThis) {
-                        this.writeCaptureThisStatement(classDecl);
-                    }
-
-                    var members = (<ASTList>this.thisClassNode.members).members
-
-                    // output initialized properties
-                    for (var i = 0; i < members.length; i++) {
-                        if (members[i].nodeType == NodeType.VarDecl) {
-                            var varDecl = <VarDecl>members[i];
-                            if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
-                                this.writeLineToOutput("");
-                                this.emitIndent();
-                                this.emitJavascriptVarDecl(varDecl, TokenID.Tilde);
-                                wroteProps++;
-                            }
-                        }
-                    }
-                    if (wroteProps) {
-                        this.writeLineToOutput("");
-                        this.indenter.decreaseIndent();
-                        this.emitIndent();
-                        this.writeLineToOutput("}");
-                    }
-                    else {
-                        this.writeLineToOutput(" }");
-                        this.indenter.decreaseIndent();
-                    }
-                    this.recordSourceMappingNameEnd();
-                    this.recordSourceMappingEnd(classDecl);
-                }
-
-                var membersLen = classDecl.members.members.length;
-                for (var j = 0; j < membersLen; j++) {
-
-                    var memberDecl: AST = classDecl.members.members[j];
-
-                    if (memberDecl.nodeType == NodeType.FuncDecl) {
-                        var fn = <FuncDecl>memberDecl;
-
-                        if (hasFlag(fn.fncFlags, FncFlags.Method) && !fn.isSignature()) {
-                            if (!hasFlag(fn.fncFlags, FncFlags.Static)) {
-                                this.emitPrototypeMember(fn, className);
-                            }
-                            else { // static functions
-                                if (fn.isAccessor()) {
-                                    this.emitPropertyAccessor(fn, this.thisClassNode.name.actualText, false);
-                                }
-                                else {
-                                    this.emitIndent();
-                                    this.recordSourceMappingStart(fn)
-                                    this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
-                                    this.emitInnerFunction(fn, (fn.name && !fn.name.isMissing()), true,
-                                            null, Emitter.shouldCaptureThis(fn), null);
-                                    this.writeLineToOutput(";");
-                                }
-                            }
-                        }
-                    }
-                    else if (memberDecl.nodeType == NodeType.VarDecl) {
-                        var varDecl = <VarDecl>memberDecl;
-                        if (hasFlag(varDecl.varFlags, VarFlags.Static)) {
-
-                            if (varDecl.init) {
-                                // EMITREVIEW
-                                this.emitIndent();
-                                this.recordSourceMappingStart(varDecl);
-                                this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
-                                this.emitJavascript(varDecl.init, TokenID.Equals, false);
-                                // EMITREVIEW
-
-                                this.writeLineToOutput(";");
-                                this.recordSourceMappingEnd(varDecl);
-                            }
-                        }
-                    }
-                    else {
-                        throw Error("We want to catch this");
-                    }
-                }
-
-                this.emitIndent();
-                this.recordSourceMappingStart(classDecl.endingToken);
-                this.writeLineToOutput("return " + className + ";");
-                this.recordSourceMappingEnd(classDecl.endingToken);
-                this.indenter.decreaseIndent();
-                this.emitIndent();
-                this.recordSourceMappingStart(classDecl.endingToken);
-                this.writeToOutput("}");
-                this.recordSourceMappingNameEnd();
-                this.recordSourceMappingEnd(classDecl.endingToken);
-                this.recordSourceMappingStart(classDecl);
-                this.writeToOutput(")(");
-                if (hasBaseClass)
-                    this.emitJavascript(baseName, TokenID.Tilde, false);
-                this.writeToOutput(");");
-                this.recordSourceMappingEnd(classDecl);
-
-                if ((temp == EmitContainer.Module || temp == EmitContainer.DynamicModule) && hasFlag(classDecl.varFlags, VarFlags.Exported)) {
-                    this.writeLineToOutput("");
-                    this.emitIndent();
-                    var modName = temp == EmitContainer.Module ? this.moduleName : "exports";
-                    this.recordSourceMappingStart(classDecl);
-                    this.writeToOutput(modName + "." + className + " = " + className + ";");
-                    this.recordSourceMappingEnd(classDecl);
-                }
-
-                this.emitIndent();
-                this.recordSourceMappingEnd(classDecl);
-                this.emitParensAndCommentsInPlace(classDecl, false);
-                this.setContainer(temp);
-                this.thisClassNode = svClassNode;
-            }
-        }
-
-        // PULLTODO
-        public emitPrologue(reqInherits: bool) {
-            if (!this.extendsPrologueEmitted) {
-                if (reqInherits) {
-                    this.extendsPrologueEmitted = true;
-                    this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
-                    this.writeLineToOutput("    function __() { this.constructor = d; }");
-                    this.writeLineToOutput("    __.prototype = b.prototype;");
-                    this.writeLineToOutput("    d.prototype = new __();");
-                    this.writeLineToOutput("};");
-                }
-                if (this.checker.mustCaptureGlobalThis) {
-                    this.globalThisCapturePrologueEmitted = true;
-                    this.writeLineToOutput(this.captureThisStmtString);
-                }
-            }
-        }
-
-        public emitSuperReference() {
-            this.writeToOutput("_super.prototype");
-        }
-
-        public emitSuperCall(callEx: CallExpression): bool {
-            if (callEx.target.nodeType == NodeType.Dot) {
-                var dotNode = <BinaryExpression>callEx.target;
-                if (dotNode.operand1.nodeType == NodeType.Super) {
-                    this.emitJavascript(dotNode, TokenID.OpenParen, false);
-                    this.writeToOutput(".call(");
-                    this.emitThis();
-                    if (callEx.arguments && callEx.arguments.members.length > 0) {
-                        this.writeToOutput(", ");
-                        this.emitJavascriptList(callEx.arguments, ", ", TokenID.Comma, false, false, false);
-                    }
-                    this.writeToOutput(")");
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public emitThis() {
-            if (this.thisFnc && !this.thisFnc.isMethod() && (!this.thisFnc.isConstructor)) {
-                this.writeToOutput("_this");
-            }
-            else {
-                this.writeToOutput("this");
-            }
-        }
-
-        private static shouldCaptureThis(func: FuncDecl): bool {
-            // Super calls use 'this' reference. If super call is in a lambda, 'this' value needs to be captured in the parent.
-            return func.hasSelfReference() || func.hasSuperReferenceInFatArrowFunction();
-        }
-
-        private createFile(fileName: string, useUTF8: bool): ITextWriter {
-                try {
-                    return this.emitOptions.ioHost.createFile(fileName, useUTF8);
-                } catch (ex) {
-                    this.errorReporter.emitterError(null, ex.message);
-                }
+            var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.locationInfo.filename);
+            this.declStack.push(pullDecl);
+            super.emitJavascriptClass(classDecl);
+            this.declStack.pop();
         }
     }
 }
@@ -62756,13 +61526,14 @@ module TypeScript {
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
-                    private unitIndex: number) {
+                    private unitIndex: number,
+                    private lineMap: ILineMap) {
         }
 
-        public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): Script {
-            var map = checkPositions ? SyntaxPositionMap.create(sourceUnit) : null;
-            var visitor = new SyntaxTreeToAstVisitor(map, fileName, unitIndex);
-            return sourceUnit.accept(visitor);
+        public static visit(syntaxTree: SyntaxTree, fileName: string, unitIndex: number): Script {
+            var map = checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
+            var visitor = new SyntaxTreeToAstVisitor(map, fileName, unitIndex, syntaxTree.lineMap());
+            return syntaxTree.sourceUnit().accept(visitor);
         }
 
         private assertElementAtPosition(element: ISyntaxElement) {
@@ -63040,7 +61811,7 @@ module TypeScript {
             this.popDeclLists();
 
             result.bod = bod;
-            result.locationInfo = new LocationInfo(this.fileName, null, this.unitIndex);
+            result.locationInfo = new LocationInfo(this.fileName, this.lineMap.lineStarts(), this.unitIndex);
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
             result.requiresExtendsBlock = this.requiresExtendsBlock;
@@ -63492,6 +62263,7 @@ module TypeScript {
             var endingToken = new ASTSpan();
             var modDecl = new ModuleDeclaration(name, members, this.topVarList(), endingToken);
             modDecl.modFlags |= ModuleFlags.IsEnum;
+            modDecl.recordNonInterface();
 
             if (enumDeclaration.exportKeyword) {
                 modDecl.modFlags |= ModuleFlags.Exported;
@@ -64421,8 +63193,8 @@ module TypeScript {
             //    this.currentClassDefinition.constructorDecl = constructorFuncDecl;
             //}
 
-            //// REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
-            //constructorFuncDecl.fncFlags |= FncFlags.ClassMethod;
+            // REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
+            result.fncFlags |= FncFlags.ClassMethod;
 
             //this.currentClassDefinition.members.members[this.currentClassDefinition.members.members.length] = constructorFuncDecl;
 
@@ -65574,7 +64346,7 @@ module TypeScript {
                     if (true || syntaxTree.diagnostics().length === 0) {
                         try {
                             timer.start();
-                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree, filename, sharedIndex);
                             timer.end();
 
                             var translateTime = timer.time;
@@ -66000,7 +64772,7 @@ module TypeScript {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
-        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
+        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter, usePullEmitter?: bool, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
             if (!script.emitRequired(this.emitSettings)) {
                 return null;
             }
@@ -66009,7 +64781,12 @@ module TypeScript {
             if (!emitter) {
                 var outFname = this.emitSettings.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
                 var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
-                emitter = new Emitter(this.typeChecker, outFname, outFile, this.emitSettings, this.errorReporter);
+                if (usePullEmitter) {
+                    emitter = new PullEmitter(outFname, outFile, this.emitSettings, this.errorReporter, this.semanticInfoChain);
+                }
+                else {
+                    emitter = new Emitter(this.typeChecker, outFname, outFile, this.emitSettings, this.errorReporter);
+                }
                 if (this.settings.mapSourceFiles) {
                     emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
                 }
@@ -66021,7 +64798,13 @@ module TypeScript {
                 emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
             }
 
-            this.typeChecker.locationInfo = script.locationInfo;
+            // Set location info
+            if (usePullEmitter) {
+                (<PullEmitter>emitter).setUnit(script.locationInfo);
+            } else {
+                this.typeChecker.locationInfo = script.locationInfo;
+            }
+
             emitter.emitJavascript(script, TokenID.Comma, false);
             if (!reuseEmitter) {
                 emitter.Close();
@@ -66031,14 +64814,14 @@ module TypeScript {
             }
         }
 
-        public emit(ioHost: EmitterIOHost, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
+        public emit(ioHost: EmitterIOHost, usePullEmitter?: bool, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
             this.parseEmitOption(ioHost);
 
             var emitter: Emitter = null;
             for (var i = 0, len = this.scripts.members.length; i < len; i++) {
                 var script = <Script>this.scripts.members[i];
                 if (this.emitSettings.outputMany || emitter == null) {
-                    emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, inputOutputMapper);
+                    emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, usePullEmitter, inputOutputMapper);
                 } else {
                     this.emitUnit(script, true, emitter);
                 }
@@ -66275,6 +65058,8 @@ module TypeScript {
                     }
 
                     var traceEndTime = new Date().getTime();
+
+                    this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.filename, this);
 
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
@@ -66623,39 +65408,7 @@ module TypeScript {
                 return null;
             }
 
-            var symbol = this.pullTypeChecker.resolver.resolveAST(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext);
-            if (!symbol) {
-                return null;
-            }
-
-            var type = symbol.getType();
-            if (!type || type === this.semanticInfoChain.anyTypeSymbol) {
-                return null;
-            }
-
-            // Figure out if privates are available under the current scope
-            var includePrivate = false;
-            var containerSymbol = type;
-            if (type.getKind() === PullElementKind.ConstructorType) {
-                containerSymbol = type.getConstructSignatures()[0].getReturnType();
-            }
-
-            if (containerSymbol && containerSymbol.isClass()) {
-                var declPath = this.pullTypeChecker.resolver.getPathToDecl(context.enclosingDecl);
-                if (declPath && declPath.length) {
-                    var declarations = containerSymbol.getDeclarations();
-                    for (var i = 0, n = declarations.length; i < n; i++) {
-                        var declaration = declarations[i];
-                        if (declPath.indexOf(declaration) >= 0) {
-                            includePrivate = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            var searchKind = context.resolutionContext.searchTypeSpace ? PullElementKind.SomeType : PullElementKind.SomeValue;
-            return type.getAllMemebers(searchKind, includePrivate);
+            return this.pullTypeChecker.resolver.getVisibleMembersFromExpresion(path.ast(), context.enclosingDecl, context.resolutionContext);
         }
 
         public pullGetVisibleSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbol[] {
@@ -66711,7 +65464,7 @@ module TypeScript {
                         var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
                         var newScript: Script = null;
                         try {
-                            newScript = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, i);
+                            newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, filename, i);
 
                             // TypeScriptCompiler.compareObjects(script, script2);
                         } catch (e1) {
@@ -67980,9 +66733,9 @@ class BatchCompiler {
                 compiler.errorReporter.hasErrors = true;
                 var fname = this.resolvedEnvironment.code[unitIndex].path;
                 var lineCol = { line: -1, col: -1 };
-                compiler.parser.getSourceLineCol(lineCol, minChar);
-                // line is 1-base, col, however, is 0-base. add 1 to the col before printing the message
-                var msg = fname + " (" + lineCol.line + "," + (lineCol.col + 1) + "): " + message;
+                compiler.parser.getZeroBasedSourceLineCol(lineCol, minChar);
+
+                var msg = fname + " (" + (lineCol.line + 1) + "," + (lineCol.col + 1) + "): " + message;
                 if (this.compilationSettings.errorRecovery) {
                     this.errorReporter.WriteLine(msg);
                 } else {
@@ -68040,10 +66793,13 @@ class BatchCompiler {
             }
             else {
                 compiler.typeCheck();
-                var mapInputToOutput = (unitIndex: number, outFile: string): void => {
-                   this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
-                };
-                compiler.emit(emitterIOHost, mapInputToOutput);
+            }
+
+            var mapInputToOutput = (unitIndex: number, outFile: string): void => {
+                this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
+            };
+            compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
+            if (!this.compilationSettings.usePull) {
                 compiler.emitDeclarations();
             }
         } catch (err) {

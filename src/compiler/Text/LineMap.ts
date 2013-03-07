@@ -16,6 +16,10 @@ class LineMap implements ILineMap {
     constructor(private _lineStarts: number[], private length: number) {
     }
 
+    public toJSON(key) {
+        return { lineStarts: this._lineStarts, length: this.length };
+    }
+
     public equals(other: LineMap): bool {
         return this.length === other.length &&
                ArrayUtilities.sequenceEquals(this.lineStarts(), other.lineStarts(), (v1, v2) => v1 === v2);

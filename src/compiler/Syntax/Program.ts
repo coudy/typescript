@@ -13,7 +13,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    // "0_004152.ts";
+    // "ConstructorAmbiguity1.ts";
     undefined;
 
 var generate = false;

@@ -3644,7 +3644,7 @@ module Parser1 {
                     // array.  Or you can say "new Foo[i]".  which accesses the i'th element of Foo and calls
                     // the construct operator on it. So, in this case, if we're parsing a 'new', we do allow
                     // seeing brackets, but only if they're *complete*.  
-                    return this.parseType(/*requireCompleteArraySuffix:*/ true);
+                    return this.parseType(/*requireCompleteArraySuffix:*/ true, /*inExpression:*/ true);
                 }
             }
 
@@ -3893,7 +3893,7 @@ module Parser1 {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
 
             var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
-            var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
+            var type = this.parseType(/*requireCompleteArraySuffix:*/ false, /*inExpression:*/ false);
             var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
             var expression = this.parseUnaryExpression();
 
@@ -4355,7 +4355,7 @@ module Parser1 {
             }
 
             var extendsKeyword = this.eatKeyword(SyntaxKind.ExtendsKeyword);
-            var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
+            var type = this.parseType(/*requireCompleteArraySuffix:*/ false, /*inExpression:*/ false);
 
             return this.factory.constraint(extendsKeyword, type);
         }
@@ -4388,7 +4388,7 @@ module Parser1 {
             // Debug.assert(this.isTypeAnnotation());
 
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var type = this.parseType(/*requireCompleteArraySuffix:*/ false);
+            var type = this.parseType(/*requireCompleteArraySuffix:*/ false, /*inExpression:*/ false);
 
             return this.factory.typeAnnotation(colonToken, type);
         }
@@ -4399,8 +4399,8 @@ module Parser1 {
                    this.isName();
         }
 
-        private parseType(requireCompleteArraySuffix: bool): ITypeSyntax {
-            var type = this.parseNonArrayType();
+        private parseType(requireCompleteArraySuffix: bool, inExpression: bool): ITypeSyntax {
+            var type = this.parseNonArrayType(inExpression);
 
             while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
                 if (requireCompleteArraySuffix && this.peekToken(1).tokenKind !== SyntaxKind.CloseBracketToken) {
@@ -4416,7 +4416,7 @@ module Parser1 {
             return type;
         }
 
-        private parseNonArrayType(): ITypeSyntax {
+        private parseNonArrayType(inExpression: bool): ITypeSyntax {
             if (this.isPredefinedType()) {
                 return this.parsePredefinedType();
             }
@@ -4424,13 +4424,13 @@ module Parser1 {
                 return this.parseTypeLiteral();
             }
             else {
-                return this.parseNameOrGenericType();
+                return this.parseNameOrGenericType(inExpression);
             }
         }
 
-        private parseNameOrGenericType(): ITypeSyntax {
+        private parseNameOrGenericType(inExpression: bool): ITypeSyntax {
             var name = this.parseName();
-            var typeArgumentList = this.tryParseTypeArgumentList(/*inExpression:*/ false);
+            var typeArgumentList = this.tryParseTypeArgumentList(/*inExpression:*/ inExpression);
 
             return typeArgumentList === null
                 ? name
@@ -4459,7 +4459,7 @@ module Parser1 {
             var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
-            var returnType = this.parseType(/*requireCompleteArraySuffix:*/ false);
+            var returnType = this.parseType(/*requireCompleteArraySuffix:*/ false, /*inExpression:*/ false);
 
             return this.factory.functionType(typeParameterList, parameterList, equalsGreaterThanToken, returnType);
         }
@@ -4470,7 +4470,7 @@ module Parser1 {
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
-            var type = this.parseType(/*requreCompleteArraySuffix:*/ false);
+            var type = this.parseType(/*requreCompleteArraySuffix:*/ false, /*inExpression:*/ false);
 
             return this.factory.constructorType(newKeyword, null, parameterList, equalsGreaterThanToken, type);
         }
@@ -5333,7 +5333,7 @@ module Parser1 {
                     return this.parseAssignmentExpression(/*allowIn:*/ true);
 
                 case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                    return this.parseNameOrGenericType();
+                    return this.parseNameOrGenericType(/*inExpression:*/ false);
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                     return this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ false);
@@ -5351,7 +5351,7 @@ module Parser1 {
                     return this.parseParameter();
 
                 case ListParsingState.TypeArgumentList_Types:
-                    return this.parseType(/*requireCompleteArraySuffix:*/ false);
+                    return this.parseType(/*requireCompleteArraySuffix:*/ false, /*inExpression:*/ false);
 
                 case ListParsingState.TypeParameterList_TypeParameters:
                     return this.parseTypeParameter();
