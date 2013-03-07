@@ -120,6 +120,15 @@ module TypeScript {
             return symbol;
         }
 
+
+        private recordNonInterfaceParentModule() {
+            var parent = this.getParent();
+            var ast = this.semanticInfo.getASTForSymbol(parent);
+            if (ast && ast.nodeType == NodeType.ModuleDeclaration) {
+                (<ModuleDeclaration>ast).recordNonInterface();
+            }
+        }
+
         //
         // decl binding
         //
@@ -139,7 +148,7 @@ module TypeScript {
 
             var parent = this.getParent();
             var parentInstanceSymbol = this.getParent(true);
-
+            
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleContainerDecl);
 
             var createdNewSymbol = false;
@@ -182,9 +191,9 @@ module TypeScript {
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
             moduleContainerDecl.setSymbol(moduleContainerTypeSymbol);
 
-            this.semanticInfo.setSymbolForAST(moduleAST, moduleContainerTypeSymbol);
             this.semanticInfo.setSymbolForAST(moduleAST.name, moduleContainerTypeSymbol);
-        
+            this.semanticInfo.setSymbolForAST(moduleAST, moduleContainerTypeSymbol);
+
             if (createdNewSymbol) {
 
                 if (parent) {
@@ -204,6 +213,8 @@ module TypeScript {
                             moduleInstanceSymbol.addOutgoingLink(parentInstanceSymbol, SymbolLinkKind.ContainedBy);
                         }
                     }
+
+                    this.recordNonInterfaceParentModule();
                 }
             }
             else if (this.reBindingAfterChange) {
@@ -292,8 +303,8 @@ module TypeScript {
             enumSymbol.addDeclaration(enumDeclaration);
             enumDeclaration.setSymbol(enumSymbol);            
             
-            this.semanticInfo.setSymbolForAST(enumAST, enumSymbol);
             this.semanticInfo.setSymbolForAST(enumAST.name, enumSymbol);
+            this.semanticInfo.setSymbolForAST(enumAST, enumSymbol);
         
             if (createdNewSymbol) {
                 var parent = this.getParent();
@@ -307,6 +318,7 @@ module TypeScript {
                     else {
                         enumSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                     }
+                    this.recordNonInterfaceParentModule();
                 }
             }
             else if (this.reBindingAfterChange) {
@@ -425,8 +437,8 @@ module TypeScript {
             
             classDecl.setSymbol(classSymbol);
 
-            this.semanticInfo.setSymbolForAST(classAST, classSymbol);
             this.semanticInfo.setSymbolForAST(classAST.name, classSymbol);
+            this.semanticInfo.setSymbolForAST(classAST, classSymbol);
         
             if (parent && !parentHadSymbol) {
                 var linkKind = classDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
@@ -437,6 +449,7 @@ module TypeScript {
                 else {
                     classSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
@@ -592,8 +605,8 @@ module TypeScript {
             interfaceSymbol.addDeclaration(interfaceDecl);
             interfaceDecl.setSymbol(interfaceSymbol);
 
-            this.semanticInfo.setSymbolForAST(interfaceAST, interfaceSymbol);
             this.semanticInfo.setSymbolForAST(interfaceAST.name, interfaceSymbol);
+            this.semanticInfo.setSymbolForAST(interfaceAST, interfaceSymbol);
 
             if (createdNewSymbol) {
 
@@ -861,8 +874,8 @@ module TypeScript {
                 variableSymbol.addDeclaration(variableDeclaration);
                 variableDeclaration.setSymbol(variableSymbol);
 
-                this.semanticInfo.setSymbolForAST(varDeclAST, variableSymbol);
                 this.semanticInfo.setSymbolForAST(varDeclAST.id, variableSymbol);
+                this.semanticInfo.setSymbolForAST(varDeclAST, variableSymbol);
             }
             else if (!parentHadSymbol) {
 
@@ -985,6 +998,7 @@ module TypeScript {
                 else {
                     variableSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
         }
 
@@ -1058,8 +1072,8 @@ module TypeScript {
                 propertySymbol.addDeclaration(propertyDeclaration);
                 propertyDeclaration.setSymbol(propertySymbol);
 
-                this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
                 this.semanticInfo.setSymbolForAST(propDeclAST.id, propertySymbol);
+                this.semanticInfo.setSymbolForAST(propDeclAST, propertySymbol);
             }
             else {
                 // it's really an implicit class decl, so we need to set the type of the symbol to
@@ -1177,8 +1191,8 @@ module TypeScript {
             importSymbol.addDeclaration(importDeclaration);
             importDeclaration.setSymbol(importSymbol);
 
-            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
             this.semanticInfo.setSymbolForAST(importDeclAST.id, importSymbol);
+            this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
             
 
             if (parent && !parentHadSymbol) {
@@ -1189,6 +1203,7 @@ module TypeScript {
                 else {
                     importSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
         }
 
@@ -1236,8 +1251,8 @@ module TypeScript {
                         }
                     }
                     
-                    this.semanticInfo.setSymbolForAST(argDecl, parameterSymbol);
                     this.semanticInfo.setSymbolForAST(argDecl.id, parameterSymbol);
+                    this.semanticInfo.setSymbolForAST(argDecl, parameterSymbol);
 
                     signatureSymbol.addParameter(parameterSymbol, parameterSymbol.getIsOptional());
 
@@ -1331,9 +1346,9 @@ module TypeScript {
             functionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionDeclaration);
             
-            this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
             this.semanticInfo.setSymbolForAST(funcDeclAST.name, functionSymbol);
-        
+            this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
+
             if (parent && !parentHadSymbol) {
                 if (isExported) {
                     parent.addMember(functionSymbol, SymbolLinkKind.PublicMember);
@@ -1341,6 +1356,7 @@ module TypeScript {
                 else {
                     functionSymbol.addOutgoingLink(parent, SymbolLinkKind.ContainedBy);
                 }
+                this.recordNonInterfaceParentModule();
             }
 
             if (!isSignature) {
@@ -1427,12 +1443,11 @@ module TypeScript {
             functionExpressionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionExpressionDeclaration);
 
-            this.semanticInfo.setSymbolForAST(funcExpAST, functionSymbol);
-
             if (funcExpAST.name) {
                 this.semanticInfo.setSymbolForAST(funcExpAST.name, functionSymbol);
             }
-        
+            this.semanticInfo.setSymbolForAST(funcExpAST, functionSymbol);
+
             this.pushParent(functionTypeSymbol);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
@@ -1601,9 +1616,9 @@ module TypeScript {
 
             methodDeclaration.setSymbol(methodSymbol);
             methodSymbol.addDeclaration(methodDeclaration);
-            this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
             this.semanticInfo.setSymbolForAST(methodAST.name, methodSymbol);
-        
+            this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
+
             if (!parentHadSymbol) {
 
                 if (isStatic) {

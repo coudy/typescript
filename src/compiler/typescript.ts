@@ -776,7 +776,7 @@ module TypeScript {
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         }
 
-        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
+        public emitUnit(script: Script, reuseEmitter?: bool, emitter?: Emitter, usePullEmitter?: bool, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
             if (!script.emitRequired(this.emitSettings)) {
                 return null;
             }
@@ -785,7 +785,12 @@ module TypeScript {
             if (!emitter) {
                 var outFname = this.emitSettings.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
                 var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
-                emitter = new Emitter(this.typeChecker, outFname, outFile, this.emitSettings, this.errorReporter);
+                if (usePullEmitter) {
+                    emitter = new PullEmitter(outFname, outFile, this.emitSettings, this.errorReporter, this.semanticInfoChain);
+                }
+                else {
+                    emitter = new Emitter(this.typeChecker, outFname, outFile, this.emitSettings, this.errorReporter);
+                }
                 if (this.settings.mapSourceFiles) {
                     emitter.setSourceMappings(new TypeScript.SourceMapper(fname, outFname, outFile, this.createFile(outFname + SourceMapper.MapFileExtension, false), this.errorReporter, this.settings.emitFullSourceMapPath));
                 }
@@ -797,7 +802,13 @@ module TypeScript {
                 emitter.setSourceMappings(new TypeScript.SourceMapper(fname, emitter.emittingFileName, emitter.outfile, emitter.sourceMapper.sourceMapOut, this.errorReporter, this.settings.emitFullSourceMapPath));
             }
 
-            this.typeChecker.locationInfo = script.locationInfo;
+            // Set location info
+            if (usePullEmitter) {
+                (<PullEmitter>emitter).setUnit(script.locationInfo);
+            } else {
+                this.typeChecker.locationInfo = script.locationInfo;
+            }
+
             emitter.emitJavascript(script, TokenID.Comma, false);
             if (!reuseEmitter) {
                 emitter.Close();
@@ -807,14 +818,14 @@ module TypeScript {
             }
         }
 
-        public emit(ioHost: EmitterIOHost, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
+        public emit(ioHost: EmitterIOHost, usePullEmitter?: bool, inputOutputMapper?: (unitIndex: number, outFile: string) => void) {
             this.parseEmitOption(ioHost);
 
             var emitter: Emitter = null;
             for (var i = 0, len = this.scripts.members.length; i < len; i++) {
                 var script = <Script>this.scripts.members[i];
                 if (this.emitSettings.outputMany || emitter == null) {
-                    emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, inputOutputMapper);
+                    emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, usePullEmitter, inputOutputMapper);
                 } else {
                     this.emitUnit(script, true, emitter);
                 }

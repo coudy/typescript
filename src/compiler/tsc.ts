@@ -223,10 +223,13 @@ class BatchCompiler {
             }
             else {
                 compiler.typeCheck();
-                var mapInputToOutput = (unitIndex: number, outFile: string): void => {
-                   this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
-                };
-                compiler.emit(emitterIOHost, mapInputToOutput);
+            }
+
+            var mapInputToOutput = (unitIndex: number, outFile: string): void => {
+                this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
+            };
+            compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
+            if (!this.compilationSettings.usePull) {
                 compiler.emitDeclarations();
             }
         } catch (err) {

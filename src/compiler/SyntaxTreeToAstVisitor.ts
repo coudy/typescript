@@ -803,6 +803,7 @@ module TypeScript {
             var endingToken = new ASTSpan();
             var modDecl = new ModuleDeclaration(name, members, this.topVarList(), endingToken);
             modDecl.modFlags |= ModuleFlags.IsEnum;
+            modDecl.recordNonInterface();
 
             if (enumDeclaration.exportKeyword) {
                 modDecl.modFlags |= ModuleFlags.Exported;
@@ -1732,8 +1733,8 @@ module TypeScript {
             //    this.currentClassDefinition.constructorDecl = constructorFuncDecl;
             //}
 
-            //// REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
-            //constructorFuncDecl.fncFlags |= FncFlags.ClassMethod;
+            // REVIEW: Should we have a separate flag for class constructors?  (Constructors are not methods)
+            result.fncFlags |= FncFlags.ClassMethod;
 
             //this.currentClassDefinition.members.members[this.currentClassDefinition.members.members.length] = constructorFuncDecl;
 

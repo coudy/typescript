@@ -1844,9 +1844,13 @@ module TypeScript {
             return funcDeclSymbol;
         }
 
+        static setSelfReferenceOnDecl(pullDecl: PullDecl) {
+            pullDecl.setFlags(pullDecl.getFlags() | PullElementFlags.MustCaptureThis);
+            return true;
+        }
+
         // PULLTODO: Optimization: cache this for a given decl path
         public resolveThisExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-
             if (!enclosingDecl) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -1858,13 +1862,52 @@ module TypeScript {
             // work back up the decl path, until you can find a class
             // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
             if (declPath.length) {
+                var isFatArrowFunction = declPath[declPath.length - 1].getKind() == PullElementKind.FunctionExpression && (declPath[declPath.length - 1].getFlags() & PullElementFlags.FatArrow);
+                var hasSetSelfReference = !isFatArrowFunction;
+                var firstFncDecl: PullDecl = null;
+                if (!hasSetSelfReference) {
+                    for (var i = declPath.length - 2; i >= 0; i--) {
+                        decl = declPath[i];
+                        var declKind = decl.getKind();
+                        if (declKind == PullElementKind.Function || declKind == PullElementKind.Method) {
+                            hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                        } else if (declKind == PullElementKind.FunctionExpression) {
+                            if (!(decl.getFlags() & PullElementFlags.FatArrow)) {
+                                hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                            } else if (decl.getFlags() & PullElementFlags.MustCaptureThis) {
+                                firstFncDecl = null;
+                                break;
+                            } else if (!firstFncDecl) {
+                                firstFncDecl = decl;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (!hasSetSelfReference && firstFncDecl) {
+                        hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(firstFncDecl);
+                    }
+                }
+
                 for (var i = declPath.length - 1; i >= 0; i--) {
                     decl = declPath[i];
-
-                    if (decl.getKind() == PullElementKind.Class) {
+                    var declKind = decl.getKind();
+                    if (declKind == PullElementKind.Class) {
                         classSymbol = <PullClassTypeSymbol>decl.getSymbol();
                         
+                        if (!hasSetSelfReference) {
+                            hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                        }
                         return classSymbol;
+                    }
+
+                    if (!hasSetSelfReference &&
+                        (declKind == PullElementKind.Container ||
+                        declKind == PullElementKind.DynamicModule ||
+                        declKind == PullElementKind.Script)) {
+                        hasSetSelfReference = PullTypeResolver.setSelfReferenceOnDecl(decl);
+                        break;
                     }
                 }
             }
