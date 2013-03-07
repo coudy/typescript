@@ -164,7 +164,7 @@ class BatchCompiler {
                 var fname = this.resolvedEnvironment.code[unitIndex].path;
                 var lineCol = { line: -1, col: -1 };
                 compiler.parser.getZeroBasedSourceLineCol(lineCol, minChar);
-                // line is 1-base, col, however, is 0-base. add 1 to the col before printing the message
+
                 var msg = fname + " (" + (lineCol.line + 1) + "," + (lineCol.col + 1) + "): " + message;
                 if (this.compilationSettings.errorRecovery) {
                     this.errorReporter.WriteLine(msg);

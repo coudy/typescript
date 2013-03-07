@@ -1673,8 +1673,9 @@ module TypeScript {
 
     // Return the (0-based) line number from a character offset using the provided linemap.
     export function getZeroBasedLineNumberFromPosition(lineMap: number[], position: number): number {
-        if (position === -1)
+        if (position === -1) {
             return -1;
+        }
 
         // Binary search
         var min = 0;
@@ -1710,9 +1711,6 @@ module TypeScript {
     export function getZeroBasedLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
         var result = { line: -1, col: -1 };
         getZeroBasedSourceLineColFromMap(result, position, script.locationInfo.lineMap);
-        //if (result.col >= 0) {
-        //    result.col++;   // Make it 1-based
-        //}
         return result;
     }
 
@@ -1720,7 +1718,7 @@ module TypeScript {
     // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
     //
     export function getPositionFromZeroBasedLineColumn(script: TypeScript.Script, line: number, column: number): number {
-        return script.locationInfo.lineMap[line] + (column);
+        return script.locationInfo.lineMap[line] + column;
     }
 
     // Return true if the token is a primitive type

@@ -150,8 +150,8 @@ module TypeScript {
             if (context.parser !== null) {
                 context.parser.getZeroBasedSourceLineCol(lineCol, this.minChar);
                 context.parser.getZeroBasedSourceLineCol(limLineCol, this.limChar);
-                context.write("(" + (lineCol.line + 1) + "," + lineCol.col + ")--" +
-                              "(" + (limLineCol.line + 1) + "," + limLineCol.col + "): ");
+                context.write("(" + lineCol.line + "," + lineCol.col + ")--" +
+                              "(" + limLineCol.line + "," + limLineCol.col + "): ");
             }
             var lab = this.printLabel();
             if (hasFlag(this.flags, ASTFlags.Error)) {

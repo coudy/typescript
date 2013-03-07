@@ -76,8 +76,10 @@ module TypeScript {
         public logLinemap(linemap: number[]) {
             var result = "[";
             for (var i = 0; i < linemap.length; i++) {
-                if (i > 0)
+                if (i > 0) {
                     result += ",";
+                }
+
                 result += linemap[i];
             }
             result += "]";
@@ -97,14 +99,6 @@ module TypeScript {
             // just for calling getSourceLineColFromMap
             var lineInfo = { line: -1, col: -1 };
             TypeScript.getZeroBasedSourceLineColFromMap(lineInfo, position, script.locationInfo.lineMap);
-
-            if (lineInfo.line !== -1) {
-                lineInfo.line++;
-            }
-
-            if (lineInfo.col !== -1) {
-                lineInfo.col++;
-            }
 
             return "(" + lineInfo.line + ", " + lineInfo.col + ")";
         }
