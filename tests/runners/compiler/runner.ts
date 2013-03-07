@@ -172,7 +172,7 @@ class CompilerBaselineRunner extends RunnerBase {
             }
 
             if (!Harness.Compiler.isDeclareFile(lastUnit.name)) {
-                if (that.emit && !that.usepull) {
+                if (that.emit) {
                     // check js output
                     Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + filename, justName.replace(/\.ts/, '.commonjs.js'), () => {
                         return jsOutputSync;
