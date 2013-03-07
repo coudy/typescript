@@ -29,6 +29,8 @@ module TypeScript {
 
         MustCaptureThis = 1 << 18,
 
+        Constant = 1 << 19,
+
         ImplicitVariable = ClassConstructorVariable | InitializedModule, /* | EnumVariable, */
     }
 

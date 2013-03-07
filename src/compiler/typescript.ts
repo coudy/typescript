@@ -827,7 +827,7 @@ module TypeScript {
                 if (this.emitSettings.outputMany || emitter == null) {
                     emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, usePullEmitter, inputOutputMapper);
                 } else {
-                    this.emitUnit(script, true, emitter);
+                    this.emitUnit(script, true, emitter, usePullEmitter);
                 }
             }
 

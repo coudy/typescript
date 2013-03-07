@@ -35,25 +35,17 @@ module TypeScript {
             return enclosingDecl;
         }
 
-        // PULLTODO
-        private getConstantValue(init: AST): number {
-            if (init) {
-                if (init.nodeType === NodeType.NumberLit) {
-                    var numLit = <NumberLiteral>init;
-                    return numLit.value;
-                }
-                else if (init.nodeType === NodeType.Lsh) {
-                    var binop = <BinaryExpression>init;
-                    if (binop.operand1.nodeType === NodeType.NumberLit &&
-                        binop.operand2.nodeType === NodeType.NumberLit) {
-                        return (<NumberLiteral>binop.operand1).value << (<NumberLiteral>binop.operand2).value;
-                    }
-                }
-                else if (init.nodeType === NodeType.Name) {
-                    var ident = <Identifier>init;
-                    if (ident.sym !== null && ident.sym.declAST.nodeType === NodeType.VarDecl) {
-                        var varDecl = <VarDecl>ident.sym.declAST;
-                        return this.getConstantValue(varDecl.init);
+        public getVarDeclFromIdentifier(ident: Identifier) {
+            var resolvingContext = new PullTypeResolutionContext();
+            var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.filename);
+            var pullSymbol = typeResolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
+            if (pullSymbol) {
+                var pullDecls = pullSymbol.getDeclarations();
+                if (pullDecls.length == 1) {
+                    var pullDecl = pullDecls[0];
+                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
+                    if (ast && ast.nodeType == NodeType.VarDecl) {
+                        return <VarDecl>ast;
                     }
                 }
             }
@@ -61,30 +53,22 @@ module TypeScript {
             return null;
         }
 
-        // PULLTODO
-        public tryEmitConstant(dotExpr: BinaryExpression) {
-            if (!this.emitOptions.propagateConstants) {
-                return false;
-            }
-            var propertyName = <Identifier>dotExpr.operand2;
-            if (propertyName && propertyName.sym && propertyName.sym.isVariable()) {
-                if (hasFlag(propertyName.sym.flags, SymbolFlags.Constant)) {
-                    if (propertyName.sym.declAST) {
-                        var boundDecl = <BoundDecl>propertyName.sym.declAST;
-                        var value = this.getConstantValue(boundDecl.init);
-                        if (value !== null) {
-                            this.writeToOutput(value.toString());
-                            var comment = " /* ";
-                            comment += propertyName.actualText;
-                            comment += " */ ";
-                            this.writeToOutput(comment);
-                            return true;
-                        }
+        public getConstantDecl(dotExpr: BinaryExpression) {
+            var resolvingContext = new PullTypeResolutionContext();
+            var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.filename);
+            var pullSymbol = typeResolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
+            if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
+                var pullDecls = pullSymbol.getDeclarations();
+                if (pullDecls.length == 1) {
+                    var pullDecl = pullDecls[0];
+                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
+                    if (ast && ast.nodeType == NodeType.VarDecl) {
+                        return <VarDecl>ast;
                     }
                 }
             }
-
-            return false;
+            
+            return null;
         }
 
         public getClassPropertiesMustComeAfterSuperCall(funcDecl: FuncDecl, classDecl: TypeDeclaration) {
