@@ -351,7 +351,7 @@ module TypeScript {
             this.popDeclLists();
 
             result.bod = bod;
-            result.locationInfo = new LocationInfo(this.fileName, null, this.lineMap, this.unitIndex);
+            result.locationInfo = new LocationInfo(this.fileName, this.lineMap.lineStarts(), this.unitIndex);
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
             result.requiresExtendsBlock = this.requiresExtendsBlock;

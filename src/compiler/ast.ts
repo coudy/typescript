@@ -1149,12 +1149,11 @@ module TypeScript {
     export class LocationInfo {
         constructor(public filename: string,
                     public lineMap: number[],
-                    public newLineMap: ILineMap,
                     public unitIndex) {
         }
     }
 
-    export var unknownLocationInfo = new LocationInfo("unknown", null, null, -1);
+    export var unknownLocationInfo = new LocationInfo("unknown", null, -1);
 
     export class Script extends FuncDecl {
         public locationInfo: LocationInfo = null;

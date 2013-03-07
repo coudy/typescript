@@ -4,6 +4,7 @@
 ///<reference path='TextUtilities.ts' />
 
 interface ILineMap {
+    lineStarts(): number[];
     lineCount(): number;
     getLineNumberFromPosition(position: number): number;
     getLinePosition(position: number): LinePosition;
@@ -12,16 +13,20 @@ interface ILineMap {
 class LineMap implements ILineMap {
     public static empty = new LineMap([0], 0);
 
-    constructor(private lineStarts: number[], private length: number) {
+    constructor(private _lineStarts: number[], private length: number) {
     }
 
     public equals(other: LineMap): bool {
         return this.length === other.length &&
-               ArrayUtilities.sequenceEquals(this.lineStarts, other.lineStarts, (v1, v2) => v1 === v2);
+               ArrayUtilities.sequenceEquals(this.lineStarts(), other.lineStarts(), (v1, v2) => v1 === v2);
+    }
+
+    public lineStarts(): number[]{
+        return this._lineStarts;
     }
 
     public lineCount(): number {
-        return this.lineStarts.length;
+        return this.lineStarts().length;
     }
 
     public getLineNumberFromPosition(position: number): number {
@@ -38,7 +43,7 @@ class LineMap implements ILineMap {
         }
 
         // Binary search to find the right line
-        var lineNumber = ArrayUtilities.binarySearch(this.lineStarts, position);
+        var lineNumber = ArrayUtilities.binarySearch(this.lineStarts(), position);
         if (lineNumber < 0) {
             lineNumber = (~lineNumber) - 1;
         }
@@ -53,7 +58,7 @@ class LineMap implements ILineMap {
 
         var lineNumber = this.getLineNumberFromPosition(position);
 
-        return new LinePosition(lineNumber, position - this.lineStarts[lineNumber]);
+        return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
     }
 
     public static createFrom(text: ISimpleText): LineMap {

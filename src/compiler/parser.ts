@@ -4392,7 +4392,7 @@ module TypeScript {
             this.popDeclLists();
             script.minChar = minChar;
             script.limChar = this.scanner.pos;
-            script.locationInfo = new LocationInfo(filename, this.scanner.lineMap, null, unitIndex);
+            script.locationInfo = new LocationInfo(filename, this.scanner.lineMap, unitIndex);
             script.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
             script.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
             script.isDeclareFile = this.parsingDeclareFile;
