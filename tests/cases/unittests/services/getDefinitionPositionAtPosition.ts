@@ -29,7 +29,7 @@ describe('getDefinitionPositionAtPosition', function() {
         else {
             script = ls.languageService.getScriptAST(fileName);
         }
-        return script.locationInfo.lineMap[line] + col;
+        return script.locationInfo.lineMap[line - 1] + col;
     }
     
     function definitionAtPos(line: number, col: number) {

@@ -850,8 +850,8 @@ module Formatting {
         }
 
         public GetLineNumberFromPosition(position: number): number {
-            var lineNumber = TypeScript.getLineNumberFromPosition(this.script.locationInfo.lineMap, position);
-            return lineNumber - 1;   // We want to be 0-based.
+            var lineNumber = TypeScript.getZeroBasedLineNumberFromPosition(this.script.locationInfo.lineMap, position);
+            return lineNumber;   // We want to be 0-based.
         }
 
         public GetLineFromPosition(position: number): ITextSnapshotLine {
@@ -870,8 +870,8 @@ module Formatting {
 
         private GetLineFromLineNumberWorker(lineNumber: number): ITextSnapshotLine {
             var lineMap = this.script.locationInfo.lineMap;
-            var lineMapIndex = lineNumber + 1; //Note: lineMap is 1-based
-            if (lineMapIndex < 1 || lineMapIndex >= lineMap.length)
+            var lineMapIndex = lineNumber; //Note: lineMap is 0-based
+            if (lineMapIndex < 0 || lineMapIndex >= lineMap.length)
                 throw new Error("invalid line number (" + lineMapIndex + ")");
             var start = lineMap[lineMapIndex];
 

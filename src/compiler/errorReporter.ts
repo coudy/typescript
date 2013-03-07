@@ -61,8 +61,11 @@ module TypeScript {
 
         public writePrefixFromSym(symbol: Symbol): void {
             if (symbol && this.checker.locationInfo.lineMap) {
-                getSourceLineColFromMap(this.lineCol, symbol.location,
+                getZeroBasedSourceLineColFromMap(this.lineCol, symbol.location,
                                         this.checker.locationInfo.lineMap);
+                if (this.lineCol.line >= 0) {
+                    this.lineCol.line++;
+                }
             }
             else {
                 this.lineCol.line = -1;
@@ -75,7 +78,10 @@ module TypeScript {
             if (ast) {
                 ast.flags |= ASTFlags.Error;
                 if (this.checker.locationInfo.lineMap) {
-                    getSourceLineColFromMap(this.lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                    getZeroBasedSourceLineColFromMap(this.lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                    if (this.lineCol.line >= 0) {
+                        this.lineCol.line++;
+                    }
                 }
             }
         }
@@ -126,8 +132,8 @@ module TypeScript {
         public showRef(ast: AST, text: string, symbol: Symbol) {
             var defLineCol = { line: -1, col: -1 };
             // TODO: multiple def locations
-            this.parser.getSourceLineCol(defLineCol, symbol.location);
-            this.reportError(ast, "symbol " + text + " defined at (" + defLineCol.line + "," + defLineCol.col + ")");
+            this.parser.getZeroBasedSourceLineCol(defLineCol, symbol.location);
+            this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.col + ")");
         }
 
         public unresolvedSymbol(ast: AST, name: string) {

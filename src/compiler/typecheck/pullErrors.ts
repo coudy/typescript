@@ -69,9 +69,9 @@ module TypeScript {
             var locationInfo = this.locationInfoCache[error.filename];
 
             if (locationInfo && locationInfo.lineMap) {
-                getSourceLineColFromMap(this.lineCol, error.getOffset(), locationInfo.lineMap);
+                getZeroBasedSourceLineColFromMap(this.lineCol, error.getOffset(), locationInfo.lineMap);
 
-                this.textWriter.Write(locationInfo.filename + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
+                this.textWriter.Write(locationInfo.filename + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
             }
             else {
                 this.textWriter.Write(error.filename + "(0,0): ");

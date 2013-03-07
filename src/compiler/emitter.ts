@@ -1266,12 +1266,12 @@ module TypeScript {
                 sourceMapping.start.emittedColumn = this.emitState.column;
                 sourceMapping.start.emittedLine = this.emitState.line;
                 // REVIEW: check time consumed by this binary search (about two per leaf statement)
-                getSourceLineColFromMap(lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                getZeroBasedSourceLineColFromMap(lineCol, ast.minChar, this.checker.locationInfo.lineMap);
                 sourceMapping.start.sourceColumn = lineCol.col;
-                sourceMapping.start.sourceLine = lineCol.line;
-                getSourceLineColFromMap(lineCol, ast.limChar, this.checker.locationInfo.lineMap);
+                sourceMapping.start.sourceLine = lineCol.line + 1;
+                getZeroBasedSourceLineColFromMap(lineCol, ast.limChar, this.checker.locationInfo.lineMap);
                 sourceMapping.end.sourceColumn = lineCol.col;
-                sourceMapping.end.sourceLine = lineCol.line;
+                sourceMapping.end.sourceLine = lineCol.line + 1;
                 if (this.sourceMapper.currentNameIndex.length > 0) {
                     sourceMapping.nameIndex = this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1];
                 }

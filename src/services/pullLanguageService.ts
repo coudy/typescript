@@ -255,11 +255,11 @@ module Services {
             var script = this.pullCompilerState.getScriptAST(fileName);
 
             var containerASTs: TypeScript.AST[] = [];
-            var lineMap = this.pullCompilerState.getLineMap(fileName);
+            // var lineMap = this.pullCompilerState.getLineMap(fileName);
 
             // find line and col
-            var lineCol = { line: -1, col: -1 };
-            TypeScript.getSourceLineColFromMap(lineCol, pos, lineMap);
+            //var lineCol = { line: -1, col: -1 };
+            //TypeScript.getSourceLineColFromMap(lineCol, pos, lineMap);
 
             // Get the valid breakpoint location container list till position so we could choose where to set breakpoint
             var pre = (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker): TypeScript.AST => {

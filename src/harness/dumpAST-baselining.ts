@@ -104,10 +104,26 @@ module DumpAST {
         entry.nodeType = (<any>TypeScript.NodeType)._map[ast.nodeType];
         entry.minChar = ast.minChar;
         entry.limChar = ast.limChar;
-        entry.startLine = TypeScript.getLineColumnFromPosition(script, ast.minChar).line;
-        entry.startCol = TypeScript.getLineColumnFromPosition(script, ast.minChar).col;
-        entry.endLine = TypeScript.getLineColumnFromPosition(script, ast.limChar).line;
-        entry.endCol = TypeScript.getLineColumnFromPosition(script, ast.limChar).col;
+        entry.startLine = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.minChar).line;
+        entry.startCol = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.minChar).col;
+        entry.endLine = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.limChar).line;
+        entry.endCol = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.limChar).col;
+
+        if (entry.startLine >= 0) {
+            entry.startLine++;
+        }
+
+        if (entry.startCol >= 0) {
+            entry.startCol++;
+        }
+
+        if (entry.endLine >= 0) {
+            entry.endLine++;
+        }
+
+        if (entry.endCol >= 0) {
+            entry.endCol++;
+        }
         if (parent)
             parent.children.push(entry);
         return entry;
@@ -203,8 +219,8 @@ module DumpAST {
         text += indentStr;
         text += addKey("sourceText");
         text += ": [\r\n";
-        for (var i = 1; i < script.locationInfo.lineMap.length; i++) {
-            if (i > 1) {
+        for (var i = 0; i < script.locationInfo.lineMap.length; i++) {
+            if (i > 0) {
                 text += ",\r\n";
             }
             var start = script.locationInfo.lineMap[i];

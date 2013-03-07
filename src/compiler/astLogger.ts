@@ -95,14 +95,15 @@ module TypeScript {
 
         private addLineColumn(script: TypeScript.Script, position: number): string {
             // just for calling getSourceLineColFromMap
-            var lineInfo = {
-                line: -1,
-                col: -1
+            var lineInfo = { line: -1, col: -1 };
+            TypeScript.getZeroBasedSourceLineColFromMap(lineInfo, position, script.locationInfo.lineMap);
+
+            if (lineInfo.line !== -1) {
+                lineInfo.line++;
             }
-            TypeScript.getSourceLineColFromMap(lineInfo, position, script.locationInfo.lineMap);
 
             if (lineInfo.col !== -1) {
-                lineInfo.col++; //TODO: function above seems to consider line as 1-based, and column as 0-based
+                lineInfo.col++;
             }
 
             return "(" + lineInfo.line + ", " + lineInfo.col + ")";

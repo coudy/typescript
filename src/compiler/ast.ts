@@ -148,10 +148,10 @@ module TypeScript {
             var lineCol = { line: -1, col: -1 };
             var limLineCol = { line: -1, col: -1 };
             if (context.parser !== null) {
-                context.parser.getSourceLineCol(lineCol, this.minChar);
-                context.parser.getSourceLineCol(limLineCol, this.limChar);
-                context.write("(" + lineCol.line + "," + lineCol.col + ")--" +
-                              "(" + limLineCol.line + "," + limLineCol.col + "): ");
+                context.parser.getZeroBasedSourceLineCol(lineCol, this.minChar);
+                context.parser.getZeroBasedSourceLineCol(limLineCol, this.limChar);
+                context.write("(" + (lineCol.line + 1) + "," + lineCol.col + ")--" +
+                              "(" + (limLineCol.line + 1) + "," + limLineCol.col + "): ");
             }
             var lab = this.printLabel();
             if (hasFlag(this.flags, ASTFlags.Error)) {

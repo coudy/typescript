@@ -148,8 +148,8 @@ module TypeScript {
             this.errorRecovery = true;
         }
 
-        public getSourceLineCol(lineCol: ILineCol, minChar: number): void {
-            getSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap);
+        public getZeroBasedSourceLineCol(lineCol: ILineCol, minChar: number): void {
+            getZeroBasedSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap);
         }
 
         private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
@@ -169,9 +169,9 @@ module TypeScript {
             }
             else if (this.errorRecovery) {
                 var lineCol = { line: -1, col: -1 };
-                this.getSourceLineCol(lineCol, startPos);
+                this.getZeroBasedSourceLineCol(lineCol, startPos);
                 if (this.outfile) {
-                    this.outfile.WriteLine("// " + this.fname + " (" + lineCol.line + "," + lineCol.col + "): " + message);
+                    this.outfile.WriteLine("// " + this.fname + " (" + (lineCol.line + 1) + "," + lineCol.col + "): " + message);
                 }
             }
             else {
@@ -253,9 +253,9 @@ module TypeScript {
                 c.minChar = comment.startPos;
                 c.limChar = comment.startPos + comment.value.length;
                 var lineCol = { line: -1, col: -1 };
-                this.getSourceLineCol(lineCol, c.minChar);
+                this.getZeroBasedSourceLineCol(lineCol, c.minChar);
                 c.minLine = lineCol.line;
-                this.getSourceLineCol(lineCol, c.limChar);
+                this.getZeroBasedSourceLineCol(lineCol, c.limChar);
                 c.limLine = lineCol.line;
 
                 if (!comment.isBlock && comment.value.length > 3 && comment.value.substring(0, 3) == "///") {

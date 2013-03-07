@@ -21,8 +21,8 @@ describe('getDefinitionPositionAtPositionPartialInterface', function() {
             var def = definitionAtPos(fileName2, 8, 13);
             assert.notNull(def);
             assert.equal(def.unitIndex, 1);
-            assert.equal(typescriptLS.positionToLineCol(fileName, def.minChar).line, 2);
-            assert.equal(typescriptLS.positionToLineCol(fileName, def.minChar).col, 5);
+            assert.equal(typescriptLS.positionToZeroBasedLineCol(fileName, def.minChar).line + 1, 2);
+            assert.equal(typescriptLS.positionToZeroBasedLineCol(fileName, def.minChar).col + 1, 5);
         });
     });
 });

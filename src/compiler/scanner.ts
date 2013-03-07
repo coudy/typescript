@@ -464,8 +464,8 @@ module TypeScript {
         seenUnicodeCharInComment: bool = false;
 
         public startLine: number;
-        public prevLine = 1;
-        public line = 1;
+        public prevLine = 0;
+        public line = 0;
         public col = 0;
         public leftCurlyCount: number;
         public rightCurlyCount: number;
@@ -563,8 +563,8 @@ module TypeScript {
         // REVIEW: When adding new variables make sure to handle storing them in getLookAheadToken. 
         //         The method works by storing the state before scanning and restoring it later on,
         //         missing a member variable could result in an inconsistent state.
-        public prevLine = 1;
-        public line = 1;
+        public prevLine = 0;
+        public line = 0;
         public col = 0;
         public pos = 0;
         public startPos = 0;
@@ -594,7 +594,7 @@ module TypeScript {
         constructor() {
             this.startCol = this.col;
             this.startLine = this.line;
-            this.lineMap[1] = 0;
+            this.lineMap[0] = 0;
 
             if (!LexKeywordTable) {
                 LexInitialize();
@@ -609,7 +609,7 @@ module TypeScript {
             this.pos = 0;
             this.interveningWhitespacePos = 0;
             this.startPos = 0;
-            this.line = 1;
+            this.line = 0;
             this.col = 0;
             this.startCol = this.col;
             this.startLine = this.line;
@@ -617,7 +617,7 @@ module TypeScript {
             this.src = newSrc.getText(0, newSrc.getLength());
             this.len = this.src.length;
             this.lineMap = [];
-            this.lineMap[1] = 0;
+            this.lineMap[0] = 0;
             this.commentStack = [];
             this.leftCurlyCount = 0;
             this.rightCurlyCount = 0;
@@ -1671,10 +1671,10 @@ module TypeScript {
         }
     }
 
-    // Return the (1-based) line number from a character offset using the provided linemap.
-    export function getLineNumberFromPosition(lineMap: number[], position: number): number {
+    // Return the (0-based) line number from a character offset using the provided linemap.
+    export function getZeroBasedLineNumberFromPosition(lineMap: number[], position: number): number {
         if (position === -1)
-            return 0;
+            return -1;
 
         // Binary search
         var min = 0;
@@ -1696,31 +1696,31 @@ module TypeScript {
     }
 
     /// Return the [line, column] data for a given offset and a lineMap.
-    /// Note that the returned line is 1-based, while the column is 0-based.
-    export function getSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap: number[]): void {
-        var line = getLineNumberFromPosition(lineMap, minChar);
+    /// Note that the returned line is 0-based, while the column is 0-based.
+    export function getZeroBasedSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap: number[]): void {
+        var line = getZeroBasedLineNumberFromPosition(lineMap, minChar);
 
-        if (line > 0) {
+        if (line >= 0) {
             lineCol.line = line;
             lineCol.col = (minChar - lineMap[line]);
         }
     }
 
-    // Return the [line, column] (both 1 based) corresponding to a given position in a given script.
-    export function getLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
+    // Return the [line, column] (both 0 based) corresponding to a given position in a given script.
+    export function getZeroBasedLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
         var result = { line: -1, col: -1 };
-        getSourceLineColFromMap(result, position, script.locationInfo.lineMap);
-        if (result.col >= 0) {
-            result.col++;   // Make it 1-based
-        }
+        getZeroBasedSourceLineColFromMap(result, position, script.locationInfo.lineMap);
+        //if (result.col >= 0) {
+        //    result.col++;   // Make it 1-based
+        //}
         return result;
     }
 
     //
-    // Return the position (offset) corresponding to a given [line, column] (both 1-based) in a given script.
+    // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
     //
-    export function getPositionFromLineColumn(script: TypeScript.Script, line: number, column: number): number {
-        return script.locationInfo.lineMap[line] + (column - 1);
+    export function getPositionFromZeroBasedLineColumn(script: TypeScript.Script, line: number, column: number): number {
+        return script.locationInfo.lineMap[line] + (column);
     }
 
     // Return true if the token is a primitive type

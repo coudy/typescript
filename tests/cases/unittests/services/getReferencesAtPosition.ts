@@ -1,5 +1,7 @@
 ///<reference path='_project.ts'/>
 
+debugger;
+
 describe('getReferencesAtPosition', function() {
     var typescriptLS = new Harness.TypeScriptLS();
 
@@ -20,7 +22,7 @@ describe('getReferencesAtPosition', function() {
     // Returns the offset corresponding to the line + column given
     function lineToOffset(line: number, col = 0, fileName?: string = fileName1) {
         var script: TypeScript.Script = ls.languageService.getScriptAST(fileName);
-        return script.locationInfo.lineMap[line] + col;
+        return script.locationInfo.lineMap[line - 1] + col;
     }
 
     describe("local get references", function() {

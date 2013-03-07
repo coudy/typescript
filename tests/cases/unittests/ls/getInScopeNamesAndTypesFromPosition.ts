@@ -32,7 +32,7 @@ describe('getInScopeNamesAndTypesFromPosition', function ()
         initCompiler(code);
 
         var lineMap = script.locationInfo.lineMap;
-        var offset = lineMap[line] + col;
+        var offset = lineMap[line - 1] + col;
 
         var text = new TypeScript.StringSourceText(code);
         var pos = offset;
@@ -47,7 +47,7 @@ describe('getInScopeNamesAndTypesFromPosition', function ()
         initCompiler(code);
 
         var lineMap = script.locationInfo.lineMap;
-        var offset = lineMap[line] + col;
+        var offset = lineMap[line - 1] + col;
 
         var text = new TypeScript.StringSourceText(code);
         var pos = offset;

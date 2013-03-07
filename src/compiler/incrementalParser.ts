@@ -206,8 +206,8 @@ module TypeScript {
             }
 
             // Skip entries < minChar
-            var i1 = 2; // lineMap[0] is always undefined, lineMap[1] is always 0.
-            var i2 = 2; // lineMap[0] is always undefined, lineMap[1] is always 0.
+            var i1 = 1; // lineMap[0] is always 0.
+            var i2 = 1; // lineMap[0] is always 0.
             var len1 = lineMap1.length;
             var len2 = lineMap2.length;
             while (i1 < len1) {

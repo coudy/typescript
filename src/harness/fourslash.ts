@@ -734,7 +734,16 @@ module FourSlash {
         }
 
         private getCurrentCaretFilePosition() {
-            return this.langSvc.positionToLineCol(this.activeFile.name, this.currentCaretPosition);
+            var result = this.langSvc.positionToZeroBasedLineCol(this.activeFile.name, this.currentCaretPosition);
+            if (result.line >= 0) {
+                result.line++;
+            }
+
+            if (result.col >= 0) {
+                result.col++;
+            }
+
+            return result;
         }
 
         private assertItemInCompletionList(completionList: Services.CompletionEntry[], name: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
@@ -851,12 +860,12 @@ module FourSlash {
         }
 
         private getCurrentLineNumberOneBased() {
-            return this.langSvc.positionToLineCol(this.activeFile.name, this.currentCaretPosition).line;
+            return this.langSvc.positionToZeroBasedLineCol(this.activeFile.name, this.currentCaretPosition).line + 1;
         }
 
         private getLineColStringAtCaret() {
-            var pos = this.langSvc.positionToLineCol(this.activeFile.name, this.currentCaretPosition);
-            return 'line ' + pos.line + ', col ' + pos.col;
+            var pos = this.langSvc.positionToZeroBasedLineCol(this.activeFile.name, this.currentCaretPosition);
+            return 'line ' + (pos.line + 1) + ', col ' + pos.col;
         }
 
         private getMarkerByName(markerName: string) {

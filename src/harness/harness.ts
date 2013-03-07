@@ -1715,7 +1715,7 @@ module Harness {
             var sourceText = new TypeScript.StringSourceText(IO.readFile(fileName))
             return this.parseSourceText(fileName, sourceText);
         }
-
+        
         /**
          * @param line 1 based index
          * @param col 1 based index
@@ -1725,23 +1725,23 @@ module Harness {
             assert.notNull(script);
             assert.is(line >= 1);
             assert.is(col >= 1);
-            assert.is(line < script.locationInfo.lineMap.length);
+            assert.is(line <= script.locationInfo.lineMap.length);
 
-            return TypeScript.getPositionFromLineColumn(script, line, col);
+            return TypeScript.getPositionFromZeroBasedLineColumn(script, line - 1, col - 1);
         }
 
         /**
-         * @param line 1 based index
-         * @param col 1 based index
+         * @param line 0 based index
+         * @param col 0 based index
         */
-        public positionToLineCol(fileName: string, position: number): TypeScript.ILineCol {
+        public positionToZeroBasedLineCol(fileName: string, position: number): TypeScript.ILineCol {
             var script = this.ls.languageService.getScriptAST(fileName);
             assert.notNull(script);
 
-            var result = TypeScript.getLineColumnFromPosition(script, position);
+            var result = TypeScript.getZeroBasedLineColumnFromPosition(script, position);
 
-            assert.is(result.line >= 1);
-            assert.is(result.col >= 1);
+            assert.is(result.line >= 0);
+            assert.is(result.col >= 0);
             return result;
         }
 
