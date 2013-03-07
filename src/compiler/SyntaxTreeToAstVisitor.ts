@@ -66,13 +66,14 @@ module TypeScript {
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
-                    private unitIndex: number) {
+                    private unitIndex: number,
+                    private lineMap: ILineMap) {
         }
 
-        public static visit(sourceUnit: SourceUnitSyntax, fileName: string, unitIndex: number): Script {
-            var map = checkPositions ? SyntaxPositionMap.create(sourceUnit) : null;
-            var visitor = new SyntaxTreeToAstVisitor(map, fileName, unitIndex);
-            return sourceUnit.accept(visitor);
+        public static visit(syntaxTree: SyntaxTree, fileName: string, unitIndex: number): Script {
+            var map = checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
+            var visitor = new SyntaxTreeToAstVisitor(map, fileName, unitIndex, syntaxTree.lineMap());
+            return syntaxTree.sourceUnit().accept(visitor);
         }
 
         private assertElementAtPosition(element: ISyntaxElement) {
@@ -350,7 +351,7 @@ module TypeScript {
             this.popDeclLists();
 
             result.bod = bod;
-            result.locationInfo = new LocationInfo(this.fileName, null, this.unitIndex);
+            result.locationInfo = new LocationInfo(this.fileName, null, this.lineMap, this.unitIndex);
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
             result.requiresExtendsBlock = this.requiresExtendsBlock;

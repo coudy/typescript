@@ -308,7 +308,7 @@ class Program {
             Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
             
             TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
-            TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", 0);
 
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }

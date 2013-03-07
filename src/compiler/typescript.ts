@@ -350,7 +350,7 @@ module TypeScript {
                     if (true || syntaxTree.diagnostics().length === 0) {
                         try {
                             timer.start();
-                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, sharedIndex);
+                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree, filename, sharedIndex);
                             timer.end();
 
                             var translateTime = timer.time;
@@ -1457,7 +1457,7 @@ module TypeScript {
                         var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
                         var newScript: Script = null;
                         try {
-                            newScript = SyntaxTreeToAstVisitor.visit(syntaxTree.sourceUnit(), filename, i);
+                            newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, filename, i);
 
                             // TypeScriptCompiler.compareObjects(script, script2);
                         } catch (e1) {
