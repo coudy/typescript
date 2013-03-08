@@ -1,4 +1,11 @@
 {
+    "_diagnostics": [
+        {
+            "_position": 11,
+            "_width": 0,
+            "_diagnosticCode": "Identifier_expected"
+        }
+    ],
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 11,
@@ -9,52 +16,56 @@
                 "fullWidth": 11,
                 "hasZeroWidthToken": true,
                 "expression": {
-                    "kind": "ObjectCreationExpression",
+                    "kind": "GreaterThanExpression",
                     "fullWidth": 11,
-                    "newKeyword": {
-                        "kind": "NewKeyword",
-                        "width": 3,
-                        "fullWidth": 4,
-                        "text": "new",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
-                    },
-                    "expression": {
-                        "kind": "GenericType",
-                        "fullWidth": 7,
-                        "name": {
-                            "kind": "IdentifierName",
-                            "width": 4,
-                            "text": "Date",
-                            "valueText": "Date"
-                        },
-                        "typeArgumentList": {
-                            "kind": "TypeArgumentList",
-                            "fullWidth": 3,
-                            "lessThanToken": {
-                                "kind": "LessThanToken",
-                                "width": 1,
-                                "text": "<"
+                    "hasZeroWidthToken": true,
+                    "left": {
+                        "kind": "LessThanExpression",
+                        "fullWidth": 10,
+                        "left": {
+                            "kind": "ObjectCreationExpression",
+                            "fullWidth": 8,
+                            "newKeyword": {
+                                "kind": "NewKeyword",
+                                "width": 3,
+                                "fullWidth": 4,
+                                "text": "new",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             },
-                            "typeArguments": [
-                                {
-                                    "kind": "IdentifierName",
-                                    "width": 1,
-                                    "text": "A",
-                                    "valueText": "A"
-                                }
-                            ],
-                            "greaterThanToken": {
-                                "kind": "GreaterThanToken",
-                                "width": 1,
-                                "text": ">"
+                            "expression": {
+                                "kind": "IdentifierName",
+                                "width": 4,
+                                "text": "Date",
+                                "valueText": "Date"
                             }
+                        },
+                        "operatorToken": {
+                            "kind": "LessThanToken",
+                            "width": 1,
+                            "text": "<"
+                        },
+                        "right": {
+                            "kind": "IdentifierName",
+                            "width": 1,
+                            "text": "A",
+                            "valueText": "A"
                         }
+                    },
+                    "operatorToken": {
+                        "kind": "GreaterThanToken",
+                        "width": 1,
+                        "text": ">"
+                    },
+                    "right": {
+                        "kind": "IdentifierName",
+                        "width": 0,
+                        "text": ""
                     }
                 },
                 "semicolonToken": {

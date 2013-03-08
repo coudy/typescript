@@ -36844,7 +36844,7 @@ var Parser1;
                 var operand = this.parseUnaryExpression();
                 return this.factory.prefixUnaryExpression(operatorKind, operatorToken, operand);
             } else {
-                return this.parseTerm(true, false);
+                return this.parseTerm(true);
             }
         };
         ParserImpl.prototype.parseSubExpression = function (precedence, allowIn) {
@@ -36958,8 +36958,8 @@ var Parser1;
                     return false;
             }
         };
-        ParserImpl.prototype.parseTerm = function (allowInvocation, insideObjectCreation) {
-            var term = this.parseTermWorker(insideObjectCreation);
+        ParserImpl.prototype.parseTerm = function (allowInvocation) {
+            var term = this.parseTermWorker();
             if (term === null) {
                 return this.eatIdentifierToken();
             }
@@ -37035,13 +37035,8 @@ var Parser1;
             var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
             return this.factory.elementAccessExpression(expression, openBracketToken, argumentExpression, closeBracketToken);
         };
-        ParserImpl.prototype.parseTermWorker = function (insideObjectCreation) {
+        ParserImpl.prototype.parseTermWorker = function () {
             var currentToken = this.currentToken();
-            if (insideObjectCreation) {
-                if (this.isType(false, false)) {
-                    return this.parseType(true, true);
-                }
-            }
             if (currentToken.tokenKind === 85 /* EqualsGreaterThanToken */ ) {
                 return this.parseSimpleArrowFunctionExpression();
             }
@@ -37159,7 +37154,7 @@ var Parser1;
         };
         ParserImpl.prototype.parseObjectCreationExpression = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
-            var expression = this.parseTerm(false, true);
+            var expression = this.parseTerm(false);
             var argumentList = this.tryParseArgumentList();
             return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
         };
@@ -37178,7 +37173,7 @@ var Parser1;
         };
         ParserImpl.prototype.parseCastExpression = function () {
             var lessThanToken = this.eatToken(80 /* LessThanToken */ );
-            var type = this.parseType(false, false);
+            var type = this.parseType();
             var greaterThanToken = this.eatToken(81 /* GreaterThanToken */ );
             var expression = this.parseUnaryExpression();
             return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
@@ -37437,7 +37432,7 @@ var Parser1;
                 return null;
             }
             var extendsKeyword = this.eatKeyword(48 /* ExtendsKeyword */ );
-            var type = this.parseType(false, false);
+            var type = this.parseType();
             return this.factory.constraint(extendsKeyword, type);
         };
         ParserImpl.prototype.parseParameterList = function () {
@@ -37459,36 +37454,33 @@ var Parser1;
         };
         ParserImpl.prototype.parseTypeAnnotation = function () {
             var colonToken = this.eatToken(106 /* ColonToken */ );
-            var type = this.parseType(false, false);
+            var type = this.parseType();
             return this.factory.typeAnnotation(colonToken, type);
         };
-        ParserImpl.prototype.isType = function (allowFunctionType, allowConstructorType) {
-            return this.isPredefinedType() || this.isTypeLiteral(allowFunctionType, allowConstructorType) || this.isName();
+        ParserImpl.prototype.isType = function () {
+            return this.isPredefinedType() || this.isTypeLiteral() || this.isName();
         };
-        ParserImpl.prototype.parseType = function (requireCompleteArraySuffix, inExpression) {
-            var type = this.parseNonArrayType(inExpression);
+        ParserImpl.prototype.parseType = function () {
+            var type = this.parseNonArrayType();
             while(this.currentToken().tokenKind === 74 /* OpenBracketToken */ ) {
-                if (requireCompleteArraySuffix && this.peekToken(1).tokenKind !== 75 /* CloseBracketToken */ ) {
-                    break;
-                }
                 var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
                 var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
                 type = this.factory.arrayType(type, openBracketToken, closeBracketToken);
             }
             return type;
         };
-        ParserImpl.prototype.parseNonArrayType = function (inExpression) {
+        ParserImpl.prototype.parseNonArrayType = function () {
             if (this.isPredefinedType()) {
                 return this.parsePredefinedType();
-            } else if (this.isTypeLiteral(true, true)) {
+            } else if (this.isTypeLiteral()) {
                 return this.parseTypeLiteral();
             } else {
-                return this.parseNameOrGenericType(inExpression);
+                return this.parseNameOrGenericType();
             }
         };
-        ParserImpl.prototype.parseNameOrGenericType = function (inExpression) {
+        ParserImpl.prototype.parseNameOrGenericType = function () {
             var name = this.parseName();
-            var typeArgumentList = this.tryParseTypeArgumentList(inExpression);
+            var typeArgumentList = this.tryParseTypeArgumentList(false);
             return typeArgumentList === null ? name : this.factory.genericType(name, typeArgumentList);
         };
         ParserImpl.prototype.parseTypeLiteral = function () {
@@ -37506,27 +37498,18 @@ var Parser1;
             var typeParameterList = this.parseOptionalTypeParameterList(false);
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(85 /* EqualsGreaterThanToken */ );
-            var returnType = this.parseType(false, false);
+            var returnType = this.parseType();
             return this.factory.functionType(typeParameterList, parameterList, equalsGreaterThanToken, returnType);
         };
         ParserImpl.prototype.parseConstructorType = function () {
             var newKeyword = this.eatKeyword(31 /* NewKeyword */ );
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(85 /* EqualsGreaterThanToken */ );
-            var type = this.parseType(false, false);
+            var type = this.parseType();
             return this.factory.constructorType(newKeyword, null, parameterList, equalsGreaterThanToken, type);
         };
-        ParserImpl.prototype.isTypeLiteral = function (allowFunctionType, allowConstructorType) {
-            if (this.isObjectType()) {
-                return true;
-            }
-            if (allowFunctionType && this.isFunctionType()) {
-                return true;
-            }
-            if (allowConstructorType && this.isConstructorType()) {
-                return true;
-            }
-            return false;
+        ParserImpl.prototype.isTypeLiteral = function () {
+            return this.isObjectType() || this.isFunctionType() || this.isConstructorType();
         };
         ParserImpl.prototype.isObjectType = function () {
             return this.currentToken().tokenKind === 70 /* OpenBraceToken */ ;
@@ -38031,7 +38014,7 @@ var Parser1;
                 case 65536 /* ParameterList_Parameters */ :
                     return this.isParameter();
                 case 131072 /* TypeArgumentList_Types */ :
-                    return this.isType(true, true);
+                    return this.isType();
                 case 262144 /* TypeParameterList_TypeParameters */ :
                     return this.isTypeParameter();
                 case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
@@ -38061,7 +38044,7 @@ var Parser1;
                 case 8192 /* ArgumentList_AssignmentExpressions */ :
                     return this.parseAssignmentExpression(true);
                 case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
-                    return this.parseNameOrGenericType(false);
+                    return this.parseNameOrGenericType();
                 case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                     return this.parseVariableDeclarator(true, false);
                 case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
@@ -38073,7 +38056,7 @@ var Parser1;
                 case 65536 /* ParameterList_Parameters */ :
                     return this.parseParameter();
                 case 131072 /* TypeArgumentList_Types */ :
-                    return this.parseType(false, false);
+                    return this.parseType();
                 case 262144 /* TypeParameterList_TypeParameters */ :
                     return this.parseTypeParameter();
                 default:
