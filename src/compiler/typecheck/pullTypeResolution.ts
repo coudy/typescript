@@ -535,7 +535,7 @@ module TypeScript {
 
         // Declaration Resolution
 
-        public resolveDeclaration(declAST: AST, context: PullTypeResolutionContext): PullSymbol {
+        public resolveDeclaration(declAST: AST, context: PullTypeResolutionContext, enclosingDecl?:PullDecl): PullSymbol {
             switch (declAST.nodeType) {
                 case NodeType.ModuleDeclaration:
                     return this.resolveModuleDeclaration(<ModuleDeclaration>declAST, context);
@@ -547,7 +547,7 @@ module TypeScript {
                     return this.resolveFunctionDeclaration(<FuncDecl>declAST, context);
                 case NodeType.VarDecl:
                 case NodeType.ArgDecl:
-                    return this.resolveVariableDeclaration(<BoundDecl>declAST, context);
+                    return this.resolveVariableDeclaration(<BoundDecl>declAST, context, enclosingDecl);
 
                 case NodeType.TypeParameter:
                     return this.resolveTypeParameterDeclaration(<TypeParameter>declAST, context);
@@ -590,7 +590,7 @@ module TypeScript {
                 }
 
                 this.setUnitPath(decl.getScriptName());
-                this.resolveDeclaration(ast, context);
+                this.resolveDeclaration(ast, context, enclosingDecl);
             }
 
             var typeArgs = symbol.isType() ? (<PullTypeSymbol>symbol).getTypeArguments() : null;
@@ -747,6 +747,10 @@ module TypeScript {
 
                 declCollectionContext.scriptName = this.unitPath;
 
+                if (enclosingDecl) {
+                    declCollectionContext.pushParent(enclosingDecl);
+                }
+
                 getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                 var functionDecl = this.getDeclForAST(funcDeclAST);
@@ -855,6 +859,10 @@ module TypeScript {
                 var declCollectionContext = new DeclCollectionContext(semanticInfo);
 
                 declCollectionContext.scriptName = this.unitPath;
+
+                if (enclosingDecl) {
+                    declCollectionContext.pushParent(enclosingDecl);
+                }
 
                 getAstWalkerFactory().walk(interfaceDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
@@ -1060,7 +1068,7 @@ module TypeScript {
 
                     // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
                     // we filter out arrays, since for those we just want to know if their element type is a type parameter...
-                    if (enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
+                    if ((varDecl.nodeType == NodeType.ArgDecl) && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
                         var signature = enclosingDecl.getSignatureSymbol();
                         signature.setHasGenericParameter();
                     }
@@ -1319,14 +1327,14 @@ module TypeScript {
                 case NodeType.ClassDeclaration:
                 case NodeType.VarDecl:
                 case NodeType.ArgDecl:
-                    return this.resolveDeclaration(ast, context);
+                    return this.resolveDeclaration(ast, context, enclosingDecl);
 
                 case NodeType.FuncDecl:
                     if (isTypedAssignment) {
                         return this.resolveStatementOrExpression(ast, isTypedAssignment, enclosingDecl, context);
                     }
                     else {
-                        return this.resolveDeclaration(ast, context);
+                        return this.resolveDeclaration(ast, context, enclosingDecl);
                     }
 
                 default:
@@ -1774,6 +1782,10 @@ module TypeScript {
 
                 declCollectionContext.scriptName = this.unitPath;
 
+                if (enclosingDecl) {
+                    declCollectionContext.pushParent(enclosingDecl);
+                }
+
                 getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
@@ -1983,6 +1995,10 @@ module TypeScript {
 
             var objectLitDecl = new PullDecl("", PullElementKind.ObjectType, PullElementFlags.None, span, this.unitPath);
 
+            if (enclosingDecl) {
+                objectLitDecl.setParentDecl(enclosingDecl);
+            }
+
             this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
             this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
 
@@ -2034,6 +2050,7 @@ module TypeScript {
                     var decl = new PullDecl(text, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
 
                     objectLitDecl.addChildDecl(decl);
+                    decl.setParentDecl(objectLitDecl);
 
                     this.semanticInfoChain.getUnit(this.unitPath).setDeclForAST(binex, decl);
                     this.semanticInfoChain.getUnit(this.unitPath).setASTForDecl(decl, binex);
@@ -2422,7 +2439,8 @@ module TypeScript {
             var signature = signatures.length > 1 ? this.resolveOverloads(expressionAST, signatures, enclosingDecl, context) : signatures[0];
 
             if (!signature) {
-                signature = signatures[0];
+                context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Could not select overload for call expression", enclosingDecl);
+                return this.semanticInfoChain.anyTypeSymbol;
             }
 
             var returnType = signature.getReturnType();
@@ -2502,8 +2520,165 @@ module TypeScript {
 
             var constructSignatures = targetTypeSymbol.getConstructSignatures();
 
+            var typeArgs: PullTypeSymbol[] = null;
+            var typeReplacementMap: any = null;
+
             if (constructSignatures.length) {
 
+                // resolve the type arguments, specializing if necessary
+                if (callEx.typeArguments) {
+                    // specialize the type arguments
+                    typeArgs = [];
+
+                    var typeArg: PullTypeSymbol = null;
+
+                    if (callEx.typeArguments && callEx.typeArguments.members.length) {
+                        for (var i = 0; i < callEx.typeArguments.members.length; i++) {
+                            typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
+                            typeArgs[i] = context.findSpecializationForType(typeArg);
+                        }
+                    }
+                }
+
+                // next, walk the available signatures
+                // if any are generic, and we don't have type arguments, try to infer
+                // otherwise, try to specialize to the type arguments above
+                if (targetTypeSymbol.isGeneric()) {
+
+                    var resolvedSignatures: PullSignatureSymbol[] = [];
+                    var inferredTypeArgs: PullTypeSymbol[];
+                    var specializedSignature: PullSignatureSymbol;
+                    var typeParameters: PullTypeParameterSymbol[];
+                    var typeConstraint: PullTypeSymbol = null;
+
+                    for (var i = 0; i < constructSignatures.length; i++) {
+                        if (constructSignatures[i].isGeneric()) {
+                            if (typeArgs) {
+                                inferredTypeArgs = typeArgs;
+                            }
+                            else {
+                                inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
+                            }
+
+                            // if we could infer Args, or we have type arguments, then attempt to specialize the signature
+                            if (inferredTypeArgs) {
+                                typeParameters = constructSignatures[i].getTypeParameters();
+
+                                if (inferredTypeArgs.length != typeParameters.length) {
+                                    continue;
+                                }
+
+                                typeReplacementMap = {};
+
+                                for (var j = 0; j < typeParameters.length; j++) {
+                                    typeReplacementMap[typeParameters[j].getSymbolID().toString()] = inferredTypeArgs[j];
+
+                                    typeConstraint = typeParameters[j].getConstraint();
+
+                                    // test specialization type for assignment compatibility with the constraint
+                                    if (typeConstraint) {
+                                        if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
+                                            context.postError(callEx.target.minChar, callEx.target.getLength(), this.getUnitPath(), "Type '" + inferredTypeArgs[j].getName() + "' does not satisfy the constraint '" + typeConstraint.getName() + "' for type parameter '" + typeParameters[j].getName() + "'", enclosingDecl);
+                                        }
+                                    }
+                                }
+
+                                specializedSignature = specializeSignature(constructSignatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
+
+                                if (specializedSignature) {
+                                    resolvedSignatures[resolvedSignatures.length] = specializedSignature;
+                                }
+                            }
+                        }
+                        else {
+                            resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
+                        }
+                    }
+                    // PULLTODO: Try to avoid copying here...
+                    constructSignatures = resolvedSignatures;
+                }
+
+                // the target should be a function
+                //if (!targetSymbol.isType()) {
+                //    this.log("Attempting to call a non-function symbol");
+                //    return this.semanticInfoChain.anyTypeSymbol;
+                //}
+
+                if (!constructSignatures.length) {
+                    context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Attempting to 'new' a type with no construct signatures", enclosingDecl);
+                    return this.semanticInfoChain.anyTypeSymbol;
+                }
+
+                var signature = constructSignatures.length > 1 ? this.resolveOverloads(expressionAST, constructSignatures, enclosingDecl, context) : constructSignatures[0];
+
+                // if we haven't been able to choose an overload, default to the first one
+                if (!signature) {
+                    //signature = constructSignatures[0];
+                    context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Could not select overload for 'new' expression", enclosingDecl);
+                    return this.semanticInfoChain.anyTypeSymbol;
+                }
+
+                var returnType = signature.getReturnType();
+
+                if (!returnType) {
+                    returnType = signature.getReturnType();
+
+                    if (!returnType) {
+                        returnType = targetTypeSymbol;
+                    }
+                }                
+
+                // contextually type arguments
+                if (callEx.arguments) {
+                    var len = callEx.arguments.members.length;
+                    var params = signature.getParameters();
+                    var contextualType: PullTypeSymbol = null;
+
+                    for (var i = 0; i < len; i++) {
+
+                        if (params.length && i < params.length) {
+                            if (typeReplacementMap) {
+                                context.pushTypeSpecializationCache(typeReplacementMap);
+                            }
+                            this.resolveDeclaredSymbol(params[i], enclosingDecl, context);
+                            if (typeReplacementMap) {
+                                context.popTypeSpecializationCache();
+                            }
+                            contextualType = params[i].getType();
+                        }
+                        else if (params.length) {
+                            contextualType = params[params.length - 1].getType();
+                            if (contextualType.isArray()) {
+                                contextualType = contextualType.getElementType();
+                            }
+                        }
+
+                        if (contextualType) {
+                            context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                        }
+
+                        this.resolveStatementOrExpression(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
+
+                        if (contextualType) {
+                            context.popContextualType();
+                            contextualType = null;
+                        }
+                    }
+                }
+
+                if (!returnType) {
+                    returnType = this.semanticInfoChain.anyTypeSymbol;
+                }
+
+                // Store any additional resolution results if needed
+                if (additionalResults) {
+                    additionalResults.targetSymbol = targetTypeSymbol;
+                    additionalResults.resolvedSignatures = constructSignatures;
+                    additionalResults.candidateSignature = signature;
+                }
+
+                return returnType;
+/*
                 var signature = constructSignatures.length > 1 ? this.resolveOverloads(expressionAST, constructSignatures, enclosingDecl, context) : constructSignatures[0];
 
                 // if we haven't been able to choose an overload, default to the first one
@@ -2558,6 +2733,7 @@ module TypeScript {
                 }
 
                 return returnType;
+*/
             }
             else if (targetTypeSymbol.isClass()) {
 

@@ -81,8 +81,8 @@ module TypeScript {
 
     export var LexKeywordTable = undefined;
     // TODO: use new Token[128];
-    var autoToken: Token[] = new Array(LexCodeASCIIChars);
-    var lexIdStartTable: bool[] = new Array(LexCodeASCIIChars);
+    var autoToken: Token[] = new <Token[]>Array(LexCodeASCIIChars);
+    var lexIdStartTable: bool[] = new <bool[]>Array(LexCodeASCIIChars);
 
     // Unicode range maps
     // REVIEW: These range maps have been extracted from the Unicode specifications, they might be missing values, and/or include 

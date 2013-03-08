@@ -28,8 +28,9 @@ module TypeScript {
         EnumVariable = 1 << 17,
 
         MustCaptureThis = 1 << 18,
-
         Constant = 1 << 19,
+
+        ExpressionElement = 1 << 20,
 
         ImplicitVariable = ClassConstructorVariable | InitializedModule, /* | EnumVariable, */
     }
