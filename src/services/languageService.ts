@@ -14,6 +14,7 @@
 //
 
 ///<reference path='typescriptServices.ts' />
+///<reference path='diagnosticServices.ts' />
 
 module Services {
 
@@ -47,10 +48,10 @@ module Services {
         getOutliningRegions(fileName: string): NavigateToItem[];
 
         getScriptSyntaxAST(fileName: string): ScriptSyntaxAST;
-        getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
-        getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
-        getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
-        getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[];
+        getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: Services.FormatCodeOptions): TextEdit[];
+        getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: Services.FormatCodeOptions): TextEdit[];
+        getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: Services.FormatCodeOptions): TextEdit[];
+        getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: Services.FormatCodeOptions): TextEdit[];
         getBraceMatchingAtPosition(fileName: string, position: number): TextRange[];
         getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: Services.EditorOptions): number;
 
@@ -59,7 +60,7 @@ module Services {
         getSymbolAtPosition(script: TypeScript.AST, pos: number): TypeScript.Symbol;
 
         getSymbolTree(): Services.ISymbolTree;
-        getEmitOutput(fileName: string) : IOutputFile[];
+        getEmitOutput(fileName: string): Services.IOutputFile[];
     }
 
     //
@@ -74,7 +75,8 @@ module Services {
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
         getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.ScriptEditRange;
-    }
+        getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
+ }
 
     export function logInternalError(logger: TypeScript.ILogger, err: Error) {
         logger.log("*INTERNAL ERROR* - Exception in typescript services: " + err.message);
@@ -2567,4 +2569,5 @@ module Services {
         }
 
     }
+
 }

@@ -52,6 +52,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.goToDefinition();
         }
 
+        public position(position: number) {
+            FourSlash.currentTestState.goToPosition(position);
+        }
+
         // Opens a file, given either its index as it
         // appears in the test source, or its filename
         // as specified in the test metadata
@@ -200,6 +204,13 @@ module FourSlashInterface {
         public moveRight(count?: number) {
             FourSlash.currentTestState.moveCaretRight(count);
         }
+
+        public moveLeft(count?: number) {
+            if(typeof count === 'undefined') {
+                count = 1;
+            }
+            FourSlash.currentTestState.moveCaretRight(count*-1);
+        }
     }
 
     export class debug {
@@ -211,8 +222,12 @@ module FourSlashInterface {
             FourSlash.currentTestState.printCurrentFileState();
         }
 
-        public printCurrentFileStateWithWhitepsace() {
-            FourSlash.currentTestState.printCurrentFileState(true);
+        public printCurrentFileStateWithWhitespace() {
+            FourSlash.currentTestState.printCurrentFileState(/*withWhiteSpace=*/true);
+        }
+
+        public printCurrentFileStateWithoutCaret() {
+            FourSlash.currentTestState.printCurrentFileState(/*withWhiteSpace=*/false, /*withCaret=*/false);
         }
 
         public printCurrentQuickInfo() {

@@ -1516,6 +1516,10 @@ module Harness {
             return result;
         }
 
+        public getDiagnosticsObject(): Services.ILanguageServicesDiagnostics {
+            return new LanguageServicesDiagnostics("");
+        }
+
         //
         // Return a new instance of the language service shim, up-to-date wrt to typecheck.
         // To access the non-shim (i.e. actual) language service, use the "ls.languageService" property.
@@ -1666,6 +1670,16 @@ module Harness {
 
     }
 
+    export class LanguageServicesDiagnostics implements Services.ILanguageServicesDiagnostics {
+
+        constructor(private destination: string) { }
+
+        public log(content: string): void {
+            //Imitates the LanguageServicesDiagnostics object when not in Visual Studio
+        }
+
+    }
+
     // Describe/it definitions
     export function describe(description: string, block: () => any) {
         var newScenario = new Scenario(description, block);
@@ -1729,6 +1743,7 @@ module Harness {
                 runJSString(res.code, callback);
             });
         }
+
     }
 
     // Support class for baseline files

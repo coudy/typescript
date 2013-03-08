@@ -127,7 +127,7 @@ var IO = (function() {
     // Create an IO object for use inside WindowsScriptHost hosts
     // Depends on WSCript and FileSystemObject
     function getWindowsScriptHostIO(): IIO {
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
+        var fso = new ActiveXObject("Scripting.FileSystemObject");        
         var streamObjectPool = [];
 
         function getStreamObject(): any { 
@@ -421,14 +421,20 @@ var IO = (function() {
                 function filesInFolder(folder: string): string[]{
                     var paths = [];
 
-                    var files = _fs.readdirSync(folder);
-                    for (var i = 0; i < files.length; i++) {
-                        var stat = _fs.statSync(folder + "/" + files[i]);
-                        if (options.recursive && stat.isDirectory()) {
-                            paths = paths.concat(filesInFolder(folder + "/" + files[i]));
-                        } else if (stat.isFile() && (!spec || files[i].match(spec))) {
-                            paths.push(folder + "/" + files[i]);
+                    try {
+                        var files = _fs.readdirSync(folder);
+                        for (var i = 0; i < files.length; i++) {
+                            var stat = _fs.statSync(folder + "/" + files[i]);
+                            if (options.recursive && stat.isDirectory()) {
+                                paths = paths.concat(filesInFolder(folder + "/" + files[i]));
+                            } else if (stat.isFile() && (!spec || files[i].match(spec))) {
+                                paths.push(folder + "/" + files[i]);
+                            }
                         }
+                    } catch (err) {
+                        /*
+                        *   Skip folders that are inaccessible
+                        */
                     }
 
                     return paths;

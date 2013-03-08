@@ -64,6 +64,7 @@ module Services {
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
         getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
+        getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
     }
 
     export class LanguageServiceShimHostAdapter implements Services.ILanguageServiceHost {
@@ -135,6 +136,10 @@ module Services {
 
             var minLimDeltaString = rangeText.split(",");
             return new TypeScript.ScriptEditRange(parseInt(minLimDeltaString[0]), parseInt(minLimDeltaString[1]), parseInt(minLimDeltaString[2]));
+        }
+
+        public getDiagnosticsObject(): ILanguageServicesDiagnostics {
+            return this.shimHost.getDiagnosticsObject();
         }
     }
 

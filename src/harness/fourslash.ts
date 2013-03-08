@@ -110,6 +110,11 @@ module FourSlash {
             this.currentCaretPosition = marker.position;
         }
 
+        public goToPosition(position: number) {
+            this.currentCaretPosition = position;
+            this.fixCaretPosition();
+        }
+
         public moveCaretRight(count? = 1) {
             this.currentCaretPosition += count;
             this.currentCaretPosition = Math.min(this.currentCaretPosition, this.langSvc.getScriptSourceLength(this.getActiveFileIndex()));
@@ -418,7 +423,7 @@ module FourSlash {
             IO.printLine(JSON2.stringify(quickInfo));
         }
 
-        public printCurrentFileState(makeWhitespaceVisible = false) {
+        public printCurrentFileState(makeWhitespaceVisible = false, makeCaretVisible = true) {
             for (var i = 0; i < this.testData.files.length; i++) {
                 var file = this.testData.files[i];
                 var active = (this.activeFile === file);
@@ -426,7 +431,7 @@ module FourSlash {
                 IO.printLine('=== Script #' + index + ' (' + file.name + ') ' + (active ? '(active, cursor at |)' : '') + ' ===');
                 var content = this.langSvc.getScriptSourceText(index, 0, this.langSvc.getScriptSourceLength(index));
                 if (active) {
-                    content = content.substr(0, this.currentCaretPosition) + '|' + content.substr(this.currentCaretPosition);
+                    content = content.substr(0, this.currentCaretPosition) + (makeCaretVisible ? '|' : "") + content.substr(this.currentCaretPosition);
                 }
                 if (makeWhitespaceVisible) {
                     content = TestState.makeWhitespaceVisible(content);

@@ -20,6 +20,7 @@ module Services {
     // Used to help with incremental behavior of language service.
     //
     export class ScriptMap {
+
         private map: TypeScript.StringHashTable;
 
         constructor() {
@@ -137,6 +138,7 @@ module Services {
         public getSourceText(scriptIndex: number, cached: bool = false): TypeScript.ISourceText {
             return this.array[scriptIndex].getSourceText(cached);
         }
+
     }
 
     //
@@ -251,7 +253,8 @@ module Services {
 
     export class CompilerState {
 
-        public logger: TypeScript.ILogger;
+        public logger: Services.ILanguageServiceHost;
+        private diagnostics: Services.ICompilerDiagnostics;
         //
         // State related to compiler instance
         //
@@ -281,6 +284,11 @@ module Services {
             this.compilerCache = null;
             this.symbolTree = null;
             this.compilationSettings = null;
+            
+            //
+            // Object for logging user edits into Documents/Diagnostics.txt
+            //
+            this.diagnostics = new Services.CompilerDiagnostics(host);
         }
 
         public getCompilationSettings() {
@@ -336,6 +344,7 @@ module Services {
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number) {
 
             var newUnitIndex = compiler.units.length;
+            var scriptId = this.hostCache.getScriptId(hostUnitIndex)
             this.errorCollector.startParsing(newUnitIndex);
 
             //Note: We need to call "_setUnitMapping" _before_ calling into the compiler,
@@ -343,8 +352,10 @@ module Services {
             //      we recover from those failure (we still report errors to the host, 
             //      and we need unit mapping info to do that correctly.
             this.setUnitMapping(newUnitIndex, hostUnitIndex);
-
-            var newScript = compiler.addSourceUnit(this.hostCache.getSourceText(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(this.hostCache.getSourceText(hostUnitIndex), scriptId, this.hostCache.getIsResident(hostUnitIndex));
+            if (this.diagnostics.isLoggingEdits()) {
+                this.diagnostics.logNewCompilerUnit(scriptId, newUnitIndex);
+            }
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): TypeScript.UpdateUnitResult {
@@ -380,8 +391,9 @@ module Services {
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
             var result = this.attemptIncrementalUpdateUnit(scriptId);
-            if (result != null)
+            if (result != null) {
                 return result;
+            }
 
             var sourceText = this.hostCache.getSourceText(hostUnitIndex);
             this.setUnitMapping(unitIndex, hostUnitIndex);
@@ -392,6 +404,11 @@ module Services {
             var previousScript = this.getScriptAST(scriptId);
             var newSourceText = this.getSourceText(previousScript, false);
             var editRange = this.getScriptEditRange(previousScript);
+            
+            if (this.diagnostics.isLoggingEdits()) {
+                var unitIndex = this.getUnitIndex(scriptId);                
+                this.diagnostics.logUpdatedCompilerUnit(scriptId, unitIndex, editRange);
+            }
 
             var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, scriptId, newSourceText, editRange);
             if (result == null)
@@ -403,7 +420,6 @@ module Services {
                     return null;
                 }
             }
-
             //TODO: We don't enable incremental right now, as it would break IDE error reporting
             if (true) {
                 this.logger.log("  Bailing out because incremental typecheck is not implemented yet");
@@ -594,8 +610,7 @@ module Services {
                 if (unitIndex >= 0) {
                     var updateResult = this.updateCompilerUnit(this.compiler, hostUnitIndex, unitIndex);
                     updateResults.push(updateResult);
-                }
-                else {
+                } else {
                     this.addCompilerUnit(this.compiler, hostUnitIndex);
                     fileAdded = true;
                 }
@@ -791,5 +806,6 @@ module Services {
 
             return result;
         }
+
     }
 }
