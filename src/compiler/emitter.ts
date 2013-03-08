@@ -305,6 +305,14 @@ module TypeScript {
             }
         }
 
+        public getVarDeclFromIdentifier(ident: Identifier) {
+            if (ident.sym !== null && ident.sym.declAST.nodeType === NodeType.VarDecl) {
+                return <VarDecl>ident.sym.declAST;
+            }
+
+            return null;
+        }
+        
         private getConstantValue(init: AST): number {
             if (init) {
                 if (init.nodeType === NodeType.NumberLit) {
@@ -319,10 +327,23 @@ module TypeScript {
                     }
                 }
                 else if (init.nodeType === NodeType.Name) {
-                    var ident = <Identifier>init;
-                    if (ident.sym !== null && ident.sym.declAST.nodeType === NodeType.VarDecl) {
-                        var varDecl = <VarDecl>ident.sym.declAST;
+                    var varDecl = this.getVarDeclFromIdentifier(<Identifier>init);
+                    if (varDecl) {
                         return this.getConstantValue(varDecl.init);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public getConstantDecl(dotExpr: BinaryExpression) {
+            var propertyName = <Identifier>dotExpr.operand2;
+            if (propertyName && propertyName.sym && propertyName.sym.isVariable()) {
+                if (hasFlag(propertyName.sym.flags, SymbolFlags.Constant)) {
+                    if (propertyName.sym.declAST) {
+                        var boundDecl = <BoundDecl>propertyName.sym.declAST;
+                        return boundDecl;
                     }
                 }
             }
@@ -335,20 +356,16 @@ module TypeScript {
                 return false;
             }
             var propertyName = <Identifier>dotExpr.operand2;
-            if (propertyName && propertyName.sym && propertyName.sym.isVariable()) {
-                if (hasFlag(propertyName.sym.flags, SymbolFlags.Constant)) {
-                    if (propertyName.sym.declAST) {
-                        var boundDecl = <BoundDecl>propertyName.sym.declAST;
-                        var value = this.getConstantValue(boundDecl.init);
-                        if (value !== null) {
-                            this.writeToOutput(value.toString());
-                            var comment = " /* ";
-                            comment += propertyName.actualText;
-                            comment += " */ ";
-                            this.writeToOutput(comment);
-                            return true;
-                        }
-                    }
+            var boundDecl = this.getConstantDecl(dotExpr);
+            if (boundDecl) {
+                var value = this.getConstantValue(boundDecl.init);
+                if (value !== null) {
+                    this.writeToOutput(value.toString());
+                    var comment = " /* ";
+                    comment += propertyName.actualText;
+                    comment += " */ ";
+                    this.writeToOutput(comment);
+                    return true;
                 }
             }
 

@@ -309,6 +309,10 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
+        if (hasFlag(propertyDecl.varFlags, VarFlags.Constant)) {
+            declFlags |= PullElementFlags.Constant;
+        }
+
         var span = new DeclSpan();
 
         span.minChar = propertyDecl.minChar;

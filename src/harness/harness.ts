@@ -785,8 +785,6 @@ module Harness {
         var needsFullTypeCheck = true;
         export function compile(code?: string, filename?: string) {
             if (usePull) {
-                // TODO: fails with 'Unable to get property 'getTopLevelDecls' of undefined or null reference'
-                // not sure the check for existence is necessary, or whether you first need to typecheck the world once
                 if (needsFullTypeCheck) {
                     compiler.pullTypeCheck(true);
                     needsFullTypeCheck = false;
@@ -931,6 +929,17 @@ module Harness {
                     }
                 }
             }
+
+            public assertThisCanBeAssignedTo(desc: string, these: any[], notThese: any[]) {
+                it(desc + " is assignable to ", () => {
+                    this.assertAssignmentCompatibleWith(these);
+                });
+        
+                it(desc + " not assignable to ", () => {
+                    this.assertNotAssignmentCompatibleWith(notThese);
+                });
+            }
+
         }
 
         export class TypeFactory {
@@ -940,11 +949,10 @@ module Harness {
             public bool: Type;
 
             constructor() {
-                var xPosition = 4;
-                this.any = this.get('var x : any', xPosition);
-                this.number = this.get('var x : number', xPosition);
-                this.string = this.get('var x : string', xPosition);
-                this.bool = this.get('var x : bool', xPosition);
+                this.any = this.get('var x : any', 'x');
+                this.number = this.get('var x : number', 'x');
+                this.string = this.get('var x : string', 'x');
+                this.bool = this.get('var x : bool', 'x');
             }
 
             public get (code: string, target: any) {
@@ -968,7 +976,7 @@ module Harness {
                 if (errors.length > 0)
                     throw new Error("Type definition contains errors: " + errors.join(","));
 
-                var matchingIdentifiers = [];
+                var matchingIdentifiers: Type[] = [];
 
                 if (!usePull) {
                     // This will find the requested identifier in the first script where it's present, a naive search of each member in each script,
@@ -1329,8 +1337,8 @@ module Harness {
             compiler.emitToOutfile(outfile);
         }
 
-        export function emit(ioHost: TypeScript.EmitterIOHost) {
-            compiler.emit(ioHost);
+        export function emit(ioHost: TypeScript.EmitterIOHost, usePullEmitter?: bool) {
+            compiler.emit(ioHost, usePullEmitter);
         }
 
         export function compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1352,10 +1360,11 @@ module Harness {
             if (usePull) {
                 // TODO: no emit support with pull yet
                 errors = compiler.pullGetErrorsForFile(uName);
+                emit(stdout, true);
             }
             else {
                 errors = stderr.lines;
-                compiler.emit(stdout);
+                emit(stdout, false);
                 //output decl file
                 compiler.emitDeclarations();
             }
