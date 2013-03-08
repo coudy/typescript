@@ -1162,16 +1162,18 @@ module TypeScript {
                             // return type with the top-level function's return type
                             go = false;
                             break;
+
                         case NodeType.Return:
                             var returnStatement: ReturnStatement = <ReturnStatement>ast;
                             returnStatements[returnStatements.length] = returnStatement;
+                            go = false;
+                            break;
 
                         default:
                             break;
                     }
 
                     walker.options.goChildren = go;
-                    walker.options.goNextSibling = go;
 
                     return ast;
                 }
