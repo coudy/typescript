@@ -3529,6 +3529,10 @@ module Parser1 {
                         continue;
 
                     case SyntaxKind.LessThanToken:
+                        if (!allowInvocation) {
+                            return expression;
+                        }
+
                         // See if this is the start of a generic invocation.  If so, consume it and
                         // keep checking for postfix expressions.  Otherwise, it's just a '<' that's 
                         // part of an arithmetic expression.  Break out so we consume it higher in the

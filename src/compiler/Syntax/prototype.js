@@ -5248,6 +5248,12 @@ var TypeScript;
                 this.recordSourceMappingEnd(args);
             }
         };
+        Emitter.prototype.getVarDeclFromIdentifier = function (ident) {
+            if (ident.sym !== null && ident.sym.declAST.nodeType === 75 /* VarDecl */ ) {
+                return ident.sym.declAST;
+            }
+            return null;
+        };
         Emitter.prototype.getConstantValue = function (init) {
             if (init) {
                 if (init.nodeType === 24 /* NumberLit */ ) {
@@ -5259,10 +5265,21 @@ var TypeScript;
                         return (binop.operand1).value << (binop.operand2).value;
                     }
                 } else if (init.nodeType === 25 /* Name */ ) {
-                    var ident = init;
-                    if (ident.sym !== null && ident.sym.declAST.nodeType === 75 /* VarDecl */ ) {
-                        var varDecl = ident.sym.declAST;
+                    var varDecl = this.getVarDeclFromIdentifier(init);
+                    if (varDecl) {
                         return this.getConstantValue(varDecl.init);
+                    }
+                }
+            }
+            return null;
+        };
+        Emitter.prototype.getConstantDecl = function (dotExpr) {
+            var propertyName = dotExpr.operand2;
+            if (propertyName && propertyName.sym && propertyName.sym.isVariable()) {
+                if (TypeScript.hasFlag(propertyName.sym.flags, 32768 /* Constant */ )) {
+                    if (propertyName.sym.declAST) {
+                        var boundDecl = propertyName.sym.declAST;
+                        return boundDecl;
                     }
                 }
             }
@@ -5273,20 +5290,16 @@ var TypeScript;
                 return false;
             }
             var propertyName = dotExpr.operand2;
-            if (propertyName && propertyName.sym && propertyName.sym.isVariable()) {
-                if (TypeScript.hasFlag(propertyName.sym.flags, 32768 /* Constant */ )) {
-                    if (propertyName.sym.declAST) {
-                        var boundDecl = propertyName.sym.declAST;
-                        var value = this.getConstantValue(boundDecl.init);
-                        if (value !== null) {
-                            this.writeToOutput(value.toString());
-                            var comment = " /* ";
-                            comment += propertyName.actualText;
-                            comment += " */ ";
-                            this.writeToOutput(comment);
-                            return true;
-                        }
-                    }
+            var boundDecl = this.getConstantDecl(dotExpr);
+            if (boundDecl) {
+                var value = this.getConstantValue(boundDecl.init);
+                if (value !== null) {
+                    this.writeToOutput(value.toString());
+                    var comment = " /* ";
+                    comment += propertyName.actualText;
+                    comment += " */ ";
+                    this.writeToOutput(comment);
+                    return true;
                 }
             }
             return false;
@@ -36976,6 +36989,9 @@ var Parser1;
                         expression = this.factory.invocationExpression(expression, this.parseArgumentList(null));
                         continue;
                     case 80 /* LessThanToken */ :
+                        if (!allowInvocation) {
+                            return expression;
+                        }
                         var argumentList = this.tryParseArgumentList();
                         if (argumentList !== null) {
                             expression = this.factory.invocationExpression(expression, argumentList);
@@ -38530,6 +38546,7 @@ var TypeScript;
         PullElementFlags.InitializedModule = 1 << 16;
         PullElementFlags.EnumVariable = 1 << 17;
         PullElementFlags.MustCaptureThis = 1 << 18;
+        PullElementFlags.Constant = 1 << 19;
         PullElementFlags.ImplicitVariable = PullElementFlags.ClassConstructorVariable | PullElementFlags.InitializedModule;
     })(TypeScript.PullElementFlags || (TypeScript.PullElementFlags = {}));
     var PullElementFlags = TypeScript.PullElementFlags;
@@ -44867,6 +44884,9 @@ var TypeScript;
         if (TypeScript.hasFlag(propertyDecl.id.flags, 1024 /* OptionalName */ )) {
             declFlags |= 256 /* Optional */ ;
         }
+        if (TypeScript.hasFlag(propertyDecl.varFlags, 65536 /* Constant */ )) {
+            declFlags |= 524288 /* Constant */ ;
+        }
         var span = new TypeScript.DeclSpan();
         span.minChar = propertyDecl.minChar;
         span.limChar = propertyDecl.limChar;
@@ -47188,48 +47208,37 @@ var TypeScript;
             var enclosingDecl = declStackLen > 0 ? this.declStack[declStackLen - 1] : null;
             return enclosingDecl;
         };
-        PullEmitter.prototype.getConstantValue = function (init) {
-            if (init) {
-                if (init.nodeType === 24 /* NumberLit */ ) {
-                    var numLit = init;
-                    return numLit.value;
-                } else if (init.nodeType === 63 /* Lsh */ ) {
-                    var binop = init;
-                    if (binop.operand1.nodeType === 24 /* NumberLit */  && binop.operand2.nodeType === 24 /* NumberLit */ ) {
-                        return (binop.operand1).value << (binop.operand2).value;
-                    }
-                } else if (init.nodeType === 25 /* Name */ ) {
-                    var ident = init;
-                    if (ident.sym !== null && ident.sym.declAST.nodeType === 75 /* VarDecl */ ) {
-                        var varDecl = ident.sym.declAST;
-                        return this.getConstantValue(varDecl.init);
+        PullEmitter.prototype.getVarDeclFromIdentifier = function (ident) {
+            var resolvingContext = new TypeScript.PullTypeResolutionContext();
+            var typeResolver = new TypeScript.PullTypeResolver(this.semanticInfoChain, this.locationInfo.filename);
+            var pullSymbol = typeResolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
+            if (pullSymbol) {
+                var pullDecls = pullSymbol.getDeclarations();
+                if (pullDecls.length == 1) {
+                    var pullDecl = pullDecls[0];
+                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
+                    if (ast && ast.nodeType == 75 /* VarDecl */ ) {
+                        return ast;
                     }
                 }
             }
             return null;
         };
-        PullEmitter.prototype.tryEmitConstant = function (dotExpr) {
-            if (!this.emitOptions.propagateConstants) {
-                return false;
-            }
-            var propertyName = dotExpr.operand2;
-            if (propertyName && propertyName.sym && propertyName.sym.isVariable()) {
-                if (TypeScript.hasFlag(propertyName.sym.flags, 32768 /* Constant */ )) {
-                    if (propertyName.sym.declAST) {
-                        var boundDecl = propertyName.sym.declAST;
-                        var value = this.getConstantValue(boundDecl.init);
-                        if (value !== null) {
-                            this.writeToOutput(value.toString());
-                            var comment = " /* ";
-                            comment += propertyName.actualText;
-                            comment += " */ ";
-                            this.writeToOutput(comment);
-                            return true;
-                        }
+        PullEmitter.prototype.getConstantDecl = function (dotExpr) {
+            var resolvingContext = new TypeScript.PullTypeResolutionContext();
+            var typeResolver = new TypeScript.PullTypeResolver(this.semanticInfoChain, this.locationInfo.filename);
+            var pullSymbol = typeResolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
+            if (pullSymbol && pullSymbol.hasFlag(524288 /* Constant */ )) {
+                var pullDecls = pullSymbol.getDeclarations();
+                if (pullDecls.length == 1) {
+                    var pullDecl = pullDecls[0];
+                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
+                    if (ast && ast.nodeType == 75 /* VarDecl */ ) {
+                        return ast;
                     }
                 }
             }
-            return false;
+            return null;
         };
         PullEmitter.prototype.getClassPropertiesMustComeAfterSuperCall = function (funcDecl, classDecl) {
             var isClassConstructor = funcDecl.isConstructor && TypeScript.hasFlag(funcDecl.fncFlags, 262144 /* ClassMethod */ );
@@ -50124,7 +50133,7 @@ var TypeScript;
                 if (this.emitSettings.outputMany || emitter == null) {
                     emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, usePullEmitter, inputOutputMapper);
                 } else {
-                    this.emitUnit(script, true, emitter);
+                    this.emitUnit(script, true, emitter, usePullEmitter);
                 }
             }
             if (emitter) {
