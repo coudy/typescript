@@ -291,6 +291,10 @@ module TypeScript {
         public toString() {
             var str = this.name;
 
+            if (this.hasFlag(PullElementFlags.Optional)) {
+                str += "?";
+            }
+
             var type = this.getType();
 
             if (type) {
@@ -304,7 +308,7 @@ module TypeScript {
                 str += ": " + typeName;
             }
 
-            return this.name;
+            return str;
         }
     }
 

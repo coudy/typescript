@@ -33,7 +33,10 @@ module TypeScript {
 
         var decl = new PullDecl(importDecl.id.actualText, PullElementKind.TypeAlias, declFlags, span, context.scriptName);
 
-        context.getParent().addChildDecl(decl);
+        var parent = context.getParent();
+
+        parent.addChildDecl(decl);
+        decl.setParentDecl(parent);
 
         context.semanticInfo.setDeclForAST(ast, decl);
 
@@ -72,8 +75,9 @@ module TypeScript {
         span.limChar = moduleDecl.limChar;
 
         var decl = new PullDecl(modName, kind, declFlags, span, context.scriptName);
-
-        context.getParent().addChildDecl(decl);
+        var parent = context.getParent();
+        parent.addChildDecl(decl);
+        decl.setParentDecl(parent);
 
         context.pushParent(decl);
 
@@ -110,8 +114,11 @@ module TypeScript {
 
         decl.setValueDecl(constructorDecl);
 
-        context.getParent().addChildDecl(decl);
-        context.getParent().addChildDecl(constructorDecl);
+        var parent = context.getParent();
+        parent.addChildDecl(decl);
+        parent.addChildDecl(constructorDecl);
+        decl.setParentDecl(parent);
+        constructorDecl.setParentDecl(parent);
 
         context.pushParent(decl);
 
@@ -142,6 +149,7 @@ module TypeScript {
         // if we're collecting a decl for a type annotation, we don't want to add the decl to the parent scope
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -172,6 +180,7 @@ module TypeScript {
         // if we're collecting a decl for a type annotation, we don't want to add the decl to the parent scope
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -209,6 +218,7 @@ module TypeScript {
         // if we're collecting a decl for a type annotation, we don't want to add the decl to the parent scope
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -241,13 +251,16 @@ module TypeScript {
 
         var decl = new PullDecl(argDecl.id.text, PullElementKind.Parameter, declFlags, span, context.scriptName);
 
-        context.getParent().addChildDecl(decl);
+        var parent = context.getParent();
+        parent.addChildDecl(decl);
+        decl.setParentDecl(parent);
 
         // if it's a property type, we'll need to add it to the parent's parent as well
         if (hasFlag(argDecl.varFlags, VarFlags.Property)) {
             var propDecl = new PullDecl(argDecl.id.text, PullElementKind.Property, declFlags, span, context.scriptName);
             propDecl.setValueDecl(decl);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
+            propDecl.setParentDecl(context.parentChain[context.parentChain.length - 2]);
             context.semanticInfo.setASTForDecl(propDecl, ast);
             context.semanticInfo.setDeclForAST(ast, propDecl);
         }
@@ -284,7 +297,9 @@ module TypeScript {
         context.semanticInfo.setASTForDecl(decl, ast);
         context.semanticInfo.setDeclForAST(ast, decl);
 
-        context.getParent().addChildDecl(decl);
+        var parent = context.getParent();
+        parent.addChildDecl(decl);
+        decl.setParentDecl(parent);
 
         if (typeParameterDecl.constraint &&
             ((<TypeReference>typeParameterDecl.constraint).term.nodeType == NodeType.InterfaceDeclaration ||
@@ -321,7 +336,9 @@ module TypeScript {
 
         var decl = new PullDecl(propertyDecl.id.text, declType, declFlags, span, context.scriptName);
 
-        context.getParent().addChildDecl(decl);
+        var parent = context.getParent();
+        parent.addChildDecl(decl);
+        decl.setParentDecl(parent);
 
         context.semanticInfo.setDeclForAST(propertyDecl, decl);
 
@@ -365,7 +382,9 @@ module TypeScript {
 
         var decl = new PullDecl(memberDecl.id.text, declType, declFlags, span, context.scriptName);
 
-        context.getParent().addChildDecl(decl);
+        var parent = context.getParent();
+        parent.addChildDecl(decl);
+        decl.setParentDecl(parent);
 
         context.semanticInfo.setDeclForAST(memberDecl, decl);
 
@@ -405,7 +424,9 @@ module TypeScript {
 
         var decl = new PullDecl(varDecl.id.text, declType, declFlags, span, context.scriptName);
 
-        context.getParent().addChildDecl(decl);
+        var parent = context.getParent();
+        parent.addChildDecl(decl);
+        decl.setParentDecl(parent);
 
         context.semanticInfo.setDeclForAST(varDecl, decl);
 
@@ -459,6 +480,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -498,6 +520,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -548,6 +571,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -590,6 +614,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -647,6 +672,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -685,6 +711,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -723,6 +750,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -761,6 +789,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -803,6 +832,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -848,6 +878,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -894,6 +925,7 @@ module TypeScript {
 
         if (parent) {
             parent.addChildDecl(decl);
+            decl.setParentDecl(parent);
         }
 
         context.pushParent(decl);
@@ -1057,6 +1089,7 @@ module TypeScript {
 
                 if (parentDecl) {
                     parentDecl.addChildDecl(valueDecl);
+                    valueDecl.setParentDecl(parentDecl);
                 }
             }
         }

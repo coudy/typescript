@@ -80,9 +80,9 @@ module TypeScript {
     export var LexCodeASCIIChars = 128;
 
     export var LexKeywordTable = undefined;
-    // TODO: use new Token[128];
-    var autoToken: Token[] = new Array(LexCodeASCIIChars);
-    var lexIdStartTable: bool[] = new Array(LexCodeASCIIChars);
+    // PULLTODO: When generics are on by default, remove the assertion to 'any[]'
+    var autoToken: Token[] = <any[]>(new Array(LexCodeASCIIChars));
+    var lexIdStartTable: bool[] = <any[]>(new Array(LexCodeASCIIChars));
 
     // Unicode range maps
     // REVIEW: These range maps have been extracted from the Unicode specifications, they might be missing values, and/or include 

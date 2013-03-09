@@ -80,6 +80,9 @@ module TypeScript {
         public getParentDecl() {
             return this.parentDecl;
         }
+        public setParentDecl(parentDecl: PullDecl) {
+            this.parentDecl = parentDecl;
+        }
 
         public addError(error: PullError) {
             if (!this.errors) {
