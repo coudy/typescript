@@ -34,8 +34,15 @@ module Services {
         logAST(fileName: string): void;
         logSyntaxAST(fileName: string): void;
 
+        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
         getErrors(maxCount: number): string;
+
+        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
         getScriptErrors(fileName: string, maxCount: number): string;
+
+        getSyntacticErrors(fileName: string): string;
+        getSemanticErrors(fileName: string): string;
+
         getTypeAtPosition(fileName: string, pos: number): string;
         getSignatureAtPosition(fileName: string, pos: number): string;
         getDefinitionAtPosition(fileName: string, pos: number): string;
@@ -234,21 +241,28 @@ module Services {
         /// SQUIGGLES
         ///
         public getErrors(maxCount: number): string {
+            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            return _resultToJSON([]);
+        }
+
+        public getScriptErrors(fileName: string, maxCount: number): string {
+            return _resultToJSON([]);
+        }
+
+        public getSyntacticErrors(fileName: string): string {
             return this.forwardJSONCall(
-                "getErrors(" + maxCount + ")",
+                "getSyntacticErrors(\"" + fileName + "\")",
                 () => {
-                    var errors = this.languageService.getErrors(maxCount);
+                    var errors = this.pullLanguageService.getSyntacticErrors(fileName);
                     return _resultToJSON(errors);
                 });
         }
 
-        /// SQUIGGLES
-        ///
-        public getScriptErrors(fileName: string, maxCount: number): string {
+        public getSemanticErrors(fileName: string): string {
             return this.forwardJSONCall(
-                "getScriptErrors(" + maxCount + ")",
+                "getSemanticErrors(\"" + fileName + "\")",
                 () => {
-                    var errors = this.languageService.getScriptErrors(fileName, maxCount);
+                    var errors = this.pullLanguageService.getSemanticErrors(fileName);
                     return _resultToJSON(errors);
                 });
         }

@@ -131,7 +131,7 @@ module TypeScript {
     }
 
     export class ErrorEntry {
-        constructor (public unitIndex: number,
+        constructor(public unitIndex: number,
                     public minChar: number,
                     public limChar: number,
                     public message: string) { }
@@ -170,8 +170,6 @@ module TypeScript {
         public emitSettings: EmitOptions;
 
         public syntaxTrees: SyntaxTree[] = [];
-
-
 
         constructor(public errorOutput: ITextWriter,
                     public logger: ILogger = new NullLogger(),

@@ -9,6 +9,9 @@ module Services {
     export interface IPullLanguageService extends ILanguageService {
         host: ILanguageServiceHost;
 
+        getSyntacticErrors(fileName: string): TypeScript.ErrorEntry[];
+        getSemanticErrors(fileName: string): TypeScript.ErrorEntry[];
+
         getOutliningSpans(fileName: string): TextSpan[];
         getMatchingBraceSpans(fileName: string, position: number): TextSpan[];
         logSyntaxTree(fileName: string): void;
@@ -925,25 +928,35 @@ module Services {
             new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
         }
 
-        public getErrors(maxCount: number): TypeScript.ErrorEntry[] {
-            // Note: Do not throw on errors, as we want to report "internal" 
-            //       errors that can occur when initializing the compiler 
-            //       or typechecking the whole program.
+        public getSyntacticErrors(fileName: string): TypeScript.ErrorEntry[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
 
-            return this.pullCompilerState.getErrorEntries(maxCount, (u, e) => true);
+            var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
+            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            var diagnostics = syntaxTree.diagnostics();
+            return diagnostics.map(d => new TypeScript.ErrorEntry(unitIndex, d.position(), d.position() + d.width(), d.message()));
         }
 
-        public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[] {
-            this.refresh();
-
+        public getSemanticErrors(fileName: string): TypeScript.ErrorEntry[] {
+            this.pullCompilerState.refresh(false/*throwOnError*/);
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
-            return this.pullCompilerState.getErrorEntries(maxCount, (u, e) => { return u === unitIndex; });
+
+            return [];
+        }
+
+        public getErrors(maxCount: number): TypeScript.ErrorEntry[]{
+            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            return [];
+        }
+
+        public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[]{
+            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            return [];
         }
 
         public getEmitOutput(fileName: string): IOutputFile[] {
             return [];
-        }        
+        }
 
         private getNameOrDottedNameSpanFromPosition(pos: number, script: TypeScript.Script): SpanInfo  {
             var result: SpanInfo = null;

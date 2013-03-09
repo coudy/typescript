@@ -171,7 +171,6 @@ module Services {
     }
 
     export class UnitErrors {
-
         public parseErrors: TypeScript.ErrorEntry[];
         public typeCheckErrors: TypeScript.ErrorEntry[];
 
@@ -182,7 +181,6 @@ module Services {
     }
 
     export class CompilerErrorCollector {
-
         private parseMode: bool;
         public fileMap: UnitErrors[];
 
@@ -250,7 +248,6 @@ module Services {
     }
 
     export class CompilerState {
-
         public logger: TypeScript.ILogger;
         //
         // State related to compiler instance

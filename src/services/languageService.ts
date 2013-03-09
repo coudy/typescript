@@ -26,13 +26,16 @@ module Services {
 
         refresh(): void;
 
+        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+        getErrors(maxCount: number): TypeScript.ErrorEntry[];
+
+        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+        getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[];
+
         logAST(fileName: string): void;
         logSyntaxAST(fileName: string): void;
 
-        getErrors(maxCount: number): TypeScript.ErrorEntry[];
-
         getScriptAST(fileName: string): TypeScript.Script;
-        getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[];
         getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo;
         getTypeAtPosition(fileName: string, pos: number): TypeInfo;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
@@ -2038,20 +2041,14 @@ module Services {
             new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
         }
 
-        public getErrors(maxCount: number): TypeScript.ErrorEntry[] {
-            // Note: Do not throw on errors, as we want to report "internal" 
-            //       errors that can occur when initializing the compiler 
-            //       or typechecking the whole program.
-            this.compilerState.refresh(false/*throwOnError*/);
-
-            return this.compilerState.getErrorEntries(maxCount, (u, e) => true);
+        public getErrors(maxCount: number): TypeScript.ErrorEntry[]{
+            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            return [];
         }
 
         public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[] {
-            this.refresh();
-
-            var unitIndex = this.compilerState.getUnitIndex(fileName);
-            return this.compilerState.getErrorEntries(maxCount, (u, e) => { return u === unitIndex; });
+            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            return [];
         }
 
         /// Emit
