@@ -1,4 +1,4 @@
-///<reference path='ISyntaxToken.ts' />
+﻿///<reference path='ISyntaxToken.ts' />
 ///<reference path='..\Text\IText.ts' />
 ///<reference path='SyntaxToken.ts' />
 

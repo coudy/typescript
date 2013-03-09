@@ -1413,6 +1413,35 @@ var definitions = [
         isTypeScriptSpecific: true
     }, 
     {
+        name: 'ExportAssignmentSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'IModuleElementSyntax'
+        ],
+        children: [
+            {
+                name: 'exportKeyword',
+                isToken: true
+            }, 
+            {
+                name: 'equalsToken',
+                isToken: true
+            }, 
+            {
+                name: 'identifier',
+                isToken: true,
+                tokenKinds: [
+                    'IdentifierName'
+                ]
+            }, 
+            {
+                name: 'semicolonToken',
+                isToken: true
+            }
+        ],
+        isTypeScriptSpecific: true
+    }, 
+    {
         name: 'ClassDeclarationSyntax',
         baseType: 'SyntaxNode',
         interfaces: [

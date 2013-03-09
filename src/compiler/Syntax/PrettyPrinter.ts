@@ -184,9 +184,20 @@ module PrettyPrinter {
         private visitImportDeclaration(node: ImportDeclarationSyntax): void {
             this.appendToken(node.importKeyword);
             this.ensureSpace();
+            this.appendToken(node.identifier);
+            this.ensureSpace();
             this.appendToken(node.equalsToken);
             this.ensureSpace();
             node.moduleReference.accept(this);
+            this.appendToken(node.semicolonToken);
+        }
+
+        private visitExportAssignment(node: ExportAssignmentSyntax): void {
+            this.appendToken(node.exportKeyword);
+            this.ensureSpace();
+            this.appendToken(node.equalsToken);
+            this.ensureSpace();
+            this.appendToken(node.identifier);
             this.appendToken(node.semicolonToken);
         }
 

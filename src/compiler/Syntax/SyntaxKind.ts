@@ -164,6 +164,7 @@ enum SyntaxKind {
     ClassDeclaration,
     EnumDeclaration,
     ImportDeclaration,
+    ExportAssignment,
 
     // ClassElements
     MemberFunctionDeclaration,

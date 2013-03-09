@@ -1,4 +1,4 @@
-///<reference path='SyntaxVisitor.generated.ts' />
+﻿///<reference path='SyntaxVisitor.generated.ts' />
 
 class SyntaxWalker implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): void {
@@ -75,6 +75,13 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.identifier);
         this.visitToken(node.equalsToken);
         this.visitNode(node.moduleReference);
+        this.visitToken(node.semicolonToken);
+    }
+
+    public visitExportAssignment(node: ExportAssignmentSyntax): void {
+        this.visitToken(node.exportKeyword);
+        this.visitToken(node.equalsToken);
+        this.visitToken(node.identifier);
         this.visitToken(node.semicolonToken);
     }
 

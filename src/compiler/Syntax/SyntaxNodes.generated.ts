@@ -1,4 +1,4 @@
-///<reference path='SyntaxNode.ts' />
+﻿///<reference path='SyntaxNode.ts' />
 ///<reference path='ISyntaxList.ts' />
 ///<reference path='ISeparatedSyntaxList.ts' />
 ///<reference path='SeparatedSyntaxList.ts' />
@@ -311,6 +311,87 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): ImportDeclarationSyntax {
         return this.update(this.importKeyword, this.identifier, this.equalsToken, this.moduleReference, semicolonToken);
+    }
+
+    public isTypeScriptSpecific(): bool {
+        return true;
+    }
+}
+
+class ExportAssignmentSyntax extends SyntaxNode implements IModuleElementSyntax {
+
+    constructor(public exportKeyword: ISyntaxToken,
+                public equalsToken: ISyntaxToken,
+                public identifier: ISyntaxToken,
+                public semicolonToken: ISyntaxToken,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
+
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitExportAssignment(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ExportAssignment;
+    }
+
+    public childCount(): number {
+        return 4;
+    }
+
+    public childAt(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this.exportKeyword;
+            case 1: return this.equalsToken;
+            case 2: return this.identifier;
+            case 3: return this.semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
+    private isModuleElement(): bool {
+        return true;
+    }
+
+    public update(exportKeyword: ISyntaxToken,
+                  equalsToken: ISyntaxToken,
+                  identifier: ISyntaxToken,
+                  semicolonToken: ISyntaxToken): ExportAssignmentSyntax {
+        if (this.exportKeyword === exportKeyword && this.equalsToken === equalsToken && this.identifier === identifier && this.semicolonToken === semicolonToken) {
+            return this;
+        }
+
+        return new ExportAssignmentSyntax(exportKeyword, equalsToken, identifier, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(identifier: ISyntaxToken): ExportAssignmentSyntax {
+        return new ExportAssignmentSyntax(Syntax.token(SyntaxKind.ExportKeyword), Syntax.token(SyntaxKind.EqualsToken), identifier, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ExportAssignmentSyntax {
+        return <ExportAssignmentSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ExportAssignmentSyntax {
+        return <ExportAssignmentSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withExportKeyword(exportKeyword: ISyntaxToken): ExportAssignmentSyntax {
+        return this.update(exportKeyword, this.equalsToken, this.identifier, this.semicolonToken);
+    }
+
+    public withEqualsToken(equalsToken: ISyntaxToken): ExportAssignmentSyntax {
+        return this.update(this.exportKeyword, equalsToken, this.identifier, this.semicolonToken);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): ExportAssignmentSyntax {
+        return this.update(this.exportKeyword, this.equalsToken, identifier, this.semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): ExportAssignmentSyntax {
+        return this.update(this.exportKeyword, this.equalsToken, this.identifier, semicolonToken);
     }
 
     public isTypeScriptSpecific(): bool {

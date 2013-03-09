@@ -1,4 +1,5 @@
 ///<reference path='ITextLine.ts' />
+///<reference path='LineMap.ts' />
 ///<reference path='LinePosition.ts' />
 
 /// <summary>

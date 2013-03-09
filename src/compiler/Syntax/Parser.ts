@@ -1668,6 +1668,9 @@ module Parser1 {
             if (this.isImportDeclaration()) {
                 return this.parseImportDeclaration();
             }
+            else if (this.isExportAssignment()) {
+                return this.parseExportAssignment();
+            }
             else if (this.isModuleDeclaration()) {
                 return this.parseModuleDeclaration();
             }
@@ -1689,13 +1692,7 @@ module Parser1 {
         }
 
         private isImportDeclaration(): bool {
-            // REVIEW: because 'import' is not a javascript keyword, we need to make sure that this is 
-            // an actual import declaration.  As such, i check for "import id =" as that shouldn't 
-            // match any other legal javascript construct.  However, we need to verify that this is
-            // actually the case.
-            return this.currentToken().tokenKind === SyntaxKind.ImportKeyword &&
-                   ParserImpl.isIdentifierName(this.peekToken(1)) && 
-                   this.peekToken(2).tokenKind === SyntaxKind.EqualsToken;
+            return this.currentToken().tokenKind === SyntaxKind.ImportKeyword;
         }
 
         private parseImportDeclaration(): ImportDeclarationSyntax {
@@ -1708,6 +1705,22 @@ module Parser1 {
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
             return this.factory.importDeclaration(importKeyword, identifier, equalsToken, moduleReference, semicolonToken);
+        }
+
+        private isExportAssignment(): bool {
+            return this.currentToken().tokenKind === SyntaxKind.ExportKeyword &&
+                   this.peekToken(1).tokenKind === SyntaxKind.EqualsToken;
+        }
+
+        private parseExportAssignment(): ExportAssignmentSyntax {
+            // Debug.assert(this.isExportAssignment());
+
+            var exportKeyword = this.eatKeyword(SyntaxKind.ExportKeyword);
+            var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
+            var identifier = this.eatIdentifierToken();
+            var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
+
+            return this.factory.exportAssignment(exportKeyword, equalsToken, identifier, semicolonToken);
         }
 
         private parseModuleReference(): ModuleReferenceSyntax {

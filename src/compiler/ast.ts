@@ -922,6 +922,12 @@ module TypeScript {
         }
     }
 
+    export class ExportAssignment extends ModuleElement {
+        constructor(public id: Identifier) {
+            super(NodeType.ExportAssignment);
+        }
+    }
+
     export class BoundDecl extends AST {
         public init: AST = null;
         public typeExpr: AST = null;

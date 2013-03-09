@@ -1,4 +1,4 @@
-///<reference path='SyntaxNodes.generated.ts' />
+﻿///<reference path='SyntaxNodes.generated.ts' />
 
 interface ISyntaxVisitor {
     visitToken(token: ISyntaxToken): any;
@@ -6,6 +6,7 @@ interface ISyntaxVisitor {
     visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any;
     visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any;
     visitImportDeclaration(node: ImportDeclarationSyntax): any;
+    visitExportAssignment(node: ExportAssignmentSyntax): any;
     visitClassDeclaration(node: ClassDeclarationSyntax): any;
     visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): any;
     visitExtendsClause(node: ExtendsClauseSyntax): any;
@@ -109,6 +110,10 @@ class SyntaxVisitor implements ISyntaxVisitor {
     }
 
     private visitImportDeclaration(node: ImportDeclarationSyntax): any {
+        return this.defaultVisit(node);
+    }
+
+    private visitExportAssignment(node: ExportAssignmentSyntax): any {
         return this.defaultVisit(node);
     }
 

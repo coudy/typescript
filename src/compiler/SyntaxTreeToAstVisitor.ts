@@ -818,6 +818,7 @@ module TypeScript {
 
         private visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
             this.assertElementAtPosition(node);
+            var start = this.position;
 
             this.moveTo2(node, node.identifier);
 
@@ -830,7 +831,24 @@ module TypeScript {
             var importDecl = new ImportDeclaration(name, alias);
             importDecl.isDynamicImport = node.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
 
+            this.setSpan(importDecl, start, this.position);
+
             return importDecl;
+        }
+
+        private visitExportAssignment(node: ExportAssignmentSyntax): ExportAssignment {
+            this.assertElementAtPosition(node);
+            var start = this.position;
+
+            this.moveTo2(node, node.identifier);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
+            this.movePast(node.identifier);
+            this.movePast(node.semicolonToken);
+
+            var result = new ExportAssignment(name);
+            this.setSpan(result, start, this.position);
+
+            return result;
         }
 
         private visitVariableStatement(node: VariableStatementSyntax): AST {

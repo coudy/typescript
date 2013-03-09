@@ -1,4 +1,4 @@
-///<reference path='ISyntaxNodeOrToken.ts' />
+﻿///<reference path='ISyntaxNodeOrToken.ts' />
 
 class SyntaxRewriter implements ISyntaxVisitor {
     public visitToken(token: ISyntaxToken): ISyntaxToken {
@@ -84,6 +84,14 @@ class SyntaxRewriter implements ISyntaxVisitor {
             this.visitToken(node.identifier),
             this.visitToken(node.equalsToken),
             <ModuleReferenceSyntax>this.visitNode(node.moduleReference),
+            this.visitToken(node.semicolonToken));
+    }
+
+    public visitExportAssignment(node: ExportAssignmentSyntax): any {
+        return node.update(
+            this.visitToken(node.exportKeyword),
+            this.visitToken(node.equalsToken),
+            this.visitToken(node.identifier),
             this.visitToken(node.semicolonToken));
     }
 

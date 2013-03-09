@@ -89,6 +89,18 @@ var definitions:ITypeDefinition[] = [
         isTypeScriptSpecific: true
     },
     <any>{
+        name: 'ExportAssignmentSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['IModuleElementSyntax'],
+        children: [
+            <any>{ name: 'exportKeyword', isToken: true },
+            <any>{ name: 'equalsToken', isToken: true },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'semicolonToken', isToken: true }
+        ],
+        isTypeScriptSpecific: true
+    },
+    <any>{
         name: 'ClassDeclarationSyntax',
         baseType: 'SyntaxNode',
         interfaces: ['IModuleElementSyntax'],

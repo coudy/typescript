@@ -118,6 +118,7 @@ module TypeScript {
         InterfaceDeclaration,
         ModuleDeclaration,
         ImportDeclaration,
+        ExportAssignment,
         With,
         Label,
         LabeledStatement,
