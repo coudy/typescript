@@ -285,59 +285,9 @@ module Services {
             return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext);
         }
 
-        public getErrorEntries(maxCount: number, filter: (unitIndex: number, error: SyntaxDiagnostic) => bool): TypeScript.ErrorEntry[] {
-            var entries: TypeScript.ErrorEntry[] = [];
-            var count = 0;
-
-            var addError = (unitIndex: number, error: SyntaxDiagnostic): bool => {
-                var entry = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(unitIndex), error.position(), error.width(), error.message());
-                entries.push(entry);
-                count++;
-                return (count < maxCount);
-            }
-    
-            var addTypeError = (unitIndex: number, error: TypeScript.SemanticError): bool => {
-                var entry = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(unitIndex), error.getOffset(), error.length, error.message);
-                entries.push(entry);
-                count++;
-                return (count < maxCount);
-            }
-
-            for (var hostUnitIndex = 0, len = this.host.getScriptCount() ; hostUnitIndex < len; hostUnitIndex++) {
-                var fileName = this.hostCache.getScriptId(hostUnitIndex);
-                var unitIndex = this.compilerCache.getUnitIndex(fileName);
-                if (this.compiler.syntaxTrees[unitIndex]) {
-                    var errors = (<SyntaxTree>this.compiler.syntaxTrees[unitIndex]).diagnostics();
-                    if (errors !== undefined) {
-                        for (var i = 0; i < errors.length; i++) {
-                            var error = errors[i];
-                            if (filter(unitIndex, error)) {
-                                if (!addError(unitIndex, error)) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                
-                //this.compiler.pullResolveFile(fileName);
-
-                var typeErrors = this.compiler.pullGetErrorsForFile(fileName);
-                if (typeErrors !== undefined) {
-                    for (var i = 0; i < typeErrors.length; i++) {
-                        var e = typeErrors[i];
-                        //if (filter(unitIndex, e)) {
-                            if (!addTypeError(unitIndex, e)) {
-                                break;
-                            }
-                        //}
-                    }
-                }
-            }
-
-            return entries;
-        } 
+        public pullGetErrorsForFile(fileName: string): TypeScript.SemanticError[] {
+            return this.compiler.pullGetErrorsForFile(fileName);
+        }
 
         public cleanASTTypesForReTypeCheck(ast: TypeScript.AST): void {
             this.compiler.cleanASTTypesForReTypeCheck(ast);

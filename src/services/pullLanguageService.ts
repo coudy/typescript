@@ -934,6 +934,7 @@ module Services {
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             var diagnostics = syntaxTree.diagnostics();
+
             return diagnostics.map(d => new TypeScript.ErrorEntry(unitIndex, d.position(), d.position() + d.width(), d.message()));
         }
 
@@ -941,7 +942,10 @@ module Services {
             this.pullCompilerState.refresh(false/*throwOnError*/);
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
 
-            return [];
+            // JOE: Here is where you should call and get the right set of semantic errors for this file.
+            var errors = this.pullCompilerState.pullGetErrorsForFile(fileName);
+
+            return errors.map(e => new TypeScript.ErrorEntry(unitIndex, e.getOffset(), e.getOffset() + e.length, e.message));
         }
 
         public getErrors(maxCount: number): TypeScript.ErrorEntry[]{

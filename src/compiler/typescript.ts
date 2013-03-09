@@ -899,8 +899,7 @@ module TypeScript {
             return true;
         }
 
-        public pullGetErrorsForFile(filename: string): SemanticError[]{
-
+        public pullGetErrorsForFile(filename: string): SemanticError[] {
             var errors: PullError[] = [];
 
             var unit = this.semanticInfoChain.getUnit(filename);
