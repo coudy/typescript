@@ -1122,13 +1122,8 @@ module TypeScript {
             this.assertElementAtPosition(type);
 
             if (type.isToken()) {
-                var typeToken = <ISyntaxToken>type;
-
                 var start = this.position;
-                var identifier = this.identifierFromToken(typeToken, /*isOptional:*/ false);
-                this.movePast(typeToken);
-
-                var result = new TypeReference(identifier, 0);
+                var result = new TypeReference(type.accept(this), 0);
                 this.setSpan(result, start, this.position);
 
                 return result;
