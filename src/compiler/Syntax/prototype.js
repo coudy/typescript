@@ -36087,7 +36087,7 @@ var Parser1;
             if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
                 return true;
             }
-            return this.isImportDeclaration() || this.isModuleDeclaration() || this.isInterfaceDeclaration() || this.isClassDeclaration() || this.isEnumDeclaration() || this.isStatement();
+            return this.isImportDeclaration() || this.isExportAssignment() || this.isModuleDeclaration() || this.isInterfaceDeclaration() || this.isClassDeclaration() || this.isEnumDeclaration() || this.isStatement();
         };
         ParserImpl.prototype.parseModuleElement = function () {
             if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
@@ -58696,6 +58696,10 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         if (true) {
         }
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
+        });
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             IncrementalParserTests.runAllTests();
@@ -58703,10 +58707,6 @@ var Program = (function () {
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
-        });
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
         });
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files", function (filePath) {

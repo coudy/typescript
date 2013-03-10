@@ -13,7 +13,7 @@ var timer = new Timer();
 var stringTable = Collections.createStringTable();
 
 var specificFile =
-    // "ObjectCreation1.ts";
+    // "ExportAssignment1.ts";
     undefined;
 
 var generate = false;
@@ -30,6 +30,10 @@ class Program {
             // return;
         }
 
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
+            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
+
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             IncrementalParserTests.runAllTests();
@@ -38,10 +42,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
             filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
-
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",

@@ -1653,6 +1653,7 @@ module Parser1 {
             }
 
             return this.isImportDeclaration() ||
+                   this.isExportAssignment() ||
                    this.isModuleDeclaration() ||
                    this.isInterfaceDeclaration() ||
                    this.isClassDeclaration() ||
