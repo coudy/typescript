@@ -698,7 +698,6 @@ module TypeScript {
 
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
 
             if (node.exportKeyword) {
                 funcDecl.fncFlags |= FncFlags.Exported;

@@ -91,6 +91,7 @@ module TypeScript {
         private cachedObjectInterfaceType: PullTypeSymbol = null;
         private cachedFunctionInterfaceType: PullTypeSymbol = null;
         private cachedIArgumentsInterfaceType: PullTypeSymbol = null;
+        private cachedRegExpInterfaceType: PullTypeSymbol = null;
 
         private assignableCache: any[] = <any>{};
         private subtypeCache: any[] = <any>{};
@@ -108,6 +109,7 @@ module TypeScript {
             this.cachedObjectInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Object", [], PullElementKind.Interface);
             this.cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface);
             this.cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface);
+            this.cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
@@ -659,6 +661,7 @@ module TypeScript {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var enclosingDecl = this.getEnclosingDecl(classDecl);
             var classDeclSymbol = <PullClassTypeSymbol>classDecl.getSymbol();
+            var parentType: PullTypeSymbol = null;
 
             if (classDeclSymbol.isResolved()) {
                 return classDeclSymbol;
@@ -667,7 +670,6 @@ module TypeScript {
             var i = 0;
 
             if (classDeclAST.extendsList) {
-                var parentType: PullTypeSymbol = null;
                 for (i = 0; i < classDeclAST.extendsList.members.length; i++) {
                     parentType = this.resolveTypeReference(new TypeReference(classDeclAST.extendsList.members[i], 0), classDecl, context);
                     classDeclSymbol.addExtendedType(parentType);
@@ -689,6 +691,46 @@ module TypeScript {
             var classTypeParameters = classDeclSymbol.getTypeParameters();
 
             if (constructorMethod) {
+                var constructorTypeSymbol = constructorMethod.getType();
+
+                var constructSignatures = constructorTypeSymbol.getConstructSignatures();
+
+                if (!constructSignatures.length) {
+                    var constructorSignature: PullSignatureSymbol;
+                    
+                    // inherit parent's constructor signatures
+                    if (parentType && parentType.isClass()) {
+                        var parentClass = <PullClassTypeSymbol>parentType;
+                        var parentConstructor = parentClass.getConstructorMethod();
+                        var parentConstructorType = parentConstructor.getType();
+                        var parentConstructSignatures = parentConstructorType.getConstructSignatures();
+
+                        var parentConstructSignature: PullSignatureSymbol;
+                        var parentParameters: PullSymbol[];
+                        for (i = 0; i < parentConstructSignatures.length; i++) {
+                            // create a new signature for each parent constructor
+                            parentConstructSignature = parentConstructSignatures[i];
+                            parentParameters = parentConstructSignature.getParameters();
+
+                            constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                            constructorSignature.setReturnType(classDeclSymbol);
+
+                            for (var j = 0; j < parentParameters.length; j++) {
+                                constructorSignature.addParameter(parentParameters[j]);
+                            }
+
+                            constructorTypeSymbol.addConstructSignature(constructorSignature);
+                            constructorSignature.addDeclaration(classDecl);
+                        }
+                    }
+                    else {
+                        constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                        constructorSignature.setReturnType(classDeclSymbol);
+                        constructorTypeSymbol.addConstructSignature(constructorSignature);
+                        constructorSignature.addDeclaration(classDecl);
+                    }
+                }
+
                 this.resolveDeclaredSymbol(constructorMethod, classDecl, context);
             }
 
@@ -1033,6 +1075,15 @@ module TypeScript {
 
                     if (!arraySymbol) {
                         arraySymbol = this.semanticInfoChain.anyTypeSymbol;
+                    }
+                }
+
+                if (typeRef.arrayCount > 1) {
+                    var arity = typeRef.arrayCount - 1;
+
+                    while (arity) {
+                        arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, arraySymbol, this, context);
+                        arity--;
                     }
                 }
 
@@ -1695,6 +1746,9 @@ module TypeScript {
 
                 case NodeType.ConditionalExpression:
                     return this.resolveConditionalExpression(<ConditionalExpression>expressionAST, enclosingDecl, context);
+
+                case NodeType.Regex:
+                    return this.cachedRegExpInterfaceType ? this.cachedRegExpInterfaceType : this.semanticInfoChain.anyTypeSymbol;
             }
 
             return this.semanticInfoChain.anyTypeSymbol;
@@ -2707,7 +2761,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var signature = signatures.length > 1 ? this.resolveOverloads(expressionAST, signatures, enclosingDecl, context) : signatures[0];
+            var signature = this.resolveOverloads(expressionAST, signatures, enclosingDecl, context);
 
             if (!signature) {
                 context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Could not select overload for call expression", enclosingDecl);
@@ -2882,7 +2936,7 @@ module TypeScript {
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                var signature = constructSignatures.length > 1 ? this.resolveOverloads(expressionAST, constructSignatures, enclosingDecl, context) : constructSignatures[0];
+                var signature = this.resolveOverloads(expressionAST, constructSignatures, enclosingDecl, context);
 
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
@@ -2951,62 +3005,6 @@ module TypeScript {
                 }
 
                 return returnType;
-                /*
-                                var signature = constructSignatures.length > 1 ? this.resolveOverloads(expressionAST, constructSignatures, enclosingDecl, context) : constructSignatures[0];
-                
-                                // if we haven't been able to choose an overload, default to the first one
-                                if (!signature) {
-                                    signature = constructSignatures[0];
-                                }
-                
-                                if (!returnType) {
-                                    returnType = signature.getReturnType();
-                
-                                    if (!returnType) {
-                                        returnType = targetTypeSymbol;
-                                    }
-                                }
-                
-                                // contextually type arguments
-                                if (callEx.arguments) {
-                                    var len = callEx.arguments.members.length;
-                                    var params = signature.getParameters();
-                                    var contextualType: PullTypeSymbol = null;
-                                    
-                                    for (var i = 0; i < len; i++) {
-                
-                                        if (params.length && i < params.length) {
-                                            contextualType = params[i].getType();
-                                        }
-                                        else if (params.length) {
-                                            contextualType = params[params.length - 1].getType();
-                                            if (contextualType.isArray()) {
-                                                contextualType = contextualType.getElementType();
-                                            }
-                                        }
-                
-                                        if (contextualType) {
-                                            context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
-                                        }
-                                    
-                                        this.resolveStatementOrExpression(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
-                
-                                        if (contextualType) {
-                                            context.popContextualType();
-                                            contextualType = null;
-                                        }
-                                    }
-                                }
-                
-                                // Store any additional resolution results if needed
-                                if (additionalResults) {
-                                    additionalResults.targetSymbol = targetTypeSymbol;
-                                    additionalResults.resolvedSignatures = constructSignatures;
-                                    additionalResults.candidateSignature = signature;
-                                }
-                
-                                return returnType;
-                */
             }
             else if (targetTypeSymbol.isClass()) {
 

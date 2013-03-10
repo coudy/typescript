@@ -327,6 +327,8 @@ module TypeScript {
         private hasOptionalParam = false;
         private nonOptionalParamCount = 0;
 
+        private hasVarArgs = false;
+
         private specializationCache: any = {}
 
         private memberTypeParameterNameCache: any = null;
@@ -338,7 +340,9 @@ module TypeScript {
         }
 
         public isDefinition() { return false; }
-        public hasVariableParamList() { return this.hasOptionalParam; }
+
+        public hasVariableParamList() { return this.hasVarArgs; }
+        public setHasVariableParamList() { this.hasVarArgs = true; }
 
         public setHasGenericParameter() { this.hasAGenericParameter = true; }
         public hasGenericParameter() { return this.hasAGenericParameter; }
@@ -1382,6 +1386,7 @@ module TypeScript {
     export class PullClassTypeSymbol extends PullTypeSymbol {
 
         private constructorMethod: PullSymbol = null;
+        private hasDefaultConstructor = false;
 
         constructor(name: string) {
             super(name, PullElementKind.Class);
@@ -1389,6 +1394,14 @@ module TypeScript {
 
         public isClass() {
             return true;
+        }
+
+        public setHasDefaultConstructor(hasOne=true) {
+            this.hasDefaultConstructor = hasOne;
+        }
+
+        public getHasDefaultConstructor() {
+            return this.hasDefaultConstructor;
         }
 
         public getConstructorMethod() {
@@ -1656,7 +1669,7 @@ module TypeScript {
         }
 
         // PULLTODO: Recursive reference bug
-        var newArrayType: PullTypeSymbol = new PullTypeSymbol(arrayInterfaceType.getName(), arrayInterfaceType.getKind() | PullElementKind.Array);
+        var newArrayType: PullTypeSymbol = new PullArrayTypeSymbol();
         newArrayType.addDeclaration(arrayInterfaceType.getDeclarations()[0]);
 
         typeToSpecializeTo.setArrayType(newArrayType);
@@ -2111,7 +2124,11 @@ module TypeScript {
         newSignature = new PullSignatureSymbol(signature.getKind());
         newSignature.addDeclaration(signature.getDeclarations()[0]);
 
-        signature.addSpecialization(newSignature, typeArguments);
+        if (signature.hasVariableParamList()) {
+            newSignature.setHasVariableParamList();
+        }
+
+        signature.addSpecialization(newSignature, typeArguments);      
 
         var parameters = signature.getParameters();
         var typeParameters = signature.getTypeParameters();
