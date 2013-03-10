@@ -723,7 +723,7 @@ module TypeScript {
                             constructorSignature.addDeclaration(classDecl);
                         }
                     }
-                    else {
+                    else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues
                         constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                         constructorSignature.setReturnType(classDeclSymbol);
                         constructorTypeSymbol.addConstructSignature(constructorSignature);
