@@ -1079,7 +1079,11 @@ module TypeScript {
             this.movePast(node.equalsGreaterThanToken);
 
             var parameters = new ASTList();
-            parameters.append(new ArgDecl(identifier));
+
+            var parameter = new ArgDecl(identifier);
+            this.setSpan(parameter, identifier.minChar, identifier.limChar);
+
+            parameters.append(parameter);
 
             this.pushDeclLists();
 
