@@ -1687,6 +1687,12 @@ module TypeScript {
                 case NodeType.Typeof:
                     return this.semanticInfoChain.stringTypeSymbol;
 
+                case NodeType.Throw:
+                    return this.semanticInfoChain.voidTypeSymbol;
+
+                case NodeType.Delete:
+                    return this.semanticInfoChain.boolTypeSymbol;
+
                 case NodeType.ConditionalExpression:
                     return this.resolveConditionalExpression(<ConditionalExpression>expressionAST, enclosingDecl, context);
             }

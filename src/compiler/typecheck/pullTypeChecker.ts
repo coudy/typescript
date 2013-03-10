@@ -23,6 +23,7 @@ module TypeScript {
             if (this.enclosingDeclStack.length) {
                 return this.enclosingDeclStack[this.enclosingDeclStack.length - 1];
             }
+
             return null;
         }
     }
@@ -47,6 +48,10 @@ module TypeScript {
 
         public typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
 
+            if (!ast) {
+                return null;
+            }
+           
             switch (ast.nodeType) {
 
                 // decarations
@@ -158,6 +163,52 @@ module TypeScript {
                 case NodeType.ConditionalExpression:
                     return this.typeCheckConditionalExpression(ast, typeCheckContext);
 
+                case NodeType.Void:
+                    return this.typeCheckVoidExpression(ast, typeCheckContext);
+
+                case NodeType.Throw:
+                    return this.typeCheckThrowExpression(ast, typeCheckContext);
+
+                case NodeType.Delete:
+                    return this.typeCheckDeleteExpression(ast, typeCheckContext);
+
+                // statements
+                case NodeType.For:
+                    return this.typeCheckForStatement(ast, typeCheckContext);
+
+                case NodeType.ForIn:
+                    return this.typeCheckForInStatement(ast, typeCheckContext);
+
+                case NodeType.While:
+                    return this.typeCheckWhileStatement(ast, typeCheckContext);
+
+                case NodeType.DoWhile:
+                    return this.typeCheckDoWhileStatement(ast, typeCheckContext);
+
+                case NodeType.If:
+                    return this.typeCheckIfStatement(ast, typeCheckContext);
+
+                case NodeType.Block:
+                    return this.typeCheckBlockStatement(ast, typeCheckContext);
+
+                case NodeType.With:
+                    return this.typeCheckWithStatement(ast, typeCheckContext);
+
+                case NodeType.TryFinally:
+                    return this.typeCheckTryFinallyStatement(ast, typeCheckContext);
+
+                case NodeType.TryCatch:
+                    return this.typeCheckTryCatchStatement(ast, typeCheckContext);
+
+                case NodeType.Try:
+                    return this.typeCheckTryBlock(ast, typeCheckContext);
+
+                case NodeType.Catch:
+                    return this.typeCheckCatchBlock(ast, typeCheckContext);
+
+                case NodeType.Finally:
+                    return this.typeCheckFinallyBlock(ast, typeCheckContext);
+
                 default:
                     break;
             }
@@ -186,6 +237,17 @@ module TypeScript {
             }
 
             typeCheckContext.popEnclosingDecl();
+        }
+
+        // lists
+        public typeCheckList(list: ASTList, typeCheckContext: PullTypeCheckContext) {
+            if (!list) {
+                return null;
+            }
+
+            for (var i = 0; i < list.members.length; i++) {
+                this.typeCheckAST(list.members[i], typeCheckContext);
+            }
         }
 
         // variable and argument declarations
@@ -258,11 +320,7 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            if (funcDeclAST.bod) {
-                for (var i = 0; i < funcDeclAST.bod.members.length; i++) {
-                    this.typeCheckAST(funcDeclAST.bod.members[i], typeCheckContext);
-                }
-            }
+            this.typeCheckList(funcDeclAST.bod, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -314,9 +372,7 @@ module TypeScript {
             typeCheckContext.pushEnclosingDecl(moduleDecl);
 
             if (moduleDeclAST.members) {
-                for (var i = 0; i < moduleDeclAST.members.members.length; i++) {
-                    this.typeCheckAST(moduleDeclAST.members.members[i], typeCheckContext);
-                }
+                this.typeCheckList(moduleDeclAST.members, typeCheckContext);
             }
 
             typeCheckContext.popEnclosingDecl();
@@ -352,7 +408,7 @@ module TypeScript {
                 // ignore comparison info for now
                 var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [rightType.toString(), leftType.toString()]);
 
-                this.context.postError(assignmentAST.operand1.minChar - span.start(), span.length(), typeCheckContext.scriptName, message, enclosingDecl);
+                this.context.postError(assignmentAST.operand1.minChar - span.minChar, span.limChar - span.minChar, typeCheckContext.scriptName, message, enclosingDecl);
             }
 
             return leftType;
@@ -479,5 +535,142 @@ module TypeScript {
         public typeCheckConditionalExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
         }
+
+        // new expression types
+        public typeCheckThrowExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        public typeCheckDeleteExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
+            return this.semanticInfoChain.boolTypeSymbol;
+        }
+
+        public typeCheckVoidExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
+            return this.semanticInfoChain.undefinedTypeSymbol;
+        }
+
+        // statements
+
+        public typeCheckForStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var forStatementAST = <ForStatement>ast;
+
+            this.typeCheckAST(forStatementAST.init, typeCheckContext);
+            this.typeCheckAST(forStatementAST.cond, typeCheckContext);
+            this.typeCheckAST(forStatementAST.body, typeCheckContext);            
+
+            return null;
+        }
+
+        public typeCheckForInStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+
+            var forInStatement = <ForInStatement>ast;
+
+
+            this.typeCheckAST(forInStatement.obj, typeCheckContext);
+            
+            var varDecl = <VarDecl>forInStatement.lval;
+
+            if (varDecl.typeExpr) {
+                this.context.postError(varDecl.minChar, varDecl.getLength(), typeCheckContext.scriptName, "Variable declarations for for/in expressions may not contain a type annotation", typeCheckContext.getEnclosingDecl());
+            }
+
+            var varSym = this.resolver.resolveAST(varDecl, false, typeCheckContext.getEnclosingDecl(), this.context);
+
+            varSym.unsetType();
+
+            varSym.setType(this.semanticInfoChain.stringTypeSymbol);
+            varSym.setResolved();            
+
+            return null;
+        }
+
+        public typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var whileStatementAST = <WhileStatement>ast;
+
+            this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
+            this.typeCheckAST(whileStatementAST.body, typeCheckContext);
+
+            return null;
+        }
+
+        public typeCheckDoWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var whileStatementAST = <DoWhileStatement>ast;
+
+            this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
+            this.typeCheckAST(whileStatementAST.body, typeCheckContext);
+
+            return null;
+        }
+
+        public typeCheckIfStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+
+            var ifStatementAST = <IfStatement>ast;
+
+            this.typeCheckAST(ifStatementAST.cond, typeCheckContext);
+            this.typeCheckAST(ifStatementAST.thenBod, typeCheckContext);
+            this.typeCheckAST(ifStatementAST.elseBod, typeCheckContext);
+                
+            return null;
+        }
+
+        public typeCheckBlockStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var blockStatement = <Block>ast;
+
+            this.typeCheckAST(blockStatement.statements, typeCheckContext);
+
+            return null;
+        }
+
+        public typeCheckWithStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            // PULLTODO: "With" statements
+            return null;
+        }
+
+        public typeCheckTryFinallyStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var tryFinallyAST = <TryFinally>ast;
+
+            this.typeCheckTryBlock(tryFinallyAST.tryNode, typeCheckContext);
+            this.typeCheckFinallyBlock(tryFinallyAST.finallyNode, typeCheckContext);
+
+            return null;
+        }
+
+        public typeCheckTryCatchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var tryCatchAST = <TryCatch>ast;
+
+            this.typeCheckTryBlock(tryCatchAST.tryNode, typeCheckContext);
+            this.typeCheckFinallyBlock(tryCatchAST.catchNode, typeCheckContext);
+
+            return null;
+        }
+
+        public typeCheckTryBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var tryAST = <Try>ast;
+
+            this.typeCheckAST(tryAST.body, typeCheckContext);
+
+            return null;
+        }
+
+        public typeCheckCatchBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var catchAST = <Catch>ast;
+
+            this.typeCheckAST(catchAST.body, typeCheckContext);
+
+            return null;
+        }
+
+        public typeCheckFinallyBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var finallyAST = <Finally>ast;
+
+            this.typeCheckAST(finallyAST.body, typeCheckContext);
+
+            return null;
+        }
+        
     }
 }
+>>>>>>> More rigorous error detection, also account for some expression types I've yet to include in the resolver
