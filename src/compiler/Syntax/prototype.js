@@ -36342,7 +36342,7 @@ var Parser1;
             var getKeyword = this.eatKeyword(65 /* GetKeyword */ );
             var identifier = this.eatIdentifierToken();
             var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(false);
             var block = this.parseBlock();
             return this.factory.getMemberAccessorDeclaration(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
         };
@@ -36573,7 +36573,7 @@ var Parser1;
             var openBracketToken = this.eatToken(74 /* OpenBracketToken */ );
             var parameter = this.parseParameter();
             var closeBracketToken = this.eatToken(75 /* CloseBracketToken */ );
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(false);
             return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
         };
         ParserImpl.prototype.parseFunctionSignature = function () {
@@ -36585,7 +36585,7 @@ var Parser1;
         ParserImpl.prototype.parsePropertySignature = function () {
             var identifier = this.eatIdentifierNameToken();
             var questionToken = this.tryEatToken(105 /* QuestionToken */ );
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(false);
             return this.factory.propertySignature(identifier, questionToken, typeAnnotation);
         };
         ParserImpl.prototype.isCallSignature = function (tokenIndex) {
@@ -37101,7 +37101,7 @@ var Parser1;
             var equalsValueClause = null;
             var typeAnnotation = null;
             if (identifier.width() > 0) {
-                typeAnnotation = this.parseOptionalTypeAnnotation();
+                typeAnnotation = this.parseOptionalTypeAnnotation(false);
                 if (this.isEqualsValueClause(false)) {
                     equalsValueClause = this.parseEqualsValueClause(allowIn);
                 }
@@ -37709,7 +37709,7 @@ var Parser1;
         ParserImpl.prototype.parseCallSignature = function (requireCompleteTypeParameterList) {
             var typeParameterList = this.parseOptionalTypeParameterList(requireCompleteTypeParameterList);
             var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(false);
             return this.factory.callSignature(typeParameterList, parameterList, typeAnnotation);
         };
         ParserImpl.prototype.parseOptionalTypeParameterList = function (requireCompleteTypeParameterList) {
@@ -37762,12 +37762,12 @@ var Parser1;
         ParserImpl.prototype.isTypeAnnotation = function () {
             return this.currentToken().tokenKind === 106 /* ColonToken */ ;
         };
-        ParserImpl.prototype.parseOptionalTypeAnnotation = function () {
-            return this.isTypeAnnotation() ? this.parseTypeAnnotation() : null;
+        ParserImpl.prototype.parseOptionalTypeAnnotation = function (allowStringLiteral) {
+            return this.isTypeAnnotation() ? this.parseTypeAnnotation(allowStringLiteral) : null;
         };
-        ParserImpl.prototype.parseTypeAnnotation = function () {
+        ParserImpl.prototype.parseTypeAnnotation = function (allowStringLiteral) {
             var colonToken = this.eatToken(106 /* ColonToken */ );
-            var type = this.parseType();
+            var type = allowStringLiteral && this.currentToken().tokenKind === 14 /* StringLiteral */  ? this.eatToken(14 /* StringLiteral */ ) : this.parseType();
             return this.factory.typeAnnotation(colonToken, type);
         };
         ParserImpl.prototype.isType = function () {
@@ -37874,7 +37874,7 @@ var Parser1;
             }
             var identifier = this.eatIdentifierToken();
             var questionToken = this.tryEatToken(105 /* QuestionToken */ );
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(true);
             var equalsValueClause = null;
             if (this.isEqualsValueClause(true)) {
                 equalsValueClause = this.parseEqualsValueClause(true);

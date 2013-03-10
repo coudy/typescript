@@ -2049,7 +2049,7 @@ module Parser1 {
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
             var identifier = this.eatIdentifierToken();
             var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
             var block = this.parseBlock();
 
             return this.factory.getMemberAccessorDeclaration(
@@ -2444,7 +2444,7 @@ module Parser1 {
             var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
             var parameter = this.parseParameter();
             var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
 
             return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
         }
@@ -2462,7 +2462,7 @@ module Parser1 {
 
             var identifier = this.eatIdentifierNameToken();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
 
             return this.factory.propertySignature(identifier, questionToken, typeAnnotation);
         }
@@ -3313,7 +3313,7 @@ module Parser1 {
             var typeAnnotation: TypeAnnotationSyntax = null;
 
             if (identifier.width() > 0) {
-                typeAnnotation = this.parseOptionalTypeAnnotation();
+                typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
 
                 if (this.isEqualsValueClause(/*inParameter*/ false)) {
                     equalsValueClause = this.parseEqualsValueClause(allowIn);
@@ -4358,7 +4358,7 @@ module Parser1 {
         private parseCallSignature(requireCompleteTypeParameterList: bool): CallSignatureSyntax {
             var typeParameterList = this.parseOptionalTypeParameterList(requireCompleteTypeParameterList);
             var parameterList = this.parseParameterList();
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
 
             return this.factory.callSignature(typeParameterList, parameterList, typeAnnotation);
         }
@@ -4433,17 +4433,19 @@ module Parser1 {
             return this.currentToken().tokenKind === SyntaxKind.ColonToken;
         }
 
-        private parseOptionalTypeAnnotation(): TypeAnnotationSyntax {
+        private parseOptionalTypeAnnotation(allowStringLiteral: bool): TypeAnnotationSyntax {
             return this.isTypeAnnotation()
-                ? this.parseTypeAnnotation()
+                ? this.parseTypeAnnotation(allowStringLiteral)
                 : null;
         }
 
-        private parseTypeAnnotation(): TypeAnnotationSyntax {
+        private parseTypeAnnotation(allowStringLiteral: bool): TypeAnnotationSyntax {
             // Debug.assert(this.isTypeAnnotation());
 
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var type = this.parseType();
+            var type = allowStringLiteral && this.currentToken().tokenKind === SyntaxKind.StringLiteral
+                ? this.eatToken(SyntaxKind.StringLiteral)
+                : this.parseType();
 
             return this.factory.typeAnnotation(colonToken, type);
         }
@@ -4598,7 +4600,7 @@ module Parser1 {
 
             var identifier = this.eatIdentifierToken();
             var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
-            var typeAnnotation = this.parseOptionalTypeAnnotation();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ true);
 
             var equalsValueClause: EqualsValueClauseSyntax = null;
             if (this.isEqualsValueClause(/*inParameter*/ true)) {
