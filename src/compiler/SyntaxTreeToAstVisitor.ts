@@ -269,10 +269,15 @@ module TypeScript {
 
         private hasTopLevelImportOrExport(node: SourceUnitSyntax): bool {
             // TODO: implement this.
-            for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+
+            var firstToken: ISyntaxToken;
+            var i = 0;
+            var n = 0;
+            
+            for (i = 0, n = node.moduleElements.childCount(); i < n; i++) {
                 var moduleElement = node.moduleElements.childAt(i);
 
-                var firstToken = moduleElement.firstToken();
+                firstToken = moduleElement.firstToken();
                 if (firstToken !== null && firstToken.kind() === SyntaxKind.ExportKeyword) {
                     return true;
                 }
@@ -285,10 +290,12 @@ module TypeScript {
                 }
             }
 
-            var firstToken = node.firstToken();
+            firstToken = node.firstToken();
+
             if (firstToken.hasLeadingComment()) {
                 var leadingTrivia = firstToken.leadingTrivia();
-                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
+
+                for (i = 0, n = leadingTrivia.count(); i < n; i++) {
                     var trivia = leadingTrivia.syntaxTriviaAt(i);
 
                     if (trivia.isComment()) {
@@ -404,7 +411,10 @@ module TypeScript {
 
             result.varFlags |= VarFlags.Class;
 
-            for (var i = 0; i < members.members.length; i++) {
+            var i = 0;
+            var n = 0;
+
+            for (i = 0; i < members.members.length; i++) {
                 var member = members.members[i];
                 if (member.nodeType === NodeType.FuncDecl) {
                     var funcDecl = <FuncDecl>member;
@@ -420,7 +430,8 @@ module TypeScript {
             }
 
             var knownMemberNames: any = {};
-            for (var i = 0, n = node.classElements.childCount(); i < n; i++) {
+
+            for (i = 0, n = node.classElements.childCount(); i < n; i++) {
                 var classElement = <IClassElementSyntax>node.classElements.childAt(i);
 
                 if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
@@ -570,13 +581,14 @@ module TypeScript {
             this.movePast(node.closeBraceToken);
 
             var moduleDecl: ModuleDeclaration = null;
+
             for (var i = names.length - 1; i >= 0; i--) {
                 var innerName = names[i];
 
                 var closeBraceSpan = new ASTSpan();
                 closeBraceSpan.minChar = closeBracePosition;
                 closeBraceSpan.limChar = this.position;
-                var moduleDecl = new ModuleDeclaration(innerName, members, this.topVarList(), closeBraceSpan);
+                moduleDecl = new ModuleDeclaration(innerName, members, this.topVarList(), closeBraceSpan);
                 this.setSpan(moduleDecl, start, this.position);
                 //innerDecl.preComments = preComments;
 
@@ -726,6 +738,7 @@ module TypeScript {
             var lastValue: NumberLiteral = null;
             var memberNames: Identifier[] = [];
             var start = this.position;
+            var memberName: Identifier;
 
             for (var i = 0, n = enumDeclaration.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
@@ -734,7 +747,9 @@ module TypeScript {
                 else {
                     var element = <IEnumElementSyntax>enumDeclaration.enumElements.childAt(i);
 
-                    var memberName: Identifier;
+                    memberName = this.identifierFromToken(variableDeclarator.identifier, /*isOptional:*/ false);
+                    this.movePast(variableDeclarator.identifier);
+
                     var memberValue: AST = null;
 
                     if (element.kind() === SyntaxKind.VariableDeclarator) {
@@ -803,7 +818,7 @@ module TypeScript {
                         // as well.
                         var nameNode = <Identifier>memberValue;
                         for (var j = 0; j < memberNames.length; j++) {
-                            var memberName = memberNames[j];
+                            memberName = memberNames[j];
                             if (memberName.text === nameNode.text) {
                                 member.varFlags |= VarFlags.Constant;
                                 break;

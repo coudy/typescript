@@ -77,6 +77,9 @@ module TypeScript {
 
             function initUseDefPre(cur: AST, parent: AST, walker: IAstWalker) {
                 var context: UseDefContext = walker.state;
+                var asg: BinaryExpression;
+                var id: Identifier;
+                
                 if (cur == null) {
                     cur = null;
                 }
@@ -90,7 +93,7 @@ module TypeScript {
                     // use
                     if (parent) {
                         if (parent.nodeType == NodeType.Asg) {
-                            var asg = <BinaryExpression>parent;
+                            asg = <BinaryExpression>parent;
                             if (asg.operand1 == cur) {
                                 return cur;
                             }
@@ -102,14 +105,14 @@ module TypeScript {
                             }
                         }
                     }
-                    var id = <Identifier>cur;
+                    id = <Identifier>cur;
                     useSym(id.sym, context, cur);
                 }
                 else if ((cur.nodeType >= NodeType.Asg) && (cur.nodeType <= NodeType.LastAsg)) {
                     // def
-                    var asg = <BinaryExpression>cur;
+                    asg = <BinaryExpression>cur;
                     if (asg.operand1 && (asg.operand1.nodeType == NodeType.Name)) {
-                        var id = <Identifier>asg.operand1;
+                        id = <Identifier>asg.operand1;
                         defSym(id.sym, context);
                     }
                 }
@@ -2240,7 +2243,8 @@ module TypeScript {
             var isSetter = funcDecl.isAccessor() && hasFlag(funcDecl.fncFlags, FncFlags.SetAccessor);
             var accessorType: Type = (isGetter || isSetter) && funcDecl.accessorSymbol ? funcDecl.accessorSymbol.getType() : null;
             var prevModDecl = this.checker.currentModDecl;
-
+            var ssb: SymbolScopeBuilder;
+            
             if (funcDecl.isConstructor && !funcDecl.isOverload) {
                 if (fnType.instanceType == null) {
                     this.checker.errorReporter.simpleError(funcDecl, "Malformed function body (is this a class named the same as an existing interface?)");
@@ -2251,7 +2255,7 @@ module TypeScript {
                     return funcDecl;
                 }
                 this.scope = fnType.instanceType.constructorScope;
-                var ssb = <SymbolScopeBuilder>this.scope;
+                ssb = <SymbolScopeBuilder>this.scope;
                 funcTable = ssb.valueMembers.allMembers;
             }
             else if ((funcDecl.isSpecialFn() && !(funcDecl.fncFlags & FncFlags.Signature)) || funcDecl.isOverload) {
@@ -2266,7 +2270,7 @@ module TypeScript {
                 if (funcDecl.bod) {
                     this.scope = fnType.containedScope;
                 }
-                var ssb = <SymbolScopeBuilder>this.scope;
+                ssb = <SymbolScopeBuilder>this.scope;
 
                 // If it is null, it's an ambient declaration with no body, so it doesn't strictly matter
                 // if funcTable is not set
@@ -2363,10 +2367,12 @@ module TypeScript {
             }
 
             var paramLen = signature.parameters.length;
+            var candidateTypeContext: ContextualTypeContext;
+            var p = 0;
 
             if (!funcDecl.isConstructor && funcDecl.bod && !funcDecl.isSignature()) {
                 var tmpParamScope = this.scope;
-                var ssb = <SymbolScopeBuilder>this.scope;
+                ssb = <SymbolScopeBuilder>this.scope;
 
                 // Attempt to contextually type the function declaration             
                 if (!funcDecl.isMethod() && funcDecl.returnTypeAnnotation == null) {
@@ -2385,7 +2391,7 @@ module TypeScript {
                     }
 
                     if (this.checker.hasTargetType()) {
-                        var candidateTypeContext = this.checker.getTargetTypeContext();
+                        candidateTypeContext = this.checker.getTargetTypeContext();
                         var candidateType = candidateTypeContext.contextualType;
 
                         if (this.checker.canContextuallyTypeFunction(candidateType, funcDecl, true)) {
@@ -2419,12 +2425,12 @@ module TypeScript {
                 var paramTable = ssb.valueMembers;
                 this.scope = new SymbolScopeBuilder(paramTable, null, null, null, prevScope, container);
 
-                for (var p = 0; p < paramLen; p++) {
+                for (p = 0; p < paramLen; p++) {
                     var symbol = signature.parameters[p];
                     var ast = <ArgDecl>symbol.declAST
 
                     if (this.checker.hasTargetType() && (targetParams && (this.checker.getTargetTypeContext().targetSig.hasVariableArgList || p < targetParams.length))) {
-                        var candidateTypeContext = this.checker.getTargetTypeContext();
+                        candidateTypeContext = this.checker.getTargetTypeContext();
                         var hasVarArgList = candidateTypeContext.targetSig.hasVariableArgList;
                         ast.type = hasVarArgList && p >= targetParams.length - 1 ? targetParams[targetParams.length - 1].getType().elementType : targetParams[p].getType();
                         ast.sym.setType(ast.type);
@@ -2451,7 +2457,7 @@ module TypeScript {
 
                 // Because some terms were not yet type-checkable during binding, ensure that
                 // param symbols are updated with the proper argument types
-                for (var p = 0; p < paramLen; p++) {
+                for (p = 0; p < paramLen; p++) {
                     signature.parameters[p].parameter.typeLink.type = funcDecl.arguments.members[p].type;
                     // Verify the parameter for the privacy
                     this.checkTypePrivacy(signature.parameters[p].getType(), container, (typeName: string, isModuleName: bool) => this.functionArgumentPrivacyErrorReporter(funcDecl, p, signature.parameters[p], typeName, isModuleName));
@@ -2633,7 +2639,7 @@ module TypeScript {
 
             // if the function declaration is a getter or a setter, set the type of the associated getter/setter symbol
             if (funcDecl.accessorSymbol) {
-                var accessorType = funcDecl.accessorSymbol.getType();
+                accessorType = funcDecl.accessorSymbol.getType();
                 if (!onlyHasThrow && hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor) && !hasFlag(funcDecl.fncFlags, FncFlags.HasReturnExpression)) {
                     this.checker.errorReporter.simpleError(funcDecl, "Getters must return a value");
                 }
@@ -3556,6 +3562,7 @@ module TypeScript {
             var comparisonInfo = new TypeComparisonInfo();
             var args: ASTList = null;
             var target: AST = null;
+            var i = 0;
 
             if (application.nodeType == NodeType.Call || application.nodeType == NodeType.New) {
                 var callEx = <CallExpression>application;
@@ -3563,7 +3570,7 @@ module TypeScript {
                 target = callEx.target;
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
-                    for (var i = 0; i < len; i++) {
+                    for (i = 0; i < len; i++) {
                         actuals[i] = callEx.arguments.members[i].type;
                     }
                 }
@@ -3592,10 +3599,10 @@ module TypeScript {
             // No need to recurse since dots are left associative
             var apparentTarget = target.nodeType == NodeType.Dot ? (<BinaryExpression> target).operand2 : target;
             if (exactCandidates.length == 0) {
-
+                var candidateInfo: {sig: Signature; ambiguous: bool;};
                 var applicableCandidates = this.checker.getApplicableSignatures(conversionCandidates, args, comparisonInfo);
                 if (applicableCandidates.length > 0) {
-                    var candidateInfo = this.checker.findMostApplicableSignature(applicableCandidates, args);
+                    candidateInfo = this.checker.findMostApplicableSignature(applicableCandidates, args);
                     if (candidateInfo.ambiguous) {
                         this.checker.errorReporter.simpleError(apparentTarget, "Ambiguous call expression - could not choose overload");
                     }
@@ -3614,10 +3621,10 @@ module TypeScript {
             else {
                 if (exactCandidates.length > 1) {
                     var applicableSigs: ApplicableSignature[] = [];
-                    for (var i = 0; i < exactCandidates.length; i++) {
+                    for (i = 0; i < exactCandidates.length; i++) {
                         applicableSigs[i] = { signature: exactCandidates[i], hadProvisionalErrors: false };
                     }
-                    var candidateInfo = this.checker.findMostApplicableSignature(applicableSigs, args);
+                    candidateInfo = this.checker.findMostApplicableSignature(applicableSigs, args);
                     if (candidateInfo.ambiguous) {
                         this.checker.errorReporter.simpleError(apparentTarget, "Ambiguous call expression - could not choose overload");
                     }
@@ -3634,6 +3641,7 @@ module TypeScript {
 
         public typeCheckNew(ast: AST): AST {
             var callEx = <CallExpression>ast;
+            var signature: Signature;
 
             callEx.target = this.typeCheck(callEx.target);
             var target = callEx.target;
@@ -3650,7 +3658,7 @@ module TypeScript {
             }
             else {
                 if (target.type.construct) {
-                    var signature = this.resolveOverload(callEx, target.type.construct);
+                    signature = this.resolveOverload(callEx, target.type.construct);
                     if (signature == null) {
                         callEx.type = this.anyType;
                     }
@@ -3664,7 +3672,7 @@ module TypeScript {
                     }
                 }
                 else if (target.type.call) {
-                    var signature = this.resolveOverload(callEx, target.type.call);
+                    signature = this.resolveOverload(callEx, target.type.call);
                     if (signature == null) {
                         callEx.type = this.anyType;
                     }
@@ -3803,6 +3811,7 @@ module TypeScript {
             this.preTypeCheckCallArgs(callEx.arguments);
 
             var target = callEx.target;
+            var signature: Signature;
 
             if ((target.type == null) || (target.type == this.anyType) || (this.functionInterfaceType && target.type == this.functionInterfaceType)) {
                 callEx.type = this.anyType;
@@ -3810,7 +3819,7 @@ module TypeScript {
             else {
                 var fnType = target.type;
                 if (fnType.call) {
-                    var signature = this.resolveOverload(callEx, fnType.call);
+                    signature = this.resolveOverload(callEx, fnType.call);
                     if (signature == null) {
                         callEx.type = this.anyType;
                     }
@@ -3826,8 +3835,8 @@ module TypeScript {
                         this.thisFnc.isConstructor &&
                         hasFlag(this.thisFnc.fncFlags, FncFlags.ClassMethod)) {
 
-                            // Need to use the class type for the construct signature, not the instance type
-                        var signature = fnType.symbol.type.construct ? this.resolveOverload(callEx, fnType.symbol.type.construct) : null;
+                        // Need to use the class type for the construct signature, not the instance type
+                        signature = fnType.symbol.type.construct ? this.resolveOverload(callEx, fnType.symbol.type.construct) : null;
 
                         if (signature == null) {
                             callEx.type = this.anyType;

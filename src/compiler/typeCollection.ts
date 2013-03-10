@@ -227,12 +227,15 @@ module TypeScript {
                 context.checker.errorReporter.simpleError(moduleDecl, 'All contributions to a module must be "export" or none');
             }
         }
+        
+        var enclosedTypes: ScopedMembers = null;
+        var ambientEnclosedTypes: ScopedMembers = null;
 
         if ((symbol == null) || (symbol.kind() != SymbolKind.Type)) {
 
             if (modType == null) {
-                var enclosedTypes = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
-                var ambientEnclosedTypes = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
+                enclosedTypes = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
+                ambientEnclosedTypes = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
                 modType = new ModuleType(enclosedTypes, ambientEnclosedTypes);
                 if (isEnum) {
                     modType.typeFlags |= TypeFlags.IsEnum;
@@ -263,11 +266,11 @@ module TypeScript {
             // initialize new private scope for the type
             var publicEnclosedTypes = typeSymbol.type.getAllEnclosedTypes().publicMembers;
             var publicEnclosedTypesTable = (publicEnclosedTypes == null) ? new StringHashTable() : publicEnclosedTypes;
-            var enclosedTypes = new ScopedMembers(new DualStringHashTable(publicEnclosedTypesTable, new StringHashTable()));
+            enclosedTypes = new ScopedMembers(new DualStringHashTable(publicEnclosedTypesTable, new StringHashTable()));
 
             var publicEnclosedAmbientTypes = typeSymbol.type.getAllAmbientEnclosedTypes().publicMembers;
             var publicAmbientEnclosedTypesTable = (publicEnclosedAmbientTypes == null) ? new StringHashTable() : publicEnclosedAmbientTypes;
-            var ambientEnclosedTypes = new ScopedMembers(new DualStringHashTable(publicAmbientEnclosedTypesTable, new StringHashTable()));
+            ambientEnclosedTypes = new ScopedMembers(new DualStringHashTable(publicAmbientEnclosedTypesTable, new StringHashTable()));
 
             var publicMembers = typeSymbol.type.members.publicMembers;
             var publicMembersTable = (publicMembers == null) ? new StringHashTable() : publicMembers;

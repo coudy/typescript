@@ -972,6 +972,7 @@ declare var Array: {
     new <T>(...items: T[]): T[];
     new <T>(arrayLength: number): T[];    
     <T>(...items: T[]): T[];
+    <T>(arrayLength: number): T[];
     isArray(arg: any): bool;
     prototype: Array; // Note: Implicitly Array<any>
 }

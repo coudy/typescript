@@ -260,7 +260,7 @@ module Parser1 {
             var element: ISyntaxElement;
 
             while (!this.isFinished()) {
-                var element = this.currentElement();
+                element = this.currentElement();
                 if (element.isNode()) {
                     this.moveToFirstChild();
                     continue;

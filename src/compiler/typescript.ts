@@ -396,6 +396,8 @@ module TypeScript {
             }
             obj1.alreadySeenObject = true;
 
+            var value1, value2;
+
             for (var name in obj1) {
                 if (name === "limChar" ||
                     name === "minChar" ||
@@ -415,13 +417,13 @@ module TypeScript {
                     continue; 
                 }
 
-                var value1 = obj1[name];
+                value1 = obj1[name];
                 if (value1) {
                     if (typeof value1 === 'number' ||
                         typeof value1 === 'string' ||
                         typeof value1 === 'boolean') {
 
-                        var value2 = obj2[name];
+                        value2 = obj2[name];
 
                         if (typeof value1 !== typeof value2) {
                             throw new Error("Objects differed in type for key: " + name);
@@ -434,20 +436,20 @@ module TypeScript {
                 }
             }
 
-            for (var name in obj1) {
-                if (name === "preComments" ||
-                    name === "postComments" ||
-                    name === "docComments" ||
-                    name === "sym" ||
-                    name === "lineMap" ||
-                    name === "resolvedTarget") {
+            for (var name2 in obj1) {
+                if (name2 === "preComments" ||
+                    name2 === "postComments" ||
+                    name2 === "docComments" ||
+                    name2 === "sym" ||
+                    name2 === "lineMap" ||
+                    name2 === "resolvedTarget") {
                     continue;
                 } 
 
-                var value1 = obj1[name];
+                value1 = obj1[name];
                 if (value1) {
                     if (typeof value1 === 'object') {
-                        var value2 = obj2[name];
+                        value2 = obj2[name];
 
                         if (typeof value1 !== typeof value2) {
                             throw new Error("Objects differed in type for key: " + name);
@@ -1028,7 +1030,9 @@ module TypeScript {
                 var binder = new PullSymbolBinder(this.semanticInfoChain);
                 binder.setUnit(newScript.locationInfo.filename);
 
-                for (var i = 0; i < topLevelDecls.length; i++) {
+                var i = 0;
+
+                for (i = 0; i < topLevelDecls.length; i++) {
                     binder.bindDeclToPullSymbol(topLevelDecls[i], true);
                 }
 
@@ -1042,7 +1046,7 @@ module TypeScript {
                     var diff: PullDeclDiff;
 
                     var traceStartTime = new Date().getTime();
-                    for (var i = 0; i < diffResults.length; i++) {
+                    for (i = 0; i < diffResults.length; i++) {
                         diff = diffResults[i];
 
                         if (diff.kind == PullDeclEdit.DeclRemoved) {
@@ -1172,9 +1176,10 @@ module TypeScript {
                 }
                 else {
                     // otherwise, it's an expression that needs to be resolved, so we must pull...
+                    var i = 0;
 
                     // first, find the enclosing decl
-                    for (var i = declStack.length - 1; i >= 0; i--) {
+                    for (i = declStack.length - 1; i >= 0; i--) {
                         if (!(declStack[i].getKind() & (PullElementKind.Variable | PullElementKind.Parameter))) {
                             enclosingDecl = declStack[i];
                             break;
@@ -1187,7 +1192,7 @@ module TypeScript {
                     // if the found AST is a named, we want to check for previous dotted expressions,
                     // since those will give us the right typing
                     if (foundAST.nodeType == NodeType.Name && resultASTs.length > 1) {
-                        for (var i = resultASTs.length - 2; i >= 0; i--) {
+                        for (i = resultASTs.length - 2; i >= 0; i--) {
                             if ((resultASTs[i].nodeType === NodeType.VarDecl && (<VarDecl>resultASTs[i]).id === resultASTs[i + 1]) ||
                                 //((resultASTs[i].nodeType === NodeType.Call || resultASTs[i].nodeType == NodeType.New) && (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) ||
                                 (resultASTs[i].nodeType === NodeType.Dot && (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1])) {
@@ -1201,7 +1206,7 @@ module TypeScript {
 
                     // if it's a list, we may not have an exact AST, so find the next nearest one
                     if (foundAST.nodeType == NodeType.List) {
-                        for (var i = 0; i < (<ASTList>foundAST).members.length; i++) {
+                        for (i = 0; i < (<ASTList>foundAST).members.length; i++) {
                             if ((<ASTList>foundAST).members[i].minChar > pos) {
                                 foundAST = (<ASTList>foundAST).members[i];
                                 break;
@@ -1218,7 +1223,7 @@ module TypeScript {
                         var assigningAST: VarDecl;
                         var varSymbol: PullSymbol;
 
-                        for (var i = 0; i < declarationInitASTs.length; i++) {
+                        for (i = 0; i < declarationInitASTs.length; i++) {
 
                             assigningAST = declarationInitASTs[i];
                             isTypedAssignment = (assigningAST != null) && (assigningAST.typeExpr != null);
@@ -1238,7 +1243,7 @@ module TypeScript {
                     }
 
                     if (typeAssertionASTs.length) {
-                        for (var i = 0; i < typeAssertionASTs.length; i++) {
+                        for (i = 0; i < typeAssertionASTs.length; i++) {
                             this.pullTypeChecker.resolver.resolveAST(typeAssertionASTs[i], isTypedAssignment, enclosingDecl, resolutionContext);
                         }
                     }
@@ -1279,8 +1284,11 @@ module TypeScript {
                 return null;
             }
 
+            var i = 0;
+            var n = 0;
+
             // Extract infromation from path
-            for (var i = 0, n = path.count(); i < n; i++) {
+            for (i = 0, n = path.count(); i < n; i++) {
                 var current = path.asts[i];
                 var decl = semanticInfo.getDeclForAST(current);
 
@@ -1343,7 +1351,7 @@ module TypeScript {
             // if the found AST is a named, we want to check for previous dotted expressions,
             // since those will give us the right typing
             if (path.ast().nodeType === NodeType.Name && path.count() > 1) {
-                for (var i = path.count() - 1; i >= 0; i--) {
+                for (i = path.count() - 1; i >= 0; i--) {
                     if (path.asts[path.top - 1].nodeType === NodeType.Dot &&
                         (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
                         path.pop();

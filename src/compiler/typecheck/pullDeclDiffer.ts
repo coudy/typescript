@@ -37,8 +37,9 @@ module TypeScript {
             var foundDecls: PullDecl[];
             var foundDiff = false;
             var childFoundDiff = true;
+            var i = 0;
 
-            for (var i = 0; i < oldDeclChildren.length; i++) {
+            for (i = 0; i < oldDeclChildren.length; i++) {
                 foundDecls = newDecl.findChildDecls(oldDeclChildren[i].getName(), oldDeclChildren[i].getKind());
 
                 if (!foundDecls.length) {
@@ -54,7 +55,7 @@ module TypeScript {
                 }
             }
 
-            for (var i = 0; i < newDeclChildren.length; i++) {
+            for (i = 0; i < newDeclChildren.length; i++) {
                 foundDecls = oldDecl.findChildDecls(newDeclChildren[i].getName(), newDeclChildren[i].getKind());
 
                 if (!foundDecls.length) {

@@ -430,7 +430,7 @@ module TypeScript {
                     // as well.
                     var nameNode = <Identifier>memberValue;
                     for (var i = 0; i < memberNames.length; i++) {
-                        var memberName = memberNames[i];
+                        memberName = memberNames[i];
                         if (memberName.text === nameNode.text) {
                             member.varFlags |= VarFlags.Constant;
                             break;
@@ -959,6 +959,7 @@ module TypeScript {
             var wasShorthand = false;
             var isAnonLambda = false;
             var limChar: number;
+            var bodMinChar: number;
 
             if (requiresSignature) {
                 // If we require a signature, but they provided a block, then give an error, but
@@ -967,7 +968,7 @@ module TypeScript {
                 if (this.currentToken.tokenId === TokenID.OpenBrace) {
                     this.reportParseError("Function declarations are not permitted within interfaces, ambient modules or classes")
                     bod = new ASTList();
-                    var bodMinChar = this.scanner.startPos;
+                    bodMinChar = this.scanner.startPos;
 
                     this.parseFunctionBlock(errorRecoverySet, allowedElements, parentModifiers, bod, bodMinChar);
                     this.checkCurrentToken(TokenID.CloseBrace, errorRecoverySet);
@@ -984,7 +985,7 @@ module TypeScript {
             }
             else {
                 bod = new ASTList();
-                var bodMinChar = this.scanner.startPos;
+                bodMinChar = this.scanner.startPos;
                 if (this.currentToken.tokenId == TokenID.EqualsGreaterThan) {
                     if (isMethod) {
                         this.reportParseError("'=>' may not be used for class methods");
@@ -2351,7 +2352,7 @@ module TypeScript {
                                            OperatorPrecedence.Comma, true, TypeContext.NoTypes);
                     varDecl.limChar = varDecl.init.limChar;
                     if (varDecl.init.nodeType == NodeType.FuncDecl) {
-                        var funcDecl = <FuncDecl>varDecl.init;
+                        funcDecl = <FuncDecl>varDecl.init;
                         funcDecl.hint = varDecl.id.text;
                         funcDecl.boundToProperty = varDecl;
                     }
@@ -2585,12 +2586,14 @@ module TypeScript {
                     this.currentToken = this.scanner.scan();
                 }
 
+                var funcDecl: FuncDecl;
+
                 if (accessorPattern) {
                     var args = new ASTList();
                     this.parseFormalParameterList(errorRecoverySet | ErrorRecoverySet.RParen,
                                       args, false, true, false, !isSet, isSet, false, null, true);
 
-                    var funcDecl: FuncDecl =
+                    funcDecl =
                         this.parseFunctionStatements(errorRecoverySet | ErrorRecoverySet.RCurly,
                                                 <Identifier>memberName, false, true, args,
                                                 AllowedElements.None,
@@ -2608,7 +2611,7 @@ module TypeScript {
                     member.minChar = memberName.minChar;
 
                     if (memberExpr.nodeType == NodeType.FuncDecl) {
-                        var funcDecl = <FuncDecl>memberExpr;
+                        funcDecl = <FuncDecl>memberExpr;
                         funcDecl.hint = idHint;
                     }
                 }
@@ -2628,7 +2631,7 @@ module TypeScript {
                     member = new BinaryExpression(NodeType.Member, memberName, memberExpr);
                     member.minChar = memberName.minChar;
                     if (memberExpr.nodeType == NodeType.FuncDecl) {
-                        var funcDecl = <FuncDecl>memberExpr;
+                        funcDecl = <FuncDecl>memberExpr;
                         funcDecl.hint = idHint;
                     }
                 }
@@ -3291,12 +3294,13 @@ module TypeScript {
             var preComments = this.parseComments();
             this.currentToken = this.scanner.scan();
             this.checkCurrentToken(TokenID.OpenParen, errorRecoverySet | ErrorRecoverySet.ExprStart);
+            var ecatch: Catch;
             if ((this.currentToken.tokenId != TokenID.Identifier) || convertTokToID(this.currentToken, this.strictMode)) {
                 this.reportParseError("Expected identifier in catch header");
                 if (this.errorRecovery) {
                     this.skip(errorRecoverySet);
 
-                    var ecatch = new Catch(new VarDecl(new MissingIdentifier(), this.nestingLevel),
+                    ecatch = new Catch(new VarDecl(new MissingIdentifier(), this.nestingLevel),
                                             new Statement(NodeType.Empty));
                     ecatch.statement.minChar = catchMinChar;
                     ecatch.statement.limChar = this.scanner.pos;
@@ -3319,7 +3323,7 @@ module TypeScript {
                 if (this.errorRecovery) {
                     this.skip(errorRecoverySet);
 
-                    var ecatch = new Catch(new VarDecl(new MissingIdentifier(), this.nestingLevel),
+                    ecatch = new Catch(new VarDecl(new MissingIdentifier(), this.nestingLevel),
                                             new Statement(NodeType.Empty));
                     ecatch.statement.minChar = catchMinChar;
                     ecatch.statement.limChar = statementPos;
@@ -3432,6 +3436,8 @@ module TypeScript {
                 }
             }
 
+            var id: Identifier;
+
             for (; ;) {
                 switch (this.currentToken.tokenId) {
                     case TokenID.EndOfFile:
@@ -3533,7 +3539,7 @@ module TypeScript {
                             else {
                                 this.currentToken = this.scanner.scan();
 
-                                var id = Identifier.fromToken(this.currentToken);
+                                id = Identifier.fromToken(this.currentToken);
                                 id.minChar = this.scanner.startPos;
                                 id.limChar = this.scanner.pos;
 
@@ -3595,7 +3601,7 @@ module TypeScript {
                             else {
                                 this.currentToken = this.scanner.scan();
 
-                                var id = Identifier.fromToken(this.currentToken);
+                                id = Identifier.fromToken(this.currentToken);
                                 id.minChar = this.scanner.startPos;
                                 id.limChar = this.scanner.pos;
 

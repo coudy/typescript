@@ -541,7 +541,7 @@ module TypeScript {
 
             // set default args first
             for (i = 0; i < defaultArgs.length; i++) {
-                var arg = defaultArgs[i];
+                arg = defaultArgs[i];
                 this.emitIndent();
                 this.recordSourceMappingStart(arg);
                 this.writeToOutput("if (typeof " + arg.id.actualText + " === \"undefined\") { ");//
@@ -624,7 +624,7 @@ module TypeScript {
 
                 var nProps = (<ASTList>this.thisClassNode.members).members.length;
 
-                for (var i = 0; i < nProps; i++) {
+                for (i = 0; i < nProps; i++) {
                     if ((<ASTList>this.thisClassNode.members).members[i].nodeType == NodeType.VarDecl) {
                         var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[i];
                         if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
@@ -677,9 +677,9 @@ module TypeScript {
         public getModuleImportAndDepencyList(moduleDecl: ModuleDeclaration) {
             var importList = "";
             var dependencyList = "";
-
+            var i = 0;
             // all dependencies are quoted
-            for (var i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
+            for (i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
                 var importStatement = (<ModuleType>moduleDecl.mod).importedModules[i]
 
                 // if the imported module is only used in a type position, do not add it as a requirement
@@ -696,7 +696,7 @@ module TypeScript {
             }
 
             // emit any potential amd dependencies
-            for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
+            for (i = 0; i < moduleDecl.amdDependencies.length; i++) {
                 dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
             }
 
@@ -1587,6 +1587,7 @@ module TypeScript {
                 var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
                 var baseNameDecl: AST = null;
                 var baseName: AST = null;
+                var varDecl: VarDecl = null;
 
                 if (hasBaseClass) {
                     this.writeLineToOutput(" = (function (_super) {");
@@ -1636,9 +1637,9 @@ module TypeScript {
                     var members = (<ASTList>this.thisClassNode.members).members
 
                     // output initialized properties
-                    for (var i = 0; i < members.length; i++) {
+                    for (i = 0; i < members.length; i++) {
                         if (members[i].nodeType == NodeType.VarDecl) {
-                            var varDecl = <VarDecl>members[i];
+                            varDecl = <VarDecl>members[i];
                             if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
                                 this.writeLineToOutput("");
                                 this.emitIndent();
@@ -1689,7 +1690,7 @@ module TypeScript {
                         }
                     }
                     else if (memberDecl.nodeType == NodeType.VarDecl) {
-                        var varDecl = <VarDecl>memberDecl;
+                        varDecl = <VarDecl>memberDecl;
                         if (hasFlag(varDecl.varFlags, VarFlags.Static)) {
 
                             if (varDecl.init) {

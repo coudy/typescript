@@ -59,6 +59,10 @@ module TypeScript {
             return this.declKind == PullElementKind.Primitive;
         }
 
+        public isAccessor() {
+            return false;
+        }
+
         constructor(name: string, declKind: PullElementKind) {
             this.name = name;
             this.declKind = declKind;
@@ -132,11 +136,13 @@ module TypeScript {
             this.incomingLinks.update(map, context);
         }
 
-        public setContainer(containerSymbol: PullTypeSymbol, relationshipKind: SymbolLinkKind) {
+        public setContainer(containerSymbol: PullTypeSymbol) {
             //containerSymbol.addOutgoingLink(this, relationshipKind);
 
             var link = this.addOutgoingLink(containerSymbol, SymbolLinkKind.ContainedBy);
             this.cachedContainerLink = link;
+
+            containerSymbol.addContainedByLink(link);
         }
 
         public getContainer(): PullTypeSymbol {
@@ -496,11 +502,12 @@ module TypeScript {
         public toString() {
             var typeParameters = this.getTypeParameters();
             var typeParameterString = "";
-
+            var i = 0;
+            
             if (typeParameters && typeParameters.length) {
                 typeParameterString = "<";
 
-                for (var i = 0; i < typeParameters.length; i++) {
+                for (i = 0; i < typeParameters.length; i++) {
                     if (i) {
                         typeParameterString += ",";
                     }
@@ -515,7 +522,7 @@ module TypeScript {
             var params = this.getParameters();
             var paramType: PullTypeSymbol;
 
-            for (var i = 0; i < params.length; i++) {
+            for (i = 0; i < params.length; i++) {
                 sigString += params[i].getName();
 
                 paramType = params[i].getType();
@@ -544,10 +551,12 @@ module TypeScript {
         private memberLinks: PullSymbolLink[] = null;
         private typeParameterLinks: PullSymbolLink[] = null;
         private specializationLinks: PullSymbolLink[] = null;
+        private containedByLinks: PullSymbolLink[] = null;
 
         private memberNameCache: any = null;
         private memberTypeNameCache: any = null;
         private memberTypeParameterNameCache: any = null;
+        private containedMemberCache: any = null;
 
         private typeArguments: PullTypeSymbol[] = null;
 
@@ -612,12 +621,39 @@ module TypeScript {
             arrayType.addOutgoingLink(this, SymbolLinkKind.ArrayOf);
         }
 
+        public addContainedByLink(containedByLink: PullSymbolLink) {
+            if (!this.containedByLinks) {
+                this.containedByLinks = [];
+            }
+
+            if (!this.containedMemberCache) {
+                this.containedMemberCache = {};
+            }
+
+            this.containedByLinks[this.containedByLinks.length] = containedByLink;
+            this.containedMemberCache[containedByLink.start.getName()] = containedByLink.start;
+        }
+
+        public findContainedMember(name: string): PullSymbol {
+
+            if (!this.containedByLinks) {
+                this.containedByLinks = this.findIncomingLinks(psl => psl.kind == SymbolLinkKind.ContainedBy);
+                this.containedMemberCache = {};
+
+                for (var i = 0; i < this.containedByLinks.length; i++) {
+                    this.containedMemberCache[this.containedByLinks[i].start.getName()] = this.containedByLinks[i].start;
+                }
+            }
+
+            return this.containedMemberCache[name];
+        }
+
         public addMember(memberSymbol: PullSymbol, linkKind: SymbolLinkKind) {
 
             var link = this.addOutgoingLink(memberSymbol, linkKind);
 
-            memberSymbol.setContainer(this, linkKind);
-
+            memberSymbol.setContainer(this);
+            
             if (!this.memberCache) {
                 this.memberCache = [];
             }
@@ -768,14 +804,15 @@ module TypeScript {
             }
 
             var specializations = this.getKnownSpecializations();
+            var i = 0;
 
-            for (var i = 0; i < specializations.length; i++) {
+            for (i = 0; i < specializations.length; i++) {
                 specializations[i].invalidate();
             }
 
             if (this.specializationLinks && this.specializationLinks.length) {
-
-                for (var i = 0; i < this.specializationLinks.length; i++) {
+            
+                for (i = 0; i < this.specializationLinks.length; i++) {
                     this.removeOutgoingLink(this.specializationLinks[i]);
                 }
             }
@@ -1035,8 +1072,9 @@ module TypeScript {
             }
 
             var extendedTypes = this.getExtendedTypes();
+            var i = 0;
 
-            for (var i = 0; i < extendedTypes.length; i++) {
+            for (i = 0; i < extendedTypes.length; i++) {
                 if (extendedTypes[i].hasBase(potentialBase)) {
                     return true;
                 }
@@ -1044,7 +1082,7 @@ module TypeScript {
 
             var implementedTypes = this.getImplementedTypes();
 
-            for (var i = 0; i < implementedTypes.length; i++) {
+            for (i = 0; i < implementedTypes.length; i++) {
                 if (implementedTypes[i].hasBase(potentialBase)) {
                     return true;
                 }
@@ -1071,6 +1109,7 @@ module TypeScript {
 
         public findMember(name: string): PullSymbol {
             var memberSymbol: PullSymbol;
+            var i = 0;
 
             if (!this.memberNameCache) {
                 this.populateMemberCache();
@@ -1085,7 +1124,7 @@ module TypeScript {
             // check parents
             if (!memberSymbol && this.extendedTypeLinks) {
 
-                for (var i = 0 ; i < this.extendedTypeLinks.length; i++) {
+                for (i = 0 ; i < this.extendedTypeLinks.length; i++) {
                     memberSymbol = (<PullTypeSymbol>this.extendedTypeLinks[i].end).findMember(name);
 
                     if (memberSymbol) {
@@ -1096,7 +1135,7 @@ module TypeScript {
 
             if (!memberSymbol && this.implementedTypeLinks) {
 
-                for (var i = 0 ; i < this.implementedTypeLinks.length; i++) {
+                for (i = 0 ; i < this.implementedTypeLinks.length; i++) {
                     memberSymbol = (<PullTypeSymbol>this.implementedTypeLinks[i].end).findMember(name);
 
                     if (memberSymbol) {
@@ -1165,6 +1204,10 @@ module TypeScript {
         public getAllMembers(searchDeclKind: PullElementKind, includePrivate: bool): PullSymbol[] {
 
             var allMembers: PullSymbol[] = [];
+            var i = 0;
+            var j = 0;
+            var m = 0;
+            var n = 0;
 
             // Update the cache id needed
             if (!this.memberTypeNameCache) {
@@ -1172,7 +1215,7 @@ module TypeScript {
             }
 
             // Add members
-            for (var i = 0, n = this.memberCache.length; i < n; i++) {
+            for (i = 0, n = this.memberCache.length; i < n; i++) {
                 var member = this.memberCache[i];
                 if ((member.getKind() & searchDeclKind) && (includePrivate || !member.hasFlag(PullElementFlags.Private))) {
                     allMembers[allMembers.length] = member;
@@ -1182,10 +1225,10 @@ module TypeScript {
             // Add parent members
             if (this.extendedTypeLinks) {
 
-                for (var i = 0, n = this.extendedTypeLinks.length; i < n; i++) {
+                for (i = 0, n = this.extendedTypeLinks.length; i < n; i++) {
                     var extendedMembers = (<PullTypeSymbol>this.extendedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (var j = 0, m = extendedMembers.length; j < m; j++) {
+                    for (j = 0, m = extendedMembers.length; j < m; j++) {
                         var extendedMember = extendedMembers[j];
                         if (!this.memberNameCache[extendedMember.getName()]) {
                             allMembers[allMembers.length] = extendedMember;
@@ -1196,10 +1239,10 @@ module TypeScript {
 
             if (this.implementedTypeLinks) {
 
-                for (var i = 0 ; i < this.implementedTypeLinks.length; i++) {
+                for (i = 0 ; i < this.implementedTypeLinks.length; i++) {
                     var implementedMembers = (<PullTypeSymbol>this.implementedTypeLinks[i].end).getAllMembers(searchDeclKind, includePrivate);
 
-                    for (var j = 0, m = implementedMembers.length; j < m; j++) {
+                    for (j = 0, m = implementedMembers.length; j < m; j++) {
                         var implementedMember = implementedMembers[j];
                         if (!this.memberNameCache[implementedMember.getName()]) {
                             allMembers[allMembers.length] = implementedMember;
@@ -1239,8 +1282,11 @@ module TypeScript {
             this.memberNameCache = null;
             this.memberCache = null;
             this.memberTypeNameCache = null;
+            this.containedMemberCache = null;
 
             this.invalidatedSpecializations = false;
+
+            this.containedByLinks = null;
 
             this.memberLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.PrivateMember ||
                                                               psl.kind == SymbolLinkKind.PublicMember);
@@ -1263,8 +1309,8 @@ module TypeScript {
         public toString() {
             var tstring = this.getName();
             var typarString = "";
-
             var typars = this.getTypeArguments();
+            var i = 0;
 
             if (!typars || !typars.length) {
                 typars = this.getTypeParameters();
@@ -1273,7 +1319,7 @@ module TypeScript {
             if (typars && typars.length) {
                 typarString = "<";
 
-                for (var i = 0; i < typars.length; i++) {
+                for (i = 0; i < typars.length; i++) {
                     if (i) {
                         typarString += ",";
                     }
@@ -1290,7 +1336,7 @@ module TypeScript {
             var constructSigs = this.getConstructSignatures();
             var indexSigs = this.getIndexSignatures();
 
-            for (var i = 0; i < members.length; i++) {
+            for (i = 0; i < members.length; i++) {
                 tstring += members[i].toString();
                 tstring += "; ";
             }
@@ -1499,6 +1545,70 @@ module TypeScript {
 
     }
 
+    export class PullAccessorSymbol extends PullSymbol {
+
+        private getterSymbolLink: PullSymbolLink = null;
+        private setterSymbolLink: PullSymbolLink = null;
+
+        constructor(name: string) {
+            super(name, PullElementKind.Property);
+        }
+
+        public isAccessor() { return true; }
+
+        public setSetter(setter: PullSymbol) {
+            this.setterSymbolLink = this.addOutgoingLink(setter, SymbolLinkKind.SetterFunction);
+        }
+
+        public getSetter(): PullSymbol {
+            var setter: PullSymbol = null;
+
+            if (this.setterSymbolLink) {
+                setter = this.setterSymbolLink.end;
+            }
+
+            return setter;
+        }
+
+        public removeSetter() {
+            if (this.setterSymbolLink) {
+                this.removeOutgoingLink(this.setterSymbolLink);
+            }
+        }
+
+        public setGetter(getter: PullSymbol) {
+            this.getterSymbolLink = this.addOutgoingLink(getter, SymbolLinkKind.GetterFunction);
+        }
+
+        public getGetter(): PullSymbol {
+            var getter: PullSymbol = null;
+
+            if (this.getterSymbolLink) {
+                getter = this.getterSymbolLink.end;
+            }
+
+            return getter;
+        }
+
+        public removeGetter() {
+            if (this.getterSymbolLink) {
+                this.removeOutgoingLink(this.getterSymbolLink);
+            }
+        }
+
+        public invalidate() {
+            if (this.getterSymbolLink) {
+                this.getterSymbolLink.end.invalidate();
+            }
+
+            if (this.setterSymbolLink) {
+                this.setterSymbolLink.end.invalidate();
+            }
+
+            super.invalidate();
+        }
+    }
+
     export class PullArrayTypeSymbol extends PullTypeSymbol {
         private elementType: PullTypeSymbol = null;
 
@@ -1701,8 +1811,11 @@ module TypeScript {
         //    return typeToSpecialize;
         //}
 
+        var i = 0;
+        var j = 0;
+
         if (!typeArguments.length) {
-            for (var i = 0; i < typeParameters.length; i++) {
+            for (i = 0; i < typeParameters.length; i++) {
                 typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
             }
         }
@@ -1718,10 +1831,12 @@ module TypeScript {
             }
         }
 
+        var newTypeDecl = typeToSpecialize.getDeclarations()[0];
+
         newType = typeToSpecialize.isClass() ? new PullClassTypeSymbol(typeToSpecialize.getName()) :
                     isArray ? new PullArrayTypeSymbol() :
                         new PullTypeSymbol(typeToSpecialize.getName(), typeToSpecialize.getKind());
-        newType.addDeclaration(typeToSpecialize.getDeclarations()[0]);
+        newType.addDeclaration(newTypeDecl);
 
         newType.setIsBeingSpecialized();
 
@@ -1735,18 +1850,21 @@ module TypeScript {
 
         var typeReplacementMap: any = {};
 
-        for (var i = 0; i < typeParameters.length; i++) {
+        for (i = 0; i < typeParameters.length; i++) {
             typeReplacementMap[typeParameters[i].getSymbolID().toString()] = typeArguments[i];
             newType.addMember(typeParameters[i], SymbolLinkKind.TypeParameter);
         }
 
         // specialize any extends/implements types
         var extendedTypesToSpecialize = typeToSpecialize.getExtendedTypes();
+        var typeDecl: PullDecl;
+        var typeAST: TypeDeclaration;
+        var unitPath: string;
 
         if (extendedTypesToSpecialize.length) {
-            var typeDecl = typeToSpecialize.getDeclarations()[0];
-            var typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
-            var unitPath = resolver.getUnitPath();
+            typeDecl = typeToSpecialize.getDeclarations()[0];
+            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
+            unitPath = resolver.getUnitPath();
             resolver.setUnitPath(typeDecl.getScriptName());
             context.pushTypeSpecializationCache(typeReplacementMap);
             var extendTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.extendsList.members[0], 0), typeDecl, context);
@@ -1758,9 +1876,9 @@ module TypeScript {
         var implementedTypesToSpecialize = typeToSpecialize.getImplementedTypes();
 
         if (implementedTypesToSpecialize.length) {
-            var typeDecl = typeToSpecialize.getDeclarations()[0];
-            var typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
-            var unitPath = resolver.getUnitPath();
+            typeDecl = typeToSpecialize.getDeclarations()[0];
+            typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl, typeDecl.getScriptName());
+            unitPath = resolver.getUnitPath();
             resolver.setUnitPath(typeDecl.getScriptName());
             context.pushTypeSpecializationCache(typeReplacementMap);
             var implementedTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.implementsList.members[0], 0), typeDecl, context);
@@ -1780,11 +1898,9 @@ module TypeScript {
 
         var decl: PullDecl = null;
         var decls: PullDecl[] = null;
-        var declAST: AST = null;
-        var unitPath: string = null;
+        var declAST: AST = null;       
 
-
-        for (var i = 0; i < callSignatures.length; i++) {
+        for (i = 0; i < callSignatures.length; i++) {
             signature = callSignatures[i];
 
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -1795,11 +1911,11 @@ module TypeScript {
 
             declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
 
-            resolver.resolveAST(declAST, false, enclosingDecl, context);
+            resolver.resolveAST(declAST, false, newTypeDecl, context);
 
             resolver.setUnitPath(unitPath);
 
-            newSignature = specializeSignature(signature, true, typeReplacementMap, typeArguments, resolver, enclosingDecl, context);
+            newSignature = specializeSignature(signature, true, typeReplacementMap, typeArguments, resolver, newTypeDecl, context);
 
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
@@ -1815,7 +1931,7 @@ module TypeScript {
         }
 
         // specialize construct signatures
-        for (var i = 0; i < constructSignatures.length; i++) {
+        for (i = 0; i < constructSignatures.length; i++) {
             signature = constructSignatures[i];
 
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -1826,11 +1942,12 @@ module TypeScript {
 
             declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
 
-            resolver.resolveAST(declAST, false, enclosingDecl, context);
+            resolver.resolveAST(declAST, false, newTypeDecl, context);
 
             resolver.setUnitPath(unitPath);
+            
+            newSignature = specializeSignature(signature, true, typeReplacementMap, typeArguments, resolver, newTypeDecl, context);
 
-            newSignature = specializeSignature(signature, true, typeReplacementMap, typeArguments, resolver, enclosingDecl, context);
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
@@ -1845,7 +1962,7 @@ module TypeScript {
         }
 
         // specialize index signatures
-        for (var i = 0; i < indexSignatures.length; i++) {
+        for (i = 0; i < indexSignatures.length; i++) {
             signature = indexSignatures[i];
 
             context.pushTypeSpecializationCache(typeReplacementMap);
@@ -1856,11 +1973,12 @@ module TypeScript {
 
             declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
 
-            resolver.resolveAST(declAST, false, enclosingDecl, context);
+            resolver.resolveAST(declAST, false, newTypeDecl, context);
 
             resolver.setUnitPath(unitPath);
+            
+            newSignature = specializeSignature(signature, true, typeReplacementMap, typeArguments, resolver, newTypeDecl, context);
 
-            newSignature = specializeSignature(signature, true, typeReplacementMap, typeArguments, resolver, enclosingDecl, context);
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
@@ -1885,10 +2003,10 @@ module TypeScript {
         var newFieldType: PullTypeSymbol = null;
         var replacementType: PullTypeSymbol = null;
 
-        for (var i = 0; i < members.length; i++) {
+        for (i = 0; i < members.length; i++) {
             field = members[i];
 
-            resolver.resolveDeclaredSymbol(field, enclosingDecl, context);
+            resolver.resolveDeclaredSymbol(field, newTypeDecl, context);
 
             decls = field.getDeclarations();
 
@@ -1902,7 +2020,7 @@ module TypeScript {
                 newField.setType(replacementType);
                 decl = decls[0];
 
-                for (var j = 0; j < decls.length; j++) {
+                for (j = 0; j < decls.length; j++) {
                     newField.addDeclaration(decls[j]);
                 }
             }
@@ -1920,19 +2038,19 @@ module TypeScript {
 
                 context.pushTypeSpecializationCache(typeReplacementMap);
 
-                for (var j = 0; j < decls.length; j++) {
+                for (j = 0; j < decls.length; j++) {
                     decl = decls[j];
 
                     newField.addDeclaration(decl);
 
                     declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
-                    fieldType = (resolver.resolveAST(declAST, false, enclosingDecl, context)).getType();
+                    fieldType = (resolver.resolveAST(declAST, false, newTypeDecl, context)).getType();
                     if (fieldType.isFunction) {
                         fieldType.addDeclaration(decl);
                     }
                 }
 
-                newFieldType = specializeType(fieldType, typeArguments, resolver, enclosingDecl, context, ast);
+                newFieldType = specializeType(fieldType, typeArguments, resolver, newTypeDecl, context, ast);
 
                 resolver.setUnitPath(unitPath);
 
@@ -1950,13 +2068,13 @@ module TypeScript {
         if (typeToSpecialize.isClass()) {
             var constructorMethod = (<PullClassTypeSymbol>typeToSpecialize).getConstructorMethod();
             var newConstructorMethod = new PullSymbol(constructorMethod.getName(), PullElementKind.ConstructorMethod);
-            var newConstructorType = specializeType(constructorMethod.getType(), typeArguments, resolver, enclosingDecl, context, ast);
+            var newConstructorType = specializeType(constructorMethod.getType(), typeArguments, resolver, newTypeDecl, context, ast);
 
             newConstructorMethod.setType(newConstructorType);
 
             var constructorDecls: PullDecl[] = constructorMethod.getDeclarations();
 
-            for (var i = 0; i < constructorDecls.length; i++) {
+            for (i = 0; i < constructorDecls.length; i++) {
                 newConstructorMethod.addDeclaration(constructorDecls[i]);
                 newConstructorType.addDeclaration(constructorDecls[i]);
             }
@@ -1984,6 +2102,7 @@ module TypeScript {
         ast?: AST): PullSignatureSymbol {
 
         var newSignature = signature.getSpecialization(typeArguments);
+        var i = 0;
 
         if (newSignature) {
             return newSignature;
@@ -1998,7 +2117,7 @@ module TypeScript {
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.getReturnType();
 
-        for (var i = 0; i < typeParameters.length; i++) {
+        for (i = 0; i < typeParameters.length; i++) {
             newSignature.addTypeParameter(typeParameters[i]);
         }
 
@@ -2027,7 +2146,7 @@ module TypeScript {
         // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the
         // enclosing type.  (E.g., "class C<T> { public m<T>() {...} }" )
         if (skipLocalTypeParameters) {
-            for (var i = 0; i < typeParameters.length; i++) {
+            for (i = 0; i < typeParameters.length; i++) {
                 localTypeParameters[typeParameters[i].getName()] = true;
             }
         }
@@ -2039,7 +2158,7 @@ module TypeScript {
             parameterType = parameters[k].getType();
 
             context.pushTypeSpecializationCache(typeReplacementMap);
-            var newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, typeArguments, resolver, enclosingDecl, context, ast) : parameterType;
+            newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, typeArguments, resolver, enclosingDecl, context, ast) : parameterType;
             context.popTypeSpecializationCache();
 
             if (newParameterType != parameterType) {

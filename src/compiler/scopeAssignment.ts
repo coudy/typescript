@@ -171,7 +171,7 @@ module TypeScript {
         var members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
         var ambientMembers = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
 
-        var withType = new Type();
+        withType = new Type();
         var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.unitIndex, withType);
         withType.members = members;
         withType.ambientMembers = ambientMembers;
@@ -240,6 +240,8 @@ module TypeScript {
             container = context.scopeChain.thisType.symbol;
         }
 
+        var fgSym: TypeSymbol = null;
+
         if (funcDecl.type == null || hasFlag(funcDecl.type.symbol.flags, SymbolFlags.TypeSetDuringScopeAssignment)) {
             if (context.scopeChain.fnc && context.scopeChain.fnc.type) {
                 container = context.scopeChain.fnc.type.symbol;
@@ -248,7 +250,6 @@ module TypeScript {
             var funcScope = null;
             var outerFnc: FuncDecl = context.scopeChain.fnc;
             var nameText = funcDecl.name ? funcDecl.name.actualText : null;
-            var fgSym: TypeSymbol = null;
 
             if (isStatic) {
                 // In the case of function-nested statics, no member list will have bee initialized for the function, so we need
@@ -351,7 +352,7 @@ module TypeScript {
             funcDecl.enclosingFnc = context.scopeChain.fnc;
             group.enclosingType = isStatic ? context.scopeChain.classType : context.scopeChain.thisType;
             // for mapping when type checking
-            var fgSym = <TypeSymbol>ast.type.symbol;
+            fgSym = <TypeSymbol>ast.type.symbol;
             if (((funcDecl.fncFlags & FncFlags.Signature) == FncFlags.None) && funcDecl.vars) {
                 context.typeFlow.addLocalsFromScope(locals, fgSym, funcDecl.vars,
                                                     funcTable, false);

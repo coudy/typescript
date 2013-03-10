@@ -290,7 +290,7 @@ module TypeScript {
             var symbol: PullSymbol = null;
 
             if (decls.length) {
-                var symbol = decls[0].getSymbol();
+                symbol = decls[0].getSymbol();
 
                 if (symbol) {
                     this.symbolCache[cacheID] = symbol;
@@ -359,7 +359,6 @@ module TypeScript {
         }
 
         public removeSymbolFromCache(symbol: PullSymbol) {
-
 
             var path = [symbol.getName()];
             var kind = (symbol.getKind() & PullElementKind.SomeType) != 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;

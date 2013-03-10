@@ -239,15 +239,16 @@ module TypeScript {
 
         export function walkListChildren(preAst: ASTList, parent: AST, walker: IAstWalker): void {
             var len = preAst.members.length;
+            var i = 0;
             if (walker.options.reverseSiblings) {
-                for (var i = len - 1; i >= 0; i--) {
+                for (i = len - 1; i >= 0; i--) {
                     if (walker.options.goNextSibling) {
                         preAst.members[i] = walker.walk(preAst.members[i], preAst);
                     }
                 }
             }
             else {
-                for (var i = 0; i < len; i++) {
+                for (i = 0; i < len; i++) {
                     if (walker.options.goNextSibling) {
                         preAst.members[i] = walker.walk(preAst.members[i], preAst);
                     }

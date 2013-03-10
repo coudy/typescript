@@ -350,12 +350,14 @@ module TypeScript {
                 ambientTable = (this.ambientValueMembers == null) ? null :
                                     publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             }
+            var s: Symbol;
+            
             if (ambientTable) {
-                var s = ambientTable.lookup(name);
+                s = ambientTable.lookup(name);
                 if (s) { return s; }
             }
             if (table) {
-                var s = table.lookup(name);
+                s = table.lookup(name);
                 if (s) { return s; }
             }
 

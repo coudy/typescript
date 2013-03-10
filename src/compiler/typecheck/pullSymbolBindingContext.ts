@@ -43,11 +43,13 @@ module TypeScript {
         var nestedSymbolPath: string[] = [];
         var copyOfContextSymbolPath = [];
         var symbol: PullSymbol = null;
+        var i = 0;
+        var endTime: number;
 
         // first, search within the given symbol path
         if (typeLookupPath.length) {
 
-            for (var i = 0; i < typeLookupPath.length; i++) {
+            for (i = 0; i < typeLookupPath.length; i++) {
                 nestedSymbolPath[nestedSymbolPath.length] = typeLookupPath[i];
             }
 
@@ -57,7 +59,7 @@ module TypeScript {
                 symbol = context.semanticInfoChain.findSymbol(nestedSymbolPath, declKind);
 
                 if (symbol) {
-                    var endTime = new Date().getTime();
+                    endTime = new Date().getTime();
                     time_in_findSymbol += endTime - startTime;
                     return symbol;
                 }
@@ -68,12 +70,12 @@ module TypeScript {
 
         // next, link back up to the enclosing context
         if (contextSymbolPath.length) {
-
-            for (var i = 0; i < contextSymbolPath.length; i++) {
+            
+            for (i = 0; i < contextSymbolPath.length; i++) {
                 copyOfContextSymbolPath[copyOfContextSymbolPath.length] = contextSymbolPath[i];
             }
 
-            for (var i = 0; i < typeLookupPath.length; i++) {
+            for (i = 0; i < typeLookupPath.length; i++) {
                 copyOfContextSymbolPath[copyOfContextSymbolPath.length] = typeLookupPath[i];
             }
 
@@ -83,7 +85,6 @@ module TypeScript {
                 symbol = context.semanticInfoChain.findSymbol(copyOfContextSymbolPath, declKind);
 
                 if (symbol) {
-                    var endTime = new Date().getTime();
                     time_in_findSymbol += endTime - startTime;
                     return symbol;
                 }
@@ -96,7 +97,7 @@ module TypeScript {
         // finally, try searching globally
         symbol = context.semanticInfoChain.findSymbol([name], declKind);
 
-        var endTime = new Date().getTime();
+        endTime = new Date().getTime();
         time_in_findSymbol += endTime - startTime;
 
         return symbol;

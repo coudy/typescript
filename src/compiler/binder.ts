@@ -35,10 +35,11 @@ module TypeScript {
 
             var i = 0, len = type.extendsList.length;
             var derivedIsClass = type.isClassInstance();
+            var baseRef: AST = null;
             for (; i < len; i++) {
                 var baseIsClass = type.extendsList[i].isClassInstance();
                 if (type.extendsList[i] != this.checker.anyType) {
-                    var baseRef = type.extendsTypeLinks[i].ast;
+                    baseRef = type.extendsTypeLinks[i].ast;
                     if (derivedIsClass) {
                         if (!baseIsClass) {
                             this.checker.errorReporter.simpleError(baseRef,
@@ -59,7 +60,7 @@ module TypeScript {
             if (type.implementsList) {
                 for (i = 0, len = type.implementsList.length; i < len; i++) {
                     var iface = type.implementsList[i];
-                    var baseRef = type.implementsTypeLinks[i].ast;
+                    baseRef = type.implementsTypeLinks[i].ast;
                     if (iface.isClassInstance()) {
                         if (derivedIsClass) {
                             this.checker.errorReporter.simpleError(baseRef,

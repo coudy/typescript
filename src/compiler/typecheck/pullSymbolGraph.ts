@@ -185,6 +185,8 @@ module TypeScript {
 
             symbolToRemove.updateIncomingLinks(propagateRemovalToIncomingLinks, new PullSymbolUpdate(GraphUpdateKind.SymbolRemoved, symbolToRemove, this));
 
+            symbolToRemove.unsetContainer();
+
             var container = symbolToRemove.getContainer();
 
             if (container) {

@@ -648,7 +648,7 @@ module TypeScript {
                                 classType.instanceType = overloadGroupType.instanceType;
                             }
 
-                            var instanceType = classType.instanceType;
+                            instanceType = classType.instanceType;
 
                             if (instanceType) {
                                 if (instanceType.call == null) {
@@ -1460,10 +1460,11 @@ module TypeScript {
             var targetMember: Symbol = null;
             var text = "";
             var foundSyms = {};
+            var i = 0;
 
             // Check that each property in the object literal is present in the target
             // type
-            for (var i = 0; i < memberDecls.members.length; i++) {
+            for (i = 0; i < memberDecls.members.length; i++) {
                 id = (<BinaryExpression>memberDecls.members[i]).operand1;
 
                 if (id.nodeType == NodeType.Name) {
@@ -1490,7 +1491,7 @@ module TypeScript {
             // Check that all members in the target type are present in the object literal
             var targetMembers = targetType.memberScope.getAllValueSymbolNames(true);
 
-            for (var i = 0; i < targetMembers.length; i++) {
+            for (i = 0; i < targetMembers.length; i++) {
                 var memberName = targetMembers[i];
                 var memberSym = targetType.memberScope.find(memberName, true, false);
 
@@ -1974,6 +1975,9 @@ module TypeScript {
             }
 
             // check signature groups
+            var hasSig: string;
+            var lacksSig: string;
+            
             if (source.call || target.call) {
                 if (!this.signatureGroupIsRelatableToTarget(source.call, target.call, assignableTo, comparisonCache, comparisonInfo)) {
                     if (comparisonInfo) {
@@ -1981,8 +1985,8 @@ module TypeScript {
                             comparisonInfo.addMessageToFront("Call signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         }
                         else {
-                            var hasSig = target.call ? target.getTypeName() : source.getTypeName();
-                            var lacksSig = !target.call ? target.getTypeName() : source.getTypeName();
+                            hasSig = target.call ? target.getTypeName() : source.getTypeName();
+                            lacksSig = !target.call ? target.getTypeName() : source.getTypeName();
                             comparisonInfo.setMessage("Type '" + hasSig + "' requires a call signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;
@@ -1999,8 +2003,8 @@ module TypeScript {
                             comparisonInfo.addMessageToFront("Construct signatures of types '" + source.getTypeName() + "' and '" + target.getTypeName() + "' are incompatible");
                         }
                         else {
-                            var hasSig = target.construct ? target.getTypeName() : source.getTypeName();
-                            var lacksSig = !target.construct ? target.getTypeName() : source.getTypeName();
+                            hasSig = target.construct ? target.getTypeName() : source.getTypeName();
+                            lacksSig = !target.construct ? target.getTypeName() : source.getTypeName();
                             comparisonInfo.setMessage("Type '" + hasSig + "' requires a construct signature, but Type '" + lacksSig + "' lacks one");
                         }
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleSignatures;

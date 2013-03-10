@@ -118,5 +118,23 @@ module TypeScript {
             message: "Operator '{0}' cannot be applied to type '{1}'",
             code: 114
         },
+
+        duplicateGetter_1: {
+            category: DiagnosticCategory.Error,
+            message: "Getter '{0}' already declared",
+            code: 115
+        },
+
+        duplicateSetter_1: {
+            category: DiagnosticCategory.Error,
+            message: "Setter '{0}' already declared",
+            code: 116
+        },
+
+        accessorsMayNotBeGeneric: {
+            category: DiagnosticCategory.Error,
+            message: "Accessors may not take type parameters",
+            code: 117
+        },
     };
 }

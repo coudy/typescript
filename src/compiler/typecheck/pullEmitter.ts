@@ -89,9 +89,10 @@ module TypeScript {
         public getModuleImportAndDepencyList(moduleDecl: ModuleDeclaration) {
             var importList = "";
             var dependencyList = "";
+            var i = 0;
 
             // all dependencies are quoted
-            for (var i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
+            for (i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
                 var importStatement = (<ModuleType>moduleDecl.mod).importedModules[i]
 
                 // if the imported module is only used in a type position, do not add it as a requirement
@@ -108,7 +109,7 @@ module TypeScript {
             }
 
             // emit any potential amd dependencies
-            for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
+            for (i = 0; i < moduleDecl.amdDependencies.length; i++) {
                 dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
             }
 
@@ -121,7 +122,9 @@ module TypeScript {
         public isParentDynamicModule(moduleDecl: ModuleDeclaration) {
             var symbol = this.semanticInfoChain.getSymbolForAST(moduleDecl, this.locationInfo.filename);
             var parentSymbol = symbol.getContainer();
-            var parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+
+            parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+
             if (parentSymbol && parentSymbol.getKind() == PullElementKind.DynamicModule) {
                 return true;
             }
@@ -167,13 +170,16 @@ module TypeScript {
 
         public isContainedInModuleOrEnumDeclaration(varDecl: VarDecl) {
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.locationInfo.filename);
+            var parentSymbol: PullTypeSymbol;
+
             if (symbol) {
-                var parentSymbol = symbol.getContainer();
+                parentSymbol = symbol.getContainer();
                 if (parentSymbol && parentSymbol.getKind() == PullElementKind.Enum) {
                     return true;
                 }
 
-                var parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+                parentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+
                 if (parentSymbol) {
                     var parentKind = parentSymbol.getKind();
                     if (parentKind == PullElementKind.Container || parentKind == PullElementKind.DynamicModule || parentKind == PullElementKind.Enum) {
@@ -330,3 +336,4 @@ module TypeScript {
         }
     }
 }
+

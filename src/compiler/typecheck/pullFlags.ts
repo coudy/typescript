@@ -114,6 +114,10 @@ module TypeScript {
         TypeArgument,
         TypeParameterSpecializedTo,
         SpecializedTo,
+
         TypeConstraint,
+
+        GetterFunction,
+        SetterFunction,
     }
 }

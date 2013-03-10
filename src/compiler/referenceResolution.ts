@@ -196,27 +196,36 @@ module TypeScript {
                     var sourceUnit = new SourceUnit(resolvedFile.path, resolvedFile.content);
                     var preProcessedFileInfo = preProcessFile(sourceUnit, this.environment.compilationSettings);
                     var resolvedFilePath = ioHost.resolvePath(resolvedFile.path);
+                    var i = 0;
+                    var resolutionResult: bool;
+
                     sourceUnit.referencedFiles = preProcessedFileInfo.referencedFiles;
 
                     // resolve explicit references
-                    for (var i = 0; i < preProcessedFileInfo.referencedFiles.length; i++) {
+                    for (i = 0; i < preProcessedFileInfo.referencedFiles.length; i++) {
                         var fileReference = preProcessedFileInfo.referencedFiles[i];
-                        var normalizedPath = isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
+
+                        normalizedPath = isRooted(fileReference.path) ? fileReference.path : rootDir + "/" + fileReference.path;
                         normalizedPath = ioHost.resolvePath(normalizedPath);
+
                         if (resolvedFilePath == normalizedPath) {
                             resolutionDispatcher.postResolutionError(normalizedPath, fileReference.startLine, fileReference.startCol, "Incorrect reference: File contains reference to itself.");
                             continue;
                         }
-                        var resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
+
+                        resolutionResult = this.resolveCode(fileReference.path, rootDir, false, resolutionDispatcher);
+
                         if (!resolutionResult) {
                             resolutionDispatcher.postResolutionError(resolvedFilePath, fileReference.startLine, fileReference.startCol, "Incorrect reference: referenced file: \"" + fileReference.path + "\" cannot be resolved.");
                         }
                     }
                     
                     // resolve imports
-                    for (var i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
+                    for (i = 0; i < preProcessedFileInfo.importedFiles.length; i++) {
                         var fileImport = preProcessedFileInfo.importedFiles[i];
-                        var resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
+
+                        resolutionResult = this.resolveCode(fileImport.path, rootDir, true, resolutionDispatcher);
+
                         if (!resolutionResult) {
                             resolutionDispatcher.postResolutionError(resolvedFilePath, fileImport.startLine, fileImport.startCol, "Incorrect reference: imported file: \"" + fileImport.path + "\" cannot be resolved.");
                         }

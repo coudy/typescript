@@ -47,6 +47,9 @@ module TypeScript {
         incompatibleTypesWithReason_3,
         expectedClassOrInterface,
         unaryOperatorTypeError_2,
+        duplicateGetter_1,
+        duplicateSetter_1,
+        accessorsMayNotBeGeneric,
     }
 
     export interface TypeScriptDiagnosticMessages {
@@ -68,6 +71,8 @@ module TypeScript {
         incompatibleTypesWithReason_3: Diagnostic;
         expectedClassOrInterface: Diagnostic;
         unaryOperatorTypeError_2: Diagnostic;
-
+        duplicateGetter_1: Diagnostic;
+        duplicateSetter_1: Diagnostic;
+        accessorsMayNotBeGeneric: Diagnostic;
     }
 }

@@ -230,7 +230,7 @@ class SyntaxNode implements ISyntaxNodeOrToken {
             var element = this.childAt(i);
 
             if (element !== null) {
-                var childWidth = element.fullWidth();
+                childWidth = element.fullWidth();
                 fullWidth += childWidth;
 
                 if (!hasSkippedText) {

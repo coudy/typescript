@@ -447,6 +447,8 @@ module TypeScript {
         public getPrettyNameOfDynamicModule(scopeSymbolPath: Symbol[]) {
             var scopeSymbolPathLength = scopeSymbolPath.length;
             var externalSymbol: { name: string; symbol: Symbol; } = null;
+            var moduleType: ModuleType;
+
             if (scopeSymbolPath.length > 0 &&
                 scopeSymbolPath[scopeSymbolPathLength - 1].getType().isModuleType() &&
                 (<TypeSymbol>scopeSymbolPath[scopeSymbolPathLength - 1]).isDynamic) {
@@ -455,14 +457,14 @@ module TypeScript {
                 if (scopeSymbolPathLength > 1 &&
                     scopeSymbolPath[scopeSymbolPathLength - 2].getType().isModuleType() &&
                     (<TypeSymbol>scopeSymbolPath[scopeSymbolPathLength - 2]).isDynamic) {
-                    var moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 2].getType();
+                    moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 2].getType();
                     externalSymbol = moduleType.findDynamicModuleName(this.type);
 
                 }
 
                 if (externalSymbol == null) {
                     // Check in this module
-                    var moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 1].getType();
+                    moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 1].getType();
                     externalSymbol = moduleType.findDynamicModuleName(this.type);
                 }
             }

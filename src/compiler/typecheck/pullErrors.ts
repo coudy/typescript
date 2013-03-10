@@ -46,16 +46,17 @@ module TypeScript {
 
     export function getErrorsFromEnclosingDecl(enclosingDecl: PullDecl, errors: SemanticError[]) {
         var declErrors = enclosingDecl.getErrors();
+        var i = 0;
 
         if (declErrors) {
-            for (var i = 0; i < declErrors.length; i++) {
+            for (i = 0; i < declErrors.length; i++) {
                 errors[errors.length] = declErrors[i];
             }
         }
 
         var childDecls = enclosingDecl.getChildDecls();
 
-        for (var i = 0; i < childDecls.length; i++) {
+        for (i = 0; i < childDecls.length; i++) {
             getErrorsFromEnclosingDecl(childDecls[i], errors);
         }
     }
