@@ -17,6 +17,7 @@ interface ISyntaxVisitor {
     visitVariableDeclaration(node: VariableDeclarationSyntax): any;
     visitVariableDeclarator(node: VariableDeclaratorSyntax): any;
     visitEqualsValueClause(node: EqualsValueClauseSyntax): any;
+    visitColonValueClause(node: ColonValueClauseSyntax): any;
     visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): any;
     visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): any;
     visitOmittedExpression(node: OmittedExpressionSyntax): any;
@@ -70,6 +71,7 @@ interface ISyntaxVisitor {
     visitWhileStatement(node: WhileStatementSyntax): any;
     visitWithStatement(node: WithStatementSyntax): any;
     visitEnumDeclaration(node: EnumDeclarationSyntax): any;
+    visitEnumElement(node: EnumElementSyntax): any;
     visitCastExpression(node: CastExpressionSyntax): any;
     visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): any;
     visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): any;
@@ -154,6 +156,10 @@ class SyntaxVisitor implements ISyntaxVisitor {
     }
 
     private visitEqualsValueClause(node: EqualsValueClauseSyntax): any {
+        return this.defaultVisit(node);
+    }
+
+    private visitColonValueClause(node: ColonValueClauseSyntax): any {
         return this.defaultVisit(node);
     }
 
@@ -366,6 +372,10 @@ class SyntaxVisitor implements ISyntaxVisitor {
     }
 
     private visitEnumDeclaration(node: EnumDeclarationSyntax): any {
+        return this.defaultVisit(node);
+    }
+
+    private visitEnumElement(node: EnumElementSyntax): any {
         return this.defaultVisit(node);
     }
 

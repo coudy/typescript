@@ -949,12 +949,12 @@ module Emitter {
         }
 
         private generateEnumValueExpression(enumDeclaration: EnumDeclarationSyntax,
-                                            variableDeclarator: VariableDeclaratorSyntax,
+                                            enumElement: IEnumElementSyntax,
                                             assignDefaultValues: bool,
                                             index: number): IExpressionSyntax {
-            if (variableDeclarator.equalsValueClause !== null) {
+            if (this.hasValueClause(enumElement)) {
                 // Use the value if one is provided.
-                return variableDeclarator.equalsValueClause.value.withTrailingTrivia(Syntax.emptyTriviaList);
+                return this.valueClause(enumElement).accept(this).withTrailingTrivia(Syntax.emptyTriviaList);
             }
 
             // Didn't have a value.  Synthesize one if we're doing that, or use the previous item's value
@@ -965,8 +965,8 @@ module Emitter {
 
             // Add one to the previous value.
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier);
-            var previousVariable = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators.nonSeparatorAt(index - 1);
-            var variableIdentifier = this.withNoTrivia(previousVariable.identifier);
+            var previousEnumElement = <VariableDeclaratorSyntax>enumDeclaration.enumElements.nonSeparatorAt(index - 1);
+            var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(previousEnumElement));
 
             var receiver = MemberAccessExpressionSyntax.create1(
                 enumIdentifier, variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList));
@@ -987,7 +987,7 @@ module Emitter {
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
 
-            if (node.variableDeclarators.nonSeparatorCount() > 0) {
+            if (node.enumElements.nonSeparatorCount() > 0) {
                 // var _ = E;
                 statements.push(VariableStatementSyntax.create1(
                     this.factory.variableDeclaration(
@@ -1006,23 +1006,23 @@ module Emitter {
                         ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
 
                 var assignDefaultValues = { value: true };
-                for (var i = 0, n = node.variableDeclarators.nonSeparatorCount(); i < n; i++) {
-                    var variableDeclarator = <VariableDeclaratorSyntax>node.variableDeclarators.nonSeparatorAt(i)
-                    var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier);
+                for (var i = 0, n = node.enumElements.nonSeparatorCount(); i < n; i++) {
+                    var enumElement = <IEnumElementSyntax>node.enumElements.nonSeparatorAt(i)
+                    var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(enumElement));
 
-                    assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause === null;
+                    assignDefaultValues.value = assignDefaultValues.value && !this.hasValueClause(enumElement);
 
                     // _.Foo = 1
                     var innerAssign = Syntax.assignmentExpression(
                         MemberAccessExpressionSyntax.create1(
                             Syntax.identifierName("_"), variableIdentifier).withTrailingTrivia(Syntax.spaceTriviaList),
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                        this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i))
+                        this.generateEnumValueExpression(node, enumElement, assignDefaultValues.value, i))
 
                     // _._map[_.Foo = 1]
                     var elementAccessExpression = ElementAccessExpressionSyntax.create1(
                         MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")),
-                        innerAssign).withLeadingTrivia(variableDeclarator.leadingTrivia()).withTrailingTrivia(this.space);;
+                        innerAssign).withLeadingTrivia(enumElement.leadingTrivia()).withTrailingTrivia(this.space);;
 
                     //_._map[_.Foo = 1] = "Foo"
                     var outerAssign = Syntax.assignmentExpression(
@@ -1048,6 +1048,34 @@ module Emitter {
             return FunctionExpressionSyntax.create1()
                 .withCallSignature(CallSignatureSyntax.create(parameterList))
                 .withBlock(block);
+        }
+
+        private hasValueClause(node: IEnumElementSyntax): bool {
+            if (node.kind() === SyntaxKind.VariableDeclarator) {
+                return (<VariableDeclaratorSyntax>node).equalsValueClause !== null;
+            }
+            else {
+                return (<EnumElementSyntax>node).colonValueClause !== null;
+            }
+        }
+
+        private valueClause(node: IEnumElementSyntax): IExpressionSyntax {
+            if (node.kind() === SyntaxKind.VariableDeclarator) {
+                return (<VariableDeclaratorSyntax>node).equalsValueClause.value;
+            }
+            else {
+                return (<EnumElementSyntax>node).colonValueClause.value;
+            }
+        }
+
+        private getEnumElementIdentifier(node: IEnumElementSyntax): ISyntaxToken {
+            if (node.kind() === SyntaxKind.VariableDeclarator) {
+                return (<VariableDeclaratorSyntax>node).identifier;
+            }
+            else {
+                var enumElement = <EnumElementSyntax>node;
+                return enumElement.identifier || enumElement.stringLiteral;
+            }
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): IStatementSyntax[] {

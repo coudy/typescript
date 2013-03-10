@@ -275,6 +275,7 @@ enum SyntaxKind {
     // Clauses
     ImplementsClause,
     ExtendsClause,
+    ColonValueClause,
     EqualsValueClause,
     CaseSwitchClause,
     DefaultSwitchClause,
@@ -288,6 +289,7 @@ enum SyntaxKind {
 
     // Misc.
     Parameter,
+    EnumElement,
     TypeAnnotation,
     SimplePropertyAssignment,
     ExternalModuleReference,

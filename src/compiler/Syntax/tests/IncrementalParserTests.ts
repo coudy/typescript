@@ -201,6 +201,18 @@ class IncrementalParserTests {
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
     }
 
+    public static testEnumElement1() {
+        // Should be able to reuse most of the enum elements.
+        var source = "enum E { a: 1, b: 1 << 1, c: 3, e: 4, f: 5, g: 7, h: 8, i: 9, j: 10 }";
+
+        var index = source.indexOf("<<");
+
+        var oldText = TextFactory.createText(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
+
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
+    }
+
     public static testStrictMode1() {
         // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
         // we'll have to reparse the nodes (and generate an error for 'static();'

@@ -160,6 +160,11 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitNodeOrToken(node.value);
     }
 
+    public visitColonValueClause(node: ColonValueClauseSyntax): void {
+        this.visitToken(node.colonToken);
+        this.visitNodeOrToken(node.value);
+    }
+
     public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): void {
         this.visitToken(node.operatorToken);
         this.visitNodeOrToken(node.operand);
@@ -510,8 +515,14 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.enumKeyword);
         this.visitToken(node.identifier);
         this.visitToken(node.openBraceToken);
-        this.visitSeparatedList(node.variableDeclarators);
+        this.visitSeparatedList(node.enumElements);
         this.visitToken(node.closeBraceToken);
+    }
+
+    public visitEnumElement(node: EnumElementSyntax): void {
+        this.visitOptionalToken(node.identifier);
+        this.visitOptionalToken(node.stringLiteral);
+        this.visitOptionalNode(node.colonValueClause);
     }
 
     public visitCastExpression(node: CastExpressionSyntax): void {

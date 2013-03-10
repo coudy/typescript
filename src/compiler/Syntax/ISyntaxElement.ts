@@ -80,3 +80,6 @@ interface ITypeSyntax extends IUnaryExpressionSyntax {
 
 interface INameSyntax extends ITypeSyntax {
 }
+
+interface IEnumElementSyntax extends ISyntaxNode {
+}

@@ -727,24 +727,42 @@ module TypeScript {
             var memberNames: Identifier[] = [];
             var start = this.position;
 
-            for (var i = 0, n = enumDeclaration.variableDeclarators.childCount(); i < n; i++) {
+            for (var i = 0, n = enumDeclaration.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
-                    this.movePast(<ISyntaxToken>enumDeclaration.variableDeclarators.childAt(i));
+                    this.movePast(<ISyntaxToken>enumDeclaration.enumElements.childAt(i));
                 }
                 else {
-                    var variableDeclarator = <VariableDeclaratorSyntax>enumDeclaration.variableDeclarators.childAt(i);
+                    var element = <IEnumElementSyntax>enumDeclaration.enumElements.childAt(i);
 
-                    var memberName: Identifier = this.identifierFromToken(variableDeclarator.identifier, /*isOptional:*/ false);
-                    this.movePast(variableDeclarator.identifier);
+                    var memberName: Identifier;
                     var memberValue: AST = null;
-                    var memberStart = this.position;
 
-                    if (variableDeclarator.equalsValueClause !== null) {
-                        memberValue = variableDeclarator.equalsValueClause.accept(this);
-                        lastValue = <NumberLiteral>memberValue;
+                    if (element.kind() === SyntaxKind.VariableDeclarator) {
+                        var variableDeclarator = <VariableDeclaratorSyntax>element;
+                        memberName = this.identifierFromToken(variableDeclarator.identifier, /*isOptional:*/ false);
+                        this.movePast(variableDeclarator.identifier);
+
+                        if (variableDeclarator.equalsValueClause !== null) {
+                            memberValue = variableDeclarator.equalsValueClause.accept(this);
+                            lastValue = <NumberLiteral>memberValue;
+                        }
                     }
                     else {
-                        if (lastValue == null) {
+                        var enumElement = <EnumElementSyntax>element;
+                        memberName = this.identifierFromToken(enumElement.identifier || enumElement.stringLiteral, /*isOptional:*/ false);
+                        this.movePast(enumElement.identifier);
+                        this.movePast(enumElement.stringLiteral);
+
+                        if (enumElement.colonValueClause !== null) {
+                            memberValue = enumElement.colonValueClause.accept(this);
+                            lastValue = <NumberLiteral>memberValue;
+                        }
+                    }
+
+                    var memberStart = this.position;
+
+                    if (memberValue === null) {
+                        if (lastValue === null) {
                             memberValue = new NumberLiteral(0, "0");
                             lastValue = <NumberLiteral>memberValue;
                         }
@@ -761,6 +779,7 @@ module TypeScript {
                                                  new StringLiteral('"' + memberName.actualText + '"'));
                         members.append(map);
                     }
+
                     var member = new VarDecl(memberName, this.nestingLevel);
                     member.init = memberValue;
                     // Note: Leave minChar, limChar as "-1" on typeExpr as this is a parsing artifact.
@@ -814,6 +833,11 @@ module TypeScript {
             this.popDeclLists();
 
             return modDecl;
+        }
+
+        private visitEnumElement(node: EnumElementSyntax): void {
+            // Processing enum elements should be handled from inside visitEnumDeclaration.
+            throw Errors.invalidOperation();
         }
 
         private visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
@@ -935,6 +959,13 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             this.movePast(node.equalsToken);
+            return node.value.accept(this);
+        }
+
+        private visitColonValueClause(node: ColonValueClauseSyntax): AST {
+            this.assertElementAtPosition(node);
+
+            this.movePast(node.colonToken);
             return node.value.accept(this);
         }
 

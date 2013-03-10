@@ -347,6 +347,12 @@ module PrettyPrinter {
             this.appendNode(node.equalsValueClause);
         }
 
+        private visitColonValueClause(node: ColonValueClauseSyntax): void {
+            this.appendToken(node.colonToken);
+            this.ensureSpace();
+            node.value.accept(this);
+        }
+
         private visitEqualsValueClause(node: EqualsValueClauseSyntax): void {
             this.ensureSpace();
             this.appendToken(node.equalsToken);
@@ -840,15 +846,6 @@ module PrettyPrinter {
         }
 
         private visitEnumDeclaration(node: EnumDeclarationSyntax): void {
-            /*
-            exportKeyword: ISyntaxToken,
-                public enumKeyword: ISyntaxToken,
-                public identifier: ISyntaxToken,
-                public openBraceToken: ISyntaxToken,
-                public variableDeclarators: ISeparatedSyntaxList,
-                public closeBraceToken:
-            */
-
             this.appendToken(node.exportKeyword);
             this.ensureSpace();
             this.appendToken(node.enumKeyword);
@@ -859,10 +856,17 @@ module PrettyPrinter {
             this.ensureNewLine();
 
             this.indentation++;
-            this.appendSeparatorNewLineList(node.variableDeclarators);
+            this.appendSeparatorNewLineList(node.enumElements);
             this.indentation--;
 
             this.appendToken(node.closeBraceToken);
+        }
+
+        private visitEnumElement(node: EnumElementSyntax): void {
+            this.appendToken(node.identifier);
+            this.ensureSpace();
+            this.appendToken(node.stringLiteral);
+            this.appendNode(node.colonValueClause);
         }
 
         private visitCastExpression(node: CastExpressionSyntax): void {

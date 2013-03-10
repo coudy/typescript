@@ -30,6 +30,15 @@ class Program {
             // return;
         }
 
+        Environment.standardOut.WriteLine("Testing Incremental 2.");
+        if (specificFile === undefined) {
+            IncrementalParserTests.runAllTests();
+        }
+
+        Environment.standardOut.WriteLine("Testing emitter 1.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
+            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
+
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
             filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
@@ -46,10 +55,6 @@ class Program {
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
             filePath => this.runPrettyPrinter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
-        Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
-
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5",
             filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
@@ -57,11 +62,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
 
-        Environment.standardOut.WriteLine("Testing Incremental 2.");
-        if (specificFile === undefined) {
-            IncrementalParserTests.runAllTests();
-        }
-            
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5",
             filePath => this.runTrivia(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));

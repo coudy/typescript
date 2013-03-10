@@ -20240,36 +20240,40 @@ var SyntaxKind;
     SyntaxKind.ImplementsClause = 228;
     SyntaxKind._map[229] = "ExtendsClause";
     SyntaxKind.ExtendsClause = 229;
-    SyntaxKind._map[230] = "EqualsValueClause";
-    SyntaxKind.EqualsValueClause = 230;
-    SyntaxKind._map[231] = "CaseSwitchClause";
-    SyntaxKind.CaseSwitchClause = 231;
-    SyntaxKind._map[232] = "DefaultSwitchClause";
-    SyntaxKind.DefaultSwitchClause = 232;
-    SyntaxKind._map[233] = "ElseClause";
-    SyntaxKind.ElseClause = 233;
-    SyntaxKind._map[234] = "CatchClause";
-    SyntaxKind.CatchClause = 234;
-    SyntaxKind._map[235] = "FinallyClause";
-    SyntaxKind.FinallyClause = 235;
-    SyntaxKind._map[236] = "TypeParameter";
-    SyntaxKind.TypeParameter = 236;
-    SyntaxKind._map[237] = "Constraint";
-    SyntaxKind.Constraint = 237;
-    SyntaxKind._map[238] = "Parameter";
-    SyntaxKind.Parameter = 238;
-    SyntaxKind._map[239] = "TypeAnnotation";
-    SyntaxKind.TypeAnnotation = 239;
-    SyntaxKind._map[240] = "SimplePropertyAssignment";
-    SyntaxKind.SimplePropertyAssignment = 240;
-    SyntaxKind._map[241] = "ExternalModuleReference";
-    SyntaxKind.ExternalModuleReference = 241;
-    SyntaxKind._map[242] = "ModuleNameModuleReference";
-    SyntaxKind.ModuleNameModuleReference = 242;
-    SyntaxKind._map[243] = "GetAccessorPropertyAssignment";
-    SyntaxKind.GetAccessorPropertyAssignment = 243;
-    SyntaxKind._map[244] = "SetAccessorPropertyAssignment";
-    SyntaxKind.SetAccessorPropertyAssignment = 244;
+    SyntaxKind._map[230] = "ColonValueClause";
+    SyntaxKind.ColonValueClause = 230;
+    SyntaxKind._map[231] = "EqualsValueClause";
+    SyntaxKind.EqualsValueClause = 231;
+    SyntaxKind._map[232] = "CaseSwitchClause";
+    SyntaxKind.CaseSwitchClause = 232;
+    SyntaxKind._map[233] = "DefaultSwitchClause";
+    SyntaxKind.DefaultSwitchClause = 233;
+    SyntaxKind._map[234] = "ElseClause";
+    SyntaxKind.ElseClause = 234;
+    SyntaxKind._map[235] = "CatchClause";
+    SyntaxKind.CatchClause = 235;
+    SyntaxKind._map[236] = "FinallyClause";
+    SyntaxKind.FinallyClause = 236;
+    SyntaxKind._map[237] = "TypeParameter";
+    SyntaxKind.TypeParameter = 237;
+    SyntaxKind._map[238] = "Constraint";
+    SyntaxKind.Constraint = 238;
+    SyntaxKind._map[239] = "Parameter";
+    SyntaxKind.Parameter = 239;
+    SyntaxKind._map[240] = "EnumElement";
+    SyntaxKind.EnumElement = 240;
+    SyntaxKind._map[241] = "TypeAnnotation";
+    SyntaxKind.TypeAnnotation = 241;
+    SyntaxKind._map[242] = "SimplePropertyAssignment";
+    SyntaxKind.SimplePropertyAssignment = 242;
+    SyntaxKind._map[243] = "ExternalModuleReference";
+    SyntaxKind.ExternalModuleReference = 243;
+    SyntaxKind._map[244] = "ModuleNameModuleReference";
+    SyntaxKind.ModuleNameModuleReference = 244;
+    SyntaxKind._map[245] = "GetAccessorPropertyAssignment";
+    SyntaxKind.GetAccessorPropertyAssignment = 245;
+    SyntaxKind._map[246] = "SetAccessorPropertyAssignment";
+    SyntaxKind.SetAccessorPropertyAssignment = 246;
     SyntaxKind.FirstStandardKeyword = SyntaxKind.BreakKeyword;
     SyntaxKind.LastStandardKeyword = SyntaxKind.WithKeyword;
     SyntaxKind.FirstFutureReservedKeyword = SyntaxKind.ClassKeyword;
@@ -20376,6 +20380,9 @@ var SyntaxRewriter = (function () {
     };
     SyntaxRewriter.prototype.visitEqualsValueClause = function (node) {
         return node.update(this.visitToken(node.equalsToken), this.visitNodeOrToken(node.value));
+    };
+    SyntaxRewriter.prototype.visitColonValueClause = function (node) {
+        return node.update(this.visitToken(node.colonToken), this.visitNodeOrToken(node.value));
     };
     SyntaxRewriter.prototype.visitPrefixUnaryExpression = function (node) {
         return node.update(node.kind(), this.visitToken(node.operatorToken), this.visitNodeOrToken(node.operand));
@@ -20534,7 +20541,10 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.withKeyword), this.visitToken(node.openParenToken), this.visitNodeOrToken(node.condition), this.visitToken(node.closeParenToken), this.visitNodeOrToken(node.statement));
     };
     SyntaxRewriter.prototype.visitEnumDeclaration = function (node) {
-        return node.update(node.exportKeyword === null ? null : this.visitToken(node.exportKeyword), this.visitToken(node.enumKeyword), this.visitToken(node.identifier), this.visitToken(node.openBraceToken), this.visitSeparatedList(node.variableDeclarators), this.visitToken(node.closeBraceToken));
+        return node.update(node.exportKeyword === null ? null : this.visitToken(node.exportKeyword), this.visitToken(node.enumKeyword), this.visitToken(node.identifier), this.visitToken(node.openBraceToken), this.visitSeparatedList(node.enumElements), this.visitToken(node.closeBraceToken));
+    };
+    SyntaxRewriter.prototype.visitEnumElement = function (node) {
+        return node.update(node.identifier === null ? null : this.visitToken(node.identifier), node.stringLiteral === null ? null : this.visitToken(node.stringLiteral), node.colonValueClause === null ? null : this.visitNode(node.colonValueClause));
     };
     SyntaxRewriter.prototype.visitCastExpression = function (node) {
         return node.update(this.visitToken(node.lessThanToken), this.visitNodeOrToken(node.type), this.visitToken(node.greaterThanToken), this.visitNodeOrToken(node.expression));
@@ -28004,6 +28014,9 @@ var Syntax;
         NormalModeFactory.prototype.equalsValueClause = function (equalsToken, value) {
             return new EqualsValueClauseSyntax(equalsToken, value, false);
         };
+        NormalModeFactory.prototype.colonValueClause = function (colonToken, value) {
+            return new ColonValueClauseSyntax(colonToken, value, false);
+        };
         NormalModeFactory.prototype.prefixUnaryExpression = function (kind, operatorToken, operand) {
             return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand, false);
         };
@@ -28160,8 +28173,11 @@ var Syntax;
         NormalModeFactory.prototype.withStatement = function (withKeyword, openParenToken, condition, closeParenToken, statement) {
             return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement, false);
         };
-        NormalModeFactory.prototype.enumDeclaration = function (exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken) {
-            return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, false);
+        NormalModeFactory.prototype.enumDeclaration = function (exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken) {
+            return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, false);
+        };
+        NormalModeFactory.prototype.enumElement = function (identifier, stringLiteral, colonValueClause) {
+            return new EnumElementSyntax(identifier, stringLiteral, colonValueClause, false);
         };
         NormalModeFactory.prototype.castExpression = function (lessThanToken, type, greaterThanToken, expression) {
             return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, false);
@@ -28259,6 +28275,9 @@ var Syntax;
         };
         StrictModeFactory.prototype.equalsValueClause = function (equalsToken, value) {
             return new EqualsValueClauseSyntax(equalsToken, value, true);
+        };
+        StrictModeFactory.prototype.colonValueClause = function (colonToken, value) {
+            return new ColonValueClauseSyntax(colonToken, value, true);
         };
         StrictModeFactory.prototype.prefixUnaryExpression = function (kind, operatorToken, operand) {
             return new PrefixUnaryExpressionSyntax(kind, operatorToken, operand, true);
@@ -28416,8 +28435,11 @@ var Syntax;
         StrictModeFactory.prototype.withStatement = function (withKeyword, openParenToken, condition, closeParenToken, statement) {
             return new WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement, true);
         };
-        StrictModeFactory.prototype.enumDeclaration = function (exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken) {
-            return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, true);
+        StrictModeFactory.prototype.enumDeclaration = function (exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken) {
+            return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, true);
+        };
+        StrictModeFactory.prototype.enumElement = function (identifier, stringLiteral, colonValueClause) {
+            return new EnumElementSyntax(identifier, stringLiteral, colonValueClause, true);
         };
         StrictModeFactory.prototype.castExpression = function (lessThanToken, type, greaterThanToken, expression) {
             return new CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, true);
@@ -28500,7 +28522,7 @@ var Syntax;
             var parent = positionedNodeOrToken.containingNode();
             if (parent !== null) {
                 switch(parent.kind()) {
-                    case 242 /* ModuleNameModuleReference */ :
+                    case 244 /* ModuleNameModuleReference */ :
                         return true;
                     case 121 /* QualifiedName */ :
                         return true;
@@ -28523,7 +28545,7 @@ var Syntax;
                     return (parent).type === nodeOrToken;
                 case 218 /* CastExpression */ :
                     return (parent).type === nodeOrToken;
-                case 239 /* TypeAnnotation */ :
+                case 241 /* TypeAnnotation */ :
                 case 229 /* ExtendsClause */ :
                 case 228 /* ImplementsClause */ :
                 case 226 /* TypeArgumentList */ :
@@ -28782,7 +28804,7 @@ var ExternalModuleReferenceSyntax = (function (_super) {
         return visitor.visitExternalModuleReference(this);
     };
     ExternalModuleReferenceSyntax.prototype.kind = function () {
-        return 241 /* ExternalModuleReference */ ;
+        return 243 /* ExternalModuleReference */ ;
     };
     ExternalModuleReferenceSyntax.prototype.childCount = function () {
         return 4;
@@ -28843,7 +28865,7 @@ var ModuleNameModuleReferenceSyntax = (function (_super) {
         return visitor.visitModuleNameModuleReference(this);
     };
     ModuleNameModuleReferenceSyntax.prototype.kind = function () {
-        return 242 /* ModuleNameModuleReference */ ;
+        return 244 /* ModuleNameModuleReference */ ;
     };
     ModuleNameModuleReferenceSyntax.prototype.childCount = function () {
         return 1;
@@ -29690,6 +29712,9 @@ var VariableDeclaratorSyntax = (function (_super) {
                 throw Errors.invalidOperation();
         }
     };
+    VariableDeclaratorSyntax.prototype.isEnumElement = function () {
+        return true;
+    };
     VariableDeclaratorSyntax.prototype.update = function (identifier, typeAnnotation, equalsValueClause) {
         if (this.identifier === identifier && this.typeAnnotation === typeAnnotation && this.equalsValueClause === equalsValueClause) {
             return this;
@@ -29739,7 +29764,7 @@ var EqualsValueClauseSyntax = (function (_super) {
         return visitor.visitEqualsValueClause(this);
     };
     EqualsValueClauseSyntax.prototype.kind = function () {
-        return 230 /* EqualsValueClause */ ;
+        return 231 /* EqualsValueClause */ ;
     };
     EqualsValueClauseSyntax.prototype.childCount = function () {
         return 2;
@@ -29782,6 +29807,61 @@ var EqualsValueClauseSyntax = (function (_super) {
         return false;
     };
     return EqualsValueClauseSyntax;
+})(SyntaxNode);
+var ColonValueClauseSyntax = (function (_super) {
+    __extends(ColonValueClauseSyntax, _super);
+    function ColonValueClauseSyntax(colonToken, value, parsedInStrictMode) {
+        _super.call(this, parsedInStrictMode);
+        this.colonToken = colonToken;
+        this.value = value;
+    }
+    ColonValueClauseSyntax.prototype.accept = function (visitor) {
+        return visitor.visitColonValueClause(this);
+    };
+    ColonValueClauseSyntax.prototype.kind = function () {
+        return 230 /* ColonValueClause */ ;
+    };
+    ColonValueClauseSyntax.prototype.childCount = function () {
+        return 2;
+    };
+    ColonValueClauseSyntax.prototype.childAt = function (slot) {
+        switch(slot) {
+            case 0:
+                return this.colonToken;
+            case 1:
+                return this.value;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
+    ColonValueClauseSyntax.prototype.update = function (colonToken, value) {
+        if (this.colonToken === colonToken && this.value === value) {
+            return this;
+        }
+        return new ColonValueClauseSyntax(colonToken, value, this.parsedInStrictMode());
+    };
+    ColonValueClauseSyntax.create1 = function create1(value) {
+        return new ColonValueClauseSyntax(Syntax.token(106 /* ColonToken */ ), value, false);
+    };
+    ColonValueClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
+        return _super.prototype.withLeadingTrivia.call(this, trivia);
+    };
+    ColonValueClauseSyntax.prototype.withTrailingTrivia = function (trivia) {
+        return _super.prototype.withTrailingTrivia.call(this, trivia);
+    };
+    ColonValueClauseSyntax.prototype.withColonToken = function (colonToken) {
+        return this.update(colonToken, this.value);
+    };
+    ColonValueClauseSyntax.prototype.withValue = function (value) {
+        return this.update(this.colonToken, value);
+    };
+    ColonValueClauseSyntax.prototype.isTypeScriptSpecific = function () {
+        if (this.value.isTypeScriptSpecific()) {
+            return true;
+        }
+        return false;
+    };
+    return ColonValueClauseSyntax;
 })(SyntaxNode);
 var PrefixUnaryExpressionSyntax = (function (_super) {
     __extends(PrefixUnaryExpressionSyntax, _super);
@@ -30665,7 +30745,7 @@ var TypeAnnotationSyntax = (function (_super) {
         return visitor.visitTypeAnnotation(this);
     };
     TypeAnnotationSyntax.prototype.kind = function () {
-        return 239 /* TypeAnnotation */ ;
+        return 241 /* TypeAnnotation */ ;
     };
     TypeAnnotationSyntax.prototype.childCount = function () {
         return 2;
@@ -30796,7 +30876,7 @@ var ParameterSyntax = (function (_super) {
         return visitor.visitParameter(this);
     };
     ParameterSyntax.prototype.kind = function () {
-        return 238 /* Parameter */ ;
+        return 239 /* Parameter */ ;
     };
     ParameterSyntax.prototype.childCount = function () {
         return 6;
@@ -31851,7 +31931,7 @@ var TypeParameterSyntax = (function (_super) {
         return visitor.visitTypeParameter(this);
     };
     TypeParameterSyntax.prototype.kind = function () {
-        return 236 /* TypeParameter */ ;
+        return 237 /* TypeParameter */ ;
     };
     TypeParameterSyntax.prototype.childCount = function () {
         return 2;
@@ -31906,7 +31986,7 @@ var ConstraintSyntax = (function (_super) {
         return visitor.visitConstraint(this);
     };
     ConstraintSyntax.prototype.kind = function () {
-        return 237 /* Constraint */ ;
+        return 238 /* Constraint */ ;
     };
     ConstraintSyntax.prototype.childCount = function () {
         return 2;
@@ -31958,7 +32038,7 @@ var ElseClauseSyntax = (function (_super) {
         return visitor.visitElseClause(this);
     };
     ElseClauseSyntax.prototype.kind = function () {
-        return 233 /* ElseClause */ ;
+        return 234 /* ElseClause */ ;
     };
     ElseClauseSyntax.prototype.childCount = function () {
         return 2;
@@ -32904,7 +32984,7 @@ var CaseSwitchClauseSyntax = (function (_super) {
         return visitor.visitCaseSwitchClause(this);
     };
     CaseSwitchClauseSyntax.prototype.kind = function () {
-        return 231 /* CaseSwitchClause */ ;
+        return 232 /* CaseSwitchClause */ ;
     };
     CaseSwitchClauseSyntax.prototype.childCount = function () {
         return 4;
@@ -32979,7 +33059,7 @@ var DefaultSwitchClauseSyntax = (function (_super) {
         return visitor.visitDefaultSwitchClause(this);
     };
     DefaultSwitchClauseSyntax.prototype.kind = function () {
-        return 232 /* DefaultSwitchClause */ ;
+        return 233 /* DefaultSwitchClause */ ;
     };
     DefaultSwitchClauseSyntax.prototype.childCount = function () {
         return 3;
@@ -33581,13 +33661,13 @@ var WithStatementSyntax = (function (_super) {
 })(SyntaxNode);
 var EnumDeclarationSyntax = (function (_super) {
     __extends(EnumDeclarationSyntax, _super);
-    function EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, parsedInStrictMode) {
+    function EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, parsedInStrictMode) {
         _super.call(this, parsedInStrictMode);
         this.exportKeyword = exportKeyword;
         this.enumKeyword = enumKeyword;
         this.identifier = identifier;
         this.openBraceToken = openBraceToken;
-        this.variableDeclarators = variableDeclarators;
+        this.enumElements = enumElements;
         this.closeBraceToken = closeBraceToken;
     }
     EnumDeclarationSyntax.prototype.accept = function (visitor) {
@@ -33610,7 +33690,7 @@ var EnumDeclarationSyntax = (function (_super) {
             case 3:
                 return this.openBraceToken;
             case 4:
-                return this.variableDeclarators;
+                return this.enumElements;
             case 5:
                 return this.closeBraceToken;
             default:
@@ -33620,11 +33700,11 @@ var EnumDeclarationSyntax = (function (_super) {
     EnumDeclarationSyntax.prototype.isModuleElement = function () {
         return true;
     };
-    EnumDeclarationSyntax.prototype.update = function (exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken) {
-        if (this.exportKeyword === exportKeyword && this.enumKeyword === enumKeyword && this.identifier === identifier && this.openBraceToken === openBraceToken && this.variableDeclarators === variableDeclarators && this.closeBraceToken === closeBraceToken) {
+    EnumDeclarationSyntax.prototype.update = function (exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken) {
+        if (this.exportKeyword === exportKeyword && this.enumKeyword === enumKeyword && this.identifier === identifier && this.openBraceToken === openBraceToken && this.enumElements === enumElements && this.closeBraceToken === closeBraceToken) {
             return this;
         }
-        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, this.parsedInStrictMode());
+        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, this.parsedInStrictMode());
     };
     EnumDeclarationSyntax.create = function create(enumKeyword, identifier, openBraceToken, closeBraceToken) {
         return new EnumDeclarationSyntax(null, enumKeyword, identifier, openBraceToken, Syntax.emptySeparatedList, closeBraceToken, false);
@@ -33639,32 +33719,96 @@ var EnumDeclarationSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     EnumDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
-        return this.update(exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.enumElements, this.closeBraceToken);
     };
     EnumDeclarationSyntax.prototype.withEnumKeyword = function (enumKeyword) {
-        return this.update(this.exportKeyword, enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(this.exportKeyword, enumKeyword, this.identifier, this.openBraceToken, this.enumElements, this.closeBraceToken);
     };
     EnumDeclarationSyntax.prototype.withIdentifier = function (identifier) {
-        return this.update(this.exportKeyword, this.enumKeyword, identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, identifier, this.openBraceToken, this.enumElements, this.closeBraceToken);
     };
     EnumDeclarationSyntax.prototype.withOpenBraceToken = function (openBraceToken) {
-        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, openBraceToken, this.enumElements, this.closeBraceToken);
     };
-    EnumDeclarationSyntax.prototype.withVariableDeclarators = function (variableDeclarators) {
-        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, variableDeclarators, this.closeBraceToken);
+    EnumDeclarationSyntax.prototype.withEnumElements = function (enumElements) {
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, enumElements, this.closeBraceToken);
     };
-    EnumDeclarationSyntax.prototype.withVariableDeclarator = function (variableDeclarator) {
-        return this.withVariableDeclarators(Syntax.separatedList([
-            variableDeclarator
+    EnumDeclarationSyntax.prototype.withEnumElement = function (enumElement) {
+        return this.withEnumElements(Syntax.separatedList([
+            enumElement
         ]));
     };
     EnumDeclarationSyntax.prototype.withCloseBraceToken = function (closeBraceToken) {
-        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.enumElements, closeBraceToken);
     };
     EnumDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
         return true;
     };
     return EnumDeclarationSyntax;
+})(SyntaxNode);
+var EnumElementSyntax = (function (_super) {
+    __extends(EnumElementSyntax, _super);
+    function EnumElementSyntax(identifier, stringLiteral, colonValueClause, parsedInStrictMode) {
+        _super.call(this, parsedInStrictMode);
+        this.identifier = identifier;
+        this.stringLiteral = stringLiteral;
+        this.colonValueClause = colonValueClause;
+    }
+    EnumElementSyntax.prototype.accept = function (visitor) {
+        return visitor.visitEnumElement(this);
+    };
+    EnumElementSyntax.prototype.kind = function () {
+        return 240 /* EnumElement */ ;
+    };
+    EnumElementSyntax.prototype.childCount = function () {
+        return 3;
+    };
+    EnumElementSyntax.prototype.childAt = function (slot) {
+        switch(slot) {
+            case 0:
+                return this.identifier;
+            case 1:
+                return this.stringLiteral;
+            case 2:
+                return this.colonValueClause;
+            default:
+                throw Errors.invalidOperation();
+        }
+    };
+    EnumElementSyntax.prototype.isEnumElement = function () {
+        return true;
+    };
+    EnumElementSyntax.prototype.update = function (identifier, stringLiteral, colonValueClause) {
+        if (this.identifier === identifier && this.stringLiteral === stringLiteral && this.colonValueClause === colonValueClause) {
+            return this;
+        }
+        return new EnumElementSyntax(identifier, stringLiteral, colonValueClause, this.parsedInStrictMode());
+    };
+    EnumElementSyntax.create = function create() {
+        return new EnumElementSyntax(null, null, null, false);
+    };
+    EnumElementSyntax.create1 = function create1() {
+        return new EnumElementSyntax(null, null, null, false);
+    };
+    EnumElementSyntax.prototype.withLeadingTrivia = function (trivia) {
+        return _super.prototype.withLeadingTrivia.call(this, trivia);
+    };
+    EnumElementSyntax.prototype.withTrailingTrivia = function (trivia) {
+        return _super.prototype.withTrailingTrivia.call(this, trivia);
+    };
+    EnumElementSyntax.prototype.withIdentifier = function (identifier) {
+        return this.update(identifier, this.stringLiteral, this.colonValueClause);
+    };
+    EnumElementSyntax.prototype.withStringLiteral = function (stringLiteral) {
+        return this.update(this.identifier, stringLiteral, this.colonValueClause);
+    };
+    EnumElementSyntax.prototype.withColonValueClause = function (colonValueClause) {
+        return this.update(this.identifier, this.stringLiteral, colonValueClause);
+    };
+    EnumElementSyntax.prototype.isTypeScriptSpecific = function () {
+        return true;
+    };
+    return EnumElementSyntax;
 })(SyntaxNode);
 var CastExpressionSyntax = (function (_super) {
     __extends(CastExpressionSyntax, _super);
@@ -33839,7 +33983,7 @@ var SimplePropertyAssignmentSyntax = (function (_super) {
         return visitor.visitSimplePropertyAssignment(this);
     };
     SimplePropertyAssignmentSyntax.prototype.kind = function () {
-        return 240 /* SimplePropertyAssignment */ ;
+        return 242 /* SimplePropertyAssignment */ ;
     };
     SimplePropertyAssignmentSyntax.prototype.childCount = function () {
         return 3;
@@ -33917,7 +34061,7 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         return visitor.visitGetAccessorPropertyAssignment(this);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-        return 243 /* GetAccessorPropertyAssignment */ ;
+        return 245 /* GetAccessorPropertyAssignment */ ;
     };
     GetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
         return 5;
@@ -33987,7 +34131,7 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         return visitor.visitSetAccessorPropertyAssignment(this);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.kind = function () {
-        return 244 /* SetAccessorPropertyAssignment */ ;
+        return 246 /* SetAccessorPropertyAssignment */ ;
     };
     SetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
         return 6;
@@ -34278,7 +34422,7 @@ var CatchClauseSyntax = (function (_super) {
         return visitor.visitCatchClause(this);
     };
     CatchClauseSyntax.prototype.kind = function () {
-        return 234 /* CatchClause */ ;
+        return 235 /* CatchClause */ ;
     };
     CatchClauseSyntax.prototype.childCount = function () {
         return 5;
@@ -34348,7 +34492,7 @@ var FinallyClauseSyntax = (function (_super) {
         return visitor.visitFinallyClause(this);
     };
     FinallyClauseSyntax.prototype.kind = function () {
-        return 235 /* FinallyClause */ ;
+        return 236 /* FinallyClause */ ;
     };
     FinallyClauseSyntax.prototype.childCount = function () {
         return 2;
@@ -34838,6 +34982,9 @@ var SyntaxVisitor = (function () {
     SyntaxVisitor.prototype.visitEqualsValueClause = function (node) {
         return this.defaultVisit(node);
     };
+    SyntaxVisitor.prototype.visitColonValueClause = function (node) {
+        return this.defaultVisit(node);
+    };
     SyntaxVisitor.prototype.visitPrefixUnaryExpression = function (node) {
         return this.defaultVisit(node);
     };
@@ -34995,6 +35142,9 @@ var SyntaxVisitor = (function () {
         return this.defaultVisit(node);
     };
     SyntaxVisitor.prototype.visitEnumDeclaration = function (node) {
+        return this.defaultVisit(node);
+    };
+    SyntaxVisitor.prototype.visitEnumElement = function (node) {
         return this.defaultVisit(node);
     };
     SyntaxVisitor.prototype.visitCastExpression = function (node) {
@@ -35180,7 +35330,7 @@ var Parser1;
         ListParsingState.Block_Statements = 1 << 5;
         ListParsingState.TryBlock_Statements = 1 << 6;
         ListParsingState.CatchBlock_Statements = 1 << 7;
-        ListParsingState.EnumDeclaration_VariableDeclarators = 1 << 8;
+        ListParsingState.EnumDeclaration_EnumElements = 1 << 8;
         ListParsingState.ObjectType_TypeMembers = 1 << 9;
         ListParsingState.ExtendsOrImplementsClause_TypeNameList = 1 << 10;
         ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn = 1 << 11;
@@ -36088,14 +36238,39 @@ var Parser1;
             var enumKeyword = this.eatKeyword(46 /* EnumKeyword */ );
             var identifier = this.eatIdentifierToken();
             var openBraceToken = this.eatToken(70 /* OpenBraceToken */ );
-            var variableDeclarators = Syntax.emptySeparatedList;
+            var enumElements = Syntax.emptySeparatedList;
             if (openBraceToken.width() > 0) {
-                var result = this.parseSeparatedSyntaxList(256 /* EnumDeclaration_VariableDeclarators */ );
-                variableDeclarators = result.list;
+                var result = this.parseSeparatedSyntaxList(256 /* EnumDeclaration_EnumElements */ );
+                enumElements = result.list;
                 openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
             var closeBraceToken = this.eatToken(71 /* CloseBraceToken */ );
-            return this.factory.enumDeclaration(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken);
+            return this.factory.enumDeclaration(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken);
+        };
+        ParserImpl.prototype.isEnumElement = function () {
+            if (this.currentNode() !== null && (this.currentNode().kind() === 223 /* VariableDeclarator */  || this.currentNode().kind() === 240 /* EnumElement */ )) {
+                return true;
+            }
+            var token0 = this.currentToken();
+            return ParserImpl.isIdentifierName(token0) || token0.tokenKind === 14 /* StringLiteral */ ;
+        };
+        ParserImpl.prototype.parseEnumElement = function () {
+            if (this.currentNode() !== null && (this.currentNode().kind() === 240 /* EnumElement */  || this.currentNode().kind() === 223 /* VariableDeclarator */ )) {
+                return this.eatNode();
+            }
+            var token0 = this.currentToken();
+            var identifier = null;
+            var stringLiteral = null;
+            if (ParserImpl.isIdentifierName(token0)) {
+                if (this.peekToken(1).tokenKind === 107 /* EqualsToken */ ) {
+                    return this.parseVariableDeclarator(true, true);
+                }
+                identifier = this.eatIdentifierNameToken();
+            } else {
+                stringLiteral = this.eatToken(14 /* StringLiteral */ );
+            }
+            var colonValueClause = this.parseOptionalColonValueClause();
+            return this.factory.enumElement(identifier, stringLiteral, colonValueClause);
         };
         ParserImpl.prototype.isClassDeclaration = function () {
             var index = 0;
@@ -36928,10 +37103,13 @@ var Parser1;
             if (identifier.width() > 0) {
                 typeAnnotation = this.parseOptionalTypeAnnotation();
                 if (this.isEqualsValueClause(false)) {
-                    equalsValueClause = this.parseEqualsValuesClause(allowIn);
+                    equalsValueClause = this.parseEqualsValueClause(allowIn);
                 }
             }
             return this.factory.variableDeclarator(identifier, typeAnnotation, equalsValueClause);
+        };
+        ParserImpl.prototype.isColonValueClause = function () {
+            return this.currentToken().tokenKind === 106 /* ColonToken */ ;
         };
         ParserImpl.prototype.isEqualsValueClause = function (inParameter) {
             var token0 = this.currentToken();
@@ -36949,7 +37127,15 @@ var Parser1;
             }
             return false;
         };
-        ParserImpl.prototype.parseEqualsValuesClause = function (allowIn) {
+        ParserImpl.prototype.parseOptionalColonValueClause = function () {
+            return this.isColonValueClause() ? this.parseColonValueClause() : null;
+        };
+        ParserImpl.prototype.parseColonValueClause = function () {
+            var colonToken = this.eatToken(106 /* ColonToken */ );
+            var value = this.parseAssignmentExpression(true);
+            return this.factory.colonValueClause(colonToken, value);
+        };
+        ParserImpl.prototype.parseEqualsValueClause = function (allowIn) {
             var equalsToken = this.eatToken(107 /* EqualsToken */ );
             var value = this.parseAssignmentExpression(allowIn);
             return this.factory.equalsValueClause(equalsToken, value);
@@ -37665,7 +37851,7 @@ var Parser1;
             return false;
         };
         ParserImpl.prototype.isParameter = function () {
-            if (this.currentNode() !== null && this.currentNode().kind() === 238 /* Parameter */ ) {
+            if (this.currentNode() !== null && this.currentNode().kind() === 239 /* Parameter */ ) {
                 return true;
             }
             var token = this.currentToken();
@@ -37678,7 +37864,7 @@ var Parser1;
             return this.isIdentifier(token);
         };
         ParserImpl.prototype.parseParameter = function () {
-            if (this.currentNode() !== null && this.currentNode().kind() === 238 /* Parameter */ ) {
+            if (this.currentNode() !== null && this.currentNode().kind() === 239 /* Parameter */ ) {
                 return this.eatNode();
             }
             var dotDotDotToken = this.tryEatToken(77 /* DotDotDotToken */ );
@@ -37691,7 +37877,7 @@ var Parser1;
             var typeAnnotation = this.parseOptionalTypeAnnotation();
             var equalsValueClause = null;
             if (this.isEqualsValueClause(true)) {
-                equalsValueClause = this.parseEqualsValuesClause(true);
+                equalsValueClause = this.parseEqualsValueClause(true);
             }
             return this.factory.parameter(dotDotDotToken, publicOrPrivateToken, identifier, questionToken, typeAnnotation, equalsValueClause);
         };
@@ -37843,7 +38029,7 @@ var Parser1;
         };
         ParserImpl.prototype.allowsTrailingSeparator = function (currentListType) {
             switch(currentListType) {
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 256 /* EnumDeclaration_EnumElements */ :
                 case 512 /* ObjectType_TypeMembers */ :
                 case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
                 case 32768 /* ArrayLiteralExpression_AssignmentExpressions */ :
@@ -37875,7 +38061,7 @@ var Parser1;
                 case 262144 /* TypeParameterList_TypeParameters */ :
                     return true;
                 case 512 /* ObjectType_TypeMembers */ :
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 256 /* EnumDeclaration_EnumElements */ :
                 case 8192 /* ArgumentList_AssignmentExpressions */ :
                 case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
                 case 65536 /* ParameterList_Parameters */ :
@@ -37896,7 +38082,7 @@ var Parser1;
                 case 512 /* ObjectType_TypeMembers */ :
                     return true;
                 case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 256 /* EnumDeclaration_EnumElements */ :
                 case 8192 /* ArgumentList_AssignmentExpressions */ :
                 case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
@@ -37920,7 +38106,7 @@ var Parser1;
             switch(currentListType) {
                 case 1024 /* ExtendsOrImplementsClause_TypeNameList */ :
                 case 8192 /* ArgumentList_AssignmentExpressions */ :
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 256 /* EnumDeclaration_EnumElements */ :
                 case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                 case 16384 /* ObjectLiteralExpression_PropertyAssignments */ :
@@ -37972,8 +38158,8 @@ var Parser1;
                     return this.isExpectedTryBlock_StatementsTerminator();
                 case 128 /* CatchBlock_Statements */ :
                     return this.isExpectedCatchBlock_StatementsTerminator();
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
-                    return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
+                case 256 /* EnumDeclaration_EnumElements */ :
+                    return this.isExpectedEnumDeclaration_EnumElementsTerminator();
                 case 512 /* ObjectType_TypeMembers */ :
                     return this.isExpectedObjectType_TypeMembersTerminator();
                 case 8192 /* ArgumentList_AssignmentExpressions */ :
@@ -38001,7 +38187,7 @@ var Parser1;
         ParserImpl.prototype.isExpectedSourceUnit_ModuleElementsTerminator = function () {
             return this.currentToken().tokenKind === 10 /* EndOfFileToken */ ;
         };
-        ParserImpl.prototype.isExpectedEnumDeclaration_VariableDeclaratorsTerminator = function () {
+        ParserImpl.prototype.isExpectedEnumDeclaration_EnumElementsTerminator = function () {
             return this.currentToken().tokenKind === 71 /* CloseBraceToken */ ;
         };
         ParserImpl.prototype.isExpectedModuleDeclaration_ModuleElementsTerminator = function () {
@@ -38126,7 +38312,8 @@ var Parser1;
                 case 64 /* TryBlock_Statements */ :
                 case 128 /* CatchBlock_Statements */ :
                     return false;
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                case 256 /* EnumDeclaration_EnumElements */ :
+                    return this.isEnumElement();
                 case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
                     return this.isVariableDeclarator();
@@ -38164,8 +38351,8 @@ var Parser1;
                     return this.parseStatement();
                 case 32 /* Block_Statements */ :
                     return this.parseStatement();
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
-                    return this.parseVariableDeclarator(true, true);
+                case 256 /* EnumDeclaration_EnumElements */ :
+                    return this.parseEnumElement();
                 case 512 /* ObjectType_TypeMembers */ :
                     return this.parseTypeMember();
                 case 8192 /* ArgumentList_AssignmentExpressions */ :
@@ -38206,7 +38393,8 @@ var Parser1;
                     return Strings.statement;
                 case 2048 /* VariableDeclaration_VariableDeclarators_AllowIn */ :
                 case 4096 /* VariableDeclaration_VariableDeclarators_DisallowIn */ :
-                case 256 /* EnumDeclaration_VariableDeclarators */ :
+                    return Strings.identifier;
+                case 256 /* EnumDeclaration_EnumElements */ :
                     return Strings.identifier;
                 case 512 /* ObjectType_TypeMembers */ :
                     return Strings.call__construct__index__property_or_function_signature;
@@ -44521,6 +44709,10 @@ var SyntaxWalker = (function () {
         this.visitToken(node.equalsToken);
         this.visitNodeOrToken(node.value);
     };
+    SyntaxWalker.prototype.visitColonValueClause = function (node) {
+        this.visitToken(node.colonToken);
+        this.visitNodeOrToken(node.value);
+    };
     SyntaxWalker.prototype.visitPrefixUnaryExpression = function (node) {
         this.visitToken(node.operatorToken);
         this.visitNodeOrToken(node.operand);
@@ -44819,8 +45011,13 @@ var SyntaxWalker = (function () {
         this.visitToken(node.enumKeyword);
         this.visitToken(node.identifier);
         this.visitToken(node.openBraceToken);
-        this.visitSeparatedList(node.variableDeclarators);
+        this.visitSeparatedList(node.enumElements);
         this.visitToken(node.closeBraceToken);
+    };
+    SyntaxWalker.prototype.visitEnumElement = function (node) {
+        this.visitOptionalToken(node.identifier);
+        this.visitOptionalToken(node.stringLiteral);
+        this.visitOptionalNode(node.colonValueClause);
     };
     SyntaxWalker.prototype.visitCastExpression = function (node) {
         this.visitToken(node.lessThanToken);
@@ -48079,7 +48276,7 @@ var TypeScript;
                 }
                 if (moduleElement.kind() === 132 /* ImportDeclaration */ ) {
                     var importDecl = moduleElement;
-                    if (importDecl.moduleReference.kind() === 241 /* ExternalModuleReference */ ) {
+                    if (importDecl.moduleReference.kind() === 243 /* ExternalModuleReference */ ) {
                         return true;
                     }
                 }
@@ -48381,20 +48578,34 @@ var TypeScript;
             var lastValue = null;
             var memberNames = [];
             var start = this.position;
-            for(var i = 0, n = enumDeclaration.variableDeclarators.childCount(); i < n; i++) {
+            for(var i = 0, n = enumDeclaration.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
-                    this.movePast(enumDeclaration.variableDeclarators.childAt(i));
+                    this.movePast(enumDeclaration.enumElements.childAt(i));
                 } else {
-                    var variableDeclarator = enumDeclaration.variableDeclarators.childAt(i);
-                    var memberName = this.identifierFromToken(variableDeclarator.identifier, false);
-                    this.movePast(variableDeclarator.identifier);
+                    var element = enumDeclaration.enumElements.childAt(i);
+                    var memberName;
                     var memberValue = null;
-                    var memberStart = this.position;
-                    if (variableDeclarator.equalsValueClause !== null) {
-                        memberValue = variableDeclarator.equalsValueClause.accept(this);
-                        lastValue = memberValue;
+                    if (element.kind() === 223 /* VariableDeclarator */ ) {
+                        var variableDeclarator = element;
+                        memberName = this.identifierFromToken(variableDeclarator.identifier, false);
+                        this.movePast(variableDeclarator.identifier);
+                        if (variableDeclarator.equalsValueClause !== null) {
+                            memberValue = variableDeclarator.equalsValueClause.accept(this);
+                            lastValue = memberValue;
+                        }
                     } else {
-                        if (lastValue == null) {
+                        var enumElement = element;
+                        memberName = this.identifierFromToken(enumElement.identifier || enumElement.stringLiteral, false);
+                        this.movePast(enumElement.identifier);
+                        this.movePast(enumElement.stringLiteral);
+                        if (enumElement.colonValueClause !== null) {
+                            memberValue = enumElement.colonValueClause.accept(this);
+                            lastValue = memberValue;
+                        }
+                    }
+                    var memberStart = this.position;
+                    if (memberValue === null) {
+                        if (lastValue === null) {
                             memberValue = new TypeScript.NumberLiteral(0, "0");
                             lastValue = memberValue;
                         } else {
@@ -48443,6 +48654,9 @@ var TypeScript;
             this.popDeclLists();
             return modDecl;
         };
+        SyntaxTreeToAstVisitor.prototype.visitEnumElement = function (node) {
+            throw Errors.invalidOperation();
+        };
         SyntaxTreeToAstVisitor.prototype.visitImportDeclaration = function (node) {
             this.assertElementAtPosition(node);
             var start = this.position;
@@ -48453,7 +48667,7 @@ var TypeScript;
             var alias = node.moduleReference.accept(this);
             this.movePast(node.semicolonToken);
             var importDecl = new TypeScript.ImportDeclaration(name, alias);
-            importDecl.isDynamicImport = node.moduleReference.kind() === 241 /* ExternalModuleReference */ ;
+            importDecl.isDynamicImport = node.moduleReference.kind() === 243 /* ExternalModuleReference */ ;
             this.setSpan(importDecl, start, this.position);
             return importDecl;
         };
@@ -48529,6 +48743,11 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitEqualsValueClause = function (node) {
             this.assertElementAtPosition(node);
             this.movePast(node.equalsToken);
+            return node.value.accept(this);
+        };
+        SyntaxTreeToAstVisitor.prototype.visitColonValueClause = function (node) {
+            this.assertElementAtPosition(node);
+            this.movePast(node.colonToken);
             return node.value.accept(this);
         };
         SyntaxTreeToAstVisitor.prototype.getUnaryExpressionNodeType = function (kind) {
@@ -49307,7 +49526,7 @@ var TypeScript;
             for(var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
                 var switchClause = node.switchClauses.childAt(i);
                 var translated = switchClause.accept(this);
-                if (switchClause.kind() === 232 /* DefaultSwitchClause */ ) {
+                if (switchClause.kind() === 233 /* DefaultSwitchClause */ ) {
                     result.defaultCase = translated;
                 }
                 result.caseList.append(translated);
@@ -55260,16 +55479,16 @@ var Emitter;
         EmitterImpl.prototype.visitInterfaceDeclaration = function (node) {
             return null;
         };
-        EmitterImpl.prototype.generateEnumValueExpression = function (enumDeclaration, variableDeclarator, assignDefaultValues, index) {
-            if (variableDeclarator.equalsValueClause !== null) {
-                return variableDeclarator.equalsValueClause.value.withTrailingTrivia(Syntax.emptyTriviaList);
+        EmitterImpl.prototype.generateEnumValueExpression = function (enumDeclaration, enumElement, assignDefaultValues, index) {
+            if (this.hasValueClause(enumElement)) {
+                return this.valueClause(enumElement).accept(this).withTrailingTrivia(Syntax.emptyTriviaList);
             }
             if (assignDefaultValues) {
                 return Syntax.numericLiteralExpression(index.toString());
             }
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier);
-            var previousVariable = enumDeclaration.variableDeclarators.nonSeparatorAt(index - 1);
-            var variableIdentifier = this.withNoTrivia(previousVariable.identifier);
+            var previousEnumElement = enumDeclaration.enumElements.nonSeparatorAt(index - 1);
+            var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(previousEnumElement));
             var receiver = MemberAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList));
             return this.factory.binaryExpression(162 /* PlusExpression */ , receiver, Syntax.token(89 /* PlusToken */ ).withTrailingTrivia(this.space), Syntax.numericLiteralExpression("1"));
         };
@@ -55279,7 +55498,7 @@ var Emitter;
             var statements = [];
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
-            if (node.variableDeclarators.nonSeparatorCount() > 0) {
+            if (node.enumElements.nonSeparatorCount() > 0) {
                 statements.push(VariableStatementSyntax.create1(this.factory.variableDeclaration(Syntax.token(40 /* VarKeyword */ ).withTrailingTrivia(this.space), Syntax.separatedList([
                     this.factory.variableDeclarator(Syntax.identifier("_").withTrailingTrivia(this.space), null, this.factory.equalsValueClause(Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), identifier))
                 ]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
@@ -55287,12 +55506,12 @@ var Emitter;
                 var assignDefaultValues = {
                     value: true
                 };
-                for(var i = 0, n = node.variableDeclarators.nonSeparatorCount(); i < n; i++) {
-                    var variableDeclarator = node.variableDeclarators.nonSeparatorAt(i);
-                    var variableIdentifier = this.withNoTrivia(variableDeclarator.identifier);
-                    assignDefaultValues.value = assignDefaultValues.value && variableDeclarator.equalsValueClause === null;
-                    var innerAssign = Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), variableIdentifier).withTrailingTrivia(Syntax.spaceTriviaList), Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, variableDeclarator, assignDefaultValues.value, i));
-                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")), innerAssign).withLeadingTrivia(variableDeclarator.leadingTrivia()).withTrailingTrivia(this.space);
+                for(var i = 0, n = node.enumElements.nonSeparatorCount(); i < n; i++) {
+                    var enumElement = node.enumElements.nonSeparatorAt(i);
+                    var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(enumElement));
+                    assignDefaultValues.value = assignDefaultValues.value && !this.hasValueClause(enumElement);
+                    var innerAssign = Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), variableIdentifier).withTrailingTrivia(Syntax.spaceTriviaList), Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, enumElement, assignDefaultValues.value, i));
+                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")), innerAssign).withLeadingTrivia(enumElement.leadingTrivia()).withTrailingTrivia(this.space);
                     ;
                     var outerAssign = Syntax.assignmentExpression(elementAccessExpression, Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
                     var expressionStatement = ExpressionStatementSyntax.create1(outerAssign).withTrailingTrivia(this.newLine);
@@ -55302,6 +55521,28 @@ var Emitter;
             var block = this.factory.block(Syntax.token(70 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), Syntax.list(statements), Syntax.token(71 /* CloseBraceToken */ ).withLeadingTrivia(this.indentationTrivia(enumColumn)));
             var parameterList = ParameterListSyntax.create1().withParameter(ParameterSyntax.create1(identifier)).withTrailingTrivia(this.space);
             return FunctionExpressionSyntax.create1().withCallSignature(CallSignatureSyntax.create(parameterList)).withBlock(block);
+        };
+        EmitterImpl.prototype.hasValueClause = function (node) {
+            if (node.kind() === 223 /* VariableDeclarator */ ) {
+                return (node).equalsValueClause !== null;
+            } else {
+                return (node).colonValueClause !== null;
+            }
+        };
+        EmitterImpl.prototype.valueClause = function (node) {
+            if (node.kind() === 223 /* VariableDeclarator */ ) {
+                return (node).equalsValueClause.value;
+            } else {
+                return (node).colonValueClause.value;
+            }
+        };
+        EmitterImpl.prototype.getEnumElementIdentifier = function (node) {
+            if (node.kind() === 223 /* VariableDeclarator */ ) {
+                return (node).identifier;
+            } else {
+                var enumElement = node;
+                return enumElement.identifier || enumElement.stringLiteral;
+            }
         };
         EmitterImpl.prototype.visitEnumDeclaration = function (node) {
             var identifier = this.withNoTrivia(node.identifier);
@@ -55692,6 +55933,11 @@ var PrettyPrinter;
         PrettyPrinterImpl.prototype.visitVariableDeclarator = function (node) {
             this.appendToken(node.identifier);
             this.appendNode(node.equalsValueClause);
+        };
+        PrettyPrinterImpl.prototype.visitColonValueClause = function (node) {
+            this.appendToken(node.colonToken);
+            this.ensureSpace();
+            node.value.accept(this);
         };
         PrettyPrinterImpl.prototype.visitEqualsValueClause = function (node) {
             this.ensureSpace();
@@ -56111,9 +56357,15 @@ var PrettyPrinter;
             this.appendToken(node.openBraceToken);
             this.ensureNewLine();
             this.indentation++;
-            this.appendSeparatorNewLineList(node.variableDeclarators);
+            this.appendSeparatorNewLineList(node.enumElements);
             this.indentation--;
             this.appendToken(node.closeBraceToken);
+        };
+        PrettyPrinterImpl.prototype.visitEnumElement = function (node) {
+            this.appendToken(node.identifier);
+            this.ensureSpace();
+            this.appendToken(node.stringLiteral);
+            this.appendNode(node.colonValueClause);
         };
         PrettyPrinterImpl.prototype.visitCastExpression = function (node) {
             this.appendToken(node.lessThanToken);
@@ -58324,6 +58576,13 @@ var IncrementalParserTests = (function () {
         var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
         IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
     };
+    IncrementalParserTests.testEnumElement1 = function testEnumElement1() {
+        var source = "enum E { a: 1, b: 1 << 1, c: 3, e: 4, f: 5, g: 7, h: 8, i: 9, j: 10 }";
+        var index = source.indexOf("<<");
+        var oldText = TextFactory.createText(source);
+        var newTextAndChange = IncrementalParserTests.withChange(oldText, index, 2, "+");
+        IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
+    };
     IncrementalParserTests.testStrictMode1 = function testStrictMode1() {
         var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
         var oldText = TextFactory.createText(source);
@@ -58440,6 +58699,14 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         if (true) {
         }
+        Environment.standardOut.WriteLine("Testing Incremental 2.");
+        if (specificFile === undefined) {
+            IncrementalParserTests.runAllTests();
+        }
+        Environment.standardOut.WriteLine("Testing emitter 1.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (filePath) {
+            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
+        });
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
             return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
@@ -58456,20 +58723,12 @@ var Program = (function () {
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (filePath) {
             return _this.runPrettyPrinter(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
-        Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (filePath) {
-            return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
-        });
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5", function (filePath) {
             return _this.runFindToken(filePath, 1 /* EcmaScript5 */ , verify, generate);
         });
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
-        Environment.standardOut.WriteLine("Testing Incremental 2.");
-        if (specificFile === undefined) {
-            IncrementalParserTests.runAllTests();
-        }
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5", function (filePath) {
             return _this.runTrivia(filePath, 1 /* EcmaScript5 */ , verify, generate);

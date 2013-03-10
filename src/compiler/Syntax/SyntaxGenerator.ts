@@ -36,7 +36,7 @@ var interfaces = {
     IStatementSyntax: 'IModuleElementSyntax',
     INameSyntax: 'ITypeSyntax',
     ITypeSyntax: 'IUnaryExpressionSyntax',
-    IUnaryExpressionSyntax: 'IExpressionSyntax'
+    IUnaryExpressionSyntax: 'IExpressionSyntax',
 };
 
 var definitions:ITypeDefinition[] = [
@@ -201,6 +201,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'VariableDeclaratorSyntax',
         baseType: 'SyntaxNode',
+        interfaces: [ 'IEnumElementSyntax' ],
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true },
@@ -212,6 +213,14 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'equalsToken', isToken: true },
+            <any>{ name: 'value', type: 'IExpressionSyntax' }
+        ]
+    },
+    <any>{
+        name: 'ColonValueClauseSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            <any>{ name: 'colonToken', isToken: true },
             <any>{ name: 'value', type: 'IExpressionSyntax' }
         ]
     },
@@ -832,8 +841,19 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'enumKeyword', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'variableDeclarators', isSeparatedList: true, elementType: 'VariableDeclaratorSyntax' },
+            <any>{ name: 'enumElements', isSeparatedList: true, elementType: 'IEnumElementSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
+        ],
+        isTypeScriptSpecific: true
+    },
+    <any>{
+        name: 'EnumElementSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['IEnumElementSyntax'],
+        children: [
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'], isOptional: true  },
+            <any>{ name: 'stringLiteral', isToken: true, isOptional: true  },
+            <any>{ name: 'colonValueClause', type: 'ColonValueClauseSyntax', isOptional: true }
         ],
         isTypeScriptSpecific: true
     },

@@ -1156,7 +1156,7 @@ class VariableDeclarationSyntax extends SyntaxNode {
     }
 }
 
-class VariableDeclaratorSyntax extends SyntaxNode {
+class VariableDeclaratorSyntax extends SyntaxNode implements IEnumElementSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
@@ -1185,6 +1185,10 @@ class VariableDeclaratorSyntax extends SyntaxNode {
             case 2: return this.equalsValueClause;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    private isEnumElement(): bool {
+        return true;
     }
 
     public update(identifier: ISyntaxToken,
@@ -1288,6 +1292,70 @@ class EqualsValueClauseSyntax extends SyntaxNode {
 
     public withValue(value: IExpressionSyntax): EqualsValueClauseSyntax {
         return this.update(this.equalsToken, value);
+    }
+
+    public isTypeScriptSpecific(): bool {
+        if (this.value.isTypeScriptSpecific()) { return true; }
+        return false;
+    }
+}
+
+class ColonValueClauseSyntax extends SyntaxNode {
+
+    constructor(public colonToken: ISyntaxToken,
+                public value: IExpressionSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
+
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitColonValueClause(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.ColonValueClause;
+    }
+
+    public childCount(): number {
+        return 2;
+    }
+
+    public childAt(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this.colonToken;
+            case 1: return this.value;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
+    public update(colonToken: ISyntaxToken,
+                  value: IExpressionSyntax): ColonValueClauseSyntax {
+        if (this.colonToken === colonToken && this.value === value) {
+            return this;
+        }
+
+        return new ColonValueClauseSyntax(colonToken, value, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(value: IExpressionSyntax): ColonValueClauseSyntax {
+        return new ColonValueClauseSyntax(Syntax.token(SyntaxKind.ColonToken), value, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): ColonValueClauseSyntax {
+        return <ColonValueClauseSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): ColonValueClauseSyntax {
+        return <ColonValueClauseSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withColonToken(colonToken: ISyntaxToken): ColonValueClauseSyntax {
+        return this.update(colonToken, this.value);
+    }
+
+    public withValue(value: IExpressionSyntax): ColonValueClauseSyntax {
+        return this.update(this.colonToken, value);
     }
 
     public isTypeScriptSpecific(): bool {
@@ -5848,7 +5916,7 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
                 public enumKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
                 public openBraceToken: ISyntaxToken,
-                public variableDeclarators: ISeparatedSyntaxList,
+                public enumElements: ISeparatedSyntaxList,
                 public closeBraceToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
@@ -5873,7 +5941,7 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
             case 1: return this.enumKeyword;
             case 2: return this.identifier;
             case 3: return this.openBraceToken;
-            case 4: return this.variableDeclarators;
+            case 4: return this.enumElements;
             case 5: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
@@ -5887,13 +5955,13 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
                   enumKeyword: ISyntaxToken,
                   identifier: ISyntaxToken,
                   openBraceToken: ISyntaxToken,
-                  variableDeclarators: ISeparatedSyntaxList,
+                  enumElements: ISeparatedSyntaxList,
                   closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        if (this.exportKeyword === exportKeyword && this.enumKeyword === enumKeyword && this.identifier === identifier && this.openBraceToken === openBraceToken && this.variableDeclarators === variableDeclarators && this.closeBraceToken === closeBraceToken) {
+        if (this.exportKeyword === exportKeyword && this.enumKeyword === enumKeyword && this.identifier === identifier && this.openBraceToken === openBraceToken && this.enumElements === enumElements && this.closeBraceToken === closeBraceToken) {
             return this;
         }
 
-        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, variableDeclarators, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(enumKeyword: ISyntaxToken,
@@ -5916,31 +5984,109 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.enumElements, this.closeBraceToken);
     }
 
     public withEnumKeyword(enumKeyword: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this.exportKeyword, enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(this.exportKeyword, enumKeyword, this.identifier, this.openBraceToken, this.enumElements, this.closeBraceToken);
     }
 
     public withIdentifier(identifier: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this.exportKeyword, this.enumKeyword, identifier, this.openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, identifier, this.openBraceToken, this.enumElements, this.closeBraceToken);
     }
 
     public withOpenBraceToken(openBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, openBraceToken, this.variableDeclarators, this.closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, openBraceToken, this.enumElements, this.closeBraceToken);
     }
 
-    public withVariableDeclarators(variableDeclarators: ISeparatedSyntaxList): EnumDeclarationSyntax {
-        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, variableDeclarators, this.closeBraceToken);
+    public withEnumElements(enumElements: ISeparatedSyntaxList): EnumDeclarationSyntax {
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, enumElements, this.closeBraceToken);
     }
 
-    public withVariableDeclarator(variableDeclarator: VariableDeclaratorSyntax): EnumDeclarationSyntax {
-        return this.withVariableDeclarators(Syntax.separatedList([variableDeclarator]));
+    public withEnumElement(enumElement: IEnumElementSyntax): EnumDeclarationSyntax {
+        return this.withEnumElements(Syntax.separatedList([enumElement]));
     }
 
     public withCloseBraceToken(closeBraceToken: ISyntaxToken): EnumDeclarationSyntax {
-        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.variableDeclarators, closeBraceToken);
+        return this.update(this.exportKeyword, this.enumKeyword, this.identifier, this.openBraceToken, this.enumElements, closeBraceToken);
+    }
+
+    public isTypeScriptSpecific(): bool {
+        return true;
+    }
+}
+
+class EnumElementSyntax extends SyntaxNode implements IEnumElementSyntax {
+
+    constructor(public identifier: ISyntaxToken,
+                public stringLiteral: ISyntaxToken,
+                public colonValueClause: ColonValueClauseSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
+
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitEnumElement(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.EnumElement;
+    }
+
+    public childCount(): number {
+        return 3;
+    }
+
+    public childAt(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this.identifier;
+            case 1: return this.stringLiteral;
+            case 2: return this.colonValueClause;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
+    private isEnumElement(): bool {
+        return true;
+    }
+
+    public update(identifier: ISyntaxToken,
+                  stringLiteral: ISyntaxToken,
+                  colonValueClause: ColonValueClauseSyntax): EnumElementSyntax {
+        if (this.identifier === identifier && this.stringLiteral === stringLiteral && this.colonValueClause === colonValueClause) {
+            return this;
+        }
+
+        return new EnumElementSyntax(identifier, stringLiteral, colonValueClause, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(): EnumElementSyntax {
+        return new EnumElementSyntax(null, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): EnumElementSyntax {
+        return new EnumElementSyntax(null, null, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): EnumElementSyntax {
+        return <EnumElementSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): EnumElementSyntax {
+        return <EnumElementSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withIdentifier(identifier: ISyntaxToken): EnumElementSyntax {
+        return this.update(identifier, this.stringLiteral, this.colonValueClause);
+    }
+
+    public withStringLiteral(stringLiteral: ISyntaxToken): EnumElementSyntax {
+        return this.update(this.identifier, stringLiteral, this.colonValueClause);
+    }
+
+    public withColonValueClause(colonValueClause: ColonValueClauseSyntax): EnumElementSyntax {
+        return this.update(this.identifier, this.stringLiteral, colonValueClause);
     }
 
     public isTypeScriptSpecific(): bool {

@@ -180,6 +180,12 @@ class SyntaxRewriter implements ISyntaxVisitor {
             <IExpressionSyntax>this.visitNodeOrToken(node.value));
     }
 
+    public visitColonValueClause(node: ColonValueClauseSyntax): any {
+        return node.update(
+            this.visitToken(node.colonToken),
+            <IExpressionSyntax>this.visitNodeOrToken(node.value));
+    }
+
     public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): any {
         return node.update(
             node.kind(),
@@ -586,8 +592,15 @@ class SyntaxRewriter implements ISyntaxVisitor {
             this.visitToken(node.enumKeyword),
             this.visitToken(node.identifier),
             this.visitToken(node.openBraceToken),
-            this.visitSeparatedList(node.variableDeclarators),
+            this.visitSeparatedList(node.enumElements),
             this.visitToken(node.closeBraceToken));
+    }
+
+    public visitEnumElement(node: EnumElementSyntax): any {
+        return node.update(
+            node.identifier === null ? null : this.visitToken(node.identifier),
+            node.stringLiteral === null ? null : this.visitToken(node.stringLiteral),
+            node.colonValueClause === null ? null : <ColonValueClauseSyntax>this.visitNode(node.colonValueClause));
     }
 
     public visitCastExpression(node: CastExpressionSyntax): any {

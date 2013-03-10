@@ -143,7 +143,7 @@ module Parser1 {
         Block_Statements = 1 << 5,
         TryBlock_Statements = 1 << 6,
         CatchBlock_Statements = 1 << 7,
-        EnumDeclaration_VariableDeclarators = 1 << 8,
+        EnumDeclaration_EnumElements = 1 << 8,
         ObjectType_TypeMembers = 1 << 9,
         ExtendsOrImplementsClause_TypeNameList = 1 << 10,
         VariableDeclaration_VariableDeclarators_AllowIn = 1 << 11,
@@ -1885,18 +1885,60 @@ module Parser1 {
             var identifier = this.eatIdentifierToken();
 
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
-            var variableDeclarators: ISeparatedSyntaxList = Syntax.emptySeparatedList;
+            var enumElements: ISeparatedSyntaxList = Syntax.emptySeparatedList;
 
             if (openBraceToken.width() > 0) {
-                var result = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_VariableDeclarators);
-                variableDeclarators = result.list;
+                var result = this.parseSeparatedSyntaxList(ListParsingState.EnumDeclaration_EnumElements);
+                enumElements = result.list;
                 openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
             }
 
             var closeBraceToken = this.eatToken(SyntaxKind.CloseBraceToken);
 
             return this.factory.enumDeclaration(exportKeyword, enumKeyword, identifier,
-                openBraceToken, variableDeclarators, closeBraceToken);
+                openBraceToken, enumElements, closeBraceToken);
+        }
+
+        private isEnumElement(): bool {
+            // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
+            if (this.currentNode() !== null &&
+                (this.currentNode().kind() === SyntaxKind.VariableDeclarator || this.currentNode().kind() === SyntaxKind.EnumElement)) {
+                return true;
+            }
+
+            var token0 = this.currentToken();
+            return ParserImpl.isIdentifierName(token0) ||
+                   token0.tokenKind === SyntaxKind.StringLiteral;
+        }
+
+        private parseEnumElement(): IEnumElementSyntax {
+            // Debug.assert(this.isEnumElement());
+            // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
+            if (this.currentNode() !== null && (this.currentNode().kind() === SyntaxKind.EnumElement || this.currentNode().kind() === SyntaxKind.VariableDeclarator)) {
+                return <EnumElementSyntax>this.eatNode();
+            }
+
+            var token0 = this.currentToken();
+
+            var identifier: ISyntaxToken = null;
+            var stringLiteral: ISyntaxToken = null;
+
+            if (ParserImpl.isIdentifierName(token0)) {
+                // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
+                // Back compat.  For the time being, we allow enum elements of the form "foo = value".
+                // We will eventually remove this and require the "foo: value" form.
+                if (this.peekToken(1).tokenKind === SyntaxKind.EqualsToken) {
+                    return this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ true);
+                }
+
+                identifier = this.eatIdentifierNameToken();
+            }
+            else {
+                stringLiteral = this.eatToken(SyntaxKind.StringLiteral);
+            }
+
+            var colonValueClause: ColonValueClauseSyntax = this.parseOptionalColonValueClause();
+            return this.factory.enumElement(identifier, stringLiteral, colonValueClause);
         }
 
         private isClassDeclaration(): bool {
@@ -3256,6 +3298,12 @@ module Parser1 {
         }
 
         private parseVariableDeclarator(allowIn: bool, allowIdentifierName: bool): VariableDeclaratorSyntax {
+            // TODO(cyrusn): What if the 'allowIn' context has changed between when we last parsed 
+            // and now?  We could end up with an incorrect tree.  For example, say we had in the old 
+            // tree "var i = a in b".  Then, in the new tree the declarator portion moved into:
+            // "for (var i = a in b".  We would not want to reuse the declarator as the "in b" portion 
+            // would need to be consumed by the for declaration instead.  Need to see if it is possible
+            // to hit this case.
             if (this.currentNode() !== null && this.currentNode().kind() === SyntaxKind.VariableDeclarator) {
                 return <VariableDeclaratorSyntax>this.eatNode();
             }
@@ -3268,11 +3316,15 @@ module Parser1 {
                 typeAnnotation = this.parseOptionalTypeAnnotation();
 
                 if (this.isEqualsValueClause(/*inParameter*/ false)) {
-                    equalsValueClause = this.parseEqualsValuesClause(allowIn);
+                    equalsValueClause = this.parseEqualsValueClause(allowIn);
                 }
             }
 
             return this.factory.variableDeclarator(identifier, typeAnnotation, equalsValueClause);
+        }
+
+        private isColonValueClause(): bool {
+            return this.currentToken().tokenKind === SyntaxKind.ColonToken;
         }
 
         private isEqualsValueClause(inParameter: bool): bool {
@@ -3312,7 +3364,20 @@ module Parser1 {
             return false;
         }
 
-        private parseEqualsValuesClause(allowIn: bool): EqualsValueClauseSyntax {
+        private parseOptionalColonValueClause(): ColonValueClauseSyntax {
+            return this.isColonValueClause() ? this.parseColonValueClause() : null;
+        }
+
+        private parseColonValueClause(): ColonValueClauseSyntax {
+            // Debug.assert(this.isColonValueClause());
+
+            var colonToken = this.eatToken(SyntaxKind.ColonToken);
+            var value = this.parseAssignmentExpression(/*allowIn:*/ true);
+
+            return this.factory.colonValueClause(colonToken, value);
+        }
+
+        private parseEqualsValueClause(allowIn: bool): EqualsValueClauseSyntax {
             // Debug.assert(this.isEqualsValueClause());
 
             var equalsToken = this.eatToken(SyntaxKind.EqualsToken);
@@ -4537,7 +4602,7 @@ module Parser1 {
 
             var equalsValueClause: EqualsValueClauseSyntax = null;
             if (this.isEqualsValueClause(/*inParameter*/ true)) {
-                equalsValueClause = this.parseEqualsValuesClause(/*allowIn:*/ true);
+                equalsValueClause = this.parseEqualsValueClause(/*allowIn:*/ true);
             }
 
             return this.factory.parameter(
@@ -4845,7 +4910,7 @@ module Parser1 {
 
         private allowsTrailingSeparator(currentListType: ListParsingState): bool {
             switch (currentListType) {
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.EnumDeclaration_EnumElements:
                 case ListParsingState.ObjectType_TypeMembers:
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
@@ -4882,7 +4947,7 @@ module Parser1 {
                     return true;
 
                 case ListParsingState.ObjectType_TypeMembers:
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.EnumDeclaration_EnumElements:
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
                 case ListParsingState.ParameterList_Parameters:
@@ -4906,7 +4971,7 @@ module Parser1 {
                     return true;
 
                 case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.EnumDeclaration_EnumElements:
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
@@ -4932,7 +4997,7 @@ module Parser1 {
             switch (currentListType) {
                 case ListParsingState.ExtendsOrImplementsClause_TypeNameList:
                 case ListParsingState.ArgumentList_AssignmentExpressions:
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.EnumDeclaration_EnumElements:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
@@ -5000,8 +5065,8 @@ module Parser1 {
                 case ListParsingState.CatchBlock_Statements:
                     return this.isExpectedCatchBlock_StatementsTerminator();
 
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
-                    return this.isExpectedEnumDeclaration_VariableDeclaratorsTerminator();
+                case ListParsingState.EnumDeclaration_EnumElements:
+                    return this.isExpectedEnumDeclaration_EnumElementsTerminator();
 
                 case ListParsingState.ObjectType_TypeMembers:
                     return this.isExpectedObjectType_TypeMembersTerminator();
@@ -5042,7 +5107,7 @@ module Parser1 {
             return this.currentToken().tokenKind === SyntaxKind.EndOfFileToken;
         }
 
-        private isExpectedEnumDeclaration_VariableDeclaratorsTerminator(): bool {
+        private isExpectedEnumDeclaration_EnumElementsTerminator(): bool {
             return this.currentToken().tokenKind === SyntaxKind.CloseBraceToken;
         }
 
@@ -5245,7 +5310,9 @@ module Parser1 {
                     // return 'false' here.
                     return false;
 
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                case ListParsingState.EnumDeclaration_EnumElements:
+                    return this.isEnumElement();
+                
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
                     return this.isVariableDeclarator();
@@ -5299,8 +5366,8 @@ module Parser1 {
                 case ListParsingState.Block_Statements:
                     return this.parseStatement();
 
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
-                    return this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ true);
+                case ListParsingState.EnumDeclaration_EnumElements:
+                    return this.parseEnumElement();
 
                 case ListParsingState.ObjectType_TypeMembers:
                     return this.parseTypeMember();
@@ -5359,7 +5426,9 @@ module Parser1 {
 
                 case ListParsingState.VariableDeclaration_VariableDeclarators_AllowIn:
                 case ListParsingState.VariableDeclaration_VariableDeclarators_DisallowIn:
-                case ListParsingState.EnumDeclaration_VariableDeclarators:
+                    return Strings.identifier;
+
+                case ListParsingState.EnumDeclaration_EnumElements:
                     return Strings.identifier;
 
                 case ListParsingState.ObjectType_TypeMembers:
