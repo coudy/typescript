@@ -968,11 +968,12 @@ module Emitter {
             var previousEnumElement = <VariableDeclaratorSyntax>enumDeclaration.enumElements.nonSeparatorAt(index - 1);
             var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(previousEnumElement));
 
-            var receiver = MemberAccessExpressionSyntax.create1(
-                enumIdentifier, variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList));
+            var receiver = variableIdentifier.kind() === SyntaxKind.StringLiteral
+                ? ElementAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier)
+                : <IExpressionSyntax>MemberAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier);
 
             return this.factory.binaryExpression(SyntaxKind.PlusExpression,
-                receiver,
+                receiver.withTrailingTrivia(Syntax.spaceTriviaList),
                 Syntax.token(SyntaxKind.PlusToken).withTrailingTrivia(this.space),
                 Syntax.numericLiteralExpression("1"));
         }
@@ -988,6 +989,7 @@ module Emitter {
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
 
             if (node.enumElements.nonSeparatorCount() > 0) {
+                /*
                 // var _ = E;
                 statements.push(VariableStatementSyntax.create1(
                     this.factory.variableDeclaration(
@@ -1004,6 +1006,7 @@ module Emitter {
                         MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")).withTrailingTrivia(this.space),
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
+                */
 
                 var assignDefaultValues = { value: true };
                 for (var i = 0, n = node.enumElements.nonSeparatorCount(); i < n; i++) {
@@ -1012,23 +1015,26 @@ module Emitter {
 
                     assignDefaultValues.value = assignDefaultValues.value && !this.hasValueClause(enumElement);
 
-                    // _.Foo = 1
+                    // "E.Foo = 1" or "E['A B'] = 1"
+                    var left = variableIdentifier.kind() === SyntaxKind.StringLiteral
+                        ? ElementAccessExpressionSyntax.create1(identifier, variableIdentifier)
+                        : <IExpressionSyntax>MemberAccessExpressionSyntax.create1(identifier, variableIdentifier);
                     var innerAssign = Syntax.assignmentExpression(
-                        MemberAccessExpressionSyntax.create1(
-                            Syntax.identifierName("_"), variableIdentifier).withTrailingTrivia(Syntax.spaceTriviaList),
+                        left.withTrailingTrivia(this.space),
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
                         this.generateEnumValueExpression(node, enumElement, assignDefaultValues.value, i))
 
-                    // _._map[_.Foo = 1]
-                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(
-                        MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")),
-                        innerAssign).withLeadingTrivia(enumElement.leadingTrivia()).withTrailingTrivia(this.space);;
+                    // E[E.Foo = 1]
+                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(identifier, innerAssign)
+                        .withLeadingTrivia(enumElement.leadingTrivia()).withTrailingTrivia(this.space);
 
-                    //_._map[_.Foo = 1] = "Foo"
+                    // E[E.Foo = 1] = "Foo"
                     var outerAssign = Syntax.assignmentExpression(
                         elementAccessExpression,
                         Syntax.token(SyntaxKind.EqualsToken).withTrailingTrivia(this.space),
-                        Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
+                        variableIdentifier.kind() === SyntaxKind.StringLiteral
+                            ? variableIdentifier
+                            : Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
 
                     var expressionStatement = ExpressionStatementSyntax.create1(
                         outerAssign).withTrailingTrivia(this.newLine);
@@ -1088,7 +1094,7 @@ module Emitter {
                 Syntax.separatedList([VariableDeclaratorSyntax.create(identifier)])))
                     .withLeadingTrivia(node.leadingTrivia()).withTrailingTrivia(this.newLine);
 
-            // (function(E) { E.e1 = ... })(E||(E={}));
+            // (function(E) { E[E.e1 = ... })(E||(E={}));
             var expressionStatement = ExpressionStatementSyntax.create1(
                 this.factory.invocationExpression(
                     ParenthesizedExpressionSyntax.create1(this.generateEnumFunctionExpression(node)),

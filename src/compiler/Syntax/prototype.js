@@ -55486,8 +55486,8 @@ var Emitter;
             var enumIdentifier = this.withNoTrivia(enumDeclaration.identifier);
             var previousEnumElement = enumDeclaration.enumElements.nonSeparatorAt(index - 1);
             var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(previousEnumElement));
-            var receiver = MemberAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier.withTrailingTrivia(Syntax.spaceTriviaList));
-            return this.factory.binaryExpression(162 /* PlusExpression */ , receiver, Syntax.token(89 /* PlusToken */ ).withTrailingTrivia(this.space), Syntax.numericLiteralExpression("1"));
+            var receiver = variableIdentifier.kind() === 14 /* StringLiteral */  ? ElementAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier) : MemberAccessExpressionSyntax.create1(enumIdentifier, variableIdentifier);
+            return this.factory.binaryExpression(162 /* PlusExpression */ , receiver.withTrailingTrivia(Syntax.spaceTriviaList), Syntax.token(89 /* PlusToken */ ).withTrailingTrivia(this.space), Syntax.numericLiteralExpression("1"));
         };
         EmitterImpl.prototype.generateEnumFunctionExpression = function (node) {
             var identifier = this.withNoTrivia(node.identifier);
@@ -55496,10 +55496,6 @@ var Emitter;
             var initIndentationColumn = enumColumn + this.options.indentSpaces;
             var initIndentationTrivia = this.indentationTrivia(initIndentationColumn);
             if (node.enumElements.nonSeparatorCount() > 0) {
-                statements.push(VariableStatementSyntax.create1(this.factory.variableDeclaration(Syntax.token(40 /* VarKeyword */ ).withTrailingTrivia(this.space), Syntax.separatedList([
-                    this.factory.variableDeclarator(Syntax.identifier("_").withTrailingTrivia(this.space), null, this.factory.equalsValueClause(Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), identifier))
-                ]))).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
-                statements.push(ExpressionStatementSyntax.create1(Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")).withTrailingTrivia(this.space), Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), ArrayLiteralExpressionSyntax.create1())).withLeadingTrivia(initIndentationTrivia).withTrailingTrivia(this.newLine));
                 var assignDefaultValues = {
                     value: true
                 };
@@ -55507,10 +55503,10 @@ var Emitter;
                     var enumElement = node.enumElements.nonSeparatorAt(i);
                     var variableIdentifier = this.withNoTrivia(this.getEnumElementIdentifier(enumElement));
                     assignDefaultValues.value = assignDefaultValues.value && !this.hasValueClause(enumElement);
-                    var innerAssign = Syntax.assignmentExpression(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), variableIdentifier).withTrailingTrivia(Syntax.spaceTriviaList), Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, enumElement, assignDefaultValues.value, i));
-                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(MemberAccessExpressionSyntax.create1(Syntax.identifierName("_"), Syntax.identifierName("_map")), innerAssign).withLeadingTrivia(enumElement.leadingTrivia()).withTrailingTrivia(this.space);
-                    ;
-                    var outerAssign = Syntax.assignmentExpression(elementAccessExpression, Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
+                    var left = variableIdentifier.kind() === 14 /* StringLiteral */  ? ElementAccessExpressionSyntax.create1(identifier, variableIdentifier) : MemberAccessExpressionSyntax.create1(identifier, variableIdentifier);
+                    var innerAssign = Syntax.assignmentExpression(left.withTrailingTrivia(this.space), Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), this.generateEnumValueExpression(node, enumElement, assignDefaultValues.value, i));
+                    var elementAccessExpression = ElementAccessExpressionSyntax.create1(identifier, innerAssign).withLeadingTrivia(enumElement.leadingTrivia()).withTrailingTrivia(this.space);
+                    var outerAssign = Syntax.assignmentExpression(elementAccessExpression, Syntax.token(107 /* EqualsToken */ ).withTrailingTrivia(this.space), variableIdentifier.kind() === 14 /* StringLiteral */  ? variableIdentifier : Syntax.stringLiteralExpression('"' + variableIdentifier.text() + '"'));
                     var expressionStatement = ExpressionStatementSyntax.create1(outerAssign).withTrailingTrivia(this.newLine);
                     statements.push(expressionStatement);
                 }
