@@ -690,6 +690,10 @@ module TypeScript {
             var constructorMethod = classDeclSymbol.getConstructorMethod();
             var classTypeParameters = classDeclSymbol.getTypeParameters();
 
+            for (i = 0; i < classTypeParameters.length; i++) {
+                this.resolveDeclaredSymbol(classTypeParameters[i], classDecl, context);
+            }
+
             if (constructorMethod) {
                 var constructorTypeSymbol = constructorMethod.getType();
 
@@ -736,10 +740,6 @@ module TypeScript {
 
             for (i = 0; i < classMembers.length; i++) {
                 this.resolveDeclaredSymbol(classMembers[i], classDecl, context);
-            }
-
-            for (i = 0; i < classTypeParameters.length; i++) {
-                this.resolveDeclaredSymbol(classTypeParameters[i], classDecl, context);
             }
 
             return classDeclSymbol;
@@ -1875,6 +1875,14 @@ module TypeScript {
                     lhsType = this.cachedFunctionInterfaceType;
 
                     nameSymbol = lhsType.findMember(rhsName);
+                }
+                // could be a type parameter with a contraint
+                else if (lhsType.isTypeParameter()) {
+                    var constraint = (<PullTypeParameterSymbol>lhsType).getConstraint();
+
+                    if (constraint) {
+                        nameSymbol = constraint.findMember(rhsName);
+                    }
                 }
                 // could be a module instance
                 else {
