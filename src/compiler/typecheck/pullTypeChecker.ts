@@ -411,7 +411,7 @@ module TypeScript {
                 // ignore comparison info for now
                 var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [rightType.toString(), leftType.toString()]);
 
-                this.context.postError(assignmentAST.operand1.minChar - span.minChar, span.limChar - span.minChar, typeCheckContext.scriptName, message, enclosingDecl);
+                this.context.postError(assignmentAST.operand1.minChar, span.length(), typeCheckContext.scriptName, message, enclosingDecl);
             }
 
             return leftType;
@@ -698,7 +698,6 @@ module TypeScript {
             this.typeCheckAST(finallyAST.body, typeCheckContext);
 
             return null;
-        }
-        
+        }        
     }
 }

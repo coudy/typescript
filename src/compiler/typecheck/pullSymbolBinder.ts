@@ -854,21 +854,20 @@ module TypeScript {
                 parentHadSymbol = true;
             }
 
-            var span: DeclSpan;
+            var span: TextSpan;
             var decl: PullDecl;
             var decls: PullDecl[];
             var ast: AST;
             var members: PullSymbol[];
-
+            
             // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
             if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
-
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
                 if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
                     span = variableDeclaration.getSpan();
 
-                    variableDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                    variableDeclaration.addError(new PullError(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
                     variableSymbol = null;
                     parentHadSymbol = false;
                  }
@@ -876,7 +875,7 @@ module TypeScript {
              else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable)) {
                 span = variableDeclaration.getSpan();
 
-                variableDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                variableDeclaration.addError(new PullError(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
                 variableSymbol = null;
                 parentHadSymbol = false;                
              }
@@ -1070,7 +1069,7 @@ module TypeScript {
                 // with an implicit constructor...
                 var span = propertyDeclaration.getSpan();
 
-                propertyDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                propertyDeclaration.addError(new PullError(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
 
                 propertySymbol = null;
             }

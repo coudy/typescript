@@ -85,6 +85,7 @@ module TypeScript {
                 symbol = context.semanticInfoChain.findSymbol(copyOfContextSymbolPath, declKind);
 
                 if (symbol) {
+                    endTime = new Date().getTime();
                     time_in_findSymbol += endTime - startTime;
                     return symbol;
                 }
