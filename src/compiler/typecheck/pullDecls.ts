@@ -3,34 +3,33 @@
 
 ///<reference path='..\typescript.ts' />
 
-module TypeScript { 
-
+module TypeScript {
     export var pullDeclID = 0;
     export var lastBoundPullDeclId = 0;
 
     export class PullDecl {
         private declType: PullElementKind;
-        
+
         private declName: string;
 
         private symbol: PullSymbol = null;
 
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
-        
+
         private childDecls: PullDecl[] = [];
         private typeParameters: PullDecl[] = [];
 
         private childDeclTypeCache: any = new BlockIntrinsics();
         private childDeclValueCache: any = new BlockIntrinsics();
         private childDeclTypeParameterCache: any = new BlockIntrinsics();
-        
+
         private declID = pullDeclID++;
-        
+
         private declFlags: PullElementFlags = PullElementFlags.None;
-        
+
         private span: TextSpan;
-        
+
         private scriptName: string;
 
         private errors: PullError[] = null;
@@ -42,7 +41,7 @@ module TypeScript {
         // edits and updates we don't leak the val decl or symbol
         private synthesizedValDecl: PullDecl = null;
 
-        constructor (declName: string, declType: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
+        constructor(declName: string, declType: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
             this.declName = declName;
             this.declType = declType;
             this.declFlags = declFlags;
@@ -53,7 +52,7 @@ module TypeScript {
         public getDeclID() { return this.declID; }
 
         public getName() { return this.declName; }
-        public getKind() { return this.declType}
+        public getKind() { return this.declType }
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
         public getSymbol(): PullSymbol { return this.symbol; }
@@ -63,10 +62,10 @@ module TypeScript {
 
         public getFlags(): PullElementFlags { return this.declFlags; }
         public setFlags(flags: PullElementFlags) { this.declFlags = flags; }
-        
+
         public getSpan(): TextSpan { return this.span; }
         public setSpan(span: TextSpan) { this.span = span; }
-        
+
         public getScriptName(): string { return this.scriptName; }
 
         public setValueDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
@@ -90,14 +89,14 @@ module TypeScript {
             this.errors[this.errors.length] = error;
         }
 
-        public getErrors(): PullError[]{
+        public getErrors(): PullError[] {
             return this.errors;
         }
 
         public setErrors(errors: PullError[]) {
             if (errors) {
                 this.errors = [];
-                
+
                 // adjust the spans as we parent the errors to the new decl
                 for (var i = 0; i < errors.length; i++) {
                     errors[i].adjustOffset(this.span.start());
@@ -112,7 +111,7 @@ module TypeScript {
 
         // returns 'true' if the child decl was successfully added
         // ('false' is returned if addIfDuplicate is false and there is a collision)
-        public addChildDecl(childDecl: PullDecl, addIfDuplicate?=true) {
+        public addChildDecl(childDecl: PullDecl, addIfDuplicate? = true) {
             // check if decl exists
             // merge if necessary
             var declName = childDecl.getName();
@@ -138,10 +137,9 @@ module TypeScript {
             if (!cacheVal) {
                 cacheVal = [];
             }
+
             cacheVal[cacheVal.length] = childDecl;
-
             cache[declName] = cacheVal;
-
 
             return true;
         }
@@ -159,10 +157,10 @@ module TypeScript {
             else {
                 if (declKind & PullElementKind.SomeType) {
                     cacheVal = this.childDeclTypeParameterCache[declName];
-                    
+
                     if (cacheVal) {
                         return cacheVal;
-                    }                    
+                    }
                 }
 
                 return [];

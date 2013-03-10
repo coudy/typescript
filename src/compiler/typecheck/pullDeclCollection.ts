@@ -6,12 +6,10 @@
 ///<reference path='..\Text\TextSpan.ts' />
 
 module TypeScript {
-
     export class DeclCollectionContext {
-
         public parentChain: PullDecl[] = [];
 
-        constructor (public semanticInfo: SemanticInfo, public scriptName = "") {
+        constructor(public semanticInfo: SemanticInfo, public scriptName = "") {
         }
 
         public getParent() { return this.parentChain ? this.parentChain[this.parentChain.length - 1] : null; }
@@ -76,7 +74,7 @@ module TypeScript {
 
         context.semanticInfo.setDeclForAST(ast, decl);
 
-        context.semanticInfo.setASTForDecl(decl,ast);
+        context.semanticInfo.setASTForDecl(decl, ast);
 
         return true;
     }
@@ -98,7 +96,7 @@ module TypeScript {
         var span = TextSpan.fromBounds(classDecl.minChar, classDecl.limChar);
 
         var decl = new PullDecl(classDecl.name.text, PullElementKind.Class, declFlags, span, context.scriptName);
-        
+
         var constructorDecl = new PullDecl(classDecl.name.text, constructorDeclKind, declFlags | PullElementFlags.ClassConstructorVariable, span, context.scriptName);
 
         decl.setValueDecl(constructorDecl);
@@ -142,7 +140,7 @@ module TypeScript {
         context.semanticInfo.setDeclForAST(interfaceDecl, decl);
         context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
-        return true;    
+        return true;
     }
 
     export function createObjectTypeDeclaration(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext) {
@@ -169,7 +167,7 @@ module TypeScript {
         context.semanticInfo.setDeclForAST(interfaceDecl, decl);
         context.semanticInfo.setASTForDecl(decl, interfaceDecl);
 
-        return true;        
+        return true;
     }
 
     export function preCollectInterfaceDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
@@ -201,7 +199,7 @@ module TypeScript {
         context.pushParent(decl);
 
         context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setASTForDecl(decl,ast);
+        context.semanticInfo.setASTForDecl(decl, ast);
 
         return true;
     }
@@ -239,11 +237,11 @@ module TypeScript {
             context.semanticInfo.setDeclForAST(ast, propDecl);
         }
         else {
-            context.semanticInfo.setASTForDecl(decl,ast);
-            context.semanticInfo.setDeclForAST(ast, decl);   
+            context.semanticInfo.setASTForDecl(decl, ast);
+            context.semanticInfo.setDeclForAST(ast, decl);
         }
 
-        if (argDecl.typeExpr && 
+        if (argDecl.typeExpr &&
             ((<TypeReference>argDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>argDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
 
@@ -253,7 +251,7 @@ module TypeScript {
 
             getAstWalkerFactory().walk((<TypeReference>argDecl.typeExpr).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
-         
+
         return false;
     }
 
@@ -311,7 +309,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, propertyDecl);
 
-        if (propertyDecl.typeExpr && 
+        if (propertyDecl.typeExpr &&
             ((<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>propertyDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
 
@@ -353,7 +351,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, memberDecl);
 
-        if (memberDecl.typeExpr && 
+        if (memberDecl.typeExpr &&
             ((<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>memberDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
 
@@ -364,7 +362,7 @@ module TypeScript {
             getAstWalkerFactory().walk((<TypeReference>memberDecl.typeExpr).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
-        return false;    
+        return false;
     }
 
     export function createVariableDeclaration(varDecl: VarDecl, context: DeclCollectionContext) {
@@ -378,7 +376,7 @@ module TypeScript {
         if (hasFlag(varDecl.varFlags, VarFlags.Exported)) {
             declFlags |= PullElementFlags.Exported;
         }
-        
+
         var span = TextSpan.fromBounds(varDecl.minChar, varDecl.limChar);
 
         var decl = new PullDecl(varDecl.id.text, declType, declFlags, span, context.scriptName);
@@ -391,7 +389,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, varDecl);
 
-        if (varDecl.typeExpr && 
+        if (varDecl.typeExpr &&
             ((<TypeReference>varDecl.typeExpr).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>varDecl.typeExpr).term.nodeType == NodeType.FuncDecl)) {
 
@@ -402,7 +400,7 @@ module TypeScript {
             getAstWalkerFactory().walk((<TypeReference>varDecl.typeExpr).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
-        return false;    
+        return false;
     }
 
     export function preCollectVarDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
@@ -445,7 +443,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, functionTypeDeclAST);
 
-        if (functionTypeDeclAST.returnTypeAnnotation && 
+        if (functionTypeDeclAST.returnTypeAnnotation &&
             ((<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>functionTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -482,7 +480,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
 
-        if (constructorTypeDeclAST.returnTypeAnnotation && 
+        if (constructorTypeDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>constructorTypeDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -530,7 +528,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, funcDeclAST);
 
-        if (funcDeclAST.returnTypeAnnotation && 
+        if (funcDeclAST.returnTypeAnnotation &&
             ((<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>funcDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -570,7 +568,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
 
-        if (functionExpressionDeclAST.returnTypeAnnotation && 
+        if (functionExpressionDeclAST.returnTypeAnnotation &&
             ((<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -581,9 +579,9 @@ module TypeScript {
             getAstWalkerFactory().walk((<TypeReference>functionExpressionDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
-        return true;    
+        return true;
     }
-    
+
     // methods
     export function createMemberFunctionDeclaration(memberFunctionDeclAST: FuncDecl, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.None;
@@ -625,7 +623,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, memberFunctionDeclAST);
 
-        if (memberFunctionDeclAST.returnTypeAnnotation && 
+        if (memberFunctionDeclAST.returnTypeAnnotation &&
             ((<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>memberFunctionDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -638,7 +636,7 @@ module TypeScript {
 
         return true;
     }
-    
+
     // index signatures
     export function createIndexSignatureDeclaration(indexSignatureDeclAST: FuncDecl, context: DeclCollectionContext) {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Index;
@@ -661,7 +659,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
 
-        if (indexSignatureDeclAST.returnTypeAnnotation && 
+        if (indexSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -672,7 +670,7 @@ module TypeScript {
             getAstWalkerFactory().walk((<TypeReference>indexSignatureDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
-        return true;        
+        return true;
     }
 
     // call signatures
@@ -697,7 +695,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
 
-        if (callSignatureDeclAST.returnTypeAnnotation && 
+        if (callSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -708,7 +706,7 @@ module TypeScript {
             getAstWalkerFactory().walk((<TypeReference>callSignatureDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
-        return true; 
+        return true;
     }
 
     // construct signatures
@@ -733,7 +731,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
 
-        if (constructSignatureDeclAST.returnTypeAnnotation && 
+        if (constructSignatureDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>constructSignatureDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -773,7 +771,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
 
-        if (constructorDeclAST.returnTypeAnnotation && 
+        if (constructorDeclAST.returnTypeAnnotation &&
             ((<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>constructorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -816,7 +814,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, getAccessorDeclAST);
 
-        if (getAccessorDeclAST.returnTypeAnnotation && 
+        if (getAccessorDeclAST.returnTypeAnnotation &&
             ((<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.InterfaceDeclaration ||
             (<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term.nodeType == NodeType.FuncDecl)) {
 
@@ -827,7 +825,7 @@ module TypeScript {
             getAstWalkerFactory().walk((<TypeReference>getAccessorDeclAST.returnTypeAnnotation).term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
-        return true;   
+        return true;
     }
 
     // set accessors
@@ -860,7 +858,7 @@ module TypeScript {
 
         context.semanticInfo.setASTForDecl(decl, setAccessorDeclAST);
 
-        return true;       
+        return true;
     }
 
     export function preCollectFuncDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
@@ -880,8 +878,8 @@ module TypeScript {
             return createSetAccessorDeclaration(funcDecl, context);
         }
         else if (hasFlag(funcDecl.fncFlags, FncFlags.ConstructMember)) {
-            return hasFlag(funcDecl.flags, ASTFlags.TypeReference) ? 
-                createConstructorTypeDeclaration(funcDecl, context) : 
+            return hasFlag(funcDecl.flags, ASTFlags.TypeReference) ?
+                createConstructorTypeDeclaration(funcDecl, context) :
                 createConstructSignatureDeclaration(funcDecl, context);
         }
         else if (hasFlag(funcDecl.fncFlags, FncFlags.CallMember)) {
@@ -1029,7 +1027,7 @@ module TypeScript {
         }
         else if (ast.nodeType == NodeType.FuncDecl) {
             context.popParent();
-            
+
             parentDecl = context.getParent();
 
             if (parentDecl && parentDecl.getKind() == PullElementKind.Container) {

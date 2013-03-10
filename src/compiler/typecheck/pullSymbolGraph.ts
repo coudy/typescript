@@ -4,14 +4,13 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-    
     export var linkID = 0; // PULLTODO: Prune these if not in use
 
     export class IListItem {
         public next: IListItem = null;
         public prev: IListItem = null;
 
-        constructor (public value: any) { }
+        constructor(public value: any) { }
     }
 
     export class LinkList {
@@ -73,7 +72,7 @@ module TypeScript {
                     else {
                         prev = node.prev;
                         next = node.next;
-                        
+
                         if (prev) {
                             prev.next = next;
                         }
@@ -92,12 +91,12 @@ module TypeScript {
             }
         }
 
-        public update(map: (item: any, context: any) => void, context: any ) {
+        public update(map: (item: any, context: any) => void , context: any) {
             var node = this.head;
 
             while (node) {
                 map(node.value, context);
-                
+
                 node = node.next;
             }
         }
@@ -106,7 +105,7 @@ module TypeScript {
     export class PullSymbolLink {
         public id = linkID++;
         public data: any;
-        constructor (public start: PullSymbol, public end: PullSymbol, public kind: SymbolLinkKind) { }
+        constructor(public start: PullSymbol, public end: PullSymbol, public kind: SymbolLinkKind) { }
     }
 
     export enum GraphUpdateKind {
@@ -128,7 +127,7 @@ module TypeScript {
 
     export class PullSymbolGraphUpdater {
 
-        constructor (public semanticInfoChain: SemanticInfoChain) { }
+        constructor(public semanticInfoChain: SemanticInfoChain) { }
 
         public removeDecl(declToRemove: PullDecl) {
             var declSymbol = declToRemove.getSymbol();
@@ -190,9 +189,9 @@ module TypeScript {
 
             if (container) {
                 container.removeMember(symbolToRemove);
-            }            
+            }
         }
-        
+
         public addSymbol(symbolToAdd: PullSymbol) {
 
             if (symbolToAdd.addUpdateVersion == updateVersion) {
@@ -223,16 +222,16 @@ module TypeScript {
             symbolWhoseTypeChanged.typeChangeUpdateVersion = updateVersion;
 
             symbolWhoseTypeChanged.updateOutgoingLinks(propagateChangedTypeToOutgoingLinks, new PullSymbolUpdate(GraphUpdateKind.TypeChanged, symbolWhoseTypeChanged, this));
-            
+
             symbolWhoseTypeChanged.updateIncomingLinks(propagateChangedTypeToIncomingLinks, new PullSymbolUpdate(GraphUpdateKind.TypeChanged, symbolWhoseTypeChanged, this));
 
-            symbolWhoseTypeChanged.invalidate();            
+            symbolWhoseTypeChanged.invalidate();
 
         }
     }
 
-    export function propagateRemovalToOutgoingLinks(link: PullSymbolLink, update: PullSymbolUpdate) { 
-        
+    export function propagateRemovalToOutgoingLinks(link: PullSymbolLink, update: PullSymbolUpdate) {
+
         var symbolToRemove = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
@@ -310,7 +309,7 @@ module TypeScript {
         symbolToRemove.removeOutgoingLink(link);
     }
 
-    export function propagateRemovalToIncomingLinks(link: PullSymbolLink, update: PullSymbolUpdate) { 
+    export function propagateRemovalToIncomingLinks(link: PullSymbolLink, update: PullSymbolUpdate) {
         var symbolToRemove = update.symbolToUpdate;
         var affectedSymbol = link.start;
 
@@ -385,8 +384,8 @@ module TypeScript {
         }
     }
 
-    export function propagateAdditionToOutgoingLinks(link: PullSymbolLink, update: PullSymbolUpdate) { 
-        
+    export function propagateAdditionToOutgoingLinks(link: PullSymbolLink, update: PullSymbolUpdate) {
+
         var symbolToAdd = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
@@ -459,7 +458,7 @@ module TypeScript {
         }
     }
 
-    export function propagateAdditionToIncomingLinks(link: PullSymbolLink, update: PullSymbolUpdate) { 
+    export function propagateAdditionToIncomingLinks(link: PullSymbolLink, update: PullSymbolUpdate) {
         var symbolToAdd = update.symbolToUpdate;
         var affectedSymbol = link.start;
 
@@ -529,7 +528,7 @@ module TypeScript {
         }
     }
 
-    export function propagateChangedTypeToOutgoingLinks(link: PullSymbolLink, update: PullSymbolUpdate) { 
+    export function propagateChangedTypeToOutgoingLinks(link: PullSymbolLink, update: PullSymbolUpdate) {
         var symbolWhoseTypeChanged = update.symbolToUpdate;
         var affectedSymbol = link.end;
 
@@ -599,7 +598,7 @@ module TypeScript {
         }
     }
 
-    export function propagateChangedTypeToIncomingLinks(link: PullSymbolLink, update: PullSymbolUpdate) { 
+    export function propagateChangedTypeToIncomingLinks(link: PullSymbolLink, update: PullSymbolUpdate) {
         var symbolWhoseTypeChanged = update.symbolToUpdate;
         var affectedSymbol = link.start;
 

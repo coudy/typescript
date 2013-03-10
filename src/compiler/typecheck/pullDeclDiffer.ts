@@ -4,7 +4,6 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-
     export enum PullDeclEdit {
         NoChanges,
         DeclAdded,
@@ -12,11 +11,9 @@ module TypeScript {
         DeclChanged,
     }
 
-
     export class PullDeclDiff {
-
-        constructor(public oldDecl: PullDecl, public newDecl: PullDecl, public kind: PullDeclEdit) { }
-    
+        constructor(public oldDecl: PullDecl, public newDecl: PullDecl, public kind: PullDeclEdit) {
+        }
     }
 
     export class PullDeclDiffer {
@@ -73,6 +70,4 @@ module TypeScript {
             return foundDiff;
         }
     }
-
-
 }

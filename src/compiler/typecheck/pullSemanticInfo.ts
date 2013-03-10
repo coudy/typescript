@@ -5,8 +5,6 @@
 ///<reference path='..\Core\HashTable.ts' />
 ///<reference path='..\Syntax\ISyntaxElement.ts' />
 
-
-
 module TypeScript {
 
     // per-file info on 

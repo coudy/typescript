@@ -16,7 +16,6 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-
     export class PullEmitter extends Emitter {
         public locationInfo: LocationInfo = null;
         private declStack: PullDecl[] = [];
@@ -67,7 +66,7 @@ module TypeScript {
                     }
                 }
             }
-            
+
             return null;
         }
 
@@ -272,6 +271,7 @@ module TypeScript {
                     this.writeToOutput(name.actualText);
                 }
             }
+
             this.recordSourceMappingEnd(name);
             this.emitParensAndCommentsInPlace(name, false);
         }
@@ -317,7 +317,7 @@ module TypeScript {
                 this.emitIndent();
                 this.writeLineToOutput("});");
                 this.recordSourceMappingEnd(funcDecl);
-                
+
                 accessorSymbol.hasBeenEmitted = true;
             }
         }

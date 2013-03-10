@@ -22,7 +22,7 @@ module TypeScript {
         Signature = 1 << 12,
         Enum = 1 << 13,
         FatArrow = 1 << 14,
-        
+
         ClassConstructorVariable = 1 << 15,
         InitializedModule = 1 << 16,
         EnumVariable = 1 << 17,
@@ -67,7 +67,7 @@ module TypeScript {
         CallSignature = 1 << 21,
         ConstructSignature = 1 << 22,
         IndexSignature = 1 << 23,
-        
+
         ObjectType = 1 << 24,
         FunctionType = 1 << 25,
         ConstructorType = 1 << 26,
@@ -77,9 +77,9 @@ module TypeScript {
         // Warning: SomeValue and SomeType (along with their constituents) must be disjoint
         SomeValue = Variable | Parameter | Property | SomeFunction,
 
-        SomeType =  Script | Global | Primitive | Container | Class | Interface | DynamicModule | 
+        SomeType = Script | Global | Primitive | Container | Class | Interface | DynamicModule |
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter,
-        
+
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
     }
 

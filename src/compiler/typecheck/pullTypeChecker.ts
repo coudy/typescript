@@ -26,7 +26,6 @@ module TypeScript {
 
             return null;
         }
-
     }
 
     export function prePullTypeCheck(ast: AST, parent: AST, walker: IAstWalker): AST {
@@ -34,11 +33,10 @@ module TypeScript {
         var typeCheckContext: PullTypeCheckContext = <PullTypeCheckContext>walker.state;
 
         var typeChecker = typeCheckContext.compiler.pullTypeChecker;
-        
+
         walker.options.goChildren = typeChecker.typeCheckAST(ast, typeCheckContext);
         return ast;
     }
-
 
     export function postPullTypeCheck(ast: AST, parent: AST, walker: IAstWalker): AST {
         var typeCheckContext: PullTypeCheckContext = <PullTypeCheckContext>walker.state;
@@ -528,7 +526,5 @@ module TypeScript {
         public typeCheckTypeReference(ast: AST, typeCheckContext: PullTypeCheckContext): AST {
             return ast;
         }
-
     }
-
 }

@@ -13,18 +13,18 @@ module TypeScript {
         public reBindingAfterChange = false;
         public startingDeclForRebind = pullDeclID; // note that this gets set on creation
 
-        constructor (public semanticInfoChain: SemanticInfoChain, public scriptName: string, public useFidelity = false) {
+        constructor(public semanticInfoChain: SemanticInfoChain, public scriptName: string, public useFidelity = false) {
             this.semanticInfo = this.semanticInfoChain.getUnit(this.scriptName);
         }
 
-        public getParent(n=0): PullTypeSymbol { return this.parentChain ? this.parentChain[this.parentChain.length - 1 - n] : null; }
+        public getParent(n = 0): PullTypeSymbol { return this.parentChain ? this.parentChain[this.parentChain.length - 1 - n] : null; }
         public getDeclPath() { return this.declPath; }
 
-        public pushParent(parentDecl: PullTypeSymbol) { 
-            if (parentDecl) { 
+        public pushParent(parentDecl: PullTypeSymbol) {
+            if (parentDecl) {
                 this.parentChain[this.parentChain.length] = parentDecl;
                 this.declPath[this.declPath.length] = parentDecl.getName();
-            } 
+            }
         }
 
         public popParent() {
@@ -68,7 +68,7 @@ module TypeScript {
 
         // next, link back up to the enclosing context
         if (contextSymbolPath.length) {
-            
+
             for (var i = 0; i < contextSymbolPath.length; i++) {
                 copyOfContextSymbolPath[copyOfContextSymbolPath.length] = contextSymbolPath[i];
             }
@@ -87,6 +87,7 @@ module TypeScript {
                     time_in_findSymbol += endTime - startTime;
                     return symbol;
                 }
+
                 copyOfContextSymbolPath.length -= 2;
                 copyOfContextSymbolPath[copyOfContextSymbolPath.length] = name;
             }

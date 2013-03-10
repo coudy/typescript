@@ -8,7 +8,7 @@ module TypeScript {
 
         private parentChain: PullTypeSymbol[] = [];
         private declPath: string[] = [];
-        
+
         private staticClassMembers: PullSymbol[] = [];
 
         public semanticInfo: SemanticInfo;
@@ -17,15 +17,15 @@ module TypeScript {
         public startingDeclForRebind = pullDeclID; // note that this gets set on creation
         public startingSymbolForRebind = pullSymbolID; // note that this gets set on creation
 
-        constructor (public semanticInfoChain: SemanticInfoChain) {
+        constructor(public semanticInfoChain: SemanticInfoChain) {
         }
 
         public setUnit(fileName: string) {
             this.semanticInfo = this.semanticInfoChain.getUnit(fileName);
         }
 
-        public getParent(returnInstanceType=false): PullTypeSymbol {
-            var parent = this.parentChain ? this.parentChain[this.parentChain.length-1] : null;
+        public getParent(returnInstanceType = false): PullTypeSymbol {
+            var parent = this.parentChain ? this.parentChain[this.parentChain.length - 1] : null;
 
             if (parent && parent.isContainer() && returnInstanceType) {
                 var instanceSymbol = (<PullContainerTypeSymbol>parent).getInstanceSymbol();
@@ -40,11 +40,11 @@ module TypeScript {
 
         public getDeclPath() { return this.declPath; }
 
-        public pushParent(parentDecl: PullTypeSymbol) { 
-            if (parentDecl) { 
+        public pushParent(parentDecl: PullTypeSymbol) {
+            if (parentDecl) {
                 this.parentChain[this.parentChain.length] = parentDecl;
                 this.declPath[this.declPath.length] = parentDecl.getName();
-            } 
+            }
         }
 
         public popParent() {
@@ -86,7 +86,7 @@ module TypeScript {
 
             // next, link back up to the enclosing context
             if (contextSymbolPath.length) {
-            
+
                 for (var i = 0; i < contextSymbolPath.length; i++) {
                     copyOfContextSymbolPath[copyOfContextSymbolPath.length] = contextSymbolPath[i];
                 }
@@ -137,7 +137,7 @@ module TypeScript {
 
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
-        
+
             var modName = moduleContainerDecl.getName();
 
             var moduleContainerTypeSymbol: PullContainerTypeSymbol = null;
@@ -148,7 +148,7 @@ module TypeScript {
 
             var parent = this.getParent();
             var parentInstanceSymbol = this.getParent(true);
-            
+
             var moduleAST = <ModuleDeclaration>this.semanticInfo.getASTForDecl(moduleContainerDecl);
 
             var createdNewSymbol = false;
@@ -170,7 +170,7 @@ module TypeScript {
             if (moduleContainerTypeSymbol) {
                 moduleInstanceSymbol = moduleContainerTypeSymbol.getInstanceSymbol();
             }
-            else { 
+            else {
                 var moduleContainerTypeSymbol = new PullContainerTypeSymbol(modName);
                 createdNewSymbol = true;
             }
@@ -186,7 +186,7 @@ module TypeScript {
                 moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
 
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
-            }            
+            }
 
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
             moduleContainerDecl.setSymbol(moduleContainerTypeSymbol);
@@ -271,7 +271,7 @@ module TypeScript {
         public bindEnumDeclarationToPullSymbol(enumDeclaration: PullDecl) {
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
-        
+
             var enumName = enumDeclaration.getName();
             var enumSymbol = <PullTypeSymbol>this.findSymbolInContext(enumName, PullElementKind.Enum, []);
 
@@ -301,11 +301,11 @@ module TypeScript {
             }
 
             enumSymbol.addDeclaration(enumDeclaration);
-            enumDeclaration.setSymbol(enumSymbol);            
-            
+            enumDeclaration.setSymbol(enumSymbol);
+
             this.semanticInfo.setSymbolForAST(enumAST.name, enumSymbol);
             this.semanticInfo.setSymbolForAST(enumAST, enumSymbol);
-        
+
             if (createdNewSymbol) {
                 var parent = this.getParent();
 
@@ -341,7 +341,7 @@ module TypeScript {
                 this.bindDeclToPullSymbol(childDecls[i]);
             }
 
-            this.popParent();        
+            this.popParent();
         }
 
         // classes
@@ -406,7 +406,7 @@ module TypeScript {
 
                 if (classSymbol.isGeneric()) {
                     //classSymbol.invalidateSpecializations();
-                    
+
                     var specializations = classSymbol.getKnownSpecializations();
                     var specialization: PullTypeSymbol = null;
 
@@ -423,23 +423,23 @@ module TypeScript {
                             }
                         }
 
-                        specialization.addDeclaration(classDecl);                
+                        specialization.addDeclaration(classDecl);
                     }
-                    
+
                 }
             }
 
             if (!parentHadSymbol) {
                 classSymbol = new PullClassTypeSymbol(className);
-            }        
-        
+            }
+
             classSymbol.addDeclaration(classDecl);
-            
+
             classDecl.setSymbol(classSymbol);
 
             this.semanticInfo.setSymbolForAST(classAST.name, classSymbol);
             this.semanticInfo.setSymbolForAST(classAST, classSymbol);
-        
+
             if (parent && !parentHadSymbol) {
                 var linkKind = classDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
 
@@ -516,7 +516,7 @@ module TypeScript {
 
                 // set the class decl's AST to the class declaration
                 this.semanticInfo.setASTForDecl(classDecl, classAST);
-                
+
                 var constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                 constructorSignature.setReturnType(classSymbol);
                 constructorTypeSymbol.addSignature(constructorSignature);
@@ -530,7 +530,7 @@ module TypeScript {
                 var member: PullSymbol;
                 var isPrivate = false;
                 var decls: PullDecl[];
-                
+
                 for (var i = 0; i < this.staticClassMembers.length; i++) {
 
                     member = this.staticClassMembers[i];
@@ -612,7 +612,7 @@ module TypeScript {
 
                 if (parent) {
                     var linkKind = interfaceDecl.getFlags() & PullElementFlags.Exported ? SymbolLinkKind.PublicMember : SymbolLinkKind.PrivateMember;
-                
+
                     if (linkKind == SymbolLinkKind.PublicMember) {
                         parent.addMember(interfaceSymbol, linkKind);
                     }
@@ -636,7 +636,7 @@ module TypeScript {
 
                     //interfaceSymbol.invalidateSpecializations();
 
-                    
+
                     var specializations = interfaceSymbol.getKnownSpecializations();
                     var specialization: PullTypeSymbol = null;
 
@@ -653,7 +653,7 @@ module TypeScript {
 
                         specialization.addDeclaration(interfaceDecl);
                     }
-                    
+
                 }
             }
 
@@ -705,7 +705,7 @@ module TypeScript {
             objectSymbol.addDeclaration(objectDecl);
             objectDecl.setSymbol(objectSymbol);
 
-            this.semanticInfo.setSymbolForAST(objectSymbolAST, objectSymbol);        
+            this.semanticInfo.setSymbolForAST(objectSymbolAST, objectSymbol);
 
             this.pushParent(objectSymbol);
 
@@ -756,10 +756,10 @@ module TypeScript {
             // 2. If no other decl exists, create a new symbol and use that one
 
             var constructorTypeSymbol = new PullConstructorTypeSymbol();
-            
+
             constructorTypeDeclaration.setSymbol(constructorTypeSymbol);
             constructorTypeSymbol.addDeclaration(constructorTypeDeclaration);
-            this.semanticInfo.setSymbolForAST(constructorTypeAST, constructorTypeSymbol);       
+            this.semanticInfo.setSymbolForAST(constructorTypeAST, constructorTypeSymbol);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
 
@@ -797,7 +797,7 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
         }
 
         // variables
@@ -1007,7 +1007,7 @@ module TypeScript {
             var declFlags = propertyDeclaration.getFlags();
             var declKind = propertyDeclaration.getKind();
             var propDeclAST = <VarDecl>this.semanticInfo.getASTForDecl(propertyDeclaration);
-            
+
             var isStatic = false;
             var isOptional = false;
 
@@ -1090,7 +1090,7 @@ module TypeScript {
                         }
                     }
                 }
-                
+
                 if (!classTypeSymbol) {
                     classTypeSymbol = <PullClassTypeSymbol>this.findSymbolInContext(declName, PullElementKind.SomeType, []);
 
@@ -1106,7 +1106,7 @@ module TypeScript {
                 else {
                     propertySymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                 }
-                
+
                 propertySymbol.setResolved();
             }
 
@@ -1193,7 +1193,7 @@ module TypeScript {
 
             this.semanticInfo.setSymbolForAST(importDeclAST.id, importSymbol);
             this.semanticInfo.setSymbolForAST(importDeclAST, importSymbol);
-            
+
 
             if (parent && !parentHadSymbol) {
 
@@ -1236,7 +1236,7 @@ module TypeScript {
                     else {
                         params[argDecl.id.actualText] = true;
                     }
-                
+
                     if (decl) {
                         parameterSymbol.addDeclaration(decl);
                         decl.setSymbol(parameterSymbol);
@@ -1250,7 +1250,7 @@ module TypeScript {
                             parameterSymbol.addDeclaration(valDecl);
                         }
                     }
-                    
+
                     this.semanticInfo.setSymbolForAST(argDecl.id, parameterSymbol);
                     this.semanticInfo.setSymbolForAST(argDecl, parameterSymbol);
 
@@ -1275,11 +1275,11 @@ module TypeScript {
                     //    }
                     //}
                 }
-            }        
+            }
         }
 
         // function declarations
-        public bindFunctionDeclarationToPullSymbol(functionDeclaration: PullDecl) {  
+        public bindFunctionDeclarationToPullSymbol(functionDeclaration: PullDecl) {
             var declKind = functionDeclaration.getKind();
             var declFlags = functionDeclaration.getFlags();
             var funcDeclAST = <FuncDecl>this.semanticInfo.getASTForDecl(functionDeclaration);
@@ -1317,7 +1317,7 @@ module TypeScript {
                 functionTypeSymbol = <PullFunctionTypeSymbol>functionSymbol.getType();
                 parentHadSymbol = true;
             }
-            
+
             if (this.reBindingAfterChange && functionSymbol) {
 
                 // prune out-of-date decls...
@@ -1333,7 +1333,7 @@ module TypeScript {
                 }
 
                 functionSymbol.invalidate();
-            } 
+            }
 
             if (!functionSymbol) {
                 // PULLTODO: Make sure that we properly flag signature decl types when collecting decls
@@ -1345,7 +1345,7 @@ module TypeScript {
 
             functionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionDeclaration);
-            
+
             this.semanticInfo.setSymbolForAST(funcDeclAST.name, functionSymbol);
             this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
 
@@ -1379,7 +1379,7 @@ module TypeScript {
             }
 
             var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
-            
+
             signature.addDeclaration(functionDeclaration);
             functionDeclaration.setSignatureSymbol(signature);
 
@@ -1411,11 +1411,11 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
 
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
-        
+
             if (!isSignature) {
                 var childDecls = functionDeclaration.getChildDecls();
 
@@ -1439,7 +1439,7 @@ module TypeScript {
             var functionTypeSymbol = new PullFunctionTypeSymbol();
 
             functionSymbol.setType(functionTypeSymbol);
-            
+
             functionExpressionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionExpressionDeclaration);
 
@@ -1478,7 +1478,7 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
 
             signature.addDeclaration(functionExpressionDeclaration);
             functionExpressionDeclaration.setSignatureSymbol(signature);
@@ -1487,7 +1487,7 @@ module TypeScript {
 
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
-        
+
             var childDecls = functionExpressionDeclaration.getChildDecls();
 
             for (var i = 0; i < childDecls.length; i++) {
@@ -1506,11 +1506,11 @@ module TypeScript {
             // 2. If no other decl exists, create a new symbol and use that one
 
             var functionTypeSymbol = new PullFunctionTypeSymbol();
-            
+
             functionTypeDeclaration.setSymbol(functionTypeSymbol);
             functionTypeSymbol.addDeclaration(functionTypeDeclaration);
             this.semanticInfo.setSymbolForAST(funcTypeAST, functionTypeSymbol);
-        
+
             this.pushParent(functionTypeSymbol);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
@@ -1541,7 +1541,7 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
 
             signature.addDeclaration(functionTypeDeclaration);
             functionTypeDeclaration.setSignatureSymbol(signature);
@@ -1551,7 +1551,7 @@ module TypeScript {
             // add the implicit call member for this function type
             functionTypeSymbol.addSignature(signature);
 
-            this.popParent();        
+            this.popParent();
         }
 
         // method declarations
@@ -1571,7 +1571,7 @@ module TypeScript {
 
             var parentHadSymbol = false;
             var cleanedPreviousDecls = false;
-            
+
             var methodSymbol: PullSymbol = null;
             var methodTypeSymbol: PullFunctionTypeSymbol = null;
 
@@ -1682,7 +1682,7 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
 
             signature.addDeclaration(methodDeclaration);
             methodDeclaration.setSignatureSymbol(signature);
@@ -1691,7 +1691,7 @@ module TypeScript {
 
             // add the implicit call member for this function type
             methodTypeSymbol.addSignature(signature);
-        
+
             if (!isSignature) {
                 var childDecls = methodDeclaration.getChildDecls();
 
@@ -1700,7 +1700,7 @@ module TypeScript {
                 }
 
                 this.popParent();
-            } 
+            }
         }
 
         // class constructor declarations
@@ -1757,7 +1757,7 @@ module TypeScript {
             constructorDeclaration.setSymbol(constructorSymbol);
             constructorSymbol.addDeclaration(constructorDeclaration);
             this.semanticInfo.setSymbolForAST(constructorAST, constructorSymbol);
-       
+
             if (!isSignature) {
                 this.pushParent(constructorTypeSymbol);
             }
@@ -1772,7 +1772,7 @@ module TypeScript {
                 constructorSymbol.invalidate();
                 constructorTypeSymbol.invalidate();
             }
-            
+
             // add a call signature to the constructor method, and a construct signature to the parent class type
             var constructSignature = isSignature ? new PullSignatureSymbol(PullElementKind.ConstructSignature) : new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
 
@@ -1786,7 +1786,7 @@ module TypeScript {
             this.bindParameterSymbols(constructorDeclAST, constructSignature);
 
             constructorTypeSymbol.addSignature(constructSignature);
-        
+
             if (!isSignature) {
                 var childDecls = constructorDeclaration.getChildDecls();
 
@@ -1811,7 +1811,7 @@ module TypeScript {
 
             // update the construct signature list
             parent.recomputeConstructSignatures();
-            
+
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
             var typeParameters = constructSignatureDeclaration.getTypeParameters();
@@ -1840,7 +1840,7 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
 
             constructSignature.addDeclaration(constructSignatureDeclaration);
             constructSignatureDeclaration.setSignatureSymbol(constructSignature);
@@ -1849,7 +1849,7 @@ module TypeScript {
 
             this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(constructSignatureDeclaration), constructSignature);
 
-            parent.addConstructSignature(constructSignature); 
+            parent.addConstructSignature(constructSignature);
         }
 
         public bindCallSignatureDeclarationToPullSymbol(callSignatureDeclaration: PullDecl) {
@@ -1867,7 +1867,7 @@ module TypeScript {
 
             // update the call signature list
             parent.recomputeCallSignatures();
-            
+
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
             var typeParameters = callSignatureDeclaration.getTypeParameters();
@@ -1897,7 +1897,7 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
 
             callSignature.addDeclaration(callSignatureDeclaration);
             callSignatureDeclaration.setSignatureSymbol(callSignature);
@@ -1921,8 +1921,8 @@ module TypeScript {
             }
 
             // update the index signature list
-            parent.recomputeIndexSignatures();         
-            
+            parent.recomputeIndexSignatures();
+
             var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
 
             var typeParameters = indexSignatureDeclaration.getTypeParameters();
@@ -1951,16 +1951,16 @@ module TypeScript {
 
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
-            }            
+            }
 
             indexSignature.addDeclaration(indexSignatureDeclaration);
             indexSignatureDeclaration.setSignatureSymbol(indexSignature);
-            
+
             this.bindParameterSymbols(<FuncDecl>this.semanticInfo.getASTForDecl(indexSignatureDeclaration), indexSignature);
 
             this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(indexSignatureDeclaration), indexSignature);
 
-            parent.addIndexSignature(indexSignature);        
+            parent.addIndexSignature(indexSignature);
         }
 
         // binding
@@ -2064,7 +2064,7 @@ module TypeScript {
 
         public bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) { }
         public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) { }
-        
+
         public bindDeclsForUnit(filePath: string, rebind = false) {
             this.setUnit(filePath);
 

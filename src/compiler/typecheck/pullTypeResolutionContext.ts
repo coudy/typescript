@@ -4,7 +4,6 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-
     export class CandidateInferenceInfo {
         public typeParameter: PullTypeParameterSymbol = null;
         public isFixed = false;
@@ -43,7 +42,7 @@ module TypeScript {
                 info.isFixed = fix;
             }
         }
-        
+
         public getInferenceCandidates(): any[] {
             var inferenceCandidates: any[] = [];
             var info: CandidateInferenceInfo;
@@ -105,8 +104,8 @@ module TypeScript {
 
         public provisionallyTypedSymbols: PullSymbol[] = [];
         public provisionalErrors: PullError[] = [];
-        
-        constructor (public contextualType: PullTypeSymbol,
+
+        constructor(public contextualType: PullTypeSymbol,
                      public provisional: bool,
                      public substitutions: any) { }
 
@@ -144,7 +143,7 @@ module TypeScript {
         public pushContextualType(type: PullTypeSymbol, provisional: bool, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
         }
-        
+
         public popContextualType(): PullContextualTypeContext {
             var tc = this.contextStack.pop();
 
@@ -155,7 +154,7 @@ module TypeScript {
 
         public findSubstitution(type: PullTypeSymbol) {
             var substitution: PullTypeSymbol = null;
-            
+
             if (this.contextStack.length) {
                 for (var i = this.contextStack.length - 1; i >= 0; i--) {
                     if (this.contextStack[i].substitutions) {
@@ -170,13 +169,13 @@ module TypeScript {
 
             return substitution;
         }
-        
+
         public getContextualType(): PullTypeSymbol {
             var context = !this.contextStack.length ? null : this.contextStack[this.contextStack.length - 1];
-            
+
             if (context) {
                 var type = context.contextualType;
-                
+
                 // if it's a type parameter, return the upper bound
                 if (type.isTypeParameter() && (<PullTypeParameterSymbol>type).getConstraint()) {
                     type = (<PullTypeParameterSymbol>type).getConstraint();
@@ -186,10 +185,10 @@ module TypeScript {
 
                 return substitution ? substitution : type;
             }
-            
+
             return null;
         }
-        
+
         public inProvisionalResolution() {
             return (!this.contextStack.length ? false : this.contextStack[this.contextStack.length - 1].provisional);
         }
@@ -239,5 +238,4 @@ module TypeScript {
             }
         }
     }
-
 }
