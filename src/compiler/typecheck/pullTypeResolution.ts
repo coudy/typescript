@@ -163,7 +163,7 @@ module TypeScript {
             var searchDecls = this.semanticInfoChain.getUnit(decl.getScriptName()).getTopLevelDecls();
             
             var spanToFind = decl.getSpan();
-            var candidateSpan: DeclSpan = null;
+            var candidateSpan: TextSpan = null;
             var searchKinds = PullElementKind.SomeType | PullElementKind.SomeFunction;
             var found = false;
 
@@ -173,7 +173,7 @@ module TypeScript {
                 for (var i = 0; i < searchDecls.length; i++) {
                     candidateSpan = searchDecls[i].getSpan();
 
-                    if (spanToFind.minChar >= candidateSpan.minChar && spanToFind.limChar <= candidateSpan.limChar) {
+                    if (spanToFind.start() >= candidateSpan.start() && spanToFind.end() <= candidateSpan.end()) {
                         if (searchDecls[i].getKind() & searchKinds) { // only consider types, which have scopes
                             //if (!(searchDecls[i].getKind() & PullElementKind.Script)) {
                                 decls[decls.length] = searchDecls[i];
@@ -1978,7 +1978,7 @@ module TypeScript {
         public resolveObjectLiteralExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var typeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(expressionAST);
-            var span: DeclSpan;
+            var span: TextSpan;
 
             if (typeSymbol && typeSymbol.isResolved()) {
                 return typeSymbol.getType();
@@ -1990,10 +1990,7 @@ module TypeScript {
             // create fields for each based on the value assigned in
             var objectLitAST = <UnaryExpression>expressionAST;
 
-            span = new DeclSpan();
-
-            span.minChar = objectLitAST.minChar;
-            span.limChar = objectLitAST.limChar;
+            span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
             var objectLitDecl = new PullDecl("", PullElementKind.ObjectType, PullElementFlags.None, span, this.unitPath);
 
@@ -2045,9 +2042,7 @@ module TypeScript {
                     }
 
                     // PULLTODO: Collect these at decl collection time, add them to the var decl
-                    span = new DeclSpan();
-                    span.minChar = binex.minChar;
-                    span.limChar = binex.limChar;
+                    span = TextSpan.fromBounds(binex.minChar, binex.limChar);
 
                     var decl = new PullDecl(text, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
 

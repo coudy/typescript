@@ -3,6 +3,7 @@
 
 ///<reference path='..\typescript.ts' />
 ///<reference path='..\Syntax\SyntaxWalker.generated.ts' />
+///<reference path='..\Text\TextSpan.ts' />
 
 module TypeScript {
 
@@ -25,11 +26,7 @@ module TypeScript {
     export function preCollectImportDecls(ast: AST, parent: AST, context: DeclCollectionContext) {
         var importDecl = <ImportDeclaration>ast;
         var declFlags = PullElementFlags.None;
-        var span = new DeclSpan();
-
-        span.minChar = importDecl.minChar;
-
-        span.limChar = importDecl.limChar
+        var span = TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
 
         var decl = new PullDecl(importDecl.id.actualText, PullElementKind.TypeAlias, declFlags, span, context.scriptName);
 
@@ -68,11 +65,7 @@ module TypeScript {
             kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Container;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = moduleDecl.minChar;
-
-        span.limChar = moduleDecl.limChar;
+        var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
 
         var decl = new PullDecl(modName, kind, declFlags, span, context.scriptName);
         var parent = context.getParent();
@@ -102,11 +95,7 @@ module TypeScript {
             constructorDeclKind = PullElementKind.Property;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = classDecl.minChar;
-
-        span.limChar = classDecl.limChar;
+        var span = TextSpan.fromBounds(classDecl.minChar, classDecl.limChar);
 
         var decl = new PullDecl(classDecl.name.text, PullElementKind.Class, declFlags, span, context.scriptName);
         
@@ -136,11 +125,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Exported;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = interfaceDecl.minChar;
-
-        span.limChar = interfaceDecl.limChar;
+        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
         var decl = new PullDecl(interfaceDecl.name.text, PullElementKind.Interface, declFlags, span, context.scriptName);
 
@@ -167,11 +152,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Exported;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = interfaceDecl.minChar;
-
-        span.limChar = interfaceDecl.limChar;
+        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
         var decl = new PullDecl("", PullElementKind.ObjectType, declFlags, span, context.scriptName);
 
@@ -205,11 +186,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Exported;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = interfaceDecl.minChar;
-
-        span.limChar = interfaceDecl.limChar;
+        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
 
         var decl = new PullDecl(interfaceDecl.name.text, PullElementKind.Interface, declFlags, span, context.scriptName);
 
@@ -244,10 +221,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = argDecl.minChar;
-        span.limChar = argDecl.limChar;
+        var span = TextSpan.fromBounds(argDecl.minChar, argDecl.limChar);
 
         var decl = new PullDecl(argDecl.id.text, PullElementKind.Parameter, declFlags, span, context.scriptName);
 
@@ -287,10 +261,7 @@ module TypeScript {
         var typeParameterDecl = <TypeParameter>ast;
         var declFlags = PullElementFlags.None;
 
-        var span = new DeclSpan();
-
-        span.minChar = typeParameterDecl.minChar;
-        span.limChar = typeParameterDecl.limChar;
+        var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
 
         var decl = new PullDecl(typeParameterDecl.name.actualText, PullElementKind.TypeParameter, declFlags, span, context.scriptName);
 
@@ -328,11 +299,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Constant;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = propertyDecl.minChar;
-
-        span.limChar = propertyDecl.limChar;
+        var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
 
         var decl = new PullDecl(propertyDecl.id.text, declType, declFlags, span, context.scriptName);
 
@@ -374,11 +341,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Static;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = memberDecl.minChar;
-
-        span.limChar = memberDecl.limChar;
+        var span = TextSpan.fromBounds(memberDecl.minChar, memberDecl.limChar);
 
         var decl = new PullDecl(memberDecl.id.text, declType, declFlags, span, context.scriptName);
 
@@ -416,11 +379,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Exported;
         }
         
-        var span = new DeclSpan();
-
-        span.minChar = varDecl.minChar;
-
-        span.limChar = varDecl.limChar;
+        var span = TextSpan.fromBounds(varDecl.minChar, varDecl.limChar);
 
         var decl = new PullDecl(varDecl.id.text, declType, declFlags, span, context.scriptName);
 
@@ -468,10 +427,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.FunctionType;
 
-        var span = new DeclSpan();
-
-        span.minChar = functionTypeDeclAST.minChar;
-        span.limChar = functionTypeDeclAST.limChar;
+        var span = TextSpan.fromBounds(functionTypeDeclAST.minChar, functionTypeDeclAST.limChar);
 
         var decl = new PullDecl("", declType, declFlags, span, context.semanticInfo.getPath());
 
@@ -508,10 +464,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.ConstructorType;
 
-        var span = new DeclSpan();
-
-        span.minChar = constructorTypeDeclAST.minChar;
-        span.limChar = constructorTypeDeclAST.limChar;
+        var span = TextSpan.fromBounds(constructorTypeDeclAST.minChar, constructorTypeDeclAST.limChar);
 
         var decl = new PullDecl("{new}", declType, declFlags, span, context.semanticInfo.getPath());
 
@@ -560,10 +513,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Signature;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = funcDeclAST.minChar;
-        span.limChar = funcDeclAST.limChar;
+        var span = TextSpan.fromBounds(funcDeclAST.minChar, funcDeclAST.limChar);
 
         var decl = new PullDecl(funcDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
 
@@ -603,10 +553,7 @@ module TypeScript {
             declFlags |= PullElementFlags.FatArrow;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = functionExpressionDeclAST.minChar;
-        span.limChar = functionExpressionDeclAST.limChar;
+        var span = TextSpan.fromBounds(functionExpressionDeclAST.minChar, functionExpressionDeclAST.limChar);
 
         var decl = new PullDecl("", declType, declFlags, span, context.scriptName);
 
@@ -661,10 +608,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = memberFunctionDeclAST.minChar;
-        span.limChar = memberFunctionDeclAST.limChar;
+        var span = TextSpan.fromBounds(memberFunctionDeclAST.minChar, memberFunctionDeclAST.limChar);
 
         var decl = new PullDecl(memberFunctionDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
 
@@ -700,10 +644,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Index;
         var declType = PullElementKind.IndexSignature;
 
-        var span = new DeclSpan();
-
-        span.minChar = indexSignatureDeclAST.minChar;
-        span.limChar = indexSignatureDeclAST.limChar;
+        var span = TextSpan.fromBounds(indexSignatureDeclAST.minChar, indexSignatureDeclAST.limChar);
 
         var decl = new PullDecl("[]", declType, declFlags, span, context.scriptName);
 
@@ -739,10 +680,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
         var declType = PullElementKind.CallSignature;
 
-        var span = new DeclSpan();
-
-        span.minChar = callSignatureDeclAST.minChar;
-        span.limChar = callSignatureDeclAST.limChar;
+        var span = TextSpan.fromBounds(callSignatureDeclAST.minChar, callSignatureDeclAST.limChar);
 
         var decl = new PullDecl("()", declType, declFlags, span, context.scriptName);
 
@@ -778,10 +716,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Signature | PullElementFlags.Call;
         var declType = PullElementKind.ConstructSignature;
 
-        var span = new DeclSpan();
-
-        span.minChar = constructSignatureDeclAST.minChar;
-        span.limChar = constructSignatureDeclAST.limChar;
+        var span = TextSpan.fromBounds(constructSignatureDeclAST.minChar, constructSignatureDeclAST.limChar);
 
         var decl = new PullDecl("new", declType, declFlags, span, context.scriptName);
 
@@ -821,10 +756,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Signature;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = constructorDeclAST.minChar;
-        span.limChar = constructorDeclAST.limChar;
+        var span = TextSpan.fromBounds(constructorDeclAST.minChar, constructorDeclAST.limChar);
 
         var decl = new PullDecl(constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
 
@@ -867,10 +799,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = getAccessorDeclAST.minChar;
-        span.limChar = getAccessorDeclAST.limChar;
+        var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
 
         var decl = new PullDecl(getAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
 
@@ -914,10 +843,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
-        var span = new DeclSpan();
-
-        span.minChar = setAccessorDeclAST.minChar;
-        span.limChar = setAccessorDeclAST.limChar;
+        var span = TextSpan.fromBounds(setAccessorDeclAST.minChar, setAccessorDeclAST.limChar);
 
         var decl = new PullDecl(setAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
 
@@ -981,11 +907,7 @@ module TypeScript {
 
         if (ast.nodeType == NodeType.Script) {
             var script: Script = <Script>ast;
-            var span = new DeclSpan();
-
-            span.minChar = script.minChar;
-
-            span.limChar = script.limChar;
+            var span = TextSpan.fromBounds(script.minChar, script.limChar);
 
             var decl = new PullDecl(context.scriptName, PullElementKind.Script, PullElementFlags.None, span, context.scriptName);
 

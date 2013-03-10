@@ -23,19 +23,19 @@ class TextSpan {
         this._length = length;
     }
 
-    start(): number {
+    public start(): number {
         return this._start;
     }
 
-    length(): number {
+    public length(): number {
         return this._length;
     }
 
-    end(): number {
+    public end(): number {
         return this._start + this._length;
     }
 
-    isEmpty(): bool {
+    public isEmpty(): bool {
         return this._length === 0;
     }
 

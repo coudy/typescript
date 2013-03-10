@@ -666,7 +666,7 @@ module Services {
                 }
                 // TODO: find a better way of selecting the main entry for none-function overloaded types instead of selecting the first one
 
-                entries.push(new DefinitionInfo(this.pullCompilerState.mapToHostUnitIndex(unitIndex), span.minChar, span.limChar, symbolKind, symbolName, containerKind, containerName, null));
+                entries.push(new DefinitionInfo(this.pullCompilerState.mapToHostUnitIndex(unitIndex), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName, null));
             }
 
             result = entries[mainEntry];

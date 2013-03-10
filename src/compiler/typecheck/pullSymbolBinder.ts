@@ -830,7 +830,7 @@ module TypeScript {
 
             if (variableSymbol && !variableSymbol.isType()) {
                 parentHadSymbol = true;
-            }            
+            }
 
             // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
             if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
@@ -840,21 +840,21 @@ module TypeScript {
                 if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
                     var span = variableDeclaration.getSpan();
 
-                    variableDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                    variableDeclaration.addError(new PullError(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
                     variableSymbol = null;
                     parentHadSymbol = false;
-                 }
-             }
-             else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable)) {
+                }
+            }
+            else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable)) {
                 var span = variableDeclaration.getSpan();
 
-                variableDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                variableDeclaration.addError(new PullError(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
                 variableSymbol = null;
-                parentHadSymbol = false;                
-             }
+                parentHadSymbol = false;
+            }
 
             if (this.reBindingAfterChange && variableSymbol && !variableSymbol.isType()) {
-   
+
                 // prune out-of-date decls...
                 var decls = variableSymbol.getDeclarations();
                 var scriptName = variableDeclaration.getScriptName();
@@ -930,14 +930,14 @@ module TypeScript {
                         }
 
                         variableSymbol.addDeclaration(variableDeclaration);
-                        variableDeclaration.setSymbol(variableSymbol);                       
+                        variableDeclaration.setSymbol(variableSymbol);
                         variableSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
                     }
                 }
                 else if ((declFlags & PullElementFlags.InitializedModule)) {
                     var moduleContainerTypeSymbol: PullContainerTypeSymbol = null;
                     var moduleParent = this.getParent(false);
-                    
+
                     if (moduleParent) {
                         var members = moduleParent.getMembers();
 
@@ -974,8 +974,8 @@ module TypeScript {
                             if (ast) {
                                 this.semanticInfo.setASTForDecl(variableDeclaration, ast);
                             }
-                        }                        
-                        
+                        }
+
                         // we added the variable to the parent when binding the module
                         parentHadSymbol = true;
                     }
@@ -987,7 +987,7 @@ module TypeScript {
             }
             else {
                 variableSymbol.addDeclaration(variableDeclaration);
-                variableDeclaration.setSymbol(variableSymbol);                
+                variableDeclaration.setSymbol(variableSymbol);
             }
 
             if (parent && !parentHadSymbol) {
@@ -1040,7 +1040,7 @@ module TypeScript {
                 // use the span, since we may not have an AST if this is a class constructor property for a class
                 // with an implicit constructor...
                 var span = propertyDeclaration.getSpan();
-                propertyDeclaration.addError(new PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
+                propertyDeclaration.addError(new PullError(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
 
                 propertySymbol = null;
             }

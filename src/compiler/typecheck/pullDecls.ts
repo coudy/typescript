@@ -8,11 +8,6 @@ module TypeScript {
     export var pullDeclID = 0;
     export var lastBoundPullDeclId = 0;
 
-    export class DeclSpan {
-        public minChar = 0;
-        public limChar = 0;
-    }
-
     export class PullDecl {
         private declType: PullElementKind;
         
@@ -34,7 +29,7 @@ module TypeScript {
         
         private declFlags: PullElementFlags = PullElementFlags.None;
         
-        private span: DeclSpan;
+        private span: TextSpan;
         
         private scriptName: string;
 
@@ -47,7 +42,7 @@ module TypeScript {
         // edits and updates we don't leak the val decl or symbol
         private synthesizedValDecl: PullDecl = null;
 
-        constructor (declName: string, declType: PullElementKind, declFlags: PullElementFlags, span: DeclSpan, scriptName: string) {
+        constructor (declName: string, declType: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
             this.declName = declName;
             this.declType = declType;
             this.declFlags = declFlags;
@@ -61,25 +56,26 @@ module TypeScript {
         public getKind() { return this.declType}
 
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
-        public getSymbol() { return this.symbol; }
+        public getSymbol(): PullSymbol { return this.symbol; }
 
-        public setSignatureSymbol(signature: PullSignatureSymbol) { this.signatureSymbol = signature; }
-        public getSignatureSymbol():PullSignatureSymbol { return this.signatureSymbol; }
+        public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
+        public getSignatureSymbol(): PullSignatureSymbol { return this.signatureSymbol; }
 
-        public getFlags() { return this.declFlags; }
+        public getFlags(): PullElementFlags { return this.declFlags; }
         public setFlags(flags: PullElementFlags) { this.declFlags = flags; }
         
-        public getSpan() { return this.span; }
-        public setSpan(span: DeclSpan) { this.span = span; }
+        public getSpan(): TextSpan { return this.span; }
+        public setSpan(span: TextSpan) { this.span = span; }
         
-        public getScriptName() { return this.scriptName; }
+        public getScriptName(): string { return this.scriptName; }
 
         public setValueDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
         public getValueDecl() { return this.synthesizedValDecl; }
 
-        public getParentDecl() {
+        public getParentDecl(): PullDecl {
             return this.parentDecl;
         }
+
         public setParentDecl(parentDecl: PullDecl) {
             this.parentDecl = parentDecl;
         }
@@ -89,7 +85,7 @@ module TypeScript {
                 this.errors = [];
             }
 
-            error.adjustOffset(this.span.minChar);
+            error.adjustOffset(this.span.start());
 
             this.errors[this.errors.length] = error;
         }
@@ -104,7 +100,7 @@ module TypeScript {
                 
                 // adjust the spans as we parent the errors to the new decl
                 for (var i = 0; i < errors.length; i++) {
-                    errors[i].adjustOffset(this.span.minChar);
+                    errors[i].adjustOffset(this.span.start());
                     this.errors[this.errors.length] = errors[i];
                 }
             }

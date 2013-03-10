@@ -8,7 +8,7 @@
 
 
 module TypeScript {
-    
+
     // per-file info on 
     //  decls
     //  bindings
@@ -24,22 +24,22 @@ module TypeScript {
         private compilationUnitPath: string;  // the "file" this is associated with
 
         private topLevelDecls: PullDecl[] = [];
-        
+
         private astDeclMap: DataMap = new DataMap();
         private declASTMap: DataMap = new DataMap();
 
         private syntaxElementDeclMap: DataMap = new DataMap();
         private declSyntaxElementMap: DataMap = new DataMap();
-        
+
         private declSymbolMap: DataMap = new DataMap();
-        
+
         private astSymbolMap: DataMap = new DataMap();
         private symbolASTMap: DataMap = new DataMap();
 
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
-        constructor (compilationUnitPath: string, public locationInfo: LocationInfo = null) {
+        constructor(compilationUnitPath: string, public locationInfo: LocationInfo = null) {
             this.compilationUnitPath = compilationUnitPath;
         }
 
@@ -49,12 +49,12 @@ module TypeScript {
 
         public getTopLevelDecls() { return this.topLevelDecls; }
 
-        public getPath(): string { 
-            return this.compilationUnitPath; 
+        public getPath(): string {
+            return this.compilationUnitPath;
         }
 
-        public getDeclForAST(ast: AST): PullDecl { 
-            return <PullDecl>this.astDeclMap.read(ast.getID().toString()); 
+        public getDeclForAST(ast: AST): PullDecl {
+            return <PullDecl>this.astDeclMap.read(ast.getID().toString());
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
@@ -71,9 +71,9 @@ module TypeScript {
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
             this.astSymbolMap.link(ast.getID().toString(), symbol);
-            this.symbolASTMap.link(symbol.getSymbolID().toString(), ast) 
+            this.symbolASTMap.link(symbol.getSymbolID().toString(), ast)
         }
-        
+
         public getSymbolForAST(ast: AST): PullSymbol {
             return <PullSymbol>this.astSymbolMap.read(ast.getID().toString());
         }
@@ -134,7 +134,7 @@ module TypeScript {
         public voidTypeSymbol: PullTypeSymbol = null;
 
         public addPrimitive(name: string, globalDecl: PullDecl) {
-            var span = new DeclSpan();
+            var span = new TextSpan(0, 0);
             var decl = new PullDecl(name, PullElementKind.Primitive, PullElementFlags.None, span, "");
             var symbol = new PullPrimitiveTypeSymbol(name);
 
@@ -148,12 +148,12 @@ module TypeScript {
             return symbol;
         }
 
-        constructor () {
-            var span = new DeclSpan();
+        constructor() {
+            var span = new TextSpan(0, 0);
             var globalDecl = new PullDecl("", PullElementKind.Global, PullElementFlags.None, span, "");
             var globalInfo = this.units[0];
             globalInfo.addTopLevelDecl(globalDecl);
-            
+
             // add primitive types
             this.anyTypeSymbol = this.addPrimitive("any", globalDecl);
             this.boolTypeSymbol = this.addPrimitive("bool", globalDecl);
@@ -207,7 +207,7 @@ module TypeScript {
 
         private getDeclPathCacheID(declPath: string[], declKind: PullElementKind) {
             var cacheID = "";
-            
+
             for (var i = 0; i < declPath.length; i++) {
                 cacheID += "#" + declPath[i];
             }
@@ -318,7 +318,7 @@ module TypeScript {
             if (unit) {
                 return unit.getDeclForAST(ast);
             }
-            
+
             return null;
         }
 
@@ -328,7 +328,7 @@ module TypeScript {
             if (unit) {
                 return unit.getASTForDecl(decl);
             }
-            
+
             return null;
         }
 
@@ -338,7 +338,7 @@ module TypeScript {
             if (unit) {
                 return unit.getSymbolForAST(ast);
             }
-            
+
             return null;
         }
 
@@ -348,7 +348,7 @@ module TypeScript {
             if (unit) {
                 return unit.getASTForSymbol(symbol);
             }
-            
+
             return null;
         }
 
@@ -361,10 +361,10 @@ module TypeScript {
         }
 
         public removeSymbolFromCache(symbol: PullSymbol) {
-            
+
 
             var path = [symbol.getName()];
-            var kind = (symbol.getKind() & PullElementKind.SomeType) != 0 ? PullElementKind.SomeType: PullElementKind.SomeValue;
+            var kind = (symbol.getKind() & PullElementKind.SomeType) != 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;
 
             var kindID = this.getDeclPathCacheID(path, kind);
             var symID = this.getDeclPathCacheID(path, symbol.getKind());
@@ -377,7 +377,7 @@ module TypeScript {
 
         public postErrors(): SemanticError[] {
             var errors: PullError[] = [];
-            
+
             for (var i = 1; i < this.units.length; i++) {
                 this.units[i].getErrors(errors);
             }

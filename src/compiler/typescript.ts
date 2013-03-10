@@ -1051,7 +1051,7 @@ module TypeScript {
                         else if (diff.kind == PullDeclEdit.DeclAdded) {
                             graphUpdater.addDecl(diff.newDecl);                        
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
-                            this.resolvePosition(diff.newDecl.getSpan().minChar, newScript);
+                            this.resolvePosition(diff.newDecl.getSpan().start(), newScript);
                         }
                         else {
                             // PULLTODO: Other kinds of edits
