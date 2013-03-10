@@ -2,34 +2,45 @@
 // See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='..\typescript.ts' />
+///<reference path='..\Core\IDiagnostic.ts' />
 
 module TypeScript {
 
     // pull errors are declared at a specific offset from a given decl
     // adjustedOffset is set when the error is added to a decl
 
-    export interface SemanticError {
-        length: number;
+    export interface SemanticError extends IDiagnostic {
         filename: string;
-        message: string;
-
         adjustOffset(pos: number): void;
-        getOffset(): number;
     }
 
     export class PullError implements SemanticError {
-        private adjustedOffset: number;
+        private _originalStart: number;
+        private _start: number;
+        private _length: number;
+        private _message: string;
 
-        constructor(private offset: number, public length: number, public filename: string, public message: string) {
-            this.adjustedOffset = offset;
+        constructor(start: number, length: number, public filename: string, message: string) {
+            this._originalStart = start;
+            this._start = start;
+            this._length = length;
+            this._message = message;
+        }
+
+        public start(): number {
+            return this._start;
+        }
+
+        public length(): number {
+            return this._length;
+        }
+
+        public message(): string {
+            return this._message;
         }
 
         public adjustOffset(pos: number) {
-            this.adjustedOffset = this.offset + pos;
-        }
-
-        public getOffset() {
-            return this.adjustedOffset;
+            this._start = this._originalStart + pos;
         }
     }
 
@@ -68,7 +79,7 @@ module TypeScript {
             var locationInfo = this.locationInfoCache[error.filename];
 
             if (locationInfo && locationInfo.lineMap) {
-                getZeroBasedSourceLineColFromMap(this.lineCol, error.getOffset(), locationInfo.lineMap);
+                getZeroBasedSourceLineColFromMap(this.lineCol, error.start(), locationInfo.lineMap);
 
                 this.textWriter.Write(locationInfo.filename + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
             }
@@ -76,7 +87,7 @@ module TypeScript {
                 this.textWriter.Write(error.filename + "(0,0): ");
             }
 
-            this.textWriter.WriteLine(error.message);
+            this.textWriter.WriteLine(error.message());
         }
 
         public reportErrors(errors: SemanticError[]) {

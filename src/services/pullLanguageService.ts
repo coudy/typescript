@@ -945,7 +945,7 @@ module Services {
             // JOE: Here is where you should call and get the right set of semantic errors for this file.
             var errors = this.pullCompilerState.pullGetErrorsForFile(fileName);
 
-            return errors.map(e => new TypeScript.ErrorEntry(unitIndex, e.getOffset(), e.getOffset() + e.length, e.message));
+            return errors.map(e => new TypeScript.ErrorEntry(unitIndex, e.start(), e.start() + e.length(), e.message()));
         }
 
         public getErrors(maxCount: number): TypeScript.ErrorEntry[]{

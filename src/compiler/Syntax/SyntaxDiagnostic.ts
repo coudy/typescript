@@ -1,7 +1,8 @@
 ///<reference path='Diagnostic.ts' />
 ///<reference path='..\Core\Errors.ts' />
+///<reference path='..\Core\IDiagnostic.ts' />
 
-class SyntaxDiagnostic extends Diagnostic {
+class SyntaxDiagnostic extends Diagnostic implements IDiagnostic {
     private _start: number;
     private _length: number;
 
