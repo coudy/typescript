@@ -1579,8 +1579,14 @@ module TypeScript {
                         var getterReturnType = getterSig.getReturnType();
 
                         if (!this.typesAreIdentical(accessorType, getterReturnType)) {
-                            context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", funcDecl);
-                            accessorSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+
+                            if (accessorType == this.semanticInfoChain.anyTypeSymbol) {
+                                accessorSymbol.setType(getterReturnType);
+                            }
+                            else {
+                                context.postError(funcDeclAST.minChar, funcDeclAST.getLength(), this.unitPath, "Getter and setter types do not agree", funcDecl);
+                                accessorSymbol.setType(this.semanticInfoChain.anyTypeSymbol);
+                            }
                         }
                     }
                     else {
@@ -1640,8 +1646,21 @@ module TypeScript {
                     else {
                         return this.resolveDottedNameExpression(<BinaryExpression>expressionAST, enclosingDecl, context);
                     }
+
                 case NodeType.FuncDecl:
-                    return this.resolveFunctionExpression(<FuncDecl>expressionAST, isTypedAssignment, enclosingDecl, context);
+                    {
+                        var funcDecl = <FuncDecl>expressionAST;
+
+                        if (funcDecl.isGetAccessor()) {
+                            return this.resolveGetAccessorDeclaration(funcDecl, context);
+                        }
+                        else if (funcDecl.isSetAccessor()) {
+                            return this.resolveSetAccessorDeclaration(funcDecl, context);
+                        }
+                        else {
+                            return this.resolveFunctionExpression(funcDecl, isTypedAssignment, enclosingDecl, context);
+                        }
+                    }
 
                 case NodeType.ObjectLit:
                     return this.resolveObjectLiteralExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
@@ -2369,6 +2388,35 @@ module TypeScript {
                             context.pushContextualType(assigningSymbol.getType(), context.inProvisionalResolution(), null);
 
                             acceptedContextualType = true;
+                        }
+                    }
+
+                    // if operand 2 is a getter or a setter, we need to resolve it properly
+                    if (binex.operand2.nodeType == NodeType.FuncDecl) {
+                        var funcDeclAST = <FuncDecl>binex.operand2;
+
+                        if (funcDeclAST.isAccessor()) {
+                            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                            var declCollectionContext = new DeclCollectionContext(semanticInfo);
+
+                            declCollectionContext.scriptName = this.unitPath;
+
+                            declCollectionContext.pushParent(objectLitDecl);
+
+                            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                            var functionDecl = this.getDeclForAST(funcDeclAST);
+
+                            var binder = new PullSymbolBinder(this.semanticInfoChain);
+                            binder.setUnit(this.unitPath);
+                            binder.pushParent(typeSymbol);
+
+                            if (funcDeclAST.isGetAccessor()) {
+                                binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
+                            }
+                            else {
+                                binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
+                            }
                         }
                     }
 
