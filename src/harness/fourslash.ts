@@ -155,16 +155,35 @@ module FourSlash {
             };
 
             var exists = this.anyErrorInRange(predicate, startMarker, endMarker);
-            var errors = this.realLangSvc.getErrors(9999);
 
             if (exists != negative) {
-                this.printErrorLog(negative, errors);
+                this.printErrorLog(negative, this.getAllDiagnostics());
                 throw new Error("Failure between markers: " + startMarkerName + ", " + endMarkerName);
             }
         }
 
-        public verifyErrorExistsAfterMarker(markerName: string, negative: bool, after: bool) {
+        private getDiagnostics(fileName: string): IDiagnostic[] {
+            var syntacticErrors = this.pullLanguageService.getSyntacticErrors(fileName);
+            var semanticErrors = this.pullLanguageService.getSemanticErrors(fileName);
 
+            var diagnostics: IDiagnostic[] = [];
+            diagnostics.push.apply(diagnostics, syntacticErrors);
+            diagnostics.push.apply(diagnostics, semanticErrors);
+
+            return diagnostics;
+        }
+
+        private getAllDiagnostics(): IDiagnostic[] {
+            var diagnostics: IDiagnostic[] = [];
+            for (var i = 0, n = this.langSvc.scripts.length; i < n; i++) {
+                var scriptId = this.langSvc.scripts[i].name;
+                diagnostics.push.apply(this.getDiagnostics(scriptId));
+            }
+
+            return diagnostics;
+        }
+        
+        public verifyErrorExistsAfterMarker(markerName: string, negative: bool, after: bool) {
             var marker: Marker = this.getMarkerByName(markerName);
             var predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool;
 
@@ -179,19 +198,17 @@ module FourSlash {
             }
 
             var exists = this.anyErrorInRange(predicate, marker);
-            var errors = this.realLangSvc.getErrors(9999);
+            var diagnostics = this.getAllDiagnostics();
 
             if (exists != negative) {
-                this.printErrorLog(negative, errors);
+                this.printErrorLog(negative, diagnostics);
                 throw new Error("Failure at marker: " + markerName);
             }
-
         }
 
         private anyErrorInRange(predicate: (errorMinChar: number, errorLimChar: number, startPos: number, endPos: number) => bool, startMarker: Marker, endMarker?: Marker) {
 
-            var fileIndex = this.getScriptIndex(this.findFile(startMarker.fileName));
-            var errors = this.realLangSvc.getErrors(9999);
+            var errors = this.getDiagnostics(startMarker.fileName);
             var exists = false;
 
             var startPos = startMarker.position;
@@ -199,30 +216,29 @@ module FourSlash {
                 var endPos = endMarker.position;
             }
 
-            errors.forEach(function (error: TypeScript.ErrorEntry) {
-                if (error.unitIndex != fileIndex) return;
-                if (predicate(error.minChar, error.limChar, startPos, endPos)) exists = true;
+            errors.forEach(function (error: IDiagnostic) {
+                if (predicate(error.start(), error.start() + error.length(), startPos, endPos)) {
+                    exists = true;
+                }
             });
 
             return exists;
-
         }
 
-        private printErrorLog(expectErrors: bool, errors: TypeScript.ErrorEntry[]) {
+        private printErrorLog(expectErrors: bool, errors: IDiagnostic[]) {
             if (expectErrors) {
                 IO.printLine("Expected error not found.  Error list is:");
             } else {
                 IO.printLine("Unexpected error(s) found.  Error list is:");
             }
-            errors.forEach(function (error: TypeScript.ErrorEntry) {
-                IO.printLine("  minChar: " + error.minChar + ", limChar: " + error.limChar + ", message: " + error.message + "\n");
+
+            errors.forEach(function (error: IDiagnostic) {
+                IO.printLine("  minChar: " + error.start() + ", limChar: " + (error.start() + error.length()) + ", message: " + error.message() + "\n");
             });
         }
 
         public verifyNumberOfErrorsInCurrentFile(expected: number) {
-            var fileIndex = this.getScriptIndex(this.activeFile);
-            var errors = this.realLangSvc.getErrors(9999);
-            errors = errors.filter((error: TypeScript.ErrorEntry) => error.unitIndex == fileIndex);
+            var errors = this.getDiagnostics(this.activeFile.name);
             var actual = errors.length;
             if (actual != expected) {
                 var errorMsg = "Actual number of errors (" + actual + ") does not match expected number (" + expected + ")";
