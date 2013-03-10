@@ -2,24 +2,24 @@
 ///<reference path='..\Core\Errors.ts' />
 
 class SyntaxDiagnostic extends Diagnostic {
-    private _position: number;
-    private _width: number;
+    private _start: number;
+    private _length: number;
 
-    constructor(position: number, width: number, code: DiagnosticCode, args: any[]) {
+    constructor(start: number, length: number, code: DiagnosticCode, args: any[]) {
         super(code, args);
 
-        if (width < 0) {
+        if (length < 0) {
             throw Errors.argumentOutOfRange("width");
         }
 
-        this._position = position;
-        this._width = width;
+        this._start = start;
+        this._length = length;
     }
 
     public toJSON(key) {
         var result: any = {};
-        result._position = this._position;
-        result._width = this._width;
+        result._position = this._start;
+        result._width = this._length;
         result._diagnosticCode = (<any>DiagnosticCode)._map[this.diagnosticCode()];
 
         var arguments = (<any>this)._arguments;
@@ -30,17 +30,17 @@ class SyntaxDiagnostic extends Diagnostic {
         return result;
     }
 
-    public position(): number {
-        return this._position;
+    public start(): number {
+        return this._start;
     }
 
-    public width(): number {
-        return this._width;
+    public length(): number {
+        return this._length;
     }
 
     public static equals(diagnostic1: SyntaxDiagnostic, diagnostic2: SyntaxDiagnostic): bool {
-        return diagnostic1._position === diagnostic2._position &&
-               diagnostic1._width === diagnostic2._width &&
+        return diagnostic1._start === diagnostic2._start &&
+               diagnostic1._length === diagnostic2._length &&
                Diagnostic.equals(diagnostic1, diagnostic2);
     }
 }

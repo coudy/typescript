@@ -23410,18 +23410,18 @@ var Diagnostic = (function () {
 })();
 var SyntaxDiagnostic = (function (_super) {
     __extends(SyntaxDiagnostic, _super);
-    function SyntaxDiagnostic(position, width, code, args) {
+    function SyntaxDiagnostic(start, length, code, args) {
         _super.call(this, code, args);
-        if (width < 0) {
+        if (length < 0) {
             throw Errors.argumentOutOfRange("width");
         }
-        this._position = position;
-        this._width = width;
+        this._start = start;
+        this._length = length;
     }
     SyntaxDiagnostic.prototype.toJSON = function (key) {
         var result = {};
-        result._position = this._position;
-        result._width = this._width;
+        result._position = this._start;
+        result._width = this._length;
         result._diagnosticCode = (DiagnosticCode)._map[this.diagnosticCode()];
         var arguments = (this)._arguments;
         if (arguments && arguments.length > 0) {
@@ -23429,14 +23429,14 @@ var SyntaxDiagnostic = (function (_super) {
         }
         return result;
     };
-    SyntaxDiagnostic.prototype.position = function () {
-        return this._position;
+    SyntaxDiagnostic.prototype.start = function () {
+        return this._start;
     };
-    SyntaxDiagnostic.prototype.width = function () {
-        return this._width;
+    SyntaxDiagnostic.prototype.length = function () {
+        return this._length;
     };
     SyntaxDiagnostic.equals = function equals(diagnostic1, diagnostic2) {
-        return diagnostic1._position === diagnostic2._position && diagnostic1._width === diagnostic2._width && Diagnostic.equals(diagnostic1, diagnostic2);
+        return diagnostic1._start === diagnostic2._start && diagnostic1._length === diagnostic2._length && Diagnostic.equals(diagnostic1, diagnostic2);
     };
     return SyntaxDiagnostic;
 })(Diagnostic);
@@ -35512,7 +35512,7 @@ var Parser1;
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
             while(tokenDiagnosticsLength > 0) {
                 var diagnostic = this._tokenDiagnostics[tokenDiagnosticsLength - 1];
-                if (diagnostic.position() >= position) {
+                if (diagnostic.start() >= position) {
                     tokenDiagnosticsLength--;
                 } else {
                     break;
@@ -36055,7 +36055,7 @@ var Parser1;
             var sourceUnit = this.parseSourceUnit();
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort(function (a, b) {
-                return a.position() - b.position();
+                return a.start() - b.start();
             });
             return new SyntaxTree(sourceUnit, allDiagnostics, this.lineMap);
         };
@@ -38135,7 +38135,7 @@ var Parser1;
             this.addDiagnostic(diagnostic);
         };
         ParserImpl.prototype.addDiagnostic = function (diagnostic) {
-            if (this.diagnostics.length > 0 && this.diagnostics[this.diagnostics.length - 1].position() === diagnostic.position()) {
+            if (this.diagnostics.length > 0 && this.diagnostics[this.diagnostics.length - 1].start() === diagnostic.start()) {
                 return;
             }
             this.diagnostics.push(diagnostic);
@@ -38938,14 +38938,6 @@ var TypeScript;
 (function (TypeScript) {
     TypeScript.pullDeclID = 0;
     TypeScript.lastBoundPullDeclId = 0;
-    var DeclSpan = (function () {
-        function DeclSpan() {
-            this.minChar = 0;
-            this.limChar = 0;
-        }
-        return DeclSpan;
-    })();
-    TypeScript.DeclSpan = DeclSpan;    
     var PullDecl = (function () {
         function PullDecl(declName, declType, declFlags, span, scriptName) {
             this.symbol = null;
@@ -39018,7 +39010,7 @@ var TypeScript;
             if (!this.errors) {
                 this.errors = [];
             }
-            error.adjustOffset(this.span.minChar);
+            error.adjustOffset(this.span.start());
             this.errors[this.errors.length] = error;
         };
         PullDecl.prototype.getErrors = function () {
@@ -39028,7 +39020,7 @@ var TypeScript;
             if (errors) {
                 this.errors = [];
                 for(var i = 0; i < errors.length; i++) {
-                    errors[i].adjustOffset(this.span.minChar);
+                    errors[i].adjustOffset(this.span.start());
                     this.errors[this.errors.length] = errors[i];
                 }
             }
@@ -41086,7 +41078,7 @@ var TypeScript;
                 found = false;
                 for(var i = 0; i < searchDecls.length; i++) {
                     candidateSpan = searchDecls[i].getSpan();
-                    if (spanToFind.minChar >= candidateSpan.minChar && spanToFind.limChar <= candidateSpan.limChar) {
+                    if (spanToFind.start() >= candidateSpan.start() && spanToFind.end() <= candidateSpan.end()) {
                         if (searchDecls[i].getKind() & searchKinds) {
                             decls[decls.length] = searchDecls[i];
                             searchDecls = searchDecls[i].getChildDecls();
@@ -42294,9 +42286,7 @@ var TypeScript;
                 return typeSymbol.getType();
             }
             var objectLitAST = expressionAST;
-            span = new TypeScript.DeclSpan();
-            span.minChar = objectLitAST.minChar;
-            span.limChar = objectLitAST.limChar;
+            span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
             var objectLitDecl = new TypeScript.PullDecl("", 16777216 /* ObjectType */ , 0 /* None */ , span, this.unitPath);
             if (enclosingDecl) {
                 objectLitDecl.setParentDecl(enclosingDecl);
@@ -42332,9 +42322,7 @@ var TypeScript;
                     } else {
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
-                    span = new TypeScript.DeclSpan();
-                    span.minChar = binex.minChar;
-                    span.limChar = binex.limChar;
+                    span = TextSpan.fromBounds(binex.minChar, binex.limChar);
                     var decl = new TypeScript.PullDecl(text, 8192 /* Property */ , 4 /* Public */ , span, this.unitPath);
                     objectLitDecl.addChildDecl(decl);
                     decl.setParentDecl(objectLitDecl);
@@ -44066,7 +44054,7 @@ var TypeScript;
                     rightType.toString(), 
                     leftType.toString()
                 ]);
-                this.context.postError(assignmentAST.operand1.minChar - span.minChar, span.limChar - span.minChar, typeCheckContext.scriptName, message, enclosingDecl);
+                this.context.postError(assignmentAST.operand1.minChar - span.start(), span.length(), typeCheckContext.scriptName, message, enclosingDecl);
             }
             return ast;
         };
@@ -44396,7 +44384,7 @@ var TypeScript;
             this.undefinedTypeSymbol = null;
             this.elementTypeSymbol = null;
             this.voidTypeSymbol = null;
-            var span = new TypeScript.DeclSpan();
+            var span = new TextSpan(0, 0);
             var globalDecl = new TypeScript.PullDecl("", 2 /* Global */ , 0 /* None */ , span, "");
             var globalInfo = this.units[0];
             globalInfo.addTopLevelDecl(globalDecl);
@@ -44410,7 +44398,7 @@ var TypeScript;
             this.elementTypeSymbol = this.addPrimitive("_element", globalDecl);
         }
         SemanticInfoChain.prototype.addPrimitive = function (name, globalDecl) {
-            var span = new TypeScript.DeclSpan();
+            var span = new TextSpan(0, 0);
             var decl = new TypeScript.PullDecl(name, 4 /* Primitive */ , 0 /* None */ , span, "");
             var symbol = new TypeScript.PullPrimitiveTypeSymbol(name);
             symbol.addDeclaration(decl);
@@ -45135,9 +45123,7 @@ var TypeScript;
     function preCollectImportDecls(ast, parent, context) {
         var importDecl = ast;
         var declFlags = 0 /* None */ ;
-        var span = new TypeScript.DeclSpan();
-        span.minChar = importDecl.minChar;
-        span.limChar = importDecl.limChar;
+        var span = TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
         var decl = new TypeScript.PullDecl(importDecl.id.actualText, 512 /* TypeAlias */ , declFlags, span, context.scriptName);
         var parent = context.getParent();
         parent.addChildDecl(decl);
@@ -45165,9 +45151,7 @@ var TypeScript;
         } else {
             kind = isDynamic ? 64 /* DynamicModule */  : 8 /* Container */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = moduleDecl.minChar;
-        span.limChar = moduleDecl.limChar;
+        var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
         var decl = new TypeScript.PullDecl(modName, kind, declFlags, span, context.scriptName);
         var parent = context.getParent();
         parent.addChildDecl(decl);
@@ -45189,9 +45173,7 @@ var TypeScript;
             declFlags |= 1 /* Exported */ ;
             constructorDeclKind = 8192 /* Property */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = classDecl.minChar;
-        span.limChar = classDecl.limChar;
+        var span = TextSpan.fromBounds(classDecl.minChar, classDecl.limChar);
         var decl = new TypeScript.PullDecl(classDecl.name.text, 16 /* Class */ , declFlags, span, context.scriptName);
         var constructorDecl = new TypeScript.PullDecl(classDecl.name.text, constructorDeclKind, declFlags | 32768 /* ClassConstructorVariable */ , span, context.scriptName);
         decl.setValueDecl(constructorDecl);
@@ -45211,9 +45193,7 @@ var TypeScript;
         if (TypeScript.hasFlag(interfaceDecl.varFlags, 1 /* Exported */ )) {
             declFlags |= 1 /* Exported */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = interfaceDecl.minChar;
-        span.limChar = interfaceDecl.limChar;
+        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
         var decl = new TypeScript.PullDecl(interfaceDecl.name.text, 32 /* Interface */ , declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45231,9 +45211,7 @@ var TypeScript;
         if (TypeScript.hasFlag(interfaceDecl.varFlags, 1 /* Exported */ )) {
             declFlags |= 1 /* Exported */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = interfaceDecl.minChar;
-        span.limChar = interfaceDecl.limChar;
+        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
         var decl = new TypeScript.PullDecl("", 16777216 /* ObjectType */ , declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45252,9 +45230,7 @@ var TypeScript;
         if (TypeScript.hasFlag(interfaceDecl.varFlags, 1 /* Exported */ )) {
             declFlags |= 1 /* Exported */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = interfaceDecl.minChar;
-        span.limChar = interfaceDecl.limChar;
+        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
         var decl = new TypeScript.PullDecl(interfaceDecl.name.text, 32 /* Interface */ , declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45278,9 +45254,7 @@ var TypeScript;
         if (TypeScript.hasFlag(argDecl.flags, 1024 /* OptionalName */ ) || TypeScript.hasFlag(argDecl.id.flags, 1024 /* OptionalName */ )) {
             declFlags |= 256 /* Optional */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = argDecl.minChar;
-        span.limChar = argDecl.limChar;
+        var span = TextSpan.fromBounds(argDecl.minChar, argDecl.limChar);
         var decl = new TypeScript.PullDecl(argDecl.id.text, 4096 /* Parameter */ , declFlags, span, context.scriptName);
         var parent = context.getParent();
         parent.addChildDecl(decl);
@@ -45307,9 +45281,7 @@ var TypeScript;
     function preCollectTypeParameterDecl(ast, parent, context) {
         var typeParameterDecl = ast;
         var declFlags = 0 /* None */ ;
-        var span = new TypeScript.DeclSpan();
-        span.minChar = typeParameterDecl.minChar;
-        span.limChar = typeParameterDecl.limChar;
+        var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
         var decl = new TypeScript.PullDecl(typeParameterDecl.name.actualText, 16384 /* TypeParameter */ , declFlags, span, context.scriptName);
         context.semanticInfo.setASTForDecl(decl, ast);
         context.semanticInfo.setDeclForAST(ast, decl);
@@ -45333,9 +45305,7 @@ var TypeScript;
         if (TypeScript.hasFlag(propertyDecl.varFlags, 65536 /* Constant */ )) {
             declFlags |= 524288 /* Constant */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = propertyDecl.minChar;
-        span.limChar = propertyDecl.limChar;
+        var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
         var decl = new TypeScript.PullDecl(propertyDecl.id.text, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         parent.addChildDecl(decl);
@@ -45361,9 +45331,7 @@ var TypeScript;
         if (TypeScript.hasFlag(memberDecl.varFlags, 16 /* Static */ )) {
             declFlags |= 16 /* Static */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = memberDecl.minChar;
-        span.limChar = memberDecl.limChar;
+        var span = TextSpan.fromBounds(memberDecl.minChar, memberDecl.limChar);
         var decl = new TypeScript.PullDecl(memberDecl.id.text, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         parent.addChildDecl(decl);
@@ -45387,9 +45355,7 @@ var TypeScript;
         if (TypeScript.hasFlag(varDecl.varFlags, 1 /* Exported */ )) {
             declFlags |= 1 /* Exported */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = varDecl.minChar;
-        span.limChar = varDecl.limChar;
+        var span = TextSpan.fromBounds(varDecl.minChar, varDecl.limChar);
         var decl = new TypeScript.PullDecl(varDecl.id.text, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         parent.addChildDecl(decl);
@@ -45421,9 +45387,7 @@ var TypeScript;
     function createFunctionTypeDeclaration(functionTypeDeclAST, context) {
         var declFlags = 0 /* None */ ;
         var declType = 33554432 /* FunctionType */ ;
-        var span = new TypeScript.DeclSpan();
-        span.minChar = functionTypeDeclAST.minChar;
-        span.limChar = functionTypeDeclAST.limChar;
+        var span = TextSpan.fromBounds(functionTypeDeclAST.minChar, functionTypeDeclAST.limChar);
         var decl = new TypeScript.PullDecl("", declType, declFlags, span, context.semanticInfo.getPath());
         var parent = context.getParent();
         if (parent) {
@@ -45444,9 +45408,7 @@ var TypeScript;
     function createConstructorTypeDeclaration(constructorTypeDeclAST, context) {
         var declFlags = 0 /* None */ ;
         var declType = 67108864 /* ConstructorType */ ;
-        var span = new TypeScript.DeclSpan();
-        span.minChar = constructorTypeDeclAST.minChar;
-        span.limChar = constructorTypeDeclAST.limChar;
+        var span = TextSpan.fromBounds(constructorTypeDeclAST.minChar, constructorTypeDeclAST.limChar);
         var decl = new TypeScript.PullDecl("{new}", declType, declFlags, span, context.semanticInfo.getPath());
         var parent = context.getParent();
         if (parent) {
@@ -45476,9 +45438,7 @@ var TypeScript;
         if (!funcDeclAST.bod) {
             declFlags |= 4096 /* Signature */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = funcDeclAST.minChar;
-        span.limChar = funcDeclAST.limChar;
+        var span = TextSpan.fromBounds(funcDeclAST.minChar, funcDeclAST.limChar);
         var decl = new TypeScript.PullDecl(funcDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45502,9 +45462,7 @@ var TypeScript;
         if (TypeScript.hasFlag(functionExpressionDeclAST.fncFlags, 32768 /* IsFatArrowFunction */ )) {
             declFlags |= 16384 /* FatArrow */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = functionExpressionDeclAST.minChar;
-        span.limChar = functionExpressionDeclAST.limChar;
+        var span = TextSpan.fromBounds(functionExpressionDeclAST.minChar, functionExpressionDeclAST.limChar);
         var decl = new TypeScript.PullDecl("", declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45539,9 +45497,7 @@ var TypeScript;
         if (TypeScript.hasFlag(memberFunctionDeclAST.name.flags, 1024 /* OptionalName */ )) {
             declFlags |= 256 /* Optional */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = memberFunctionDeclAST.minChar;
-        span.limChar = memberFunctionDeclAST.limChar;
+        var span = TextSpan.fromBounds(memberFunctionDeclAST.minChar, memberFunctionDeclAST.limChar);
         var decl = new TypeScript.PullDecl(memberFunctionDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45562,9 +45518,7 @@ var TypeScript;
     function createIndexSignatureDeclaration(indexSignatureDeclAST, context) {
         var declFlags = 4096 /* Signature */  | 2048 /* Index */ ;
         var declType = 8388608 /* IndexSignature */ ;
-        var span = new TypeScript.DeclSpan();
-        span.minChar = indexSignatureDeclAST.minChar;
-        span.limChar = indexSignatureDeclAST.limChar;
+        var span = TextSpan.fromBounds(indexSignatureDeclAST.minChar, indexSignatureDeclAST.limChar);
         var decl = new TypeScript.PullDecl("[]", declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45585,9 +45539,7 @@ var TypeScript;
     function createCallSignatureDeclaration(callSignatureDeclAST, context) {
         var declFlags = 4096 /* Signature */  | 512 /* Call */ ;
         var declType = 2097152 /* CallSignature */ ;
-        var span = new TypeScript.DeclSpan();
-        span.minChar = callSignatureDeclAST.minChar;
-        span.limChar = callSignatureDeclAST.limChar;
+        var span = TextSpan.fromBounds(callSignatureDeclAST.minChar, callSignatureDeclAST.limChar);
         var decl = new TypeScript.PullDecl("()", declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45608,9 +45560,7 @@ var TypeScript;
     function createConstructSignatureDeclaration(constructSignatureDeclAST, context) {
         var declFlags = 4096 /* Signature */  | 512 /* Call */ ;
         var declType = 4194304 /* ConstructSignature */ ;
-        var span = new TypeScript.DeclSpan();
-        span.minChar = constructSignatureDeclAST.minChar;
-        span.limChar = constructSignatureDeclAST.limChar;
+        var span = TextSpan.fromBounds(constructSignatureDeclAST.minChar, constructSignatureDeclAST.limChar);
         var decl = new TypeScript.PullDecl("new", declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45634,9 +45584,7 @@ var TypeScript;
         if (!constructorDeclAST.bod) {
             declFlags |= 4096 /* Signature */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = constructorDeclAST.minChar;
-        span.limChar = constructorDeclAST.limChar;
+        var span = TextSpan.fromBounds(constructorDeclAST.minChar, constructorDeclAST.limChar);
         var decl = new TypeScript.PullDecl(constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45663,9 +45611,7 @@ var TypeScript;
         if (TypeScript.hasFlag(getAccessorDeclAST.name.flags, 1024 /* OptionalName */ )) {
             declFlags |= 256 /* Optional */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = getAccessorDeclAST.minChar;
-        span.limChar = getAccessorDeclAST.limChar;
+        var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
         var decl = new TypeScript.PullDecl(getAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45692,9 +45638,7 @@ var TypeScript;
         if (TypeScript.hasFlag(setAccessorDeclAST.name.flags, 1024 /* OptionalName */ )) {
             declFlags |= 256 /* Optional */ ;
         }
-        var span = new TypeScript.DeclSpan();
-        span.minChar = setAccessorDeclAST.minChar;
-        span.limChar = setAccessorDeclAST.limChar;
+        var span = TextSpan.fromBounds(setAccessorDeclAST.minChar, setAccessorDeclAST.limChar);
         var decl = new TypeScript.PullDecl(setAccessorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
         var parent = context.getParent();
         if (parent) {
@@ -45736,9 +45680,7 @@ var TypeScript;
         var go = false;
         if (ast.nodeType == 95 /* Script */ ) {
             var script = ast;
-            var span = new TypeScript.DeclSpan();
-            span.minChar = script.minChar;
-            span.limChar = script.limChar;
+            var span = TextSpan.fromBounds(script.minChar, script.limChar);
             var decl = new TypeScript.PullDecl(context.scriptName, 1 /* Script */ , 0 /* None */ , span, context.scriptName);
             context.pushParent(decl);
             go = true;
@@ -46391,7 +46333,7 @@ var TypeScript;
             if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
                 if ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0) {
                     var span = variableDeclaration.getSpan();
-                    variableDeclaration.addError(new TypeScript.PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                    variableDeclaration.addError(new TypeScript.PullError(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                         declName
                     ])));
                     variableSymbol = null;
@@ -46399,7 +46341,7 @@ var TypeScript;
                 }
             } else if (variableSymbol && (variableSymbol.getKind() != 2048 /* Variable */ )) {
                 var span = variableDeclaration.getSpan();
-                variableDeclaration.addError(new TypeScript.PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                variableDeclaration.addError(new TypeScript.PullError(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     declName
                 ])));
                 variableSymbol = null;
@@ -46530,7 +46472,7 @@ var TypeScript;
             propertySymbol = parent.findMember(declName);
             if (propertySymbol && (!this.reBindingAfterChange || (propertySymbol.getSymbolID() > this.startingSymbolForRebind))) {
                 var span = propertyDeclaration.getSpan();
-                propertyDeclaration.addError(new TypeScript.PullError(span.minChar, span.limChar - span.minChar, this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
+                propertyDeclaration.addError(new TypeScript.PullError(span.start(), span.length(), this.semanticInfo.getPath(), TypeScript.getDiagnosticMessage(2 /* duplicateIdentifier_1 */ , [
                     declName
                 ])));
                 propertySymbol = null;
@@ -50775,7 +50717,7 @@ var TypeScript;
                         } else if (diff.kind == 1 /* DeclAdded */ ) {
                             graphUpdater.addDecl(diff.newDecl);
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
-                            _this.resolvePosition(diff.newDecl.getSpan().minChar, newScript);
+                            _this.resolvePosition(diff.newDecl.getSpan().start(), newScript);
                         } else {
                         }
                     }

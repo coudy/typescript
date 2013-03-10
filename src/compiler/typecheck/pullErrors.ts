@@ -50,7 +50,6 @@ module TypeScript {
     }
 
     export class PullErrorReporter {
-
         public lineCol = { line: 0, col: 0 };
         public locationInfoCache: any = {};
 

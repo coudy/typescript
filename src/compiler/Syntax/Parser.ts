@@ -538,7 +538,7 @@ module Parser1 {
             var tokenDiagnosticsLength = this._tokenDiagnostics.length;
             while (tokenDiagnosticsLength > 0) {
                 var diagnostic = this._tokenDiagnostics[tokenDiagnosticsLength - 1];
-                if (diagnostic.position() >= position) {
+                if (diagnostic.start() >= position) {
                     tokenDiagnosticsLength--;
                 }
                 else {
@@ -1606,7 +1606,7 @@ module Parser1 {
             var sourceUnit = this.parseSourceUnit();
 
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
-            allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.position() - b.position());
+            allDiagnostics.sort((a: SyntaxDiagnostic, b: SyntaxDiagnostic) => a.start() - b.start());
 
             return new SyntaxTree(sourceUnit, allDiagnostics, this.lineMap);
         }
@@ -5035,7 +5035,7 @@ module Parser1 {
         private addDiagnostic(diagnostic: SyntaxDiagnostic): void {
             // Except: if we already have a diagnostic for this position, don't report another one.
             if (this.diagnostics.length > 0 &&
-                this.diagnostics[this.diagnostics.length - 1].position() === diagnostic.position()) {
+                this.diagnostics[this.diagnostics.length - 1].start() === diagnostic.start()) {
                 return;
             }
 

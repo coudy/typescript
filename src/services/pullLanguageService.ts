@@ -935,7 +935,7 @@ module Services {
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             var diagnostics = syntaxTree.diagnostics();
 
-            return diagnostics.map(d => new TypeScript.ErrorEntry(unitIndex, d.position(), d.position() + d.width(), d.message()));
+            return diagnostics.map(d => new TypeScript.ErrorEntry(unitIndex, d.start(), d.start() + d.length(), d.message()));
         }
 
         public getSemanticErrors(fileName: string): TypeScript.ErrorEntry[] {
