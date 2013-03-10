@@ -2,6 +2,7 @@
 // See LICENSE.txt in the project root for complete license information.
 
 ///<reference path='typescriptServices.ts' />
+///<reference path='..\Compiler\Core\IDiagnostic.ts' />
 
 module Services {
     /// IPullLanguageService represent language service features that use Fidelity Syntax Tree directelly without having to
@@ -9,8 +10,8 @@ module Services {
     export interface IPullLanguageService extends ILanguageService {
         host: ILanguageServiceHost;
 
-        getSyntacticErrors(fileName: string): TypeScript.ErrorEntry[];
-        getSemanticErrors(fileName: string): TypeScript.ErrorEntry[];
+        getSyntacticErrors(fileName: string): IDiagnostic[];
+        getSemanticErrors(fileName: string): IDiagnostic[];
 
         getOutliningSpans(fileName: string): TextSpan[];
         getMatchingBraceSpans(fileName: string, position: number): TextSpan[];
@@ -928,24 +929,28 @@ module Services {
             new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
         }
 
-        public getSyntacticErrors(fileName: string): TypeScript.ErrorEntry[] {
+        private static massageDiagnostic(diagnostic: IDiagnostic): any {
+            return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
+        }
+
+        public getSyntacticErrors(fileName: string): IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
 
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             var diagnostics = syntaxTree.diagnostics();
 
-            return diagnostics.map(d => new TypeScript.ErrorEntry(unitIndex, d.start(), d.start() + d.length(), d.message()));
+            return diagnostics.map(PullLanguageService.massageDiagnostic);
         }
 
-        public getSemanticErrors(fileName: string): TypeScript.ErrorEntry[] {
+        public getSemanticErrors(fileName: string): IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
 
             // JOE: Here is where you should call and get the right set of semantic errors for this file.
             var errors = this.pullCompilerState.pullGetErrorsForFile(fileName);
 
-            return errors.map(e => new TypeScript.ErrorEntry(unitIndex, e.start(), e.start() + e.length(), e.message()));
+            return errors.map(PullLanguageService.massageDiagnostic);
         }
 
         public getErrors(maxCount: number): TypeScript.ErrorEntry[]{

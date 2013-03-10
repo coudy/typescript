@@ -47860,18 +47860,24 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var PullError = (function () {
-        function PullError(offset, length, filename, message) {
-            this.offset = offset;
-            this.length = length;
+        function PullError(start, length, filename, message) {
             this.filename = filename;
-            this.message = message;
-            this.adjustedOffset = offset;
+            this._originalStart = start;
+            this._start = start;
+            this._length = length;
+            this._message = message;
         }
-        PullError.prototype.adjustOffset = function (pos) {
-            this.adjustedOffset = this.offset + pos;
+        PullError.prototype.start = function () {
+            return this._start;
         };
-        PullError.prototype.getOffset = function () {
-            return this.adjustedOffset;
+        PullError.prototype.length = function () {
+            return this._length;
+        };
+        PullError.prototype.message = function () {
+            return this._message;
+        };
+        PullError.prototype.adjustOffset = function (pos) {
+            this._start = this._originalStart + pos;
         };
         return PullError;
     })();
@@ -47907,12 +47913,12 @@ var TypeScript;
         PullErrorReporter.prototype.reportError = function (error) {
             var locationInfo = this.locationInfoCache[error.filename];
             if (locationInfo && locationInfo.lineMap) {
-                TypeScript.getZeroBasedSourceLineColFromMap(this.lineCol, error.getOffset(), locationInfo.lineMap);
+                TypeScript.getZeroBasedSourceLineColFromMap(this.lineCol, error.start(), locationInfo.lineMap);
                 this.textWriter.Write(locationInfo.filename + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
             } else {
                 this.textWriter.Write(error.filename + "(0,0): ");
             }
-            this.textWriter.WriteLine(error.message);
+            this.textWriter.WriteLine(error.message());
         };
         PullErrorReporter.prototype.reportErrors = function (errors) {
             for(var i = 0; i < errors.length; i++) {
