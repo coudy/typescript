@@ -1853,6 +1853,8 @@ module TypeScript {
 
         newType.setIsBeingSpecialized();
 
+        newType.setTypeArguments(typeArguments);
+
         typeToSpecialize.addSpecialization(newType, typeArguments);
 
         if (isArray) {
@@ -2016,6 +2018,8 @@ module TypeScript {
         var newFieldType: PullTypeSymbol = null;
         var replacementType: PullTypeSymbol = null;
 
+        var fieldSignatureSymbol: PullSignatureSymbol = null;
+
         for (i = 0; i < members.length; i++) {
             field = members[i];
 
@@ -2024,6 +2028,10 @@ module TypeScript {
             decls = field.getDeclarations();
 
             newField = new PullSymbol(field.getName(), field.getKind());
+
+            if (field.getIsOptional()) {
+                newField.setIsOptional();
+            }
 
             fieldType = field.getType();
 
@@ -2056,6 +2064,11 @@ module TypeScript {
 
                     newField.addDeclaration(decl);
 
+                    if (fieldType.getCallSignatures().length) {
+                        fieldSignatureSymbol = decl.getSignatureSymbol();
+                        fieldSignatureSymbol.invalidate();
+                    }
+
                     declAST = resolver.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
                     fieldType = (resolver.resolveAST(declAST, false, newTypeDecl, context)).getType();
                     if (fieldType.isFunction) {
@@ -2064,6 +2077,7 @@ module TypeScript {
                 }
 
                 newFieldType = specializeType(fieldType, typeArguments, resolver, newTypeDecl, context, ast);
+                //newFieldType = specializeType(fieldType, fieldType.getTypeParameters(), resolver, newTypeDecl, context, ast);
 
                 resolver.setUnitPath(unitPath);
 
@@ -2097,8 +2111,6 @@ module TypeScript {
 
         newType.setIsSpecialized();
 
-        newType.setTypeArguments(typeArguments);
-
         newType.setResolved();
 
         return newType;
@@ -2126,6 +2138,10 @@ module TypeScript {
 
         if (signature.hasVariableParamList()) {
             newSignature.setHasVariableParamList();
+        }
+
+        if (signature.hasGenericParameter()) {
+            newSignature.setHasGenericParameter();
         }
 
         signature.addSpecialization(newSignature, typeArguments);      
@@ -2182,9 +2198,13 @@ module TypeScript {
                 newParameterType.addDeclaration(parameterType.getDeclarations()[0]);
             }
 
+            if (parameters[k].getIsOptional()) {
+                newParameter.setIsOptional();
+            }
+
             newParameter.setType(newParameterType);
-            newSignature.addParameter(newParameter);
-        }
+            newSignature.addParameter(newParameter, newParameter.getIsOptional());
+        }       
 
         return newSignature;
     }

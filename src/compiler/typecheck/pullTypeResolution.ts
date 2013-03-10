@@ -1313,6 +1313,7 @@ module TypeScript {
 
                 if (signature.isResolving()) {
                     // PULLTODO: Error or warning?
+
                     signature.setReturnType(this.semanticInfoChain.anyTypeSymbol);
                     signature.setResolved();
 
@@ -1328,7 +1329,7 @@ module TypeScript {
                     }
                 }
 
-                if (signature.hasGenericParameter()) {
+                if (signature.isGeneric()) {
                     // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
                     if (funcSymbol) {
                         funcSymbol.getType().setHasGenericSignature();
@@ -2775,6 +2776,7 @@ module TypeScript {
                 var len = callEx.arguments.members.length;
                 var params = signature.getParameters();
                 var contextualType: PullTypeSymbol = null;
+                var signatureDecl = signature.getDeclarations()[0];
                     
                 for (i = 0; i < len; i++) {
 
@@ -2782,7 +2784,7 @@ module TypeScript {
                         if (typeReplacementMap) {
                             context.pushTypeSpecializationCache(typeReplacementMap);
                         }
-                        this.resolveDeclaredSymbol(params[i], enclosingDecl, context);
+                        this.resolveDeclaredSymbol(params[i], signatureDecl, context);
                         if (typeReplacementMap) {
                             context.popTypeSpecializationCache();
                         }
@@ -2960,6 +2962,7 @@ module TypeScript {
                     var len = callEx.arguments.members.length;
                     var params = signature.getParameters();
                     var contextualType: PullTypeSymbol = null;
+                    var signatureDecl = signature.getDeclarations()[0];
 
                     for (i = 0; i < len; i++) {
 
@@ -2967,7 +2970,7 @@ module TypeScript {
                             if (typeReplacementMap) {
                                 context.pushTypeSpecializationCache(typeReplacementMap);
                             }
-                            this.resolveDeclaredSymbol(params[i], enclosingDecl, context);
+                            this.resolveDeclaredSymbol(params[i], signatureDecl, context);
                             if (typeReplacementMap) {
                                 context.popTypeSpecializationCache();
                             }
@@ -4068,7 +4071,7 @@ module TypeScript {
                                 }
                                 miss = true;
                             }
-
+                            argSym.invalidate();
                             cxt = context.popContextualType();
                             hadProvisionalErrors = cxt.hadProvisionalErrors();
 
@@ -4095,7 +4098,7 @@ module TypeScript {
                             }
                             miss = true;
                         }
-
+                        argSym.invalidate();
                         cxt = context.popContextualType();
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
 
@@ -4121,7 +4124,7 @@ module TypeScript {
                             }
                             break;
                         }
-
+                        argSym.invalidate();
                         cxt = context.popContextualType();
 
                         hadProvisionalErrors = cxt.hadProvisionalErrors();

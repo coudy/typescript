@@ -746,9 +746,6 @@ module TypeScript {
                 else {
                     var element = <IEnumElementSyntax>enumDeclaration.enumElements.childAt(i);
 
-                    memberName = this.identifierFromToken(variableDeclarator.identifier, /*isOptional:*/ false);
-                    this.movePast(variableDeclarator.identifier);
-
                     var memberValue: AST = null;
 
                     if (element.kind() === SyntaxKind.VariableDeclarator) {
