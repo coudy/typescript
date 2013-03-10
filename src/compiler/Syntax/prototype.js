@@ -48863,11 +48863,8 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitType = function (type) {
             this.assertElementAtPosition(type);
             if (type.isToken()) {
-                var typeToken = type;
                 var start = this.position;
-                var identifier = this.identifierFromToken(typeToken, false);
-                this.movePast(typeToken);
-                var result = new TypeScript.TypeReference(identifier, 0);
+                var result = new TypeScript.TypeReference(type.accept(this), 0);
                 this.setSpan(result, start, this.position);
                 return result;
             } else {
