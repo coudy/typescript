@@ -400,6 +400,7 @@ module TypeScript {
                 }
 
                 constructorSymbol = classSymbol.getConstructorMethod();
+                constructorTypeSymbol = <PullConstructorTypeSymbol>constructorSymbol.getType();
 
                 decls = constructorSymbol.getDeclarations();
 
@@ -434,9 +435,11 @@ module TypeScript {
                             }
                         }
 
-                        specialization.addDeclaration(classDecl);                
+                        specialization.addDeclaration(classDecl);
                     }
-                    
+
+                    classSymbol.cleanTypeParameters();
+                    constructorTypeSymbol.cleanTypeParameters();
                 }
             }
 
@@ -561,6 +564,7 @@ module TypeScript {
             var typeParameter: PullTypeParameterSymbol;
             var typeParameterDecls: PullDecl[] = null;
 
+            // PULLREVIEW: Now that we clean type paramters, searching is redundant
             for (i = 0; i < typeParameters.length; i++) {
 
                 typeParameter = classSymbol.findTypeParameter(typeParameters[i].getName());
@@ -669,6 +673,8 @@ module TypeScript {
 
                         specialization.addDeclaration(interfaceDecl);
                     }
+
+                    interfaceSymbol.cleanTypeParameters();
                 }
             }
 
@@ -686,6 +692,7 @@ module TypeScript {
             var typeParameter: PullTypeParameterSymbol;
             var typeParameterDecls: PullDecl[] = null;
 
+            // PULLREVIEW: Now that we clean type paramters, searching is redundant
             for (i = 0; i < typeParameters.length; i++) {
 
                 typeParameter = interfaceSymbol.findTypeParameter(typeParameters[i].getName());

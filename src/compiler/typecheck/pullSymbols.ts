@@ -1276,6 +1276,17 @@ module TypeScript {
             return memberSymbol;
         }
 
+        public cleanTypeParameters() {
+            if (this.typeParameterLinks) {
+                for (var i = 0; i < this.typeParameterLinks.length; i++) {
+                    this.removeOutgoingLink(this.typeParameterLinks[i]);
+                }
+            }
+
+            this.typeParameterLinks = null;
+            this.memberTypeParameterNameCache = null;
+        }
+
         public setResolved() {
             this.invalidatedSpecializations = true;
             super.setResolved();
@@ -1555,6 +1566,16 @@ module TypeScript {
         }
 
         public isGeneric() { return true; }
+
+        public toString() {
+            var name = this.getName();
+
+            if (this.constraintLink) {
+                name += " extends " + this.constraintLink.end.toString();
+            }
+
+            return name;
+        }
 
     }
 
