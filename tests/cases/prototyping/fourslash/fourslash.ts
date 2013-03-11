@@ -67,6 +67,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.goToMarker(name);
         }
 
+        public position(pos: number) {
+            FourSlash.currentTestState.goToPosition(pos);
+        }
+
         public bof() {
             FourSlash.currentTestState.goToBOF();
         }
@@ -236,6 +240,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.deleteCharBehindMarker(count);
         }
 
+        public delete(count?: number) {
+            FourSlash.currentTestState.deleteChar(count);
+        }
+
         public insert(text: string) {
             this.insertLines(text);
         }
@@ -284,6 +292,10 @@ module FourSlashInterface {
 
         public printBreakpointLocation(pos: number) {
             FourSlash.currentTestState.printBreakpointLocation(pos);
+        }
+
+        public printErrorList() {
+            FourSlash.currentTestState.printErrorList();
         }
     }
 

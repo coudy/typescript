@@ -79,6 +79,10 @@ module FourSlashInterface {
             FourSlash.currentTestState.goToDefinition();
         }
 
+        public position(pos: number) {
+            FourSlash.currentTestState.goToPosition(pos);
+        }
+
         // Opens a file, given either its index as it
         // appears in the test source, or its filename
         // as specified in the test metadata
@@ -234,6 +238,10 @@ module FourSlashInterface {
     export class edit {
         public backspace(count?: number) {
             FourSlash.currentTestState.deleteCharBehindMarker(count);
+        }
+
+        public delete(count?: number) {
+            FourSlash.currentTestState.deleteChar(count);
         }
 
         public insert(text: string) {

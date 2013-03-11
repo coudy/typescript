@@ -134,6 +134,10 @@ module FourSlash {
             this.currentCaretPosition = marker.position;
         }
 
+        public goToPosition(pos: number) {
+            this.currentCaretPosition = pos;
+        }
+
         public moveCaretRight(count? = 1) {
             this.currentCaretPosition += count;
             this.currentCaretPosition = Math.min(this.currentCaretPosition, this.langSvc.getScriptSourceLength(this.getActiveFileIndex()));
@@ -458,6 +462,14 @@ module FourSlash {
             IO.printLine(JSON2.stringify(quickInfo));
         }
 
+        public printErrorList() {
+            var errors = this.realLangSvc.getErrors(9999);
+            console.log('Error list (' + errors.length + ' errors)');
+            errors.forEach(err => {
+                console.log(err);
+            });
+        }
+
         public printCurrentFileState(makeWhitespaceVisible = false) {
             for (var i = 0; i < this.testData.files.length; i++) {
                 var file = this.testData.files[i];
@@ -490,19 +502,15 @@ module FourSlash {
             IO.printLine(JSON2.stringify(completions));
         }
 
-        public deleteCharBehindMarker(count ?= 1) {
-
+        public deleteChar(count? = 1) {
             var opts = new Services.FormatCodeOptions();
             var offset = this.currentCaretPosition;
             var ch = "";
 
             for (var i = 0; i < count; i++) {
-
-                offset--;
                 // Make the edit
                 this.langSvc.editScript(this.activeFile.name, offset, offset + 1, ch);
                 this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
-                
 
                 // Handle post-keystroke formatting
                 var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
@@ -513,7 +521,28 @@ module FourSlash {
             this.currentCaretPosition = offset;
 
             this.fixCaretPosition();
+        }
 
+        public deleteCharBehindMarker(count ?= 1) {
+            var opts = new Services.FormatCodeOptions();
+            var offset = this.currentCaretPosition;
+            var ch = "";
+
+            for (var i = 0; i < count; i++) {
+                offset--;
+                // Make the edit
+                this.langSvc.editScript(this.activeFile.name, offset, offset + 1, ch);
+                this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
+
+                // Handle post-keystroke formatting
+                var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
+                offset += this.applyEdits(this.activeFile.name, edits);
+            }
+
+            // Move the caret to wherever we ended up
+            this.currentCaretPosition = offset;
+
+            this.fixCaretPosition();
         }
 
         // Enters lines of text at the current caret position
