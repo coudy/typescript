@@ -36,6 +36,8 @@ module TypeScript {
 
         private resolvingTypeArguments = false;
 
+        private isBound = false;
+
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
@@ -78,6 +80,10 @@ module TypeScript {
 
         public setIsSynthesized() { this.isSynthesized = true; }
         public getIsSynthesized() { return this.isSynthesized; }
+
+        public setIsBound() { this.isBound = true; }
+
+        public getIsBound() { return this.isBound; }
 
         public addCacheID(cacheID: string) {
             if (!this.cachedPathIDs[cacheID]) {
@@ -260,6 +266,7 @@ module TypeScript {
 
         public setUnresolved() {
             this.hasBeenResolved = false;
+            this.isBound = false;
         }
 
         // helper methods:
@@ -277,6 +284,7 @@ module TypeScript {
             this.cachedContainerLink = null;
 
             this.hasBeenResolved = false;
+            this.isBound = false;
 
             // reset the errors for its decl
             this.declarations.update((pullDecl: PullDecl) => pullDecl.resetErrors(), null);

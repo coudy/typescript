@@ -595,6 +595,8 @@ module TypeScript {
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
             }
+
+            classSymbol.setIsBound();
         }
 
         // interfaces

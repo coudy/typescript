@@ -735,7 +735,13 @@ module TypeScript {
                     }
                 }
 
+                var constructorMembers = constructorTypeSymbol.getMembers();
+
                 this.resolveDeclaredSymbol(constructorMethod, classDecl, context);
+
+                for (i = 0; i < constructorMembers.length; i++) {
+                    this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
+                }
             }
 
             for (i = 0; i < classMembers.length; i++) {

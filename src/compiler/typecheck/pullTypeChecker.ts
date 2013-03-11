@@ -344,7 +344,10 @@ module TypeScript {
         public typeCheckClass(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
 
             // resolving the class also resolves its members...
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var classSymbol = <PullClassTypeSymbol>this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            
+            
+            return classSymbol;
         }
 
         // Interfaces
