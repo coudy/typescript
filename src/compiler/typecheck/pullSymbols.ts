@@ -258,6 +258,10 @@ module TypeScript {
             this.resolvingTypeArguments = false;
         }
 
+        public setUnresolved() {
+            this.hasBeenResolved = false;
+        }
+
         // helper methods:
         // cacheInfo?
 

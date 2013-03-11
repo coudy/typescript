@@ -337,6 +337,8 @@ module TypeScript {
                         enumSymbol.removeDeclaration(decls[i]);
                     }
                 }
+
+                enumSymbol.invalidate();
             }
 
             this.pushParent(enumSymbol);
@@ -441,6 +443,10 @@ module TypeScript {
                     classSymbol.cleanTypeParameters();
                     constructorTypeSymbol.cleanTypeParameters();
                 }
+
+                classSymbol.setUnresolved();
+                constructorSymbol.setUnresolved();
+                constructorTypeSymbol.setUnresolved();
             }
 
             if (!parentHadSymbol) {
@@ -675,6 +681,8 @@ module TypeScript {
                     }
 
                     interfaceSymbol.cleanTypeParameters();
+
+                    interfaceSymbol.setUnresolved();
                 }
             }
 
@@ -898,6 +906,8 @@ module TypeScript {
                         variableSymbol.removeDeclaration(decls[j]);
                     }
                 }
+
+                variableSymbol.setUnresolved();
             }
 
             if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
@@ -1097,7 +1107,7 @@ module TypeScript {
                     }
                 }
 
-                propertySymbol.invalidate();
+                propertySymbol.setUnresolved();
             }
 
             var classTypeSymbol: PullClassTypeSymbol;
