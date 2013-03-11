@@ -3592,12 +3592,27 @@ module TypeScript {
 
                 if (!target.isPrimitive()) {
                     if (source == this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType) {
+
+                        if (!this.cachedNumberInterfaceType.isResolved()) {
+                            this.resolveDeclaredSymbol(this.cachedNumberInterfaceType, null, context);
+                        }
+
                         source = this.cachedNumberInterfaceType;
                     }
                     else if (source == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType) {
+
+                        if (!this.cachedStringInterfaceType.isResolved()) {
+                            this.resolveDeclaredSymbol(this.cachedStringInterfaceType, null, context);
+                        }
+
                         source = this.cachedStringInterfaceType;
                     }
                     else if (source == this.semanticInfoChain.boolTypeSymbol && this.cachedBooleanInterfaceType) {
+
+                        if (!this.cachedBooleanInterfaceType.isResolved()) {
+                            this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType, null, context);
+                        }
+
                         source = this.cachedBooleanInterfaceType;
                     }
                     else {
@@ -3624,12 +3639,7 @@ module TypeScript {
                 return true;
             }
 
-            // REVIEW: We should perhaps do this, though it wouldn't be quite right without generics support
-            //if (this.typeFlow.arrayInterfaceType && (source.index) && target == this.typeFlow.arrayInterfaceType) {
-            //    return true;
-            //}
-
-            if (target.hasMembers() && source.hasMembers()) {
+            if (target.hasMembers()) {
                 var mProps = target.getMembers();
                 var mProp: PullSymbol = null;
                 var nProp: PullSymbol = null;

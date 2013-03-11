@@ -727,6 +727,7 @@ module TypeScript {
             var members = new ASTList();
 
             var mapDecl = new VarDecl(new Identifier("_map"), 0);
+
             mapDecl.varFlags |= VarFlags.Exported;
             mapDecl.varFlags |= VarFlags.Private;
 
@@ -840,6 +841,7 @@ module TypeScript {
             }
 
             this.setSpan(modDecl, start, this.position);
+            this.setSpan(mapDecl, start, this.position);
             
             this.popDeclLists();
 
