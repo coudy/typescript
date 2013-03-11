@@ -46,7 +46,7 @@ module TypeScript {
 
         // declarations
 
-        public typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        public typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment=false): PullTypeSymbol {
 
             if (!ast) {
                 return null;
@@ -61,7 +61,7 @@ module TypeScript {
                     return this.typeCheckBoundDecl(ast, typeCheckContext);
 
                 case NodeType.FuncDecl:
-                    return this.typeCheckFunction(ast, typeCheckContext);
+                    return this.typeCheckFunction(ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ClassDeclaration:
                     return this.typeCheckClass(ast, typeCheckContext);
@@ -82,10 +82,10 @@ module TypeScript {
                     return this.typeCheckGenericType(ast, typeCheckContext);
 
                 case NodeType.ObjectLit:
-                    return this.typeCheckObjectLiteral(ast, typeCheckContext);
+                    return this.typeCheckObjectLiteral(ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.ArrayLit:
-                    return this.typeCheckArrayLiteral(ast, typeCheckContext);
+                    return this.typeCheckArrayLiteral(ast, typeCheckContext, inTypedAssignment);
 
                 case NodeType.This:
                     return this.typeCheckThis(ast, typeCheckContext);
@@ -267,7 +267,7 @@ module TypeScript {
             if (boundDeclAST.init) {
                 this.context.pushContextualType(varTypeSymbol, this.context.inProvisionalResolution(), null);
                 //var initTypeSymbol = this.resolver.resolveAST(boundDeclAST.init, true, enclosingDecl, this.context).getType();
-                var initTypeSymbol = this.typeCheckAST(boundDeclAST.init, typeCheckContext);
+                var initTypeSymbol = this.typeCheckAST(boundDeclAST.init, typeCheckContext, true);
                 this.context.popContextualType();
                 
                 //getAstWalkerFactory().walk(boundDeclAST.init, prePullTypeCheck, postPullTypeCheck, null, typeCheckContext);
@@ -300,7 +300,7 @@ module TypeScript {
         //  - getters return a value
         //  - setters return no value
         // PULLTODO: split up into separate functions for constructors, indexers, expressions, signatures, etc.
-        public typeCheckFunction(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+        public typeCheckFunction(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
 
             // "Calls to 'super' constructor are not allowed in classes that either inherit directly from 'Object' or have no base class"
             // "If a derived class contains initialized properties or constructor parameter properties, the first statement in the constructor body must be a call to the super constructor"
@@ -315,7 +315,7 @@ module TypeScript {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var functionSymbol = this.resolver.resolveAST(ast, false, enclosingDecl, this.context).getType();
+            var functionSymbol = this.resolver.resolveAST(ast, inTypedAssignment, enclosingDecl, this.context).getType();
 
             var funcDeclAST = <FuncDecl>ast;
 
@@ -429,15 +429,15 @@ module TypeScript {
         // Object literals
         // validate:
         //
-        public typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        public typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+            return this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
         }
 
         // Array literals
         // validate:
         //  - incompatible types in expression
-        public typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        public typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
+            return this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
         }
 
         // 'This' expressions 
