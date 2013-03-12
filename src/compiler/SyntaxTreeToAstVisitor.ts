@@ -1547,7 +1547,7 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, start, this.position);
 
             result.returnTypeAnnotation = returnType;
@@ -1574,7 +1574,7 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var funcDecl = new FuncDecl(name, new ASTList(), false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var funcDecl = new FuncDecl(name, null, false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, start, this.position);
 
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
@@ -1606,7 +1606,7 @@ module TypeScript {
             var parameters = new ASTList();
             parameters.append(parameter);
 
-            var result = new FuncDecl(name, new ASTList(), /*isConstructor:*/ false, null, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(name, null, /*isConstructor:*/ false, null, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, start, this.position);
 
             result.variableArgList = !!node.parameter.dotDotDotToken;
@@ -1656,7 +1656,7 @@ module TypeScript {
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var result = new FuncDecl(null, new ASTList(), /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
+            var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, start, this.position);
 
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
@@ -1902,6 +1902,8 @@ module TypeScript {
             if (node.staticKeyword) {
                 result.fncFlags |= FncFlags.Static;
             }
+
+            result.fncFlags |= FncFlags.Method;
 
             return result;
         }

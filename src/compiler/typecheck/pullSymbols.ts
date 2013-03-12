@@ -28,8 +28,7 @@ module TypeScript {
 
         private hasBeenResolved = false;
 
-        private isOptional = false;
-
+        private isOptional = false;
         private inResolution = false;
 
         private isSynthesized = false;
@@ -76,8 +75,7 @@ module TypeScript {
         public setKind(declType: PullElementKind) { this.declKind = declType; }
 
         public setIsOptional() { this.isOptional = true; }
-        public getIsOptional() { return this.isOptional; }
-
+        public getIsOptional() { return this.isOptional; }
         public setIsSynthesized() { this.isSynthesized = true; }
         public getIsSynthesized() { return this.isSynthesized; }
 
@@ -305,27 +303,115 @@ module TypeScript {
             return false;
         }
 
+        public pathToRoot() {
+            var path: PullSymbol[] = [];
+            var node = this;
+            while (node) {
+                path[path.length] = node;
+                node = node.getContainer();
+            }
+            return path;
+        }
+
+        public findCommonAncestorPath(b: PullSymbol): PullSymbol[] {
+            var aPath = this.pathToRoot();
+            if (aPath.length == 1) {
+                // Global symbol
+                return aPath;
+            }
+
+            var bPath: PullSymbol[];
+            if (b) {
+                bPath = this.pathToRoot();
+            } else {
+                return aPath;
+            }
+
+            var commonNodeIndex = -1;
+            for (var i = 0, aLen = aPath.length; i < aLen; i++) {
+                var aNode = aPath[i];
+                for (var j = 0, bLen = bPath.length; j < bLen; j++) {
+                    var bNode = bPath[j];
+                    if (aNode == bNode) {
+                        commonNodeIndex = i;
+                        break;
+                    }
+                }
+                if (commonNodeIndex >= 0) {
+                    break;
+                }
+            }
+
+            if (commonNodeIndex >= 0) {
+                return aPath.slice(0, commonNodeIndex);
+            }
+            else {
+                return aPath;
+            }
+        }
+
         public toString() {
-            var str = this.name;
-
-            if (this.hasFlag(PullElementFlags.Optional)) {
-                str += "?";
-            }
-
-            var type = this.getType();
-
-            if (type) {
-                var typeName: string;
-                if (type.isArray()) {
-                    typeName = type.getElementType().getName() + "[]";
-                }
-                else {
-                    typeName = type.getName();
-                }
-                str += ": " + typeName;
-            }
-
+            var str = this.getNameAndTypeName();
             return str;
+        }
+
+        public getScopedName(scopeSymbol?: PullSymbol) {
+            var path = this.findCommonAncestorPath(scopeSymbol);
+            var fullName = "";
+            for (var i = 1; i < path.length; i++) {
+                var kind = path[i].getKind();
+                if (kind == PullElementKind.Container) {
+                    fullName = path[i].getName() + "." + fullName;
+                } else {
+                    break;
+                }
+            }
+            fullName = fullName + this.getName();
+            return fullName;
+        }
+
+        public getScopedNameEx(scopeSymbol?: PullSymbol) {
+            var name = this.getScopedName(scopeSymbol);
+            return MemberName.create(name);
+        }
+
+        public getTypeName(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+            var memberName = this.getTypeNameEx(scopeSymbol, getPrettyTypeName);
+            return memberName.toString();
+        }
+
+        public getTypeNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+            var type = this.getType();
+            if (type) {
+                return type.getTypeNameEx(scopeSymbol, getPrettyTypeName);
+            }
+            return MemberName.create("");
+        }
+
+        public getNameAndTypeName(scopeSymbol?: PullSymbol) {
+            var nameAndTypeName = this.getNameAndTypeNameEx(scopeSymbol);
+            return nameAndTypeName.toString();
+        }
+
+        public getNameAndTypeNameEx(scopeSymbol?: PullSymbol) {
+            var typeNameEx = this.getTypeNameEx(scopeSymbol);
+            var memberName = MemberName.create(typeNameEx, this.getScopedName(scopeSymbol) + (this.getIsOptional() ? "?" : "") + ": ", "");
+            return memberName;
+        }
+
+        static getTypeParameterString(typars: PullTypeSymbol[], scopeSymbol?: PullSymbol) {
+            var typarString = "";
+            if (typars && typars.length) {
+                typarString = "<";
+                for (var i = 0; i < typars.length; i++) {
+                    if (i) {
+                        typarString += ", ";
+                    }
+                    typarString += typars[i].getScopedName(scopeSymbol);
+                }
+                typarString += ">";
+            }
+            return typarString;
         }
     }
 
@@ -515,51 +601,101 @@ module TypeScript {
             super.invalidate();
         }
 
-        public toString() {
-            var typeParameters = this.getTypeParameters();
-            var typeParameterString = "";
-            var i = 0;
-            
-            if (typeParameters && typeParameters.length) {
-                typeParameterString = "<";
+        static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[], prefix: string, shortform: bool, brackets: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+            var result: MemberName[] = [];
+            var len = signatures.length;
+            if (!getPrettyTypeName && len > 1) {
+                shortform = false;
+            }
 
-                for (i = 0; i < typeParameters.length; i++) {
-                    if (i) {
-                        typeParameterString += ",";
+            var i = 0
+            var foundDefinition = false;
+            for (; i < len; i++) {
+                // the definition signature shouldn't be printed if there are overloads
+                if (len > 1 && signatures[i].isDefinition()) {
+                    foundDefinition = true;
+                    continue;
+                }
+
+                result.push(signatures[i].getSignatureTypeNameEx(prefix, shortform, brackets, scopeSymbol));
+                if (getPrettyTypeName) {
+                    break;
+                }
+            }
+
+            if (getPrettyTypeName && len > 1) {
+                var lastMemberName = <MemberNameArray>result[result.length - 1];
+                for (i = i + 1; i < len; i++) {
+                    if (signatures[i].isDefinition()) {
+                        foundDefinition = true;
+                        break;
                     }
-
-                    typeParameterString += typeParameters[i].getName();
                 }
-
-                typeParameterString += ">";
+                var overloadString = " (+ " + (foundDefinition ? len - 2 : len - 1) + " overload(s))";
+                lastMemberName.add(MemberName.create(overloadString));
             }
 
-            var sigString = typeParameterString + "(";
+            return result;
+        }
+
+        public toString() {
+            return this.getSignatureTypeNameEx(this.getScopedName(), false, false).toString();
+        }
+
+        public getSignatureTypeNameEx(prefix: string, shortform: bool, brackets: bool, scopeSymbol?: PullSymbol) {
+            var builder = new MemberNameArray();
+            var typeParameters = this.getTypeParameters();
+            var typeParameterString = PullSymbol.getTypeParameterString(typeParameters, scopeSymbol);
+            if (brackets) {
+                builder.prefix = prefix + typeParameterString + "[";
+            }
+            else {
+                builder.prefix = prefix + typeParameterString + "(";
+            }
+
+            // TODO : shkamat : variable args
             var params = this.getParameters();
-            var paramType: PullTypeSymbol;
-
-            for (i = 0; i < params.length; i++) {
-                sigString += params[i].getName();
-
-                paramType = params[i].getType();
-
+            var paramLen = params.length;
+            var len = paramLen;
+            for (var i = 0 ; i < params.length; i++) {
+                var paramType = params[i].getType();
+                var typeString = paramType ? ": " : "";
+                builder.add(MemberName.create(params[i].getScopedName(scopeSymbol) + (params[i].getIsOptional() ? "?" : "") + typeString));
                 if (paramType) {
-                    sigString += ": " + paramType.getName();
+                    builder.add(paramType.getTypeNameEx(scopeSymbol));
                 }
-
-                if (i < params.length - 1) {
-                    sigString += ", ";
+                if (i < paramLen - 1) {
+                    builder.add(MemberName.create(", "));
                 }
             }
-            sigString += ")";
+
+            if (shortform) {
+                if (brackets) {
+                    builder.add(MemberName.create("] => "));
+                }
+                else {
+                    builder.add(MemberName.create(") => "));
+                }
+            }
+            else {
+                if (brackets) {
+                    builder.add(MemberName.create("]: "));
+                }
+                else {
+                    builder.add(MemberName.create("): "));
+                }
+            }
 
             var returnType = this.getReturnType();
 
             if (returnType) {
-                sigString += ": " + returnType.getName();
+                builder.add(returnType.getTypeNameEx(scopeSymbol));
+            }
+            else {
+                builder.add(MemberName.create("any"));
             }
 
-            return sigString;
+            return builder;
         }
     }
 
@@ -1333,58 +1469,111 @@ module TypeScript {
             super.invalidate();
         }
 
-        public toString() {
-            var tstring = this.getName();
-            var typarString = "";
-            var typars = this.getTypeArguments();
-            var i = 0;
+        public getScopedName(scopeSymbol?: PullSymbol): string {
+            var name = super.getScopedName(scopeSymbol);
 
+            var typars = this.getTypeArguments();
             if (!typars || !typars.length) {
                 typars = this.getTypeParameters();
             }
 
-            if (typars && typars.length) {
-                typarString = "<";
+            var typarString = PullSymbol.getTypeParameterString(typars);
+            return name + typarString;
+        }
 
-                for (i = 0; i < typars.length; i++) {
-                    if (i) {
-                        typarString += ",";
+        private isNamedTypeSymbol() {
+            var kind = this.getKind();
+            if (kind == PullElementKind.Primitive || // primitives
+                kind == PullElementKind.Class || // class
+                kind == PullElementKind.Container || // module
+                kind == PullElementKind.Enum || // enum
+                kind == PullElementKind.TypeParameter || //TypeParameter
+                (this.getKind() == PullElementKind.ObjectType && this.getName() != "")) { // ModuleType
+                return true;
+            }
+
+            return false;
+        }
+
+        public toString() {
+            if (this.isNamedTypeSymbol()) {
+                return this.getMemberTypeNameEx(true).toString();
+            } else {
+                return super.toString();
+            }
+        }
+
+        public getTypeNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+            return this.getMemberTypeNameEx(true, scopeSymbol, getPrettyTypeName);
+        }
+
+        public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
+            if (this.isNamedTypeSymbol()) {
+                return this.getScopedNameEx(scopeSymbol);
+            }
+
+            var members = this.getMembers();
+            var callSignatures = this.getCallSignatures();
+            var constructSignatures = this.getConstructSignatures();
+            var indexSignatures = this.getIndexSignatures();
+
+            if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
+                var allMemberNames = new MemberNameArray();
+                var curlies = !topLevel || indexSignatures.length != 0;
+                var delim = "; ";
+                var memberCount = 0;
+                for (var i = 0; i < members.length; i++) {
+                    var memberTypeName = members[i].getNameAndTypeNameEx(scopeSymbol);
+
+                    if (memberTypeName.isArray() && (<MemberNameArray>memberTypeName).delim == delim) {
+                        allMemberNames.addAll((<MemberNameArray>memberTypeName).entries);
+                    } else {
+                        allMemberNames.add(memberTypeName);
                     }
-
-                    typarString += typars[i].getName();
+                    curlies = true;
+                    memberCount++;
                 }
 
-                typarString += ">";
+                // Use pretty Function overload signature if this is just a call overload
+                var getPrettyFunctionOverload = getPrettyTypeName && !curlies &&
+                    memberCount > 0 && constructSignatures.length == 0 && indexSignatures.length == 0 &&
+                    callSignatures.length > 1;
+
+                var signatureCount = callSignatures.length + constructSignatures.length + indexSignatures.length;
+                if (signatureCount != 0 || memberCount != 0) {
+                    var useShortFormSignature = !curlies && (signatureCount == 1 || getPrettyFunctionOverload);
+
+                    if (callSignatures.length > 0) {
+                        var signatureMemberName =
+                            PullSignatureSymbol.getSignaturesTypeNameEx(callSignatures, "", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
+                        allMemberNames.addAll(signatureMemberName);
+                    }
+
+                    if (constructSignatures.length > 0) {
+                        var signatureMemberName =
+                            PullSignatureSymbol.getSignaturesTypeNameEx(constructSignatures, "new", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
+                        allMemberNames.addAll(signatureMemberName);
+                    }
+
+                    if (indexSignatures.length > 0) {
+                        var signatureMemberName =
+                            PullSignatureSymbol.getSignaturesTypeNameEx(indexSignatures, "", useShortFormSignature, true, scopeSymbol, getPrettyFunctionOverload);
+                        allMemberNames.addAll(signatureMemberName);
+                    }
+
+                    if ((curlies) || (!getPrettyFunctionOverload && (signatureCount > 1) && topLevel)) {
+                        allMemberNames.prefix = "{ ";
+                        allMemberNames.suffix = "}";
+                        allMemberNames.delim = delim;
+                    } else if (allMemberNames.entries.length > 1) {
+                        allMemberNames.delim = delim;
+                    }
+
+                    return allMemberNames;
+                }
             }
 
-            tstring += typarString ? typarString + "{ " : " {";
-            var members = this.getMembers();
-            var callSigs = this.getCallSignatures();
-            var constructSigs = this.getConstructSignatures();
-            var indexSigs = this.getIndexSignatures();
-
-            for (i = 0; i < members.length; i++) {
-                tstring += members[i].toString();
-                tstring += "; ";
-            }
-
-            for (i = 0; i < callSigs.length; i++) {
-                tstring += callSigs[i].toString();
-                tstring += "; ";
-            }
-
-            for (i = 0; i < constructSigs.length; i++) {
-                tstring += "new " + constructSigs[i].toString();
-                tstring += "; ";
-            }
-
-            for (i = 0; i < indexSigs.length; i++) {
-                tstring += "[" + indexSigs[i].toString() + "]";
-                tstring += "; ";
-            }
-
-            tstring += " }";
-            return tstring;
+            return MemberName.create("{}");
         }
     }
 
@@ -1397,10 +1586,6 @@ module TypeScript {
 
         public invalidate() {
             // do nothing...
-        }
-
-        public toString() {
-            return this.getName();
         }
     }
 
@@ -1447,7 +1632,7 @@ module TypeScript {
 
     // represents the module "namespace" type
     export class PullContainerTypeSymbol extends PullTypeSymbol {
-        public instanceSymbol: PullSymbol = null;
+        public instanceSymbol: PullSymbol  = null;
 
         constructor(name: string) {
             super(name, PullElementKind.Container);
@@ -1579,16 +1764,15 @@ module TypeScript {
 
         public isGeneric() { return true; }
 
-        public toString() {
-            var name = this.getName();
+        public getName() {
+            var name = super.getName();
 
             if (this.constraintLink) {
                 name += " extends " + this.constraintLink.end.toString();
             }
-
+        
             return name;
         }
-
     }
 
     export class PullAccessorSymbol extends PullSymbol {
@@ -1670,13 +1854,9 @@ module TypeScript {
             this.elementType = type;
         }
 
-        public getName() {
-            return this.toString();
-        }
-
-        public toString() {
-            var elementTypeName = this.elementType ? this.elementType.getName() : "TypeArg";
-            return "Array<" + elementTypeName + ">";
+        public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
+            var elementMemberName = this.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName);
+            return MemberName.create(elementMemberName, "", "[]");
         }
     }
 
@@ -2030,7 +2210,7 @@ module TypeScript {
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
-
+            
             newSignature.addDeclaration(decl);
 
             newType.addIndexSignature(newSignature);

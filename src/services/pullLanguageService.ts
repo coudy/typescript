@@ -583,10 +583,10 @@ module Services {
                     parameters.forEach((p, i) => {
                         var signatureParameterInfo = new FormalParameterInfo();
                         signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
-                        signatureParameterInfo.isOptional = p.hasFlag(TypeScript.PullElementFlags.Optional);
+                        signatureParameterInfo.isOptional = p.getIsOptional();
                         signatureParameterInfo.name = p.getName();
                         signatureParameterInfo.docComment = p.getDocComments();
-                        signatureParameterInfo.type = p.getType() ? p.getType().getName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
+                        signatureParameterInfo.type = p.getType() ? p.getType().getScopedName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
                     });
                     result.signatureGroup.push(signatureGroupInfo);

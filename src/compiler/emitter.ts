@@ -460,6 +460,10 @@ module TypeScript {
             return classPropertiesMustComeAfterSuperCall;
         }
 
+        public isAccessorInObjectLiteral(funcDecl: FuncDecl) {
+            return (<FieldSymbol>funcDecl.accessorSymbol).isObjectLitField;
+        }
+
         public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
             hasSelfRef: bool, classDecl: TypeDeclaration) {
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
@@ -486,7 +490,7 @@ module TypeScript {
                 this.writeToOutput("(");
             }
             this.recordSourceMappingStart(funcDecl);
-            if (!(funcDecl.isAccessor() && (<FieldSymbol>funcDecl.accessorSymbol).isObjectLitField)) {
+            if (!(funcDecl.isAccessor() && this.isAccessorInObjectLiteral(funcDecl))) {
                 this.writeToOutput("function ");
             }
             if (printName) {
@@ -1495,31 +1499,52 @@ module TypeScript {
             }
         }
 
+        public isAccessorEmitted(funcDecl: FuncDecl) {
+            var returnVal = !(<FieldSymbol>funcDecl.accessorSymbol).hasBeenEmitted;
+            (<FieldSymbol>funcDecl.accessorSymbol).hasBeenEmitted = true;
+            return returnVal;
+        }
+
+        public getGetterAndSetterFunction(funcDecl: FuncDecl): { getter: FuncDecl; setter: FuncDecl; } {
+            var accessorSymbol = <FieldSymbol>funcDecl.accessorSymbol;
+            var result: { getter: FuncDecl; setter: FuncDecl; } = {
+                getter: null,
+                setter: null
+            };
+
+            if (accessorSymbol.getter) {
+                result.getter = <FuncDecl>accessorSymbol.getter.declAST;
+            }
+
+            if (accessorSymbol.setter) {
+                result.getter = <FuncDecl>accessorSymbol.setter.declAST;
+            }
+
+            return result;
+        }
+
         public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: bool) {
-            if (!(<FieldSymbol>funcDecl.accessorSymbol).hasBeenEmitted) {
+            if (!this.isAccessorEmitted(funcDecl)) {
                 var accessorSymbol = <FieldSymbol>funcDecl.accessorSymbol;
                 this.emitIndent();
                 this.recordSourceMappingStart(funcDecl);
                 this.writeLineToOutput("Object.defineProperty(" + className + (isProto ? ".prototype, \"" : ", \"") + funcDecl.name.actualText + "\"" + ", {");
                 this.indenter.increaseIndent();
 
-                if (accessorSymbol.getter) {
-                    var getter: FuncDecl = <FuncDecl>accessorSymbol.getter.declAST;
-
+                var accessors = this.getGetterAndSetterFunction(funcDecl);
+                if (accessors.getter) {
                     this.emitIndent();
-                    this.recordSourceMappingStart(getter);
+                    this.recordSourceMappingStart(accessors.getter);
                     this.writeToOutput("get: ");
-                    this.emitInnerFunction(getter, false, isProto, this.shouldCaptureThis(getter), null);
+                    this.emitInnerFunction(accessors.getter, false, isProto, this.shouldCaptureThis(accessors.getter), null);
                     this.writeLineToOutput(",");
                 }
 
-                if (accessorSymbol.setter) {
-                    var setter: FuncDecl = <FuncDecl>accessorSymbol.setter.declAST;
-
+                if (accessors.setter) {
                     this.emitIndent();
-                    this.recordSourceMappingStart(setter);
+                    this.recordSourceMappingStart(accessors.setter);
                     this.writeToOutput("set: ");
-                    this.emitInnerFunction(setter, false, isProto, this.shouldCaptureThis(setter), null);
+                    this.emitInnerFunction(accessors.setter, false, isProto, this.shouldCaptureThis(accessors.setter), null);
                     this.writeLineToOutput(",");
                 }
 
@@ -1531,8 +1556,6 @@ module TypeScript {
                 this.emitIndent();
                 this.writeLineToOutput("});");
                 this.recordSourceMappingEnd(funcDecl);
-
-                accessorSymbol.hasBeenEmitted = true;
             }
         }
 

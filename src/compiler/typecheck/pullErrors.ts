@@ -64,6 +64,7 @@ module TypeScript {
     export class PullErrorReporter {
         public lineCol = { line: 0, col: 0 };
         public locationInfoCache: any = {};
+        public hasErrors = false;
 
         constructor(public textWriter: ITextWriter) {
         }
@@ -76,7 +77,7 @@ module TypeScript {
             }
         }
 
-        public reportError(error: SemanticError) {
+        private reportError(error: SemanticError) {
             var locationInfo = this.locationInfoCache[error.filename];
 
             if (locationInfo && locationInfo.lineMap) {
@@ -94,6 +95,7 @@ module TypeScript {
         public reportErrors(errors: SemanticError[]) {
             for (var i = 0; i < errors.length; i++) {
                 this.reportError(errors[i]);
+                this.hasErrors = true;
             }
         }
     }
