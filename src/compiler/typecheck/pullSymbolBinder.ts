@@ -923,7 +923,7 @@ module TypeScript {
                     }
                 }
 
-                variableSymbol.setUnresolved();
+                variableSymbol.invalidate();
             }
 
             if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {

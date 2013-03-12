@@ -3749,7 +3749,7 @@ module TypeScript {
             var lacksSig: string;
 
             // check signature groups
-            if (sourceCallSigs.length || targetCallSigs.length) {
+            if (targetCallSigs.length) {
                 if (!this.signatureGroupIsRelatableToTarget(sourceCallSigs, targetCallSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (sourceCallSigs.length && targetCallSigs.length) {
@@ -3767,7 +3767,7 @@ module TypeScript {
                 }
             }
 
-            if (sourceConstructSigs.length || targetConstructSigs.length) {
+            if (targetConstructSigs.length) {
                 if (!this.signatureGroupIsRelatableToTarget(sourceConstructSigs, targetConstructSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
@@ -3809,7 +3809,7 @@ module TypeScript {
                 return true;
             }
 
-            if (!(sourceSG && targetSG)) {
+            if (!(sourceSG.length && targetSG.length)) {
                 return false;
             }
 
