@@ -23,11 +23,27 @@ class CharacterInfo {
 
     public static isWhitespace(ch: number): bool {
         switch (ch) {
+            // Unicode 3.0 space characters.
             case CharacterCodes.space:
+            case CharacterCodes.nonBreakingSpace:
+            case CharacterCodes.enQuad:
+            case CharacterCodes.emQuad:
+            case CharacterCodes.enSpace:
+            case CharacterCodes.emSpace:
+            case CharacterCodes.threePerEmSpace:
+            case CharacterCodes.fourPerEmSpace:
+            case CharacterCodes.sixPerEmSpace:
+            case CharacterCodes.figureSpace:
+            case CharacterCodes.punctuationSpace:
+            case CharacterCodes.thinSpace:
+            case CharacterCodes.hairSpace:
+            case CharacterCodes.zeroWidthSpace:
+            case CharacterCodes.narrowNoBreakSpace:
+            case CharacterCodes.ideographicSpace:
+
             case CharacterCodes.tab:
             case CharacterCodes.verticalTab:
             case CharacterCodes.formFeed:
-            case CharacterCodes.nonBreakingSpace:
             case CharacterCodes.byteOrderMark:
                 return true;
         }

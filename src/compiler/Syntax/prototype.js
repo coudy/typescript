@@ -22680,9 +22680,23 @@ var CharacterCodes;
     CharacterCodes.carriageReturn = 13;
     CharacterCodes.lineSeparator = 0x2028;
     CharacterCodes.paragraphSeparator = 0x2029;
-    CharacterCodes.space = 32;
     CharacterCodes.nextLine = 0x0085;
+    CharacterCodes.space = 0x0020;
     CharacterCodes.nonBreakingSpace = 0x00A0;
+    CharacterCodes.enQuad = 0x2000;
+    CharacterCodes.emQuad = 0x2001;
+    CharacterCodes.enSpace = 0x2002;
+    CharacterCodes.emSpace = 0x2003;
+    CharacterCodes.threePerEmSpace = 0x2004;
+    CharacterCodes.fourPerEmSpace = 0x2005;
+    CharacterCodes.sixPerEmSpace = 0x2006;
+    CharacterCodes.figureSpace = 0x2007;
+    CharacterCodes.punctuationSpace = 0x2008;
+    CharacterCodes.thinSpace = 0x2009;
+    CharacterCodes.hairSpace = 0x200A;
+    CharacterCodes.zeroWidthSpace = 0x200B;
+    CharacterCodes.narrowNoBreakSpace = 0x202F;
+    CharacterCodes.ideographicSpace = 0x3000;
     CharacterCodes._ = 95;
     CharacterCodes.$ = 36;
     CharacterCodes._0 = 48;
@@ -22763,10 +22777,24 @@ var CharacterInfo = (function () {
     CharacterInfo.isWhitespace = function isWhitespace(ch) {
         switch(ch) {
             case 32 /* space */ :
+            case 160 /* nonBreakingSpace */ :
+            case 8192 /* enQuad */ :
+            case 8193 /* emQuad */ :
+            case 8194 /* enSpace */ :
+            case 8195 /* emSpace */ :
+            case 8196 /* threePerEmSpace */ :
+            case 8197 /* fourPerEmSpace */ :
+            case 8198 /* sixPerEmSpace */ :
+            case 8199 /* figureSpace */ :
+            case 8200 /* punctuationSpace */ :
+            case 8201 /* thinSpace */ :
+            case 8202 /* hairSpace */ :
+            case 8203 /* zeroWidthSpace */ :
+            case 8239 /* narrowNoBreakSpace */ :
+            case 12288 /* ideographicSpace */ :
             case 9 /* tab */ :
             case 11 /* verticalTab */ :
             case 12 /* formFeed */ :
-            case 160 /* nonBreakingSpace */ :
             case 65279 /* byteOrderMark */ :
                 return true;
         }
@@ -26937,10 +26965,24 @@ var Scanner = (function () {
                 var ch = this.currentCharCode();
                 switch(ch) {
                     case 32 /* space */ :
+                    case 160 /* nonBreakingSpace */ :
+                    case 8192 /* enQuad */ :
+                    case 8193 /* emQuad */ :
+                    case 8194 /* enSpace */ :
+                    case 8195 /* emSpace */ :
+                    case 8196 /* threePerEmSpace */ :
+                    case 8197 /* fourPerEmSpace */ :
+                    case 8198 /* sixPerEmSpace */ :
+                    case 8199 /* figureSpace */ :
+                    case 8200 /* punctuationSpace */ :
+                    case 8201 /* thinSpace */ :
+                    case 8202 /* hairSpace */ :
+                    case 8203 /* zeroWidthSpace */ :
+                    case 8239 /* narrowNoBreakSpace */ :
+                    case 12288 /* ideographicSpace */ :
                     case 9 /* tab */ :
                     case 11 /* verticalTab */ :
                     case 12 /* formFeed */ :
-                    case 160 /* nonBreakingSpace */ :
                     case 65279 /* byteOrderMark */ :
                         trivia.push(this.scanWhitespaceTrivia());
                         continue;
@@ -26978,10 +27020,24 @@ var Scanner = (function () {
             var ch = this.currentCharCode();
             switch(ch) {
                 case 32 /* space */ :
+                case 160 /* nonBreakingSpace */ :
+                case 8192 /* enQuad */ :
+                case 8193 /* emQuad */ :
+                case 8194 /* enSpace */ :
+                case 8195 /* emSpace */ :
+                case 8196 /* threePerEmSpace */ :
+                case 8197 /* fourPerEmSpace */ :
+                case 8198 /* sixPerEmSpace */ :
+                case 8199 /* figureSpace */ :
+                case 8200 /* punctuationSpace */ :
+                case 8201 /* thinSpace */ :
+                case 8202 /* hairSpace */ :
+                case 8203 /* zeroWidthSpace */ :
+                case 8239 /* narrowNoBreakSpace */ :
+                case 12288 /* ideographicSpace */ :
                 case 9 /* tab */ :
                 case 11 /* verticalTab */ :
                 case 12 /* formFeed */ :
-                case 160 /* nonBreakingSpace */ :
                 case 65279 /* byteOrderMark */ :
                     this.slidingWindow.moveToNextItem();
                     width++;
@@ -27031,10 +27087,24 @@ var Scanner = (function () {
             var ch = this.currentCharCode();
             switch(ch) {
                 case 32 /* space */ :
+                case 160 /* nonBreakingSpace */ :
+                case 8192 /* enQuad */ :
+                case 8193 /* emQuad */ :
+                case 8194 /* enSpace */ :
+                case 8195 /* emSpace */ :
+                case 8196 /* threePerEmSpace */ :
+                case 8197 /* fourPerEmSpace */ :
+                case 8198 /* sixPerEmSpace */ :
+                case 8199 /* figureSpace */ :
+                case 8200 /* punctuationSpace */ :
+                case 8201 /* thinSpace */ :
+                case 8202 /* hairSpace */ :
+                case 8203 /* zeroWidthSpace */ :
+                case 8239 /* narrowNoBreakSpace */ :
+                case 12288 /* ideographicSpace */ :
                 case 9 /* tab */ :
                 case 11 /* verticalTab */ :
                 case 12 /* formFeed */ :
-                case 160 /* nonBreakingSpace */ :
                 case 65279 /* byteOrderMark */ :
                     this.slidingWindow.moveToNextItem();
                     width++;

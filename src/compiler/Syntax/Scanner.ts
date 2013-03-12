@@ -154,11 +154,27 @@ class Scanner implements ISlidingWindowSource {
                 var ch = this.currentCharCode();
 
                 switch (ch) {
+                    // Unicode 3.0 space characters
                     case CharacterCodes.space:
+                    case CharacterCodes.nonBreakingSpace:
+                    case CharacterCodes.enQuad:
+                    case CharacterCodes.emQuad:
+                    case CharacterCodes.enSpace:
+                    case CharacterCodes.emSpace:
+                    case CharacterCodes.threePerEmSpace:
+                    case CharacterCodes.fourPerEmSpace:
+                    case CharacterCodes.sixPerEmSpace:
+                    case CharacterCodes.figureSpace:
+                    case CharacterCodes.punctuationSpace:
+                    case CharacterCodes.thinSpace:
+                    case CharacterCodes.hairSpace:
+                    case CharacterCodes.zeroWidthSpace:
+                    case CharacterCodes.narrowNoBreakSpace:
+                    case CharacterCodes.ideographicSpace:
+
                     case CharacterCodes.tab:
                     case CharacterCodes.verticalTab:
                     case CharacterCodes.formFeed:
-                    case CharacterCodes.nonBreakingSpace:
                     case CharacterCodes.byteOrderMark:
                         // Normal whitespace.  Consume and continue.
                         trivia.push(this.scanWhitespaceTrivia());
@@ -214,11 +230,27 @@ class Scanner implements ISlidingWindowSource {
             var ch = this.currentCharCode();
 
             switch (ch) {
+                // Unicode 3.0 space characters
                 case CharacterCodes.space:
+                case CharacterCodes.nonBreakingSpace:
+                case CharacterCodes.enQuad:
+                case CharacterCodes.emQuad:
+                case CharacterCodes.enSpace:
+                case CharacterCodes.emSpace:
+                case CharacterCodes.threePerEmSpace:
+                case CharacterCodes.fourPerEmSpace:
+                case CharacterCodes.sixPerEmSpace:
+                case CharacterCodes.figureSpace:
+                case CharacterCodes.punctuationSpace:
+                case CharacterCodes.thinSpace:
+                case CharacterCodes.hairSpace:
+                case CharacterCodes.zeroWidthSpace:
+                case CharacterCodes.narrowNoBreakSpace:
+                case CharacterCodes.ideographicSpace:
+
                 case CharacterCodes.tab:
                 case CharacterCodes.verticalTab:
                 case CharacterCodes.formFeed:
-                case CharacterCodes.nonBreakingSpace:
                 case CharacterCodes.byteOrderMark:
                     // Normal whitespace.  Consume and continue.
                     this.slidingWindow.moveToNextItem();
@@ -286,11 +318,27 @@ class Scanner implements ISlidingWindowSource {
             var ch = this.currentCharCode();
 
             switch (ch) {
+                // Unicode 3.0 space characters
                 case CharacterCodes.space:
+                case CharacterCodes.nonBreakingSpace:
+                case CharacterCodes.enQuad:
+                case CharacterCodes.emQuad:
+                case CharacterCodes.enSpace:
+                case CharacterCodes.emSpace:
+                case CharacterCodes.threePerEmSpace:
+                case CharacterCodes.fourPerEmSpace:
+                case CharacterCodes.sixPerEmSpace:
+                case CharacterCodes.figureSpace:
+                case CharacterCodes.punctuationSpace:
+                case CharacterCodes.thinSpace:
+                case CharacterCodes.hairSpace:
+                case CharacterCodes.zeroWidthSpace:
+                case CharacterCodes.narrowNoBreakSpace:
+                case CharacterCodes.ideographicSpace:
+
                 case CharacterCodes.tab:
                 case CharacterCodes.verticalTab:
                 case CharacterCodes.formFeed:
-                case CharacterCodes.nonBreakingSpace:
                 case CharacterCodes.byteOrderMark:
                     // Normal whitespace.  Consume and continue.
                     this.slidingWindow.moveToNextItem();

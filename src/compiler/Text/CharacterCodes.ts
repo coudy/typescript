@@ -6,13 +6,28 @@ enum CharacterCodes {
     carriageReturn      = 13,       // \r
     lineSeparator       = 0x2028,
     paragraphSeparator  = 0x2029,
-    space               = 32,       // " "
 
     // REVIEW: do we need to support this?  The scanner doesn't, but our IText does.  This seems 
     // like an odd disparity?  (Or maybe it's completely fine for them to be different).
     nextLine            = 0x0085,
 
+    // Unicode 3.0 space characters
+    space               = 0x0020,   // " "
     nonBreakingSpace    = 0x00A0,   //
+    enQuad              = 0x2000,
+    emQuad              = 0x2001,
+    enSpace             = 0x2002,
+    emSpace             = 0x2003,
+    threePerEmSpace     = 0x2004,
+    fourPerEmSpace      = 0x2005,
+    sixPerEmSpace       = 0x2006,
+    figureSpace         = 0x2007,
+    punctuationSpace    = 0x2008,
+    thinSpace           = 0x2009,
+    hairSpace           = 0x200A,
+    zeroWidthSpace      = 0x200B,
+    narrowNoBreakSpace  = 0x202F,
+    ideographicSpace    = 0x3000,
 
     _ = 95,
     $ = 36,
