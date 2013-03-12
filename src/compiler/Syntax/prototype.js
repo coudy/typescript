@@ -23407,6 +23407,8 @@ var DiagnosticCode;
     DiagnosticCode.Trailing_separator_not_allowed = 9;
     DiagnosticCode._map[10] = "_StarSlash__expected";
     DiagnosticCode._StarSlash__expected = 10;
+    DiagnosticCode._map[11] = "_public_or_private_modifier_must_precede__static_";
+    DiagnosticCode._public_or_private_modifier_must_precede__static_ = 11;
 })(DiagnosticCode || (DiagnosticCode = {}));
 var DiagnosticMessages = (function () {
     function DiagnosticMessages() { }
@@ -23424,6 +23426,7 @@ var DiagnosticMessages = (function () {
             DiagnosticMessages.codeToFormatString[8 /* Unexpected_token__0_expected */ ] = "Unexpected token; '{0}' expected.";
             DiagnosticMessages.codeToFormatString[9 /* Trailing_separator_not_allowed */ ] = "Trailing separator not allowed.";
             DiagnosticMessages.codeToFormatString[10 /* _StarSlash__expected */ ] = "'*/' expected.";
+            DiagnosticMessages.codeToFormatString[11 /* _public_or_private_modifier_must_precede__static_ */ ] = "'public' or 'private' modifier must precede 'static'.";
         }
     };
     DiagnosticMessages.getFormatString = function getFormatString(code) {
@@ -36419,9 +36422,12 @@ var Parser1;
         ParserImpl.prototype.isConstructorDeclaration = function () {
             return this.currentToken().tokenKind === 63 /* ConstructorKeyword */ ;
         };
+        ParserImpl.isPublicOrPrivateKeyword = function isPublicOrPrivateKeyword(token) {
+            return token.tokenKind === 57 /* PublicKeyword */  || token.tokenKind === 55 /* PrivateKeyword */ ;
+        };
         ParserImpl.prototype.isMemberAccessorDeclaration = function () {
             var index = 0;
-            if (this.currentToken().tokenKind === 57 /* PublicKeyword */  || this.currentToken().tokenKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 index++;
             }
             if (this.peekToken(index).tokenKind === 58 /* StaticKeyword */ ) {
@@ -36435,7 +36441,7 @@ var Parser1;
         };
         ParserImpl.prototype.parseMemberAccessorDeclaration = function () {
             var publicOrPrivateKeyword = null;
-            if (this.currentToken().tokenKind === 57 /* PublicKeyword */  || this.currentToken().tokenKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
             var staticKeyword = this.tryEatKeyword(58 /* StaticKeyword */ );
@@ -36465,7 +36471,7 @@ var Parser1;
         ParserImpl.prototype.isMemberVariableDeclaration = function () {
             var index = 0;
             var token0 = this.peekToken(index);
-            if (token0.tokenKind === 57 /* PublicKeyword */  || token0.tokenKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(token0)) {
                 index++;
                 if (this.peekToken(index).tokenKind === 71 /* CloseBraceToken */  || this.peekToken(index).tokenKind === 10 /* EndOfFileToken */ ) {
                     return true;
@@ -36473,7 +36479,8 @@ var Parser1;
             }
             if (this.peekToken(index).tokenKind === 58 /* StaticKeyword */ ) {
                 index++;
-                if (this.peekToken(index).tokenKind === 71 /* CloseBraceToken */  || this.peekToken(index).tokenKind === 10 /* EndOfFileToken */ ) {
+                var token1 = this.peekToken(index);
+                if (token1.tokenKind === 71 /* CloseBraceToken */  || token1.tokenKind === 10 /* EndOfFileToken */  || ParserImpl.isPublicOrPrivateKeyword(token1)) {
                     return true;
                 }
             }
@@ -36511,8 +36518,7 @@ var Parser1;
         };
         ParserImpl.prototype.isMemberFunctionDeclaration = function () {
             var index = 0;
-            var token0KeywordKind = this.currentToken().tokenKind;
-            if (token0KeywordKind === 57 /* PublicKeyword */  || token0KeywordKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 index++;
             }
             if (this.peekToken(index).tokenKind === 58 /* StaticKeyword */ ) {
@@ -36522,7 +36528,7 @@ var Parser1;
         };
         ParserImpl.prototype.parseMemberFunctionDeclaration = function () {
             var publicOrPrivateKeyword = null;
-            if (this.currentToken().tokenKind === 57 /* PublicKeyword */  || this.currentToken().tokenKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
             var staticKeyword = this.tryEatKeyword(58 /* StaticKeyword */ );
@@ -36538,10 +36544,20 @@ var Parser1;
         };
         ParserImpl.prototype.parseMemberVariableDeclaration = function () {
             var publicOrPrivateKeyword = null;
-            if (this.currentToken().tokenKind === 57 /* PublicKeyword */  || this.currentToken().tokenKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
             var staticKeyword = this.tryEatKeyword(58 /* StaticKeyword */ );
+            if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
+                var token1 = this.peekToken(1);
+                if (token1.tokenKind !== 78 /* SemicolonToken */  && token1.tokenKind !== 106 /* ColonToken */  && token1.tokenKind !== 107 /* EqualsToken */ ) {
+                    this.addDiagnostic(new SyntaxDiagnostic(this.currentTokenStart(), this.currentToken().width(), 11 /* _public_or_private_modifier_must_precede__static_ */ , null));
+                    var skippedTokens = this.getArray();
+                    skippedTokens.push(this.eatAnyToken());
+                    staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
+                    this.returnArray(skippedTokens);
+                }
+            }
             var variableDeclarator = this.parseVariableDeclarator(true, true);
             var semicolon = this.eatExplicitOrAutomaticSemicolon(false);
             return this.factory.memberVariableDeclaration(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
@@ -37968,7 +37984,7 @@ var Parser1;
             if (token.tokenKind === 77 /* DotDotDotToken */ ) {
                 return true;
             }
-            if (token.tokenKind === 57 /* PublicKeyword */  || token.tokenKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(token)) {
                 return true;
             }
             return this.isIdentifier(token);
@@ -37979,7 +37995,7 @@ var Parser1;
             }
             var dotDotDotToken = this.tryEatToken(77 /* DotDotDotToken */ );
             var publicOrPrivateToken = null;
-            if (this.currentToken().tokenKind === 57 /* PublicKeyword */  || this.currentToken().tokenKind === 55 /* PrivateKeyword */ ) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateToken = this.eatAnyToken();
             }
             var identifier = this.eatIdentifierToken();

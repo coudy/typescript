@@ -2000,11 +2000,14 @@ module Parser1 {
             return this.currentToken().tokenKind === SyntaxKind.ConstructorKeyword;
         }
 
+        private static isPublicOrPrivateKeyword(token: ISyntaxToken): bool {
+            return token.tokenKind === SyntaxKind.PublicKeyword || token.tokenKind === SyntaxKind.PrivateKeyword;
+        }
+
         private isMemberAccessorDeclaration(): bool {
             var index = 0;
 
-            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 index++;
             }
 
@@ -2025,8 +2028,7 @@ module Parser1 {
             // Debug.assert(this.isMemberAccessorDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
 
@@ -2074,8 +2076,7 @@ module Parser1 {
             var index = 0;
             var token0 = this.peekToken(index);
 
-            if (token0.tokenKind === SyntaxKind.PublicKeyword ||
-                token0.tokenKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(token0)) {
                 index++;
 
                 // ERROR RECOVERY: 
@@ -2093,8 +2094,13 @@ module Parser1 {
                 // ERROR RECOVERY: 
                 // If we're following by an close curly or EOF, then consider this the start of a
                 // variable declaration.
-                if (this.peekToken(index).tokenKind === SyntaxKind.CloseBraceToken ||
-                    this.peekToken(index).tokenKind === SyntaxKind.EndOfFileToken) {
+                //
+                // Also if we see 'static public' or 'static private', then treat this as the start
+                // of a variable declaration.
+                var token1 = this.peekToken(index);
+                if (token1.tokenKind === SyntaxKind.CloseBraceToken ||
+                    token1.tokenKind === SyntaxKind.EndOfFileToken ||
+                    ParserImpl.isPublicOrPrivateKeyword(token1)) {
                     return true;
                 }
             }
@@ -2174,9 +2180,7 @@ module Parser1 {
         private isMemberFunctionDeclaration(): bool {
             var index = 0;
 
-            var token0KeywordKind = this.currentToken().tokenKind;
-            if (token0KeywordKind === SyntaxKind.PublicKeyword ||
-                token0KeywordKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 index++;
             }
 
@@ -2191,8 +2195,7 @@ module Parser1 {
             // Debug.assert(this.isMemberFunctionDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
 
@@ -2216,12 +2219,44 @@ module Parser1 {
             // Debug.assert(this.isMemberVariableDeclaration());
 
             var publicOrPrivateKeyword: ISyntaxToken = null;
-            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
 
             var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
+
+            // If we see 'static' followed by 'public' then this is actually syntactically invalid.
+            // However, it's a common enough type of error that we want to see it and give a useful
+            // error message to clarify the issue.
+            if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
+                // Ok.  We've seen 'static public' or 'static private'.
+
+                // This is actually legal in some circumstances.  For example, it's legal to type:
+                // 'static public = 0'.  The following list is what is legal:
+                //
+                //      static public;
+                //      static public: SomeType ...
+                //      static public = ...
+                //
+                // If we see any of those, then w parse it as we would normally.  However, if we
+                // don't see that, then treat this as an error, attach the 'public/private' token
+                // as skipped text on the 'static' keyword, and continue on.
+
+                var token1 = this.peekToken(1);
+                if (token1.tokenKind !== SyntaxKind.SemicolonToken &&
+                    token1.tokenKind !== SyntaxKind.ColonToken &&
+                    token1.tokenKind !== SyntaxKind.EqualsToken) {
+
+                    this.addDiagnostic(new SyntaxDiagnostic(
+                        this.currentTokenStart(), this.currentToken().width(), DiagnosticCode._public_or_private_modifier_must_precede__static_, null));
+
+                    var skippedTokens = this.getArray();
+                    skippedTokens.push(this.eatAnyToken());
+                    staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
+                    this.returnArray(skippedTokens);
+                }
+            }
+
             var variableDeclarator = this.parseVariableDeclarator(/*allowIn:*/ true, /*allowIdentifierName:*/ true);
             var semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
 
@@ -4579,8 +4614,7 @@ module Parser1 {
                 return true;
             }
 
-            if (token.tokenKind === SyntaxKind.PublicKeyword ||
-                token.tokenKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(token)) {
                 return true;
             }
 
@@ -4595,8 +4629,7 @@ module Parser1 {
             var dotDotDotToken = this.tryEatToken(SyntaxKind.DotDotDotToken);
 
             var publicOrPrivateToken: ISyntaxToken = null;
-            if (this.currentToken().tokenKind === SyntaxKind.PublicKeyword ||
-                this.currentToken().tokenKind === SyntaxKind.PrivateKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateToken = this.eatAnyToken();
             }
 
