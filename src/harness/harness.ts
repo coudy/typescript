@@ -1183,7 +1183,7 @@ module Harness {
                 for (var i = 0; i < errorLines.length; i++) {
                     if (Harness.usePull) {
                         var err = <any>errorLines[i]; // TypeScript.PullError
-                        this.errors.push(new CompilerError(err.filename, 0, 0, err.message));
+                        this.errors.push(new CompilerError(err.filename, 0, 0, err.message()));
                     } else {
                         var match = errorLines[i].match(/([^\(]*)\((\d+),(\d+)\):\s+((.*[\s\r\n]*.*)+)\s*$/);
                         if (match) {
