@@ -2186,21 +2186,49 @@ module Parser1 {
 
             if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
                 index++;
+
+                if (this.isFunctionSignature(index, /*allowQuestionToken:*/ false)) {
+                    return true;
+                }
+
+                // Error Recovery:
+                // We may have 'static public foo()' or 'static private foo()'. check for that 
+                // common case so we can give a good error message.
+                if (ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
+                    index++;
+                }
             }
 
-            return this.isFunctionSignature(index);
+            return this.isFunctionSignature(index, /*allowQuestionToken:*/ false);
         }
 
         private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
             // Debug.assert(this.isMemberFunctionDeclaration());
-
+            
             var publicOrPrivateKeyword: ISyntaxToken = null;
             if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
 
             var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
-            var functionSignature = this.parseFunctionSignature();
+
+            // If we see 'static' followed by 'public' then this is actually syntactically invalid.
+            // However, it's a common enough type of error that we want to see it and give a useful
+            // error message to clarify the issue.
+            if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
+                // Ok.  We've seen 'static public' or 'static private'.
+
+                // This is actually legal in some circumstances.  For example, it's legal to type:
+                // 'static public() {}'.  So, if we're on a legal function signature, then parse
+                // it normally.  Otherwise, treat this as an error, attach the 'public/private' token
+                // as skipped text on the 'static' keyword, and continue on.
+
+                if (!this.isFunctionSignature(0, /*allowQuestionToken:*/ false)) {
+                    staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
+                }
+            }
+
+            var functionSignature = this.parseFunctionSignature(/*allowQuestionToken:*/ false);
 
             var block: BlockSyntax = null;
             var semicolon: ISyntaxToken = null;
@@ -2213,6 +2241,23 @@ module Parser1 {
             }
 
             return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
+        }
+
+        private handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword: ISyntaxToken): ISyntaxToken {
+            Debug.assert(staticKeyword.tokenKind === SyntaxKind.StaticKeyword);
+
+            this.addDiagnostic(new SyntaxDiagnostic(
+                this.currentTokenStart(), this.currentToken().width(), DiagnosticCode._public_or_private_modifier_must_precede__static_, null));
+
+            var publicOrPrivateKeyword = this.eatAnyToken();
+            Debug.assert(publicOrPrivateKeyword.tokenKind === SyntaxKind.PublicKeyword || publicOrPrivateKeyword.tokenKind === SyntaxKind.PrivateKeyword);
+
+            var skippedTokens = this.getArray();
+            skippedTokens.push(publicOrPrivateKeyword);
+            staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
+            this.returnArray(skippedTokens);
+
+            return staticKeyword;
         }
 
         private parseMemberVariableDeclaration(): MemberVariableDeclarationSyntax {
@@ -2247,13 +2292,7 @@ module Parser1 {
                     token1.tokenKind !== SyntaxKind.ColonToken &&
                     token1.tokenKind !== SyntaxKind.EqualsToken) {
 
-                    this.addDiagnostic(new SyntaxDiagnostic(
-                        this.currentTokenStart(), this.currentToken().width(), DiagnosticCode._public_or_private_modifier_must_precede__static_, null));
-
-                    var skippedTokens = this.getArray();
-                    skippedTokens.push(this.eatAnyToken());
-                    staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
-                    this.returnArray(skippedTokens);
+                    staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
                 }
             }
 
@@ -2309,7 +2348,7 @@ module Parser1 {
             var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
 
             var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
-            var functionSignature = this.parseFunctionSignature();
+            var functionSignature = this.parseFunctionSignature(/*allowQuestionToken:*/ false);
 
             var semicolonToken: ISyntaxToken = null;
             var block: BlockSyntax = null;
@@ -2434,7 +2473,7 @@ module Parser1 {
             return this.isCallSignature(/*tokenIndex:*/ 0) ||
                    this.isConstructSignature() ||
                    this.isIndexSignature() ||
-                   this.isFunctionSignature(/*tokenIndex:*/ 0) ||
+                   this.isFunctionSignature(/*tokenIndex:*/ 0, /*allowQuestionToken:*/ true) ||
                    this.isPropertySignature();
         }
 
@@ -2452,10 +2491,10 @@ module Parser1 {
             else if (this.isIndexSignature()) {
                 return this.parseIndexSignature();
             }
-            else if (this.isFunctionSignature(/*tokenIndex:*/ 0)) {
+            else if (this.isFunctionSignature(/*tokenIndex:*/ 0, /*allowQuestionToken:*/ true)) {
                 // Note: it is important that isFunctionSignature is called before isPropertySignature.
                 // isPropertySignature checks for a subset of isFunctionSignature.
-                return this.parseFunctionSignature();
+                return this.parseFunctionSignature(/*allowQuestionToken:*/ true);
             }
             else if (this.isPropertySignature()) {
                 return this.parsePropertySignature();
@@ -2485,9 +2524,9 @@ module Parser1 {
             return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
         }
 
-        private parseFunctionSignature(): FunctionSignatureSyntax {
+        private parseFunctionSignature(allowQuestionToken: bool): FunctionSignatureSyntax {
             var identifier = this.eatIdentifierNameToken();
-            var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
+            var questionToken = allowQuestionToken ? this.tryEatToken(SyntaxKind.QuestionToken) : null;
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
             return this.factory.functionSignature(identifier, questionToken, callSignature);
@@ -2516,7 +2555,7 @@ module Parser1 {
             return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
         }
 
-        private isFunctionSignature(tokenIndex: number): bool {
+        private isFunctionSignature(tokenIndex: number, allowQuestionToken: bool): bool {
             if (ParserImpl.isIdentifierName(this.peekToken(tokenIndex))) {
                 // id(
                 if (this.isCallSignature(tokenIndex + 1)) {
@@ -2524,7 +2563,7 @@ module Parser1 {
                 }
 
                 // id?(
-                if (this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
+                if (allowQuestionToken && this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
                     this.isCallSignature(tokenIndex + 2)) {
                     return true;
                 }

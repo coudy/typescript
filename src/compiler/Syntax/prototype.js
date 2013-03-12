@@ -36523,8 +36523,14 @@ var Parser1;
             }
             if (this.peekToken(index).tokenKind === 58 /* StaticKeyword */ ) {
                 index++;
+                if (this.isFunctionSignature(index, false)) {
+                    return true;
+                }
+                if (ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
+                    index++;
+                }
             }
-            return this.isFunctionSignature(index);
+            return this.isFunctionSignature(index, false);
         };
         ParserImpl.prototype.parseMemberFunctionDeclaration = function () {
             var publicOrPrivateKeyword = null;
@@ -36532,7 +36538,12 @@ var Parser1;
                 publicOrPrivateKeyword = this.eatAnyToken();
             }
             var staticKeyword = this.tryEatKeyword(58 /* StaticKeyword */ );
-            var functionSignature = this.parseFunctionSignature();
+            if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
+                if (!this.isFunctionSignature(0, false)) {
+                    staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
+                }
+            }
+            var functionSignature = this.parseFunctionSignature(false);
             var block = null;
             var semicolon = null;
             if (this.isBlock()) {
@@ -36541,6 +36552,17 @@ var Parser1;
                 semicolon = this.eatExplicitOrAutomaticSemicolon(false);
             }
             return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
+        };
+        ParserImpl.prototype.handlePublicOrPrivateKeywordAfterStaticKeyword = function (staticKeyword) {
+            Debug.assert(staticKeyword.tokenKind === 58 /* StaticKeyword */ );
+            this.addDiagnostic(new SyntaxDiagnostic(this.currentTokenStart(), this.currentToken().width(), 11 /* _public_or_private_modifier_must_precede__static_ */ , null));
+            var publicOrPrivateKeyword = this.eatAnyToken();
+            Debug.assert(publicOrPrivateKeyword.tokenKind === 57 /* PublicKeyword */  || publicOrPrivateKeyword.tokenKind === 55 /* PrivateKeyword */ );
+            var skippedTokens = this.getArray();
+            skippedTokens.push(publicOrPrivateKeyword);
+            staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
+            this.returnArray(skippedTokens);
+            return staticKeyword;
         };
         ParserImpl.prototype.parseMemberVariableDeclaration = function () {
             var publicOrPrivateKeyword = null;
@@ -36551,11 +36573,7 @@ var Parser1;
             if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
                 var token1 = this.peekToken(1);
                 if (token1.tokenKind !== 78 /* SemicolonToken */  && token1.tokenKind !== 106 /* ColonToken */  && token1.tokenKind !== 107 /* EqualsToken */ ) {
-                    this.addDiagnostic(new SyntaxDiagnostic(this.currentTokenStart(), this.currentToken().width(), 11 /* _public_or_private_modifier_must_precede__static_ */ , null));
-                    var skippedTokens = this.getArray();
-                    skippedTokens.push(this.eatAnyToken());
-                    staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
-                    this.returnArray(skippedTokens);
+                    staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
                 }
             }
             var variableDeclarator = this.parseVariableDeclarator(true, true);
@@ -36592,7 +36610,7 @@ var Parser1;
             var exportKeyword = this.tryEatKeyword(47 /* ExportKeyword */ );
             var declareKeyword = this.tryEatKeyword(64 /* DeclareKeyword */ );
             var functionKeyword = this.eatKeyword(27 /* FunctionKeyword */ );
-            var functionSignature = this.parseFunctionSignature();
+            var functionSignature = this.parseFunctionSignature(false);
             var semicolonToken = null;
             var block = null;
             if (this.isBlock()) {
@@ -36669,7 +36687,7 @@ var Parser1;
             if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
                 return true;
             }
-            return this.isCallSignature(0) || this.isConstructSignature() || this.isIndexSignature() || this.isFunctionSignature(0) || this.isPropertySignature();
+            return this.isCallSignature(0) || this.isConstructSignature() || this.isIndexSignature() || this.isFunctionSignature(0, true) || this.isPropertySignature();
         };
         ParserImpl.prototype.parseTypeMember = function () {
             if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
@@ -36681,8 +36699,8 @@ var Parser1;
                 return this.parseConstructSignature();
             } else if (this.isIndexSignature()) {
                 return this.parseIndexSignature();
-            } else if (this.isFunctionSignature(0)) {
-                return this.parseFunctionSignature();
+            } else if (this.isFunctionSignature(0, true)) {
+                return this.parseFunctionSignature(true);
             } else if (this.isPropertySignature()) {
                 return this.parsePropertySignature();
             } else {
@@ -36701,9 +36719,9 @@ var Parser1;
             var typeAnnotation = this.parseOptionalTypeAnnotation(false);
             return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
         };
-        ParserImpl.prototype.parseFunctionSignature = function () {
+        ParserImpl.prototype.parseFunctionSignature = function (allowQuestionToken) {
             var identifier = this.eatIdentifierNameToken();
-            var questionToken = this.tryEatToken(105 /* QuestionToken */ );
+            var questionToken = allowQuestionToken ? this.tryEatToken(105 /* QuestionToken */ ) : null;
             var callSignature = this.parseCallSignature(false);
             return this.factory.functionSignature(identifier, questionToken, callSignature);
         };
@@ -36723,12 +36741,12 @@ var Parser1;
         ParserImpl.prototype.isIndexSignature = function () {
             return this.currentToken().tokenKind === 74 /* OpenBracketToken */ ;
         };
-        ParserImpl.prototype.isFunctionSignature = function (tokenIndex) {
+        ParserImpl.prototype.isFunctionSignature = function (tokenIndex, allowQuestionToken) {
             if (ParserImpl.isIdentifierName(this.peekToken(tokenIndex))) {
                 if (this.isCallSignature(tokenIndex + 1)) {
                     return true;
                 }
-                if (this.peekToken(tokenIndex + 1).tokenKind === 105 /* QuestionToken */  && this.isCallSignature(tokenIndex + 2)) {
+                if (allowQuestionToken && this.peekToken(tokenIndex + 1).tokenKind === 105 /* QuestionToken */  && this.isCallSignature(tokenIndex + 2)) {
                     return true;
                 }
             }
