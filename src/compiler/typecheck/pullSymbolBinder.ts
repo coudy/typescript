@@ -197,6 +197,7 @@ module TypeScript {
                 // The instance symbol is further set up in bindVariableDeclaration
                 moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
                 moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
+                moduleInstanceSymbol.addDeclaration(moduleContainerDecl);
 
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
             }            
