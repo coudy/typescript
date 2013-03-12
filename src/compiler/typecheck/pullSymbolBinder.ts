@@ -7,6 +7,7 @@ module TypeScript {
     export class PullSymbolBinder {
 
         private parentChain: PullTypeSymbol[] = [];
+        private parentDeclChain: PullDecl[] = [];
         private declPath: string[] = [];
 
         private staticClassMembers: PullSymbol[] = [];
@@ -39,11 +40,16 @@ module TypeScript {
             return parent;
         }
 
+        public getParentDecl(): PullDecl {
+            return this.parentDeclChain.length ? this.parentDeclChain[this.parentDeclChain.length - 1] : null;
+        }
+
         public getDeclPath() { return this.declPath; }
 
-        public pushParent(parentType: PullTypeSymbol) { 
+        public pushParent(parentType: PullTypeSymbol, parentDecl: PullDecl) { 
             if (parentType) { 
                 this.parentChain[this.parentChain.length] = parentType;
+                this.parentDeclChain[this.parentDeclChain.length] = parentDecl;
                 this.declPath[this.declPath.length] = parentType.getName();
             } 
         }
@@ -51,6 +57,7 @@ module TypeScript {
         public popParent() {
             if (this.parentChain.length) {
                 this.parentChain.length--;
+                this.parentDeclChain.length--;
                 this.declPath.length--;
             }
         }
@@ -190,6 +197,7 @@ module TypeScript {
                 // The instance symbol is further set up in bindVariableDeclaration
                 moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
                 moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
+                moduleInstanceSymbol.addDeclaration(moduleContainerDecl);
 
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
             }            
@@ -262,7 +270,7 @@ module TypeScript {
                 moduleContainerTypeSymbol.invalidate();
             }
 
-            this.pushParent(moduleContainerTypeSymbol);
+            this.pushParent(moduleContainerTypeSymbol, moduleContainerDecl);
 
             var childDecls = moduleContainerDecl.getChildDecls();
 
@@ -341,7 +349,7 @@ module TypeScript {
                 enumSymbol.invalidate();
             }
 
-            this.pushParent(enumSymbol);
+            this.pushParent(enumSymbol, enumDeclaration);
 
             var childDecls = enumDeclaration.getChildDecls();
 
@@ -506,7 +514,7 @@ module TypeScript {
                 classSymbol.invalidate();
             }
 
-            this.pushParent(classSymbol);
+            this.pushParent(classSymbol, classDecl);
 
             var childDecls = classDecl.getChildDecls();
 
@@ -688,7 +696,7 @@ module TypeScript {
                 }
             }
 
-            this.pushParent(interfaceSymbol);
+            this.pushParent(interfaceSymbol, interfaceDecl);
 
             var childDecls = interfaceDecl.getChildDecls();
 
@@ -738,7 +746,7 @@ module TypeScript {
 
             this.semanticInfo.setSymbolForAST(objectSymbolAST, objectSymbol);        
 
-            this.pushParent(objectSymbol);
+            this.pushParent(objectSymbol, objectDecl);
 
             var childDecls = objectDecl.getChildDecls();
 
@@ -861,7 +869,13 @@ module TypeScript {
 
                 if (!variableSymbol) {
                     variableSymbol = parent.findContainedMember(declName);
+                    var parentDecl = this.getParentDecl();
+
+                    if (variableSymbol && (parentDecl != variableSymbol.getDeclarations()[0].getParentDecl())) {
+                        variableSymbol = null;
+                    }
                 }
+
             }
             else if (!(variableDeclaration.getFlags() & PullElementFlags.Exported)) {
                 variableSymbol = this.findSymbolInContext(declName, PullElementKind.SomeValue, []);
@@ -909,7 +923,7 @@ module TypeScript {
                     }
                 }
 
-                variableSymbol.setUnresolved();
+                variableSymbol.invalidate();
             }
 
             if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
@@ -1360,6 +1374,11 @@ module TypeScript {
 
                 if (!functionSymbol) {
                     functionSymbol = parent.findContainedMember(funcName);
+                    var parentDecl = this.getParentDecl();
+
+                    if (functionSymbol && (parentDecl != functionSymbol.getDeclarations()[0].getParentDecl())) {
+                        functionSymbol = null;
+                    }
                 }
             }
             else if (!(functionDeclaration.getFlags() & PullElementFlags.Exported)) {
@@ -1419,7 +1438,7 @@ module TypeScript {
             }
 
             if (!isSignature) {
-                this.pushParent(functionTypeSymbol);
+                this.pushParent(functionTypeSymbol, functionDeclaration);
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
@@ -1511,7 +1530,7 @@ module TypeScript {
             }
             this.semanticInfo.setSymbolForAST(funcExpAST, functionSymbol);
 
-            this.pushParent(functionTypeSymbol);
+            this.pushParent(functionTypeSymbol, functionExpressionDeclaration);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
@@ -1578,7 +1597,7 @@ module TypeScript {
             functionTypeSymbol.addDeclaration(functionTypeDeclaration);
             this.semanticInfo.setSymbolForAST(funcTypeAST, functionTypeSymbol);
         
-            this.pushParent(functionTypeSymbol);
+            this.pushParent(functionTypeSymbol, functionTypeDeclaration);
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
@@ -1704,7 +1723,7 @@ module TypeScript {
             }
 
             if (!isSignature) {
-                this.pushParent(methodTypeSymbol);
+                this.pushParent(methodTypeSymbol, methodDeclaration);
             }
 
             if (parentHadSymbol && cleanedPreviousDecls) {
@@ -1839,7 +1858,7 @@ module TypeScript {
             var i = 0;
        
             if (!isSignature) {
-                this.pushParent(constructorTypeSymbol);
+                this.pushParent(constructorTypeSymbol, constructorDeclaration);
             }
 
             if (parentHadSymbol && cleanedPreviousDecls) {
@@ -2180,7 +2199,7 @@ module TypeScript {
             }
 
             if (!isSignature) {
-                this.pushParent(getterTypeSymbol);
+                this.pushParent(getterTypeSymbol, getAccessorDeclaration);
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
@@ -2345,7 +2364,7 @@ module TypeScript {
             }
 
             if (!isSignature) {
-                this.pushParent(setterTypeSymbol);
+                this.pushParent(setterTypeSymbol, setAccessorDeclaration);
             }
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when

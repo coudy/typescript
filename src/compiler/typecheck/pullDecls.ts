@@ -84,7 +84,7 @@ module TypeScript {
                 this.errors = [];
             }
 
-            error.adjustOffset(this.span.start());
+            //error.adjustOffset(this.span.start());
 
             this.errors[this.errors.length] = error;
         }

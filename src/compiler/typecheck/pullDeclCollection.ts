@@ -112,6 +112,7 @@ module TypeScript {
         context.semanticInfo.setDeclForAST(ast, decl);
 
         context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfo.setASTForDecl(constructorDecl, ast);
 
         return true;
     }
