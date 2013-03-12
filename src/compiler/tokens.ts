@@ -432,8 +432,8 @@ module TypeScript {
     }
 
     export class CommentToken extends Token {
-        constructor (tokenID: TokenID, public value: string, public isBlock: bool, public startPos: number, public line: number, public endsLine: bool) {
-            super(tokenID);
+        constructor(public value: string, public isBlock: bool, public startPos: number, public line: number, public endsLine: bool) {
+            super(TokenID.Comment);
         }
 
         public getText(): string {

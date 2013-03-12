@@ -1084,7 +1084,7 @@ module TypeScript {
                 if (this.startPos < this.pos) {
                     var commentText = this.src.substring(this.startPos, this.pos);
                     this.tokenStart();
-                    return new CommentToken(TokenID.Comment, commentText,/*isBlock*/true, this.startPos, commentLine,/*endsLine*/true);
+                    return new CommentToken(commentText,/*isBlock*/true, this.startPos, commentLine,/*endsLine*/true);
                 }
                 else {
                     return staticTokens[TokenID.EndOfFile];
@@ -1310,7 +1310,7 @@ module TypeScript {
                         var commentStartLine = this.line;
                         this.finishSinglelineComment();
                         var commentText = this.src.substring(commentStartPos, this.pos);
-                        var commentToken = new CommentToken(TokenID.Comment, commentText,/*isBlock*/false, commentStartPos, commentStartLine,/*endsLine*/false);
+                        var commentToken = new CommentToken(commentText,/*isBlock*/false, commentStartPos, commentStartLine,/*endsLine*/false);
                         if (this.scanComments) {
                             // respect scanner contract: when returning a token, startPos is the start position of the token
                             this.startPos = commentStartPos;
@@ -1332,7 +1332,7 @@ module TypeScript {
                         this.finishMultilineComment();
                         var commentText = this.src.substring(commentStartPos, this.pos);
                         var endsLine = this.endsLine(this.peekChar());
-                        var commentToken = new CommentToken(TokenID.Comment, commentText,/*isBlock*/true, commentStartPos, commentStartLine, endsLine);
+                        var commentToken = new CommentToken(commentText,/*isBlock*/true, commentStartPos, commentStartLine, endsLine);
                         if (this.scanComments) {
                             // respect scanner contract: when returning a token, startPos is the start position of the token
                             this.startPos = commentStartPos;
