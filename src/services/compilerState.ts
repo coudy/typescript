@@ -569,7 +569,7 @@ module Services {
             //
             for (unitIndex = 0, len = this.compiler.units.length; unitIndex < len; unitIndex++) {
                 fileName = this.compiler.units[unitIndex].filename;
-                isResident = (<TypeScript.Script>this.compiler.scripts.members[unitIndex]).isResident;
+                var isResident = (<TypeScript.Script>this.compiler.scripts.members[unitIndex]).isResident;
                 hostUnitIndex = this.hostCache.getUnitIndex(fileName);
 
                 if (this.hostCache.getIsResident(hostUnitIndex) != isResident) {
@@ -640,6 +640,7 @@ module Services {
             if (!incrementalTypeCheckSuccessful) {
                 // Apply changes to units
                 var anythingUpdated = false;
+                var i = 0;
                 for (i = 0, len = updateResults.length; i < len; i++) {
                     var entry = updateResults[i];
                     if (this.applyUpdateResult(entry))

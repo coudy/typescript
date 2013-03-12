@@ -884,7 +884,7 @@ module Services {
                     resultAST = this.getBreakpointInStatement(pos, switchStatement.statement, true, resultAST, false, false);
                     // Loop through case statements and find the best one
                     var caseListCount = switchStatement.caseList.members.length;
-                    var caseToUse: TypeScript.CaseStatemen;
+                    var caseToUse: TypeScript.CaseStatement;
                     if (caseListCount > 0) {
                         var lastCase = switchStatement.caseList.members[caseListCount - 1];
                         if (pos >= lastCase.limChar) {
@@ -1874,8 +1874,8 @@ module Services {
             // Ensure rules are initialized and up to date wrt to formatting options
             this.formattingRulesProvider.ensureUptodate(options);
 
-            var syntaxAST: AST;
-            var manager: FormattingManager;
+            var syntaxAST: Services.ScriptSyntaxAST;
+            var manager: Formatting.FormattingManager;
 
             if (key === "}") {
                 syntaxAST = this._getScriptSyntaxAST(fileName);
@@ -1899,6 +1899,7 @@ module Services {
             this.refresh();
 
             var i = 0;
+            var len = 0;
 
             // Split search value in terms array
             var terms = searchValue.split(" ");

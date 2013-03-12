@@ -806,6 +806,8 @@ module Services {
             var result: NavigateToItem[] = [];
 
             // Process all script ASTs and look for matchin symbols
+            var len = 0;
+            
             for (i = 0, len = this.pullCompilerState.getScriptCount() ; i < len; i++) {
                 // Add the item for the script name if needed
                 var script = this.pullCompilerState.getScript(i);
