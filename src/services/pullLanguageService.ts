@@ -929,18 +929,12 @@ module Services {
             new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
         }
 
-        private static massageDiagnostic(diagnostic: IDiagnostic): any {
-            return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
-        }
-
         public getSyntacticErrors(fileName: string): IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
 
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            var diagnostics = syntaxTree.diagnostics();
-
-            return diagnostics.map(PullLanguageService.massageDiagnostic);
+            return syntaxTree.diagnostics();
         }
 
         public getSemanticErrors(fileName: string): IDiagnostic[] {
@@ -948,9 +942,7 @@ module Services {
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
 
             // JOE: Here is where you should call and get the right set of semantic errors for this file.
-            var errors = this.pullCompilerState.pullGetErrorsForFile(fileName);
-
-            return errors.map(PullLanguageService.massageDiagnostic);
+            return this.pullCompilerState.pullGetErrorsForFile(fileName);
         }
 
         public getErrors(maxCount: number): TypeScript.ErrorEntry[]{

@@ -249,12 +249,16 @@ module Services {
             return _resultToJSON([]);
         }
 
+        private static realizeDiagnostic(diagnostic: IDiagnostic): { message: string; start: number; length: number; } {
+            return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
+        }
+
         public getSyntacticErrors(fileName: string): string {
             return this.forwardJSONCall(
                 "getSyntacticErrors(\"" + fileName + "\")",
                 () => {
                     var errors = this.pullLanguageService.getSyntacticErrors(fileName);
-                    return _resultToJSON(errors);
+                    return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }
 
@@ -263,7 +267,7 @@ module Services {
                 "getSemanticErrors(\"" + fileName + "\")",
                 () => {
                     var errors = this.pullLanguageService.getSemanticErrors(fileName);
-                    return _resultToJSON(errors);
+                    return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }
 
