@@ -79,7 +79,7 @@ module DumpAST {
             var dumpComments = function (comments: TypeScript.Comment[]): void {
                 if (comments) {
                     for (var i = 0; i < comments.length; i++) {
-                        entries.push(createDumpEntry(script, comments[i], parent));
+                        entries.push(createDumpEntry(script, comments[i], parent2));
                     }
                 }
             }
