@@ -172,7 +172,7 @@ module Formatting {
                 }
 
                 while (ancestorNodeDetails.Kind != AuthorParseNodeKind.apnkEmptyNode) {
-                    var nodeEdge = astCursor.GetEdgeLabel();
+                    nodeEdge = astCursor.GetEdgeLabel();
                     var node = new ParseNode();
                     node.AuthorNode = new AuthorParseNode();
                     node.AuthorNode.Details = ancestorNodeDetails;
@@ -185,7 +185,7 @@ module Formatting {
 
                 // Insert ancestors nodes at the beginning of the list, in reverse order, so that the root
                 // is first in the list.
-                for (var i = 0; i < ancestorNodes.count() ; i++) {
+                for (i = 0; i < ancestorNodes.count() ; i++) {
                     selfAndDescendantsNodes.insert(0, ancestorNodes.get(i));
                 }
                 this.Root = ParseTree.BuildTree(selfAndDescendantsNodes);

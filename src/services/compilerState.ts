@@ -567,10 +567,10 @@ module Services {
             //
             // If any file "isResident" status has changed, create a new compiler instance
             //
-            for (var unitIndex = 0, len = this.compiler.units.length; unitIndex < len; unitIndex++) {
-                var fileName = this.compiler.units[unitIndex].filename;
-                var isResident = (<TypeScript.Script>this.compiler.scripts.members[unitIndex]).isResident;
-                var hostUnitIndex = this.hostCache.getUnitIndex(fileName);
+            for (unitIndex = 0, len = this.compiler.units.length; unitIndex < len; unitIndex++) {
+                fileName = this.compiler.units[unitIndex].filename;
+                isResident = (<TypeScript.Script>this.compiler.scripts.members[unitIndex]).isResident;
+                hostUnitIndex = this.hostCache.getUnitIndex(fileName);
 
                 if (this.hostCache.getIsResident(hostUnitIndex) != isResident) {
                     this.logger.log("Creating new compiler instance because of unit 'isResident' status has changed: " + unitIndex + "-" + fileName);
@@ -640,7 +640,7 @@ module Services {
             if (!incrementalTypeCheckSuccessful) {
                 // Apply changes to units
                 var anythingUpdated = false;
-                for (var i = 0, len = updateResults.length; i < len; i++) {
+                for (i = 0, len = updateResults.length; i < len; i++) {
                     var entry = updateResults[i];
                     if (this.applyUpdateResult(entry))
                         anythingUpdated = true;
@@ -737,8 +737,8 @@ module Services {
                                 break;
                         }
                     }
-                    for (var i = 0; i < errors.typeCheckErrors.length; i++) {
-                        var error = errors.typeCheckErrors[i];
+                    for (i = 0; i < errors.typeCheckErrors.length; i++) {
+                        error = errors.typeCheckErrors[i];
                         if (filter(unitIndex, error)) {
                             if (!addError(error))
                                 break;
@@ -749,7 +749,7 @@ module Services {
 
             // Convert "unitIndex" into host units
             var result: TypeScript.ErrorEntry[] = [];
-            for (var i = 0; i < entries.length; i++) {
+            for (i = 0; i < entries.length; i++) {
                 var e = entries[i];
                 var ne = new TypeScript.ErrorEntry(this.mapToHostUnitIndex(e.unitIndex), e.minChar, e.limChar, e.message);
                 result.push(ne);

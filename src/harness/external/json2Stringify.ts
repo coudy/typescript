@@ -172,8 +172,6 @@ the Apache 2.0 License, whether by implication, estoppel or otherwise.
 
 var JSON2: any = {};
 
-declare var IO;
-
 (function() {
     'use strict';
 

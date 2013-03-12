@@ -48,8 +48,8 @@ module Services {
             if (closeBraceIndex >= 0) {
                 var openBracePos = this.getMatchingBraceBackward(position - 1, closeBracesTokens[closeBraceIndex], openBracesTokens[closeBraceIndex]);
                 if (openBracePos >= 0) {
-                    var range1 = new TextRange(position - 1, position);
-                    var range2 = new TextRange(openBracePos, openBracePos + 1);
+                    range1 = new TextRange(position - 1, position);
+                    range2 = new TextRange(openBracePos, openBracePos + 1);
                     result.push(range1, range2);
                 }
             }

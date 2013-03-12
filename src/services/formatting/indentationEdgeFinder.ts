@@ -49,6 +49,7 @@ module Formatting {
 
         static FillIndentationLevels2(node: ParseNode, nextNodesToVisit: Stack_ParseNode): void
         {
+            var child: ParseNode;
             //TypeScript specific
             switch (node.AuthorNode.Details.nodeType) {
                 case TypeScript.NodeType.ModuleDeclaration:
@@ -74,7 +75,7 @@ module Formatting {
                         node.ChildrenIndentationDelta = 0;
 
                         // Program children are not indented.
-                        var child = ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneBody)
+                        child = ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneBody)
                         ParseNodeExtensions.ForAllChildren(child, (child) => {
                             child.IndentationDelta = 0;
                             child.ChildrenIndentationDelta = 0;
@@ -155,7 +156,7 @@ module Formatting {
                 case AuthorParseNodeKind.apnkDefaultCase:
                     {
                         // Indent all children of case and default
-                        var child = ParseNodeExtensions.FindChildWithEdge(
+                        child = ParseNodeExtensions.FindChildWithEdge(
                                         ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneBody),
                                         AuthorParseNodeEdge.apneBlockBody);
                         if (child != null) {
@@ -206,7 +207,7 @@ module Formatting {
                         //      statement
                         // }
                         node.ChildrenIndentationDelta = 1;
-                        var child = ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneBody);
+                        child = ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneBody);
                         FillIndentationEdgesForBlockOrNot(child, /*childrenLevel:*/ 1);
                     }
                     break;

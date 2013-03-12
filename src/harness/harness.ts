@@ -22,7 +22,7 @@ declare var assert: Harness.Assert;
 declare var it;
 declare var describe;
 declare var run;
-declare var IO: IIO;
+//declare var IO: IIO;
 declare var __dirname; // Node-specific
 
 function switchToForwardSlashes(path: string) {
@@ -995,7 +995,7 @@ module Harness {
                     }
                 }
                 else {
-                    for (var m = 0; m < compiler.scripts.members.length; m++) {
+                    for (m = 0; m < compiler.scripts.members.length; m++) {
                         var script2 = <TypeScript.Script>compiler.scripts.members[m];
                         if (script2.locationInfo.filename !== 'lib.d.ts') {
                             if (targetPosition > -1) {
@@ -1008,10 +1008,10 @@ module Harness {
                             }
                             else {
                                 for (var pos = 0; pos < code.length; pos++) {
-                                    var tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
-                                    var name = this.getTypeInfoName(tyInfo.ast);
+                                    tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
+                                    name = this.getTypeInfoName(tyInfo.ast);
                                     if (name === targetIdentifier) {
-                                        var foundValue = new Type(tyInfo.typeInfo, code, targetIdentifier);
+                                        foundValue = new Type(tyInfo.typeInfo, code, targetIdentifier);
                                         if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
                                             matchingIdentifiers.push(foundValue);
                                         }
@@ -1427,7 +1427,7 @@ module Harness {
         }
 
         // Regex for parsing options in the format "@Alpha: Value of any sort"
-        private optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;  // multiple matches on multiple lines
+        var optionRegex = /^[\/]{2}\s*@(\w+):\s*(\S*)/gm;  // multiple matches on multiple lines
 
         // List of allowed metadata names
         var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out"];
@@ -1530,14 +1530,14 @@ module Harness {
             currentFileName = files.length > 0 ? currentFileName : '0.ts';
 
             // EOF, push whatever remains
-            var newTestFile = {
+            var newTestFile2 = {
                 content: currentFileContent || '',
                 name: currentFileName,
                 fileOptions: currentFileOptions,
                 originalFilePath: filename,
                 references: refs
             };
-            files.push(newTestFile);
+            files.push(newTestFile2);
 
             return { settings: settings, testUnitData: files };
         }
@@ -2051,7 +2051,7 @@ module Harness {
             var actualFilename = localPath(relativeFilename);
 
             if (runImmediately) {
-                var actual = generateActual(actualFilename, generateContent);
+                actual = generateActual(actualFilename, generateContent);
                 var comparison = compareToBaseline(actual, relativeFilename, opts);
                 writeComparison(comparison.expected, comparison.actual, relativeFilename, actualFilename, descriptionForDescribe);
             } else {
