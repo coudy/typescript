@@ -713,6 +713,7 @@ module Formatting {
         // Get the value of a property on the current node. If the property value is not supported on the current node, 0 is 
         // returned.
         public GetNodeProperty(nodeProperty: AuthorParseNodeProperty): number {
+            var bod: TypeScript.ASTList;
             if (this.path.count() == 0)
                 return 0;
 
@@ -723,7 +724,7 @@ module Formatting {
             switch (authorNode.Details.ast.nodeType) {
                 case TypeScript.NodeType.FuncDecl: {
                     var funcDecl = (<TypeScript.FuncDecl>authorNode.Details.ast);
-                    var bod = funcDecl.bod;
+                    bod = funcDecl.bod;
                     switch (nodeProperty) {
                         case AuthorParseNodeProperty.apnpFunctionKeywordMin:
                             return funcDecl.minChar; // TODO: Is this really the "function" keyword?
@@ -754,7 +755,7 @@ module Formatting {
 
                 case TypeScript.NodeType.ClassDeclaration: {
                     var classDecl = <TypeScript.ClassDeclaration>authorNode.Details.ast;
-                    var bod = <TypeScript.ASTList>classDecl.members;
+                    bod = <TypeScript.ASTList>classDecl.members;
                     switch (nodeProperty) {
                         case AuthorParseNodeProperty.apnpLCurlyMin:
                             if (bod !== null) {

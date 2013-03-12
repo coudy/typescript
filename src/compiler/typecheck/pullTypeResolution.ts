@@ -1141,6 +1141,19 @@ module TypeScript {
                 }
                 else {
 
+                    // PULLREVIEW: If the type annotation is a container type, use the module instance type
+                    if (typeExprSymbol.getKind() == PullElementKind.Container) {
+                        var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol()
+
+                        if (!instanceSymbol) {
+                            context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Tried to set variable type to uninitialized module type'" + typeExprSymbol.getName() + "'", decl);
+                            typeExprSymbol = this.semanticInfoChain.anyTypeSymbol;
+                        }
+                        else {
+                            typeExprSymbol = instanceSymbol.getType();
+                        }
+                    }
+
                     context.setTypeInContext(declSymbol, typeExprSymbol);
 
                     if (declParameterSymbol) {
@@ -1173,6 +1186,7 @@ module TypeScript {
                     hadError = true;
                 }
                 else {
+
                     context.setTypeInContext(declSymbol, this.widenType(initExprSymbol.getType()));
                     initExprSymbol.addOutgoingLink(declSymbol, SymbolLinkKind.ProvidesInferredType);
 

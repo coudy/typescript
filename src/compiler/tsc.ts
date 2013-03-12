@@ -229,9 +229,7 @@ class BatchCompiler {
                 this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
             };
             compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
-            if (!this.compilationSettings.usePull) {
-                compiler.emitDeclarations();
-            }
+            compiler.emitDeclarations(this.compilationSettings.usePull);
         } catch (err) {
             compiler.errorReporter.hasErrors = true;
             // Catch emitter exceptions

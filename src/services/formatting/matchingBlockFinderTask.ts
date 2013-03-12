@@ -108,10 +108,10 @@ module Formatting {
                     case AuthorParseNodeKind.apnkObject:
                         {
                             // Special handling for the case when object is inside a return
-                            var start = parser.GetNodeProperty(AuthorParseNodeProperty.apnpLCurlyMin);
+                            start = parser.GetNodeProperty(AuthorParseNodeProperty.apnpLCurlyMin);
                             start = (start == 0) ? currentNode.StartOffset : start;
 
-                            var end = parser.GetNodeProperty(AuthorParseNodeProperty.apnpRCurlyMin);
+                            end = parser.GetNodeProperty(AuthorParseNodeProperty.apnpRCurlyMin);
                             end = (end == 0) ? currentNode.EndOffset : end + 1;
 
                             return new Span(start, end - start);

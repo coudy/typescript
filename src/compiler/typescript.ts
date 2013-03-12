@@ -63,6 +63,8 @@
 ///<reference path='typecheck\pullSymbolGraph.ts' />
 ///<reference path='typecheck\pullEmitter.ts' />
 ///<reference path='typecheck\pullErrors.ts' />
+///<reference path='typecheck\pullHelpers.ts' />
+///<reference path='typecheck\pullDeclarationEmitter.ts' />
 ///<reference path='SyntaxTreeToAstVisitor.ts' />
 ///<reference path='resources.ts' />
 ///<reference path='resourceStrings.ts' />
@@ -707,7 +709,7 @@ module TypeScript {
             return true;
         }
 
-        public emitDeclarationsUnit(script: Script, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
+        public emitDeclarationsUnit(script: Script, usePullEmitter?: bool, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
             if (!this.canEmitDeclarations(script)) {
                 return null;
             }
@@ -715,7 +717,11 @@ module TypeScript {
             if (!declarationEmitter) {
                 var declareFileName = this.emitSettings.mapOutputFileName(script.locationInfo.filename, TypeScriptCompiler.mapToDTSFileName);
                 var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
-                declarationEmitter = new DeclarationEmitter(this.typeChecker, this.emitSettings, this.errorReporter);
+                if (usePullEmitter) {
+                    declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitSettings, this.errorReporter);
+                } else {
+                    declarationEmitter = new DeclarationEmitter(this.typeChecker, this.emitSettings, this.errorReporter);
+                }
                 declarationEmitter.setDeclarationFile(declareFile);
             }
 
@@ -729,12 +735,12 @@ module TypeScript {
             }
         }
 
-        public emitDeclarations() {
+        public emitDeclarations(usePullEmitter?: bool) {
             if (!this.canEmitDeclarations()) {
                 return;
             }
 
-            if (this.errorReporter.hasErrors) {
+            if (this.errorReporter.hasErrors || this.pullErrorReporter.hasErrors) {
                 // There were errors reported, do not generate declaration file
                 return;
             }
@@ -748,10 +754,10 @@ module TypeScript {
                 var script = <Script>this.scripts.members[i];
                 if (this.emitSettings.outputMany || declarationEmitter == null) {
                     // Create or reuse file
-                    declarationEmitter = this.emitDeclarationsUnit(script, !this.emitSettings.outputMany);
+                    declarationEmitter = this.emitDeclarationsUnit(script, usePullEmitter, !this.emitSettings.outputMany);
                 } else {
                     // Emit in existing emitter
-                    this.emitDeclarationsUnit(script, true, declarationEmitter);
+                    this.emitDeclarationsUnit(script, usePullEmitter, true, declarationEmitter);
                 }
             }
 

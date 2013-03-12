@@ -15,7 +15,7 @@
 
 ///<reference path='..\compiler\typescript.ts' />
 ///<reference path='harness.ts' />
-///<reference path='external\json2.ts' />
+
 
 module FourSlash {
     // Represents a parsed source file with metadata

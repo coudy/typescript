@@ -293,6 +293,7 @@ module Formatting {
 
         private GetRuleEditsWorker(rule: Rule, t1: TokenSpan, t2: TokenSpan): IList_TextEditInfo {
             var emptyResult = new List_TextEditInfo();
+            var lengthBetween: number;
             if (rule.Operation.Action == RuleAction.Ignore)
                 return emptyResult;
 
@@ -315,7 +316,6 @@ module Formatting {
                             betweenSpan = new Span(t1.Span.endPosition(), t2.Span.startPosition() - t1.Span.endPosition());
                         }
                         else {
-                            var lengthBetween: number;
                             if (t1.lineNumber() == t2.lineNumber())
                                 lengthBetween = t2.Span.startPosition() - t1.Span.endPosition();
                             else
@@ -352,7 +352,6 @@ module Formatting {
                             betweenSpan = new Span(t1.Span.endPosition(), t2.Span.startPosition() - t1.Span.endPosition());
                         }
                         else {
-                            var lengthBetween: number;
 
                             if (t1.lineNumber() == t2.lineNumber())
                                 lengthBetween = t2.Span.startPosition() - t1.Span.endPosition();

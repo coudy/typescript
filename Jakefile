@@ -65,6 +65,8 @@ var compilerSources = [
 	"typecheck/pullSymbolGraph.ts",
 	"typecheck/pullEmitter.ts",	
 	"typecheck/pullErrors.ts",
+	"typecheck/pullHelpers.ts",	
+	"typecheck/pullDeclarationEmitter.ts",	
 	"SyntaxTreeToAstVisitor.ts",
 	"resources.ts",
 	"resourceStrings.ts",

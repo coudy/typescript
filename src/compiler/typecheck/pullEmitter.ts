@@ -286,46 +286,29 @@ module TypeScript {
             return this.locationInfo.lineMap;
         }
 
-        //PULLTODO
-        public emitPropertyAccessor(funcDecl: FuncDecl, className: string, isProto: bool) {
-            if (!(<FieldSymbol>funcDecl.accessorSymbol).hasBeenEmitted) {
-                var accessorSymbol = <FieldSymbol>funcDecl.accessorSymbol;
-                this.emitIndent();
-                this.recordSourceMappingStart(funcDecl);
-                this.writeLineToOutput("Object.defineProperty(" + className + (isProto ? ".prototype, \"" : ", \"") + funcDecl.name.actualText + "\"" + ", {");
-                this.indenter.increaseIndent();
-
-                if (accessorSymbol.getter) {
-                    var getter: FuncDecl = <FuncDecl>accessorSymbol.getter.declAST;
-
-                    this.emitIndent();
-                    this.recordSourceMappingStart(getter);
-                    this.writeToOutput("get: ");
-                    this.emitInnerFunction(getter, false, isProto, this.shouldCaptureThis(getter), null);
-                    this.writeLineToOutput(",");
-                }
-
-                if (accessorSymbol.setter) {
-                    var setter: FuncDecl = <FuncDecl>accessorSymbol.setter.declAST;
-
-                    this.emitIndent();
-                    this.recordSourceMappingStart(setter);
-                    this.writeToOutput("set: ");
-                    this.emitInnerFunction(setter, false, isProto, this.shouldCaptureThis(setter), null);
-                    this.writeLineToOutput(",");
-                }
-
-                this.emitIndent();
-                this.writeLineToOutput("enumerable: true,");
-                this.emitIndent();
-                this.writeLineToOutput("configurable: true");
-                this.indenter.decreaseIndent();
-                this.emitIndent();
-                this.writeLineToOutput("});");
-                this.recordSourceMappingEnd(funcDecl);
-
-                accessorSymbol.hasBeenEmitted = true;
+        public isAccessorEmitted(funcDecl: FuncDecl) {
+            if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor)) {
+                return false;
             }
+
+            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
+            if (accessorSymbol.getGetter()) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public getGetterAndSetterFunction(funcDecl: FuncDecl): { getter: FuncDecl; setter: FuncDecl; } {
+            var result = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
+            return result;
+        }
+
+        public isAccessorInObjectLiteral(funcDecl: FuncDecl) {
+            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
+            var container = accessorSymbol.getContainer();
+            var containerKind = container.getKind();
+            return containerKind != PullElementKind.Class && containerKind != PullElementKind.ConstructorType;
         }
 
         public emitJavascriptClass(classDecl: ClassDeclaration) {

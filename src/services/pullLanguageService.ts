@@ -419,7 +419,7 @@ module Services {
                             var caseToUse = <TypeScript.CaseStatement>lastCase;
                             resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, false, true);
                         } else {
-                            var caseToUse = <TypeScript.CaseStatement>switchStatement.caseList.members[0];
+                            caseToUse = <TypeScript.CaseStatement>switchStatement.caseList.members[0];
                             resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, true, true);
                         }
                     }
@@ -463,7 +463,7 @@ module Services {
                     if (tryFinally.nodeType == TypeScript.NodeType.Try) {
                         resultAST = this.getBreakpointInStatement(pos, (<TypeScript.Try>tryFinally.tryNode).body, true, null, false, true);
                     } else {
-                        var tryCatch = <TypeScript.TryCatch>tryFinally.tryNode;
+                        tryCatch = <TypeScript.TryCatch>tryFinally.tryNode;
                         resultAST = this.getBreakpointInStatement(pos, tryCatch.tryNode.body, true, null, false, true);
                         resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.statement, true, resultAST, false, false);
                         resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.body, true, resultAST, false, true);
@@ -583,10 +583,10 @@ module Services {
                     parameters.forEach((p, i) => {
                         var signatureParameterInfo = new FormalParameterInfo();
                         signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
-                        signatureParameterInfo.isOptional = p.hasFlag(TypeScript.PullElementFlags.Optional);
+                        signatureParameterInfo.isOptional = p.getIsOptional();
                         signatureParameterInfo.name = p.getName();
                         signatureParameterInfo.docComment = p.getDocComments();
-                        signatureParameterInfo.type = p.getType() ? p.getType().getName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
+                        signatureParameterInfo.type = p.getType() ? p.getType().getScopedName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
                     });
                     result.signatureGroup.push(signatureGroupInfo);
@@ -768,13 +768,13 @@ module Services {
                 return manager.FormatOnClosingCurlyBrace(position);
             }
             else if (key === ";") {
-                var syntaxAST = this._getScriptSyntaxAST(fileName);
-                var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
+                syntaxAST = this._getScriptSyntaxAST(fileName);
+                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
                 return manager.FormatOnSemicolon(position);
             }
             else if (key === "\n") {
-                var syntaxAST = this._getScriptSyntaxAST(fileName);
-                var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
+                syntaxAST = this._getScriptSyntaxAST(fileName);
+                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
                 return manager.FormatOnEnter(position);
             }
             return []; //TextEdit.createInsert(minChar, "/* format was invoked here!*/")];
@@ -806,7 +806,9 @@ module Services {
             var result: NavigateToItem[] = [];
 
             // Process all script ASTs and look for matchin symbols
-            for (var i = 0, len = this.pullCompilerState.getScriptCount() ; i < len; i++) {
+            var len = 0;
+            
+            for (i = 0, len = this.pullCompilerState.getScriptCount() ; i < len; i++) {
                 // Add the item for the script name if needed
                 var script = this.pullCompilerState.getScript(i);
                 var scriptId = script.locationInfo.filename;

@@ -795,6 +795,7 @@ module Services {
             var resultAST: TypeScript.IASTSpan = null;
             var cur = containerASTs[containerASTs.length - 1];
             var customSpan: TypeScript.ASTSpan = null;
+            var tryCatch: TypeScript.TryCatch;
 
             switch (cur.nodeType) {
                 // TODO : combine these as interface and use custom method instead of duplicate logic
@@ -883,14 +884,15 @@ module Services {
                     resultAST = this.getBreakpointInStatement(pos, switchStatement.statement, true, resultAST, false, false);
                     // Loop through case statements and find the best one
                     var caseListCount = switchStatement.caseList.members.length;
+                    var caseToUse: TypeScript.CaseStatement;
                     if (caseListCount > 0) {
                         var lastCase = switchStatement.caseList.members[caseListCount - 1];
                         if (pos >= lastCase.limChar) {
                             // Use last one if the character after last statement in the block
-                            var caseToUse = <TypeScript.CaseStatement>lastCase;
+                            caseToUse = <TypeScript.CaseStatement>lastCase;
                             resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, false, true);
                         } else {
-                            var caseToUse = <TypeScript.CaseStatement>switchStatement.caseList.members[0];
+                            caseToUse = <TypeScript.CaseStatement>switchStatement.caseList.members[0];
                             resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, true, true);
                         }
                     }
@@ -923,7 +925,7 @@ module Services {
                     break;
 
                 case TypeScript.NodeType.TryCatch:
-                    var tryCatch = <TypeScript.TryCatch>cur;
+                    tryCatch = <TypeScript.TryCatch>cur;
                     resultAST = this.getBreakpointInStatement(pos, tryCatch.tryNode.body, true, null, false, true);
                     resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.statement, true, resultAST, false, false);
                     resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.body, false, resultAST, false, true);
@@ -934,7 +936,7 @@ module Services {
                     if (tryFinally.nodeType == TypeScript.NodeType.Try) {
                         resultAST = this.getBreakpointInStatement(pos, (<TypeScript.Try>tryFinally.tryNode).body, true, null, false, true);
                     } else {
-                        var tryCatch = <TypeScript.TryCatch>tryFinally.tryNode;
+                        tryCatch = <TypeScript.TryCatch>tryFinally.tryNode;
                         resultAST = this.getBreakpointInStatement(pos, tryCatch.tryNode.body, true, null, false, true);
                         resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.statement, true, resultAST, false, false);
                         resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.body, true, resultAST, false, true);
@@ -1872,19 +1874,22 @@ module Services {
             // Ensure rules are initialized and up to date wrt to formatting options
             this.formattingRulesProvider.ensureUptodate(options);
 
+            var syntaxAST: Services.ScriptSyntaxAST;
+            var manager: Formatting.FormattingManager;
+
             if (key === "}") {
-                var syntaxAST = this._getScriptSyntaxAST(fileName);
-                var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
+                syntaxAST = this._getScriptSyntaxAST(fileName);
+                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
                 return manager.FormatOnClosingCurlyBrace(position);
             }
             else if (key === ";") {
-                var syntaxAST = this._getScriptSyntaxAST(fileName);
-                var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
+                syntaxAST = this._getScriptSyntaxAST(fileName);
+                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
                 return manager.FormatOnSemicolon(position);
             }
             else if (key === "\n") {
-                var syntaxAST = this._getScriptSyntaxAST(fileName);
-                var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
+                syntaxAST = this._getScriptSyntaxAST(fileName);
+                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
                 return manager.FormatOnEnter(position);
             }
             return []; //TextEdit.createInsert(minChar, "/* format was invoked here!*/")];
@@ -1893,15 +1898,18 @@ module Services {
         public getNavigateToItems(searchValue: string): NavigateToItem[] {
             this.refresh();
 
+            var i = 0;
+            var len = 0;
+
             // Split search value in terms array
             var terms = searchValue.split(" ");
-            for (var i = 0; i < terms.length; i++) {
+            for (i = 0; i < terms.length; i++) {
                 terms[i] = terms[i].trim().toLocaleLowerCase();
             }
 
             var match = (ast: TypeScript.AST, parent: TypeScript.AST, name: string): string => {
                 name = name.toLocaleLowerCase();
-                for (var i = 0; i < terms.length; i++) {
+                for (i = 0; i < terms.length; i++) {
                     var term = terms[i];
                     if (name === term)
                         return MatchKind.exact;
@@ -1916,7 +1924,7 @@ module Services {
             var result: NavigateToItem[] = [];
 
             // Process all script ASTs and look for matchin symbols
-            for (var i = 0, len = this.compilerState.getScriptCount() ; i < len; i++) {
+            for (i = 0, len = this.compilerState.getScriptCount() ; i < len; i++) {
                 // Add the item for the script name if needed
                 var script = this.compilerState.getScript(i);
                 var scriptId = script.locationInfo.filename;

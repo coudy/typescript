@@ -379,7 +379,7 @@ module Diff {
             }
 
             //...add lines after matching lines
-            for (var i = newStart; i < newEnd; ++i) {
+            for (i = newStart; i < newEnd; ++i) {
                 var j = newContent[i].matchingIndex;
 
                 //...if we have a matching index for the other side...
@@ -393,8 +393,8 @@ module Diff {
             }
 
             //...add lines before matching lines
-            for (var i = newEnd; i > newStart; --i) {
-                var j = newContent[i].matchingIndex;
+            for (i = newEnd; i > newStart; --i) {
+                j = newContent[i].matchingIndex;
 
                 //...if we have a matching index for the other side...
                 if (j != -1 && j <= oldEnd && j > oldStart) {
@@ -473,8 +473,8 @@ module Diff {
             }
 
             //...add lines before matching lines
-            for (var i = newContent.length - 1; i > 0; --i) {
-                var j = newContent[i].matchingIndex;
+            for (i = newContent.length - 1; i > 0; --i) {
+                j = newContent[i].matchingIndex;
 
                 //...if we have a matching index for the other side...
                 if (j != -1 && j < oldContent.length && j > 0) {
