@@ -273,7 +273,7 @@ module TypeScript {
 
         public emitArrayLiteral(content: ASTList) {
             this.writeToOutput("[");
-            if (content) {
+            if (content && content.members.length > 0) {
                 this.writeLineToOutput("");
                 this.indenter.increaseIndent();
                 this.emitJavascriptList(content, ", ", TokenID.Comma, true, false, false);
