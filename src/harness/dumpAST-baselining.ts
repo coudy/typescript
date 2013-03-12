@@ -70,8 +70,8 @@ module DumpAST {
         var pre = (cur: TypeScript.AST, parent: TypeScript.AST): TypeScript.AST => {
             //verifyAstNodePositions(script, cur);
 
-            var parent = (entries.length == 0 ? null : entries[entries.length - 1]);
-            var newEntry = createDumpEntry(script, cur, parent);
+            var parent2 = (entries.length == 0 ? null : entries[entries.length - 1]);
+            var newEntry = createDumpEntry(script, cur, parent2);
             if (entries.length == 0) {
                 root = newEntry;
             }
@@ -196,7 +196,7 @@ module DumpAST {
         result += addKey("children") + ": [";
         if (entry.children !== null && entry.children.length > 0) {
             result += "\r\n";
-            for (var i = 0; i < entry.children.length; i++) {
+            for (i = 0; i < entry.children.length; i++) {
                 result += dumpEntries(entry.children[i], indent + 1);
                 if (i < entry.children.length - 1) {
                     result += ",";
