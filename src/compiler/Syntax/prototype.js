@@ -36561,7 +36561,6 @@ var Parser1;
             var skippedTokens = this.getArray();
             skippedTokens.push(publicOrPrivateKeyword);
             staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
-            this.returnArray(skippedTokens);
             return staticKeyword;
         };
         ParserImpl.prototype.parseMemberVariableDeclaration = function () {
@@ -38116,6 +38115,9 @@ var Parser1;
         ParserImpl.prototype.parseSeparatedSyntaxListWorker = function (currentListType) {
             var items = this.getArray();
             var skippedTokens = this.getArray();
+            Debug.assert(items.length === 0);
+            Debug.assert(skippedTokens.length === 0);
+            Debug.assert(skippedTokens !== items);
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var separatorKind = this.separatorKind(currentListType);
             var inErrorRecovery = false;

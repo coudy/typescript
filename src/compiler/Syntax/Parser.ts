@@ -2255,7 +2255,6 @@ module Parser1 {
             var skippedTokens = this.getArray();
             skippedTokens.push(publicOrPrivateKeyword);
             staticKeyword = this.addSkippedTokensAfterToken(staticKeyword, skippedTokens);
-            this.returnArray(skippedTokens);
 
             return staticKeyword;
         }
@@ -4846,6 +4845,9 @@ module Parser1 {
         private parseSeparatedSyntaxListWorker(currentListType: ListParsingState): { skippedTokens: ISyntaxToken[]; list: ISeparatedSyntaxList; } {
             var items: ISyntaxNodeOrToken[] = this.getArray();
             var skippedTokens: ISyntaxToken[] = this.getArray();
+            Debug.assert(items.length === 0);
+            Debug.assert(skippedTokens.length === 0);
+            Debug.assert(skippedTokens !== items);
 
             var allowAutomaticSemicolonInsertion = this.allowsAutomaticSemicolonInsertion(currentListType);
             var separatorKind = this.separatorKind(currentListType);
