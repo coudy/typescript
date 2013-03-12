@@ -2423,7 +2423,7 @@ module TypeScript {
 
                             var binder = new PullSymbolBinder(this.semanticInfoChain);
                             binder.setUnit(this.unitPath);
-                            binder.pushParent(typeSymbol);
+                            binder.pushParent(typeSymbol, objectLitDecl);
 
                             if (funcDeclAST.isGetAccessor()) {
                                 binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
