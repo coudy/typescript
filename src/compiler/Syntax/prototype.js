@@ -39158,7 +39158,6 @@ var TypeScript;
             if (!this.errors) {
                 this.errors = [];
             }
-            error.adjustOffset(this.span.start());
             this.errors[this.errors.length] = error;
         };
         PullDecl.prototype.getErrors = function () {
@@ -42881,7 +42880,7 @@ var TypeScript;
                             var functionDecl = this.getDeclForAST(funcDeclAST);
                             var binder = new TypeScript.PullSymbolBinder(this.semanticInfoChain);
                             binder.setUnit(this.unitPath);
-                            binder.pushParent(typeSymbol);
+                            binder.pushParent(typeSymbol, objectLitDecl);
                             if (funcDeclAST.isGetAccessor()) {
                                 binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
                             } else {
@@ -43788,7 +43787,7 @@ var TypeScript;
             var targetIndexSigs = target.getIndexSignatures();
             var hasSig;
             var lacksSig;
-            if (sourceCallSigs.length || targetCallSigs.length) {
+            if (targetCallSigs.length) {
                 if (!this.signatureGroupIsRelatableToTarget(sourceCallSigs, targetCallSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (sourceCallSigs.length && targetCallSigs.length) {
@@ -43804,7 +43803,7 @@ var TypeScript;
                     return false;
                 }
             }
-            if (sourceConstructSigs.length || targetConstructSigs.length) {
+            if (targetConstructSigs.length) {
                 if (!this.signatureGroupIsRelatableToTarget(sourceConstructSigs, targetConstructSigs, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
                         if (sourceConstructSigs.length && targetConstructSigs.length) {
@@ -43839,7 +43838,7 @@ var TypeScript;
             if (sourceSG == targetSG) {
                 return true;
             }
-            if (!(sourceSG && targetSG)) {
+            if (!(sourceSG.length && targetSG.length)) {
                 return false;
             }
             var mSig = null;
@@ -45888,6 +45887,7 @@ var TypeScript;
         context.pushParent(decl);
         context.semanticInfo.setDeclForAST(ast, decl);
         context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfo.setASTForDecl(constructorDecl, ast);
         return true;
     }
     TypeScript.preCollectClassDecls = preCollectClassDecls;
@@ -46481,6 +46481,7 @@ var TypeScript;
         function PullSymbolBinder(semanticInfoChain) {
             this.semanticInfoChain = semanticInfoChain;
             this.parentChain = [];
+            this.parentDeclChain = [];
             this.declPath = [];
             this.staticClassMembers = [];
             this.reBindingAfterChange = false;
@@ -46501,18 +46502,23 @@ var TypeScript;
             }
             return parent;
         };
+        PullSymbolBinder.prototype.getParentDecl = function () {
+            return this.parentDeclChain.length ? this.parentDeclChain[this.parentDeclChain.length - 1] : null;
+        };
         PullSymbolBinder.prototype.getDeclPath = function () {
             return this.declPath;
         };
-        PullSymbolBinder.prototype.pushParent = function (parentType) {
+        PullSymbolBinder.prototype.pushParent = function (parentType, parentDecl) {
             if (parentType) {
                 this.parentChain[this.parentChain.length] = parentType;
+                this.parentDeclChain[this.parentDeclChain.length] = parentDecl;
                 this.declPath[this.declPath.length] = parentType.getName();
             }
         };
         PullSymbolBinder.prototype.popParent = function () {
             if (this.parentChain.length) {
                 this.parentChain.length--;
+                this.parentDeclChain.length--;
                 this.declPath.length--;
             }
         };
@@ -46607,6 +46613,7 @@ var TypeScript;
                 moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
                 moduleInstanceSymbol = new TypeScript.PullSymbol(modName, 2048 /* Variable */ );
                 moduleInstanceSymbol.setType(moduleInstanceTypeSymbol);
+                moduleInstanceSymbol.addDeclaration(moduleContainerDecl);
                 moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
             }
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
@@ -46656,7 +46663,7 @@ var TypeScript;
                 }
                 moduleContainerTypeSymbol.invalidate();
             }
-            this.pushParent(moduleContainerTypeSymbol);
+            this.pushParent(moduleContainerTypeSymbol, moduleContainerDecl);
             var childDecls = moduleContainerDecl.getChildDecls();
             for(i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
@@ -46711,7 +46718,7 @@ var TypeScript;
                 }
                 enumSymbol.invalidate();
             }
-            this.pushParent(enumSymbol);
+            this.pushParent(enumSymbol, enumDeclaration);
             var childDecls = enumDeclaration.getChildDecls();
             for(i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
@@ -46824,7 +46831,7 @@ var TypeScript;
                 }
                 classSymbol.invalidate();
             }
-            this.pushParent(classSymbol);
+            this.pushParent(classSymbol, classDecl);
             var childDecls = classDecl.getChildDecls();
             for(i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
@@ -46944,7 +46951,7 @@ var TypeScript;
                     interfaceSymbol.setUnresolved();
                 }
             }
-            this.pushParent(interfaceSymbol);
+            this.pushParent(interfaceSymbol, interfaceDecl);
             var childDecls = interfaceDecl.getChildDecls();
             for(i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
@@ -46976,7 +46983,7 @@ var TypeScript;
             objectSymbol.addDeclaration(objectDecl);
             objectDecl.setSymbol(objectSymbol);
             this.semanticInfo.setSymbolForAST(objectSymbolAST, objectSymbol);
-            this.pushParent(objectSymbol);
+            this.pushParent(objectSymbol, objectDecl);
             var childDecls = objectDecl.getChildDecls();
             var i = 0;
             for(i = 0; i < childDecls.length; i++) {
@@ -47051,6 +47058,10 @@ var TypeScript;
                 variableSymbol = parent.findMember(declName);
                 if (!variableSymbol) {
                     variableSymbol = parent.findContainedMember(declName);
+                    var parentDecl = this.getParentDecl();
+                    if (variableSymbol && (parentDecl != variableSymbol.getDeclarations()[0].getParentDecl())) {
+                        variableSymbol = null;
+                    }
                 }
             } else if (!(variableDeclaration.getFlags() & 1 /* Exported */ )) {
                 variableSymbol = this.findSymbolInContext(declName, TypeScript.PullElementKind.SomeValue, []);
@@ -47088,7 +47099,7 @@ var TypeScript;
                         variableSymbol.removeDeclaration(decls[j]);
                     }
                 }
-                variableSymbol.setUnresolved();
+                variableSymbol.invalidate();
             }
             if ((declFlags & TypeScript.PullElementFlags.ImplicitVariable) == 0) {
                 if (!variableSymbol) {
@@ -47387,6 +47398,10 @@ var TypeScript;
                 functionSymbol = parent.findMember(funcName);
                 if (!functionSymbol) {
                     functionSymbol = parent.findContainedMember(funcName);
+                    var parentDecl = this.getParentDecl();
+                    if (functionSymbol && (parentDecl != functionSymbol.getDeclarations()[0].getParentDecl())) {
+                        functionSymbol = null;
+                    }
                 }
             } else if (!(functionDeclaration.getFlags() & 1 /* Exported */ )) {
                 functionSymbol = this.findSymbolInContext(funcName, TypeScript.PullElementKind.SomeValue, []);
@@ -47430,7 +47445,7 @@ var TypeScript;
                 this.recordNonInterfaceParentModule();
             }
             if (!isSignature) {
-                this.pushParent(functionTypeSymbol);
+                this.pushParent(functionTypeSymbol, functionDeclaration);
             }
             if (parentHadSymbol && cleanedPreviousDecls) {
                 var callSigs = functionTypeSymbol.getCallSignatures();
@@ -47488,7 +47503,7 @@ var TypeScript;
                 this.semanticInfo.setSymbolForAST(funcExpAST.name, functionSymbol);
             }
             this.semanticInfo.setSymbolForAST(funcExpAST, functionSymbol);
-            this.pushParent(functionTypeSymbol);
+            this.pushParent(functionTypeSymbol, functionExpressionDeclaration);
             var signature = new TypeScript.PullDefinitionSignatureSymbol(2097152 /* CallSignature */ );
             if (funcExpAST.variableArgList) {
                 signature.setHasVariableParamList();
@@ -47530,7 +47545,7 @@ var TypeScript;
             functionTypeDeclaration.setSymbol(functionTypeSymbol);
             functionTypeSymbol.addDeclaration(functionTypeDeclaration);
             this.semanticInfo.setSymbolForAST(funcTypeAST, functionTypeSymbol);
-            this.pushParent(functionTypeSymbol);
+            this.pushParent(functionTypeSymbol, functionTypeDeclaration);
             var signature = new TypeScript.PullDefinitionSignatureSymbol(2097152 /* CallSignature */ );
             if (funcTypeAST.variableArgList) {
                 signature.setHasVariableParamList();
@@ -47615,7 +47630,7 @@ var TypeScript;
                 }
             }
             if (!isSignature) {
-                this.pushParent(methodTypeSymbol);
+                this.pushParent(methodTypeSymbol, methodDeclaration);
             }
             if (parentHadSymbol && cleanedPreviousDecls) {
                 var callSigs = methodTypeSymbol.getCallSignatures();
@@ -47707,7 +47722,7 @@ var TypeScript;
             this.semanticInfo.setSymbolForAST(constructorAST, constructorSymbol);
             var i = 0;
             if (!isSignature) {
-                this.pushParent(constructorTypeSymbol);
+                this.pushParent(constructorTypeSymbol, constructorDeclaration);
             }
             if (parentHadSymbol && cleanedPreviousDecls) {
                 var constructSigs = constructorTypeSymbol.getConstructSignatures();
@@ -47937,7 +47952,7 @@ var TypeScript;
                 }
             }
             if (!isSignature) {
-                this.pushParent(getterTypeSymbol);
+                this.pushParent(getterTypeSymbol, getAccessorDeclaration);
             }
             if (parentHadSymbol && cleanedPreviousDecls) {
                 var callSigs = getterTypeSymbol.getCallSignatures();
@@ -48051,7 +48066,7 @@ var TypeScript;
                 }
             }
             if (!isSignature) {
-                this.pushParent(setterTypeSymbol);
+                this.pushParent(setterTypeSymbol, setAccessorDeclaration);
             }
             if (parentHadSymbol && cleanedPreviousDecls) {
                 var callSigs = setterTypeSymbol.getCallSignatures();
@@ -51754,7 +51769,6 @@ var TypeScript;
                         } else if (diff.kind == 1 /* DeclAdded */ ) {
                             graphUpdater.addDecl(diff.newDecl);
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
-                            _this.resolvePosition(diff.newDecl.getSpan().start(), newScript);
                         } else {
                         }
                     }

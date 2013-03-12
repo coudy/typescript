@@ -1,0 +1,143 @@
+{
+    "_sourceUnit": {
+        "kind": "SourceUnit",
+        "fullWidth": 41,
+        "hasZeroWidthToken": true,
+        "moduleElements": [
+            {
+                "kind": "IfStatement",
+                "fullWidth": 41,
+                "ifKeyword": {
+                    "kind": "IfKeyword",
+                    "width": 2,
+                    "fullWidth": 3,
+                    "text": "if",
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "openParenToken": {
+                    "kind": "OpenParenToken",
+                    "width": 1,
+                    "text": "("
+                },
+                "condition": {
+                    "kind": "LogicalNotExpression",
+                    "fullWidth": 15,
+                    "operatorToken": {
+                        "kind": "ExclamationToken",
+                        "width": 1,
+                        "text": "!"
+                    },
+                    "operand": {
+                        "kind": "MemberAccessExpression",
+                        "fullWidth": 14,
+                        "expression": {
+                            "kind": "ModuleKeyword",
+                            "width": 6,
+                            "text": "module"
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 1,
+                            "text": "."
+                        },
+                        "name": {
+                            "kind": "IdentifierName",
+                            "width": 7,
+                            "text": "exports",
+                            "valueText": "exports"
+                        }
+                    }
+                },
+                "closeParenToken": {
+                    "kind": "CloseParenToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": ")",
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "statement": {
+                    "kind": "ExpressionStatement",
+                    "fullWidth": 20,
+                    "expression": {
+                        "kind": "AssignmentExpression",
+                        "fullWidth": 19,
+                        "left": {
+                            "kind": "MemberAccessExpression",
+                            "fullWidth": 15,
+                            "expression": {
+                                "kind": "ModuleKeyword",
+                                "width": 6,
+                                "text": "module"
+                            },
+                            "dotToken": {
+                                "kind": "DotToken",
+                                "width": 1,
+                                "text": "."
+                            },
+                            "name": {
+                                "kind": "IdentifierName",
+                                "width": 7,
+                                "fullWidth": 8,
+                                "text": "exports",
+                                "valueText": "exports",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            }
+                        },
+                        "operatorToken": {
+                            "kind": "EqualsToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": "=",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "right": {
+                            "kind": "StringLiteral",
+                            "width": 2,
+                            "text": "\"\""
+                        }
+                    },
+                    "semicolonToken": {
+                        "kind": "SemicolonToken",
+                        "width": 1,
+                        "text": ";"
+                    }
+                }
+            }
+        ],
+        "endOfFileToken": {
+            "kind": "EndOfFileToken",
+            "width": 0,
+            "text": ""
+        }
+    },
+    "_lineMap": {
+        "lineStarts": [
+            0
+        ],
+        "length": 41
+    }
+}
