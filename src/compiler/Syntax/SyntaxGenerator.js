@@ -3347,6 +3347,11 @@ var definitions = [
                 isToken: true
             }, 
             {
+                name: 'typeAnnotation',
+                type: 'TypeAnnotationSyntax',
+                isOptional: true
+            }, 
+            {
                 name: 'block',
                 type: 'BlockSyntax'
             }
@@ -3372,11 +3377,8 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'parameterName',
-                isToken: true,
-                tokenKinds: [
-                    'IdentifierName'
-                ]
+                name: 'parameter',
+                type: 'ParameterSyntax'
             }, 
             {
                 name: 'closeParenToken',

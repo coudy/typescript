@@ -2271,6 +2271,9 @@ module TypeScript {
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
             this.movePast(node.closeParenToken);
+            var returnType = node.typeAnnotation
+                ? node.typeAnnotation.accept(this)
+                : null;
 
             this.pushDeclLists();
 
@@ -2289,6 +2292,7 @@ module TypeScript {
             funcDecl.fncFlags |= FncFlags.GetAccessor;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
             funcDecl.hint = "get" + node.propertyName.text();
+            funcDecl.returnTypeAnnotation = returnType;
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
             this.setSpan(result, start, this.position);
@@ -2304,12 +2308,8 @@ module TypeScript {
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
-            var parameterName = this.identifierFromToken(node.parameterName, /*isOptional:*/ false);
-            this.movePast(node.parameterName);
+            var parameter = node.parameter.accept(this);
             this.movePast(node.closeParenToken);
-
-            var parameter = new ArgDecl(parameterName);
-            this.setSpan(parameter, parameterName.minChar, parameter.limChar);
 
             var parameters = new ASTList();
             parameters.append(parameter);

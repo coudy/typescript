@@ -4244,9 +4244,10 @@ module Parser1 {
             var propertyName = this.eatAnyToken();
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
             var block = this.parseBlock();
 
-            return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, block);
+            return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block);
         }
 
         private isSetAccessorPropertyAssignment(): bool {
@@ -4260,11 +4261,11 @@ module Parser1 {
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var propertyName = this.eatAnyToken();
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-            var parameterName = this.eatIdentifierToken();
+            var parameter = this.parseParameter();
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var block = this.parseBlock();
 
-            return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
+            return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
         }
 
         private isSimplePropertyAssignment(inErrorRecovery: bool): bool {

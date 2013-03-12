@@ -20580,10 +20580,10 @@ var SyntaxRewriter = (function () {
         return node.update(this.visitToken(node.propertyName), this.visitToken(node.colonToken), this.visitNodeOrToken(node.expression));
     };
     SyntaxRewriter.prototype.visitGetAccessorPropertyAssignment = function (node) {
-        return node.update(this.visitToken(node.getKeyword), this.visitToken(node.propertyName), this.visitToken(node.openParenToken), this.visitToken(node.closeParenToken), this.visitNode(node.block));
+        return node.update(this.visitToken(node.getKeyword), this.visitToken(node.propertyName), this.visitToken(node.openParenToken), this.visitToken(node.closeParenToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation), this.visitNode(node.block));
     };
     SyntaxRewriter.prototype.visitSetAccessorPropertyAssignment = function (node) {
-        return node.update(this.visitToken(node.setKeyword), this.visitToken(node.propertyName), this.visitToken(node.openParenToken), this.visitToken(node.parameterName), this.visitToken(node.closeParenToken), this.visitNode(node.block));
+        return node.update(this.visitToken(node.setKeyword), this.visitToken(node.propertyName), this.visitToken(node.openParenToken), this.visitNode(node.parameter), this.visitToken(node.closeParenToken), this.visitNode(node.block));
     };
     SyntaxRewriter.prototype.visitFunctionExpression = function (node) {
         return node.update(this.visitToken(node.functionKeyword), node.identifier === null ? null : this.visitToken(node.identifier), this.visitNode(node.callSignature), this.visitNode(node.block));
@@ -28282,11 +28282,11 @@ var Syntax;
         NormalModeFactory.prototype.simplePropertyAssignment = function (propertyName, colonToken, expression) {
             return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, false);
         };
-        NormalModeFactory.prototype.getAccessorPropertyAssignment = function (getKeyword, propertyName, openParenToken, closeParenToken, block) {
-            return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block, false);
+        NormalModeFactory.prototype.getAccessorPropertyAssignment = function (getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block) {
+            return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, false);
         };
-        NormalModeFactory.prototype.setAccessorPropertyAssignment = function (setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block) {
-            return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block, false);
+        NormalModeFactory.prototype.setAccessorPropertyAssignment = function (setKeyword, propertyName, openParenToken, parameter, closeParenToken, block) {
+            return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block, false);
         };
         NormalModeFactory.prototype.functionExpression = function (functionKeyword, identifier, callSignature, block) {
             return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block, false);
@@ -28544,11 +28544,11 @@ var Syntax;
         StrictModeFactory.prototype.simplePropertyAssignment = function (propertyName, colonToken, expression) {
             return new SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, true);
         };
-        StrictModeFactory.prototype.getAccessorPropertyAssignment = function (getKeyword, propertyName, openParenToken, closeParenToken, block) {
-            return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block, true);
+        StrictModeFactory.prototype.getAccessorPropertyAssignment = function (getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block) {
+            return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, true);
         };
-        StrictModeFactory.prototype.setAccessorPropertyAssignment = function (setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block) {
-            return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block, true);
+        StrictModeFactory.prototype.setAccessorPropertyAssignment = function (setKeyword, propertyName, openParenToken, parameter, closeParenToken, block) {
+            return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block, true);
         };
         StrictModeFactory.prototype.functionExpression = function (functionKeyword, identifier, callSignature, block) {
             return new FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block, true);
@@ -34147,9 +34147,10 @@ var AccessorPropertyAssignmentSyntax = (function (_super) {
 })(PropertyAssignmentSyntax);
 var GetAccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(GetAccessorPropertyAssignmentSyntax, _super);
-    function GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block, parsedInStrictMode) {
+    function GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, parsedInStrictMode) {
         _super.call(this, propertyName, openParenToken, closeParenToken, block, parsedInStrictMode);
         this.getKeyword = getKeyword;
+        this.typeAnnotation = typeAnnotation;
     }
     GetAccessorPropertyAssignmentSyntax.prototype.accept = function (visitor) {
         return visitor.visitGetAccessorPropertyAssignment(this);
@@ -34158,7 +34159,7 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         return 245 /* GetAccessorPropertyAssignment */ ;
     };
     GetAccessorPropertyAssignmentSyntax.prototype.childCount = function () {
-        return 5;
+        return 6;
     };
     GetAccessorPropertyAssignmentSyntax.prototype.childAt = function (slot) {
         switch(slot) {
@@ -34171,19 +34172,24 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
             case 3:
                 return this.closeParenToken;
             case 4:
+                return this.typeAnnotation;
+            case 5:
                 return this.block;
             default:
                 throw Errors.invalidOperation();
         }
     };
-    GetAccessorPropertyAssignmentSyntax.prototype.update = function (getKeyword, propertyName, openParenToken, closeParenToken, block) {
-        if (this.getKeyword === getKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.closeParenToken === closeParenToken && this.block === block) {
+    GetAccessorPropertyAssignmentSyntax.prototype.update = function (getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block) {
+        if (this.getKeyword === getKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.closeParenToken === closeParenToken && this.typeAnnotation === typeAnnotation && this.block === block) {
             return this;
         }
-        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, block, this.parsedInStrictMode());
+        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, this.parsedInStrictMode());
+    };
+    GetAccessorPropertyAssignmentSyntax.create = function create(getKeyword, propertyName, openParenToken, closeParenToken, block) {
+        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, null, block, false);
     };
     GetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName) {
-        return new GetAccessorPropertyAssignmentSyntax(Syntax.token(65 /* GetKeyword */ ), propertyName, Syntax.token(72 /* OpenParenToken */ ), Syntax.token(73 /* CloseParenToken */ ), BlockSyntax.create1(), false);
+        return new GetAccessorPropertyAssignmentSyntax(Syntax.token(65 /* GetKeyword */ ), propertyName, Syntax.token(72 /* OpenParenToken */ ), Syntax.token(73 /* CloseParenToken */ ), null, BlockSyntax.create1(), false);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -34192,21 +34198,27 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.withGetKeyword = function (getKeyword) {
-        return this.update(getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, this.block);
+        return this.update(getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, this.typeAnnotation, this.block);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.withPropertyName = function (propertyName) {
-        return this.update(this.getKeyword, propertyName, this.openParenToken, this.closeParenToken, this.block);
+        return this.update(this.getKeyword, propertyName, this.openParenToken, this.closeParenToken, this.typeAnnotation, this.block);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.withOpenParenToken = function (openParenToken) {
-        return this.update(this.getKeyword, this.propertyName, openParenToken, this.closeParenToken, this.block);
+        return this.update(this.getKeyword, this.propertyName, openParenToken, this.closeParenToken, this.typeAnnotation, this.block);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.withCloseParenToken = function (closeParenToken) {
-        return this.update(this.getKeyword, this.propertyName, this.openParenToken, closeParenToken, this.block);
+        return this.update(this.getKeyword, this.propertyName, this.openParenToken, closeParenToken, this.typeAnnotation, this.block);
+    };
+    GetAccessorPropertyAssignmentSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+        return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, typeAnnotation, this.block);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.withBlock = function (block) {
-        return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, block);
+        return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, this.typeAnnotation, block);
     };
     GetAccessorPropertyAssignmentSyntax.prototype.isTypeScriptSpecific = function () {
+        if (this.typeAnnotation !== null && this.typeAnnotation.isTypeScriptSpecific()) {
+            return true;
+        }
         if (this.block.isTypeScriptSpecific()) {
             return true;
         }
@@ -34216,10 +34228,10 @@ var GetAccessorPropertyAssignmentSyntax = (function (_super) {
 })(AccessorPropertyAssignmentSyntax);
 var SetAccessorPropertyAssignmentSyntax = (function (_super) {
     __extends(SetAccessorPropertyAssignmentSyntax, _super);
-    function SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block, parsedInStrictMode) {
+    function SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block, parsedInStrictMode) {
         _super.call(this, propertyName, openParenToken, closeParenToken, block, parsedInStrictMode);
         this.setKeyword = setKeyword;
-        this.parameterName = parameterName;
+        this.parameter = parameter;
     }
     SetAccessorPropertyAssignmentSyntax.prototype.accept = function (visitor) {
         return visitor.visitSetAccessorPropertyAssignment(this);
@@ -34239,7 +34251,7 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
             case 2:
                 return this.openParenToken;
             case 3:
-                return this.parameterName;
+                return this.parameter;
             case 4:
                 return this.closeParenToken;
             case 5:
@@ -34248,14 +34260,14 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
                 throw Errors.invalidOperation();
         }
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.update = function (setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block) {
-        if (this.setKeyword === setKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.parameterName === parameterName && this.closeParenToken === closeParenToken && this.block === block) {
+    SetAccessorPropertyAssignmentSyntax.prototype.update = function (setKeyword, propertyName, openParenToken, parameter, closeParenToken, block) {
+        if (this.setKeyword === setKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.parameter === parameter && this.closeParenToken === closeParenToken && this.block === block) {
             return this;
         }
-        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block, this.parsedInStrictMode());
+        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block, this.parsedInStrictMode());
     };
-    SetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName, parameterName) {
-        return new SetAccessorPropertyAssignmentSyntax(Syntax.token(68 /* SetKeyword */ ), propertyName, Syntax.token(72 /* OpenParenToken */ ), parameterName, Syntax.token(73 /* CloseParenToken */ ), BlockSyntax.create1(), false);
+    SetAccessorPropertyAssignmentSyntax.create1 = function create1(propertyName, parameter) {
+        return new SetAccessorPropertyAssignmentSyntax(Syntax.token(68 /* SetKeyword */ ), propertyName, Syntax.token(72 /* OpenParenToken */ ), parameter, Syntax.token(73 /* CloseParenToken */ ), BlockSyntax.create1(), false);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
         return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -34264,24 +34276,27 @@ var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         return _super.prototype.withTrailingTrivia.call(this, trivia);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.withSetKeyword = function (setKeyword) {
-        return this.update(setKeyword, this.propertyName, this.openParenToken, this.parameterName, this.closeParenToken, this.block);
+        return this.update(setKeyword, this.propertyName, this.openParenToken, this.parameter, this.closeParenToken, this.block);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.withPropertyName = function (propertyName) {
-        return this.update(this.setKeyword, propertyName, this.openParenToken, this.parameterName, this.closeParenToken, this.block);
+        return this.update(this.setKeyword, propertyName, this.openParenToken, this.parameter, this.closeParenToken, this.block);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.withOpenParenToken = function (openParenToken) {
-        return this.update(this.setKeyword, this.propertyName, openParenToken, this.parameterName, this.closeParenToken, this.block);
+        return this.update(this.setKeyword, this.propertyName, openParenToken, this.parameter, this.closeParenToken, this.block);
     };
-    SetAccessorPropertyAssignmentSyntax.prototype.withParameterName = function (parameterName) {
-        return this.update(this.setKeyword, this.propertyName, this.openParenToken, parameterName, this.closeParenToken, this.block);
+    SetAccessorPropertyAssignmentSyntax.prototype.withParameter = function (parameter) {
+        return this.update(this.setKeyword, this.propertyName, this.openParenToken, parameter, this.closeParenToken, this.block);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.withCloseParenToken = function (closeParenToken) {
-        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameterName, closeParenToken, this.block);
+        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameter, closeParenToken, this.block);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.withBlock = function (block) {
-        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameterName, this.closeParenToken, block);
+        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameter, this.closeParenToken, block);
     };
     SetAccessorPropertyAssignmentSyntax.prototype.isTypeScriptSpecific = function () {
+        if (this.parameter.isTypeScriptSpecific()) {
+            return true;
+        }
         if (this.block.isTypeScriptSpecific()) {
             return true;
         }
@@ -37732,8 +37747,9 @@ var Parser1;
             var propertyName = this.eatAnyToken();
             var openParenToken = this.eatToken(72 /* OpenParenToken */ );
             var closeParenToken = this.eatToken(73 /* CloseParenToken */ );
+            var typeAnnotation = this.parseOptionalTypeAnnotation(false);
             var block = this.parseBlock();
-            return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, block);
+            return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block);
         };
         ParserImpl.prototype.isSetAccessorPropertyAssignment = function () {
             return this.currentToken().tokenKind === 68 /* SetKeyword */  && this.isPropertyName(this.peekToken(1), false);
@@ -37742,10 +37758,10 @@ var Parser1;
             var setKeyword = this.eatKeyword(68 /* SetKeyword */ );
             var propertyName = this.eatAnyToken();
             var openParenToken = this.eatToken(72 /* OpenParenToken */ );
-            var parameterName = this.eatIdentifierToken();
+            var parameter = this.parseParameter();
             var closeParenToken = this.eatToken(73 /* CloseParenToken */ );
             var block = this.parseBlock();
-            return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameterName, closeParenToken, block);
+            return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
         };
         ParserImpl.prototype.isSimplePropertyAssignment = function (inErrorRecovery) {
             return this.isPropertyName(this.currentToken(), inErrorRecovery);
@@ -45680,13 +45696,14 @@ var SyntaxWalker = (function () {
         this.visitToken(node.propertyName);
         this.visitToken(node.openParenToken);
         this.visitToken(node.closeParenToken);
+        this.visitOptionalNode(node.typeAnnotation);
         this.visitNode(node.block);
     };
     SyntaxWalker.prototype.visitSetAccessorPropertyAssignment = function (node) {
         this.visitToken(node.setKeyword);
         this.visitToken(node.propertyName);
         this.visitToken(node.openParenToken);
-        this.visitToken(node.parameterName);
+        this.visitNode(node.parameter);
         this.visitToken(node.closeParenToken);
         this.visitNode(node.block);
     };
@@ -50589,6 +50606,7 @@ var TypeScript;
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
             this.movePast(node.closeParenToken);
+            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             this.pushDeclLists();
             var statements = this.convertBlock(node.block);
             statements.append(new TypeScript.EndCode());
@@ -50600,6 +50618,7 @@ var TypeScript;
             funcDecl.fncFlags |= 64 /* GetAccessor */ ;
             funcDecl.fncFlags |= 131072 /* IsFunctionExpression */ ;
             funcDecl.hint = "get" + node.propertyName.text();
+            funcDecl.returnTypeAnnotation = returnType;
             var result = new TypeScript.BinaryExpression(74 /* Member */ , name, funcDecl);
             this.setSpan(result, start, this.position);
             return result;
@@ -50611,11 +50630,8 @@ var TypeScript;
             var name = this.identifierFromToken(node.propertyName, false);
             this.movePast(node.propertyName);
             this.movePast(node.openParenToken);
-            var parameterName = this.identifierFromToken(node.parameterName, false);
-            this.movePast(node.parameterName);
+            var parameter = node.parameter.accept(this);
             this.movePast(node.closeParenToken);
-            var parameter = new TypeScript.ArgDecl(parameterName);
-            this.setSpan(parameter, parameterName.minChar, parameter.limChar);
             var parameters = new TypeScript.ASTList();
             parameters.append(parameter);
             this.pushDeclLists();
@@ -57329,6 +57345,7 @@ var PrettyPrinter;
             this.appendToken(node.propertyName);
             this.appendToken(node.openParenToken);
             this.appendToken(node.closeParenToken);
+            this.appendNode(node.typeAnnotation);
             this.ensureSpace();
             node.block.accept(this);
         };
@@ -57337,7 +57354,7 @@ var PrettyPrinter;
             this.ensureSpace();
             this.appendToken(node.propertyName);
             this.appendToken(node.openParenToken);
-            this.appendToken(node.parameterName);
+            node.parameter.accept(this);
             this.appendToken(node.closeParenToken);
             this.ensureSpace();
             node.block.accept(this);

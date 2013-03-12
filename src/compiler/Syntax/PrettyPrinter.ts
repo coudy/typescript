@@ -908,6 +908,7 @@ module PrettyPrinter {
             this.appendToken(node.propertyName);
             this.appendToken(node.openParenToken);
             this.appendToken(node.closeParenToken);
+            this.appendNode(node.typeAnnotation);
             this.ensureSpace();
             node.block.accept(this);
         }
@@ -917,7 +918,7 @@ module PrettyPrinter {
             this.ensureSpace();
             this.appendToken(node.propertyName);
             this.appendToken(node.openParenToken);
-            this.appendToken(node.parameterName);
+            node.parameter.accept(this);
             this.appendToken(node.closeParenToken);
             this.ensureSpace();
             node.block.accept(this);

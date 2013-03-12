@@ -631,6 +631,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             this.visitToken(node.propertyName),
             this.visitToken(node.openParenToken),
             this.visitToken(node.closeParenToken),
+            node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation),
             <BlockSyntax>this.visitNode(node.block));
     }
 
@@ -639,7 +640,7 @@ class SyntaxRewriter implements ISyntaxVisitor {
             this.visitToken(node.setKeyword),
             this.visitToken(node.propertyName),
             this.visitToken(node.openParenToken),
-            this.visitToken(node.parameterName),
+            <ParameterSyntax>this.visitNode(node.parameter),
             this.visitToken(node.closeParenToken),
             <BlockSyntax>this.visitNode(node.block));
     }

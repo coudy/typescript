@@ -549,6 +549,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.propertyName);
         this.visitToken(node.openParenToken);
         this.visitToken(node.closeParenToken);
+        this.visitOptionalNode(node.typeAnnotation);
         this.visitNode(node.block);
     }
 
@@ -556,7 +557,7 @@ class SyntaxWalker implements ISyntaxVisitor {
         this.visitToken(node.setKeyword);
         this.visitToken(node.propertyName);
         this.visitToken(node.openParenToken);
-        this.visitToken(node.parameterName);
+        this.visitNode(node.parameter);
         this.visitToken(node.closeParenToken);
         this.visitNode(node.block);
     }
