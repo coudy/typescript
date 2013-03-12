@@ -298,25 +298,19 @@ directory(builtTestDirectory);
 var run = path.join(builtTestDirectory, "run.js");
 compileFile(run, harnessSources, [builtTestDirectory, tscFile].concat(libraryTargets).concat(harnessSources), [], true);
 
-// Hack for running --fourslash-prototyping tests until Pull emit support is online
-var fsDir = 'tests/cases/prototyping/fourslash/';
-var fsJS = path.join(fsDir, 'fourslash.js');
-var fsTS = path.join(fsDir, 'fourslash.ts');
-compileFile(fsJS, [fsTS], [], [], true);
-
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 var localPrototypingBaseline = "tests/baselines/prototyping/local/";
 var refPrototypingBaseline = "tests/baselines/prototyping/reference/";
 
 desc("Builds the test infrastructure using the built compiler");
-task("tests", [run, serviceFile, fsJS].concat(libraryTargets), function() {	
+task("tests", [run, serviceFile].concat(libraryTargets), function() {	
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
 	jake.cpR(path.join(nongenericLibraryDirectory, "lib.d.ts"), builtTestDirectory);	
 });
 
-task("tests-prototyping", [run, serviceFile, fsJS].concat(libraryTargets), function() {
+task("tests-prototyping", [run, serviceFile].concat(libraryTargets), function() {
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
 	jake.cpR(path.join(genericLibraryDirectory, "lib.d.ts"), builtTestDirectory);
