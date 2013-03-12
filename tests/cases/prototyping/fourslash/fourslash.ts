@@ -240,7 +240,7 @@ module FourSlashInterface {
             FourSlash.currentTestState.deleteCharBehindMarker(count);
         }
 
-        public delete(count?: number) {
+        public deleteAtCaret(times?: number) {
             FourSlash.currentTestState.deleteChar(count);
         }
 
