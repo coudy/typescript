@@ -979,6 +979,21 @@ module TypeScript {
             // want to be able to bind lambdas in return positions
             go = true;
         }
+        else if (ast.nodeType == NodeType.TryCatch) {
+            go = true;
+        }
+        else if (ast.nodeType == NodeType.TryFinally) {
+            go = true;
+        }
+        else if (ast.nodeType == NodeType.Try) {
+            go = true;
+        }
+        else if (ast.nodeType == NodeType.Catch) {
+            go = true;
+        }
+        else if (ast.nodeType == NodeType.Finally) {
+            go = true;
+        }
 
         walker.options.goChildren = go;
 

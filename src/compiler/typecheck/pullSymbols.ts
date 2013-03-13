@@ -40,6 +40,8 @@ module TypeScript {
 
         private rebindingID = 0;
 
+        private isVarArg = false;
+
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
@@ -79,6 +81,9 @@ module TypeScript {
 
         public setIsOptional() { this.isOptional = true; }
         public getIsOptional() { return this.isOptional; }
+
+        public getIsVarArg() { return this.isVarArg; }
+        public setIsVarArg() { this.isVarArg = true; }
 
         public setIsSynthesized() { this.isSynthesized = true; }
         public getIsSynthesized() { return this.isSynthesized; }
@@ -2422,9 +2427,10 @@ module TypeScript {
 
         context.pushTypeSpecializationCache(typeReplacementMap);
         var newReturnType = specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast);
-        context.popTypeSpecializationCache();
+        context.popTypeSpecializationCache();      
 
         if (newReturnType != returnType) {
+
             newReturnType.addDeclaration(returnType.getDeclarations()[0]);
         }
 

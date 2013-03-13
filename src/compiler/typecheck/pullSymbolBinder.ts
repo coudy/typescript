@@ -1309,6 +1309,10 @@ module TypeScript {
                     isProperty = hasFlag(argDecl.varFlags, VarFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Parameter);
 
+                    if (funcDecl.variableArgList && i == funcDecl.arguments.members.length - 1) {
+                        parameterSymbol.setIsVarArg();
+                    }
+
                     if (decl.getFlags() & PullElementFlags.Optional) {
                         parameterSymbol.setIsOptional();
                     }
@@ -2134,6 +2138,10 @@ module TypeScript {
 
             accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
 
+            if (codeGenTarget < CodeGenTarget.ES5) {
+                getAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
+            }
+
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
                     getAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [funcName])));
@@ -2299,6 +2307,10 @@ module TypeScript {
             var j = 0;
 
             accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
+
+            if (codeGenTarget < CodeGenTarget.ES5) {
+                setAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
+            }
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {

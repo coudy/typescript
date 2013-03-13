@@ -613,6 +613,7 @@ module TypeScript {
                     //context.postError(span.minChar, span.limChar - span.minChar, this.unitPath, "Could not resolve location for symbol '" + symbol.getName() +"'", enclosingDecl);
 
                     // We'll return the cached results, and let the decl be corrected on the next invalidation
+                    this.setUnitPath(thisUnit);
                     return symbol;
                 }
 
@@ -2227,6 +2228,7 @@ module TypeScript {
                 var firstFncDecl: PullDecl = null;
                 var i = 0;
                 var declKind: PullElementKind;
+                var declFlags: PullElementFlags;
 
                 if (!hasSetSelfReference) {
                     for (i = declPath.length - 2; i >= 0; i--) {
@@ -2261,6 +2263,12 @@ module TypeScript {
                 for (i = declPath.length - 1; i >= 0; i--) {
                     decl = declPath[i];
                     declKind = decl.getKind();
+                    declFlags = decl.getFlags();
+
+                    if (declFlags & PullElementFlags.Static) {
+                        this.semanticInfoChain.anyTypeSymbol;
+                    }
+
                     if (declKind == PullElementKind.Class) {
                         classSymbol = <PullClassTypeSymbol>decl.getSymbol();
 

@@ -54,6 +54,10 @@ module TypeScript {
            
             switch (ast.nodeType) {
 
+                // lists
+                case NodeType.List:
+                    return this.typeCheckList(ast, typeCheckContext);
+
                 // decarations
 
                 case NodeType.VarDecl:
@@ -243,7 +247,9 @@ module TypeScript {
         }
 
         // lists
-        public typeCheckList(list: ASTList, typeCheckContext: PullTypeCheckContext) {
+        public typeCheckList(ast: AST, typeCheckContext: PullTypeCheckContext) {
+            var list = <ASTList>ast;
+
             if (!list) {
                 return null;
             }
@@ -342,10 +348,15 @@ module TypeScript {
         //  - method does not overrided field, or vice-versa
         //  - body members
         public typeCheckClass(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-
+            var classAST = <ClassDeclaration>ast;
             // resolving the class also resolves its members...
             var classSymbol = <PullClassTypeSymbol>this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
             
+            if (classAST.members) {
+                for (var i = 0; i < classAST.members.members.length; i++) {
+                    this.typeCheckAST(classAST.members.members[i], typeCheckContext);
+                }
+            }
             
             return classSymbol;
         }
