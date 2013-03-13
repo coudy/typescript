@@ -96,7 +96,6 @@ class CompilerBaselineRunner extends RunnerBase {
 
             if (that.usepull) {
                 tcSettings.push({ flag: 'usepull', value: 'true' });
-                tcSettings.push({ flag: 'usefidelity', value: 'true' });
             }
 
             // compile as CommonJS module                    
