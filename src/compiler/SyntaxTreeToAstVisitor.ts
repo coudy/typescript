@@ -63,6 +63,7 @@ module TypeScript {
         private staticsLists: ASTList[] = [];
 
         private requiresExtendsBlock: bool = false;
+        private previousTokenTrailingComments: Comment[] = null;
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
@@ -154,11 +155,17 @@ module TypeScript {
             for (var i = 0, n = list.childCount(); i < n; i++) {
                 if (i % 2 === 0) {
                     result.append(list.childAt(i).accept(this));
+                    this.previousTokenTrailingComments = null;
                 }
                 else {
-                    this.movePast(<ISyntaxToken>list.childAt(i));
+                    var separatorToken = <ISyntaxToken>list.childAt(i);
+                    this.previousTokenTrailingComments = this.convertTokenTrailingComments(
+                        separatorToken, this.position + separatorToken.leadingTriviaWidth() + separatorToken.width());
+                    this.movePast(separatorToken);
                 }
             }
+
+            this.previousTokenTrailingComments = null;
 
             this.setSpan(result, start, this.position);
             return result;
@@ -239,7 +246,11 @@ module TypeScript {
         }
 
         private convertNodeLeadingComments(node: SyntaxNode, nodeStart: number): Comment[] {
-            return this.convertTokenLeadingComments(node.firstToken(), nodeStart);
+            var preComments = this.convertTokenLeadingComments(node.firstToken(), nodeStart);
+
+            return this.previousTokenTrailingComments === null
+                ? preComments
+                : this.previousTokenTrailingComments.concat(preComments);
         }
 
         private convertNodeTrailingComments(node: SyntaxNode, nodeStart: number): Comment[] {
@@ -1713,6 +1724,12 @@ module TypeScript {
 
         private visitParameterList(node: ParameterListSyntax): ASTList {
             this.assertElementAtPosition(node);
+
+            var start = this.position;
+
+            var openParenToken = node.openParenToken;
+            this.previousTokenTrailingComments = this.convertTokenTrailingComments(
+                openParenToken, start + openParenToken.leadingTriviaWidth() + openParenToken.width());
 
             this.movePast(node.openParenToken);
             var result = this.visitSeparatedSyntaxList(node.parameters);
