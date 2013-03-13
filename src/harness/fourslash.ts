@@ -468,7 +468,7 @@ module FourSlash {
             var errors = this.realLangSvc.getErrors(9999);
             IO.printLine('Error list (' + errors.length + ' errors)');
             errors.forEach(err => {
-                IO.printLine(err);
+                IO.printLine(err.message);
             });
         }
 
@@ -772,13 +772,13 @@ module FourSlash {
             for (i = 0; i < positions.length; i++) {
                 var nameOf = (type) => type ? type.fullSymbolName : '(none)';
 
-                var referenceType = referencePullSvc.getTypeAtPosition(this.activeFile.name, position);
-                var pullType = this.pullLanguageService.getTypeAtPosition(this.activeFile.name, position);
+                var referenceType = referencePullSvc.getTypeAtPosition(this.activeFile.name, positions[i]);
+                var pullType = this.pullLanguageService.getTypeAtPosition(this.activeFile.name, positions[i]);
                 var refName = nameOf(referenceType);
                 var pullName = nameOf(pullType);
                 if (refName !== pullName) {
                     var textAtPosition = this.testData.files[i].content.substr(i, 10);
-                    throw new Error('verifyTypeAgainstFullCheck at position ' + position + ' ("' + i + '...") failed - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '"');
+                    throw new Error('verifyTypeAgainstFullCheck at position ' + positions[i] + ' ("' + i + '...") failed - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '"');
                 }
             }
         }
