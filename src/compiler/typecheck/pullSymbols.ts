@@ -28,7 +28,8 @@ module TypeScript {
 
         private hasBeenResolved = false;
 
-        private isOptional = false;
+        private isOptional = false;
+
         private inResolution = false;
 
         private isSynthesized = false;
@@ -77,7 +78,8 @@ module TypeScript {
         public setKind(declType: PullElementKind) { this.declKind = declType; }
 
         public setIsOptional() { this.isOptional = true; }
-        public getIsOptional() { return this.isOptional; }
+        public getIsOptional() { return this.isOptional; }
+
         public setIsSynthesized() { this.isSynthesized = true; }
         public getIsSynthesized() { return this.isSynthesized; }
 
@@ -1542,21 +1544,22 @@ module TypeScript {
                 var signatureCount = callSignatures.length + constructSignatures.length + indexSignatures.length;
                 if (signatureCount != 0 || memberCount != 0) {
                     var useShortFormSignature = !curlies && (signatureCount == 1 || getPrettyFunctionOverload);
-
+                    var signatureMemberName: MemberName[];
+                    
                     if (callSignatures.length > 0) {
-                        var signatureMemberName =
+                        signatureMemberName =
                             PullSignatureSymbol.getSignaturesTypeNameEx(callSignatures, "", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
                         allMemberNames.addAll(signatureMemberName);
                     }
 
                     if (constructSignatures.length > 0) {
-                        var signatureMemberName =
+                        signatureMemberName =
                             PullSignatureSymbol.getSignaturesTypeNameEx(constructSignatures, "new", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
                         allMemberNames.addAll(signatureMemberName);
                     }
 
                     if (indexSignatures.length > 0) {
-                        var signatureMemberName =
+                        signatureMemberName =
                             PullSignatureSymbol.getSignaturesTypeNameEx(indexSignatures, "", useShortFormSignature, true, scopeSymbol, getPrettyFunctionOverload);
                         allMemberNames.addAll(signatureMemberName);
                     }
