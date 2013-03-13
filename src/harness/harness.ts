@@ -769,7 +769,6 @@ module Harness {
             compiler.settings.controlFlowUseDef = true;
             if (Harness.usePull) {
                 compiler.settings.usePull = true;
-                compiler.settings.useFidelity = true;
             }
 
             compiler.parseEmitOption(stdout);

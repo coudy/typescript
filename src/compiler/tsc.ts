@@ -437,10 +437,8 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.usePull = true;
-                this.compilationSettings.useFidelity = true;
             }
         });
-
 
         opts.option('target', {
             usage: 'Specify ECMAScript target version: "ES3" (default), or "ES5"',
@@ -500,14 +498,6 @@ class BatchCompiler {
                 this.printVersion();
             }
         }, 'v');
-
-        opts.flag('fidelity', {
-            usage: 'Use the fidelity parser.',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.useFidelity = true;
-            }
-        });
 
         opts.parse(this.ioHost.arguments);
         

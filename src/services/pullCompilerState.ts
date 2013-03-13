@@ -107,7 +107,6 @@ module Services {
             // Set "ES5" target by default for language service
             settings = new TypeScript.CompilationSettings();
             settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
-            settings.useFidelity = true;
             settings.usePull = true;
             return settings;
         }
@@ -123,7 +122,6 @@ module Services {
             
             Services.copyDataObject(this.compilationSettings, this.getHostCompilationSettings());
             this.compilationSettings.usePull = true;
-            this.compilationSettings.useFidelity = true;
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
             this.scriptMap = new ScriptMap();
             this.unitIndexMap = [];
@@ -383,7 +381,7 @@ module Services {
                 return false;
             }
 
-            if (this.compilationSettings.useFidelity) {
+            if (this.compilationSettings.usePull) {
                 this.updateSyntaxTree(scriptId);
             }
 

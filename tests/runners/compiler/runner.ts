@@ -57,7 +57,6 @@ class CompilerBaselineRunner extends RunnerBase {
     { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
     { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
     { flag: 'usepull', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.usePull = value.toLowerCase() === 'true' ? true : false; } },
-    { flag: 'usefidelity', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.useFidelity = value.toLowerCase() === 'true' ? true : false; } }
     ];
 
     public checkTestCodeOutput(filename: string) {

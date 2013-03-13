@@ -13,7 +13,7 @@ module TypeScript {
         public reBindingAfterChange = false;
         public startingDeclForRebind = pullDeclID; // note that this gets set on creation
 
-        constructor(public semanticInfoChain: SemanticInfoChain, public scriptName: string, public useFidelity = false) {
+        constructor(public semanticInfoChain: SemanticInfoChain, public scriptName: string) {
             this.semanticInfo = this.semanticInfoChain.getUnit(this.scriptName);
         }
 

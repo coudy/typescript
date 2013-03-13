@@ -375,7 +375,7 @@ module Services {
                 return TypeScript.UpdateUnitResult.noEdits(unitIndex); // not updated
             }
 
-            if (this.compilationSettings.useFidelity) {
+            if (this.compilationSettings.usePull) {
                 this.updateSyntaxTree(scriptId);
             }
 

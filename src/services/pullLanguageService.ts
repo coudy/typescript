@@ -1526,8 +1526,8 @@ module Services {
         public getOutliningSpans(fileName: string): TextSpan[] {
             this.refresh();
 
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("getOutliningSpans is only available when useFidelity flag is set.");
+            if (!this.pullCompilerState.getCompilationSettings().usePull) {
+                throw new Error("getOutliningSpans is only available when usePull flag is set.");
             }
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
@@ -1537,8 +1537,8 @@ module Services {
         public getMatchingBraceSpans(fileName: string, position: number): TextSpan[] {
             this.refresh();
 
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("getMatchingBraceSpans is only available when useFidelity flag is set.");
+            if (!this.pullCompilerState.getCompilationSettings().usePull) {
+                throw new Error("getMatchingBraceSpans is only available when usePull flag is set.");
             }
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
@@ -1548,8 +1548,8 @@ module Services {
         public getIndentation(fileName: string, position: number, options: Services.EditorOptions): number {
             this.refresh();
 
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("getIndentation is only available when useFidelity flag is set.");
+            if (!this.pullCompilerState.getCompilationSettings().usePull) {
+                throw new Error("getIndentation is only available when usePull flag is set.");
             }
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
@@ -1560,8 +1560,8 @@ module Services {
         public logSyntaxTree(fileName: string): void {
             this.refresh();
 
-            if (!this.pullCompilerState.getCompilationSettings().useFidelity) {
-                throw new Error("logSyntaxTree is only available when useFidelity flag is set.");
+            if (!this.pullCompilerState.getCompilationSettings().usePull) {
+                throw new Error("logSyntaxTree is only available when usePull flag is set.");
             }
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);

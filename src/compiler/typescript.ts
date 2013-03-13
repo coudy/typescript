@@ -325,7 +325,7 @@ module TypeScript {
                 var sharedIndex = this.units.length;
                 var reParsedScript: Script = null;
                 
-                if (!this.settings.useFidelity) {
+                if (!this.settings.usePull) {
                     timer.start();
                     var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
                     timer.end();

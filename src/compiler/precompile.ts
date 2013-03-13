@@ -112,7 +112,6 @@ module TypeScript {
         public generateDeclarationFiles = false;
 
         public useCaseSensitiveFileResolution = false;
-        public useFidelity = false;
         public usePull = false;
 
         public gatherDiagnostics = false;
