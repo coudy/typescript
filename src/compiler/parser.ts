@@ -247,7 +247,7 @@ module TypeScript {
             return this.staticsLists[this.staticsLists.length - 1];
         }
 
-        private parseComment(comment: CommentToken) {
+        private parseComment(comment: CommentToken): Comment {
             if (comment) {
                 var c: Comment = new Comment(comment.value, comment.isBlock, comment.endsLine);
                 c.minChar = comment.startPos;

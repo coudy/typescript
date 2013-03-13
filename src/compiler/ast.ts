@@ -2458,13 +2458,14 @@ module TypeScript {
     }
 
     export class Comment extends AST {
-
         public text: string[] = null;
         public minLine: number;
         public limLine: number;
         private docCommentText: string = null;
 
-        constructor (public content: string, public isBlockComment: bool, public endsLine) {
+        constructor(public content: string,
+                    public isBlockComment: bool,
+                    public endsLine) {
             super(NodeType.Comment);
         }
 
