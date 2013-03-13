@@ -32,7 +32,7 @@ module Services {
             var closeBracesTokens = [TypeScript.TokenID.CloseBrace, TypeScript.TokenID.CloseParen, TypeScript.TokenID.CloseBracket];
 
             var result = new TextRange[]();
-            var character = this.scriptSyntaxAST.getSourceText().getText(position, position + 1);
+            var character = this.scriptSyntaxAST.getScriptSnapshot().getText(position, position + 1);
             var openBraceIndex = openBraces.indexOf(character);
             if (openBraceIndex >= 0) {
                 var closeBracePos = this.getMatchingBraceForward(position, openBracesTokens[openBraceIndex], closeBracesTokens[openBraceIndex]);
@@ -43,7 +43,7 @@ module Services {
                 }
             }
 
-            character = this.scriptSyntaxAST.getSourceText().getText(position - 1, position);
+            character = this.scriptSyntaxAST.getScriptSnapshot().getText(position - 1, position);
             var closeBraceIndex = closeBraces.indexOf(character);
             if (closeBraceIndex >= 0) {
                 var openBracePos = this.getMatchingBraceBackward(position - 1, closeBracesTokens[closeBraceIndex], openBracesTokens[closeBraceIndex]);

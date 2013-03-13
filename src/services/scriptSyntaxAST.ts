@@ -20,7 +20,7 @@ module Services {
     // Encapsulate state about a single script source, with access to token stream and syntax-only AST.
     //
     export class ScriptSyntaxAST { 
-        constructor(private logger: TypeScript.ILogger, private script: TypeScript.Script, private sourceText: TypeScript.ISourceText) {
+        constructor(private logger: TypeScript.ILogger, private script: TypeScript.Script, private sourceText: TypeScript.IScriptSnapshot) {
         }
 
         public getLogger(): TypeScript.ILogger {
@@ -35,7 +35,7 @@ module Services {
             return this.script;
         }
 
-        public getSourceText(): TypeScript.ISourceText {
+        public getScriptSnapshot(): TypeScript.IScriptSnapshot {
             return this.sourceText;
         }
 
@@ -47,12 +47,12 @@ module Services {
             }
 
             if (!limChar) {
-                limChar = this.getSourceText().getLength();
+                limChar = this.getScriptSnapshot().getLength();
             }
 
-            var scannerSourceText = this.getSourceText();
+            var scannerSourceText = this.getScriptSnapshot();
             if (minChar > 0 || limChar < scannerSourceText.getLength()) {
-                scannerSourceText = new Services.SourceTextRange(scannerSourceText, minChar, limChar);
+                scannerSourceText = new TypeScript.StringScriptSnapshot(scannerSourceText.getText(minChar, limChar));
             }
 
             var scanner = new TypeScript.Scanner();

@@ -19,14 +19,14 @@ module Formatting {
     export class SmartIndentManager {
 
         private logger: TypeScript.LoggerAdapter;
-        private sourceText: TypeScript.ISourceText;
+        private sourceText: TypeScript.IScriptSnapshot;
         private snapshot: TextSnapshot;
         private fileAuthoringProxy: FileAuthoringProxy;
         private tokenKindMap: AuthorTokenKindMap;
 
         constructor(private scriptSyntaxAST: Services.ScriptSyntaxAST, private editorOptions: Services.EditorOptions) {
             this.logger = new TypeScript.LoggerAdapter(this.scriptSyntaxAST.getLogger());
-            this.sourceText = this.scriptSyntaxAST.getSourceText();
+            this.sourceText = this.scriptSyntaxAST.getScriptSnapshot();
             this.snapshot = new TextSnapshot(this.scriptSyntaxAST.getScript(), this.sourceText);
             this.fileAuthoringProxy = new FileAuthoringProxy(this.scriptSyntaxAST);
             this.tokenKindMap = AuthorTokenKindMap.getInstance();

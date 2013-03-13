@@ -221,12 +221,12 @@ module TypeScript {
         }
     }
 
-    export function getReferencedFiles(sourceText: ISourceText): IFileReference[] {
+    export function getReferencedFiles(sourceText: IScriptSnapshot): IFileReference[] {
         var preProcessInfo = preProcessFile(sourceText, null, false);
         return preProcessInfo.referencedFiles;
     }
 
-    export function preProcessFile(sourceText: ISourceText, options=new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
+    export function preProcessFile(sourceText: IScriptSnapshot, options=new CompilationSettings(), readImportFiles? = true): IPreProcessedFileInfo {
         var scanner = new Scanner();
         scanner.resetComments();
         scanner.setSourceText(sourceText, LexMode.File);

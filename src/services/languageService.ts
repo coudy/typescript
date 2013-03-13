@@ -71,8 +71,7 @@ module Services {
         getCompilationSettings(): TypeScript.CompilationSettings;
         getScriptCount(): number;
         getScriptId(scriptIndex: number): string;
-        getScriptSourceText(scriptIndex: number, start: number, end: number): string;
-        getScriptSourceLength(scriptIndex: number): number;
+        getScriptSnapshot(scriptIndex): TypeScript.IScriptSnapshot;
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
         getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.ScriptEditRange;
@@ -81,84 +80,6 @@ module Services {
 
     export function logInternalError(logger: TypeScript.ILogger, err: Error) {
         logger.log("*INTERNAL ERROR* - Exception in typescript services: " + err.message);
-    }
-
-    // Provides ISourceText implementation over a host script
-    export class SourceTextAdapter implements TypeScript.ISourceText {
-        constructor (private host: ILanguageServiceHost, private scriptIndex: number) {
-        }
-
-        public getText(start: number, end: number): string {
-            return this.host.getScriptSourceText(this.scriptIndex, start, end);
-        }
-
-        public getLength(): number {
-            return this.host.getScriptSourceLength(this.scriptIndex);
-        }
-
-        // cache last received text for perf.
-        private lastText: string = null;
-        private lastTextStart: number = 0;
-        
-        public charCodeAt(index: number): number {
-            if (this.lastText === null ||
-                index < this.lastTextStart ||
-                index >= this.lastTextStart + this.lastText.length) {
-
-                // Bite off a 1k chunk as the caller may call charCodeAt again very quickly and 
-                // we don't want to call back into the host for that.
-                this.lastText = this.getText(index, Math.min(this.getLength(), index + 1024));
-                this.lastTextStart = index;
-            }
-
-            return this.lastText.charCodeAt(index - this.lastTextStart);
-        }
-    }
-
-    // Provide a ISourceText implementation over a host script where the implementation minimizes the 
-    // # of callbacks to the host at the cost of an increased memory usage.
-    export class CachedSourceTextAdapter implements TypeScript.ISourceText {
-        private length: number;
-        private text: string;
-
-        constructor (host: ILanguageServiceHost, scriptIndex: number) {
-            this.length = host.getScriptSourceLength(scriptIndex);
-            this.text = host.getScriptSourceText(scriptIndex, 0, this.length)
-        }
-
-        public getText(start: number, end: number): string {
-            return this.text.substring(start, end);
-        }
-
-        public getLength(): number {
-            return this.length;
-        }
-
-        public charCodeAt(index: number): number {
-            return this.text.charCodeAt(index);
-        }
-    }
-
-    // Provides ISourceText implementation over a text range of another ISourceText
-    export class SourceTextRange implements TypeScript.ISourceText {
-        constructor (private sourceText: TypeScript.ISourceText, private minChar: number, private limChar: number) {
-        }
-
-        public getText(start: number, end: number): string {
-            var actualStart = this.minChar + start;
-            var actualEnd = this.minChar + end;
-            if (actualEnd > this.limChar)
-                actualEnd = this.limChar;
-            return this.sourceText.getText(actualStart, actualEnd);
-        }
-
-        public getLength(): number {
-            return this.limChar - this.minChar;
-        }
-
-        public charCodeAt(index: number): number {
-            return this.sourceText.charCodeAt(index + this.minChar);
-        }
     }
 
     export class ReferenceEntry {
@@ -570,7 +491,7 @@ module Services {
         private attemptIncrementalSyntaxAST(syntaxASTState: ScriptSyntaxASTState): ScriptSyntaxAST {
             var syntaxAST = syntaxASTState.syntaxAST;
             var fileName = syntaxAST.getScriptId();
-            var newSourceText = this.compilerState.getSourceText2(fileName);
+            var newSourceText = this.compilerState.getScriptSnapshot2(fileName);
 
             var editRange = this.compilerState.getScriptEditRangeSinceVersion(fileName, syntaxASTState.version);
 
@@ -643,7 +564,7 @@ module Services {
             this.refresh();
 
             var script = this.compilerState.getScriptAST(fileName);
-            var sourceText = this.compilerState.getSourceText(script);
+            var sourceText = this.compilerState.getScriptSnapshot(script);
 
             // Look for AST node containing the position
             var typeInfo = this.getTypeInfoAtPosition(pos, script, true);
@@ -1013,7 +934,7 @@ module Services {
                 return null;
             }
 
-            var sourceText = this.compilerState.getSourceText(script);
+            var sourceText = this.compilerState.getScriptSnapshot(script);
             var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, /*isMemberCompletion*/false);
             if (enclosingScopeContext == null) {
                 this.logger.log("No context found at the specified location.");
@@ -1521,7 +1442,7 @@ module Services {
             }
 
             // Find the enclosing scope so we can parse the corresponding fragment
-            var sourceText = this.compilerState.getSourceText(script);
+            var sourceText = this.compilerState.getScriptSnapshot(script);
             var enclosingScopeContext = new TypeScript.IncrementalParser(this.logger).getEnclosingScopeContextIfSingleScopeEdit(script, fileName, sourceText, editRange);
             if (enclosingScopeContext === null) {
                 this.logger.log("Full refresh required: range of edits may affect more than one scope");
@@ -1561,7 +1482,7 @@ module Services {
 
             // Find the enclosing scope so we can parse the corresponding fragment
             var script = this.compilerState.getScriptAST(fileName);
-            var sourceText = this.compilerState.getSourceText(script);
+            var sourceText = this.compilerState.getScriptSnapshot(script);
             var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, isMemberCompletion);
             if (enclosingScopeContext == null) {
                 this.logger.log("No context found at the specified location.");
@@ -2585,7 +2506,7 @@ module Services {
                     }
                 }
 
-                var sourceText = syntaxAST.getSourceText();
+                var sourceText = syntaxAST.getScriptSnapshot();
                 logSourceText(sourceText.getText(0, sourceText.getLength()));
                 for (var i = 0; i < result.length; i++) {
                     var edit = result[i];

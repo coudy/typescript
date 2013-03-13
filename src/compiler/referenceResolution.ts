@@ -24,7 +24,7 @@ module TypeScript {
 
     /// This class acts as a convenience class to store path and content information in places
     /// where we need an ISourceText object
-    export class SourceUnit implements ISourceText, IResolvedFile {
+    export class SourceUnit implements IScriptSnapshot, IResolvedFile {
         public referencedFiles: IFileReference[] = null;
 
         constructor(public path: string,
@@ -39,8 +39,8 @@ module TypeScript {
             return this.content.length;
         }
 
-        public charCodeAt(index: number): number {
-            return this.content.charCodeAt(index);
+        public getLineStartPositions(): string {
+            throw Errors.notYetImplemented();
         }
     }
 
@@ -70,7 +70,7 @@ module TypeScript {
 
     export interface IResolutionDispatcher {
         postResolutionError(errorFile: string, line: number, col: number, errorMessage: string): void;
-        postResolution(path: string, source: ISourceText): void;
+        postResolution(path: string, source: IScriptSnapshot): void;
     }
 
     export interface ICodeResolver {

@@ -85,7 +85,6 @@ module Services {
         }
 
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number) {
-
             var newUnitIndex = compiler.units.length;
             this.errorCollector.startParsing(newUnitIndex);
 
@@ -95,7 +94,7 @@ module Services {
             //      and we need unit mapping info to do that correctly.
             this.setUnitMapping(newUnitIndex, hostUnitIndex);
 
-            var newScript = compiler.addSourceUnit(this.hostCache.getSourceText(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
         }
 
         private getHostCompilationSettings() {
@@ -243,8 +242,8 @@ module Services {
                 throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
             }
 
-            var sourceText = this.getSourceText2(fileName, /*cached:*/ false);
-            var text = new TypeScript.SourceSimpleText(sourceText);
+            var sourceText = this.getScriptSnapshot2(fileName);
+            var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
             return Parser1.parse(text);
         }
 
@@ -307,23 +306,23 @@ module Services {
             return this.host.getScriptEditRangeSinceVersion(hostUnitIndex, lastKnownVersion);
         }
 
-        public getSourceText(script: TypeScript.Script, cached: bool = false) {
-            return this.hostCache.getSourceText(this.hostCache.getUnitIndex(script.locationInfo.filename), cached);
+        public getScriptSnapshot(script: TypeScript.Script) {
+            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(script.locationInfo.filename));
         }
 
-        public getSourceText2(fileName: string, cached: bool = false) {
-            return this.hostCache.getSourceText(this.hostCache.getUnitIndex(fileName), cached);
+        public getScriptSnapshot2(fileName: string) {
+            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(fileName));
         }
 
-        public getSourceText3(unitIndex: number, cached: bool = false) {
-            return this.hostCache.getSourceText(unitIndex, cached);
+        public getScriptSnapshot3(unitIndex: number) {
+            return this.hostCache.getScriptSnapshot(unitIndex);
         }
 
         // Since we don't have incremental parsing or typecheck, we resort to parsing the whole source text
         // and return a "syntax only" AST. For example, we use this for formatting engine.
         // We will change this when we have incremental parsing.
         public getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {
-            var sourceText = this.hostCache.getSourceText(this.hostCache.getUnitIndex(fileName), /*cached*/true);
+            var sourceText = this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(fileName));
 
             var parser = new TypeScript.Parser();
             parser.setErrorRecovery(null);
@@ -389,7 +388,7 @@ module Services {
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
 
-            var sourceText = this.hostCache.getSourceText(hostUnitIndex);
+            var sourceText = this.hostCache.getScriptSnapshot(hostUnitIndex);
             this.setUnitMapping(unitIndex, hostUnitIndex);
             return compiler.pullUpdateUnit(sourceText, scriptId, true/*setRecovery*/);
         }
@@ -404,11 +403,11 @@ module Services {
 
             // Debug.assert(newLength >= 0);
 
-            var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
+            var newSourceText = this.getScriptSnapshot(previousScript);
 
             var textChangeRange = new TextChangeRange(TextSpan.fromBounds(start, end), newLength);
 
-            var newText = new TypeScript.SourceSimpleText(newSourceText);
+            var newText = new TypeScript.SegmentedScriptSnapshot(newSourceText);
 
             var previousSyntaxTree = this.getSyntaxTree(scriptId);
             var nextSyntaxTree = Parser1.incrementalParse(

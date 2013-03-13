@@ -28,7 +28,7 @@ module TypeScript {
         //
         // Return "null" if "editRange" cannot be safely determined to be inside a single scope.
         //
-        public getEnclosingScopeContextIfSingleScopeEdit(previousScript: Script, scriptId: string, newSourceText: ISourceText, editRange: ScriptEditRange): EnclosingScopeContext {
+        public getEnclosingScopeContextIfSingleScopeEdit(previousScript: Script, scriptId: string, newSourceText: IScriptSnapshot, editRange: ScriptEditRange): EnclosingScopeContext {
             this.logger.log("checkEditsInsideSingleScope(\"" + scriptId + "\")");
 
             if (editRange === null) {
@@ -62,7 +62,7 @@ module TypeScript {
             return scope1;
         }
 
-        public attemptIncrementalUpdateUnit(previousScript: Script, scriptId: string, newSourceText: ISourceText, editRange: ScriptEditRange): UpdateUnitResult {
+        public attemptIncrementalUpdateUnit(previousScript: Script, scriptId: string, newSourceText: IScriptSnapshot, editRange: ScriptEditRange): UpdateUnitResult {
             this.logger.log("attemptIncrementalUpdateUnit(\"" + scriptId + "\")");
 
             if (editRange === null) {

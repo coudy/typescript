@@ -210,7 +210,7 @@ module DumpAST {
     }
 
     function createDumpContentForFile(typescriptLS: Harness.TypeScriptLS, fileName: string): string {
-        var sourceText = new TypeScript.StringSourceText(IO.readFile(fileName))
+        var sourceText = new TypeScript.StringScriptSnapshot(IO.readFile(fileName))
         var script = typescriptLS.parseSourceText(fileName, sourceText);
 
         // Dump source text (as JS comments)

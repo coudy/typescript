@@ -279,46 +279,111 @@ module TypeScript {
         Block
     }
 
-    // Represent a piece of source code which can be read in multiple segments
-    export interface ISourceText {
+    // Represents an immutable snapshot of a script at a specified time.  Once acquired, the 
+    // snapshot is observably immutable.  i.e. the same calls with the same parameters will return
+    // the same values.
+    export interface IScriptSnapshot {
+        // Get's a portion of the script snapshot specified by [start, end).  
         getText(start: number, end: number): string;
+
+        // Get's the length of this script snapshot.
         getLength(): number;
-        charCodeAt(index: number): number;
+
+        // This call returns the JSON encoded array containing the start position of every line.  
+        // i.e."[0, 10, 55]".  TODO: consider making this optional.  The language service could
+        // always determine this (albeit in a more expensive manner).
+        getLineStartPositions(): string;
     }
 
-    export class SourceSimpleText implements ISimpleText {
-        constructor(private text: ISourceText) {
+    // Class which wraps a host IScriptSnapshot and exposes both an IScriptSnapshot (for older
+    // compiler code) and an ISimpleText for newer compiler code. 
+    export class SegmentedScriptSnapshot implements IScriptSnapshot, ISimpleText {
+        private _length: number;
+        public segment: string;
+        public segmentStart: number;
+        private _lineMap: ILineMap = null;
+
+        constructor(public scriptSnapshot: IScriptSnapshot) {
+            this._length = this.scriptSnapshot.getLength();
+
+            // initialize values so the first call to fetchSegment will actually retrieve new data.
+            this.segment = "";
+            this.segmentStart = 0;
+            this.fetchSegment(0, 1024);
         }
 
-        public length() {
-            return this.text.getLength();
+        public getLength() {
+            return this._length;
+        }
+
+        // Ensures we have a segment that contains the range [start, end).  The segment may start 
+        // before 'start' and may end after 'end'. 
+        private fetchSegment(start: number, end: number): void {
+            if (start >= this.segmentStart && end <= (this.segmentStart + this.segment.length)) {
+                // We're in bounds of the last fetched segment.  Nothing to do.
+                return;
+            }
+
+            // Always try to fetch at least 1k.  Unless it would go past the end of the array.
+            var lengthToFetch = this.max(1024, end - start);
+            var fetchEnd = this.min(start + lengthToFetch, this._length);
+
+            this.segment = this.scriptSnapshot.getText(start, fetchEnd);
+            this.segmentStart = start;
+        }
+
+        private max(a: number, b: number): number {
+            return a >= b ? a : b;
+        }
+
+        private min(a: number, b: number): number {
+            return a <= b ? a : b;
+        }
+
+        public charCodeAt(index: number): number {
+            this.fetchSegment(index, /*end:*/ index + 1);
+            return this.segment[index - this.segmentStart];
+        }
+
+        public getText(start: number, end: number): string {
+            this.fetchSegment(start, end);
+            return this.segment.substr(start - this.segmentStart, end - start);
+        }
+
+        public getLineStartPositions(): string {
+            return this.scriptSnapshot.getLineStartPositions();
+        }
+
+        public length(): number {
+            return this._length;
         }
 
         public copyTo(sourceIndex: number, destination: number[], destinationIndex: number, count: number): void {
-            StringUtilities.copyTo(this.text.getText(sourceIndex, sourceIndex +count), 0, destination, destinationIndex, count);
+            this.fetchSegment(sourceIndex, sourceIndex + count);
+            StringUtilities.copyTo(this.segment, sourceIndex - this.segmentStart, destination, destinationIndex, count);
         }
 
         public substr(start: number, length: number, intern: bool): string {
-            // TODO: intern as appropriate.
-            return this.text.getText(start, start + length);
+            this.fetchSegment(start, start + length);
+            return this.segment.substr(start - this.segmentStart, length);
         }
 
         public subText(span: TextSpan): ISimpleText {
             return TextFactory.createSimpleSubText(this, span);
         }
+        
+        public lineMap(): ILineMap {
+            if (this._lineMap === null) {
+                var lineStartPositions = JSON.parse(this.getLineStartPositions());
+                this._lineMap = new LineMap(lineStartPositions, this.length());
+            }
 
-        public charCodeAt(index: number): number {
-            return this.text.charCodeAt(index);
-        }
-
-        public lineMap(): LineMap {
-            return LineMap.createFrom(this);
+            return this._lineMap;
         }
     }
 
-    // Implementation on top of a contiguous string
-    export class StringSourceText implements ISourceText {
-        constructor(public text: string) {
+    export class StringScriptSnapshot implements IScriptSnapshot {
+        constructor(private text: string) {
         }
 
         public getText(start: number, end: number): string {
@@ -329,100 +394,12 @@ module TypeScript {
             return this.text.length;
         }
 
-        public charCodeAt(index: number): number {
-            return this.text.charCodeAt(index);
+        public getLineStartPositions(): string {
+            var lineStarts = TextUtilities.parseLineStarts(TextFactory.createSimpleText(this.text));
+            return JSON2.stringify(lineStarts);
         }
     }
-
-    export class SourceTextSegment implements ISourceTextSegment {
-        constructor(public segmentStart: number,
-                    public segmentEnd: number,
-                    public segment: string) {
-        }
-
-        charCodeAt(index: number): number {
-            return this.segment.charCodeAt(index - this.segmentStart);
-        }
-
-        substring(start: number, end: number): string {
-            return this.segment.substring(start - this.segmentStart, end - this.segmentStart);
-        }
-    }
-
-    export class AggerateSourceTextSegment implements ISourceTextSegment {
-        constructor(public seg1: SourceTextSegment, public seg2: SourceTextSegment) {
-        }
-
-        public charCodeAt(index: number): number {
-            if (this.seg1.segmentStart <= index && index < this.seg1.segmentEnd)
-                return this.seg1.segment.charCodeAt(index - this.seg1.segmentStart);
-
-            return this.seg2.segment.charCodeAt(index - this.seg2.segmentStart);
-        }
-
-        public substring(start: number, end: number): string {
-            if (this.seg1.segmentStart <= start && end <= this.seg1.segmentEnd)
-                return this.seg1.segment.substring(start - this.seg1.segmentStart, end - this.seg1.segmentStart);
-
-            return this.seg2.segment.substring(start - this.seg2.segmentStart) + this.seg1.segment.substring(0, end - this.seg1.segmentStart);
-        }
-    }
-
-    export interface ISourceTextSegment {
-        charCodeAt(index: number): number;
-        substring(start: number, end: number): string;
-    }
-
-    export class ScannerTextStream {
-        static emptySegment = new SourceTextSegment(0, 0, "");
-        public agg: AggerateSourceTextSegment;
-        public len: number;
-
-        constructor(public sourceText: ISourceText) {
-            this.agg = new AggerateSourceTextSegment(ScannerTextStream.emptySegment, ScannerTextStream.emptySegment);
-            this.len = this.sourceText.getLength();
-        }
-
-        public max(a: number, b: number): number {
-            return a >= b ? a : b;
-        }
-
-        public min(a: number, b: number): number {
-            return a <= b ? a : b;
-        }
-
-        public fetchSegment(start: number, end: number): ISourceTextSegment {
-            // Common case
-            if (this.agg.seg1.segmentStart <= start && end <= this.agg.seg1.segmentEnd)
-                return this.agg.seg1;
-
-            // Common overlap case
-            if (this.agg.seg2.segmentStart <= start && end <= this.agg.seg1.segmentEnd)
-                return this.agg;
-
-            // if overlapping outside of fetched segment(s), fetch a new segment
-            var prev = this.agg.seg1;
-
-            var s = prev.segmentEnd;
-            var e = max(s + 512, end); // ensure we move forward at least 512 characters or "end"
-            e = min(e, this.len);    // but don't go past the end of the source text
-
-            var src = this.sourceText.getText(s, e);
-            var newSeg = new SourceTextSegment(s, e, src);
-            this.agg.seg2 = prev;
-            this.agg.seg1 = newSeg;
-            return this.agg;
-        }
-
-        public charCodeAt(index: number): number {
-            return this.fetchSegment(index, index + 1).charCodeAt(index);
-        }
-
-        public substring(start: number, end: number) {
-            return this.fetchSegment(start, end).substring(start, end);
-        }
-    }
-
+    
     export interface IScanner {
         startPos: number;
         pos: number;
@@ -440,7 +417,7 @@ module TypeScript {
         getCommentsForLine(line: number): CommentToken[];
         resetComments(): void;
         lineMap: number[];
-        setSourceText(newSrc: ISourceText, textMode: number): void;
+        setSourceText(newSrc: IScriptSnapshot, textMode: number): void;
         setErrorHandler(reportError: (message: string) => void ): void;
         seenUnicodeChar: bool;
         seenUnicodeCharInComment: bool;
@@ -548,7 +525,7 @@ module TypeScript {
             this.commentStack = [];
         }
 
-        public setSourceText(newSrc: ISourceText, textMode: number) {
+        public setSourceText(newSrc: IScriptSnapshot, textMode: number) {
         }
 
         public setErrorHandler(reportError: (message: string) => void ) {
@@ -603,7 +580,7 @@ module TypeScript {
 
         public previousToken() { return this.prevTok; }
 
-        public setSourceText(newSrc: ISourceText, textMode: number) {
+        public setSourceText(newSrc: IScriptSnapshot, textMode: number) {
             this.mode = textMode;
             this.scanComments = (this.mode === LexMode.Line);
             this.pos = 0;
@@ -630,7 +607,7 @@ module TypeScript {
         }
 
         public setText(newSrc: string, textMode: number) {
-            this.setSourceText(new StringSourceText(newSrc), textMode);
+            this.setSourceText(new StringScriptSnapshot(newSrc), textMode);
         }
 
         public setScanComments(value: bool) {

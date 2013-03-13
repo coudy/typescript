@@ -842,7 +842,7 @@ module Formatting {
 
         private lines: TextSnapshotLine[];
 
-        constructor (private script: TypeScript.Script, private sourceText: TypeScript.ISourceText) {
+        constructor (private script: TypeScript.Script, private sourceText: TypeScript.IScriptSnapshot) {
             this.lines = [];
         }
 

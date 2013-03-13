@@ -4289,7 +4289,7 @@ module TypeScript {
 
         private fname = "";
 
-        public quickParse(sourceText: ISourceText, filename: string, unitIndex: number): QuickParseResult {
+        public quickParse(sourceText: IScriptSnapshot, filename: string, unitIndex: number): QuickParseResult {
             //TODO: REVIEW: We set this to avoid adding a "module" decl in the resulting script (see parse() method)
             var svGenTarget = TypeScript.moduleGenTarget;
             try {
@@ -4302,7 +4302,7 @@ module TypeScript {
             }
         }
 
-        public parse(sourceText: ISourceText, filename: string, unitIndex: number, allowedElements = AllowedElements.Global): Script {
+        public parse(sourceText: IScriptSnapshot, filename: string, unitIndex: number, allowedElements = AllowedElements.Global): Script {
             // Reset all parser state here.  This allows us to be resilient to reentrancy if an 
             // exception is thrown.
             this.fname = filename;
@@ -4410,7 +4410,7 @@ module TypeScript {
         }
     }
 
-    export function quickParse(logger: TypeScript.ILogger, scopeStartAST: AST, sourceText: ISourceText, minChar: number, limChar: number,
+    export function quickParse(logger: TypeScript.ILogger, scopeStartAST: AST, sourceText: IScriptSnapshot, minChar: number, limChar: number,
         errorCapture: (minChar: number, charLen: number, message: string, unitIndex: number) => void ): QuickParseResult {
 
         var fragment = sourceText.getText(minChar, limChar);
@@ -4425,7 +4425,7 @@ module TypeScript {
         var quickClassDecl = new ClassDeclaration(null, null, null, null, null);
         quickParser.currentClassDecl = quickClassDecl;
 
-        var result = quickParser.quickParse(new StringSourceText(fragment), "", 0);
+        var result = quickParser.quickParse(new StringScriptSnapshot(fragment), "", 0);
         return result;
     }
 }

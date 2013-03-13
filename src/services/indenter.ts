@@ -17,7 +17,7 @@
 
 module Services {
     export class Indenter {
-        static public getIndentation(node: SourceUnitSyntax, soruceText: TypeScript.ISourceText, position: number, editorOptions: Services.EditorOptions): number {
+        static public getIndentation(node: SourceUnitSyntax, soruceText: TypeScript.IScriptSnapshot, position: number, editorOptions: Services.EditorOptions): number {
             
             var indentation = 0;
             var currentToken = node.findToken(position);
@@ -60,7 +60,7 @@ module Services {
             return indentation;
         }
 
-        private static belongsToBracket(sourceText: TypeScript.ISourceText, token: PositionedToken, position: number): bool {
+        private static belongsToBracket(sourceText: TypeScript.IScriptSnapshot, token: PositionedToken, position: number): bool {
             switch (token.token().kind()) {
                 case SyntaxKind.OpenBraceToken:
                 case SyntaxKind.CloseBraceToken:

@@ -68,8 +68,7 @@ module Services {
         getCompilationSettings(): string;
         getScriptCount(): number;
         getScriptId(scriptIndex: number): string;
-        getScriptSourceText(scriptIndex: number, start: number, end: number): string;
-        getScriptSourceLength(scriptIndex: number): number;
+        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
         getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
@@ -121,12 +120,8 @@ module Services {
             return this.shimHost.getScriptId(scriptIndex);
         }
 
-        public getScriptSourceText(scriptIndex: number, start: number, end: number): string {
-            return this.shimHost.getScriptSourceText(scriptIndex, start, end);
-        }
-
-        public getScriptSourceLength(scriptIndex: number): number {
-            return this.shimHost.getScriptSourceLength(scriptIndex);
+        public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {
+            return this.shimHost.getScriptSnapshot(scriptIndex);
         }
 
         public getScriptIsResident(scriptIndex: number): bool {
@@ -594,7 +589,7 @@ module Services {
         ///
         /// getPreProcessedFileInfo
         ///
-        public getPreProcessedFileInfo(scriptId: string, sourceText: TypeScript.ISourceText): string {
+        public getPreProcessedFileInfo(scriptId: string, sourceText: TypeScript.IScriptSnapshot): string {
             return this.forwardJSONCall(
                 "getPreProcessedFileInfo(\"" + scriptId + "\")",
                 () => {

@@ -149,7 +149,7 @@ module Services {
             /// TODO: Cache symbol existence for files to save text search
             /// TODO: Use a smarter search mechanism to avoid picking up partial matches, matches in comments and in string literals
 
-            var sourceText = this.pullCompilerState.getSourceText3(unitIndex);
+            var sourceText = this.pullCompilerState.getScriptSnapshot3(unitIndex);
             var text = sourceText.getText(0, sourceText.getLength());
             var symbolName = symbol.getName();
 
@@ -188,7 +188,7 @@ module Services {
         private attemptIncrementalSyntaxAST(syntaxASTState: ScriptSyntaxASTState): ScriptSyntaxAST {
             var syntaxAST = syntaxASTState.syntaxAST;
             var fileName = syntaxAST.getScriptId();
-            var newSourceText = this.pullCompilerState.getSourceText2(fileName);
+            var newSourceText = this.pullCompilerState.getScriptSnapshot2(fileName);
 
             var editRange = this.pullCompilerState.getScriptEditRangeSinceVersion(fileName, syntaxASTState.version);
 
@@ -1628,7 +1628,7 @@ module Services {
             }
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            var sourceText = this.pullCompilerState.getSourceText2(fileName, /* cached */ true);
+            var sourceText = this.pullCompilerState.getScriptSnapshot2(fileName);
             return Indenter.getIndentation(syntaxTree.sourceUnit(), sourceText, position, options);
         }
 
@@ -1672,7 +1672,7 @@ module Services {
                     }
                 }
 
-                var sourceText = syntaxAST.getSourceText();
+                var sourceText = syntaxAST.getScriptSnapshot();
                 logSourceText(sourceText.getText(0, sourceText.getLength()));
                 for (var i = 0; i < result.length; i++) {
                     var edit = result[i];

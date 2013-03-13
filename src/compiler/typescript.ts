@@ -243,10 +243,10 @@ module TypeScript {
         }
 
         public updateUnit(prog: string, filename: string, setRecovery: bool) {
-            return this.updateSourceUnit(new StringSourceText(prog), filename, setRecovery);
+            return this.updateSourceUnit(new StringScriptSnapshot(prog), filename, setRecovery);
         }
 
-        public updateSourceUnit(sourceText: ISourceText, filename: string, setRecovery: bool): bool {
+        public updateSourceUnit(sourceText: IScriptSnapshot, filename: string, setRecovery: bool): bool {
             return this.timeFunction("updateSourceUnit(" + filename + ")", () => {
                 var updateResult = this.partialUpdateUnit(sourceText, filename, setRecovery);
                 return this.applyUpdateResult(updateResult);
@@ -277,7 +277,7 @@ module TypeScript {
             }
         }
 
-        public partialUpdateUnit(sourceText: ISourceText, filename: string, setRecovery: bool): UpdateUnitResult {
+        public partialUpdateUnit(sourceText: IScriptSnapshot, filename: string, setRecovery: bool): UpdateUnitResult {
             return this.timeFunction("partialUpdateUnit(" + filename + ")", () => {
                 for (var i = 0, len = this.units.length; i < len; i++) {
                     if (this.units[i].filename == filename) {
@@ -316,14 +316,14 @@ module TypeScript {
         }
 
         public addUnit(prog: string, filename: string, keepResident? = false, referencedFiles?: IFileReference[] = []): Script {
-            return this.addSourceUnit(new StringSourceText(prog), filename, keepResident, referencedFiles);
+            return this.addSourceUnit(new StringScriptSnapshot(prog), filename, keepResident, referencedFiles);
         }
 
         private stringTable: Collections.StringTable = Collections.createStringTable();
         
         private typeCollectionTime = 0;
 
-        public addSourceUnit(sourceText: ISourceText, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
+        public addSourceUnit(sourceText: IScriptSnapshot, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + filename + ", " + keepResident + ")", () => {
                 //if (filename.indexOf("getCompletionsAtPosition5") < 0) {
                 //    return;
@@ -347,7 +347,7 @@ module TypeScript {
                     this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
                 }
                 else {
-                    var text = new TypeScript.SourceSimpleText(sourceText);
+                    var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
 
                     timer.start();
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
@@ -1531,7 +1531,7 @@ module TypeScript {
             });
         }
 
-        public pullUpdateUnit(sourceText: ISourceText, filename: string, setRecovery: bool): bool {
+        public pullUpdateUnit(sourceText: IScriptSnapshot, filename: string, setRecovery: bool): bool {
             return this.timeFunction("pullUpdateUnit(" + filename + ")", () => {
                 for (var i = 0, len = this.units.length; i < len; i++) {
                     if (this.units[i].filename == filename) {
@@ -1553,7 +1553,7 @@ module TypeScript {
 
                         var oldScript = <Script>this.scripts.members[i];
 
-                        var text = new TypeScript.SourceSimpleText(sourceText);
+                        var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
 
                         var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
                         var newScript: Script = null;

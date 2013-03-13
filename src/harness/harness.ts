@@ -790,8 +790,8 @@ module Harness {
                 }
                 else {
                     // requires unit to already exist in the compiler
-                    compiler.pullUpdateUnit(new TypeScript.StringSourceText(""), filename, true);
-                    compiler.pullUpdateUnit(new TypeScript.StringSourceText(code), filename, true);
+                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(""), filename, true);
+                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), filename, true);
                 }
             }
             else {
@@ -983,7 +983,7 @@ module Harness {
                     // m = 1 because the first script will always be lib.d.ts which we don't want to search.                                
                     for (var m = 1; m < compiler.scripts.members.length; m++) {
                         var script = compiler.scripts.members[m];
-                        var enclosingScopeContext = TypeScript.findEnclosingScopeAt(new TypeScript.NullLogger(), <TypeScript.Script>script, new TypeScript.StringSourceText(code), 0, false);
+                        var enclosingScopeContext = TypeScript.findEnclosingScopeAt(new TypeScript.NullLogger(), <TypeScript.Script>script, new TypeScript.StringScriptSnapshot(code), 0, false);
                         var entries = new TypeScript.ScopeTraversal(compiler).getScopeEntries(enclosingScopeContext);
 
                         for (var i = 0; i < entries.length; i++) {
@@ -1281,7 +1281,7 @@ module Harness {
 
         export function updateUnit(code: string, unitName: string, setRecovery?: bool) {
             if (Harness.usePull) {
-                compiler.pullUpdateUnit(new TypeScript.StringSourceText(code), unitName, setRecovery);
+                compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), unitName, setRecovery);
             } else {
                 compiler.updateUnit(code, unitName, setRecovery);
             }
@@ -1677,12 +1677,8 @@ module Harness {
             return this.scripts.length;
         }
 
-        public getScriptSourceText(scriptIndex: number, start: number, end: number): string {
-            return this.scripts[scriptIndex].content.substring(start, end);
-        }
-
-        public getScriptSourceLength(scriptIndex: number): number {
-            return this.scripts[scriptIndex].content.length;
+        public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {
+            return new TypeScript.StringScriptSnapshot(this.scripts[scriptIndex].content);
         }
 
         public getScriptId(scriptIndex: number): string {
@@ -1714,7 +1710,7 @@ module Harness {
         }
 
         /** Parse file given its source text */
-        public parseSourceText(fileName: string, sourceText: TypeScript.ISourceText): TypeScript.Script {
+        public parseSourceText(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.Script {
             var parser = new TypeScript.Parser();
             parser.setErrorRecovery(null);
             parser.errorCallback = (a, b, c, d) => { };
@@ -1725,7 +1721,7 @@ module Harness {
 
         /** Parse a file on disk given its filename */
         public parseFile(fileName: string) {
-            var sourceText = new TypeScript.StringSourceText(IO.readFile(fileName))
+            var sourceText = new TypeScript.StringScriptSnapshot(IO.readFile(fileName))
             return this.parseSourceText(fileName, sourceText);
         }
         

@@ -53,33 +53,25 @@ module Services {
     // An cache entry in HostCache 
     //
     export class HostCacheEntry {
-        private _cachedSourceText: TypeScript.ISourceText;
-        private _sourceText: TypeScript.ISourceText;
+        private _sourceText: TypeScript.IScriptSnapshot;
+        public version: number;
 
         constructor(
             private host: ILanguageServiceHost,
             public hostUnitIndex: number,
             public id: string,
-            public version: number,
+            version: number,
             public isResident: bool) {
-            this._cachedSourceText = null;
             this._sourceText = null;
+            this.version = version;
         }
 
+        public getScriptSnapshot(): TypeScript.IScriptSnapshot {
+            if (this._sourceText === null) {
+                this._sourceText = this.host.getScriptSnapshot(this.hostUnitIndex);
+            }
 
-        public getSourceText(cached: bool): TypeScript.ISourceText {
-            if (cached) {
-                if (this._cachedSourceText === null) {
-                    this._cachedSourceText = new CachedSourceTextAdapter(this.host, this.hostUnitIndex);
-                }
-                return this._cachedSourceText;
-            }
-            else {
-                if (this._sourceText === null) {
-                    this._sourceText = new SourceTextAdapter(this.host, this.hostUnitIndex);
-                }
-                return this._sourceText;
-            }
+            return this._sourceText;
         }
     }
 
@@ -89,7 +81,6 @@ module Services {
     // set of scripts handled by the host changes.
     //
     export class HostCache {
-
         private map: TypeScript.StringHashTable;
         private array: HostCacheEntry[];
 
@@ -107,7 +98,7 @@ module Services {
             for (var i = 0, len = this.host.getScriptCount() ; i < len; i++) {
                 var scriptId = this.host.getScriptId(i);
                 this.map.add(scriptId, i);
-                this.array[i] = new HostCacheEntry(this.host, i, scriptId, this.host.getScriptVersion(i), this.host.getScriptIsResident(i));
+                this.reset(i);
             }
         }
 
@@ -117,11 +108,13 @@ module Services {
 
         public getUnitIndex(scriptId: string): number {
             var result: number = this.map.lookup(scriptId);
-            if (result == null)
+            if (result == null) {
                 return -1;
+            }
+
             return result;
         }
-
+        
         public getVersion(scriptIndex: number): number {
             return this.array[scriptIndex].version;
         }
@@ -134,8 +127,16 @@ module Services {
             return this.array[scriptIndex].id;
         }
 
-        public getSourceText(scriptIndex: number, cached: bool = false): TypeScript.ISourceText {
-            return this.array[scriptIndex].getSourceText(cached);
+        public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {
+            return this.array[scriptIndex].getScriptSnapshot();
+        }
+
+        private reset(scriptIndex: number): void {
+            this.array[scriptIndex] = new HostCacheEntry(
+                this.host, scriptIndex,
+                this.host.getScriptId(scriptIndex),
+                this.host.getScriptVersion(scriptIndex),
+                this.host.getScriptIsResident(scriptIndex));
         }
     }
 
@@ -341,7 +342,7 @@ module Services {
             //      and we need unit mapping info to do that correctly.
             this.setUnitMapping(newUnitIndex, hostUnitIndex);
 
-            var newScript = compiler.addSourceUnit(this.hostCache.getSourceText(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler,
@@ -383,10 +384,11 @@ module Services {
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
             var result = this.attemptIncrementalUpdateUnit(scriptId);
-            if (result != null)
+            if (result != null) {
                 return result;
+            }
 
-            var sourceText = this.hostCache.getSourceText(hostUnitIndex);
+            var sourceText = this.hostCache.getScriptSnapshot(hostUnitIndex);
             this.setUnitMapping(unitIndex, hostUnitIndex);
             return compiler.partialUpdateUnit(sourceText, scriptId, true/*setRecovery*/);
         }
@@ -401,11 +403,11 @@ module Services {
 
             // Debug.assert(newLength >= 0);
 
-            var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
+            var newSourceText = this.getScriptSnapshot(previousScript);
 
             var textChangeRange = new TextChangeRange(TextSpan.fromBounds(start, end), newLength);
 
-            var newText = new TypeScript.SourceSimpleText(newSourceText);
+            var newText = new TypeScript.SegmentedScriptSnapshot(newSourceText);
 
             var previousSyntaxTree = this.getSyntaxTree(scriptId);
             var nextSyntaxTree = Parser1.incrementalParse(
@@ -417,7 +419,7 @@ module Services {
         private attemptIncrementalUpdateUnit(scriptId: string): TypeScript.UpdateUnitResult {
             var previousScript = this.getScriptAST(scriptId);
             
-            var newSourceText = this.getSourceText(previousScript, /*cached:*/ false);
+            var newSourceText = this.getScriptSnapshot(previousScript);
             var editRange = this.getScriptEditRange(previousScript);
 
             var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, scriptId, newSourceText, editRange);
@@ -778,19 +780,19 @@ module Services {
             return this.host.getScriptEditRangeSinceVersion(hostUnitIndex, lastKnownVersion);
         }
 
-        public getSourceText(script: TypeScript.Script, cached: bool = false): TypeScript.ISourceText {
-            return this.hostCache.getSourceText(this.hostCache.getUnitIndex(script.locationInfo.filename), cached);
+        public getScriptSnapshot(script: TypeScript.Script): TypeScript.IScriptSnapshot {
+            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(script.locationInfo.filename));
         }
 
-        public getSourceText2(fileName: string, cached: bool = false) {
-            return this.hostCache.getSourceText(this.hostCache.getUnitIndex(fileName), cached);
+        public getScriptSnapshot2(fileName: string): TypeScript.IScriptSnapshot {
+            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(fileName));
         }
 
         // Since we don't have incremental parsing or typecheck, we resort to parsing the whole source text
         // and return a "syntax only" AST. For example, we use this for formatting engine.
         // We will change this when we have incremental parsing.
         public getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {
-            var sourceText = this.hostCache.getSourceText(this.hostCache.getUnitIndex(fileName), /*cached*/true);
+            var sourceText = this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(fileName));
 
             var parser = new TypeScript.Parser();
             parser.setErrorRecovery(null);

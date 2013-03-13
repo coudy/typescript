@@ -20,7 +20,7 @@ class HarnessHost implements TypeScript.IResolverHost {
 
         var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
             postResolutionError: postResolutionError,
-            postResolution: function (path: string, code: TypeScript.ISourceText) {
+            postResolution: function (path: string, code: TypeScript.IScriptSnapshot) {
                 if (!resolvedPaths[path]) {
                     resolvedEnv.code.push(<TypeScript.SourceUnit>code);
                     resolvedPaths[path] = true;
@@ -30,7 +30,7 @@ class HarnessHost implements TypeScript.IResolverHost {
 
         var residentResolutionDispatcher: TypeScript.IResolutionDispatcher = {
             postResolutionError: postResolutionError,
-            postResolution: function (path: string, code: TypeScript.ISourceText) {
+            postResolution: function (path: string, code: TypeScript.IScriptSnapshot) {
                 if (!resolvedPaths[path]) {
                     resolvedEnv.residentCode.push(<TypeScript.SourceUnit>code);
                     resolvedPaths[path] = true;
