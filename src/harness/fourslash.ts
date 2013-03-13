@@ -16,7 +16,6 @@
 ///<reference path='..\compiler\typescript.ts' />
 ///<reference path='harness.ts' />
 
-
 module FourSlash {
     // Represents a parsed source file with metadata
     export interface FourSlashFile {
@@ -104,6 +103,9 @@ module FourSlash {
 
         // The file that's currently 'opened'
         public activeFile: FourSlashFile = null;
+
+        // Whether or not we should format on keystrokes
+        public enableFormatting = true;
 
         constructor(public testData: FourSlashData) {
             // Initialize the language service with all the scripts
@@ -460,12 +462,13 @@ module FourSlash {
         public printCurrentQuickInfo() {
             var quickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition);
             IO.printLine(JSON2.stringify(quickInfo));
-        }
+        }
+
         public printErrorList() {
             var errors = this.realLangSvc.getErrors(9999);
-            console.log('Error list (' + errors.length + ' errors)');
+            IO.printLine('Error list (' + errors.length + ' errors)');
             errors.forEach(err => {
-                console.log(err);
+                IO.printLine(err);
             });
         }
 
@@ -512,8 +515,10 @@ module FourSlash {
                 this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
 
                 // Handle post-keystroke formatting
-                var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
-                offset += this.applyEdits(this.activeFile.name, edits);
+                if (this.enableFormatting) {
+                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
+                    offset += this.applyEdits(this.activeFile.name, edits);
+                }
             }
 
             // Move the caret to wherever we ended up
@@ -534,8 +539,10 @@ module FourSlash {
                 this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
 
                 // Handle post-keystroke formatting
-                var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
-                offset += this.applyEdits(this.activeFile.name, edits);
+                if (this.enableFormatting) {
+                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
+                    offset += this.applyEdits(this.activeFile.name, edits);
+                }
             }
 
             // Move the caret to wherever we ended up
@@ -556,8 +563,10 @@ module FourSlash {
                 offset++;
 
                 // Handle post-keystroke formatting
-                var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
-                offset += this.applyEdits(this.activeFile.name, edits);
+                if (this.enableFormatting) {
+                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
+                    offset += this.applyEdits(this.activeFile.name, edits);
+                }
             }
 
             // Move the caret to wherever we ended up
@@ -744,6 +753,34 @@ module FourSlash {
 
         public verifyIndentationLevelAtCurrentPosition(numberOfTabs: number) {
             this.verifyIndentationLevelAtPosition(this.currentCaretPosition, numberOfTabs);
+        }
+
+        public verifyTypesAgainstFullCheckAtPositions(positions: number[]) {
+            // Create a from-scratch LS to check against
+            var referenceLangSvc = new Harness.TypeScriptLS();
+            var referencePullSvcParent = referenceLangSvc.getLanguageService();
+            var referencePullSvc = referencePullSvcParent.pullLanguageService;
+
+            for (var i = 0; i < this.testData.files.length; i++) {
+                var file = this.testData.files[i];
+                var index = this.getScriptIndex(file);
+                var content = this.langSvc.getScriptSourceText(index, 0, this.langSvc.getScriptSourceLength(index));
+                referenceLangSvc.addScript(this.testData.files[i].name, content, false);
+            }
+            referencePullSvcParent.refresh(true);
+            
+            for (i = 0; i < positions.length; i++) {
+                var nameOf = (type) => type ? type.fullSymbolName : '(none)';
+
+                var referenceType = referencePullSvc.getTypeAtPosition(this.activeFile.name, position);
+                var pullType = this.pullLanguageService.getTypeAtPosition(this.activeFile.name, position);
+                var refName = nameOf(referenceType);
+                var pullName = nameOf(pullType);
+                if (refName !== pullName) {
+                    var textAtPosition = this.testData.files[i].content.substr(i, 10);
+                    throw new Error('verifyTypeAgainstFullCheck at position ' + position + ' ("' + i + '...") failed - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '"');
+                }
+            }
         }
 
         private getBOF(): number {
@@ -977,7 +1014,12 @@ module FourSlash {
         result = fsOutput.lines.join('\r\n');
 
         // Compile and execute the test
-        eval(result);
+        try {
+            eval(result);
+        } catch (err) {
+            FourSlash.currentTestState.printCurrentFileState();
+            throw err;
+        }
         assert.throwAssertError = oldThrowAssertError;
     }
 
