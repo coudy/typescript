@@ -460,8 +460,7 @@ module FourSlash {
         public printCurrentQuickInfo() {
             var quickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition);
             IO.printLine(JSON2.stringify(quickInfo));
-        }
-
+        }
         public printErrorList() {
             var errors = this.realLangSvc.getErrors(9999);
             console.log('Error list (' + errors.length + ' errors)');
@@ -974,14 +973,8 @@ module FourSlash {
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + filename + ': ' + fsErrors.lines.join('\r\n'));
         }
-        
-        result = fsOutput.lines.join('\r\n');
 
-        // TODO: this is necessary while the Pull compiler lacks proper emit support
-        // Fourslash expects 'result' to include the results of compiling the units added above, namely 'fourslash.ts'
-        if (Harness.usePull) {
-            result = IO.readFile('./tests/cases/prototyping/fourslash/fourslash.js') + '\r\n' + result;
-        }
+        result = fsOutput.lines.join('\r\n');
 
         // Compile and execute the test
         eval(result);
