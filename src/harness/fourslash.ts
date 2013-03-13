@@ -1031,10 +1031,11 @@ module FourSlash {
         try {
             eval(result);
         } catch (err) {
-            FourSlash.currentTestState.printCurrentFileState();
+            // Debugging: FourSlash.currentTestState.printCurrentFileState();
             throw err;
+        } finally {
+            assert.throwAssertError = oldThrowAssertError;
         }
-        assert.throwAssertError = oldThrowAssertError;
     }
 
     function chompLeadingSpace(content: string) {
