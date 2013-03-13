@@ -1240,7 +1240,13 @@ module Harness {
                     }
             }
 
-            compiler.errorReporter.hasErrors = false;
+            if(Harness.usePull) {
+                compiler.pullErrorReporter.hasErrors = false;
+            }
+            else {
+                compiler.errorReporter.hasErrors = false;
+            }
+            
         }
 
         // Defines functions to invoke before compiling a piece of code and a post compile action intended to clean up the
