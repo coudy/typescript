@@ -1130,7 +1130,7 @@ module Harness {
                         fileExists: (path: string) => true,
                         resolvePath: (path: string) => path
                     });
-                compiler.emitDeclarations();
+                compiler.emitDeclarations(Harness.usePull);
 
                 var results: string = null;
                 for (var fn in outputs) {
@@ -1152,7 +1152,6 @@ module Harness {
                     throw new Error('Compilation did not produce .d.ts files');
                 }
             } finally {
-                compiler.settings.generateDeclarationFiles = false;
                 compiler.settings.outputOption = oldOutputOption;
                 compiler.parseEmitOption(oldEmitterIOHost);
                 if (compilationContext && compilationContext.postCompile) {
@@ -1357,16 +1356,15 @@ module Harness {
 
             var errors;
             if (usePull) {
-                // TODO: no emit support with pull yet
                 errors = compiler.pullGetErrorsForFile(uName);
-                emit(stdout, true);
+                emit(stdout, true);                
             }
             else {
                 errors = stderr.lines;
                 emit(stdout, false);
-                //output decl file
-                compiler.emitDeclarations();
             }
+
+            compiler.emitDeclarations(Harness.usePull);
 
             if (context) {
                 context.postCompile();
@@ -1421,6 +1419,7 @@ module Harness {
         export interface TestUnitData {
             content: string;
             name: string;
+            fileOptions: any;
             originalFilePath: string;
             references: TypeScript.IFileReference[];
         }
