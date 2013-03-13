@@ -1307,7 +1307,7 @@ module TypeScript {
                     argDecl = <BoundDecl>funcDecl.arguments.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
                     isProperty = hasFlag(argDecl.varFlags, VarFlags.Property);
-                    parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Variable);
+                    parameterSymbol = new PullSymbol(argDecl.id.actualText, PullElementKind.Parameter);
 
                     if (decl.getFlags() & PullElementFlags.Optional) {
                         parameterSymbol.setIsOptional();

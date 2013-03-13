@@ -159,7 +159,6 @@ module FourSlashInterface {
         public quickInfoIs(typeName: string, docComment?: string, symbolName?: string, kind?: string) {
             FourSlash.currentTestState.verifyQuickInfo(typeName, this.negative, docComment, symbolName, kind);
         }
-
     }
 
     export class verify extends verifyNegatable {
@@ -239,8 +238,12 @@ module FourSlashInterface {
         public indentationLevelIs(numberOfTabs: number) {
             FourSlash.currentTestState.verifyIndentationLevelAtCurrentPosition(numberOfTabs);
         }
+
+        public setVerifyDocComments(val: bool) {
+            FourSlash.currentTestState.setVerifyDocComments(val);
+        }
     }
-    
+   
     export class edit {
         public backspace(count?: number) {
             FourSlash.currentTestState.deleteCharBehindMarker(count);

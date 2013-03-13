@@ -138,6 +138,10 @@ module TypeScript {
             return this.semanticInfoChain.getASTForSymbol(symbol, unitPath ? unitPath : this.unitPath);
         }
 
+        public getASTForDecl(decl: PullDecl) {
+            return this.semanticInfoChain.getASTForDecl(decl, decl.getScriptName());
+        }
+
         public getCachedArrayType() {
             return this.cachedArrayInterfaceType;
         }
@@ -1695,10 +1699,10 @@ module TypeScript {
                     return this.resolveSuperExpression(expressionAST, enclosingDecl, context);
 
                 case NodeType.Call:
-                    return this.resolveCallExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveCallExpression(<CallExpression>expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 case NodeType.New:
-                    return this.resolveNewExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
+                    return this.resolveNewExpression(<CallExpression>expressionAST, isTypedAssignment, enclosingDecl, context);
 
                 case NodeType.TypeAssertion:
                     return this.resolveTypeAssertionExpression(expressionAST, isTypedAssignment, enclosingDecl, context);
@@ -2732,8 +2736,7 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
-        public resolveCallExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
-            var callEx = <CallExpression>expressionAST;
+        public resolveCallExpression(callEx: CallExpression, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
 
             // resolve the target
             var targetSymbol = this.resolveStatementOrExpression(callEx.target, isTypedAssignment, enclosingDecl, context).getType();
@@ -2835,14 +2838,14 @@ module TypeScript {
             //}
 
             if (!signatures.length) {
-                context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Attempting to call on a type with no call signatures", enclosingDecl);
+                context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Attempting to call on a type with no call signatures", enclosingDecl);
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var signature = this.resolveOverloads(expressionAST, signatures, enclosingDecl, context);
+            var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, context);
 
             if (!signature) {
-                context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Could not select overload for call expression", enclosingDecl);
+                context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for call expression", enclosingDecl);
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -2901,9 +2904,8 @@ module TypeScript {
             return returnType;
         }
 
-        public resolveNewExpression(expressionAST: AST, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
+        public resolveNewExpression(callEx: CallExpression, isTypedAssignment: bool, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
 
-            var callEx = <CallExpression>expressionAST;
             var returnType: PullTypeSymbol = null;
 
             // resolve the target
@@ -3011,16 +3013,16 @@ module TypeScript {
                 //}
 
                 if (!constructSignatures.length) {
-                    context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Attempting to 'new' a type with no construct signatures", enclosingDecl);
+                    context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Attempting to 'new' a type with no construct signatures", enclosingDecl);
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                var signature = this.resolveOverloads(expressionAST, constructSignatures, enclosingDecl, context);
+                var signature = this.resolveOverloads(callEx, constructSignatures, enclosingDecl, context);
 
                 // if we haven't been able to choose an overload, default to the first one
                 if (!signature) {
                     //signature = constructSignatures[0];
-                    context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Could not select overload for 'new' expression", enclosingDecl);
+                    context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Could not select overload for 'new' expression", enclosingDecl);
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
@@ -3092,7 +3094,7 @@ module TypeScript {
                 return returnType;
             }
 
-            context.postError(expressionAST.minChar, expressionAST.getLength(), this.unitPath, "Invalid 'new' expression", enclosingDecl);
+            context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid 'new' expression", enclosingDecl);
 
             return this.semanticInfoChain.anyTypeSymbol;
 

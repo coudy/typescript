@@ -27,7 +27,7 @@ module TypeScript {
         private emitTypeSignature(type: PullTypeSymbol) {
             var declarationContainerAst = this.getAstDeclarationContainer();
             var declarationPullSymbol = this.semanticInfoChain.getSymbolForAST(declarationContainerAst, this.locationInfo.filename);
-            var typeNameMembers = type.getTypeNameEx(declarationPullSymbol);
+            var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
 
@@ -71,7 +71,7 @@ module TypeScript {
         }
 
         public emitReturnTypeOfFuncDecl(funcDecl: FuncDecl) {
-            var funcSignature = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
+            var funcSignature = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, this.locationInfo.filename).signature;
             var returnType = funcSignature.getReturnType();
             if (funcDecl.returnTypeAnnotation ||
                 (returnType && returnType != this.semanticInfoChain.anyTypeSymbol)) {

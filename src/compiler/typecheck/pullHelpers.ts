@@ -8,26 +8,35 @@
 module TypeScript {
 
     export module PullHelpers {
+        export interface SignatureInfoForFuncDecl {
+            signature: PullSignatureSymbol;
+            allSignatures: PullSignatureSymbol[];
+        }
+
         export function getSignatureForFuncDecl(funcDecl: FuncDecl, semanticInfoChain: SemanticInfoChain, unitPath: string) {
             var funcSymbol = semanticInfoChain.getSymbolForAST(funcDecl, unitPath);
+            var result: SignatureInfoForFuncDecl = { signature: null, allSignatures: null };
             if (funcSymbol.isSignature()) {
-                return <PullSignatureSymbol>funcSymbol;
+                result.signature = <PullSignatureSymbol>funcSymbol;
+                result.allSignatures = [<PullSignatureSymbol>funcSymbol];
+                return result;
             }
             var funcTypeSymbol = funcSymbol.getType();
             var signatures: PullSignatureSymbol[];
-            if (funcDecl.isConstructMember()) {
+            if (funcDecl.isConstructor || funcDecl.isConstructMember()) {
                 signatures = funcTypeSymbol.getConstructSignatures();
             } else if (funcDecl.isIndexerMember()) {
                 signatures = funcTypeSymbol.getIndexSignatures();
             } else {
                 signatures = funcTypeSymbol.getCallSignatures();
             }
-
             for (var i = 0; i < signatures.length; i++) {
                 var signatureDecl = signatures[i].getDeclarations()[0];
                 var signatureAST = semanticInfoChain.getASTForDecl(signatureDecl, signatureDecl.getScriptName());
                 if (signatureAST == funcDecl) {
-                    return signatures[i];
+                    result.signature = signatures[i];
+                    result.allSignatures = signatures;
+                    return result;
                 }
             }
 

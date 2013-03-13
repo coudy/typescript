@@ -313,6 +313,12 @@ module TypeScript {
             while (node) {
                 path[path.length] = node;
                 node = node.getContainer();
+                if (node && node.isType()) {
+                    var associatedContainerSymbol = (<PullTypeSymbol>node).getAssociatedContainerType();
+                    if (associatedContainerSymbol) {
+                        node = associatedContainerSymbol;
+                    }
+                }
             }
             return path;
         }
@@ -359,6 +365,16 @@ module TypeScript {
             return str;
         }
 
+        public fullName() {
+            var path = this.pathToRoot();
+            var fullName = "";
+            for (var i = 1; i < path.length; i++) {
+                fullName = path[i].getName() + "." + fullName;
+            }
+            fullName = fullName + this.getName();
+            return fullName;
+        }
+
         public getScopedName(scopeSymbol?: PullSymbol) {
             var path = this.findCommonAncestorPath(scopeSymbol);
             var fullName = "";
@@ -374,7 +390,7 @@ module TypeScript {
             return fullName;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol) {
+        public getScopedNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
             var name = this.getScopedName(scopeSymbol);
             return MemberName.create(name);
         }
@@ -387,7 +403,7 @@ module TypeScript {
         public getTypeNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
             var type = this.getType();
             if (type) {
-                return type.getTypeNameEx(scopeSymbol, getPrettyTypeName);
+                return type.getScopedNameEx(scopeSymbol, getPrettyTypeName);
             }
             return MemberName.create("");
         }
@@ -398,9 +414,23 @@ module TypeScript {
         }
 
         public getNameAndTypeNameEx(scopeSymbol?: PullSymbol) {
-            var typeNameEx = this.getTypeNameEx(scopeSymbol);
-            var memberName = MemberName.create(typeNameEx, this.getScopedName(scopeSymbol) + (this.getIsOptional() ? "?" : "") + ": ", "");
-            return memberName;
+            var type = this.getType();
+            var nameEx = this.getScopedNameEx(scopeSymbol);
+            if (type) {
+                var nameStr = nameEx.toString() + (this.getIsOptional() ? "?" : "");
+                if (this.declKind != PullElementKind.Property) {
+                    var signatures = type.getCallSignatures();
+                    var typeName = new MemberNameArray();
+                    var signatureName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, nameStr, false, false, scopeSymbol);
+                    typeName.addAll(signatureName);
+                    return typeName;
+                } else {
+                    var typeNameEx = type.getScopedNameEx(scopeSymbol);
+                    var memberName = MemberName.create(typeNameEx, nameStr + ": ", "");
+                    return memberName;
+                }
+            }
+            return nameEx;
         }
 
         static getTypeParameterString(typars: PullTypeSymbol[], scopeSymbol?: PullSymbol) {
@@ -603,7 +633,14 @@ module TypeScript {
             super.invalidate();
         }
 
-        static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[], prefix: string, shortform: bool, brackets: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+        static getSignatureTypeMemberName(candidateSignature: PullSignatureSymbol, signatures: PullSignatureSymbol[], scopeSymbol: PullSymbol) {
+            var allMemberNames = new MemberNameArray();
+            var signatureMemberName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, "", false, false, scopeSymbol, true, candidateSignature);
+            allMemberNames.addAll(signatureMemberName);
+            return allMemberNames;
+        }
+
+        static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[], prefix: string, shortform: bool, brackets: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool, candidateSignature?: PullSignatureSymbol) {
             var result: MemberName[] = [];
             var len = signatures.length;
             if (!getPrettyTypeName && len > 1) {
@@ -612,6 +649,11 @@ module TypeScript {
 
             var i = 0
             var foundDefinition = false;
+            if (candidateSignature && candidateSignature.isDefinition() && len > 1) {
+                // Overloaded signature with candidateSignature = definition - cannot be used.
+                candidateSignature = null;
+            }
+
             for (; i < len; i++) {
                 // the definition signature shouldn't be printed if there are overloads
                 if (len > 1 && signatures[i].isDefinition()) {
@@ -619,7 +661,12 @@ module TypeScript {
                     continue;
                 }
 
-                result.push(signatures[i].getSignatureTypeNameEx(prefix, shortform, brackets, scopeSymbol));
+                var signature = signatures[i];
+                if (getPrettyTypeName && candidateSignature) {
+                    signature = candidateSignature;
+                }
+
+                result.push(signature.getSignatureTypeNameEx(prefix, shortform, brackets, scopeSymbol));
                 if (getPrettyTypeName) {
                     break;
                 }
@@ -664,7 +711,7 @@ module TypeScript {
                 var typeString = paramType ? ": " : "";
                 builder.add(MemberName.create(params[i].getScopedName(scopeSymbol) + (params[i].getIsOptional() ? "?" : "") + typeString));
                 if (paramType) {
-                    builder.add(paramType.getTypeNameEx(scopeSymbol));
+                    builder.add(paramType.getScopedNameEx(scopeSymbol));
                 }
                 if (i < paramLen - 1) {
                     builder.add(MemberName.create(", "));
@@ -691,7 +738,7 @@ module TypeScript {
             var returnType = this.getReturnType();
 
             if (returnType) {
-                builder.add(returnType.getTypeNameEx(scopeSymbol));
+                builder.add(returnType.getScopedNameEx(scopeSymbol));
             }
             else {
                 builder.add(MemberName.create("any"));
@@ -1490,7 +1537,7 @@ module TypeScript {
                 kind == PullElementKind.Container || // module
                 kind == PullElementKind.Enum || // enum
                 kind == PullElementKind.TypeParameter || //TypeParameter
-                (this.getKind() == PullElementKind.ObjectType && this.getName() != "")) { // ModuleType
+                ((kind == PullElementKind.Interface || kind == PullElementKind.ObjectType) && this.getName() != "")) {
                 return true;
             }
 
@@ -1505,15 +1552,15 @@ module TypeScript {
             }
         }
 
-        public getTypeNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
-            return this.getMemberTypeNameEx(true, scopeSymbol, getPrettyTypeName);
+        public getScopedNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+            if (!this.isNamedTypeSymbol()) {
+                return this.getMemberTypeNameEx(true, scopeSymbol, getPrettyTypeName);
+            }
+
+            return super.getScopedNameEx(scopeSymbol, getPrettyTypeName);
         }
 
         public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
-            if (this.isNamedTypeSymbol()) {
-                return this.getScopedNameEx(scopeSymbol);
-            }
-
             var members = this.getMembers();
             var callSignatures = this.getCallSignatures();
             var constructSignatures = this.getConstructSignatures();
@@ -1538,14 +1585,13 @@ module TypeScript {
 
                 // Use pretty Function overload signature if this is just a call overload
                 var getPrettyFunctionOverload = getPrettyTypeName && !curlies &&
-                    memberCount > 0 && constructSignatures.length == 0 && indexSignatures.length == 0 &&
-                    callSignatures.length > 1;
+                    memberCount == 0 && constructSignatures.length == 0 && callSignatures.length > 1;
 
                 var signatureCount = callSignatures.length + constructSignatures.length + indexSignatures.length;
                 if (signatureCount != 0 || memberCount != 0) {
-                    var useShortFormSignature = !curlies && (signatureCount == 1 || getPrettyFunctionOverload);
+                    var useShortFormSignature = !curlies && (signatureCount == 1);
                     var signatureMemberName: MemberName[];
-                    
+
                     if (callSignatures.length > 0) {
                         signatureMemberName =
                             PullSignatureSymbol.getSignaturesTypeNameEx(callSignatures, "", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
@@ -1554,13 +1600,13 @@ module TypeScript {
 
                     if (constructSignatures.length > 0) {
                         signatureMemberName =
-                            PullSignatureSymbol.getSignaturesTypeNameEx(constructSignatures, "new", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
+                            PullSignatureSymbol.getSignaturesTypeNameEx(constructSignatures, "new", useShortFormSignature, false, scopeSymbol);
                         allMemberNames.addAll(signatureMemberName);
                     }
 
                     if (indexSignatures.length > 0) {
                         signatureMemberName =
-                            PullSignatureSymbol.getSignaturesTypeNameEx(indexSignatures, "", useShortFormSignature, true, scopeSymbol, getPrettyFunctionOverload);
+                            PullSignatureSymbol.getSignaturesTypeNameEx(indexSignatures, "", useShortFormSignature, true, scopeSymbol);
                         allMemberNames.addAll(signatureMemberName);
                     }
 

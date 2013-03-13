@@ -647,7 +647,7 @@ module Services {
             }
 
             var symbolName = symbolInfo.symbol.getName();
-            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.getKind());//this.getSymbolElementKind(sym),
+            var symbolKind = this.mapPullElementKind(symbolInfo.symbol);//this.getSymbolElementKind(sym),
             var container = symbolInfo.symbol.getContainer();
             var containerName = container ? container.getName() : "<global>";//this.getSymbolContainerName(sym)
             var containerKind = "";//this.getSymbolContainerKind(sym)
@@ -1314,6 +1314,22 @@ module Services {
             return path;
         }
 
+        private getFullNameOfSymbol(symbol: TypeScript.PullSymbol, enclosingScopeSymbol: TypeScript.PullSymbol) {
+            var container = symbol.getContainer();
+            if (this.isLocal(symbol) ||
+                symbol.getKind() == TypeScript.PullElementKind.Parameter) {
+                // Local var
+                return symbol.getScopedName(enclosingScopeSymbol);
+            }
+
+            if (symbol.getKind() == TypeScript.PullElementKind.Primitive) {
+                // Primitive type symbols - do not use symbol name
+                return "";
+            }
+
+            return symbol.fullName();
+        }
+
         //
         // New Pull stuff
         //
@@ -1323,15 +1339,22 @@ module Services {
             var script = this.pullCompilerState.getScriptAST(fileName);
 
             var typeInfoAtPosition = this.pullCompilerState.getPullTypeInfoAtPosition(pos, script);
+            if (!typeInfoAtPosition.symbol) {
+                return null;
+            }
             
             // PULLTODO: use typeInfo for now, since I want to see more info for debugging;
             //  we'll want to switch to typeName later, though
-            var memberName = TypeScript.MemberName.create(typeInfoAtPosition.typeInfo);
+            var memberName = typeInfoAtPosition.callSignatures ?
+                TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(typeInfoAtPosition.candidateSignature,
+                    typeInfoAtPosition.callSignatures, typeInfoAtPosition.enclosingScopeSymbol) :
+                typeInfoAtPosition.symbol.getTypeNameEx(typeInfoAtPosition.enclosingScopeSymbol, true);
             var minChar = -1;
             var limChar = -1;
-            var kind = this.mapPullElementKind(typeInfoAtPosition.typeSymbol.getKind());
-            var docComment = typeInfoAtPosition.typeSymbol.getDocComments();
-            var symbolName = typeInfoAtPosition.typeSymbol.getName();
+            var kind = this.mapPullElementKind(typeInfoAtPosition.symbol, !typeInfoAtPosition.callSignatures,
+                !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.ast && typeInfoAtPosition.ast.nodeType == TypeScript.NodeType.New);
+            var docComment = typeInfoAtPosition.symbol.getDocComments();
+            var symbolName = this.getFullNameOfSymbol(typeInfoAtPosition.symbol, typeInfoAtPosition.enclosingScopeSymbol);
 
             if (typeInfoAtPosition.ast) {
                 minChar = typeInfoAtPosition.ast.minChar;
@@ -1395,7 +1418,7 @@ module Services {
                 var entry = new CompletionEntry();
                 entry.name = symbol.getName();
                 entry.type = symbol.getType() ? symbol.getType().toString() : "unkown type";
-                entry.kind = this.mapPullElementKind(symbol.getKind());
+                entry.kind = this.mapPullElementKind(symbol);
                 entry.fullSymbolName = entry.name;//this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
                 entry.docComment = symbol.getDocComments();
                 entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
@@ -1456,43 +1479,95 @@ module Services {
             return true;
         }
 
-        private mapPullElementKind(kind: TypeScript.PullElementKind): string {
-            switch (kind)
-            {
-                case TypeScript.PullElementKind.Script:
-                    return ScriptElementKind.scriptElement;
-                case TypeScript.PullElementKind.Container:
-                    return ScriptElementKind.moduleElement;
-                case TypeScript.PullElementKind.Interface:
-                    return ScriptElementKind.interfaceElement;
-                case TypeScript.PullElementKind.Class:
-                    return ScriptElementKind.classElement;
-                case TypeScript.PullElementKind.Enum:
-                    return ScriptElementKind.enumElement;
-                case TypeScript.PullElementKind.Variable:
-                    return ScriptElementKind.variableElement;
-                case TypeScript.PullElementKind.Parameter:
-                    return ScriptElementKind.parameterElement;
-                case TypeScript.PullElementKind.Property:
-                    return ScriptElementKind.memberVariableElement;
-                case TypeScript.PullElementKind.Function:
-                    return ScriptElementKind.functionElement;
-                case TypeScript.PullElementKind.ConstructorMethod:
-                    return ScriptElementKind.constructorImplementationElement;
-                case TypeScript.PullElementKind.Method:
-                    return ScriptElementKind.memberFunctionElement;
-                case TypeScript.PullElementKind.FunctionExpression:
-                    return ScriptElementKind.functionElement;
-                case TypeScript.PullElementKind.GetAccessor:
-                    return ScriptElementKind.memberGetAccessorElement;
-                case TypeScript.PullElementKind.SetAccessor:
-                    return ScriptElementKind.memberSetAccessorElement;
-                case TypeScript.PullElementKind.CallSignature:
-                    return ScriptElementKind.callSignatureElement;
-                case TypeScript.PullElementKind.ConstructSignature:
-                    return ScriptElementKind.constructSignatureElement;
-                case TypeScript.PullElementKind.IndexSignature:
-                    return ScriptElementKind.indexSignatureElement;
+        private isLocal(symbol: TypeScript.PullSymbol) {
+            var container = symbol.getContainer();
+            if (container) {
+                var containerKind = container.getKind();
+                if (containerKind & (TypeScript.PullElementKind.SomeFunction | TypeScript.PullElementKind.FunctionType)) {
+                    return true;
+                }
+
+                if (containerKind == TypeScript.PullElementKind.ConstructorType && !symbol.hasFlag(TypeScript.PullElementFlags.Static)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private mapPullElementKind(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool, varIsFunction?: bool, functionIsConstructor?: bool): string {
+            if (functionIsConstructor) {
+                return ScriptElementKind.constructorImplementationElement;
+            }
+
+            var kind = symbol.getKind();
+            if (varIsFunction) {
+                switch (kind) {
+                    case TypeScript.PullElementKind.Container:
+                    case TypeScript.PullElementKind.Interface:
+                    case TypeScript.PullElementKind.Class:
+                    case TypeScript.PullElementKind.Parameter:
+                        return ScriptElementKind.functionElement;
+                    case TypeScript.PullElementKind.Variable:
+                        return this.isLocal(symbol) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
+                    case TypeScript.PullElementKind.Property:
+                        return ScriptElementKind.memberFunctionElement;
+                    case TypeScript.PullElementKind.Function:
+                        return this.isLocal(symbol) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
+                    case TypeScript.PullElementKind.ConstructorMethod:
+                        return ScriptElementKind.constructorImplementationElement;
+                    case TypeScript.PullElementKind.Method:
+                        return ScriptElementKind.memberFunctionElement;
+                    case TypeScript.PullElementKind.FunctionExpression:
+                        return ScriptElementKind.localFunctionElement;
+                    case TypeScript.PullElementKind.GetAccessor:
+                        return ScriptElementKind.memberGetAccessorElement;
+                    case TypeScript.PullElementKind.SetAccessor:
+                        return ScriptElementKind.memberSetAccessorElement;
+                    case TypeScript.PullElementKind.CallSignature:
+                        return ScriptElementKind.callSignatureElement;
+                    case TypeScript.PullElementKind.ConstructSignature:
+                        return ScriptElementKind.constructSignatureElement;
+                    case TypeScript.PullElementKind.IndexSignature:
+                        return ScriptElementKind.indexSignatureElement;
+                }
+            } else {
+                switch (kind) {
+                    case TypeScript.PullElementKind.Script:
+                        return ScriptElementKind.scriptElement;
+                    case TypeScript.PullElementKind.Container:
+                        return ScriptElementKind.moduleElement;
+                    case TypeScript.PullElementKind.Interface:
+                        return ScriptElementKind.interfaceElement;
+                    case TypeScript.PullElementKind.Class:
+                        return ScriptElementKind.classElement;
+                    case TypeScript.PullElementKind.Enum:
+                        return ScriptElementKind.enumElement;
+                    case TypeScript.PullElementKind.Variable:
+                        return this.isLocal(symbol) ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
+                    case TypeScript.PullElementKind.Parameter:
+                        return ScriptElementKind.parameterElement;
+                    case TypeScript.PullElementKind.Property:
+                        return ScriptElementKind.memberVariableElement;
+                    case TypeScript.PullElementKind.Function:
+                        return this.isLocal(symbol) ? ScriptElementKind.localFunctionElement : ScriptElementKind.functionElement;
+                    case TypeScript.PullElementKind.ConstructorMethod:
+                        return useConstructorAsClass ? ScriptElementKind.classElement : ScriptElementKind.constructorImplementationElement;
+                    case TypeScript.PullElementKind.Method:
+                        return ScriptElementKind.memberFunctionElement;
+                    case TypeScript.PullElementKind.FunctionExpression:
+                        return ScriptElementKind.localFunctionElement;
+                    case TypeScript.PullElementKind.GetAccessor:
+                        return ScriptElementKind.memberGetAccessorElement;
+                    case TypeScript.PullElementKind.SetAccessor:
+                        return ScriptElementKind.memberSetAccessorElement;
+                    case TypeScript.PullElementKind.CallSignature:
+                        return ScriptElementKind.callSignatureElement;
+                    case TypeScript.PullElementKind.ConstructSignature:
+                        return ScriptElementKind.constructSignatureElement;
+                    case TypeScript.PullElementKind.IndexSignature:
+                        return ScriptElementKind.indexSignatureElement;
+                }
             }
 
             return ScriptElementKind.unknown;

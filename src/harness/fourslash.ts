@@ -107,6 +107,8 @@ module FourSlash {
         // Whether or not we should format on keystrokes
         public enableFormatting = true;
 
+        private verifyDocComments = true;
+
         constructor(public testData: FourSlashData) {
             // Initialize the language service with all the scripts
             this.langSvc = new Harness.TypeScriptLS();
@@ -120,6 +122,10 @@ module FourSlash {
 
             // Open the first file by default
             this.openFile(0);
+        }
+
+        public setVerifyDocComments(val: bool) {
+            this.verifyDocComments = val;
         }
 
         // Entry points from fourslash.ts
@@ -328,8 +334,10 @@ module FourSlash {
             var actualQuickInfoSymbolName = actualQuickInfo ? actualQuickInfo.fullSymbolName : "";
             var actualQuickInfoKind = actualQuickInfo ? actualQuickInfo.kind : "";
             if (negative) {
-                assert.notEqual(actualQuickInfoMemberName, expectedTypeName);
-                if (docComment != undefined) {
+                if (expectedTypeName != undefined) {
+                    assert.notEqual(actualQuickInfoMemberName, expectedTypeName);
+                }
+                if (this.verifyDocComments && docComment != undefined) {
                     assert.notEqual(actualQuickInfoDocComment, docComment);
                 }
                 if (symbolName != undefined) {
@@ -339,8 +347,10 @@ module FourSlash {
                     assert.notEqual(actualQuickInfoKind, kind);
                 }
             } else {
-                assert.equal(actualQuickInfoMemberName, expectedTypeName);
-                if (docComment != undefined) {
+                if (expectedTypeName != undefined) {
+                    assert.equal(actualQuickInfoMemberName, expectedTypeName);
+                }
+                if (this.verifyDocComments && docComment != undefined) {
                     assert.equal(actualQuickInfoDocComment, docComment);
                 }
                 if (symbolName != undefined) {
@@ -361,7 +371,9 @@ module FourSlash {
         }
 
         public verifyCurrentParameterHelpDocComment(docComment: string) {
-            assert.equal(this.getActiveParameter().docComment, docComment);
+            if (this.verifyDocComments) {
+                assert.equal(this.getActiveParameter().docComment, docComment);
+            }
         }
 
         public verifyCurrentParameterHelpType(typeName: string) {
@@ -378,8 +390,10 @@ module FourSlash {
         }
 
         public verifyCurrentSignatureHelpDocComment(docComment: string) {
-            var actualDocComment = this.getActiveSignatureHelp().docComment;
-            assert.equal(actualDocComment, docComment);
+            if (this.verifyDocComments) {
+                var actualDocComment = this.getActiveSignatureHelp().docComment;
+                assert.equal(actualDocComment, docComment);
+            }
         }
 
         public verifyCurrentSignatureHelpCount(expected: number) {
@@ -841,7 +855,7 @@ module FourSlash {
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 if (item.name == name) {
-                    if (docComment != undefined) {
+                    if (this.verifyDocComments && docComment != undefined) {
                         assert.equal(item.docComment, docComment);
                     }
                     if (type != undefined) {
@@ -866,7 +880,7 @@ module FourSlash {
                 if (type != undefined) {
                     returnString += ",type: " + item.type;
                 }
-                if (docComment != undefined) {
+                if (this.verifyDocComments && docComment != undefined) {
                     returnString += ",docComment: " + item.docComment;
                 }
                 if (fullSymbolName != undefined) {

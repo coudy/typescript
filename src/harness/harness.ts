@@ -1000,7 +1000,7 @@ module Harness {
                             if (targetPosition > -1) {
                                 var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
                                 var name = this.getTypeInfoName(tyInfo.ast);
-                                var foundValue = new Type(tyInfo.typeInfo, code, name);
+                                var foundValue = new Type(tyInfo.symbol.getTypeName(), code, name);
                                 if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
                                     matchingIdentifiers.push(foundValue);
                                 }
@@ -1010,7 +1010,7 @@ module Harness {
                                     tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
                                     name = this.getTypeInfoName(tyInfo.ast);
                                     if (name === targetIdentifier) {
-                                        foundValue = new Type(tyInfo.typeInfo, code, targetIdentifier);
+                                        foundValue = new Type(tyInfo.symbol.getTypeName(), code, targetIdentifier);
                                         if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
                                             matchingIdentifiers.push(foundValue);
                                         }

@@ -155,6 +155,14 @@ module TypeScript {
         resolvePath(path: string): string;
     }
 
+    export interface PullTypeAtPositionInfo {
+        symbol: PullSymbol;
+        ast: AST;
+        enclosingScopeSymbol: PullSymbol;
+        candidateSignature: PullSignatureSymbol;
+        callSignatures: PullSignatureSymbol[];
+    }
+
     export class TypeScriptCompiler {
         public parser = new Parser();
         public typeChecker: TypeChecker;
@@ -1103,7 +1111,20 @@ module TypeScript {
             });
         }
 
-        public resolvePosition(pos: number, script: Script, scriptName?: string): { symbol: PullSymbol; ast: AST; enclosingDecl: PullDecl; } {
+        public getSymbolOfDeclaration(decl: PullDecl) {
+            if (!decl) {
+                return null;
+            }
+            var ast = this.pullTypeChecker.resolver.getASTForDecl(decl);
+            if (!ast) {
+                return null;
+            }
+            var enlosingDecl = this.pullTypeChecker.resolver.getEnclosingDecl(decl);
+            var resolutionContext = new PullTypeResolutionContext();
+            return this.pullTypeChecker.resolver.resolveDeclaration(ast, resolutionContext, enlosingDecl);
+        }
+        
+        public resolvePosition(pos: number, script: Script, scriptName?: string): PullTypeAtPositionInfo {
 
             // find the enclosing decl
             var declStack: PullDecl[] = [];
@@ -1115,6 +1136,8 @@ module TypeScript {
             var lastDeclAST: AST = null;
             var foundAST: AST = null;
             var symbol: PullSymbol = null;
+            var candidateSignature: PullSignatureSymbol = null;
+            var callSignatures: PullSignatureSymbol[] = null;
 
             // these are used to track intermediate nodes so that we can properly apply contextual types
             var lambdaAST: FuncDecl = null;
@@ -1190,9 +1213,14 @@ module TypeScript {
                 }
 
                 // are we within a decl?  if so, just grab its symbol
+                var funcDecl: FuncDecl = null;
                 if (lastDeclAST == foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
                     this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, resolutionContext);
+                    enclosingDecl = declStack[declStack.length - 1].getParentDecl();
+                    if (foundAST.nodeType == NodeType.FuncDecl) {
+                        funcDecl = <FuncDecl>foundAST;
+                    }
                 }
                 else {
                     // otherwise, it's an expression that needs to be resolved, so we must pull...
@@ -1211,14 +1239,21 @@ module TypeScript {
 
                     // if the found AST is a named, we want to check for previous dotted expressions,
                     // since those will give us the right typing
+                    var callExpression: CallExpression = null;
                     if (foundAST.nodeType == NodeType.Name && resultASTs.length > 1) {
                         for (i = resultASTs.length - 2; i >= 0; i--) {
-                            if ((resultASTs[i].nodeType === NodeType.VarDecl && (<VarDecl>resultASTs[i]).id === resultASTs[i + 1]) ||
-                                //((resultASTs[i].nodeType === NodeType.Call || resultASTs[i].nodeType == NodeType.New) && (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) ||
-                                (resultASTs[i].nodeType === NodeType.Dot && (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1])) {
+                            if (resultASTs[i].nodeType === NodeType.Dot &&
+                                (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
                                 foundAST = resultASTs[i];   
                             }
-                            else {
+                            else if ((resultASTs[i].nodeType == NodeType.Call || resultASTs[i].nodeType == NodeType.New) &&
+                                (<CallExpression>resultASTs[i]).target == resultASTs[i + 1]) {
+                                callExpression = <CallExpression>resultASTs[i];
+                                break;
+                            } else if (resultASTs[i].nodeType == NodeType.FuncDecl && (<FuncDecl>resultASTs[i]).name == resultASTs[i + 1]) {
+                                funcDecl = <FuncDecl>resultASTs[i];
+                                break;
+                            } else {
                                 break;
                             }
                         }
@@ -1282,10 +1317,48 @@ module TypeScript {
                     }
 
                     symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, isTypedAssignment, enclosingDecl, resolutionContext);
+                    if (callExpression) {
+                        var typeSymbol = symbol.getType();
+                        callSignatures = callExpression.nodeType == NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
+                        var callResolutionResults: PullAdditionalCallResolutionData = {
+                            targetSymbol: null,
+                            resolvedSignatures: null,
+                            candidateSignature: null
+                        };
+
+                        if (callExpression.nodeType == NodeType.Call) {
+                            this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                        } else {
+                            this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                        }
+
+                        if (callResolutionResults.candidateSignature) {
+                            candidateSignature = callResolutionResults.candidateSignature;
+                        }
+                        if (callResolutionResults.targetSymbol && callResolutionResults.targetSymbol.getName() != "") {
+                            symbol = callResolutionResults.targetSymbol;
+                        }
+                        foundAST = callExpression;
+                    }
+                }
+
+                if (funcDecl) {
+                    if (symbol && symbol.getKind() != PullElementKind.Property) {
+                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.pullTypeChecker.resolver.semanticInfoChain, this.pullTypeChecker.resolver.getUnitPath());
+                        candidateSignature = signatureInfo.signature;
+                        callSignatures = signatureInfo.allSignatures;
+                    }
+                } else if (symbol && symbol.getKind() == PullElementKind.Method) {
+                    var typeSym = symbol.getType()
+                    if (typeSym) {
+                        callSignatures = typeSym.getCallSignatures();
+                    }
                 }
             }
 
-            return { symbol : symbol, ast : foundAST, enclosingDecl: enclosingDecl};
+            var enclosingScopeSymbol = this.getSymbolOfDeclaration(enclosingDecl);
+
+            return { symbol: symbol, ast: foundAST, enclosingScopeSymbol: enclosingScopeSymbol, candidateSignature: candidateSignature, callSignatures: callSignatures };
         }
 
         private extractResolutionContextFromPath(path: AstPath, script: Script, scriptName?: string): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {
@@ -1422,10 +1495,10 @@ module TypeScript {
             };
 
             if (isNew) {
-                this.pullTypeChecker.resolver.resolveNewExpression(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveNewExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                this.pullTypeChecker.resolver.resolveCallExpression(path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.pullTypeChecker.resolver.resolveCallExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return callResolutionResults;
@@ -1450,19 +1523,11 @@ module TypeScript {
             return this.pullTypeChecker.resolver.getVisibleSymbols(context.enclosingDecl, context.resolutionContext);
         }
 
-        public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): { ast: AST; typeName: string; typeInfo: string; typeSymbol: PullTypeSymbol; enclosingDecl: PullDecl; } {
+        public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): PullTypeAtPositionInfo {
             return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", () => {
                 
                 var info = this.resolvePosition(pos, script, scriptName);
-
-                if (info.symbol) {
-                    var type = info.symbol.getType();
-                    if (type) {
-                        return { ast: info.ast, typeName: type.getName(), typeInfo: type.toString(), typeSymbol: type, enclosingDecl: info.enclosingDecl };
-                    }
-                }
-
-                return { ast: info.ast, typeName: "couldn't find the type...", typeInfo: "couldn't find members...", typeSymbol: null, enclosingDecl: null };
+                return info;
             });
         }
 
