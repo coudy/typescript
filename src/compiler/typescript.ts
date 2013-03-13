@@ -913,13 +913,25 @@ module TypeScript {
             var unit = this.semanticInfoChain.getUnit(filename);
 
             if (unit) {
-                unit.getErrors(errors);
+                var script: Script = null;
+                
+                for (var i = 0; i < this.units.length; i++) {
+                    if (this.units[i].filename == filename) {
+                        script = <Script>this.scripts.members[i];
+                    }
+                }
+
+                if (script) {
+                    this.pullTypeChecker.typeCheckScript(script, filename, this);
+
+                    unit.getErrors(errors);
+                }
             }
 
             return errors;
         }
 
-        public pullTypeCheck(refresh = false) {
+        public pullTypeCheck(refresh = false, reportErrors = false) {
             return this.timeFunction("pullTypeCheck()", () => {
 
                 if (!this.pullTypeChecker || refresh) {
@@ -986,7 +998,9 @@ module TypeScript {
                 this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
                 this.logger.log("Find errors: " + (findErrorsEndTime - findErrorsStartTime));
 
-                this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
+                if (reportErrors) {
+                    this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors());
+                }
             });
         }
         
@@ -1061,7 +1075,6 @@ module TypeScript {
                         else if (diff.kind == PullDeclEdit.DeclAdded) {
                             graphUpdater.addDecl(diff.newDecl);                        
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
-                            //this.resolvePosition(diff.newDecl.getSpan().start(), newScript);
                         }
                         else {
                             // PULLTODO: Other kinds of edits
@@ -1070,6 +1083,7 @@ module TypeScript {
 
                     var traceEndTime = new Date().getTime();
 
+                    // Don't re-typecheck or re-report errors just yet
                     this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.filename, this);
 
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
@@ -1077,7 +1091,7 @@ module TypeScript {
 
                     this.pullErrorReporter.setUnits(this.units);
 
-                    this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors())
+                    //this.pullErrorReporter.reportErrors(this.semanticInfoChain.postErrors())
 
                     return true;
                 }

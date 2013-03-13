@@ -456,7 +456,6 @@ module TypeScript {
 
                     if (funcDecl.isConstructor) {
                         funcDecl.name = name;
-                        funcDecl.returnTypeAnnotation = new TypeReference(name, 0);
                         funcDecl.classDecl = result;
 
                         result.constructorDecl = funcDecl;

@@ -219,7 +219,7 @@ class BatchCompiler {
 
         try {
             if (this.compilationSettings.usePull) {
-                compiler.pullTypeCheck();
+                compiler.pullTypeCheck(true, true);
             }
             else {
                 compiler.typeCheck();

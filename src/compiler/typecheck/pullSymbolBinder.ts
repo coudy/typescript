@@ -4,11 +4,15 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
+    export var globalBindingPhase = 0;
+
     export class PullSymbolBinder {
 
         private parentChain: PullTypeSymbol[] = [];
         private parentDeclChain: PullDecl[] = [];
         private declPath: string[] = [];
+
+        private bindingPhase = globalBindingPhase++;
 
         private staticClassMembers: PullSymbol[] = [];
 
@@ -140,6 +144,12 @@ module TypeScript {
             if (ast && ast.nodeType == NodeType.ModuleDeclaration) {
                 (<ModuleDeclaration>ast).recordNonInterface();
             }
+        }
+
+        public symbolIsRedeclaration(sym: PullSymbol): bool {
+            var symID = sym.getSymbolID();
+            return (symID > this.startingSymbolForRebind) || 
+                    ((sym.getRebindingID() == this.bindingPhase) && (symID != this.startingSymbolForRebind));
         }
 
         //
@@ -301,7 +311,7 @@ module TypeScript {
                 enumSymbol = <PullTypeSymbol>this.findSymbolInContext(enumName, PullElementKind.SomeType, []);
             }
 
-            if (enumSymbol && (enumSymbol.getKind() != PullElementKind.Enum || enumSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+            if (enumSymbol && (enumSymbol.getKind() != PullElementKind.Enum || !this.reBindingAfterChange || this.symbolIsRedeclaration(enumSymbol))) {
                 enumDeclaration.addError(new PullError(enumAST.minChar, enumAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [enumName])));
                 enumSymbol = null;
             }
@@ -358,6 +368,8 @@ module TypeScript {
             }
 
             this.popParent();
+
+            enumSymbol.setIsBound(this.bindingPhase);
         }
 
         // classes
@@ -385,7 +397,7 @@ module TypeScript {
                 classSymbol = <PullClassTypeSymbol>this.findSymbolInContext(className, PullElementKind.SomeType, []);
             }
 
-            if (classSymbol && (classSymbol.getKind() != PullElementKind.Class || (!this.reBindingAfterChange || classSymbol.getSymbolID() > this.startingSymbolForRebind))) {
+            if (classSymbol && (classSymbol.getKind() != PullElementKind.Class || !this.reBindingAfterChange || this.symbolIsRedeclaration(classSymbol))) {
                 classDecl.addError(new PullError(classAST.minChar, classAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [className])));
                 classSymbol = null;
             }
@@ -604,7 +616,7 @@ module TypeScript {
                 typeParameters[i].setSymbol(typeParameter);
             }
 
-            classSymbol.setIsBound();
+            classSymbol.setIsBound(this.bindingPhase);
         }
 
         // interfaces
@@ -892,7 +904,7 @@ module TypeScript {
             var members: PullSymbol[];
             
             // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
-            if (variableSymbol && (variableSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+            if (variableSymbol && this.symbolIsRedeclaration(variableSymbol)) {
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
                 if ((declFlags & PullElementFlags.ImplicitVariable) == 0) {
@@ -903,7 +915,7 @@ module TypeScript {
                     parentHadSymbol = false;
                  }
              }
-             else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable)) {
+             else if (variableSymbol && (variableSymbol.getKind() != PullElementKind.Variable) && ((declFlags & PullElementFlags.ImplicitVariable) == 0)) {
                 span = variableDeclaration.getSpan();
 
                 variableDeclaration.addError(new PullError(span.start(), span.length(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateIdentifier_1, [declName])));
@@ -1061,6 +1073,8 @@ module TypeScript {
                 }
                 this.recordNonInterfaceParentModule();
             }
+
+            variableSymbol.setIsBound(this.bindingPhase);
         }
 
         // properties
@@ -1096,7 +1110,7 @@ module TypeScript {
 
             propertySymbol = parent.findMember(declName);
 
-            if (propertySymbol && (!this.reBindingAfterChange || (propertySymbol.getSymbolID() > this.startingSymbolForRebind))) {
+            if (propertySymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(propertySymbol))) {
 
                 // use the span, since we may not have an AST if this is a class constructor property for a class
                 // with an implicit constructor...
@@ -1193,6 +1207,8 @@ module TypeScript {
                     parent.addMember(propertySymbol, linkKind);
                 }
             }
+
+            propertySymbol.setIsBound(this.bindingPhase);
         }
 
         public bindImportDeclaration(importDeclaration: PullDecl) {
@@ -1225,7 +1241,7 @@ module TypeScript {
                 parentHadSymbol = true;
             }
 
-            if (importSymbol && (importSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+            if (importSymbol && this.symbolIsRedeclaration(importSymbol)) {
 
                 // if it's an implicit variable, then this variable symbol will actually be a class constructor
                 // or container type that was just defined, so we don't want to raise an error
@@ -1246,6 +1262,8 @@ module TypeScript {
                         importSymbol.removeDeclaration(decls[j]);
                     }
                 }
+
+                importSymbol.setUnresolved();
             }
 
             if (!importSymbol) {
@@ -1268,6 +1286,8 @@ module TypeScript {
                 }
                 this.recordNonInterfaceParentModule();
             }
+
+            importSymbol.setIsBound(this.bindingPhase);
         }
 
         // parameters
@@ -2122,7 +2142,7 @@ module TypeScript {
                 else {
                     getterSymbol = accessorSymbol.getGetter();
 
-                    if (getterSymbol && (!this.reBindingAfterChange || getterSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+                    if (getterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(getterSymbol))) {
                         getAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateGetter_1, [funcName])));
                         accessorSymbol = null;
                         getterSymbol = null;
@@ -2242,6 +2262,8 @@ module TypeScript {
 
                 this.popParent();
             }
+
+            getterSymbol.setIsBound(this.bindingPhase);
         }
 
         public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
@@ -2286,7 +2308,7 @@ module TypeScript {
                 else {
                     setterSymbol = accessorSymbol.getSetter();
 
-                    if (setterSymbol && (!this.reBindingAfterChange || setterSymbol.getSymbolID() > this.startingSymbolForRebind)) {
+                    if (setterSymbol && (!this.reBindingAfterChange || this.symbolIsRedeclaration(setterSymbol))) {
                         setAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), getDiagnosticMessage(DiagnosticMessages.duplicateSetter_1, [funcName])));
                         accessorSymbol = null;
                         setterSymbol = null;
@@ -2408,6 +2430,8 @@ module TypeScript {
 
                 this.popParent();
             }
+
+            setterSymbol.setIsBound(this.bindingPhase);
         }
 
         // binding

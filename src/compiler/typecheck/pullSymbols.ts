@@ -37,6 +37,8 @@ module TypeScript {
 
         private isBound = false;
 
+        private rebindingID = 0;
+
         public typeChangeUpdateVersion = -1;
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
@@ -79,7 +81,14 @@ module TypeScript {
         public setIsSynthesized() { this.isSynthesized = true; }
         public getIsSynthesized() { return this.isSynthesized; }
 
-        public setIsBound() { this.isBound = true; }
+        public setIsBound(rebindingID: number) {
+            this.isBound = true;
+            this.rebindingID = rebindingID;
+        }
+
+        public getRebindingID() {
+            return this.rebindingID;
+        }
 
         public getIsBound() { return this.isBound; }
 
@@ -267,19 +276,12 @@ module TypeScript {
             this.isBound = false;
         }
 
-        // helper methods:
-        // cacheInfo?
-
-        // helper derived classes
-        // PullClassSymbol
-        // PullInterfaceSymbol
-        // cache and convience methods
         public invalidate() {
 
-            this.removeOutgoingLink(this.cachedContainerLink);
+            //this.removeOutgoingLink(this.cachedContainerLink);
             //this.removeOutgoingLink(this.cachedTypeLink);
 
-            this.cachedContainerLink = null;
+            //this.cachedContainerLink = null;
 
             this.hasBeenResolved = false;
             this.isBound = false;
@@ -570,12 +572,10 @@ module TypeScript {
             }
         }
 
-        // only the return type would change as a result of an invalidation
-        // PULLTODO: Invalidate parameters?
-        public invalidate() {
 
-            this.removeOutgoingLink(this.returnTypeLink);
-            this.returnTypeLink = null;
+        // note that we don't invalidate the return type, since on re-bind we'll create new call, construct and
+        // index signatures
+        public invalidate() {
 
             this.parameterLinks = this.findOutgoingLinks(psl => psl.kind == SymbolLinkKind.Parameter);
             this.nonOptionalParamCount = 0;

@@ -187,10 +187,13 @@ module TypeScript {
 
             symbolToRemove.unsetContainer();
 
+            this.semanticInfoChain.removeSymbolFromCache(symbolToRemove);
+
             var container = symbolToRemove.getContainer();
 
             if (container) {
                 container.removeMember(symbolToRemove);
+                this.semanticInfoChain.removeSymbolFromCache(symbolToRemove);
             }
         }
 
@@ -418,7 +421,7 @@ module TypeScript {
         }
         else if (link.kind == SymbolLinkKind.ArrayOf) {
             // how could this happen?
-            update.updater.invalidateType(affectedSymbol);
+            //update.updater.invalidateType(affectedSymbol);
         }
         else if (link.kind == SymbolLinkKind.PublicMember) {
             update.updater.invalidateType(affectedSymbol);

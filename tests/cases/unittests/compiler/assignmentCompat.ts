@@ -12,8 +12,8 @@ describe("Assignment compatibility", function() {
     var anyArray = typeFactory.get('var arr = []', 'arr');
     var someFunction = typeFactory.get('function f() {}', 'f');
     var someObject   = typeFactory.get('var obj = {one: 1}', 'obj');
-    var someClass = typeFactory.get('class Foo {};', 'Foo');
-    var someInstance = typeFactory.get('class Foo2 {}; var f = new Foo2();', 'f'); // TODO: Foo2 because of a compiler bug
+    var someClass = typeFactory.get('class Foo {public p;};', 'Foo');
+    var someInstance = typeFactory.get('class Foo2 {public p;}; var f = new Foo2();', 'f');
 
     var AnythingBasic = [any, number, string, bool, anyArray, someFunction, someObject, someClass, someInstance];
     function AnythingBasicBut(these: any[]) {
@@ -269,7 +269,7 @@ describe("Assignment compatibility", function() {
         }
 
         describe("Classes with properties 1", function () {
-            var these = [emptyObj, emptySig, classWithOptional, classWithPublicAndOptional, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional];
+            var these = [emptyObj, emptySig, classWithPublic, classWithOptional, classWithPublicAndOptional, interfaceOne, interfaceWithOptional, interfaceWithPublicAndOptional];
             it("Class with public property assignable to", function () {
                 classWithPublic.assertAssignmentCompatibleWith(these);
             });

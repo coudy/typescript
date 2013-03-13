@@ -64,9 +64,9 @@ module TypeScript {
                 }
             }
 
-            if (!foundDiff) {
-                newDecl.setErrors(oldDecl.getErrors());
-            }
+            //if (!foundDiff) {
+            //    newDecl.setErrors(oldDecl.getErrors());
+            //}
 
             return foundDiff;
         }
