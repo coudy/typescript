@@ -94,6 +94,10 @@ module TypeScript {
         }
 
         public emitAccessorDeclarationComments(funcDecl: FuncDecl) {
+            if (!this.emitOptions.emitComments) {
+                return;
+            }
+
             var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
             var comments: Comment[] = [];
             if (accessors.getter) {
