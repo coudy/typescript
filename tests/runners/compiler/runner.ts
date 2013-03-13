@@ -24,6 +24,7 @@ class CompilerBaselineRunner extends RunnerBase {
         if (testType === 'prototyping') {
             this.basePath += '/prototyping';
             this.usepull = true;
+            Harness.usePull = true;
         }
         this.basePath += '/compiler';
     }
@@ -142,18 +143,16 @@ class CompilerBaselineRunner extends RunnerBase {
                 var declErrors = '';
                 // For single file tests we don't want the baseline file to be named 0.d.ts
                 var realDeclName = (lastUnit.name === '0.ts') ? justName.replace('.ts', '.d.ts') : declFileName;
-                // For multi-file tests we need to include their dependencies in case the .d.ts has an import so we'll take the existing units and just change the relevant one to its .d.ts counterpart
-                var newUnits = units.map(unit => {
-                    if (unit.name === lastUnit.name) {
-                        var newUnit = unit;
-                        newUnit.name = realDeclName;
-                        newUnit.content = declFileCode;
-                        return newUnit;
-                    }
-                    else {
-                        return unit;
-                    }
-                });
+                // For multi-file tests we need to include their dependencies in case the .d.ts has an import so just fix up a new lastUnit
+                var newLastUnit = {
+                    content: declFileCode,
+                    name: realDeclName,
+                    fileOptions: lastUnit.fileOptions,
+                    originalFilePath: lastUnit.originalFilePath,
+                    references: lastUnit.references
+                };
+                var newUnits = units.slice(0, units.length - 1).concat([newLastUnit]);
+                
                 Harness.Compiler.compileUnits(newUnits, function (result) {
                     for (var i = 0; i < result.errors.length; i++) {
                         declErrors += result.errors[i].file + ' line ' + result.errors[i].line + ' col ' + result.errors[i].column + ': ' + result.errors[i].message + '\r\n';
