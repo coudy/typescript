@@ -1,9 +1,11 @@
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='SyntaxNode.ts' />
 
-interface ISyntaxList extends ISyntaxElement {
-    childAt(index: number): ISyntaxNodeOrToken;
-    toArray(): ISyntaxNodeOrToken[];
+module TypeScript {
+    export interface ISyntaxList extends ISyntaxElement {
+        childAt(index: number): ISyntaxNodeOrToken;
+        toArray(): ISyntaxNodeOrToken[];
 
-    insertChildrenInto(array: ISyntaxElement[], index: number): void;
+        insertChildrenInto(array: ISyntaxElement[], index: number): void;
+    }
 }

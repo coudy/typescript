@@ -1,6 +1,6 @@
 ///<reference path='SyntaxNode.ts' />
 
-module PrettyPrinter {
+module TypeScript.PrettyPrinter {
     export function prettyPrint(node: SyntaxNode, indentWhitespace: string = "    "): string {
         var impl = new PrettyPrinterImpl(indentWhitespace);
         node.accept(impl);

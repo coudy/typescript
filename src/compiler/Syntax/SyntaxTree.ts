@@ -2,46 +2,48 @@
 ///<reference path='SyntaxDiagnostic.ts' />
 ///<reference path='..\Text\LineMap.ts' />
 
-class SyntaxTree {
-    private _sourceUnit: SourceUnitSyntax;
-    private _diagnostics: SyntaxDiagnostic[];
-    private _lineMap: ILineMap;
+module TypeScript {
+    export class SyntaxTree {
+        private _sourceUnit: SourceUnitSyntax;
+        private _diagnostics: SyntaxDiagnostic[];
+        private _lineMap: ILineMap;
 
-    constructor(sourceUnit: SourceUnitSyntax,
-                diagnostics: SyntaxDiagnostic[],
-                lineMap: ILineMap) {
-        this._sourceUnit = sourceUnit;
-        this._diagnostics = diagnostics;
-        this._lineMap = lineMap;
-    }
-
-    public toJSON(key) {
-        var result: any = { };
-
-        if (this._diagnostics.length > 0) {
-            result._diagnostics = this._diagnostics;
+        constructor(sourceUnit: SourceUnitSyntax,
+            diagnostics: SyntaxDiagnostic[],
+            lineMap: ILineMap) {
+            this._sourceUnit = sourceUnit;
+            this._diagnostics = diagnostics;
+            this._lineMap = lineMap;
         }
 
-        result._sourceUnit = this._sourceUnit;
-        result._lineMap = this._lineMap;
+        public toJSON(key) {
+            var result: any = {};
 
-        return result;
-    }
+            if (this._diagnostics.length > 0) {
+                result._diagnostics = this._diagnostics;
+            }
 
-    public sourceUnit(): SourceUnitSyntax {
-        return this._sourceUnit;
-    }
+            result._sourceUnit = this._sourceUnit;
+            result._lineMap = this._lineMap;
 
-    public diagnostics(): SyntaxDiagnostic[] {
-        return this._diagnostics;
-    }
+            return result;
+        }
 
-    public lineMap(): ILineMap {
-        return this._lineMap;
-    }
+        public sourceUnit(): SourceUnitSyntax {
+            return this._sourceUnit;
+        }
 
-    public structuralEquals(tree: SyntaxTree): bool {
-        return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), SyntaxDiagnostic.equals) &&
-            this.sourceUnit().structuralEquals(tree.sourceUnit());
+        public diagnostics(): SyntaxDiagnostic[] {
+            return this._diagnostics;
+        }
+
+        public lineMap(): ILineMap {
+            return this._lineMap;
+        }
+
+        public structuralEquals(tree: SyntaxTree): bool {
+            return ArrayUtilities.sequenceEquals(this.diagnostics(), tree.diagnostics(), SyntaxDiagnostic.equals) &&
+                this.sourceUnit().structuralEquals(tree.sourceUnit());
+        }
     }
 }

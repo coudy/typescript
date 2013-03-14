@@ -1,11 +1,12 @@
 ﻿///<reference path='..\Text\CharacterCodes.ts' />
 ///<reference path='SyntaxKind.ts' />
 
-class ScannerUtilities {
-    public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {
-        switch (length) {
-        case 2:
-            // do, if, in
+module TypeScript {
+    export class ScannerUtilities {
+        public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {
+            switch (length) {
+            case 2:
+                // do, if, in
             switch(array[startIndex]) {
             case CharacterCodes.d:
                 // do
@@ -27,8 +28,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 3:
-            // for, new, try, var, let, any, get, set
+            case 3:
+                // for, new, try, var, let, any, get, set
             switch(array[startIndex]) {
             case CharacterCodes.f:
                 // for
@@ -58,8 +59,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 4:
-            // case, else, null, this, true, void, with, enum, bool
+            case 4:
+                // case, else, null, this, true, void, with, enum, bool
             switch(array[startIndex]) {
             case CharacterCodes.c:
                 // case
@@ -106,8 +107,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 5:
-            // break, catch, false, throw, while, class, const, super, yield
+            case 5:
+                // break, catch, false, throw, while, class, const, super, yield
             switch(array[startIndex]) {
             case CharacterCodes.b:
                 // break
@@ -147,8 +148,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 6:
-            // delete, return, switch, typeof, export, import, public, static, module, number, string
+            case 6:
+                // delete, return, switch, typeof, export, import, public, static, module, number, string
             switch(array[startIndex]) {
             case CharacterCodes.d:
                 // delete
@@ -201,8 +202,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 7:
-            // default, finally, extends, package, private, boolean, declare
+            case 7:
+                // default, finally, extends, package, private, boolean, declare
             switch(array[startIndex]) {
             case CharacterCodes.d:
                 // default, declare
@@ -250,8 +251,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 8:
-            // continue, debugger, function
+            case 8:
+                // continue, debugger, function
             switch(array[startIndex]) {
             case CharacterCodes.c:
                 // continue
@@ -266,8 +267,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 9:
-            // interface, protected
+            case 9:
+                // interface, protected
             switch(array[startIndex]) {
             case CharacterCodes.i:
                 // interface
@@ -279,8 +280,8 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 10:
-            // instanceof, implements
+            case 10:
+                // instanceof, implements
             switch(array[startIndex]) {
             case CharacterCodes.i:
                 // instanceof, implements
@@ -299,11 +300,12 @@ class ScannerUtilities {
                 return SyntaxKind.IdentifierName;
             }
 
-        case 11:
-            // constructor
+            case 11:
+                // constructor
             return (array[startIndex] === CharacterCodes.c && array[startIndex + 1] === CharacterCodes.o && array[startIndex + 2] === CharacterCodes.n && array[startIndex + 3] === CharacterCodes.s && array[startIndex + 4] === CharacterCodes.t && array[startIndex + 5] === CharacterCodes.r && array[startIndex + 6] === CharacterCodes.u && array[startIndex + 7] === CharacterCodes.c && array[startIndex + 8] === CharacterCodes.t && array[startIndex + 9] === CharacterCodes.o && array[startIndex + 10] === CharacterCodes.r) ? SyntaxKind.ConstructorKeyword : SyntaxKind.IdentifierName;
-        default:
-            return SyntaxKind.IdentifierName;
+            default:
+                return SyntaxKind.IdentifierName;
+            }
         }
     }
 }

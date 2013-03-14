@@ -2,7 +2,7 @@
 ///<reference path='FormattingOptions.ts' />
 ///<reference path='SyntaxInformationMap.ts' />
 
-module Indentation {
+module TypeScript.Indentation {
     export function columnForEndOfToken(token: ISyntaxToken,
                                         syntaxInformationMap: SyntaxInformationMap,
                                         options: FormattingOptions): number {

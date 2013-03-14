@@ -244,7 +244,7 @@ module Services {
             return _resultToJSON([]);
         }
 
-        private static realizeDiagnostic(diagnostic: IDiagnostic): { message: string; start: number; length: number; } {
+        private static realizeDiagnostic(diagnostic: TypeScript.IDiagnostic): { message: string; start: number; length: number; } {
             return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
         }
 

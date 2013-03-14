@@ -17,13 +17,13 @@
 
 module Services {
     export class Indenter {
-        static public getIndentation(node: SourceUnitSyntax, soruceText: TypeScript.IScriptSnapshot, position: number, editorOptions: Services.EditorOptions): number {
+        static public getIndentation(node: TypeScript.SourceUnitSyntax, soruceText: TypeScript.IScriptSnapshot, position: number, editorOptions: Services.EditorOptions): number {
             
             var indentation = 0;
             var currentToken = node.findToken(position);
-            var currentNode: PositionedElement = currentToken;
+            var currentNode: TypeScript.PositionedElement = currentToken;
 
-            if (currentToken.token().kind() === SyntaxKind.EndOfFileToken) {
+            if (currentToken.token().kind() === TypeScript.SyntaxKind.EndOfFileToken) {
                 // Ignore EOF tokens, pick the one before it
                 currentNode = currentToken.previousToken();
             } else if (Indenter.belongsToBracket(soruceText, currentToken, position)) {
@@ -60,19 +60,19 @@ module Services {
             return indentation;
         }
 
-        private static belongsToBracket(sourceText: TypeScript.IScriptSnapshot, token: PositionedToken, position: number): bool {
+        private static belongsToBracket(sourceText: TypeScript.IScriptSnapshot, token: TypeScript.PositionedToken, position: number): bool {
             switch (token.token().kind()) {
-                case SyntaxKind.OpenBraceToken:
-                case SyntaxKind.CloseBraceToken:
-                case SyntaxKind.OpenParenToken:
-                case SyntaxKind.CloseParenToken:
-                case SyntaxKind.OpenBracketToken:
-                case SyntaxKind.CloseBracketToken:
+                case TypeScript.SyntaxKind.OpenBraceToken:
+                case TypeScript.SyntaxKind.CloseBraceToken:
+                case TypeScript.SyntaxKind.OpenParenToken:
+                case TypeScript.SyntaxKind.CloseParenToken:
+                case TypeScript.SyntaxKind.OpenBracketToken:
+                case TypeScript.SyntaxKind.CloseBracketToken:
                     // the current token is a bracket, check if the current position is separated from it by a new line
                     if (position < token.start()) {
                         var text = sourceText.getText(position, token.start());
                         for(var i = 0; i< text.length; i++){
-                            if (CharacterInfo.isLineTerminator(text.charCodeAt(i))) {
+                            if (TypeScript.CharacterInfo.isLineTerminator(text.charCodeAt(i))) {
                                 return false;
                             }    
                         }
@@ -82,58 +82,58 @@ module Services {
             return false;
         }
 
-        private static isInContainerNode(parent: ISyntaxElement, element: ISyntaxElement): bool {
+        private static isInContainerNode(parent: TypeScript.ISyntaxElement, element: TypeScript.ISyntaxElement): bool {
             switch (parent.kind()) {
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.ModuleDeclaration:
-                case SyntaxKind.EnumDeclaration:
-                case SyntaxKind.ImportDeclaration:
-                case SyntaxKind.Block:
-                case SyntaxKind.SwitchStatement:
-                case SyntaxKind.CaseSwitchClause:
-                case SyntaxKind.DefaultSwitchClause:
+                case TypeScript.SyntaxKind.ClassDeclaration:
+                case TypeScript.SyntaxKind.ModuleDeclaration:
+                case TypeScript.SyntaxKind.EnumDeclaration:
+                case TypeScript.SyntaxKind.ImportDeclaration:
+                case TypeScript.SyntaxKind.Block:
+                case TypeScript.SyntaxKind.SwitchStatement:
+                case TypeScript.SyntaxKind.CaseSwitchClause:
+                case TypeScript.SyntaxKind.DefaultSwitchClause:
                     return true;
 
-                case SyntaxKind.ObjectType:
+                case TypeScript.SyntaxKind.ObjectType:
                     return true;
 
-                case SyntaxKind.InterfaceDeclaration:
-                    return element.kind() !== SyntaxKind.ObjectType;
+                case TypeScript.SyntaxKind.InterfaceDeclaration:
+                    return element.kind() !== TypeScript.SyntaxKind.ObjectType;
 
-                case SyntaxKind.FunctionDeclaration:
-                case SyntaxKind.MemberFunctionDeclaration:
-                case SyntaxKind.GetMemberAccessorDeclaration:
-                case SyntaxKind.SetMemberAccessorDeclaration:
-                case SyntaxKind.GetAccessorPropertyAssignment:
-                case SyntaxKind.SetAccessorPropertyAssignment:
-                case SyntaxKind.FunctionExpression:
-                case SyntaxKind.CatchClause:
-                case SyntaxKind.FinallyClause:
-                case SyntaxKind.FunctionDeclaration:
-                case SyntaxKind.ConstructorDeclaration:
-                case SyntaxKind.ForStatement:
-                case SyntaxKind.ForInStatement:
-                case SyntaxKind.WhileStatement:
-                case SyntaxKind.DoStatement:
-                case SyntaxKind.WithStatement:
-                case SyntaxKind.IfStatement:
-                case SyntaxKind.ElseClause:
+                case TypeScript.SyntaxKind.FunctionDeclaration:
+                case TypeScript.SyntaxKind.MemberFunctionDeclaration:
+                case TypeScript.SyntaxKind.GetMemberAccessorDeclaration:
+                case TypeScript.SyntaxKind.SetMemberAccessorDeclaration:
+                case TypeScript.SyntaxKind.GetAccessorPropertyAssignment:
+                case TypeScript.SyntaxKind.SetAccessorPropertyAssignment:
+                case TypeScript.SyntaxKind.FunctionExpression:
+                case TypeScript.SyntaxKind.CatchClause:
+                case TypeScript.SyntaxKind.FinallyClause:
+                case TypeScript.SyntaxKind.FunctionDeclaration:
+                case TypeScript.SyntaxKind.ConstructorDeclaration:
+                case TypeScript.SyntaxKind.ForStatement:
+                case TypeScript.SyntaxKind.ForInStatement:
+                case TypeScript.SyntaxKind.WhileStatement:
+                case TypeScript.SyntaxKind.DoStatement:
+                case TypeScript.SyntaxKind.WithStatement:
+                case TypeScript.SyntaxKind.IfStatement:
+                case TypeScript.SyntaxKind.ElseClause:
                     // The block has already been conted before, ignore the container node
-                    return element.kind() !== SyntaxKind.Block;
+                    return element.kind() !== TypeScript.SyntaxKind.Block;
 
-                case SyntaxKind.TryStatement:
+                case TypeScript.SyntaxKind.TryStatement:
                     // If inside the try body, the block element will take care of the indentation
                     // If not, we do not want to indent, as the next token would probally be catch or finally
                     // and we want these on the same indentation level.
                     return false;
                 default:
-                    return parent.isNode() && (<SyntaxNode>parent).isStatement();
+                    return parent.isNode() && (<TypeScript.SyntaxNode>parent).isStatement();
             }
         }
 
-        private static getCustomListIndentation(list: ISyntaxElement, element: ISyntaxElement): number {
+        private static getCustomListIndentation(list: TypeScript.ISyntaxElement, element: TypeScript.ISyntaxElement): number {
             switch (list.kind()) {
-                case SyntaxKind.SeparatedList:
+                case TypeScript.SyntaxKind.SeparatedList:
                     // If it is the first in the list, let it have its parents indentation; no custom indentation here.
                     for (var i = 0, n = list.childCount(); i < n ; i++) {
                         var child = list.childAt(i);
@@ -142,40 +142,40 @@ module Services {
                     }
                     break;
 
-                case SyntaxKind.ArgumentList:
+                case TypeScript.SyntaxKind.ArgumentList:
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
-                    var argumentList = <ArgumentListSyntax> list;
+                    var argumentList = <TypeScript.ArgumentListSyntax> list;
                     var arguments = argumentList.arguments;
                     if (arguments !== null && argumentList.closeParenToken === element) {
                         return Indenter.getListItemIndentation(arguments, arguments.childCount() - 1);
                     }
                     break;
 
-                case SyntaxKind.ParameterList:
+                case TypeScript.SyntaxKind.ParameterList:
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
-                    var parameterList = <ParameterListSyntax> list;
+                    var parameterList = <TypeScript.ParameterListSyntax> list;
                     var parameters = parameterList.parameters;
                     if (parameters !== null && parameterList.closeParenToken === element) {
                         return Indenter.getListItemIndentation(parameters, parameters.childCount() - 1);
                     }
                     break;
 
-                case SyntaxKind.TypeArgumentList:
+                case TypeScript.SyntaxKind.TypeArgumentList:
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
-                    var typeArgumentList = <TypeArgumentListSyntax> list;
+                    var typeArgumentList = <TypeScript.TypeArgumentListSyntax> list;
                     var typeArguments = typeArgumentList.typeArguments;
                     if (typeArguments !== null && typeArgumentList.greaterThanToken === element) {
                         return Indenter.getListItemIndentation(typeArguments, typeArguments.childCount() - 1);
                     }
                     break;
 
-                case SyntaxKind.TypeParameterList:
+                case TypeScript.SyntaxKind.TypeParameterList:
                     // The separated list has been handled in the previous case, this is just if we are after
                     // the last element of the list, we want to get the indentation of the last element of the list
-                    var typeParameterList = <TypeParameterListSyntax> list;
+                    var typeParameterList = <TypeScript.TypeParameterListSyntax> list;
                     var typeParameters = typeParameterList.typeParameters;
                     if (typeParameters !== null && typeParameterList.greaterThanToken === element) {
                         return Indenter.getListItemIndentation(typeParameters, typeParameters.childCount() - 1);
@@ -185,7 +185,7 @@ module Services {
             return -1;
         }
 
-        private static getListItemIndentation(list: ISyntaxElement, elementIndex: number): number {
+        private static getListItemIndentation(list: TypeScript.ISyntaxElement, elementIndex: number): number {
             for (var i = elementIndex; i > 0 ; i--) {
                 var child = list.childAt(i);
                 var previousChild = list.childAt(i - 1);

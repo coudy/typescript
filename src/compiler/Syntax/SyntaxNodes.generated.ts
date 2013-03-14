@@ -6,7 +6,8 @@
 ///<reference path='SyntaxToken.ts' />
 ///<reference path='Syntax.ts' />
 
-class SourceUnitSyntax extends SyntaxNode {
+module TypeScript {
+    export class SourceUnitSyntax extends SyntaxNode {
 
     constructor(public moduleElements: ISyntaxList,
                 public endOfFileToken: ISyntaxToken,
@@ -76,9 +77,9 @@ class SourceUnitSyntax extends SyntaxNode {
         if (this.moduleElements.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
+    export class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax {
     constructor(parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
     }
@@ -98,9 +99,9 @@ class ModuleReferenceSyntax extends SyntaxNode implements IModuleReferenceSyntax
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
+    export class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     constructor(public moduleKeyword: ISyntaxToken,
                 public openParenToken: ISyntaxToken,
@@ -175,9 +176,9 @@ class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
+    export class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
 
     constructor(public moduleName: INameSyntax,
                 parsedInStrictMode: bool) {
@@ -227,9 +228,9 @@ class ModuleNameModuleReferenceSyntax extends ModuleReferenceSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
+    export class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     constructor(public importKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
@@ -316,9 +317,9 @@ class ImportDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ExportAssignmentSyntax extends SyntaxNode implements IModuleElementSyntax {
+    export class ExportAssignmentSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     constructor(public exportKeyword: ISyntaxToken,
                 public equalsToken: ISyntaxToken,
@@ -397,9 +398,9 @@ class ExportAssignmentSyntax extends SyntaxNode implements IModuleElementSyntax 
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
+    export class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     constructor(public exportKeyword: ISyntaxToken,
                 public declareKeyword: ISyntaxToken,
@@ -531,9 +532,9 @@ class ClassDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax 
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
+    export class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     constructor(public exportKeyword: ISyntaxToken,
                 public interfaceKeyword: ISyntaxToken,
@@ -632,9 +633,9 @@ class InterfaceDeclarationSyntax extends SyntaxNode implements IModuleElementSyn
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ExtendsClauseSyntax extends SyntaxNode {
+    export class ExtendsClauseSyntax extends SyntaxNode {
 
     constructor(public extendsKeyword: ISyntaxToken,
                 public typeNames: ISeparatedSyntaxList,
@@ -699,9 +700,9 @@ class ExtendsClauseSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ImplementsClauseSyntax extends SyntaxNode {
+    export class ImplementsClauseSyntax extends SyntaxNode {
 
     constructor(public implementsKeyword: ISyntaxToken,
                 public typeNames: ISeparatedSyntaxList,
@@ -766,9 +767,9 @@ class ImplementsClauseSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
+    export class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     constructor(public exportKeyword: ISyntaxToken,
                 public declareKeyword: ISyntaxToken,
@@ -885,9 +886,9 @@ class ModuleDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
+    export class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public exportKeyword: ISyntaxToken,
                 public declareKeyword: ISyntaxToken,
@@ -993,9 +994,9 @@ class FunctionDeclarationSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.block !== null && this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public exportKeyword: ISyntaxToken,
                 public declareKeyword: ISyntaxToken,
@@ -1086,9 +1087,9 @@ class VariableStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.variableDeclaration.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class VariableDeclarationSyntax extends SyntaxNode {
+    export class VariableDeclarationSyntax extends SyntaxNode {
 
     constructor(public varKeyword: ISyntaxToken,
                 public variableDeclarators: ISeparatedSyntaxList,
@@ -1154,9 +1155,9 @@ class VariableDeclarationSyntax extends SyntaxNode {
         if (this.variableDeclarators.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class VariableDeclaratorSyntax extends SyntaxNode implements IEnumElementSyntax {
+    export class VariableDeclaratorSyntax extends SyntaxNode implements IEnumElementSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public typeAnnotation: TypeAnnotationSyntax,
@@ -1234,9 +1235,9 @@ class VariableDeclaratorSyntax extends SyntaxNode implements IEnumElementSyntax 
         if (this.equalsValueClause !== null && this.equalsValueClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class EqualsValueClauseSyntax extends SyntaxNode {
+    export class EqualsValueClauseSyntax extends SyntaxNode {
 
     constructor(public equalsToken: ISyntaxToken,
                 public value: IExpressionSyntax,
@@ -1298,9 +1299,9 @@ class EqualsValueClauseSyntax extends SyntaxNode {
         if (this.value.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ColonValueClauseSyntax extends SyntaxNode {
+    export class ColonValueClauseSyntax extends SyntaxNode {
 
     constructor(public colonToken: ISyntaxToken,
                 public value: IExpressionSyntax,
@@ -1362,9 +1363,9 @@ class ColonValueClauseSyntax extends SyntaxNode {
         if (this.value.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
 
     constructor(kind: SyntaxKind,
@@ -1438,9 +1439,9 @@ class PrefixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpression
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public openBracketToken: ISyntaxToken,
                 public expressions: ISeparatedSyntaxList,
@@ -1526,9 +1527,9 @@ class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         if (this.expressions.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
+    export class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     constructor(parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
     }
@@ -1568,9 +1569,9 @@ class OmittedExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public openParenToken: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -1647,9 +1648,9 @@ class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     constructor(public equalsGreaterThanToken: ISyntaxToken,
                 public body: ISyntaxNodeOrToken,
                 parsedInStrictMode: bool) {
@@ -1675,9 +1676,9 @@ class ArrowFunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressi
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
+    export class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 equalsGreaterThanToken: ISyntaxToken,
@@ -1746,9 +1747,9 @@ class SimpleArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax 
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
+    export class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpressionSyntax {
 
     constructor(public callSignature: CallSignatureSyntax,
                 equalsGreaterThanToken: ISyntaxToken,
@@ -1816,9 +1817,9 @@ class ParenthesizedArrowFunctionExpressionSyntax extends ArrowFunctionExpression
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
+    export class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
 
     constructor(public left: INameSyntax,
                 public dotToken: ISyntaxToken,
@@ -1903,9 +1904,9 @@ class QualifiedNameSyntax extends SyntaxNode implements INameSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class TypeArgumentListSyntax extends SyntaxNode {
+    export class TypeArgumentListSyntax extends SyntaxNode {
 
     constructor(public lessThanToken: ISyntaxToken,
                 public typeArguments: ISeparatedSyntaxList,
@@ -1982,9 +1983,9 @@ class TypeArgumentListSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
+    export class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     constructor(public newKeyword: ISyntaxToken,
                 public typeParameterList: TypeParameterListSyntax,
@@ -2085,9 +2086,9 @@ class ConstructorTypeSyntax extends SyntaxNode implements ITypeSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
+    export class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     constructor(public typeParameterList: TypeParameterListSyntax,
                 public parameterList: ParameterListSyntax,
@@ -2180,9 +2181,9 @@ class FunctionTypeSyntax extends SyntaxNode implements ITypeSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
+    export class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     constructor(public openBraceToken: ISyntaxToken,
                 public typeMembers: ISeparatedSyntaxList,
@@ -2271,9 +2272,9 @@ class ObjectTypeSyntax extends SyntaxNode implements ITypeSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
+    export class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     constructor(public type: ITypeSyntax,
                 public openBracketToken: ISyntaxToken,
@@ -2353,9 +2354,9 @@ class ArrayTypeSyntax extends SyntaxNode implements ITypeSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
+    export class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
 
     constructor(public name: INameSyntax,
                 public typeArgumentList: TypeArgumentListSyntax,
@@ -2428,9 +2429,9 @@ class GenericTypeSyntax extends SyntaxNode implements ITypeSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class TypeAnnotationSyntax extends SyntaxNode {
+    export class TypeAnnotationSyntax extends SyntaxNode {
 
     constructor(public colonToken: ISyntaxToken,
                 public type: ITypeSyntax,
@@ -2491,9 +2492,9 @@ class TypeAnnotationSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class BlockSyntax extends SyntaxNode implements IStatementSyntax {
+    export class BlockSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public openBraceToken: ISyntaxToken,
                 public statements: ISyntaxList,
@@ -2579,9 +2580,9 @@ class BlockSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ParameterSyntax extends SyntaxNode {
+    export class ParameterSyntax extends SyntaxNode {
 
     constructor(public dotDotDotToken: ISyntaxToken,
                 public publicOrPrivateKeyword: ISyntaxToken,
@@ -2679,9 +2680,9 @@ class ParameterSyntax extends SyntaxNode {
         if (this.equalsValueClause !== null) { return true; }
         return false;
     }
-}
+    }
 
-class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public expression: IExpressionSyntax,
                 public dotToken: ISyntaxToken,
@@ -2759,9 +2760,9 @@ class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
     private _kind: SyntaxKind;
 
     constructor(kind: SyntaxKind,
@@ -2835,9 +2836,9 @@ class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressio
         if (this.operand.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public expression: IExpressionSyntax,
                 public openBracketToken: ISyntaxToken,
@@ -2923,9 +2924,9 @@ class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         if (this.argumentExpression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public expression: IExpressionSyntax,
                 public argumentList: ArgumentListSyntax,
@@ -2996,9 +2997,9 @@ class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionS
         if (this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ArgumentListSyntax extends SyntaxNode {
+    export class ArgumentListSyntax extends SyntaxNode {
 
     constructor(public typeArgumentList: TypeArgumentListSyntax,
                 public openParenToken: ISyntaxToken,
@@ -3084,9 +3085,9 @@ class ArgumentListSyntax extends SyntaxNode {
         if (this.arguments.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
+    export class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
     private _kind: SyntaxKind;
 
     constructor(kind: SyntaxKind,
@@ -3164,9 +3165,9 @@ class BinaryExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
         if (this.right.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
+    export class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSyntax {
 
     constructor(public condition: IExpressionSyntax,
                 public questionToken: ISyntaxToken,
@@ -3257,9 +3258,9 @@ class ConditionalExpressionSyntax extends SyntaxNode implements IExpressionSynta
         if (this.whenFalse.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
+    export class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
     constructor(parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
     }
@@ -3279,9 +3280,9 @@ class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ConstructSignatureSyntax extends TypeMemberSyntax {
+    export class ConstructSignatureSyntax extends TypeMemberSyntax {
 
     constructor(public newKeyword: ISyntaxToken,
                 public callSignature: CallSignatureSyntax,
@@ -3342,9 +3343,9 @@ class ConstructSignatureSyntax extends TypeMemberSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class FunctionSignatureSyntax extends TypeMemberSyntax {
+    export class FunctionSignatureSyntax extends TypeMemberSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public questionToken: ISyntaxToken,
@@ -3418,9 +3419,9 @@ class FunctionSignatureSyntax extends TypeMemberSyntax {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class IndexSignatureSyntax extends TypeMemberSyntax {
+    export class IndexSignatureSyntax extends TypeMemberSyntax {
 
     constructor(public openBracketToken: ISyntaxToken,
                 public parameter: ParameterSyntax,
@@ -3501,9 +3502,9 @@ class IndexSignatureSyntax extends TypeMemberSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class PropertySignatureSyntax extends TypeMemberSyntax {
+    export class PropertySignatureSyntax extends TypeMemberSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public questionToken: ISyntaxToken,
@@ -3575,9 +3576,9 @@ class PropertySignatureSyntax extends TypeMemberSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ParameterListSyntax extends SyntaxNode {
+    export class ParameterListSyntax extends SyntaxNode {
 
     constructor(public openParenToken: ISyntaxToken,
                 public parameters: ISeparatedSyntaxList,
@@ -3655,9 +3656,9 @@ class ParameterListSyntax extends SyntaxNode {
         if (this.parameters.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class CallSignatureSyntax extends TypeMemberSyntax {
+    export class CallSignatureSyntax extends TypeMemberSyntax {
 
     constructor(public typeParameterList: TypeParameterListSyntax,
                 public parameterList: ParameterListSyntax,
@@ -3732,9 +3733,9 @@ class CallSignatureSyntax extends TypeMemberSyntax {
         if (this.typeAnnotation !== null) { return true; }
         return false;
     }
-}
+    }
 
-class TypeParameterListSyntax extends SyntaxNode {
+    export class TypeParameterListSyntax extends SyntaxNode {
 
     constructor(public lessThanToken: ISyntaxToken,
                 public typeParameters: ISeparatedSyntaxList,
@@ -3811,9 +3812,9 @@ class TypeParameterListSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class TypeParameterSyntax extends SyntaxNode {
+    export class TypeParameterSyntax extends SyntaxNode {
 
     constructor(public identifier: ISyntaxToken,
                 public constraint: ConstraintSyntax,
@@ -3878,9 +3879,9 @@ class TypeParameterSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ConstraintSyntax extends SyntaxNode {
+    export class ConstraintSyntax extends SyntaxNode {
 
     constructor(public extendsKeyword: ISyntaxToken,
                 public type: ITypeSyntax,
@@ -3941,9 +3942,9 @@ class ConstraintSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ElseClauseSyntax extends SyntaxNode {
+    export class ElseClauseSyntax extends SyntaxNode {
 
     constructor(public elseKeyword: ISyntaxToken,
                 public statement: IStatementSyntax,
@@ -4005,9 +4006,9 @@ class ElseClauseSyntax extends SyntaxNode {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public ifKeyword: ISyntaxToken,
                 public openParenToken: ISyntaxToken,
@@ -4116,9 +4117,9 @@ class IfStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.elseClause !== null && this.elseClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public expression: IExpressionSyntax,
                 public semicolonToken: ISyntaxToken,
@@ -4188,9 +4189,9 @@ class ExpressionStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSyntax {
+    export class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSyntax {
 
     constructor(public constructorKeyword: ISyntaxToken,
                 public parameterList: ParameterListSyntax,
@@ -4274,9 +4275,9 @@ class ConstructorDeclarationSyntax extends SyntaxNode implements IClassElementSy
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
+    export class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
 
     constructor(public publicOrPrivateKeyword: ISyntaxToken,
                 public staticKeyword: ISyntaxToken,
@@ -4370,9 +4371,9 @@ class MemberFunctionDeclarationSyntax extends SyntaxNode implements IMemberDecla
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
+    export class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
     constructor(public publicOrPrivateKeyword: ISyntaxToken,
                 public staticKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
@@ -4401,9 +4402,9 @@ class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDecla
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
+    export class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
@@ -4506,9 +4507,9 @@ class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
+    export class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
 
     constructor(publicOrPrivateKeyword: ISyntaxToken,
                 staticKeyword: ISyntaxToken,
@@ -4604,9 +4605,9 @@ class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
+    export class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
 
     constructor(public publicOrPrivateKeyword: ISyntaxToken,
                 public staticKeyword: ISyntaxToken,
@@ -4694,9 +4695,9 @@ class MemberVariableDeclarationSyntax extends SyntaxNode implements IMemberDecla
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public throwKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -4773,9 +4774,9 @@ class ThrowStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public returnKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -4857,9 +4858,9 @@ class ReturnStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.expression !== null && this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public newKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -4942,9 +4943,9 @@ class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpress
         if (this.argumentList !== null && this.argumentList.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public switchKeyword: ISyntaxToken,
                 public openParenToken: ISyntaxToken,
@@ -5063,9 +5064,9 @@ class SwitchStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.switchClauses.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
+    export class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
     constructor(public colonToken: ISyntaxToken,
                 public statements: ISyntaxList,
                 parsedInStrictMode: bool) {
@@ -5087,9 +5088,9 @@ class SwitchClauseSyntax extends SyntaxNode implements ISwitchClauseSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
+    export class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
 
     constructor(public caseKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -5176,9 +5177,9 @@ class CaseSwitchClauseSyntax extends SwitchClauseSyntax {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
+    export class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
 
     constructor(public defaultKeyword: ISyntaxToken,
                 colonToken: ISyntaxToken,
@@ -5256,9 +5257,9 @@ class DefaultSwitchClauseSyntax extends SwitchClauseSyntax {
         if (this.statements.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public breakKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
@@ -5339,9 +5340,9 @@ class BreakStatementSyntax extends SyntaxNode implements IStatementSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public continueKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
@@ -5422,9 +5423,9 @@ class ContinueStatementSyntax extends SyntaxNode implements IStatementSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
     constructor(public openParenToken: ISyntaxToken,
                 public closeParenToken: ISyntaxToken,
                 public statement: IStatementSyntax,
@@ -5451,9 +5452,9 @@ class IterationStatementSyntax extends SyntaxNode implements IStatementSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class BaseForStatementSyntax extends IterationStatementSyntax {
+    export class BaseForStatementSyntax extends IterationStatementSyntax {
     constructor(public forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
                 public variableDeclaration: VariableDeclarationSyntax,
@@ -5474,9 +5475,9 @@ class BaseForStatementSyntax extends IterationStatementSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class ForStatementSyntax extends BaseForStatementSyntax {
+    export class ForStatementSyntax extends BaseForStatementSyntax {
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -5607,9 +5608,9 @@ class ForStatementSyntax extends BaseForStatementSyntax {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class ForInStatementSyntax extends BaseForStatementSyntax {
+    export class ForInStatementSyntax extends BaseForStatementSyntax {
 
     constructor(forKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -5726,9 +5727,9 @@ class ForInStatementSyntax extends BaseForStatementSyntax {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class WhileStatementSyntax extends IterationStatementSyntax {
+    export class WhileStatementSyntax extends IterationStatementSyntax {
 
     constructor(public whileKeyword: ISyntaxToken,
                 openParenToken: ISyntaxToken,
@@ -5813,9 +5814,9 @@ class WhileStatementSyntax extends IterationStatementSyntax {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public withKeyword: ISyntaxToken,
                 public openParenToken: ISyntaxToken,
@@ -5908,9 +5909,9 @@ class WithStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
+    export class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
 
     constructor(public exportKeyword: ISyntaxToken,
                 public enumKeyword: ISyntaxToken,
@@ -6014,9 +6015,9 @@ class EnumDeclarationSyntax extends SyntaxNode implements IModuleElementSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class EnumElementSyntax extends SyntaxNode implements IEnumElementSyntax {
+    export class EnumElementSyntax extends SyntaxNode implements IEnumElementSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public stringLiteral: ISyntaxToken,
@@ -6092,9 +6093,9 @@ class EnumElementSyntax extends SyntaxNode implements IEnumElementSyntax {
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public lessThanToken: ISyntaxToken,
                 public type: ITypeSyntax,
@@ -6178,9 +6179,9 @@ class CastExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
     public isTypeScriptSpecific(): bool {
         return true;
     }
-}
+    }
 
-class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public openBraceToken: ISyntaxToken,
                 public propertyAssignments: ISeparatedSyntaxList,
@@ -6266,9 +6267,9 @@ class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressi
         if (this.propertyAssignments.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class PropertyAssignmentSyntax extends SyntaxNode {
+    export class PropertyAssignmentSyntax extends SyntaxNode {
     constructor(public propertyName: ISyntaxToken,
                 parsedInStrictMode: bool) {
         super(parsedInStrictMode); 
@@ -6285,9 +6286,9 @@ class PropertyAssignmentSyntax extends SyntaxNode {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+    export class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
 
     constructor(propertyName: ISyntaxToken,
                 public colonToken: ISyntaxToken,
@@ -6357,9 +6358,9 @@ class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+    export class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     constructor(propertyName: ISyntaxToken,
                 public openParenToken: ISyntaxToken,
                 public closeParenToken: ISyntaxToken,
@@ -6379,9 +6380,9 @@ class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
+    export class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
 
     constructor(public getKeyword: ISyntaxToken,
                 propertyName: ISyntaxToken,
@@ -6480,9 +6481,9 @@ class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
+    export class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
 
     constructor(public setKeyword: ISyntaxToken,
                 propertyName: ISyntaxToken,
@@ -6574,9 +6575,9 @@ class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSynt
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public functionKeyword: ISyntaxToken,
                 public identifier: ISyntaxToken,
@@ -6667,9 +6668,9 @@ class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyn
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
@@ -6731,9 +6732,9 @@ class EmptyStatementSyntax extends SyntaxNode implements IStatementSyntax {
     public isTypeScriptSpecific(): bool {
         return false;
     }
-}
+    }
 
-class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public tryKeyword: ISyntaxToken,
                 public block: BlockSyntax,
@@ -6824,9 +6825,9 @@ class TryStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.finallyClause !== null && this.finallyClause.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class CatchClauseSyntax extends SyntaxNode {
+    export class CatchClauseSyntax extends SyntaxNode {
 
     constructor(public catchKeyword: ISyntaxToken,
                 public openParenToken: ISyntaxToken,
@@ -6909,9 +6910,9 @@ class CatchClauseSyntax extends SyntaxNode {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class FinallyClauseSyntax extends SyntaxNode {
+    export class FinallyClauseSyntax extends SyntaxNode {
 
     constructor(public finallyKeyword: ISyntaxToken,
                 public block: BlockSyntax,
@@ -6973,9 +6974,9 @@ class FinallyClauseSyntax extends SyntaxNode {
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public colonToken: ISyntaxToken,
@@ -7053,9 +7054,9 @@ class LabeledStatementSyntax extends SyntaxNode implements IStatementSyntax {
         if (this.statement.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class DoStatementSyntax extends IterationStatementSyntax {
+    export class DoStatementSyntax extends IterationStatementSyntax {
 
     constructor(public doKeyword: ISyntaxToken,
                 statement: IStatementSyntax,
@@ -7154,9 +7155,9 @@ class DoStatementSyntax extends IterationStatementSyntax {
         if (this.condition.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public typeOfKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -7226,9 +7227,9 @@ class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public deleteKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -7298,9 +7299,9 @@ class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSynta
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
     constructor(public voidKeyword: ISyntaxToken,
                 public expression: IExpressionSyntax,
@@ -7370,9 +7371,9 @@ class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax 
         if (this.expression.isTypeScriptSpecific()) { return true; }
         return false;
     }
-}
+    }
 
-class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
+    export class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     constructor(public debuggerKeyword: ISyntaxToken,
                 public semicolonToken: ISyntaxToken,
@@ -7440,5 +7441,6 @@ class DebuggerStatementSyntax extends SyntaxNode implements IStatementSyntax {
 
     public isTypeScriptSpecific(): bool {
         return false;
+    }
     }
 }

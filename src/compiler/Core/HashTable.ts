@@ -1,7 +1,7 @@
 ///<reference path='ArrayUtilities.ts' />
 ///<reference path='Hash.ts' />
 
-module Collections {
+module TypeScript.Collections {
     export var DefaultHashTableCapacity = 256;
 
     class HashTableEntry {
@@ -27,7 +27,7 @@ module Collections {
         }
 
         // Maps 'key' to 'value' in this table.  Does not throw if 'key' is already in the table.
-        public set(key: any, value: any) {
+        public set (key: any, value: any) {
             this.addOrSet(key, value, /*throwOnExistingEntry:*/ false);
         }
 
@@ -160,8 +160,8 @@ module Collections {
     }
 
     export function createHashTable(capacity: number = DefaultHashTableCapacity,
-                                    hash: (k: any) => number = null,
-                                    equals: (k1: any, k2: any) => bool = null): HashTable {
+        hash: (k: any) => number = null,
+        equals: (k1: any, k2: any) => bool = null): HashTable {
         return new HashTable(capacity, hash, equals);
     }
 

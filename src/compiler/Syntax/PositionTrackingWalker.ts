@@ -1,17 +1,19 @@
 ///<reference path='SyntaxWalker.generated.ts' />
 
-class PositionTrackingWalker extends SyntaxWalker {
-    private _position: number = 0;
+module TypeScript {
+    export class PositionTrackingWalker extends SyntaxWalker {
+        private _position: number = 0;
 
-    public visitToken(token: ISyntaxToken): void {
-        this._position += token.fullWidth();
-    }
+        public visitToken(token: ISyntaxToken): void {
+            this._position += token.fullWidth();
+        }
 
-    public position(): number {
-        return this._position;
-    }
+        public position(): number {
+            return this._position;
+        }
 
-    public skip(element: ISyntaxElement): void{
-        this._position += element.fullWidth();
+        public skip(element: ISyntaxElement): void {
+            this._position += element.fullWidth();
+        }
     }
 }

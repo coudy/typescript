@@ -3,7 +3,7 @@
 ///<reference path='ISyntaxTrivia.ts' />
 ///<reference path='..\Core\StringUtilities.ts' />
 
-module Syntax {
+module TypeScript.Syntax {
     class SyntaxTrivia implements ISyntaxTrivia {
         private _kind: SyntaxKind;
         private _text: string;

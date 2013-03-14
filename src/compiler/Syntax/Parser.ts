@@ -8,7 +8,7 @@
 /// <reference path='SyntaxTriviaList.ts' />
 /// <reference path='..\Text\TextChangeRange.ts' />
 
-module Parser1 {
+module TypeScript.Parser1 {
     // Information the parser needs to effectively rewind.
     interface IParserRewindPoint {
         // Information used by normal parser source.
@@ -417,7 +417,7 @@ module Parser1 {
         private slidingWindow: SlidingWindow;
 
         // The scanner we're pulling tokens from.
-        private scanner: Scanner;
+        private scanner: Scanner1;
 
         // The previous token to the current token.  Set when we advance to the next token.
         private _previousToken: ISyntaxToken = null;
@@ -439,7 +439,7 @@ module Parser1 {
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
-            this.scanner = new Scanner(text, languageVersion, stringTable);
+            this.scanner = new Scanner1(text, languageVersion, stringTable);
         }
 
         private currentNode(): SyntaxNode {

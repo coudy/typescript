@@ -10,11 +10,11 @@ module Services {
     export interface IPullLanguageService extends ILanguageService {
         host: ILanguageServiceHost;
 
-        getSyntacticErrors(fileName: string): IDiagnostic[];
-        getSemanticErrors(fileName: string): IDiagnostic[];
+        getSyntacticErrors(fileName: string): TypeScript.IDiagnostic[];
+        getSemanticErrors(fileName: string): TypeScript.IDiagnostic[];
 
-        getOutliningSpans(fileName: string): TextSpan[];
-        getMatchingBraceSpans(fileName: string, position: number): TextSpan[];
+        getOutliningSpans(fileName: string): TypeScript.TextSpan[];
+        getMatchingBraceSpans(fileName: string, position: number): TypeScript.TextSpan[];
         logSyntaxTree(fileName: string): void;
         getIndentation(fileName: string, position: number, options: Services.EditorOptions): number;
     }
@@ -931,7 +931,7 @@ module Services {
             new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
         }
 
-        public getSyntacticErrors(fileName: string): IDiagnostic[] {
+        public getSyntacticErrors(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
 
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
@@ -939,7 +939,7 @@ module Services {
             return syntaxTree.diagnostics();
         }
 
-        public getSemanticErrors(fileName: string): IDiagnostic[] {
+        public getSemanticErrors(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
             var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
 
@@ -1598,7 +1598,7 @@ module Services {
         // 
         // New IPullLanguageService features using Fiedlity Syntax Tree directelly
         //
-        public getOutliningSpans(fileName: string): TextSpan[] {
+        public getOutliningSpans(fileName: string): TypeScript.TextSpan[] {
             this.refresh();
 
             if (!this.pullCompilerState.getCompilationSettings().usePull) {
@@ -1609,7 +1609,7 @@ module Services {
             return OutliningElementsCollector.collectElements(syntaxTree.sourceUnit());
         }
 
-        public getMatchingBraceSpans(fileName: string, position: number): TextSpan[] {
+        public getMatchingBraceSpans(fileName: string, position: number): TypeScript.TextSpan[] {
             this.refresh();
 
             if (!this.pullCompilerState.getCompilationSettings().usePull) {

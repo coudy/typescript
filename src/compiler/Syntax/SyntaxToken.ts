@@ -2,7 +2,7 @@
 ///<reference path='..\Core\Hash.ts' />
 ///<reference path='Scanner.ts' />
 
-module Syntax {
+module TypeScript.Syntax {
     export function realize(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.tokenKind,
             token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
@@ -74,7 +74,7 @@ module Syntax {
             var text = token.text();
             for (var i = 0; i < text.length; i++) {
                 // TODO: handle unicode and escapes.
-                if (!Scanner.isIdentifierPartCharacter[text.charCodeAt(i)]) {
+                if (!Scanner1.isIdentifierPartCharacter[text.charCodeAt(i)]) {
                     return null;
                 }
             }

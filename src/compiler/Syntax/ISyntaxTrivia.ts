@@ -1,16 +1,18 @@
 ///<reference path='ISyntaxElement.ts' />
 
-interface ISyntaxTrivia {
-    kind(): SyntaxKind;
+module TypeScript {
+    export interface ISyntaxTrivia {
+        kind(): SyntaxKind;
 
-    isWhitespace(): bool;
-    isComment(): bool;
-    isNewLine(): bool;
-    isSkippedText(): bool;
+        isWhitespace(): bool;
+        isComment(): bool;
+        isNewLine(): bool;
+        isSkippedText(): bool;
 
-    // With of this trivia.
-    fullWidth(): number;
+        // With of this trivia.
+        fullWidth(): number;
 
-    // Text for this trivia.
-    fullText(): string;
+        // Text for this trivia.
+        fullText(): string;
+    }
 }

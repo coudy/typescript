@@ -17,25 +17,25 @@
 ///<reference path='..\compiler\syntax\SyntaxWalker.generated.ts' />
 
 module Services {
-    export class SyntaxNodeSerializer extends SyntaxWalker {
+    export class SyntaxNodeSerializer extends TypeScript.SyntaxWalker {
         private position: number = 0;
         private level: number = 0;
         public serializedAST: string = "";
 
-        public visitToken(token: ISyntaxToken): void {
+        public visitToken(token: TypeScript.ISyntaxToken): void {
             this.position += token.fullWidth();
             super.visitToken(token);
         }
 
-        public visitNode(node: SyntaxNode): void {
+        public visitNode(node: TypeScript.SyntaxNode): void {
             this.logNode(node);
             this.level++;
             super.visitNode(node);
             this.level--;
         }
 
-        public getNodeKindName(node: SyntaxNode): string {
-            return (<any>SyntaxKind)._map[node.kind()];
+        public getNodeKindName(node: TypeScript.SyntaxNode): string {
+            return (<any>TypeScript.SyntaxKind)._map[node.kind()];
         }
 
 
@@ -43,7 +43,7 @@ module Services {
             return node.identifier && node.identifier() ? node.identifier().value() : null;
         }
 
-        private logNode(node: SyntaxNode) {
+        private logNode(node: TypeScript.SyntaxNode) {
             var start = this.position + node.leadingTriviaWidth();
             var end = this.position + node.leadingTriviaWidth() + node.width();
             var name = this.getNodeName(node);
@@ -73,7 +73,7 @@ module Services {
             return result;
         }
 
-        public static serialize(node: SyntaxNode): string {
+        public static serialize(node: TypeScript.SyntaxNode): string {
             var serializer = new SyntaxNodeSerializer();
             node.accept(serializer);
             return serializer.serializedAST;

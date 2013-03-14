@@ -1,6 +1,6 @@
 ///<reference path='ISyntaxList.ts' />
 
-module Syntax {
+module TypeScript.Syntax {
     class EmptySyntaxList implements ISyntaxList {
         public kind(): SyntaxKind { return SyntaxKind.List; }
 

@@ -3,7 +3,7 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 ///<reference path='SyntaxTrivia.ts' />
 
-module Syntax {
+module TypeScript.Syntax {
     export var emptyTriviaList: ISyntaxTriviaList = {
         kind: (): SyntaxKind => SyntaxKind.TriviaList,
 

@@ -1,5 +1,7 @@
-interface IDiagnostic {
-    start(): number;
-    length(): number;
-    message(): string;
+module TypeScript {
+    export interface IDiagnostic {
+        start(): number;
+        length(): number;
+        message(): string;
+    }
 }

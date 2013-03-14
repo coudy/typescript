@@ -1,7 +1,7 @@
 ///<reference path='IText.ts' />
 ///<reference path='CharacterCodes.ts' />
 
-module TextUtilities {
+module TypeScript.TextUtilities {
     export function parseLineStarts(text: ISimpleText): number[]{
         var length = text.length();
 

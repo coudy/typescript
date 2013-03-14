@@ -230,7 +230,7 @@ module TypeScript {
         }
 
         private convertTokenLeadingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
-            if (!token.hasLeadingComment()) {
+            if (token === null || !token.hasLeadingComment()) {
                 return null;
             }
 
@@ -238,7 +238,7 @@ module TypeScript {
         }
 
         private convertTokenTrailingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
-            if (!token.hasTrailingComment()) {
+            if (token === null || !token.hasTrailingComment()) {
                 return null;
             }
 

@@ -7,7 +7,7 @@
 ///<reference path='SyntaxNodeInvariantsChecker.ts' />
 ///<reference path='Syntax.ts' />
 
-module Emitter {
+module TypeScript.Emitter1 {
     function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {
         return CallSignatureSyntax.create1().withParameterList(
             ParameterListSyntax.create1().withParameter(parameter));

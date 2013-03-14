@@ -2,7 +2,7 @@
 ///<reference path='Hash.ts' />
 ///<reference path='StringUtilities.ts' />
 
-module Collections {
+module TypeScript.Collections {
     export var DefaultStringTableCapacity = 256;
 
     class StringTableEntry {

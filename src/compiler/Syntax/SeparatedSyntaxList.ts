@@ -4,7 +4,7 @@
 ///<reference path='SyntaxFacts.ts' />
 ///<reference path='SyntaxFacts.ts' />
 
-module Syntax {
+module TypeScript.Syntax {
     export var emptySeparatedList: ISeparatedSyntaxList = {
         kind: () => SyntaxKind.SeparatedList,
 

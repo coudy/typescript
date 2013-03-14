@@ -1,24 +1,26 @@
 ///<reference path='ISyntaxElement.ts' />
 ///<reference path='ISyntaxTrivia.ts' />
 
-interface ISyntaxTriviaList {
-    count(): number;
-    syntaxTriviaAt(index: number): ISyntaxTrivia;
+module TypeScript {
+    export interface ISyntaxTriviaList {
+        count(): number;
+        syntaxTriviaAt(index: number): ISyntaxTrivia;
 
-    // With of this trivia list.
-    fullWidth(): number;
+        // With of this trivia list.
+        fullWidth(): number;
 
-    // Text for this trivia list.
-    fullText(): string;
+        // Text for this trivia list.
+        fullText(): string;
 
-    hasComment(): bool;
-    hasNewLine(): bool;
-    hasSkippedText(): bool;
+        hasComment(): bool;
+        hasNewLine(): bool;
+        hasSkippedText(): bool;
 
-    last(): ISyntaxTrivia;
-    toArray(): ISyntaxTrivia[];
+        last(): ISyntaxTrivia;
+        toArray(): ISyntaxTrivia[];
 
-    concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList;
+        concat(trivia: ISyntaxTriviaList): ISyntaxTriviaList;
 
-    collectTextElements(elements: string[]): void;
+        collectTextElements(elements: string[]): void;
+    }
 }

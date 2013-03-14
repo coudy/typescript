@@ -405,12 +405,12 @@ module Services {
 
             var newSourceText = this.getScriptSnapshot(previousScript);
 
-            var textChangeRange = new TextChangeRange(TextSpan.fromBounds(start, end), newLength);
+            var textChangeRange = new TypeScript.TextChangeRange(TypeScript.TextSpan.fromBounds(start, end), newLength);
 
             var newText = new TypeScript.SegmentedScriptSnapshot(newSourceText);
 
             var previousSyntaxTree = this.getSyntaxTree(scriptId);
-            var nextSyntaxTree = Parser1.incrementalParse(
+            var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
                 previousSyntaxTree.sourceUnit(), [textChangeRange], newText);
 
             this.setSyntaxTree(scriptId, nextSyntaxTree);
@@ -688,16 +688,16 @@ module Services {
             return <TypeScript.Script>this.compiler.scripts.members[unitIndex];
         }
 
-        public getSyntaxTree(fileName: string): SyntaxTree {
+        public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             var unitIndex = this.compilerCache.getUnitIndex(fileName);
             if (unitIndex < 0) {
                 throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
             }
 
-            return <SyntaxTree>this.compiler.syntaxTrees[unitIndex];
+            return <TypeScript.SyntaxTree>this.compiler.syntaxTrees[unitIndex];
         }
 
-        public setSyntaxTree(fileName: string, syntaxTree: SyntaxTree): void {
+        public setSyntaxTree(fileName: string, syntaxTree: TypeScript.SyntaxTree): void {
             var unitIndex = this.compilerCache.getUnitIndex(fileName);
             if (unitIndex < 0) {
                 throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");

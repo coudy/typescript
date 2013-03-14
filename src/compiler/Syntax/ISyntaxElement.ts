@@ -1,85 +1,87 @@
 ///<reference path='SyntaxKind.ts' />
 ///<reference path='ISyntaxToken.ts' />
 
-interface ISyntaxElement {
-    kind(): SyntaxKind;
+module TypeScript {
+    export interface ISyntaxElement {
+        kind(): SyntaxKind;
 
-    isNode(): bool;
-    isToken(): bool;
-    isList(): bool;
-    isSeparatedList(): bool;
+        isNode(): bool;
+        isToken(): bool;
+        isList(): bool;
+        isSeparatedList(): bool;
 
-    childCount(): number;
-    childAt(index: number): ISyntaxElement;
+        childCount(): number;
+        childAt(index: number): ISyntaxElement;
 
-    // True if this element is typescript specific and would not be legal in pure javascript.
-    isTypeScriptSpecific(): bool;
+        // True if this element is typescript specific and would not be legal in pure javascript.
+        isTypeScriptSpecific(): bool;
 
-    // True if this element (or any child element) contains any skipped text trivia.
-    hasSkippedText(): bool;
+        // True if this element (or any child element) contains any skipped text trivia.
+        hasSkippedText(): bool;
 
-    // True if this element (or any child element) contains any zero width tokens.
-    hasZeroWidthToken(): bool;
+        // True if this element (or any child element) contains any zero width tokens.
+        hasZeroWidthToken(): bool;
 
-    // True if this element (or any child element) contains any regular expression token.
-    hasRegularExpressionToken(): bool;
+        // True if this element (or any child element) contains any regular expression token.
+        hasRegularExpressionToken(): bool;
 
-    // With of this element, including leading and trailing trivia.
-    fullWidth(): number;
+        // With of this element, including leading and trailing trivia.
+        fullWidth(): number;
 
-    // Width of this element, not including leading and trailing trivia.
-    width(): number;
+        // Width of this element, not including leading and trailing trivia.
+        width(): number;
 
-    // Text for this element, including leading and trailing trivia.
-    fullText(): string;
+        // Text for this element, including leading and trailing trivia.
+        fullText(): string;
 
-    leadingTrivia(): ISyntaxTriviaList;
-    trailingTrivia(): ISyntaxTriviaList;
+        leadingTrivia(): ISyntaxTriviaList;
+        trailingTrivia(): ISyntaxTriviaList;
 
-    leadingTriviaWidth(): number;
-    trailingTriviaWidth(): number;
+        leadingTriviaWidth(): number;
+        trailingTriviaWidth(): number;
 
-    firstToken(): ISyntaxToken;
-    lastToken(): ISyntaxToken;
+        firstToken(): ISyntaxToken;
+        lastToken(): ISyntaxToken;
 
-    collectTextElements(elements: string[]): void;
-}
+        collectTextElements(elements: string[]): void;
+    }
 
-interface ISyntaxNode extends ISyntaxNodeOrToken {
-}
+    export interface ISyntaxNode extends ISyntaxNodeOrToken {
+    }
 
-interface IModuleReferenceSyntax extends ISyntaxNode {
-}
+    export interface IModuleReferenceSyntax extends ISyntaxNode {
+    }
 
-interface IModuleElementSyntax extends ISyntaxNode {
-}
+    export interface IModuleElementSyntax extends ISyntaxNode {
+    }
 
-interface IStatementSyntax extends IModuleElementSyntax {
-}
+    export interface IStatementSyntax extends IModuleElementSyntax {
+    }
 
-interface ITypeMemberSyntax extends ISyntaxNode {
-}
+    export interface ITypeMemberSyntax extends ISyntaxNode {
+    }
 
-interface IClassElementSyntax extends ISyntaxNode {
-}
+    export interface IClassElementSyntax extends ISyntaxNode {
+    }
 
-interface IMemberDeclarationSyntax extends IClassElementSyntax {
-}
+    export interface IMemberDeclarationSyntax extends IClassElementSyntax {
+    }
 
-interface ISwitchClauseSyntax extends ISyntaxNode {
-}
+    export interface ISwitchClauseSyntax extends ISyntaxNode {
+    }
 
-interface IExpressionSyntax extends ISyntaxNodeOrToken {
-}
+    export interface IExpressionSyntax extends ISyntaxNodeOrToken {
+    }
 
-interface IUnaryExpressionSyntax extends IExpressionSyntax {
-}
+    export interface IUnaryExpressionSyntax extends IExpressionSyntax {
+    }
 
-interface ITypeSyntax extends IUnaryExpressionSyntax {
-}
+    export interface ITypeSyntax extends IUnaryExpressionSyntax {
+    }
 
-interface INameSyntax extends ITypeSyntax {
-}
+    export interface INameSyntax extends ITypeSyntax {
+    }
 
-interface IEnumElementSyntax extends ISyntaxNode {
+    export interface IEnumElementSyntax extends ISyntaxNode {
+    }
 }

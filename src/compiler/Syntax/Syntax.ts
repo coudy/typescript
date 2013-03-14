@@ -1,6 +1,6 @@
 /// <reference path='SyntaxFactory.generated.ts' />
 
-module Syntax {
+module TypeScript.Syntax {
     export function emptySourceUnit() {
         return Syntax.normalModeFactory.sourceUnit(Syntax.emptyList, Syntax.token(SyntaxKind.EndOfFileToken, { text: "" }));
     }

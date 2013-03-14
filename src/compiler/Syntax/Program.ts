@@ -9,8 +9,8 @@
 ///<reference path='Top1000.ts' />
 ///<reference path='tests\IncrementalParserTests.ts' />
 
-var timer = new Timer();
-var stringTable = Collections.createStringTable();
+var timer = new TypeScript.Timer();
+var stringTable = TypeScript.Collections.createStringTable();
 
 var specificFile =
     // "ExportAssignment1.ts";
@@ -32,56 +32,56 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
-            IncrementalParserTests.runAllTests();
+            TypeScript.IncrementalParserTests.runAllTests();
         }
 
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
+            filePath => this.runEmitter(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
-            filePath => this.runPrettyPrinter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+            filePath => this.runPrettyPrinter(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing findToken.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\findToken\\ecmascript5",
-            filePath => this.runFindToken(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+            filePath => this.runFindToken(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing Incremental Perf.");
         this.testIncrementalSpeed(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\SyntaxNodes.generated.ts");
 
         Environment.standardOut.WriteLine("Testing trivia.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\trivia\\ecmascript5",
-            filePath => this.runTrivia(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+            filePath => this.runTrivia(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing scanner.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\scanner\\ecmascript5",
-            filePath => this.runScanner(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+            filePath => this.runScanner(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
             
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
-            filePath => this.runIncremental(filePath, LanguageVersion.EcmaScript5));
+            filePath => this.runIncremental(filePath, TypeScript.LanguageVersion.EcmaScript5));
             
         Environment.standardOut.WriteLine("Testing emitter 2.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter2\\ecmascript5",
-            filePath => this.runEmitter(filePath, LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ true));
+            filePath => this.runEmitter(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ true));
     }
 
-    private static reusedElements(oldNode: SourceUnitSyntax, newNode: SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
-        var allOldElements = SyntaxElementsCollector.collectElements(oldNode);
-        var allNewElements = SyntaxElementsCollector.collectElements(newNode);
+    private static reusedElements(oldNode: TypeScript.SourceUnitSyntax, newNode: TypeScript.SourceUnitSyntax, key: any): { originalElements: number; reusedElements: number; } {
+        var allOldElements = TypeScript.SyntaxElementsCollector.collectElements(oldNode);
+        var allNewElements = TypeScript.SyntaxElementsCollector.collectElements(newNode);
 
         for (var i = 0; i < allOldElements.length; i++) {
             var oldElement = allOldElements[i];
@@ -107,25 +107,25 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        var text = TextFactory.createText(contents);
-        var tree = Parser1.parse(text, LanguageVersion.EcmaScript5, stringTable);
+        var text = TypeScript.TextFactory.createText(contents);
+        var tree = TypeScript.Parser1.parse(text, TypeScript.LanguageVersion.EcmaScript5, stringTable);
 
         var totalIncrementalTime = 0;
         var count = 1000;
-        var timer = new Timer();
+        var timer = new TypeScript.Timer();
 
         for (var i = 0; i < count; i++) {
             timer.start();
             
             var changeLength = i * 2;
-            var tree2 = Parser1.incrementalParse(
-                tree.sourceUnit(), [new TextChangeRange(new TextSpan((text.length() / 2) - i, changeLength), changeLength)], text, LanguageVersion.EcmaScript5, stringTable);
+            var tree2 = TypeScript.Parser1.incrementalParse(
+                tree.sourceUnit(), [new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength)], text, TypeScript.LanguageVersion.EcmaScript5, stringTable);
             
             timer.end();
 
             totalIncrementalTime += timer.time;
 
-            Debug.assert(tree.structuralEquals(tree2));
+            TypeScript.Debug.assert(tree.structuralEquals(tree2));
 
             //if (i % 100 === 0) {
             //    var info = Program.reusedElements(tree.sourceUnit(), tree2.sourceUnit(), i);
@@ -212,7 +212,7 @@ class Program {
     }
     
     runEmitter(filePath: string,
-               languageVersion: LanguageVersion,
+        languageVersion: TypeScript.LanguageVersion,
                verify: bool,
                generateBaseline: bool,
                justText: bool): void {
@@ -220,7 +220,7 @@ class Program {
             // return;
         }
 
-        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
 
@@ -233,10 +233,10 @@ class Program {
 
         totalSize += contents.length;
 
-        var text = TextFactory.createText(contents);
+        var text = TypeScript.TextFactory.createText(contents);
 
-        var tree = Parser1.parse(text, languageVersion, stringTable);
-        var emitted = Emitter.emit(<SourceUnitSyntax>tree.sourceUnit());
+        var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+        var emitted = TypeScript.Emitter1.emit(<TypeScript.SourceUnitSyntax>tree.sourceUnit());
 
         var result = justText
             ? <any>emitted.fullText()
@@ -245,10 +245,10 @@ class Program {
     }
 
     runPrettyPrinter(filePath: string,
-        languageVersion: LanguageVersion,
+        languageVersion: TypeScript.LanguageVersion,
         verify: bool,
         generateBaseline: bool): void {
-        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
 
@@ -261,10 +261,10 @@ class Program {
 
         totalSize += contents.length;
 
-        var text = TextFactory.createText(contents);
+        var text = TypeScript.TextFactory.createText(contents);
         
-        var tree = Parser1.parse(text, languageVersion, stringTable);
-        var result = PrettyPrinter.prettyPrint(tree.sourceUnit());
+        var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+        var result = TypeScript.PrettyPrinter.prettyPrint(tree.sourceUnit());
 
         this.checkResult(filePath, result, verify, generateBaseline, true);
 
@@ -272,11 +272,11 @@ class Program {
     }
 
     runParser(filePath: string,
-              languageVersion: LanguageVersion,
+        languageVersion: TypeScript.LanguageVersion,
               useTypeScript: bool,
               verify: bool,
               generateBaseline?: bool = false): void {
-        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
 
@@ -290,7 +290,7 @@ class Program {
         totalSize += contents.length;
 
         if (useTypeScript) {
-            var text1 = new TypeScript.StringSourceText(contents);
+            var text1 = new TypeScript.StringScriptSnapshot(contents);
 
             timer.start();
             var parser1 = new TypeScript.Parser(); 
@@ -299,13 +299,13 @@ class Program {
             timer.end();
         }
         else {
-            var text = TextFactory.createText(contents);
+            var text = TypeScript.TextFactory.createText(contents);
 
             timer.start();
-            var tree = Parser1.parse(text, languageVersion, stringTable);
+            var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
             timer.end();
 
-            Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
+            TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
             
             TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
             TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", 0);
@@ -317,8 +317,8 @@ class Program {
     }
 
     runIncremental(filePath: string,
-                   languageVersion: LanguageVersion): void {
-        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+        languageVersion: TypeScript.LanguageVersion): void {
+        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
 
@@ -329,18 +329,18 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        var text = TextFactory.createText(contents);
+        var text = TypeScript.TextFactory.createText(contents);
 
-        var tree1 = Parser1.parse(text, languageVersion, stringTable);
-        var tree2 = Parser1.incrementalParse(
-            Syntax.emptySourceUnit(), [new TextChangeRange(new TextSpan(0, 0), text.length())], text, languageVersion, stringTable);
+        var tree1 = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+        var tree2 = TypeScript.Parser1.incrementalParse(
+            TypeScript.Syntax.emptySourceUnit(), [new TypeScript.TextChangeRange(new TypeScript.TextSpan(0, 0), text.length())], text, languageVersion, stringTable);
 
-        Debug.assert(tree1.structuralEquals(tree2));
+        TypeScript.Debug.assert(tree1.structuralEquals(tree2));
     }
 
     runFindToken(filePath: string,
-        languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
-        if (!StringUtilities.endsWith(filePath, ".ts") && !StringUtilities.endsWith(filePath, ".js")) {
+        languageVersion: TypeScript.LanguageVersion, verify: bool, generateBaseline: bool): void {
+        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
             return;
         }
 
@@ -351,11 +351,11 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
         // Environment.standardOut.WriteLine(filePath);
 
-        var text = TextFactory.createText(contents);
-        var tree = Parser1.parse(text, languageVersion, stringTable);
+        var text = TypeScript.TextFactory.createText(contents);
+        var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
         var sourceUnit = tree.sourceUnit();
 
-        Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
+        TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
 
         var tokens = {};
         var tokensOnLeft = {};
@@ -368,13 +368,13 @@ class Program {
             var left = sourceUnit.findTokenOnLeft(i);
             var tokenOnLeft = left === null ? null : left.token();
 
-            Debug.assert(token.isToken());
+            TypeScript.Debug.assert(token.isToken());
             if (i === contents.length) {
-                Debug.assert(token.kind() === SyntaxKind.EndOfFileToken);
+                TypeScript.Debug.assert(token.kind() === TypeScript.SyntaxKind.EndOfFileToken);
             }
             else {
-                Debug.assert(token.width() > 0 || token.kind() === SyntaxKind.EndOfFileToken);
-                Debug.assert(token.fullWidth() > 0);
+                TypeScript.Debug.assert(token.width() > 0 || token.kind() === TypeScript.SyntaxKind.EndOfFileToken);
+                TypeScript.Debug.assert(token.fullWidth() > 0);
             }
 
             tokens[i] = token;
@@ -404,25 +404,25 @@ class Program {
     }
 
     runTrivia(filePath: string,
-              languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
-        if (!StringUtilities.endsWith(filePath, ".ts")) {
+        languageVersion: TypeScript.LanguageVersion, verify: bool, generateBaseline: bool): void {
+        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
 
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-        var text = TextFactory.createText(contents);
-        var scanner = new Scanner(text, languageVersion, stringTable);
+        var text = TypeScript.TextFactory.createText(contents);
+        var scanner = new TypeScript.Scanner1(text, languageVersion, stringTable);
 
-        var tokens: ISyntaxToken[] = [];
+        var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
-        var diagnostics: SyntaxDiagnostic[] = [];
+        var diagnostics: TypeScript.SyntaxDiagnostic[] = [];
 
         while (true) {
             var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
             tokens.push(token);
 
-            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+            if (token.tokenKind === TypeScript.SyntaxKind.EndOfFileToken) {
                 break;
             }
         }
@@ -430,31 +430,31 @@ class Program {
         this.checkResult(filePath, tokens, verify, generateBaseline, false);
     }
 
-    runScanner(filePath: string, languageVersion: LanguageVersion, verify: bool, generateBaseline: bool): void {
-        if (!StringUtilities.endsWith(filePath, ".ts")) {
+    runScanner(filePath: string, languageVersion: TypeScript.LanguageVersion, verify: bool, generateBaseline: bool): void {
+        if (!TypeScript.StringUtilities.endsWith(filePath, ".ts")) {
             return;
         }
 
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
-        var text = TextFactory.createText(contents);
-        var scanner = new Scanner(text, languageVersion, stringTable);
+        var text = TypeScript.TextFactory.createText(contents);
+        var scanner = new TypeScript.Scanner1(text, languageVersion, stringTable);
 
-        var tokens: ISyntaxToken[] = [];
+        var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
-        var diagnostics: SyntaxDiagnostic[] = [];
+        var diagnostics: TypeScript.SyntaxDiagnostic[] = [];
 
         while (true) {
             var token = scanner.scan(diagnostics, /*allowRegularExpression:*/ false);
             tokens.push(token);
 
-            if (token.tokenKind === SyntaxKind.EndOfFileToken) {
+            if (token.tokenKind === TypeScript.SyntaxKind.EndOfFileToken) {
                 break;
             }
         }
 
         if (verify) {
-            var tokenText = ArrayUtilities.select(tokens, t => t.fullText()).join("");
+            var tokenText = TypeScript.ArrayUtilities.select(tokens, t => t.fullText()).join("");
 
             if (tokenText !== contents) {
                 throw new Error("Token invariant broken!");
@@ -477,7 +477,7 @@ class Program {
                 continue;
             }
 
-            this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false);
+            this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false);
         }
     }
 
@@ -505,8 +505,8 @@ class Program {
             testCount++;
 
             try {
-                var stringText = TextFactory.createText(contents);
-                var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
+                var stringText = TypeScript.TextFactory.createText(contents);
+                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5, stringTable);
 
                 if (isNegative) {
                     var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -575,8 +575,8 @@ class Program {
             testCount++;
 
             try {
-                var stringText = TextFactory.createText(contents);
-                var tree = Parser1.parse(stringText, LanguageVersion.EcmaScript5, stringTable);
+                var stringText = TypeScript.TextFactory.createText(contents);
+                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5, stringTable);
 
             //Environment.standardOut.WriteLine(filePath);
             // Environment.standardOut.Write(".");

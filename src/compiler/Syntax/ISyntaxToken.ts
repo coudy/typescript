@@ -2,39 +2,41 @@
 ///<reference path='ISyntaxTriviaList.ts' />
 ///<reference path='SyntaxVisitor.generated.ts' />
 
-interface ISyntaxToken extends ISyntaxNodeOrToken, INameSyntax {
-    // Same as kind(), just exposed through a property for perf.
-    tokenKind: SyntaxKind;
+module TypeScript {
+    export interface ISyntaxToken extends ISyntaxNodeOrToken, INameSyntax {
+        // Same as kind(), just exposed through a property for perf.
+        tokenKind: SyntaxKind;
 
-    // Text for this token, not including leading or trailing trivia.
-    text(): string;
+        // Text for this token, not including leading or trailing trivia.
+        text(): string;
 
-    value(): any;
+        value(): any;
 
-    hasLeadingTrivia(): bool;
-    hasLeadingComment(): bool;
-    hasLeadingNewLine(): bool;
-    hasLeadingSkippedText(): bool;
+        hasLeadingTrivia(): bool;
+        hasLeadingComment(): bool;
+        hasLeadingNewLine(): bool;
+        hasLeadingSkippedText(): bool;
 
-    hasTrailingTrivia(): bool;
-    hasTrailingComment(): bool;
-    hasTrailingNewLine(): bool;
-    hasTrailingSkippedText(): bool;
+        hasTrailingTrivia(): bool;
+        hasTrailingComment(): bool;
+        hasTrailingNewLine(): bool;
+        hasTrailingSkippedText(): bool;
 
-    hasSkippedText(): bool;
+        hasSkippedText(): bool;
 
-    leadingTrivia(): ISyntaxTriviaList;
-    trailingTrivia(): ISyntaxTriviaList;
+        leadingTrivia(): ISyntaxTriviaList;
+        trailingTrivia(): ISyntaxTriviaList;
 
-    withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
-    withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken;
+        withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken;
+        withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken;
 
-    clone(): ISyntaxToken;
-}
+        clone(): ISyntaxToken;
+    }
 
-interface ITokenInfo {
-    leadingTrivia?: ISyntaxTrivia[];
-    text?: string;
-    value?: any;
-    trailingTrivia?: ISyntaxTrivia[];
+    export interface ITokenInfo {
+        leadingTrivia?: ISyntaxTrivia[];
+        text?: string;
+        value?: any;
+        trailingTrivia?: ISyntaxTrivia[];
+    }
 }

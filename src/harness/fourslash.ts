@@ -175,19 +175,19 @@ module FourSlash {
             }
         }
 
-        private getDiagnostics(fileName: string): IDiagnostic[] {
+        private getDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             var syntacticErrors = this.pullLanguageService.getSyntacticErrors(fileName);
             var semanticErrors = this.pullLanguageService.getSemanticErrors(fileName);
 
-            var diagnostics: IDiagnostic[] = [];
+            var diagnostics: TypeScript.IDiagnostic[] = [];
             diagnostics.push.apply(diagnostics, syntacticErrors);
             diagnostics.push.apply(diagnostics, semanticErrors);
 
             return diagnostics;
         }
 
-        private getAllDiagnostics(): IDiagnostic[] {
-            var diagnostics: IDiagnostic[] = [];
+        private getAllDiagnostics(): TypeScript.IDiagnostic[] {
+            var diagnostics: TypeScript.IDiagnostic[] = [];
             for (var i = 0, n = this.langSvc.scripts.length; i < n; i++) {
                 var scriptId = this.langSvc.scripts[i].name;
                 diagnostics.push.apply(this.getDiagnostics(scriptId));
@@ -229,7 +229,7 @@ module FourSlash {
                 var endPos = endMarker.position;
             }
 
-            errors.forEach(function (error: IDiagnostic) {
+            errors.forEach(function (error: TypeScript.IDiagnostic) {
                 if (predicate(error.start(), error.start() + error.length(), startPos, endPos)) {
                     exists = true;
                 }
@@ -238,14 +238,14 @@ module FourSlash {
             return exists;
         }
 
-        private printErrorLog(expectErrors: bool, errors: IDiagnostic[]) {
+        private printErrorLog(expectErrors: bool, errors: TypeScript.IDiagnostic[]) {
             if (expectErrors) {
                 IO.printLine("Expected error not found.  Error list is:");
             } else {
                 IO.printLine("Unexpected error(s) found.  Error list is:");
             }
 
-            errors.forEach(function (error: IDiagnostic) {
+            errors.forEach(function (error: TypeScript.IDiagnostic) {
                 IO.printLine("  minChar: " + error.start() + ", limChar: " + (error.start() + error.length()) + ", message: " + error.message() + "\n");
             });
         }

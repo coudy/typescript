@@ -1,8 +1,10 @@
 ///<reference path='ISyntaxElement.ts' />
 
-interface ISyntaxNodeOrToken extends ISyntaxElement {
-    withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
-    withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
+module TypeScript {
+    export interface ISyntaxNodeOrToken extends ISyntaxElement {
+        withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
+        withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxNodeOrToken;
 
-    accept(visitor: ISyntaxVisitor): any;
+        accept(visitor: ISyntaxVisitor): any;
+    }
 }

@@ -1,7 +1,7 @@
 ///<reference path='..\Core\Debug.ts' />
 ///<reference path='SyntaxKind.ts' />
 
-module SyntaxFacts {
+module TypeScript.SyntaxFacts {
     var textToKeywordKind: any = {
         "any": SyntaxKind.AnyKeyword,
         "bool": SyntaxKind.BoolKeyword,

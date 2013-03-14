@@ -4,7 +4,7 @@
 ///<reference path='..\Core\StringUtilities.ts' />
 ///<reference path='..\Core\StringTable.ts' />
 
-module TextFactory {
+module TypeScript.TextFactory {
     /// <summary>
     /// Return startLineBreak = index-1, lengthLineBreak = 2   if there is a \r\n at index-1
     /// Return startLineBreak = index,   lengthLineBreak = 1   if there is a 1-char newline at index

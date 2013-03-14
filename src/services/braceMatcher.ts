@@ -23,8 +23,8 @@ module Services {
         // Given a script name and position in the script, return a pair of text range if the 
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return an empty set.
-        public static getMatchSpans(syntaxTree: SyntaxTree, position: number): TextSpan[] {
-            var result: TextSpan[] = [];
+        public static getMatchSpans(syntaxTree: TypeScript.SyntaxTree, position: number): TypeScript.TextSpan[] {
+            var result: TypeScript.TextSpan[] = [];
 
             var currentToken = syntaxTree.sourceUnit().findToken(position);
 
@@ -34,7 +34,7 @@ module Services {
             return result;
         }
 
-        private static getMatchingCloseBrace(currentToken: PositionedToken, position: number, result: TextSpan[]) {
+        private static getMatchingCloseBrace(currentToken: TypeScript.PositionedToken, position: number, result: TypeScript.TextSpan[]) {
             if (currentToken.start() === position) {
                 var closingBraceKind = getMatchingCloseBraceTokenKind(currentToken);
                 if (closingBraceKind !== null) {
@@ -44,8 +44,8 @@ module Services {
                         var element = parentElement.childAt(i);
                         if (element !== null && element.fullWidth() > 0) {
                             if (element.kind() === closingBraceKind) {
-                                var range1 = new TextSpan(position, currentToken.token().width());
-                                var range2 = new TextSpan(currentPosition + element.leadingTriviaWidth(), element.width());
+                                var range1 = new TypeScript.TextSpan(position, currentToken.token().width());
+                                var range2 = new TypeScript.TextSpan(currentPosition + element.leadingTriviaWidth(), element.width());
                                 result.push(range1, range2);
                                 break;
                             }
@@ -57,7 +57,7 @@ module Services {
             }
         }
 
-        private static getMatchingOpenBrace(currentToken: PositionedToken, position: number, result: TextSpan[]) {
+        private static getMatchingOpenBrace(currentToken: TypeScript.PositionedToken, position: number, result: TypeScript.TextSpan[]) {
             // Check if the current token to the left is a close brace
             if (currentToken.fullStart() === position) {
                 currentToken = currentToken.previousToken();
@@ -72,8 +72,8 @@ module Services {
                         var element = parentElement.childAt(i);
                         if (element !== null && element.fullWidth() > 0) {
                             if (element.kind() === openBraceKind) {
-                                var range1 = new TextSpan(position - 1, currentToken.token().width());
-                                var range2 = new TextSpan(currentPosition - element.trailingTriviaWidth() - element.width(), element.width());
+                                var range1 = new TypeScript.TextSpan(position - 1, currentToken.token().width());
+                                var range2 = new TypeScript.TextSpan(currentPosition - element.trailingTriviaWidth() - element.width(), element.width());
                                 result.push(range1, range2);
                                 break;
                             }
@@ -85,32 +85,32 @@ module Services {
             }
         }
 
-        private static getMatchingCloseBraceTokenKind(positionedElement: PositionedElement): SyntaxKind {
+        private static getMatchingCloseBraceTokenKind(positionedElement: TypeScript.PositionedElement): TypeScript.SyntaxKind {
             var element = positionedElement !== null && positionedElement.element();
             switch (element.kind()) {
-                case SyntaxKind.OpenBraceToken:
-                    return SyntaxKind.CloseBraceToken
-                case SyntaxKind.OpenParenToken:
-                    return SyntaxKind.CloseParenToken;
-                case SyntaxKind.OpenBracketToken:
-                    return SyntaxKind.CloseBracketToken;
-                case SyntaxKind.LessThanToken:
-                    return SyntaxUtilities.isAngleBracket(positionedElement) ? SyntaxKind.GreaterThanToken : null;
+                case TypeScript.SyntaxKind.OpenBraceToken:
+                    return TypeScript.SyntaxKind.CloseBraceToken
+                case TypeScript.SyntaxKind.OpenParenToken:
+                    return TypeScript.SyntaxKind.CloseParenToken;
+                case TypeScript.SyntaxKind.OpenBracketToken:
+                    return TypeScript.SyntaxKind.CloseBracketToken;
+                case TypeScript.SyntaxKind.LessThanToken:
+                    return TypeScript.SyntaxUtilities.isAngleBracket(positionedElement) ? TypeScript.SyntaxKind.GreaterThanToken : null;
             }
             return null;
         }
 
-        private static getMatchingOpenBraceTokenKind(positionedElement: PositionedElement): SyntaxKind {
+        private static getMatchingOpenBraceTokenKind(positionedElement: TypeScript.PositionedElement): TypeScript.SyntaxKind {
             var element = positionedElement !== null && positionedElement.element();
             switch (element.kind()) {
-                case SyntaxKind.CloseBraceToken:
-                    return SyntaxKind.OpenBraceToken
-                case SyntaxKind.CloseParenToken:
-                    return SyntaxKind.OpenParenToken;
-                case SyntaxKind.CloseBracketToken:
-                    return SyntaxKind.OpenBracketToken;
-                case SyntaxKind.GreaterThanToken:
-                    return SyntaxUtilities.isAngleBracket(positionedElement) ? SyntaxKind.LessThanToken : null;
+                case TypeScript.SyntaxKind.CloseBraceToken:
+                    return TypeScript.SyntaxKind.OpenBraceToken
+                case TypeScript.SyntaxKind.CloseParenToken:
+                    return TypeScript.SyntaxKind.OpenParenToken;
+                case TypeScript.SyntaxKind.CloseBracketToken:
+                    return TypeScript.SyntaxKind.OpenBracketToken;
+                case TypeScript.SyntaxKind.GreaterThanToken:
+                    return TypeScript.SyntaxUtilities.isAngleBracket(positionedElement) ? TypeScript.SyntaxKind.LessThanToken : null;
             }
             return null;
         }

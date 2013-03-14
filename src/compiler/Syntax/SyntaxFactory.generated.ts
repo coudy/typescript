@@ -1,6 +1,6 @@
 ﻿///<reference path='ISyntaxList.ts' />
 
-module Syntax {
+module TypeScript.Syntax {
     export interface IFactory {
         sourceUnit(moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken): SourceUnitSyntax;
         externalModuleReference(moduleKeyword: ISyntaxToken, openParenToken: ISyntaxToken, stringLiteral: ISyntaxToken, closeParenToken: ISyntaxToken): ExternalModuleReferenceSyntax;

@@ -1025,7 +1025,7 @@ var definitions:ITypeDefinition[] = [
 //}
 
 function getStringWithoutSuffix(definition: string) {
-    if (StringUtilities.endsWith(definition, "Syntax")) {
+    if (TypeScript.StringUtilities.endsWith(definition, "Syntax")) {
         return definition.substring(0, definition.length - "Syntax".length);
     }
 
@@ -1173,8 +1173,8 @@ function generateSwitchKindCheck(child: IMemberDefinition, tokenKinds: string[],
 
     var result = "";
 
-    var identifierName = ArrayUtilities.where(tokenKinds, v => v.indexOf("IdentifierName") >= 0);
-    var notIdentifierName = ArrayUtilities.where(tokenKinds, v => v.indexOf("IdentifierName") < 0);
+    var identifierName = TypeScript.ArrayUtilities.where(tokenKinds, v => v.indexOf("IdentifierName") >= 0);
+    var notIdentifierName = TypeScript.ArrayUtilities.where(tokenKinds, v => v.indexOf("IdentifierName") < 0);
 
     if (identifierName.length > 0) {
         result += indent + "        if (!SyntaxFacts.isIdentifierName(" + child.name + ".tokenKind)) {\r\n";
@@ -1274,7 +1274,7 @@ function generateConstructor(definition: ITypeDefinition): string {
     var base = baseType(definition);
     var subchildren = childrenInAllSubclasses(definition);
     var baseSubchildren = childrenInAllSubclasses(base);
-    var baseSubchildrenNames = ArrayUtilities.select(baseSubchildren, c => c.name);
+    var baseSubchildrenNames = TypeScript.ArrayUtilities.select(baseSubchildren, c => c.name);
 
     var result = "";
     result += "    constructor("
@@ -1287,7 +1287,7 @@ function generateConstructor(definition: ITypeDefinition): string {
     for (var i = 0; i < children.length; i++) {
         var child = children[i];
 
-        if (getType(child) !== "SyntaxKind" && !ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
+        if (getType(child) !== "SyntaxKind" && !TypeScript.ArrayUtilities.contains(baseSubchildrenNames, child.name)) {
             result += "public ";
         }
 
@@ -1340,7 +1340,7 @@ function isOptional(child: IMemberDefinition) {
 }
 
 function generateFactory1Method(definition: ITypeDefinition): string {
-    var mandatoryChildren = ArrayUtilities.where(
+    var mandatoryChildren = TypeScript.ArrayUtilities.where(
         definition.children, c => !isOptional(c));
     if (mandatoryChildren.length === definition.children.length) {
         return "";
@@ -1388,11 +1388,11 @@ function generateFactory1Method(definition: ITypeDefinition): string {
 }
 
 function isKeywordOrPunctuation(kind: string): bool {
-    if (StringUtilities.endsWith(kind, "Keyword")) {
+    if (TypeScript.StringUtilities.endsWith(kind, "Keyword")) {
         return true;
     }
     
-    if (StringUtilities.endsWith(kind, "Token") && 
+    if (TypeScript.StringUtilities.endsWith(kind, "Token") &&
         kind !== "IdentifierName" &&
         kind !== "EndOfFileToken") {
         return true;
@@ -1442,7 +1442,7 @@ function isMandatory(child: IMemberDefinition): bool {
 }
 
 function generateFactory2Method(definition: ITypeDefinition): string {
-    var mandatoryChildren: IMemberDefinition[] = ArrayUtilities.where(definition.children, isMandatory);
+    var mandatoryChildren: IMemberDefinition[] = TypeScript.ArrayUtilities.where(definition.children, isMandatory);
     if (mandatoryChildren.length === definition.children.length) {
         return "";
     }
@@ -1527,7 +1527,7 @@ function generateIsMethod(definition: ITypeDefinition): string {
             var current = ifaces[i];
 
             while (current !== undefined) {
-                if (!ArrayUtilities.contains(ifaces, current)) {
+                if (!TypeScript.ArrayUtilities.contains(ifaces, current)) {
                     ifaces.push(current);
                 }
 
@@ -1739,12 +1739,12 @@ function generateInsertChildrenIntoMethod(definition: ITypeDefinition): string {
 }
 
 function baseType(definition: ITypeDefinition): ITypeDefinition {
-    return ArrayUtilities.firstOrDefault(definitions, d => d.name === definition.baseType);
+    return TypeScript.ArrayUtilities.firstOrDefault(definitions, d => d.name === definition.baseType);
 }
 
 function memberDefinitionType(child: IMemberDefinition): ITypeDefinition {
     // Debug.assert(child.type !== undefined);
-    return ArrayUtilities.firstOrDefault(definitions, d => d.name === child.type);
+    return TypeScript.ArrayUtilities.firstOrDefault(definitions, d => d.name === child.type);
 }
 
 function derivesFrom(def1: ITypeDefinition, def2: ITypeDefinition): bool {
@@ -1762,7 +1762,7 @@ function derivesFrom(def1: ITypeDefinition, def2: ITypeDefinition): bool {
 }
 
 function contains(definition: ITypeDefinition, child: IMemberDefinition) {
-    return ArrayUtilities.any(definition.children,
+    return TypeScript.ArrayUtilities.any(definition.children,
         c => c.name === child.name &&
              c.isList === child.isList &&
              c.isSeparatedList === child.isSeparatedList &&
@@ -1774,7 +1774,7 @@ function childrenInAllSubclasses(definition: ITypeDefinition): IMemberDefinition
     var result = [];
 
     if (definition !== null && definition.isAbstract) {
-        var subclasses = ArrayUtilities.where(definitions, d => !d.isAbstract && derivesFrom(d, definition));
+        var subclasses = TypeScript.ArrayUtilities.where(definitions, d => !d.isAbstract && derivesFrom(d, definition));
 
         if (subclasses.length > 0) {
             var firstSubclass = subclasses[0];
@@ -1782,7 +1782,7 @@ function childrenInAllSubclasses(definition: ITypeDefinition): IMemberDefinition
             for (var i = 0; i < firstSubclass.children.length; i++) {
                 var child = firstSubclass.children[i];
 
-                if (ArrayUtilities.all(subclasses, s => contains(s, child))) {
+                if (TypeScript.ArrayUtilities.all(subclasses, s => contains(s, child))) {
                     result.push(child);
                 }
             }
@@ -1832,7 +1832,7 @@ function generateWithMethod(definition: ITypeDefinition, child: IMemberDefinitio
     result += "    }\r\n";
 
     if (child.isList || child.isSeparatedList) {
-        if (StringUtilities.endsWith(child.name, "s")) {
+        if (TypeScript.StringUtilities.endsWith(child.name, "s")) {
             var pascalName = pascalCase(child.name);
             pascalName = pascalName.substring(0, pascalName.length - 1);
 
@@ -1991,9 +1991,9 @@ function generateIsTypeScriptSpecificMethod(definition: ITypeDefinition): string
 
 function couldBeRegularExpressionToken(child: IMemberDefinition): bool {
     var kinds = tokenKinds(child);
-    return ArrayUtilities.contains(kinds, "SlashToken") ||
-           ArrayUtilities.contains(kinds, "SlashEqualsToken") ||
-           ArrayUtilities.contains(kinds, "RegularExpressionLiteral");
+    return TypeScript.ArrayUtilities.contains(kinds, "SlashToken") ||
+           TypeScript.ArrayUtilities.contains(kinds, "SlashEqualsToken") ||
+           TypeScript.ArrayUtilities.contains(kinds, "RegularExpressionLiteral");
 }
 
 function generateComputeDataMethod(definition: ITypeDefinition): string {
@@ -2099,7 +2099,7 @@ function generateStructuralEqualsMethod(definition: ITypeDefinition): string {
 }
 
 function generateNode(definition: ITypeDefinition): string {
-    var result = "class " + definition.name + " extends " + definition.baseType 
+    var result = "    export class " + definition.name + " extends " + definition.baseType 
 
     if (definition.interfaces) {
         result += " implements " + definition.interfaces.join(", ");
@@ -2133,7 +2133,7 @@ function generateNode(definition: ITypeDefinition): string {
     // result += generateFindTokenInternalMethod(definition);
     // result += generateStructuralEqualsMethod(definition);
 
-    result += "}";
+    result += "    }";
 
     return result;
 }
@@ -2145,14 +2145,21 @@ function generateNodes(): string {
     result += "///<reference path='SeparatedSyntaxList.ts' />\r\n"
     result += "///<reference path='SyntaxList.ts' />\r\n"
     result += "///<reference path='SyntaxToken.ts' />\r\n"
-    result += "///<reference path='Syntax.ts' />"
+    result += "///<reference path='Syntax.ts' />\r\n\r\n"
+
+    result += "module TypeScript {\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
 
-        result += "\r\n\r\n";
+        if (i > 0) {
+            result += "\r\n\r\n";
+        }
+
         result += generateNode(definition);
     }
+
+    result += "\r\n}";
 
     return result;
 }
@@ -2171,76 +2178,76 @@ function generateRewriter(): string {
     result = "";
     result += "///<reference path='ISyntaxNodeOrToken.ts' />\r\n";
 
-    result +=
-"\r\nclass SyntaxRewriter implements ISyntaxVisitor {\r\n" +
-"    public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
-"        return token;\r\n" +
-"    }\r\n" +
+    result += "\r\nmodule TypeScript {\r\n" +
+"    export class SyntaxRewriter implements ISyntaxVisitor {\r\n" +
+"        public visitToken(token: ISyntaxToken): ISyntaxToken {\r\n" +
+"            return token;\r\n" +
+"        }\r\n" +
 "\r\n" +
-"    public visitNode(node: SyntaxNode): SyntaxNode {\r\n" +
-"        return node.accept(this);\r\n" +
-"    }\r\n" +
+"        public visitNode(node: SyntaxNode): SyntaxNode {\r\n" +
+"            return node.accept(this);\r\n" +
+"        }\r\n" +
 "\r\n" +
-"    public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" +
-"        return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" +
-"    }\r\n" +
+"        public visitNodeOrToken(node: ISyntaxNodeOrToken): ISyntaxNodeOrToken {\r\n" +
+"            return node.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>node) : this.visitNode(<SyntaxNode>node);\r\n" +
+"        }\r\n" +
 "\r\n" +
-"    public visitList(list: ISyntaxList): ISyntaxList {\r\n" +
-"        var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
+"        public visitList(list: ISyntaxList): ISyntaxList {\r\n" +
+"            var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
 "\r\n" +
-"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
-"            var item = list.childAt(i);\r\n" +
-"            var newItem = this.visitNodeOrToken(item);\r\n" +
+"            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"                var item = list.childAt(i);\r\n" +
+"                var newItem = this.visitNodeOrToken(item);\r\n" +
 "\r\n" +
-"            if (item !== newItem && newItems === null) {\r\n" +
-"                newItems = [];\r\n" +
-"                for (var j = 0; j < i; j++) {\r\n" +
-"                    newItems.push(list.childAt(j));\r\n" +
+"                if (item !== newItem && newItems === null) {\r\n" +
+"                    newItems = [];\r\n" +
+"                    for (var j = 0; j < i; j++) {\r\n" +
+"                        newItems.push(list.childAt(j));\r\n" +
+"                    }\r\n" +
+"                }\r\n" +
+"\r\n" +
+"                if (newItems) {\r\n" +
+"                    newItems.push(newItem);\r\n" +
 "                }\r\n" +
 "            }\r\n" +
 "\r\n" +
-"            if (newItems) {\r\n" +
-"                newItems.push(newItem);\r\n" +
-"            }\r\n" +
+"            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
+"            return newItems === null ? list : Syntax.list(newItems);\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
-"        return newItems === null ? list : Syntax.list(newItems);\r\n" +
-"    }\r\n" +
+"        public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" +
+"            var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
 "\r\n" +
-"    public visitSeparatedList(list: ISeparatedSyntaxList): ISeparatedSyntaxList {\r\n" +
-"        var newItems: ISyntaxNodeOrToken[] = null;\r\n" +
+"            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"                var item = list.childAt(i);\r\n" +
+"                var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" +
 "\r\n" +
-"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
-"            var item = list.childAt(i);\r\n" +
-"            var newItem = item.isToken() ? <ISyntaxNodeOrToken>this.visitToken(<ISyntaxToken>item) : this.visitNode(<SyntaxNode>item);\r\n" +
+"                if (item !== newItem && newItems === null) {\r\n" +
+"                    newItems = [];\r\n" +
+"                    for (var j = 0; j < i; j++) {\r\n" +
+"                        newItems.push(list.childAt(j));\r\n" +
+"                    }\r\n" +
+"                }\r\n" +
 "\r\n" +
-"            if (item !== newItem && newItems === null) {\r\n" +
-"                newItems = [];\r\n" +
-"                for (var j = 0; j < i; j++) {\r\n" +
-"                    newItems.push(list.childAt(j));\r\n" +
+"                if (newItems) {\r\n" +
+"                    newItems.push(newItem);\r\n" +
 "                }\r\n" +
 "            }\r\n" +
 "\r\n" +
-"            if (newItems) {\r\n" +
-"                newItems.push(newItem);\r\n" +
-"            }\r\n" +
-"        }\r\n" +
-"\r\n" +
-"        // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
-"        return newItems === null ? list : Syntax.separatedList(newItems);\r\n" +
-"    }\r\n";
+"            // Debug.assert(newItems === null || newItems.length === list.childCount());\r\n" +
+"            return newItems === null ? list : Syntax.separatedList(newItems);\r\n" +
+"        }\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) { continue; }
 
         result += "\r\n";
-        result += "    public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+        result += "        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
 
         if (definition.children.length === 0) {
-            result += "        return node;\r\n"
-            result += "    }\r\n";
+            result += "            return node;\r\n"
+            result += "        }\r\n";
             continue;
         }
 
@@ -2248,13 +2255,13 @@ function generateRewriter(): string {
         //    result += "        return node.with" + pascalCase(definition.children[0].name) + "(\r\n";
         //}
         //else {
-            result += "        return node.update(\r\n";
+        result += "            return node.update(\r\n";
         //}
 
         for (var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
 
-            result += "            ";
+            result += "                ";
             if (child.isOptional) {
                 result += "node." + child.name + " === null ? null : ";
             }
@@ -2284,10 +2291,11 @@ function generateRewriter(): string {
         }
 
         result += ");\r\n";
-        result += "    }\r\n";
+        result += "        }\r\n";
     }
 
-    result += "}";
+    result += "    }";
+    result += "\r\n}";
     return result;
 }
 
@@ -2488,7 +2496,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     result += "        public hasLeadingSkippedText(): bool { return false; }\r\n";
     result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading
-        ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)"
+        ? "Scanner1.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
     result += "        public hasTrailingTrivia(): bool { return " + (trailing ? "true" : "false") + "; }\r\n";
@@ -2497,7 +2505,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
     result += "        public hasTrailingSkippedText(): bool { return false; }\r\n";
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing
-        ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
+        ? "Scanner1.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedText(): bool { return false; }\r\n";
 
@@ -2538,7 +2546,7 @@ function generateTokens(): string {
         "///<reference path='..\\Text\\IText.ts' />\r\n" +
         "///<reference path='SyntaxToken.ts' />\r\n" +
         "\r\n" +
-        "module Syntax {\r\n";
+        "module TypeScript.Syntax {\r\n";
 
     result += generateToken(/*isFixedWidth:*/ false, /*leading:*/ false, /*trailing:*/ false);
     result += "\r\n";
@@ -2645,110 +2653,112 @@ function generateWalker(): string {
     result +=
 "///<reference path='SyntaxVisitor.generated.ts' />\r\n"+
 "\r\n" +
-"class SyntaxWalker implements ISyntaxVisitor {\r\n" +
-"    public visitToken(token: ISyntaxToken): void {\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    public visitNode(node: SyntaxNode): void {\r\n" +
-"        node.accept(this);\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" +
-"        if (nodeOrToken.isToken()) { \r\n" +
-"            this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" +
-"        }\r\n" +
-"        else {\r\n" +
-"            this.visitNode(<SyntaxNode>nodeOrToken);\r\n" +
-"        }\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    private visitOptionalToken(token: ISyntaxToken): void {\r\n" +
-"        if (token === null) {\r\n" +
-"            return;\r\n" +
+"module TypeScript {\r\n" +
+"    export class SyntaxWalker implements ISyntaxVisitor {\r\n" +
+"        public visitToken(token: ISyntaxToken): void {\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        this.visitToken(token);\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    public visitOptionalNode(node: SyntaxNode): void {\r\n" +
-"        if (node === null) {\r\n" +
-"            return;\r\n" +
+"        public visitNode(node: SyntaxNode): void {\r\n" +
+"            node.accept(this);\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        this.visitNode(node);\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" +
-"        if (nodeOrToken === null) {\r\n" +
-"            return;\r\n" +
+"        public visitNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" +
+"            if (nodeOrToken.isToken()) { \r\n" +
+"                this.visitToken(<ISyntaxToken>nodeOrToken);\r\n" +
+"            }\r\n" +
+"            else {\r\n" +
+"                this.visitNode(<SyntaxNode>nodeOrToken);\r\n" +
+"            }\r\n" +
 "        }\r\n" +
 "\r\n" +
-"        this.visitNodeOrToken(nodeOrToken);\r\n" +
-"    }\r\n" +
+"        private visitOptionalToken(token: ISyntaxToken): void {\r\n" +
+"            if (token === null) {\r\n" +
+"                return;\r\n" +
+"            }\r\n" +
 "\r\n" +
-"    public visitList(list: ISyntaxList): void {\r\n" +
-"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
-"           this.visitNodeOrToken(list.childAt(i));\r\n" +
+"            this.visitToken(token);\r\n" +
 "        }\r\n" +
-"    }\r\n" +
 "\r\n" +
-"    public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" +
-"        for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
-"            var item = list.childAt(i);\r\n" +
-"            this.visitNodeOrToken(item);\r\n" + 
+"        public visitOptionalNode(node: SyntaxNode): void {\r\n" +
+"            if (node === null) {\r\n" +
+"                return;\r\n" +
+"            }\r\n" +
+"\r\n" +
+"            this.visitNode(node);\r\n" +
 "        }\r\n" +
-"    }\r\n";
+"\r\n" +
+"        public visitOptionalNodeOrToken(nodeOrToken: ISyntaxNodeOrToken): void {\r\n" +
+"            if (nodeOrToken === null) {\r\n" +
+"                return;\r\n" +
+"            }\r\n" +
+"\r\n" +
+"            this.visitNodeOrToken(nodeOrToken);\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        public visitList(list: ISyntaxList): void {\r\n" +
+"            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"               this.visitNodeOrToken(list.childAt(i));\r\n" +
+"            }\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        public visitSeparatedList(list: ISeparatedSyntaxList): void {\r\n" +
+"            for (var i = 0, n = list.childCount(); i < n; i++) {\r\n" +
+"                var item = list.childAt(i);\r\n" +
+"                this.visitNodeOrToken(item);\r\n" + 
+"            }\r\n" +
+"        }\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (definition.isAbstract) { continue; }
 
         result += "\r\n";
-        result += "    public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): void {\r\n";
+        result += "        public visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): void {\r\n";
 
         for (var j = 0; j < definition.children.length; j++) {
             var child = definition.children[j];
 
             if (child.isToken) {
                 if (child.isOptional) {
-                    result += "        this.visitOptionalToken(node." + child.name + ");\r\n";
+                    result += "            this.visitOptionalToken(node." + child.name + ");\r\n";
                 }
                 else {
-                    result += "        this.visitToken(node." + child.name + ");\r\n";
+                    result += "            this.visitToken(node." + child.name + ");\r\n";
                 }
             }
             else if (child.isList) {
-                result += "        this.visitList(node." + child.name + ");\r\n";
+                result += "            this.visitList(node." + child.name + ");\r\n";
             }
             else if (child.isSeparatedList) {
-                result += "        this.visitSeparatedList(node." + child.name + ");\r\n";
+                result += "            this.visitSeparatedList(node." + child.name + ");\r\n";
             }
             else if (isNodeOrToken(child)) {
                 if (child.isOptional) {
-                    result += "        this.visitOptionalNodeOrToken(node." + child.name + ");\r\n";
+                    result += "            this.visitOptionalNodeOrToken(node." + child.name + ");\r\n";
                 }
                 else {
-                    result += "        this.visitNodeOrToken(node." + child.name + ");\r\n";
+                    result += "            this.visitNodeOrToken(node." + child.name + ");\r\n";
                 }
             }
             else if (child.type !== "SyntaxKind") {
                 if (child.isOptional) {
-                    result += "        this.visitOptionalNode(node." + child.name + ");\r\n";
+                    result += "            this.visitOptionalNode(node." + child.name + ");\r\n";
                 }
                 else {
-                    result += "        this.visitNode(node." + child.name + ");\r\n";
+                    result += "            this.visitNode(node." + child.name + ");\r\n";
                 }
             }
         }
 
-        result += "    }\r\n";
+        result += "        }\r\n";
     }
 
-    result += "}";
+    result += "    }";
+    result += "\r\n}";
     return result;
 }
 
-function generateKeywordCondition(keywords: { text: string; kind: SyntaxKind; }[], currentCharacter: number, indent: string): string {
+function generateKeywordCondition(keywords: { text: string; kind: TypeScript.SyntaxKind; }[], currentCharacter: number, indent: string): string {
     var length = keywords[0].text.length;
 
     var result = "";
@@ -2757,7 +2767,7 @@ function generateKeywordCondition(keywords: { text: string; kind: SyntaxKind; }[
         var keyword = keywords[0];
         
         if (currentCharacter === length) {
-            return indent + "return SyntaxKind." + (<any>SyntaxKind)._map[keyword.kind] + ";\r\n";
+            return indent + "return SyntaxKind." + (<any>TypeScript.SyntaxKind)._map[keyword.kind] + ";\r\n";
         }
 
         var keywordText = keywords[0].text;
@@ -2772,18 +2782,18 @@ function generateKeywordCondition(keywords: { text: string; kind: SyntaxKind; }[
             result += "array[" + index + "] === CharacterCodes." + keywordText.substr(i, 1);
         }
 
-        result += ") ? SyntaxKind." + (<any>SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierName;\r\n";
+        result += ") ? SyntaxKind." + (<any>TypeScript.SyntaxKind)._map[keyword.kind] + " : SyntaxKind.IdentifierName;\r\n";
     }
     else {
         var index = currentCharacter === 0 ? "startIndex" : ("startIndex + " + currentCharacter);
         result += indent + "switch(array[" + index + "]) {\r\n"
 
-        var groupedKeywords = ArrayUtilities.groupBy(keywords, k => k.text.substr(currentCharacter, 1));
+        var groupedKeywords = TypeScript.ArrayUtilities.groupBy(keywords, k => k.text.substr(currentCharacter, 1));
 
         for (var c in groupedKeywords) {
             if (groupedKeywords.hasOwnProperty(c)) {
                 result += indent + "case CharacterCodes." + c + ":\r\n";
-                result += indent + "    // " + ArrayUtilities.select(groupedKeywords[c], k => k.text).join(", ") + "\r\n";
+                result += indent + "    // " + TypeScript.ArrayUtilities.select(groupedKeywords[c], k => k.text).join(", ") + "\r\n";
                 result += generateKeywordCondition(groupedKeywords[c], currentCharacter + 1, indent + "    ");
             }
         }
@@ -2800,25 +2810,26 @@ function generateScannerUtilities(): string {
     var result = "///<reference path='..\\Text\\CharacterCodes.ts' />\r\n" +
         "///<reference path='SyntaxKind.ts' />\r\n" +
         "\r\n" +
-        "class ScannerUtilities {\r\n";
+        "module TypeScript {\r\n" +
+        "    export class ScannerUtilities {\r\n";
 
-    var keywords: { text: string; kind: SyntaxKind; }[] = [];
-    for (var i = SyntaxKind.FirstKeyword; i <= SyntaxKind.LastKeyword; i++) {
-        keywords.push({ kind: i, text: SyntaxFacts.getText(i) });
+    var keywords: { text: string; kind: TypeScript.SyntaxKind; }[] = [];
+    for (var i = TypeScript.SyntaxKind.FirstKeyword; i <= TypeScript.SyntaxKind.LastKeyword; i++) {
+        keywords.push({ kind: i, text: TypeScript.SyntaxFacts.getText(i) });
     }
 
-    result += "    public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {\r\n";
+    result += "        public static identifierKind(array: number[], startIndex: number, length: number): SyntaxKind {\r\n";
 
-    var minTokenLength = ArrayUtilities.min(keywords, k => k.text.length);
-    var maxTokenLength = ArrayUtilities.max(keywords, k => k.text.length);
-    result += "        switch (length) {\r\n";
+    var minTokenLength = TypeScript.ArrayUtilities.min(keywords, k => k.text.length);
+    var maxTokenLength = TypeScript.ArrayUtilities.max(keywords, k => k.text.length);
+    result += "            switch (length) {\r\n";
 
 
     for (var i = minTokenLength; i <= maxTokenLength; i++) {
-        var keywordsOfLengthI = ArrayUtilities.where(keywords, k => k.text.length === i);
+        var keywordsOfLengthI = TypeScript.ArrayUtilities.where(keywords, k => k.text.length === i);
         if (keywordsOfLengthI.length > 0) {
-            result += "        case " + i + ":\r\n";
-            result += "            // " + ArrayUtilities.select(keywordsOfLengthI, k => k.text).join(", ") + "\r\n";
+            result += "            case " + i + ":\r\n";
+            result += "                // " + TypeScript.ArrayUtilities.select(keywordsOfLengthI, k => k.text).join(", ") + "\r\n";
 
             result += generateKeywordCondition(keywordsOfLengthI, 0, "            ");
 
@@ -2826,11 +2837,12 @@ function generateScannerUtilities(): string {
         }
     }
 
-    result += "        default:\r\n";
-    result += "            return SyntaxKind.IdentifierName;\r\n";
+    result += "            default:\r\n";
+    result += "                return SyntaxKind.IdentifierName;\r\n";
+    result += "            }\r\n";
     result += "        }\r\n";
-    result += "    }\r\n";
 
+    result += "    }\r\n";
     result += "}";
 
     return result;
@@ -2841,40 +2853,43 @@ function generateVisitor(): string {
 
     result += "///<reference path='SyntaxNodes.generated.ts' />\r\n\r\n";
 
-    result += "interface ISyntaxVisitor {\r\n";
-    result += "    visitToken(token: ISyntaxToken): any;\r\n";
+    result += "module TypeScript {\r\n";
+    result += "    export interface ISyntaxVisitor {\r\n";
+    result += "        visitToken(token: ISyntaxToken): any;\r\n";
 
     for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
         if (!definition.isAbstract) {
-            result += "    visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
+            result += "        visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any;\r\n";
         }
     }
 
-    result += "}\r\n\r\n";
+    result += "    }\r\n\r\n";
 
     if (!forPrettyPrinter) {
-        result += "class SyntaxVisitor implements ISyntaxVisitor {\r\n";
-        result += "    public defaultVisit(node: ISyntaxNodeOrToken): any {\r\n";
-        result += "        return null;\r\n";
-        result += "    }\r\n";
+        result += "    export class SyntaxVisitor implements ISyntaxVisitor {\r\n";
+        result += "        public defaultVisit(node: ISyntaxNodeOrToken): any {\r\n";
+        result += "            return null;\r\n";
+        result += "        }\r\n";
         result += "\r\n";
-        result += "    private visitToken(token: ISyntaxToken): any {\r\n";
-        result += "        return this.defaultVisit(token);\r\n";
-        result += "    }\r\n";
+        result += "        private visitToken(token: ISyntaxToken): any {\r\n";
+        result += "            return this.defaultVisit(token);\r\n";
+        result += "        }\r\n";
 
         for (var i = 0; i < definitions.length; i++) {
             var definition = definitions[i];
 
             if (!definition.isAbstract) {
-                result += "\r\n    private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
-                result += "        return this.defaultVisit(node);\r\n";
-                result += "    }\r\n";
+                result += "\r\n        private visit" + getNameWithoutSuffix(definition) + "(node: " + definition.name + "): any {\r\n";
+                result += "            return this.defaultVisit(node);\r\n";
+                result += "        }\r\n";
             }
         }
 
-        result += "}";
+        result += "    }";
     }
+
+    result += "\r\n}";
 
     return result;
 }
@@ -2882,7 +2897,7 @@ function generateVisitor(): string {
 function generateFactory(): string {
     var result = "///<reference path='ISyntaxList.ts' />\r\n";
 
-    result += "\r\nmodule Syntax {\r\n";
+    result += "\r\nmodule TypeScript.Syntax {\r\n";
 
     result += "    export interface IFactory {\r\n";
 
