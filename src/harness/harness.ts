@@ -1992,7 +1992,7 @@ module Harness {
                 errMsg += 'either fix the regression (if unintended) or run nmake baseline-accept (if intended).'
 
                 var refFilename = referencePath(relativeFilename);
-                htmlBaselineReport.addDifference(descriptionForDescribe, actualFilename, refFilename, expected, actual);
+                htmlBaselineReport.addDifference(descriptionForDescribe, actualFilename, refFilename, expected, actual, /*includeUnchangedRegions:*/ true);
 
                 throw new Error(errMsg);
             }
