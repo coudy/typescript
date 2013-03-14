@@ -1,12 +1,9 @@
 {
     "_diagnostics": [
         {
-            "_position": 10,
+            "_position": 9,
             "_width": 1,
-            "_diagnosticCode": "_0_expected",
-            "_arguments": [
-                "=>"
-            ]
+            "_diagnosticCode": "Identifier_expected"
         }
     ],
     "_sourceUnit": {
@@ -72,56 +69,54 @@
                                     ]
                                 },
                                 "value": {
-                                    "kind": "ParenthesizedArrowFunctionExpression",
+                                    "kind": "InvocationExpression",
                                     "fullWidth": 6,
                                     "hasZeroWidthToken": true,
-                                    "callSignature": {
-                                        "kind": "CallSignature",
-                                        "fullWidth": 2,
-                                        "parameterList": {
-                                            "kind": "ParameterList",
-                                            "fullWidth": 2,
-                                            "openParenToken": {
-                                                "kind": "OpenParenToken",
-                                                "width": 1,
-                                                "text": "("
-                                            },
-                                            "parameters": [],
-                                            "closeParenToken": {
-                                                "kind": "CloseParenToken",
-                                                "width": 1,
-                                                "text": ")"
-                                            }
-                                        }
-                                    },
-                                    "equalsGreaterThanToken": {
-                                        "kind": "EqualsGreaterThanToken",
-                                        "width": 0,
-                                        "text": ""
-                                    },
-                                    "body": {
+                                    "expression": {
                                         "kind": "ParenthesizedExpression",
-                                        "fullWidth": 4,
+                                        "fullWidth": 2,
+                                        "hasZeroWidthToken": true,
                                         "openParenToken": {
                                             "kind": "OpenParenToken",
                                             "width": 1,
                                             "text": "("
                                         },
                                         "expression": {
-                                            "kind": "ObjectLiteralExpression",
-                                            "fullWidth": 2,
-                                            "openBraceToken": {
-                                                "kind": "OpenBraceToken",
-                                                "width": 1,
-                                                "text": "{"
-                                            },
-                                            "propertyAssignments": [],
-                                            "closeBraceToken": {
-                                                "kind": "CloseBraceToken",
-                                                "width": 1,
-                                                "text": "}"
-                                            }
+                                            "kind": "IdentifierName",
+                                            "width": 0,
+                                            "text": ""
                                         },
+                                        "closeParenToken": {
+                                            "kind": "CloseParenToken",
+                                            "width": 1,
+                                            "text": ")"
+                                        }
+                                    },
+                                    "argumentList": {
+                                        "kind": "ArgumentList",
+                                        "fullWidth": 4,
+                                        "openParenToken": {
+                                            "kind": "OpenParenToken",
+                                            "width": 1,
+                                            "text": "("
+                                        },
+                                        "arguments": [
+                                            {
+                                                "kind": "ObjectLiteralExpression",
+                                                "fullWidth": 2,
+                                                "openBraceToken": {
+                                                    "kind": "OpenBraceToken",
+                                                    "width": 1,
+                                                    "text": "{"
+                                                },
+                                                "propertyAssignments": [],
+                                                "closeBraceToken": {
+                                                    "kind": "CloseBraceToken",
+                                                    "width": 1,
+                                                    "text": "}"
+                                                }
+                                            }
+                                        ],
                                         "closeParenToken": {
                                             "kind": "CloseParenToken",
                                             "width": 1,

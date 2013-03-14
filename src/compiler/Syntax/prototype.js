@@ -37991,7 +37991,8 @@ var TypeScript;
                 }
                 var token1 = this.peekToken(1);
                 if (token1.tokenKind === 73 /* CloseParenToken */ ) {
-                    return true;
+                    var token2 = this.peekToken(2);
+                    return token2.tokenKind === 106 /* ColonToken */  || token2.tokenKind === 85 /* EqualsGreaterThanToken */  || token2.tokenKind === 70 /* OpenBraceToken */ ;
                 }
                 if (token1.tokenKind === 77 /* DotDotDotToken */ ) {
                     return true;
@@ -61128,6 +61129,7 @@ var stringTable = TypeScript.Collections.createStringTable();
 var specificFile = undefined;
 var generate = true;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
+htmlReport.reset();
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (useTypeScript, verify) {
@@ -61153,7 +61155,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, generate);
         });
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (filePath) {

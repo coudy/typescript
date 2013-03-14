@@ -4077,7 +4077,7 @@ module TypeScript.Parser1 {
             // arrow function.
 
             if (this.isDefinitelyArrowFunctionExpression()) {
-                // We have something like "()" or "(a) =>".  Definitely a lambda, so parse it
+                // We have something like "() =>" or "(a) =>".  Definitely a lambda, so parse it
                 // unilaterally as such.
                 return this.parseParenthesizedArrowFunctionExpression(/*requiresArrow:*/ false);
             }
@@ -4164,8 +4164,16 @@ module TypeScript.Parser1 {
 
             if (token1.tokenKind === SyntaxKind.CloseParenToken) {
                 // ()
-                // Definitely an arrow function.  Could never be a parenthesized expression.
-                return true;
+                // Definitely an arrow function.  Could never be a parenthesized expression.  
+                // *However*, because of error situations, we could end up with things like "().foo".
+                // In this case, we don't want to think of this as the start of an arrow function.
+                // To prevent this, we are a little stricter, and we require that we at least see:
+                //      "():"  or  "() =>"  or "() {}".  Note: the last one is illegal.  However it
+                // most likely is a missing => and not a parenthesized expression.
+                var token2 = this.peekToken(2);
+                return token2.tokenKind === SyntaxKind.ColonToken ||
+                       token2.tokenKind === SyntaxKind.EqualsGreaterThanToken ||
+                       token2.tokenKind === SyntaxKind.OpenBraceToken;
             }
 
             if (token1.tokenKind === SyntaxKind.DotDotDotToken) {

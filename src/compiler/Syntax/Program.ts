@@ -19,6 +19,7 @@ var specificFile =
 
 var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
+htmlReport.reset();
 
 class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
@@ -51,7 +52,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ true, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
