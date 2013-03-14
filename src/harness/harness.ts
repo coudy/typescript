@@ -1179,17 +1179,12 @@ module Harness {
                 this.errors = [];
 
                 for (var i = 0; i < errorLines.length; i++) {
-                    if (Harness.usePull) {
-                        var err = <any>errorLines[i]; // TypeScript.PullError
-                        this.errors.push(new CompilerError(err.filename, 0, 0, err.message()));
-                    } else {
-                        var match = errorLines[i].match(/([^\(]*)\((\d+),(\d+)\):\s+((.*[\s\r\n]*.*)+)\s*$/);
-                        if (match) {
-                            this.errors.push(new CompilerError(match[1], parseFloat(match[2]), parseFloat(match[3]), match[4]));
-                        }
-                        else {
-                            WScript.Echo("non-match on: " + errorLines[i]);
-                        }
+                    var match = errorLines[i].match(/([^\(]*)\((\d+),(\d+)\):\s+((.*[\s\r\n]*.*)+)\s*$/);
+                    if (match) {
+                        this.errors.push(new CompilerError(match[1], parseFloat(match[2]), parseFloat(match[3]), match[4]));
+                    }
+                    else {
+                        WScript.Echo("non-match on: " + errorLines[i]);
                     }
                 }
             }
@@ -1360,23 +1355,21 @@ module Harness {
             scripts.push(addUnit(code, uName, false, isDeclareFile, references));
             compile(code, uName);
 
-            var errors;
             if (usePull) {
-                errors = compiler.pullGetErrorsForFile(uName);
-                emit(stdout, true);                
-            }
-            else {
-                errors = stderr.lines;
-                emit(stdout, false);
+                var errors: TypeScript.SemanticError[] = compiler.pullGetErrorsForFile(uName);
+                compiler.pullErrorReporter.textWriter = stderr;
+                compiler.pullErrorReporter.reportErrors(errors);
             }
 
+            var errorLines = stderr.lines;
+            emit(stdout, Harness.usePull);
             compiler.emitDeclarations(Harness.usePull);
 
             if (context) {
                 context.postCompile();
             }
 
-            callback(new CompilerResult(stdout.toArray(), errors, scripts));
+            callback(new CompilerResult(stdout.toArray(), errorLines, scripts));
         }
 
         /** Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that
