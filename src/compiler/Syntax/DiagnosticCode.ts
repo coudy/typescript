@@ -12,6 +12,7 @@ module TypeScript {
         Trailing_separator_not_allowed,
         _StarSlash__expected,
         _public_or_private_modifier_must_precede__static_,
+        Unexpected_token_,
     }
 
     export class DiagnosticMessages1 {
@@ -30,6 +31,7 @@ module TypeScript {
                 codeToFormatString[DiagnosticCode.Trailing_separator_not_allowed] = "Trailing separator not allowed.";
                 codeToFormatString[DiagnosticCode._StarSlash__expected] = "'*/' expected.";
                 codeToFormatString[DiagnosticCode._public_or_private_modifier_must_precede__static_] = "'public' or 'private' modifier must precede 'static'.";
+                codeToFormatString[DiagnosticCode.Unexpected_token_] = "Unexpected token.";
             }
         }
 

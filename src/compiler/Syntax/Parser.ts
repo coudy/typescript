@@ -2061,7 +2061,7 @@ module TypeScript.Parser1 {
             var identifier = this.eatIdentifierToken();
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
 
             return this.factory.getMemberAccessorDeclaration(
                 publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
@@ -2074,7 +2074,7 @@ module TypeScript.Parser1 {
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var identifier = this.eatIdentifierToken();
             var parameterList = this.parseParameterList();
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
 
             return this.factory.setMemberAccessorDeclaration(
                 publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
@@ -2176,7 +2176,7 @@ module TypeScript.Parser1 {
             var block: BlockSyntax = null;
 
             if (this.isBlock()) {
-                block = this.parseBlock();
+                block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
             }
             else {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2238,11 +2238,17 @@ module TypeScript.Parser1 {
 
             var functionSignature = this.parseFunctionSignature(/*allowQuestionToken:*/ false);
 
+            // If we got an errant => then we want to parse what's coming up without requiring an
+            // open brace.
+            var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken(functionSignature);
+            var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
+            functionSignature = newFunctionSignature;
+
             var block: BlockSyntax = null;
             var semicolon: ISyntaxToken = null;
 
-            if (this.isBlock()) {
-                block = this.parseBlock();
+            if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
+                block = this.parseBlock(parseBlockEvenWithNoOpenBrace);
             }
             else {
                 semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2348,6 +2354,26 @@ module TypeScript.Parser1 {
                    this.peekToken(1).tokenKind === SyntaxKind.FunctionKeyword;
         }
 
+        private tryAddUnexpectedEqualsGreaterThanToken(functionSignature: FunctionSignatureSyntax): FunctionSignatureSyntax {
+            var token0 = this.currentToken();
+
+            var hasEqualsGreaterThanToken = token0.tokenKind === SyntaxKind.EqualsGreaterThanToken;
+            if (hasEqualsGreaterThanToken) {
+                // Previously the language allowed "function f() => expr;" as a shorthand for 
+                // "function f() { return expr; }.
+                // 
+                // Detect if the user is typing this and attempt recovery.
+                var diagnostic = new SyntaxDiagnostic(
+                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_, []);
+                this.addDiagnostic(diagnostic);
+
+                var token = this.eatAnyToken();
+                return <FunctionSignatureSyntax>this.addSkippedTokenAfterNode(functionSignature, token0);
+            }
+
+            return functionSignature;
+        }
+
         private parseFunctionDeclaration(): FunctionDeclarationSyntax {
             // Debug.assert(this.isFunctionDeclaration());
 
@@ -2357,11 +2383,18 @@ module TypeScript.Parser1 {
             var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
             var functionSignature = this.parseFunctionSignature(/*allowQuestionToken:*/ false);
 
+            // If we got an errant => then we want to parse what's coming up without requiring an
+            // open brace.
+            var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken(functionSignature);
+            var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
+            functionSignature = newFunctionSignature;
+
             var semicolonToken: ISyntaxToken = null;
             var block: BlockSyntax = null;
 
-            if (this.isBlock()) {
-                block = this.parseBlock();
+            // Parse a block if we're on a bock, or if we saw a '=>'
+            if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
+                block = this.parseBlock(parseBlockEvenWithNoOpenBrace);
             }
             else {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2678,7 +2711,7 @@ module TypeScript.Parser1 {
                 return this.parseIfStatement();
             }
             else if (this.isBlock()) {
-                return this.parseBlock();
+                return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
             }
             else if (this.isReturnStatement()) {
                 return this.parseReturnStatement();
@@ -2783,7 +2816,7 @@ module TypeScript.Parser1 {
 
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= ListParsingState.TryBlock_Statements;
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
             this.listParsingState = savedListParsingState;
 
             var catchClause: CatchClauseSyntax = null;
@@ -2815,7 +2848,7 @@ module TypeScript.Parser1 {
 
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= ListParsingState.CatchBlock_Statements;
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
             this.listParsingState = savedListParsingState;
 
             return this.factory.catchClause(catchKeyword, openParenToken, identifier, closeParenToken, block);
@@ -2827,7 +2860,7 @@ module TypeScript.Parser1 {
 
         private parseFinallyClause(): FinallyClauseSyntax {
             var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
 
             return this.factory.finallyClause(finallyKeyword, block);
         }
@@ -3997,7 +4030,7 @@ module TypeScript.Parser1 {
             }
 
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
 
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         }
@@ -4120,7 +4153,7 @@ module TypeScript.Parser1 {
 
         private parseArrowFunctionBody(): ISyntaxNodeOrToken {
             if (this.isBlock()) {
-                return this.parseBlock();
+                return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
             }
             else {
                 return this.parseAssignmentExpression(/*allowIn:*/ true);
@@ -4344,7 +4377,7 @@ module TypeScript.Parser1 {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
 
             return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block);
         }
@@ -4362,7 +4395,7 @@ module TypeScript.Parser1 {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var parameter = this.parseParameter();
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var block = this.parseBlock();
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
 
             return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
         }
@@ -4436,12 +4469,12 @@ module TypeScript.Parser1 {
             return thisKeyword;
         }
 
-        private parseBlock(): BlockSyntax {
+        private parseBlock(parseBlockEvenWithNoOpenBrace: bool): BlockSyntax {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
             var statements: ISyntaxList = Syntax.emptyList;
 
-            if (openBraceToken.width() > 0) {
+            if (parseBlockEvenWithNoOpenBrace || openBraceToken.width() > 0) {
                 var savedIsInStrictMode = this.isInStrictMode;
 
                 var result = this.parseSyntaxList(ListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
