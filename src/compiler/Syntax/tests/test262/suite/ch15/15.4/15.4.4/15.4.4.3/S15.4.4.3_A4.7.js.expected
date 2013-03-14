@@ -113,12 +113,12 @@
                                     ]
                                 },
                                 "expression": {
-                                    "kind": "QualifiedName",
+                                    "kind": "MemberAccessExpression",
                                     "fullWidth": 30,
-                                    "left": {
-                                        "kind": "QualifiedName",
+                                    "expression": {
+                                        "kind": "MemberAccessExpression",
                                         "fullWidth": 15,
-                                        "left": {
+                                        "expression": {
                                             "kind": "IdentifierName",
                                             "width": 5,
                                             "text": "Array",
@@ -129,7 +129,7 @@
                                             "width": 1,
                                             "text": "."
                                         },
-                                        "right": {
+                                        "name": {
                                             "kind": "IdentifierName",
                                             "width": 9,
                                             "text": "prototype",
@@ -141,7 +141,7 @@
                                         "width": 1,
                                         "text": "."
                                     },
-                                    "right": {
+                                    "name": {
                                         "kind": "IdentifierName",
                                         "width": 14,
                                         "text": "toLocaleString",
@@ -262,12 +262,12 @@
                                                         ]
                                                     },
                                                     "expression": {
-                                                        "kind": "QualifiedName",
+                                                        "kind": "MemberAccessExpression",
                                                         "fullWidth": 30,
-                                                        "left": {
-                                                            "kind": "QualifiedName",
+                                                        "expression": {
+                                                            "kind": "MemberAccessExpression",
                                                             "fullWidth": 15,
-                                                            "left": {
+                                                            "expression": {
                                                                 "kind": "IdentifierName",
                                                                 "width": 5,
                                                                 "text": "Array",
@@ -278,7 +278,7 @@
                                                                 "width": 1,
                                                                 "text": "."
                                                             },
-                                                            "right": {
+                                                            "name": {
                                                                 "kind": "IdentifierName",
                                                                 "width": 9,
                                                                 "text": "prototype",
@@ -290,7 +290,7 @@
                                                             "width": 1,
                                                             "text": "."
                                                         },
-                                                        "right": {
+                                                        "name": {
                                                             "kind": "IdentifierName",
                                                             "width": 14,
                                                             "text": "toLocaleString",

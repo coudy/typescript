@@ -8,6 +8,7 @@
 ///<reference path='..\Core\Timer.ts' />
 ///<reference path='Top1000.ts' />
 ///<reference path='tests\IncrementalParserTests.ts' />
+///<reference path='..\..\Harness\Diff.ts' />
 
 var timer = new TypeScript.Timer();
 var stringTable = TypeScript.Collections.createStringTable();
@@ -17,6 +18,7 @@ var specificFile =
     undefined;
 
 var generate = false;
+var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html", /*includeUnchangedRegions:*/ false);
 
 class Program {
     runAllTests(useTypeScript: bool, verify: bool): void {
@@ -207,6 +209,7 @@ class Program {
             if (expectedResult !== actualResult) {
                 Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                 Environment.writeFile(actualFile, actualResult, /*useUTF8:*/ true);
+                htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult);
             }
         }
     }

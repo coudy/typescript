@@ -151,12 +151,12 @@
                                                     ]
                                                 },
                                                 "expression": {
-                                                    "kind": "QualifiedName",
+                                                    "kind": "MemberAccessExpression",
                                                     "fullWidth": 23,
-                                                    "left": {
-                                                        "kind": "QualifiedName",
+                                                    "expression": {
+                                                        "kind": "MemberAccessExpression",
                                                         "fullWidth": 18,
-                                                        "left": {
+                                                        "expression": {
                                                             "kind": "IdentifierName",
                                                             "width": 8,
                                                             "text": "Function",
@@ -167,7 +167,7 @@
                                                             "width": 1,
                                                             "text": "."
                                                         },
-                                                        "right": {
+                                                        "name": {
                                                             "kind": "IdentifierName",
                                                             "width": 9,
                                                             "text": "prototype",
@@ -179,7 +179,7 @@
                                                         "width": 1,
                                                         "text": "."
                                                     },
-                                                    "right": {
+                                                    "name": {
                                                         "kind": "IdentifierName",
                                                         "width": 4,
                                                         "text": "call",

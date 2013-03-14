@@ -9,47 +9,32 @@
             ]
         },
         {
-            "_position": 329,
-            "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "identifier"
-            ]
-        },
-        {
             "_position": 331,
             "_width": 1,
-            "_diagnosticCode": "Unexpected_token__0_expected",
-            "_arguments": [
-                "identifier"
-            ]
+            "_diagnosticCode": "Identifier_expected"
         }
     ],
     "_sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 335,
-        "hasSkippedText": true,
         "hasZeroWidthToken": true,
         "moduleElements": [
             {
                 "kind": "VariableStatement",
-                "fullWidth": 331,
-                "hasSkippedText": true,
+                "fullWidth": 322,
                 "hasZeroWidthToken": true,
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
-                    "fullWidth": 331,
-                    "hasSkippedText": true,
+                    "fullWidth": 322,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
-                        "fullWidth": 331,
+                        "fullWidth": 322,
                         "text": "var",
                         "hasLeadingTrivia": true,
                         "hasLeadingComment": true,
                         "hasLeadingNewLine": true,
                         "hasTrailingTrivia": true,
-                        "hasTrailingSkippedText": true,
                         "leadingTrivia": [
                             {
                                 "kind": "SingleLineCommentTrivia",
@@ -88,26 +73,51 @@
                             {
                                 "kind": "WhitespaceTrivia",
                                 "text": " "
-                            },
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "export"
-                            },
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            },
-                            {
-                                "kind": "SkippedTextTrivia",
-                                "text": "="
-                            },
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
                             }
                         ]
                     },
                     "variableDeclarators": []
+                },
+                "semicolonToken": {
+                    "kind": "SemicolonToken",
+                    "width": 0,
+                    "text": ""
+                }
+            },
+            {
+                "kind": "ExportAssignment",
+                "fullWidth": 9,
+                "hasZeroWidthToken": true,
+                "exportKeyword": {
+                    "kind": "ExportKeyword",
+                    "width": 6,
+                    "fullWidth": 7,
+                    "text": "export",
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "equalsToken": {
+                    "kind": "EqualsToken",
+                    "width": 1,
+                    "fullWidth": 2,
+                    "text": "=",
+                    "hasTrailingTrivia": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "WhitespaceTrivia",
+                            "text": " "
+                        }
+                    ]
+                },
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 0,
+                    "text": ""
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",

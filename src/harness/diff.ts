@@ -13,6 +13,8 @@
 // limitations under the License.
 //
 
+/// <reference path='..\Compiler\Core\Environment.ts' />
+
 module Diff {
     /// <summary>
     ///  Enum indicating what happened to a Segment of text analyzed in a diff.
@@ -322,7 +324,7 @@ module Diff {
         public newOutput: string;
         public regions: Region[];
 
-        constructor(oldContent: string, newContent: string) {
+        constructor(oldContent: string, newContent: string, private includeUnchangedRegions: bool = true) {
             this.regionsGenerated = false;
             this.segmentSet = [];
 
@@ -703,7 +705,11 @@ module Diff {
                         default:
                             OldText += (segment.content);
                             NewText += (segment.content);
-                            MergedHtml += (StringDiff.unchangedStringHtml(segment.content));
+
+                            if (this.includeUnchangedRegions) {
+                                MergedHtml += (StringDiff.unchangedStringHtml(segment.content));
+                            }
+
                             break;
                     }
                 }
@@ -788,12 +794,12 @@ module Diff {
 
         private reportContent: string = null;
 
-        constructor(private reportFileName: string) {
+        constructor(private reportFileName: string, private includeUnchangedRegions: bool = true) {
             var htmlTrailer = '</body></html>';
 
-            if (IO.fileExists(this.reportFileName)) {
+            if (Environment.fileExists(this.reportFileName)) {
                 // Suck in the existing baseline if we have one.
-                this.reportContent = IO.readFile(this.reportFileName);
+                this.reportContent = Environment.readFile(this.reportFileName);
             } else {
                 // Otherwise, set the content to the default.
                 this.reportContent = HtmlBaselineReport.htmlLeader;
@@ -801,15 +807,15 @@ module Diff {
         }
 
         public reset(): void {
-            if (IO.fileExists(this.reportFileName)) {
-                IO.deleteFile(this.reportFileName);
+            if (Environment.fileExists(this.reportFileName)) {
+                Environment.deleteFile(this.reportFileName);
             }
 
             this.reportContent = HtmlBaselineReport.htmlLeader;
         }
 
         public addDifference(description: string, expectedFileName: string, actualFileName: string, expected: string, actual: string): void {
-            var diff = new Diff.StringDiff(expected, actual);
+            var diff = new Diff.StringDiff(expected, actual, this.includeUnchangedRegions);
 
             var header = "";
             if (description !== "") {
@@ -825,7 +831,7 @@ module Diff {
             this.reportContent += header + '<div class="code">' + diff.mergedHtml + '</div>' + '<hr>';
             this.reportContent += HtmlBaselineReport.htmlTrailer;
 
-            IO.writeFile(this.reportFileName, this.reportContent);
+            Environment.writeFile(this.reportFileName, this.reportContent);
         }
     }
 }
