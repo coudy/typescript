@@ -1647,7 +1647,7 @@ module TypeScript.Parser1 {
             }
         }
 
-        private isModuleElement(): bool {
+        private isModuleElement(inErrorRecovery: bool): bool {
             if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
                 return true;
             }
@@ -1658,7 +1658,7 @@ module TypeScript.Parser1 {
                    this.isInterfaceDeclaration() ||
                    this.isClassDeclaration() ||
                    this.isEnumDeclaration() ||
-                   this.isStatement();
+                   this.isStatement(inErrorRecovery);
         }
         
         private parseModuleElement(): IModuleElementSyntax {
@@ -1684,7 +1684,7 @@ module TypeScript.Parser1 {
             else if (this.isEnumDeclaration()) {
                 return this.parseEnumDeclaration();
             }
-            else if (this.isStatement()) {
+            else if (this.isStatement(/*inErrorRecovery:*/ false)) {
                 return this.parseStatement();
             }
             else {
@@ -2611,7 +2611,7 @@ module TypeScript.Parser1 {
             return this.factory.implementsClause(implementsKeyword, typeNames);
         }
 
-        private isStatement(): bool {
+        private isStatement(inErrorRecovery: bool): bool {
             if (this.currentNode() !== null && this.currentNode().isStatement()) {
                 return true;
             }
@@ -2644,7 +2644,7 @@ module TypeScript.Parser1 {
                    this.isBreakStatement() ||
                    this.isContinueStatement() ||
                    this.isForOrForInStatement() ||
-                   this.isEmptyStatement() ||
+                   this.isEmptyStatement(inErrorRecovery) ||
                    this.isWhileStatement() ||
                    this.isWithStatement() ||
                    this.isDoStatement() ||
@@ -2690,7 +2690,7 @@ module TypeScript.Parser1 {
             else if (this.isForOrForInStatement()) {
                 return this.parseForOrForInStatement();
             }
-            else if (this.isEmptyStatement()) {
+            else if (this.isEmptyStatement(/*inErrorRecovery:*/ false)) {
                 return this.parseEmptyStatement();
             }
             else if (this.isWhileStatement()) {
@@ -2856,7 +2856,17 @@ module TypeScript.Parser1 {
             return this.factory.whileStatement(whileKeyword, openParenToken, condition, closeParenToken, statement);
         }
 
-        private isEmptyStatement(): bool {
+        private isEmptyStatement(inErrorRecovery: bool): bool {
+            // If we're in error recovery, then we don't want to treat ';' as an empty statement.
+            // The problem is that ';' can show up in far too many contexts, and if we see one 
+            // and assume it's a statement, then we may bail out innapropriately from whatever 
+            // we're parsing.  For example, if we have a semicolon in the middle of a class, then
+            // we really don't want to assume the class is over and we're on a statement in the
+            // outer module.  We just want to consume and move on.
+            if (inErrorRecovery) {
+                return false;
+            }
+
             return this.currentToken().tokenKind === SyntaxKind.SemicolonToken;
         }
 
@@ -5311,7 +5321,9 @@ module TypeScript.Parser1 {
         }
 
         private isExpectedArgumentList_AssignmentExpressionsTerminator(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.CloseParenToken;
+            var token0 = this.currentToken();
+            return token0.tokenKind === SyntaxKind.CloseParenToken ||
+                   token0.tokenKind === SyntaxKind.SemicolonToken;
         }
 
         private isExpectedClassDeclaration_ClassElementsTerminator(): bool {
@@ -5356,29 +5368,29 @@ module TypeScript.Parser1 {
                 // "implements foo" is not considered a type name.
                 return !this.isExtendsOrImplementsClause();
             }
-
+            
             return false;
         }
 
         private isExpectedListItem(currentListType: ListParsingState, inErrorRecovery: bool): any {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
-                    return this.isModuleElement();
+                    return this.isModuleElement(inErrorRecovery);
 
                 case ListParsingState.ClassDeclaration_ClassElements:
                     return this.isClassElement();
 
                 case ListParsingState.ModuleDeclaration_ModuleElements:
-                    return this.isModuleElement();
+                    return this.isModuleElement(inErrorRecovery);
 
                 case ListParsingState.SwitchStatement_SwitchClauses:
                     return this.isSwitchClause();
 
                 case ListParsingState.SwitchClause_Statements:
-                    return this.isStatement();
+                    return this.isStatement(inErrorRecovery);
 
                 case ListParsingState.Block_Statements:
-                    return this.isStatement();
+                    return this.isStatement(inErrorRecovery);
 
                 case ListParsingState.TryBlock_Statements:
                 case ListParsingState.CatchBlock_Statements:

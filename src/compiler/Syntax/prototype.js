@@ -36476,11 +36476,11 @@ var TypeScript;
                     parser.setStrictMode(ParserImpl.isUseStrictDirective(items[items.length - 1]));
                 }
             };
-            ParserImpl.prototype.isModuleElement = function () {
+            ParserImpl.prototype.isModuleElement = function (inErrorRecovery) {
                 if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
                     return true;
                 }
-                return this.isImportDeclaration() || this.isExportAssignment() || this.isModuleDeclaration() || this.isInterfaceDeclaration() || this.isClassDeclaration() || this.isEnumDeclaration() || this.isStatement();
+                return this.isImportDeclaration() || this.isExportAssignment() || this.isModuleDeclaration() || this.isInterfaceDeclaration() || this.isClassDeclaration() || this.isEnumDeclaration() || this.isStatement(inErrorRecovery);
             };
             ParserImpl.prototype.parseModuleElement = function () {
                 if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
@@ -36498,7 +36498,7 @@ var TypeScript;
                     return this.parseClassDeclaration();
                 } else if (this.isEnumDeclaration()) {
                     return this.parseEnumDeclaration();
-                } else if (this.isStatement()) {
+                } else if (this.isStatement(false)) {
                     return this.parseStatement();
                 } else {
                     throw TypeScript.Errors.invalidOperation();
@@ -37055,7 +37055,7 @@ var TypeScript;
                 implementsKeyword = this.addSkippedTokensAfterToken(implementsKeyword, result.skippedTokens);
                 return this.factory.implementsClause(implementsKeyword, typeNames);
             };
-            ParserImpl.prototype.isStatement = function () {
+            ParserImpl.prototype.isStatement = function (inErrorRecovery) {
                 if (this.currentNode() !== null && this.currentNode().isStatement()) {
                     return true;
                 }
@@ -37067,7 +37067,7 @@ var TypeScript;
                             return false;
                         }
                 }
-                return this.isVariableStatement() || this.isLabeledStatement() || this.isFunctionDeclaration() || this.isIfStatement() || this.isBlock() || this.isExpressionStatement() || this.isReturnStatement() || this.isSwitchStatement() || this.isThrowStatement() || this.isBreakStatement() || this.isContinueStatement() || this.isForOrForInStatement() || this.isEmptyStatement() || this.isWhileStatement() || this.isWithStatement() || this.isDoStatement() || this.isTryStatement() || this.isDebuggerStatement();
+                return this.isVariableStatement() || this.isLabeledStatement() || this.isFunctionDeclaration() || this.isIfStatement() || this.isBlock() || this.isExpressionStatement() || this.isReturnStatement() || this.isSwitchStatement() || this.isThrowStatement() || this.isBreakStatement() || this.isContinueStatement() || this.isForOrForInStatement() || this.isEmptyStatement(inErrorRecovery) || this.isWhileStatement() || this.isWithStatement() || this.isDoStatement() || this.isTryStatement() || this.isDebuggerStatement();
             };
             ParserImpl.prototype.parseStatement = function () {
                 if (this.currentNode() !== null && this.currentNode().isStatement()) {
@@ -37095,7 +37095,7 @@ var TypeScript;
                     return this.parseContinueStatement();
                 } else if (this.isForOrForInStatement()) {
                     return this.parseForOrForInStatement();
-                } else if (this.isEmptyStatement()) {
+                } else if (this.isEmptyStatement(false)) {
                     return this.parseEmptyStatement();
                 } else if (this.isWhileStatement()) {
                     return this.parseWhileStatement();
@@ -37204,7 +37204,10 @@ var TypeScript;
                 var statement = this.parseStatement();
                 return this.factory.whileStatement(whileKeyword, openParenToken, condition, closeParenToken, statement);
             };
-            ParserImpl.prototype.isEmptyStatement = function () {
+            ParserImpl.prototype.isEmptyStatement = function (inErrorRecovery) {
+                if (inErrorRecovery) {
+                    return false;
+                }
                 return this.currentToken().tokenKind === 78 /* SemicolonToken */ ;
             };
             ParserImpl.prototype.parseEmptyStatement = function () {
@@ -38690,7 +38693,8 @@ var TypeScript;
                 return false;
             };
             ParserImpl.prototype.isExpectedArgumentList_AssignmentExpressionsTerminator = function () {
-                return this.currentToken().tokenKind === 73 /* CloseParenToken */ ;
+                var token0 = this.currentToken();
+                return token0.tokenKind === 73 /* CloseParenToken */  || token0.tokenKind === 78 /* SemicolonToken */ ;
             };
             ParserImpl.prototype.isExpectedClassDeclaration_ClassElementsTerminator = function () {
                 return this.currentToken().tokenKind === 71 /* CloseBraceToken */ ;
@@ -38725,17 +38729,17 @@ var TypeScript;
             ParserImpl.prototype.isExpectedListItem = function (currentListType, inErrorRecovery) {
                 switch(currentListType) {
                     case 1 /* SourceUnit_ModuleElements */ :
-                        return this.isModuleElement();
+                        return this.isModuleElement(inErrorRecovery);
                     case 2 /* ClassDeclaration_ClassElements */ :
                         return this.isClassElement();
                     case 4 /* ModuleDeclaration_ModuleElements */ :
-                        return this.isModuleElement();
+                        return this.isModuleElement(inErrorRecovery);
                     case 8 /* SwitchStatement_SwitchClauses */ :
                         return this.isSwitchClause();
                     case 16 /* SwitchClause_Statements */ :
-                        return this.isStatement();
+                        return this.isStatement(inErrorRecovery);
                     case 32 /* Block_Statements */ :
-                        return this.isStatement();
+                        return this.isStatement(inErrorRecovery);
                     case 64 /* TryBlock_Statements */ :
                     case 128 /* CatchBlock_Statements */ :
                         return false;
