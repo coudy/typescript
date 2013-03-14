@@ -1908,21 +1908,9 @@ module Harness {
 
     /** Support class for baseline files */
     export module Baseline {
-        var reportFilename = 'baseline-report.html';
+        var htmlBaselineReport = new Diff.HtmlBaselineReport('baseline-report.html');
 
         var firstRun = true;
-        var htmlTrailer = '</body></html>';
-        var htmlLeader = '<html><head><title>Baseline Report</title>';
-        htmlLeader += ("<style>");
-        htmlLeader += '\r\n' + (".code { font: 9pt 'Courier New'; }");
-        htmlLeader += '\r\n' + (".old { background-color: #EE1111; }");
-        htmlLeader += '\r\n' + (".new { background-color: #FFFF11; }");
-        htmlLeader += '\r\n' + (".from { background-color: #EE1111; color: #1111EE; }");
-        htmlLeader += '\r\n' + (".to { background-color: #EEEE11; color: #1111EE; }");
-        htmlLeader += '\r\n' + ("h2 { margin-bottom: 0px; }");
-        htmlLeader += '\r\n' + ("h2 { padding-bottom: 0px; }");
-        htmlLeader += '\r\n' + ("h4 { font-weight: normal; }");
-        htmlLeader += '\r\n' + ("</style>");
 
         export interface BaselineOptions {
             LineEndingSensitive?: bool;
@@ -1947,21 +1935,7 @@ module Harness {
         }
 
         export function reset() {
-            if (IO.fileExists(reportFilename)) {
-                IO.deleteFile(reportFilename);
-            }
-        }
-
-        function prepareBaselineReport(): string {
-            var reportContent = htmlLeader;
-            // Delete the baseline-report.html file if needed
-            if (IO.fileExists(reportFilename)) {
-                reportContent = IO.readFile(reportFilename);
-                reportContent = reportContent.replace(htmlTrailer, '');
-            } else {
-                reportContent = htmlLeader;
-            }
-            return reportContent;
+            htmlBaselineReport.reset();
         }
 
         function generateActual(actualFilename: string, generateContent: () => string): string {
@@ -2025,16 +1999,7 @@ module Harness {
                 errMsg += 'either fix the regression (if unintended) or run nmake baseline-accept (if intended).'
 
                 var refFilename = referencePath(relativeFilename);
-
-                // Append diff to the report
-                var diff = new Diff.StringDiff(expected, actual);
-                var header = '<h2>' + descriptionForDescribe + '</h2>';
-                header += '<h4>Left file: ' + actualFilename + '; Right file: ' + refFilename + '</h4>';
-                var trailer = '<hr>';
-
-                var reportContentSoFar = prepareBaselineReport();
-                reportContentSoFar = reportContentSoFar + header + '<div class="code">' + diff.mergedHtml + '</div>' + trailer + htmlTrailer;
-                IO.writeFile(reportFilename, reportContentSoFar);
+                htmlBaselineReport.addDifference(descriptionForDescribe, actualFilename, refFilename, expected, actual);
 
                 throw new Error(errMsg);
             }

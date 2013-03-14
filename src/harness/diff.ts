@@ -36,7 +36,7 @@ module Diff {
     ///  the old and new states of the string diff'd.
     /// </summary>
     export class Segment {
-        constructor (public content? = '', public type? = SegmentType.Unchanged) { }
+        constructor(public content? = '', public type? = SegmentType.Unchanged) { }
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ module Diff {
     ///  and what happened to it between the old and new states of the string diff'd.
     /// </summary>
     export class Region {
-        constructor (public index: number, public length: number, public type: SegmentType) { }
+        constructor(public index: number, public length: number, public type: SegmentType) { }
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ module Diff {
         public hashCode: string;
         public matchingIndex: number;
         public innerDiff: InnerDiff;
-        
-        constructor (public content: string, public delimiterContent: string) {
+
+        constructor(public content: string, public delimiterContent: string) {
             this.hashCode = "~!!" + content; // this will get used as an indexer later, don't want to overwrite useful properties
             this.matchingIndex = -1;
             this.innerDiff = null;
@@ -152,12 +152,10 @@ module Diff {
             return set;
         }
 
-        
         static SplitInner(content: string): Chunk[] {
             //return SplitSeparateDelimiters(content, new char[] { ' ', '\t', '=', ':', ';', ',', '\r', '\n' });
             return SplitCategory(content);
         }
-
 
         /// <summary>
         ///  Split method which breaks each chunk on Unicode character
@@ -237,7 +235,7 @@ module Diff {
     class UniquenessEntry {
         public MatchCount: number;
 
-        constructor (public index: number, public content: string) {
+        constructor(public index: number, public content: string) {
             this.MatchCount = 1;
         }
 
@@ -256,7 +254,7 @@ module Diff {
         private currentType: SegmentType;
         private segmentExists: bool;
 
-        constructor () {
+        constructor() {
             this.segmentSet = [];
         }
 
@@ -303,7 +301,7 @@ module Diff {
     export class InnerDiff {
         public Segments: Segment[];
 
-        constructor (oldContent: string, newContent: string) {
+        constructor(oldContent: string, newContent: string) {
             var oldChunks = Chunk.SplitInner(oldContent);
             var newChunks = Chunk.SplitInner(newContent);
 
@@ -324,7 +322,7 @@ module Diff {
         public newOutput: string;
         public regions: Region[];
 
-        constructor (oldContent: string, newContent: string) {
+        constructor(oldContent: string, newContent: string) {
             this.regionsGenerated = false;
             this.segmentSet = [];
 
@@ -367,7 +365,7 @@ module Diff {
                                 break;
                             }
                         }
-                        if(foundIt) break;
+                        if (foundIt) break;
                     }
                 }
             }
@@ -771,6 +769,63 @@ module Diff {
         static whitespaceEquivalent(input: string): string {
             // TODO: Don't replace \r, \n, or \t
             return input.replace(/./g, ' ');
+        }
+    }
+    
+    export class HtmlBaselineReport {
+        private static htmlTrailer = '</body></html>';
+        private static htmlLeader = '<html><head><title>Baseline Report</title>' +
+            '\r\n' + ("<style>") +
+            '\r\n' + (".code { font: 9pt 'Courier New'; }") +
+            '\r\n' + (".old { background-color: #EE1111; }") +
+            '\r\n' + (".new { background-color: #FFFF11; }") +
+            '\r\n' + (".from { background-color: #EE1111; color: #1111EE; }") +
+            '\r\n' + (".to { background-color: #EEEE11; color: #1111EE; }") +
+            '\r\n' + ("h2 { margin-bottom: 0px; }") +
+            '\r\n' + ("h2 { padding-bottom: 0px; }") +
+            '\r\n' + ("h4 { font-weight: normal; }") +
+            '\r\n' + ("</style>");
+
+        private reportContent: string = null;
+
+        constructor(private reportFileName: string) {
+            var htmlTrailer = '</body></html>';
+
+            if (IO.fileExists(this.reportFileName)) {
+                // Suck in the existing baseline if we have one.
+                this.reportContent = IO.readFile(this.reportFileName);
+            } else {
+                // Otherwise, set the content to the default.
+                this.reportContent = HtmlBaselineReport.htmlLeader;
+            }
+        }
+
+        public reset(): void {
+            if (IO.fileExists(this.reportFileName)) {
+                IO.deleteFile(this.reportFileName);
+            }
+
+            this.reportContent = HtmlBaselineReport.htmlLeader;
+        }
+
+        public addDifference(description: string, expectedFileName: string, actualFileName: string, expected: string, actual: string): void {
+            var diff = new Diff.StringDiff(expected, actual);
+
+            var header = "";
+            if (description !== "") {
+                header = '<h2>' + description + '</h2>';
+            }
+
+            header += '<h4>Left file: ' + expectedFileName + '; Right file: ' + actualFileName + '</h4>';
+
+            // Trim the trailer since we're going to add a new entry.
+            this.reportContent = this.reportContent.replace(HtmlBaselineReport.htmlTrailer, '');
+
+            // Add the new entry and then add the trailer back in.
+            this.reportContent += header + '<div class="code">' + diff.mergedHtml + '</div>' + '<hr>';
+            this.reportContent += HtmlBaselineReport.htmlTrailer;
+
+            IO.writeFile(this.reportFileName, this.reportContent);
         }
     }
 }
