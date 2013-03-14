@@ -1545,10 +1545,10 @@ module TypeScript {
         }
 
         public toString() {
-            if (this.isNamedTypeSymbol()) {
+            if (!this.isNamedTypeSymbol()) {
                 return this.getMemberTypeNameEx(true).toString();
             } else {
-                return super.toString();
+                return this.getScopedName();
             }
         }
 
@@ -1904,7 +1904,7 @@ module TypeScript {
         }
 
         public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
-            var elementMemberName = this.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName);
+            var elementMemberName = this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName);
             return MemberName.create(elementMemberName, "", "[]");
         }
     }
