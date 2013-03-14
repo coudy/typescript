@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 ///<reference path='typescript.ts' />
+///<reference path='..\harness\external\json2.ts' />
 
 module TypeScript {
 
@@ -374,7 +375,7 @@ module TypeScript {
         
         public lineMap(): ILineMap {
             if (this._lineMap === null) {
-                var lineStartPositions = JSON.parse(this.getLineStartPositions());
+                var lineStartPositions = JSON2.parse(this.getLineStartPositions());
                 this._lineMap = new LineMap(lineStartPositions, this.length());
             }
 
