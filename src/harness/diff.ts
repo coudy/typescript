@@ -794,7 +794,7 @@ module Diff {
 
         private reportContent: string = null;
 
-        constructor(private reportFileName: string, private includeUnchangedRegions: bool = true) {
+        constructor(private reportFileName: string) {
             var htmlTrailer = '</body></html>';
 
             if (Environment.fileExists(this.reportFileName)) {
@@ -814,8 +814,8 @@ module Diff {
             this.reportContent = HtmlBaselineReport.htmlLeader;
         }
 
-        public addDifference(description: string, expectedFileName: string, actualFileName: string, expected: string, actual: string): void {
-            var diff = new Diff.StringDiff(expected, actual, this.includeUnchangedRegions);
+        public addDifference(description: string, expectedFileName: string, actualFileName: string, expected: string, actual: string, includeUnchangedRegions: bool): void {
+            var diff = new Diff.StringDiff(expected, actual, includeUnchangedRegions);
 
             var header = "";
             if (description !== "") {

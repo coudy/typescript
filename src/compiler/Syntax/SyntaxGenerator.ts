@@ -2517,7 +2517,7 @@ function generateToken(isFixedWidth: bool, leading: bool, trailing: bool): strin
 "        public hasZeroWidthToken(): bool { return this.fullWidth() === 0; }\r\n" +
 "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" +
 "        public hasRegularExpressionToken(): bool { return SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" +
-"        private realize(): ISyntaxToken { return realize(this); }\r\n" +
+"        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" +
 "        private collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 
     result +=

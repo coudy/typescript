@@ -3,8 +3,14 @@
 ///<reference path='Scanner.ts' />
 
 module TypeScript.Syntax {
-    export function realize(token: ISyntaxToken): ISyntaxToken {
+    export function realizeToken(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.tokenKind,
+            token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
+    }
+
+    export function convertToIdentifierName(token: ISyntaxToken): ISyntaxToken {
+        Debug.assert(SyntaxFacts.isAnyKeyword(token.tokenKind));
+        return new RealizedToken(SyntaxKind.IdentifierName,
             token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
     }
 
@@ -160,7 +166,7 @@ module TypeScript.Syntax {
         public trailingTriviaWidth() { return 0; }
         public leadingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
-        public realize(): ISyntaxToken { return realize(this); }
+        public realize(): ISyntaxToken { return realizeToken(this); }
         private collectTextElements(elements: string[]): void { }
 
         public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {

@@ -1238,11 +1238,9 @@ module TypeScript.Parser1 {
             return this.createMissingToken(kind, token);
         }
 
-        // An identifier name is basically any word, even if that work is a reserved keyword.  so 
-        // both 'foo' and 'return' are identifier names.  Note: a word is always an identifier or 
-        // not regardless of the state of the parser.
-        private static isIdentifierName(token: ISyntaxToken): bool {
-            return SyntaxFacts.isIdentifierName(token.tokenKind);
+        private static isIdentifierNameOrAnyKeyword(token: ISyntaxToken): bool {
+            var tokenKind = token.tokenKind;
+            return tokenKind === SyntaxKind.IdentifierName || SyntaxFacts.isAnyKeyword(tokenKind);
         }
 
         // An identifier is basically any word, unless it is a reserved keyword.  so 'foo' is an 
@@ -1277,9 +1275,19 @@ module TypeScript.Parser1 {
         // *Identifier*.
         private eatIdentifierNameToken(): ISyntaxToken {
             var token = this.currentToken();
-            if (ParserImpl.isIdentifierName(token)) {
+
+            // If we have an identifier name, then consume and return it.
+            if (token.tokenKind === SyntaxKind.IdentifierName) {
                 this.moveToNextToken();
                 return token;
+            }
+
+            // If we have a keyword, then it cna be used as an identifier name.  However, we need 
+            // to convert it to an identifier so that no later parts of the systems see it as a 
+            // keyword.
+            if (SyntaxFacts.isAnyKeyword(token.tokenKind)) {
+                this.moveToNextToken();
+                return Syntax.convertToIdentifierName(token);
             }
 
             return this.createMissingToken(SyntaxKind.IdentifierName, token);
@@ -1856,7 +1864,7 @@ module TypeScript.Parser1 {
             while (shouldContinue && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
-                shouldContinue = ParserImpl.isIdentifierName(this.currentToken());
+                shouldContinue = ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
                 var identifier = this.eatIdentifierNameToken();
 
                 current = this.factory.qualifiedName(current, dotToken, identifier);
@@ -1908,7 +1916,7 @@ module TypeScript.Parser1 {
             }
 
             var token0 = this.currentToken();
-            return ParserImpl.isIdentifierName(token0) ||
+            return ParserImpl.isIdentifierNameOrAnyKeyword(token0) ||
                    token0.tokenKind === SyntaxKind.StringLiteral;
         }
 
@@ -1924,7 +1932,7 @@ module TypeScript.Parser1 {
             var identifier: ISyntaxToken = null;
             var stringLiteral: ISyntaxToken = null;
 
-            if (ParserImpl.isIdentifierName(token0)) {
+            if (ParserImpl.isIdentifierNameOrAnyKeyword(token0)) {
                 // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
                 // Back compat.  For the time being, we allow enum elements of the form "foo = value".
                 // We will eventually remove this and require the "foo: value" form.
@@ -2106,7 +2114,7 @@ module TypeScript.Parser1 {
             }
 
             // We must at least have an identifier name at this point.
-            if (!ParserImpl.isIdentifierName(this.peekToken(index))) {
+            if (!ParserImpl.isIdentifierNameOrAnyKeyword(this.peekToken(index))) {
                 return false;
             }
 
@@ -2555,7 +2563,7 @@ module TypeScript.Parser1 {
         }
 
         private isFunctionSignature(tokenIndex: number, allowQuestionToken: bool): bool {
-            if (ParserImpl.isIdentifierName(this.peekToken(tokenIndex))) {
+            if (ParserImpl.isIdentifierNameOrAnyKeyword(this.peekToken(tokenIndex))) {
                 // id(
                 if (this.isCallSignature(tokenIndex + 1)) {
                     return true;
@@ -2574,7 +2582,7 @@ module TypeScript.Parser1 {
         private isPropertySignature(): bool {
             // Note: identifiers also start function signatures.  So it's important that we call this
             // after we calll isFunctionSignature.
-            return ParserImpl.isIdentifierName(this.currentToken());
+            return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
         }
 
         private isExtendsClause(): bool {
@@ -4368,7 +4376,7 @@ module TypeScript.Parser1 {
         private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
             // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierName is 
             // allowed here, even reserved words like keywords.
-            if (ParserImpl.isIdentifierName(token)) {
+            if (ParserImpl.isIdentifierNameOrAnyKeyword(token)) {
                 // Except: if we're in error recovery, then we don't want to consider keywords. 
                 // After all, if we have:
                 //

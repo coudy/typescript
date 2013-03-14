@@ -21482,10 +21482,6 @@ var TypeScript;
             }
         }
         SyntaxFacts.isParserGenerated = isParserGenerated;
-        function isIdentifierName(kind) {
-            return kind === 11 /* IdentifierName */  || isAnyKeyword(kind);
-        }
-        SyntaxFacts.isIdentifierName = isIdentifierName;
         function isAnyBinaryExpression(kind) {
             switch(kind) {
                 case 171 /* CommaExpression */ :
@@ -23748,7 +23744,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             VariableWidthTokenWithNoTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -23883,7 +23879,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -24018,7 +24014,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -24154,7 +24150,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -24275,7 +24271,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             FixedWidthTokenWithNoTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -24405,7 +24401,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -24535,7 +24531,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -24666,7 +24662,7 @@ var TypeScript;
                 return TypeScript.SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return Syntax.realize(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -27874,10 +27870,15 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
-        function realize(token) {
+        function realizeToken(token) {
             return new RealizedToken(token.tokenKind, token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
         }
-        Syntax.realize = realize;
+        Syntax.realizeToken = realizeToken;
+        function convertToIdentifierName(token) {
+            TypeScript.Debug.assert(TypeScript.SyntaxFacts.isAnyKeyword(token.tokenKind));
+            return new RealizedToken(11 /* IdentifierName */ , token.leadingTrivia(), token.text(), token.value(), token.trailingTrivia());
+        }
+        Syntax.convertToIdentifierName = convertToIdentifierName;
         function tokenToJSON(token) {
             var result = {};
             result.kind = (TypeScript.SyntaxKind)._map[token.kind()];
@@ -28053,7 +28054,7 @@ var TypeScript;
                 return TypeScript.Syntax.emptyTriviaList;
             };
             EmptyToken.prototype.realize = function () {
-                return realize(this);
+                return realizeToken(this);
             };
             EmptyToken.prototype.collectTextElements = function (elements) {
             };
@@ -36204,8 +36205,9 @@ var TypeScript;
                 }
                 return this.createMissingToken(kind, token);
             };
-            ParserImpl.isIdentifierName = function isIdentifierName(token) {
-                return TypeScript.SyntaxFacts.isIdentifierName(token.tokenKind);
+            ParserImpl.isIdentifierNameOrAnyKeyword = function isIdentifierNameOrAnyKeyword(token) {
+                var tokenKind = token.tokenKind;
+                return tokenKind === 11 /* IdentifierName */  || TypeScript.SyntaxFacts.isAnyKeyword(tokenKind);
             };
             ParserImpl.prototype.isIdentifier = function (token) {
                 var tokenKind = token.tokenKind;
@@ -36222,9 +36224,13 @@ var TypeScript;
             };
             ParserImpl.prototype.eatIdentifierNameToken = function () {
                 var token = this.currentToken();
-                if (ParserImpl.isIdentifierName(token)) {
+                if (token.tokenKind === 11 /* IdentifierName */ ) {
                     this.moveToNextToken();
                     return token;
+                }
+                if (TypeScript.SyntaxFacts.isAnyKeyword(token.tokenKind)) {
+                    this.moveToNextToken();
+                    return TypeScript.Syntax.convertToIdentifierName(token);
                 }
                 return this.createMissingToken(11 /* IdentifierName */ , token);
             };
@@ -36612,7 +36618,7 @@ var TypeScript;
                 var current = this.eatIdentifierToken();
                 while(shouldContinue && this.currentToken().tokenKind === 76 /* DotToken */ ) {
                     var dotToken = this.eatToken(76 /* DotToken */ );
-                    shouldContinue = ParserImpl.isIdentifierName(this.currentToken());
+                    shouldContinue = ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
                     var identifier = this.eatIdentifierNameToken();
                     current = this.factory.qualifiedName(current, dotToken, identifier);
                 }
@@ -36645,7 +36651,7 @@ var TypeScript;
                     return true;
                 }
                 var token0 = this.currentToken();
-                return ParserImpl.isIdentifierName(token0) || token0.tokenKind === 14 /* StringLiteral */ ;
+                return ParserImpl.isIdentifierNameOrAnyKeyword(token0) || token0.tokenKind === 14 /* StringLiteral */ ;
             };
             ParserImpl.prototype.parseEnumElement = function () {
                 if (this.currentNode() !== null && (this.currentNode().kind() === 240 /* EnumElement */  || this.currentNode().kind() === 223 /* VariableDeclarator */ )) {
@@ -36654,7 +36660,7 @@ var TypeScript;
                 var token0 = this.currentToken();
                 var identifier = null;
                 var stringLiteral = null;
-                if (ParserImpl.isIdentifierName(token0)) {
+                if (ParserImpl.isIdentifierNameOrAnyKeyword(token0)) {
                     if (this.peekToken(1).tokenKind === 107 /* EqualsToken */ ) {
                         return this.parseVariableDeclarator(true, true);
                     }
@@ -36765,7 +36771,7 @@ var TypeScript;
                         return true;
                     }
                 }
-                if (!ParserImpl.isIdentifierName(this.peekToken(index))) {
+                if (!ParserImpl.isIdentifierNameOrAnyKeyword(this.peekToken(index))) {
                     return false;
                 }
                 if (this.isIdentifier(this.peekToken(index))) {
@@ -37022,7 +37028,7 @@ var TypeScript;
                 return this.currentToken().tokenKind === 74 /* OpenBracketToken */ ;
             };
             ParserImpl.prototype.isFunctionSignature = function (tokenIndex, allowQuestionToken) {
-                if (ParserImpl.isIdentifierName(this.peekToken(tokenIndex))) {
+                if (ParserImpl.isIdentifierNameOrAnyKeyword(this.peekToken(tokenIndex))) {
                     if (this.isCallSignature(tokenIndex + 1)) {
                         return true;
                     }
@@ -37033,7 +37039,7 @@ var TypeScript;
                 return false;
             };
             ParserImpl.prototype.isPropertySignature = function () {
-                return ParserImpl.isIdentifierName(this.currentToken());
+                return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
             };
             ParserImpl.prototype.isExtendsClause = function () {
                 return this.currentToken().tokenKind === 48 /* ExtendsKeyword */ ;
@@ -38090,7 +38096,7 @@ var TypeScript;
                 return this.factory.simplePropertyAssignment(propertyName, colonToken, expression);
             };
             ParserImpl.prototype.isPropertyName = function (token, inErrorRecovery) {
-                if (ParserImpl.isIdentifierName(token)) {
+                if (ParserImpl.isIdentifierNameOrAnyKeyword(token)) {
                     if (inErrorRecovery) {
                         return this.isIdentifier(token);
                     } else {
@@ -61083,10 +61089,8 @@ var Diff;
     })();
     Diff.StringDiff = StringDiff;    
     var HtmlBaselineReport = (function () {
-        function HtmlBaselineReport(reportFileName, includeUnchangedRegions) {
-            if (typeof includeUnchangedRegions === "undefined") { includeUnchangedRegions = true; }
+        function HtmlBaselineReport(reportFileName) {
             this.reportFileName = reportFileName;
-            this.includeUnchangedRegions = includeUnchangedRegions;
             this.reportContent = null;
             var htmlTrailer = '</body></html>';
             if (Environment.fileExists(this.reportFileName)) {
@@ -61103,8 +61107,8 @@ var Diff;
             }
             this.reportContent = HtmlBaselineReport.htmlLeader;
         };
-        HtmlBaselineReport.prototype.addDifference = function (description, expectedFileName, actualFileName, expected, actual) {
-            var diff = new Diff.StringDiff(expected, actual, this.includeUnchangedRegions);
+        HtmlBaselineReport.prototype.addDifference = function (description, expectedFileName, actualFileName, expected, actual, includeUnchangedRegions) {
+            var diff = new Diff.StringDiff(expected, actual, includeUnchangedRegions);
             var header = "";
             if (description !== "") {
                 header = '<h2>' + description + '</h2>';
@@ -61122,8 +61126,8 @@ var Diff;
 var timer = new TypeScript.Timer();
 var stringTable = TypeScript.Collections.createStringTable();
 var specificFile = undefined;
-var generate = false;
-var htmlReport = new Diff.HtmlBaselineReport("fidelity-baselines.html", false);
+var generate = true;
+var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 var Program = (function () {
     function Program() { }
     Program.prototype.runAllTests = function (useTypeScript, verify) {
@@ -61149,7 +61153,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, generate);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (filePath) {
@@ -61272,7 +61276,8 @@ var Program = (function () {
             if (expectedResult !== actualResult) {
                 Environment.standardOut.WriteLine(" !! Test Failed. Results written to: " + actualFile);
                 Environment.writeFile(actualFile, actualResult, true);
-                htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult);
+                var includeUnchangedRegions = expectedResult.length < 10240 && actualResult.length < 10240;
+                htmlReport.addDifference("", expectedFile, actualFile, expectedResult, actualResult, includeUnchangedRegions);
             }
         }
     };

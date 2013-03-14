@@ -355,12 +355,6 @@ module TypeScript.SyntaxFacts {
         }
     }
 
-    // An identifier name is basically any word, even if that work is a reserved keyword.  so 
-    // both 'foo' and 'return' are identifier names.
-    export function isIdentifierName(kind: SyntaxKind): bool {
-        return kind === SyntaxKind.IdentifierName || isAnyKeyword(kind);
-    }
-
     export function isAnyBinaryExpression(kind: SyntaxKind): bool {
         switch (kind) {
             case SyntaxKind.CommaExpression:
