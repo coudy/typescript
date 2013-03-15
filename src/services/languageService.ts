@@ -1848,11 +1848,11 @@ module Services {
             for (i = 0, len = this.compilerState.getScriptCount() ; i < len; i++) {
                 // Add the item for the script name if needed
                 var script = this.compilerState.getScript(i);
-                var scriptId = script.locationInfo.fileName;
-                var matchKind = match(null, script, scriptId);
+                var fileName = script.locationInfo.fileName;
+                var matchKind = match(null, script, fileName);
                 if (matchKind != null) {
                     var item = new NavigateToItem();
-                    item.name = scriptId;
+                    item.name = fileName;
                     item.matchKind = matchKind;
                     item.kind = ScriptElementKind.scriptElement;
                     item.unitIndex = this.compilerState.mapToHostUnitIndex(i);

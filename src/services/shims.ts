@@ -593,11 +593,11 @@ module Services {
         ///
         /// getPreProcessedFileInfo
         ///
-        public getPreProcessedFileInfo(scriptId: string, sourceText: TypeScript.IScriptSnapshot): string {
+        public getPreProcessedFileInfo(fileName: string, sourceText: TypeScript.IScriptSnapshot): string {
             return this.forwardJSONCall(
-                "getPreProcessedFileInfo(\"" + scriptId + "\")",
+                "getPreProcessedFileInfo(\"" + fileName + "\")",
                 () => {
-                    var result = this.services.getPreProcessedFileInfo(scriptId, sourceText);
+                    var result = this.services.getPreProcessedFileInfo(fileName, sourceText);
                     return _resultToJSON(result);
                 });
         }

@@ -31,7 +31,7 @@ module Services {
         constructor (public host: ICoreServicesHost) {
         }
 
-        public getPreProcessedFileInfo(scritpId: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.IPreProcessedFileInfo {
+        public getPreProcessedFileInfo(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.IPreProcessedFileInfo {
             var settings = new TypeScript.CompilationSettings();
             settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             var result = TypeScript.preProcessFile(sourceText, settings);

@@ -96,8 +96,8 @@ module Services {
 
         private init() {
             for (var i = 0, len = this.host.getScriptCount() ; i < len; i++) {
-                var scriptId = this.host.getScriptId(i);
-                this.map.add(scriptId, i);
+                var fileName = this.host.getScriptId(i);
+                this.map.add(fileName, i);
                 this.reset(i);
             }
         }
@@ -106,8 +106,8 @@ module Services {
             return this.map.count();
         }
 
-        public getUnitIndex(scriptId: string): number {
-            var result: number = this.map.lookup(scriptId);
+        public getUnitIndex(fileName: string): number {
+            var result: number = this.map.lookup(fileName);
             if (result == null) {
                 return -1;
             }
@@ -163,8 +163,8 @@ module Services {
             }
         }
 
-        public getUnitIndex(scriptId: string): number {
-            var result: number = this.map.lookup(scriptId);
+        public getUnitIndex(fileName: string): number {
+            var result: number = this.map.lookup(fileName);
             if (result == null)
                 return -1;
             return result;
@@ -348,7 +348,7 @@ module Services {
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler,
                                    hostUnitIndex: number,
                                    unitIndex: number): TypeScript.UpdateUnitResult {
-            var scriptId = this.hostCache.getScriptId(hostUnitIndex);
+            var fileName = this.hostCache.getScriptId(hostUnitIndex);
 
             //Note: We need to call "_setUnitIndexMapping" _before_ calling into the compiler,
             //      in case the compiler fails (i.e. throws an exception). This is due to the way
@@ -356,7 +356,7 @@ module Services {
             //      and we need unit mapping info to do that correctly.
             this.setUnitIndexMapping(unitIndex, hostUnitIndex);
 
-            var previousEntry = this.scriptMap.getEntry(scriptId);
+            var previousEntry = this.scriptMap.getEntry(fileName);
 
             //
             // If file is resident, no update for sure
@@ -377,44 +377,44 @@ module Services {
             }
 
             if (this.compilationSettings.usePull) {
-                this.updateSyntaxTree(scriptId);
+                this.updateSyntaxTree(fileName);
             }
 
             //
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
-            var result = this.attemptIncrementalUpdateUnit(scriptId);
+            var result = this.attemptIncrementalUpdateUnit(fileName);
             if (result != null) {
                 return result;
             }
 
             var sourceText = this.hostCache.getScriptSnapshot(hostUnitIndex);
             this.setUnitMapping(unitIndex, hostUnitIndex);
-            return compiler.partialUpdateUnit(sourceText, scriptId, true/*setRecovery*/);
+            return compiler.partialUpdateUnit(sourceText, fileName, true/*setRecovery*/);
         }
 
-        private updateSyntaxTree(scriptId: string): void {
-            var previousScript = this.getScriptAST(scriptId);
+        private updateSyntaxTree(fileName: string): void {
+            var previousScript = this.getScriptAST(fileName);
             var editRange = this.getScriptTextChangeRange(previousScript);
             if (editRange !== null) {
                 var newSourceText = this.getScriptSnapshot(previousScript);
                 var newText = new TypeScript.SegmentedScriptSnapshot(newSourceText);
 
-                var previousSyntaxTree = this.getSyntaxTree(scriptId);
+                var previousSyntaxTree = this.getSyntaxTree(fileName);
                 var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
                     previousSyntaxTree.sourceUnit(), [editRange], newText);
 
-                this.setSyntaxTree(scriptId, nextSyntaxTree);
+                this.setSyntaxTree(fileName, nextSyntaxTree);
             }
         }
 
-        private attemptIncrementalUpdateUnit(scriptId: string): TypeScript.UpdateUnitResult {
-            var previousScript = this.getScriptAST(scriptId);
+        private attemptIncrementalUpdateUnit(fileName: string): TypeScript.UpdateUnitResult {
+            var previousScript = this.getScriptAST(fileName);
             
             var newSourceText = this.getScriptSnapshot(previousScript);
             var editRange = this.getScriptTextChangeRange(previousScript);
 
-            var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, scriptId, newSourceText, editRange);
+            var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, fileName, newSourceText, editRange);
             if (result == null)
                 return null;
 
