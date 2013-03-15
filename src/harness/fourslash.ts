@@ -479,13 +479,13 @@ module FourSlash {
             IO.printLine(JSON2.stringify(quickInfo));
         }
 
-        public printErrorList() {
-            var errors = this.realLangSvc.getErrors(9999);
-            IO.printLine('Error list (' + errors.length + ' errors)');
-            errors.forEach(err => {
-                IO.printLine(err.message);
-            });
-        }
+        //public printErrorList() {
+        //    var errors = this.realLangSvc.getErrors(9999);
+        //    IO.printLine('Error list (' + errors.length + ' errors)');
+        //    errors.forEach(err => {
+        //        IO.printLine(err.message);
+        //    });
+        //}
 
         public printCurrentFileState(makeWhitespaceVisible = false) {
             for (var i = 0; i < this.testData.files.length; i++) {

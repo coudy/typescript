@@ -23,42 +23,43 @@ module Services {
     //
     export interface ILanguageServiceShim {
         host: ILanguageServiceShimHost;
+
         languageService: Services.ILanguageService;
         pullLanguageService: Services.IPullLanguageService;
 
         logger: TypeScript.ILogger;
 
         dispose(dummy: any): void;
+
         refresh(throwOnError: bool): void;
 
         logAST(fileName: string): void;
         logSyntaxAST(fileName: string): void;
 
-        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
-        getErrors(maxCount: number): string;
-
-        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
-        getScriptErrors(fileName: string, maxCount: number): string;
-
         getSyntacticErrors(fileName: string): string;
         getSemanticErrors(fileName: string): string;
 
+        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool);
         getTypeAtPosition(fileName: string, pos: number): string;
+        getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;
+        getBreakpointStatementAtPosition(fileName: string, pos: number): string;
         getSignatureAtPosition(fileName: string, pos: number): string;
         getDefinitionAtPosition(fileName: string, pos: number): string;
-        getBraceMatchingAtPosition(fileName: string, pos: number): string;
-        getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: string/*Services.EditorOptions*/): string;
         getReferencesAtPosition(fileName: string, pos: number): string;
         getOccurrencesAtPosition(fileName: string, pos: number): string;
-        getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool);
         getImplementorsAtPosition(fileName: string, pos: number): string;
+        getNavigateToItems(searchValue: string): string;
+        getScriptLexicalStructure(fileName: string): string;
+        getOutliningRegions(fileName: string): string;
+        getBraceMatchingAtPosition(fileName: string, pos: number): string;
+        getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: string/*Services.EditorOptions*/): string;
+
         getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
         getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
         getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: string/*Services.FormatCodeOptions*/): string;
-        getNavigateToItems(searchValue: string): string;
-        getScriptLexicalStructure(fileName: string): string;
-        getOutliningRegions(fileName: string): string;
+
+        getEmitOutput(fileName: string): string;
     }
 
     //
@@ -391,7 +392,6 @@ module Services {
                     return this._referencesToResult(entries);
                 });
         }
-
 
         private _referencesToResult(entries: Services.ReferenceEntry[]): string {
             var result = "";

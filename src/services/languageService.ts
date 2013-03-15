@@ -26,16 +26,11 @@ module Services {
 
         refresh(): void;
 
-        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
-        getErrors(maxCount: number): TypeScript.ErrorEntry[];
-
-        // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
-        getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[];
-
+        // TODO: Remove these. 
         logAST(fileName: string): void;
         logSyntaxAST(fileName: string): void;
-
         getScriptAST(fileName: string): TypeScript.Script;
+
         getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo;
         getTypeAtPosition(fileName: string, pos: number): TypeInfo;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
@@ -48,14 +43,13 @@ module Services {
         getNavigateToItems(searchValue: string): NavigateToItem[];
         getScriptLexicalStructure(fileName: string): NavigateToItem[];
         getOutliningRegions(fileName: string): NavigateToItem[];
+        getBraceMatchingAtPosition(fileName: string, position: number): TextRange[];
+        getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: Services.EditorOptions): number;
 
-        getScriptSyntaxAST(fileName: string): ScriptSyntaxAST;
         getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[];
-        getBraceMatchingAtPosition(fileName: string, position: number): TextRange[];
-        getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: Services.EditorOptions): number;
 
         getAstPathToPosition(script: TypeScript.AST, pos: number, options: TypeScript.GetAstPathOptions /*= Tools.GetAstPathOptions.Default*/): TypeScript.AstPath;
         getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath;
