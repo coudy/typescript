@@ -27,8 +27,6 @@ module Services {
         languageService: Services.ILanguageService;
         pullLanguageService: Services.IPullLanguageService;
 
-        logger: TypeScript.ILogger;
-
         dispose(dummy: any): void;
 
         refresh(throwOnError: bool): void;
@@ -203,9 +201,11 @@ module Services {
     }
 
     export class LanguageServiceShim implements ILanguageServiceShim {
-        public logger: TypeScript.ILogger;
+        private logger: TypeScript.ILogger;
 
-        constructor(public host: ILanguageServiceShimHost, public languageService: Services.ILanguageService, public pullLanguageService: Services.IPullLanguageService) {
+        constructor(public host: ILanguageServiceShimHost,
+                    public languageService: Services.ILanguageService,
+                    public pullLanguageService: Services.IPullLanguageService) {
             this.logger = this.host;
         }
 
