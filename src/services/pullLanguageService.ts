@@ -8,8 +8,6 @@ module Services {
     /// IPullLanguageService represent language service features that use Fidelity Syntax Tree directelly without having to
     /// rely on the old AST format.
     export interface IPullLanguageService extends ILanguageService {
-        host: ILanguageServiceHost;
-
         getSyntacticErrors(fileName: string): TypeScript.IDiagnostic[];
         getSemanticErrors(fileName: string): TypeScript.IDiagnostic[];
 

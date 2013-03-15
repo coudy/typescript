@@ -22,8 +22,6 @@ module Services {
     // with a language service host instance
     //
     export interface ILanguageService {
-        host: ILanguageServiceHost;
-
         refresh(): void;
 
         // TODO: Remove these. 
@@ -423,13 +421,12 @@ module Services {
     }
 
     export class LanguageService implements ILanguageService {
-
-        public  logger: TypeScript.ILogger;
+        private logger: TypeScript.ILogger;
         private compilerState: CompilerState;
         private syntaxASTState: ScriptSyntaxASTState;
         private formattingRulesProvider: Formatting.RulesProvider;
 
-        constructor (public host: ILanguageServiceHost) {
+        constructor (private host: ILanguageServiceHost) {
             this.logger = this.host;
             this.compilerState = new CompilerState(this.host);
             this.syntaxASTState = new ScriptSyntaxASTState();
