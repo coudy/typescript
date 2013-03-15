@@ -15,7 +15,7 @@ var timer = new TypeScript.Timer();
 var stringTable = TypeScript.Collections.createStringTable();
 
 var specificFile =
-    // "KeywordsAsIdentifierName1.ts";
+    "OptionalTypeMembers1.ts";
     undefined;
 
 var generate = false;
