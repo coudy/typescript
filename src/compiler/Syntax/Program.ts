@@ -15,7 +15,7 @@ var timer = new TypeScript.Timer();
 var stringTable = TypeScript.Collections.createStringTable();
 
 var specificFile =
-    "OptionalTypeMembers1.ts";
+    // "AstSpans1.ts";
     undefined;
 
 var generate = false;
