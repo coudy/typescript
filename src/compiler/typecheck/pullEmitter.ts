@@ -205,7 +205,6 @@ module TypeScript {
         }
 
         public emitJavascriptName(name: Identifier, addThis: bool) {
-            var sym = name.sym;
             this.emitParensAndCommentsInPlace(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
