@@ -71,7 +71,10 @@ module Services {
         getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
-        getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
+
+        // Returns either 'null' if there was no change, or a TextChangeRange object encoded in 
+        // JSON in the form: { span: { start: number, length: number }, newLength: number }
+        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
         getHostSettings(): string;
     }
 
@@ -132,14 +135,15 @@ module Services {
             return this.shimHost.getScriptVersion(scriptIndex);
         }
 
-        public getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.ScriptEditRange {
-            var rangeText = this.shimHost.getScriptEditRangeSinceVersion(scriptIndex, scriptVersion);
-            if (rangeText === null || rangeText === "") {
-                return null; // "No changes"
+        public getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.TextChangeRange {
+            var rangeText = this.shimHost.getScriptTextChangeRangeSinceVersion(scriptIndex, scriptVersion);
+            var result: { span: { start: number; length: number; }; newLength: number; } = JSON.parse(rangeText);
+            if (result === null) {
+                return null;
             }
 
-            var minLimDeltaString = rangeText.split(",");
-            return new TypeScript.ScriptEditRange(parseInt(minLimDeltaString[0]), parseInt(minLimDeltaString[1]), parseInt(minLimDeltaString[2]));
+            return new TypeScript.TextChangeRange(
+                new TypeScript.TextSpan(result.span.start, result.span.length), result.newLength);
         }
 
         public getHostSettings(): TypeScript.IHostSettings {

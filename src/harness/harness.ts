@@ -1542,9 +1542,9 @@ module Harness {
 
     export class ScriptInfo {
         public version: number;
-        public editRanges: { length: number; editRange: TypeScript.ScriptEditRange; }[] = [];
+        public editRanges: { length: number; textChangeRange: TypeScript.TextChangeRange; }[] = [];
 
-        constructor(public name: string, public content: string, public isResident: bool, public maxScriptVersions: number) {
+        constructor(public name: string, public content: string, public isResident: bool) {
             this.version = 1;
         }
 
@@ -1565,36 +1565,24 @@ module Harness {
             // Store edit range + new length of script
             this.editRanges.push({
                 length: this.content.length,
-                editRange: new TypeScript.ScriptEditRange(minChar, limChar, (limChar - minChar) + newText.length)
+                textChangeRange: new TypeScript.TextChangeRange(
+                    TypeScript.TextSpan.fromBounds(minChar, limChar), newText.length)
             });
-
-            if (this.editRanges.length > this.maxScriptVersions) {
-                this.editRanges.splice(0, this.maxScriptVersions - this.editRanges.length);
-            }
 
             // Update version #
             this.version++;
         }
 
-        public getEditRangeSinceVersion(version: number): TypeScript.ScriptEditRange {
+        public getTextChangeRangeSinceVersion(version: number): TypeScript.TextChangeRange {
             if (this.version == version) {
                 // No edits!
                 return null;
             }
 
             var initialEditRangeIndex = this.editRanges.length - (this.version - version);
-            if (initialEditRangeIndex < 0 || initialEditRangeIndex >= this.editRanges.length) {
-                // Too far away from what we know
-                return TypeScript.ScriptEditRange.unknown();
-            }
 
             var entries = this.editRanges.slice(initialEditRangeIndex);
-
-            var minDistFromStart = entries.map(x => x.editRange.minChar).reduce((prev, current) => Math.min(prev, current));
-            var minDistFromEnd = entries.map(x => x.length - x.editRange.limChar).reduce((prev, current) => Math.min(prev, current));
-            var aggDelta = entries.map(x => x.editRange.delta).reduce((prev, current) => prev + current);
-
-            return new TypeScript.ScriptEditRange(minDistFromStart, entries[0].length - minDistFromEnd, aggDelta);
+            return TypeScript.TextChangeRange.collapse(entries.map(e => e.textChangeRange));
         }
     }
 
@@ -1602,7 +1590,6 @@ module Harness {
         private ls: Services.ILanguageServiceShim = null;
 
         public scripts: ScriptInfo[] = [];
-        public maxScriptVersions = 100;
 
         public addDefaultLibrary() {
             this.addScript("lib.d.ts", Harness.Compiler.libText, true);
@@ -1614,7 +1601,7 @@ module Harness {
         }
 
         public addScript(name: string, content: string, isResident = false) {
-            var script = new ScriptInfo(name, content, isResident, this.maxScriptVersions);
+            var script = new ScriptInfo(name, content, isResident);
             this.scripts.push(script);
         }
 
@@ -1686,10 +1673,13 @@ module Harness {
             return this.scripts[scriptIndex].version;
         }
 
-        public getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): string {
-            var range = this.scripts[scriptIndex].getEditRangeSinceVersion(scriptVersion);
-            var result = (range.minChar + "," + range.limChar + "," + range.delta);
-            return result;
+        public getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): string {
+            var range = this.scripts[scriptIndex].getTextChangeRangeSinceVersion(scriptVersion);
+            if (range === null) {
+                return null;
+            }
+
+            return JSON2.stringify({ span: { start: range.span().start(), length: range.span().length() }, newLength: range.newLength() });
         }
 
         /** Return a new instance of the language service shim, up-to-date wrt to typecheck.

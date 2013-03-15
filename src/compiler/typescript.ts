@@ -80,35 +80,12 @@ module TypeScript {
         EditsInsideSingleScope,
     }
 
-    export class ScriptEditRange {
-        constructor (public minChar: number,
-                     public limChar: number,
-                     public delta: number) { }
-
-        static unknown(): ScriptEditRange {
-            return new ScriptEditRange(-1, -1, -1);
-        }
-
-        public isUnknown() {
-            return this.minChar === -1 && this.limChar === -1 && this.delta === -1;
-        }
-
-        public containsPosition(pos: number) {
-            return (this.minChar <= pos && pos < this.limChar)
-                || (this.minChar <= pos && pos < this.limChar + this.delta);
-        }
-
-        public toString(): string {
-            return "editRange(minChar=" + this.minChar + ", limChar=" + this.limChar + ", delta=" + this.delta + ")";
-        }
-    }
-
     export class UpdateUnitResult {
         constructor (public kind: UpdateUnitKind, public unitIndex: number, public script1: Script, public script2: Script) { }
 
         public scope1: AST = null;
         public scope2: AST = null;
-        public editRange: ScriptEditRange = null;
+        public editRange: TextChangeRange = null;
         public parseErrors: ErrorEntry[] = [];
 
         static noEdits(unitIndex: number) {
@@ -122,7 +99,7 @@ module TypeScript {
             return result;
         }
 
-        static singleScopeEdits(script1: Script, script2: Script, scope1: AST, scope2: AST, editRange: ScriptEditRange, parseErrors: ErrorEntry[]) {
+        static singleScopeEdits(script1: Script, script2: Script, scope1: AST, scope2: AST, editRange: TextChangeRange, parseErrors: ErrorEntry[]) {
             var result = new UpdateUnitResult(UpdateUnitKind.EditsInsideSingleScope, script1.locationInfo.unitIndex, script1, script2);
             result.scope1 = scope1;
             result.scope2 = scope2;

@@ -28,20 +28,15 @@ module TypeScript {
         //
         // Return "null" if "editRange" cannot be safely determined to be inside a single scope.
         //
-        public getEnclosingScopeContextIfSingleScopeEdit(previousScript: Script, scriptId: string, newSourceText: IScriptSnapshot, editRange: ScriptEditRange): EnclosingScopeContext {
+        public getEnclosingScopeContextIfSingleScopeEdit(previousScript: Script, scriptId: string, newSourceText: IScriptSnapshot, editRange: TextChangeRange): EnclosingScopeContext {
             this.logger.log("checkEditsInsideSingleScope(\"" + scriptId + "\")");
 
             if (editRange === null) {
                 throw new Error("editRange should be valid");
             }
 
-            if (editRange.isUnknown()) {
-                this.logger.log("  Bailing out because edit range is unknown");
-                return null;
-            }
-
-            var scope1 = TypeScript.findEnclosingScopeAt(this.logger, previousScript, newSourceText, editRange.minChar, false/*isMemberCompletion*/);
-            var scope2 = TypeScript.findEnclosingScopeAt(this.logger, previousScript, newSourceText, editRange.limChar, false/*isMemberCompletion*/);
+            var scope1 = TypeScript.findEnclosingScopeAt(this.logger, previousScript, newSourceText, editRange.span().start(), false/*isMemberCompletion*/);
+            var scope2 = TypeScript.findEnclosingScopeAt(this.logger, previousScript, newSourceText, editRange.span().end(), false/*isMemberCompletion*/);
             if (scope1 == null || scope2 == null) {
                 this.logger.log("  Bailing out because containing scopes cannot be determined");
                 return null;
@@ -53,7 +48,8 @@ module TypeScript {
                 return null;
             }
 
-            var newScopeLength = scope1.scopeStartAST.limChar - scope1.scopeStartAST.minChar + editRange.delta;
+            var delta = editRange.newLength() - editRange.span().length();
+            var newScopeLength = scope1.scopeStartAST.limChar - scope1.scopeStartAST.minChar + delta;
             if (newScopeLength <= 0) {
                 this.logger.log("  Bailing out because scope has been entirely removed from new source text");
                 return null;
@@ -62,7 +58,7 @@ module TypeScript {
             return scope1;
         }
 
-        public attemptIncrementalUpdateUnit(previousScript: Script, scriptId: string, newSourceText: IScriptSnapshot, editRange: ScriptEditRange): UpdateUnitResult {
+        public attemptIncrementalUpdateUnit(previousScript: Script, scriptId: string, newSourceText: IScriptSnapshot, editRange: TextChangeRange): UpdateUnitResult {
             this.logger.log("attemptIncrementalUpdateUnit(\"" + scriptId + "\")");
 
             if (editRange === null) {
@@ -74,7 +70,8 @@ module TypeScript {
                 return null;
             }
 
-            var newScopeLength = scope1.scopeStartAST.limChar - scope1.scopeStartAST.minChar + editRange.delta;
+            var delta = editRange.newLength() - editRange.span().length();
+            var newScopeLength = scope1.scopeStartAST.limChar - scope1.scopeStartAST.minChar + delta;
 
             // Heuristic: if the range to reparse is too big, bail out. 
             // This is because a full parse will be faster than an incremental parse followed by all the necessary fix-ups 
@@ -151,11 +148,15 @@ module TypeScript {
 
         public mergeTrees(updateResult: UpdateUnitResult): void {
             TypeScript.timeFunction(this.logger, "mergeTrees()", () => {
-                var editRange = new ScriptEditRange(updateResult.scope1.minChar, updateResult.scope1.limChar, updateResult.editRange.delta);
+                var delta = updateResult.editRange.newLength() - updateResult.editRange.span().length();
+                var oldSpan = TextSpan.fromBounds(updateResult.scope1.minChar, updateResult.scope1.limChar);
+                var editRange = new TextChangeRange(
+                    oldSpan, oldSpan.length() + delta);
+
                 // Update positions in current ast
-                this.applyDeltaPosition(updateResult.script1, editRange.limChar, editRange.delta);
+                this.applyDeltaPosition(updateResult.script1, editRange.span().end(), delta);
                 // Update positions in new (partial) ast
-                this.applyDeltaPosition(updateResult.script2, 0, editRange.minChar);
+                this.applyDeltaPosition(updateResult.script2, 0, editRange.span().start());
                 // Merge linemaps
                 this.mergeLocationInfo(updateResult.script1, updateResult.script2, editRange);
                 //  Replace old AST for scope with new one
@@ -189,7 +190,7 @@ module TypeScript {
             TypeScript.getAstWalkerFactory().walk(script, pre);
         }
 
-        private mergeLocationInfo(script: TypeScript.Script, partial: TypeScript.Script, editRange: ScriptEditRange) {
+        private mergeLocationInfo(script: TypeScript.Script, partial: TypeScript.Script, editRange: TextChangeRange) {
             // Don't merger these fields, as the original script has the right values
             //script.locationInfo.unitIndex = partial.locationInfo.unitIndex;
             //script.locationInfo.filename = partial.locationInfo.filename;
@@ -211,18 +212,18 @@ module TypeScript {
             var len1 = lineMap1.length;
             var len2 = lineMap2.length;
             while (i1 < len1) {
-                if (lineMap1[i1] <= editRange.minChar) {
+                if (lineMap1[i1] <= editRange.span().start()) {
                     // Nothing to do for this entry, since it's before the range of the change
                     i1++;
-                } else if (lineMap1[i1] >= editRange.limChar) {
+                } else if (lineMap1[i1] >= editRange.span().end()) {
                     // Apply delta to this entry, since it's outside the range of the change
-                    lineMap1[i1] += editRange.delta;
+                    lineMap1[i1] += (editRange.newLength() - editRange.span().length());
                     i1++;
                 }
                 else {
                     if (i2 < len2) {
                         // Add a new entry to lineMap1 corresponding to lineMap2 in new range
-                        lineMap1.splice(i1, 0, lineMap2[i2] + editRange.minChar);
+                        lineMap1.splice(i1, 0, lineMap2[i2] + editRange.span().start());
                         i1++;
                         len1++;
                         i2++;
@@ -237,15 +238,15 @@ module TypeScript {
             // Merge the remaining entries in lineMap2 while maintaing the constraint that a lineMap is sorted
             if (i2 < len2) {
                 // i1 >= len1 && i2 < len2 
-                if (lineMap1[len1 - 1] >= (lineMap2[i2] + editRange.minChar)) {
+                if (lineMap1[len1 - 1] >= (lineMap2[i2] + editRange.span().start())) {
                     // lineMap2 needs to be merged within lineMap1
                     i1 = 2;
                     while (i1 < len1 && i2 < len2) {
-                        if (lineMap1[i1] < (lineMap2[i2] + editRange.minChar)) {
+                        if (lineMap1[i1] < (lineMap2[i2] + editRange.span().start())) {
                             i1++;
                         }
                         else {
-                            lineMap1.splice(i1, 0, lineMap2[i2] + editRange.minChar);
+                            lineMap1.splice(i1, 0, lineMap2[i2] + editRange.span().start());
                             i1++;
                             len1++;
                             i2++;
@@ -255,7 +256,7 @@ module TypeScript {
 
                 // Append all the remaining entries in lineMap2 to the end of lineMap1
                 for (; i2 < len2; i2++) {
-                    lineMap1.push(lineMap2[i2] + editRange.minChar);
+                    lineMap1.push(lineMap2[i2] + editRange.span().start());
                 }
             }
 

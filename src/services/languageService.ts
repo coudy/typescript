@@ -74,7 +74,7 @@ module Services {
         getScriptSnapshot(scriptIndex): TypeScript.IScriptSnapshot;
         getScriptIsResident(scriptIndex: number): bool;
         getScriptVersion(scriptIndex: number): number;
-        getScriptEditRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.ScriptEditRange;
+        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.TextChangeRange;
         getHostSettings(): TypeScript.IHostSettings;
     }
 
@@ -493,7 +493,7 @@ module Services {
             var fileName = syntaxAST.getScriptId();
             var newSourceText = this.compilerState.getScriptSnapshot2(fileName);
 
-            var editRange = this.compilerState.getScriptEditRangeSinceVersion(fileName, syntaxASTState.version);
+            var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, syntaxASTState.version);
 
             // If "no changes", ast is good to go as is
             if (editRange === null) {
@@ -1434,7 +1434,7 @@ module Services {
         //
         private getQuickCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {
             var script = this.compilerState.getScriptAST(fileName);
-            var editRange = this.compilerState.getScriptEditRange(script);
+            var editRange = this.compilerState.getScriptTextChangeRange(script);
 
             if (editRange == null) {
                 this.logger.log("Full refresh required: there are no pending edits for the script. Be conservative and try again with accurate algorithm.");

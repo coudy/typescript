@@ -190,7 +190,7 @@ module Services {
             var fileName = syntaxAST.getScriptId();
             var newSourceText = this.pullCompilerState.getScriptSnapshot2(fileName);
 
-            var editRange = this.pullCompilerState.getScriptEditRangeSinceVersion(fileName, syntaxASTState.version);
+            var editRange = this.pullCompilerState.getScriptTextChangeRangeSinceVersion(fileName, syntaxASTState.version);
 
             // If "no changes", ast is good to go as is
             if (editRange === null) {

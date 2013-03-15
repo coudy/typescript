@@ -395,32 +395,24 @@ module Services {
 
         private updateSyntaxTree(scriptId: string): void {
             var previousScript = this.getScriptAST(scriptId);
-            var editRange = this.getScriptEditRange(previousScript);
+            var editRange = this.getScriptTextChangeRange(previousScript);
+            if (editRange !== null) {
+                var newSourceText = this.getScriptSnapshot(previousScript);
+                var newText = new TypeScript.SegmentedScriptSnapshot(newSourceText);
 
-            var start = editRange.minChar;
-            var end = editRange.limChar;
-            var newLength = end - start + editRange.delta;
+                var previousSyntaxTree = this.getSyntaxTree(scriptId);
+                var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
+                    previousSyntaxTree.sourceUnit(), [editRange], newText);
 
-            // Debug.assert(newLength >= 0);
-
-            var newSourceText = this.getScriptSnapshot(previousScript);
-
-            var textChangeRange = new TypeScript.TextChangeRange(TypeScript.TextSpan.fromBounds(start, end), newLength);
-
-            var newText = new TypeScript.SegmentedScriptSnapshot(newSourceText);
-
-            var previousSyntaxTree = this.getSyntaxTree(scriptId);
-            var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
-                previousSyntaxTree.sourceUnit(), [textChangeRange], newText);
-
-            this.setSyntaxTree(scriptId, nextSyntaxTree);
+                this.setSyntaxTree(scriptId, nextSyntaxTree);
+            }
         }
 
         private attemptIncrementalUpdateUnit(scriptId: string): TypeScript.UpdateUnitResult {
             var previousScript = this.getScriptAST(scriptId);
             
             var newSourceText = this.getScriptSnapshot(previousScript);
-            var editRange = this.getScriptEditRange(previousScript);
+            var editRange = this.getScriptTextChangeRange(previousScript);
 
             var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, scriptId, newSourceText, editRange);
             if (result == null)
@@ -764,12 +756,12 @@ module Services {
             this.compiler.cleanASTTypesForReTypeCheck(ast);
         }
 
-        public getScriptEditRange(script: TypeScript.Script): TypeScript.ScriptEditRange {
+        public getScriptTextChangeRange(script: TypeScript.Script): TypeScript.TextChangeRange {
             var lastKnownVersion = this.scriptMap.getEntry(script.locationInfo.filename).version;
-            return this.getScriptEditRangeSinceVersion(script.locationInfo.filename, lastKnownVersion);
+            return this.getScriptTextChangeRangeSinceVersion(script.locationInfo.filename, lastKnownVersion);
         }
 
-        public getScriptEditRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.ScriptEditRange {
+        public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {
             var hostUnitIndex = this.hostCache.getUnitIndex(fileName);
 
             var currentVersion = this.hostCache.getVersion(hostUnitIndex);
@@ -777,7 +769,7 @@ module Services {
                 return null; // "No changes"
             }
 
-            return this.host.getScriptEditRangeSinceVersion(hostUnitIndex, lastKnownVersion);
+            return this.host.getScriptTextChangeRangeSinceVersion(hostUnitIndex, lastKnownVersion);
         }
 
         public getScriptSnapshot(script: TypeScript.Script): TypeScript.IScriptSnapshot {
