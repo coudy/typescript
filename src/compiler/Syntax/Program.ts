@@ -18,7 +18,7 @@ var specificFile =
     // "KeywordsAsIdentifierName1.ts";
     undefined;
 
-var generate = false;
+var generate = true;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 
@@ -53,7 +53,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ true, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",

@@ -4373,7 +4373,7 @@ module TypeScript.Parser1 {
             // Debug.assert(this.isGetAccessorPropertyAssignment());
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
-            var propertyName = this.eatAnyToken();
+            var propertyName = this.eatPropertyName();
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
@@ -4391,7 +4391,7 @@ module TypeScript.Parser1 {
             // Debug.assert(this.isSetAccessorPropertyAssignment());
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
-            var propertyName = this.eatAnyToken();
+            var propertyName = this.eatPropertyName();
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var parameter = this.parseParameter();
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
@@ -4404,12 +4404,16 @@ module TypeScript.Parser1 {
             return this.isPropertyName(this.currentToken(), inErrorRecovery);
         }
 
+        private eatPropertyName(): ISyntaxToken {
+            return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken())
+                ? this.eatIdentifierNameToken()
+                : this.eatAnyToken();
+        }
+
         private parseSimplePropertyAssignment(): SimplePropertyAssignmentSyntax {
             // Debug.assert(this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false));
 
-            var propertyName = ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken())
-                ? this.eatIdentifierNameToken()
-                : this.eatAnyToken();
+            var propertyName = this.eatPropertyName();
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var expression = this.parseAssignmentExpression(/*allowIn:*/ true);
 
@@ -4685,8 +4689,7 @@ module TypeScript.Parser1 {
 
         private parsePredefinedType(): ITypeSyntax {
             // Debug.assert(this.isPredefinedType());
-            var keyword = this.eatAnyToken();
-            return keyword;
+            return this.eatAnyToken();
         }
 
         private isPredefinedType(): bool {

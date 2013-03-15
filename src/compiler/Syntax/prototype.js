@@ -38257,7 +38257,7 @@ var TypeScript;
             };
             ParserImpl.prototype.parseGetAccessorPropertyAssignment = function () {
                 var getKeyword = this.eatKeyword(65 /* GetKeyword */ );
-                var propertyName = this.eatAnyToken();
+                var propertyName = this.eatPropertyName();
                 var openParenToken = this.eatToken(72 /* OpenParenToken */ );
                 var closeParenToken = this.eatToken(73 /* CloseParenToken */ );
                 var typeAnnotation = this.parseOptionalTypeAnnotation(false);
@@ -38269,7 +38269,7 @@ var TypeScript;
             };
             ParserImpl.prototype.parseSetAccessorPropertyAssignment = function () {
                 var setKeyword = this.eatKeyword(68 /* SetKeyword */ );
-                var propertyName = this.eatAnyToken();
+                var propertyName = this.eatPropertyName();
                 var openParenToken = this.eatToken(72 /* OpenParenToken */ );
                 var parameter = this.parseParameter();
                 var closeParenToken = this.eatToken(73 /* CloseParenToken */ );
@@ -38279,8 +38279,11 @@ var TypeScript;
             ParserImpl.prototype.isSimplePropertyAssignment = function (inErrorRecovery) {
                 return this.isPropertyName(this.currentToken(), inErrorRecovery);
             };
+            ParserImpl.prototype.eatPropertyName = function () {
+                return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken()) ? this.eatIdentifierNameToken() : this.eatAnyToken();
+            };
             ParserImpl.prototype.parseSimplePropertyAssignment = function () {
-                var propertyName = ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken()) ? this.eatIdentifierNameToken() : this.eatAnyToken();
+                var propertyName = this.eatPropertyName();
                 var colonToken = this.eatToken(106 /* ColonToken */ );
                 var expression = this.parseAssignmentExpression(true);
                 return this.factory.simplePropertyAssignment(propertyName, colonToken, expression);
@@ -38458,8 +38461,7 @@ var TypeScript;
                 return this.currentToken().tokenKind === 31 /* NewKeyword */ ;
             };
             ParserImpl.prototype.parsePredefinedType = function () {
-                var keyword = this.eatAnyToken();
-                return keyword;
+                return this.eatAnyToken();
             };
             ParserImpl.prototype.isPredefinedType = function () {
                 switch(this.currentToken().tokenKind) {
@@ -61344,7 +61346,7 @@ var Program = (function () {
         });
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, true, generate);
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, false, generate);
         });
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5", function (filePath) {
