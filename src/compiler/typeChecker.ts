@@ -917,7 +917,7 @@ module TypeScript {
 
                         if (typeSymbol.aliasLink && !typeSymbol.type && typeSymbol.aliasLink.alias.nodeType == NodeType.Name) {
                             var modPath = (<Identifier>typeSymbol.aliasLink.alias).text;
-                            var modSym = this.findSymbolForDynamicModule(modPath, this.locationInfo.filename, (id) => scope.find(id, false, true));
+                            var modSym = this.findSymbolForDynamicModule(modPath, this.locationInfo.fileName, (id) => scope.find(id, false, true));
                             if (modSym) {
                                 typeSymbol.type = modSym.getType();
                             }

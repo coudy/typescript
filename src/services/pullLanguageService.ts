@@ -811,7 +811,7 @@ module Services {
             for (i = 0, len = this.pullCompilerState.getScriptCount() ; i < len; i++) {
                 // Add the item for the script name if needed
                 var script = this.pullCompilerState.getScript(i);
-                var scriptId = script.locationInfo.filename;
+                var scriptId = script.locationInfo.fileName;
                 var matchKind = match(null, script, scriptId);
                 if (matchKind != null) {
                     var item = new NavigateToItem();

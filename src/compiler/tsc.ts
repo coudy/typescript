@@ -567,20 +567,20 @@ class BatchCompiler {
         var resolvedFiles: string[] = []
         var watchers: { [x: string]: IFileWatcher; } = {};
 
-        var addWatcher = (filename: string) => {
-            if (!watchers[filename]) {
-                var watcher = this.ioHost.watchFile(filename, onWatchedFileChange);
-                watchers[filename] = watcher;
+        var addWatcher = (fileName: string) => {
+            if (!watchers[fileName]) {
+                var watcher = this.ioHost.watchFile(fileName, onWatchedFileChange);
+                watchers[fileName] = watcher;
             }
             else {
                 TypeScript.CompilerDiagnostics.debugPrint("Cannot watch file, it is already watched.");
             }
         };
 
-        var removeWatcher = (filename: string) => {
-            if (watchers[filename]) {
-                watchers[filename].close();
-                delete watchers[filename];
+        var removeWatcher = (fileName: string) => {
+            if (watchers[fileName]) {
+                watchers[fileName].close();
+                delete watchers[fileName];
             }
             else {
                 TypeScript.CompilerDiagnostics.debugPrint("Cannot stop watching file, it is not being watched.");

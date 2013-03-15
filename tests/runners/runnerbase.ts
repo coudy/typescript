@@ -11,8 +11,8 @@ class RunnerBase {
     // contains the tests to run
     public tests: string[] = [];
 
-    public addTest(filename: string) {
-        this.tests.push(filename);
+    public addTest(fileName: string) {
+        this.tests.push(fileName);
     }
 
     public enumerateFiles(folder: string, recursive?: bool = false): string[] {

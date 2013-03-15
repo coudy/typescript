@@ -152,7 +152,7 @@ module FourSlash {
             this.currentCaretPosition = Math.min(this.currentCaretPosition, this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength());
         }
 
-        // Opens a file given its 0-based index or filename
+        // Opens a file given its 0-based index or fileName
         public openFile(index: number);
         public openFile(name: string);
         public openFile(indexOrName: any) {
@@ -602,14 +602,14 @@ module FourSlash {
             };
         }
 
-        private applyEdits(filename: string, edits: Services.TextEdit[]): number {
+        private applyEdits(fileName: string, edits: Services.TextEdit[]): number {
             // We get back a set of edits, but langSvc.editScript only accepts one at a time. Use this to keep track
             // of the incremental offest from each edit to the next. Assumption is that these edit ranges don't overlap
             // or come in out-of-order.
             var runningOffset = 0;
             for (var j = 0; j < edits.length; j++) {
-                this.langSvc.editScript(filename, edits[j].minChar + runningOffset, edits[j].limChar + runningOffset, edits[j].text);
-                this.updateMarkersForEdit(filename, edits[j].minChar + runningOffset, edits[j].limChar + runningOffset, edits[j].text);
+                this.langSvc.editScript(fileName, edits[j].minChar + runningOffset, edits[j].limChar + runningOffset, edits[j].text);
+                this.updateMarkersForEdit(fileName, edits[j].minChar + runningOffset, edits[j].limChar + runningOffset, edits[j].text);
                 var change = (edits[j].minChar - edits[j].limChar) + edits[j].text.length;
                 runningOffset += change;
             }
@@ -622,10 +622,10 @@ module FourSlash {
             this.fixCaretPosition();
         }
 
-        private updateMarkersForEdit(filename: string, minChar: number, limChar: number, text: string) {
+        private updateMarkersForEdit(fileName: string, minChar: number, limChar: number, text: string) {
             for (var i = 0; i < this.testData.markers.length; i++) {
                 var marker = this.testData.markers[i];
-                if (marker.fileName === filename) {
+                if (marker.fileName === fileName) {
                     if (marker.position > minChar) {
                         if (marker.position < limChar) {
                             // Marker is inside the edit - mark it as invalidated (?)
@@ -986,8 +986,8 @@ module FourSlash {
     // TOOD: should these just use the Harness's stdout/stderr?
     var fsOutput = new Harness.Compiler.WriterAggregator();
     var fsErrors = new Harness.Compiler.WriterAggregator();
-    export function runFourSlashTest(filename: string) {
-        var content = IO.readFile(filename);
+    export function runFourSlashTest(fileName: string) {
+        var content = IO.readFile(fileName);
 
         // Parse out the files and their metadata
         var testData = parseTestData(content);
@@ -1026,7 +1026,7 @@ module FourSlash {
 
         Harness.Compiler.emit(emitterIOHost, Harness.usePull);
         if (fsErrors.lines.length > 0) {
-            throw new Error('Error compiling ' + filename + ': ' + fsErrors.lines.join('\r\n'));
+            throw new Error('Error compiling ' + fileName + ': ' + fsErrors.lines.join('\r\n'));
         }
 
         result = fsOutput.lines.join('\r\n');

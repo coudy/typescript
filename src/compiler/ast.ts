@@ -1153,7 +1153,7 @@ module TypeScript {
     }
 
     export class LocationInfo {
-        constructor(public filename: string,
+        constructor(public fileName: string,
                     public lineMap: number[],
                     public unitIndex) {
         }

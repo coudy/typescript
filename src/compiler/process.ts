@@ -9,7 +9,7 @@ declare module process {
         export function write(str: string);
     }
     export module mainModule {
-        export var filename: string;
+        export var fileName: string;
     }
     export function exit(exitCode?: number);
 }

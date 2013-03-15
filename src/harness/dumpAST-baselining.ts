@@ -130,7 +130,7 @@ module DumpAST {
     }
 
     function verifyAstNodePositions(script: TypeScript.Script, ast: TypeScript.AST): void {
-        var fileName = script.locationInfo.filename;
+        var fileName = script.locationInfo.fileName;
         var maxLimChar = script.limChar;
 
         var minChar = ast.minChar;

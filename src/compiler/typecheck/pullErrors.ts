@@ -10,7 +10,7 @@ module TypeScript {
     // adjustedOffset is set when the error is added to a decl
 
     export interface SemanticError extends IDiagnostic {
-        filename: string;
+        fileName: string;
         adjustOffset(pos: number): void;
     }
 
@@ -20,7 +20,7 @@ module TypeScript {
         private _length: number;
         private _message: string;
 
-        constructor(start: number, length: number, public filename: string, message: string) {
+        constructor(start: number, length: number, public fileName: string, message: string) {
             this._originalStart = start;
             this._start = start;
             this._length = length;
@@ -73,20 +73,20 @@ module TypeScript {
             this.locationInfoCache = {};
 
             for (var i = 0; i < units.length; i++) {
-                this.locationInfoCache[units[i].filename] = units[i];
+                this.locationInfoCache[units[i].fileName] = units[i];
             }
         }
 
         private reportError(error: SemanticError) {
-            var locationInfo = this.locationInfoCache[error.filename];
+            var locationInfo = this.locationInfoCache[error.fileName];
 
             if (locationInfo && locationInfo.lineMap) {
                 getZeroBasedSourceLineColFromMap(this.lineCol, error.start(), locationInfo.lineMap);
 
-                this.textWriter.Write(locationInfo.filename + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
+                this.textWriter.Write(locationInfo.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
             }
             else {
-                this.textWriter.Write(error.filename + "(0,0): ");
+                this.textWriter.Write(error.fileName + "(0,0): ");
             }
 
             this.textWriter.WriteLine(error.message());

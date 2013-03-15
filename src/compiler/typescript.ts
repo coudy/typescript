@@ -219,13 +219,13 @@ module TypeScript {
             this.parser.errorCallback = fn;
         }
 
-        public updateUnit(prog: string, filename: string, setRecovery: bool) {
-            return this.updateSourceUnit(new StringScriptSnapshot(prog), filename, setRecovery);
+        public updateUnit(prog: string, fileName: string, setRecovery: bool) {
+            return this.updateSourceUnit(new StringScriptSnapshot(prog), fileName, setRecovery);
         }
 
-        public updateSourceUnit(sourceText: IScriptSnapshot, filename: string, setRecovery: bool): bool {
-            return this.timeFunction("updateSourceUnit(" + filename + ")", () => {
-                var updateResult = this.partialUpdateUnit(sourceText, filename, setRecovery);
+        public updateSourceUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): bool {
+            return this.timeFunction("updateSourceUnit(" + fileName + ")", () => {
+                var updateResult = this.partialUpdateUnit(sourceText, fileName, setRecovery);
                 return this.applyUpdateResult(updateResult);
             });
         }
@@ -254,10 +254,10 @@ module TypeScript {
             }
         }
 
-        public partialUpdateUnit(sourceText: IScriptSnapshot, filename: string, setRecovery: bool): UpdateUnitResult {
-            return this.timeFunction("partialUpdateUnit(" + filename + ")", () => {
+        public partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): UpdateUnitResult {
+            return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
                 for (var i = 0, len = this.units.length; i < len; i++) {
-                    if (this.units[i].filename == filename) {
+                    if (this.units[i].fileName == fileName) {
                         if ((<Script>this.scripts.members[i]).isResident) {
                             return UpdateUnitResult.noEdits(i);
                         }
@@ -278,7 +278,7 @@ module TypeScript {
                             this.parser.errorCallback = errorCapture;
 
                         var oldScript = <Script>this.scripts.members[i];
-                        var newScript = this.parser.parse(sourceText, filename, i);
+                        var newScript = this.parser.parse(sourceText, fileName, i);
 
                         if (svErrorCallback)
                             this.parser.errorCallback = svErrorCallback;
@@ -288,21 +288,21 @@ module TypeScript {
                         return updateResult;
                     }
                 }
-                throw new Error("Unknown file \"" + filename + "\"");
+                throw new Error("Unknown file \"" + fileName + "\"");
             });
         }
 
-        public addUnit(prog: string, filename: string, keepResident? = false, referencedFiles?: IFileReference[] = []): Script {
-            return this.addSourceUnit(new StringScriptSnapshot(prog), filename, keepResident, referencedFiles);
+        public addUnit(prog: string, fileName: string, keepResident? = false, referencedFiles?: IFileReference[] = []): Script {
+            return this.addSourceUnit(new StringScriptSnapshot(prog), fileName, keepResident, referencedFiles);
         }
 
         private stringTable: Collections.StringTable = Collections.createStringTable();
         
         private typeCollectionTime = 0;
 
-        public addSourceUnit(sourceText: IScriptSnapshot, filename: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
-            return this.timeFunction("addSourceUnit(" + filename + ", " + keepResident + ")", () => {
-                //if (filename.indexOf("getCompletionsAtPosition5") < 0) {
+        public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
+            return this.timeFunction("addSourceUnit(" + fileName + ", " + keepResident + ")", () => {
+                //if (fileName.indexOf("getCompletionsAtPosition5") < 0) {
                 //    return;
                 //}
 
@@ -312,7 +312,7 @@ module TypeScript {
                 
                 if (!this.settings.usePull) {
                     timer.start();
-                    var script: Script = this.parser.parse(sourceText, filename, sharedIndex, AllowedElements.Global);
+                    var script: Script = this.parser.parse(sourceText, fileName, sharedIndex, AllowedElements.Global);
                     timer.end();
 
                     reParsedScript = script;
@@ -335,12 +335,12 @@ module TypeScript {
                     if (true || syntaxTree.diagnostics().length === 0) {
                         try {
                             timer.start();
-                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree, filename, sharedIndex);
+                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, sharedIndex);
                             timer.end();
 
                             var translateTime = timer.time;
 
-                            //if (filename.indexOf("lib.d.ts") >= 0) {
+                            //if (fileName.indexOf("lib.d.ts") >= 0) {
                             //    // IO.stdout.WriteLine("");
                             //    IO.stdout.WriteLine("Old - New - Translate: " + oldParseTime + "\t" + newParseTime + "\t" + translateTime);
                             //    // IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
@@ -353,7 +353,7 @@ module TypeScript {
                              
                             // TypeScriptCompiler.compareObjects(script, script2);
                         } catch (e1) {
-                            IO.stdout.WriteLine("Error converting: " + filename);
+                            IO.stdout.WriteLine("Error converting: " + fileName);
                             IO.stdout.WriteLine("\t" + e1.message);
                         }
                     }
@@ -596,7 +596,7 @@ module TypeScript {
             for (var i = 0, len = this.scripts.members.length; i < len; i++) {
                 var script = <Script>this.scripts.members[i];
                 if (script.emitRequired(this.emitSettings)) {
-                    var fileName = script.locationInfo.filename;
+                    var fileName = script.locationInfo.fileName;
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength == -1) {
                         // First time at finding common path
@@ -700,7 +700,7 @@ module TypeScript {
             }
 
             if (!declarationEmitter) {
-                var declareFileName = this.emitSettings.mapOutputFileName(script.locationInfo.filename, TypeScriptCompiler.mapToDTSFileName);
+                var declareFileName = this.emitSettings.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                 var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
                 if (usePullEmitter) {
                     declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitSettings, this.errorReporter);
@@ -772,7 +772,7 @@ module TypeScript {
                 return null;
             }
 
-            var fname = script.locationInfo.filename;
+            var fname = script.locationInfo.fileName;
             if (!emitter) {
                 var outFname = this.emitSettings.mapOutputFileName(fname, TypeScriptCompiler.mapToJSFileName);
                 var outFile = this.createFile(outFname, this.useUTF8ForFile(script));
@@ -875,39 +875,39 @@ module TypeScript {
         // Pull typecheck infrastructure
         //
 
-        public pullResolveFile(filename: string): bool {
+        public pullResolveFile(fileName: string): bool {
             if (!this.pullTypeChecker) {
                 return false;
             }
 
-            var unit = this.semanticInfoChain.getUnit(filename);
+            var unit = this.semanticInfoChain.getUnit(fileName);
 
             if (!unit) {
                 return false;
             }
 
-            this.pullTypeChecker.setUnit(filename);
+            this.pullTypeChecker.setUnit(fileName);
             this.pullTypeChecker.resolver.resolveBoundDecls(unit.getTopLevelDecls()[0], new PullTypeResolutionContext());
 
             return true;
         }
 
-        public pullGetErrorsForFile(filename: string): SemanticError[] {
+        public pullGetErrorsForFile(fileName: string): SemanticError[] {
             var errors: PullError[] = [];
 
-            var unit = this.semanticInfoChain.getUnit(filename);
+            var unit = this.semanticInfoChain.getUnit(fileName);
 
             if (unit) {
                 var script: Script = null;
                 
                 for (var i = 0; i < this.units.length; i++) {
-                    if (this.units[i].filename == filename) {
+                    if (this.units[i].fileName == fileName) {
                         script = <Script>this.scripts.members[i];
                     }
                 }
 
                 if (script) {
-                    this.pullTypeChecker.typeCheckScript(script, filename, this);
+                    this.pullTypeChecker.typeCheckScript(script, fileName, this);
 
                     unit.getErrors(errors);
                 }
@@ -934,11 +934,11 @@ module TypeScript {
 
                 for (; i < this.scripts.members.length; i++) {
 
-                    semanticInfo = new SemanticInfo(this.units[i].filename, this.units[i]);
+                    semanticInfo = new SemanticInfo(this.units[i].fileName, this.units[i]);
 
                     declCollectionContext = new DeclCollectionContext(semanticInfo);
 
-                    declCollectionContext.scriptName = this.units[i].filename;
+                    declCollectionContext.scriptName = this.units[i].fileName;
 
                     // create decls
                     getAstWalkerFactory().walk(this.scripts.members[i], preCollectDecls, postCollectDecls, null, declCollectionContext);
@@ -965,7 +965,7 @@ module TypeScript {
 
                 //// resolve symbols
                 ////for (i = 0; i < this.scripts.members.length; i++) {
-                ////    this.pullResolveFile(this.units[i].filename);
+                ////    this.pullResolveFile(this.units[i].fileName);
                 ////}
 
                 //var typeCheckEndTime = new Date().getTime();
@@ -973,8 +973,8 @@ module TypeScript {
                 var findErrorsStartTime = new Date().getTime();
                 // type check
                 for (i = 0; i < this.scripts.members.length; i++) {
-                    this.logger.log("Type checking " + this.units[i].filename);
-                    this.pullTypeChecker.typeCheckScript(<Script>this.scripts.members[i], this.units[i].filename, this);
+                    this.logger.log("Type checking " + this.units[i].fileName);
+                    this.pullTypeChecker.typeCheckScript(<Script>this.scripts.members[i], this.units[i].fileName, this);
                 }
                 var findErrorsEndTime = new Date().getTime();                
 
@@ -996,15 +996,15 @@ module TypeScript {
                 var declDiffer = new PullDeclDiffer();
 
                 // want to name the new script semantic info the same as the old one
-                var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.filename, newScript.locationInfo);
-                var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldScript.locationInfo.filename);
+                var newScriptSemanticInfo = new SemanticInfo(oldScript.locationInfo.fileName, newScript.locationInfo);
+                var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldScript.locationInfo.fileName);
 
                 lastBoundPullDeclId = pullDeclID;
                 lastBoundPullSymbolID = pullSymbolID;
 
                 var declCollectionContext = new DeclCollectionContext(newScriptSemanticInfo);
 
-                declCollectionContext.scriptName = oldScript.locationInfo.filename;
+                declCollectionContext.scriptName = oldScript.locationInfo.fileName;
 
                 // create decls
                 getAstWalkerFactory().walk(newScript, preCollectDecls, postCollectDecls, null, declCollectionContext);
@@ -1030,10 +1030,10 @@ module TypeScript {
 
                 var topLevelDecls = newScriptSemanticInfo.getTopLevelDecls();
 
-                this.semanticInfoChain.update(newScript.locationInfo.filename);
+                this.semanticInfoChain.update(newScript.locationInfo.fileName);
 
                 var binder = new PullSymbolBinder(this.semanticInfoChain);
-                binder.setUnit(newScript.locationInfo.filename);
+                binder.setUnit(newScript.locationInfo.fileName);
 
                 var i = 0;
 
@@ -1069,7 +1069,7 @@ module TypeScript {
                     var traceEndTime = new Date().getTime();
 
                     // Don't re-typecheck or re-report errors just yet
-                    this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.filename, this);
+                    this.pullTypeChecker.typeCheckScript(newScript, newScript.locationInfo.fileName, this);
 
                     this.logger.log("Update Script - Trace time: " + (traceEndTime - traceStartTime));
                     this.logger.log("Update Script - Number of diffs: " + diffResults.length);
@@ -1107,7 +1107,7 @@ module TypeScript {
             var declStack: PullDecl[] = [];
             var resultASTs: AST[] = [];
             if (!scriptName) {
-                scriptName = script.locationInfo.filename;
+                scriptName = script.locationInfo.fileName;
             }
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var lastDeclAST: AST = null;
@@ -1171,7 +1171,7 @@ module TypeScript {
 
             if (resultASTs.length) {
 
-                this.pullTypeChecker.setUnit(script.locationInfo.filename);
+                this.pullTypeChecker.setUnit(script.locationInfo.fileName);
 
                 foundAST = resultASTs[resultASTs.length - 1];
 
@@ -1352,7 +1352,7 @@ module TypeScript {
 
         private extractResolutionContextFromPath(path: AstPath, script: Script, scriptName?: string): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; isTypedAssignment: bool; } {
             if (!scriptName) {
-                scriptName = script.locationInfo.filename;
+                scriptName = script.locationInfo.fileName;
             }
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
@@ -1520,10 +1520,10 @@ module TypeScript {
             });
         }
 
-        public pullUpdateUnit(sourceText: IScriptSnapshot, filename: string, setRecovery: bool): bool {
-            return this.timeFunction("pullUpdateUnit(" + filename + ")", () => {
+        public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): bool {
+            return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 for (var i = 0, len = this.units.length; i < len; i++) {
-                    if (this.units[i].filename == filename) {
+                    if (this.units[i].fileName == fileName) {
 
                         if (setRecovery) {
                             this.parser.setErrorRecovery(null);
@@ -1547,17 +1547,17 @@ module TypeScript {
                         var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
                         var newScript: Script = null;
                         try {
-                            newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, filename, i);
+                            newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, i);
 
                             // TypeScriptCompiler.compareObjects(script, script2);
                         } catch (e1) {
-                            IO.stdout.WriteLine("Error converting: " + filename);
+                            IO.stdout.WriteLine("Error converting: " + fileName);
                             IO.stdout.WriteLine("\t" + e1.message);
                         }
 
                         this.syntaxTrees[i] = syntaxTree;
 
-                        //var newScript = this.parser.parse(sourceText, filename, i);
+                        //var newScript = this.parser.parse(sourceText, fileName, i);
 
                         if (svErrorCallback)
                             this.parser.errorCallback = svErrorCallback;
@@ -1568,7 +1568,7 @@ module TypeScript {
                         return this.pullUpdateScript(oldScript, newScript);
                     }
                 }
-                throw new Error("Unknown file \"" + filename + "\"");
+                throw new Error("Unknown file \"" + fileName + "\"");
             });
         }
     }

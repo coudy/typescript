@@ -45,7 +45,7 @@ module TypeScript {
             if (this.emitAsComments) {
                 this.outfile.Write("// ");
             }
-            this.outfile.Write(this.checker.locationInfo.filename + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
+            this.outfile.Write(this.checker.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
         }
 
         public writePrefix(ast: AST): void {

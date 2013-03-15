@@ -27,7 +27,7 @@ module Services {
             this.compiler = null;
             this.errorCollector = null;
             this.unitIndexMap = []; // Map from compiler unit index to host unitindex
-            this.scriptMap = null; // Map from filename to FileMapEntry
+            this.scriptMap = null; // Map from fileName to FileMapEntry
 
             //
             // State recomputed at every "refresh" call (performance)
@@ -161,10 +161,10 @@ module Services {
                 // Debugging: log version and unit index mapping data
                 if (this.logger.information()) {
                     for (var i = 0; i < this.compiler.units.length; i++) {
-                        this.logger.log("compiler unit[" + i + "].filename='" + this.compiler.units[i].filename + "'");
+                        this.logger.log("compiler unit[" + i + "].fileName='" + this.compiler.units[i].fileName + "'");
                     }
                     for (var i = 0; i < this.hostCache.count() ; i++) {
-                        this.logger.log("host script[" + i + "].filename='" + this.hostCache.getScriptId(i) + "', version=" + this.hostCache.getVersion(i));
+                        this.logger.log("host script[" + i + "].fileName='" + this.hostCache.getScriptId(i) + "', version=" + this.hostCache.getVersion(i));
                     }
                     for (var i = 0; i < this.unitIndexMap.length; i++) {
                         this.logger.log("unitIndexMap[" + i + "] = " + this.unitIndexMap[i]);
@@ -213,7 +213,7 @@ module Services {
             /// even close to supporting removing symbols (unitindex will be all over the place
             /// if we remove scripts from the list).
             for (var unitIndex = 0, len = this.compiler.units.length; unitIndex < len; unitIndex++) {
-                var fileName = this.compiler.units[unitIndex].filename;
+                var fileName = this.compiler.units[unitIndex].fileName;
 
                 var hostUnitIndex = this.hostCache.getUnitIndex(fileName);
                 if (hostUnitIndex < 0) {
@@ -291,8 +291,8 @@ module Services {
         }
 
         public getScriptTextChangeRange(script: TypeScript.Script): TypeScript.TextChangeRange {
-            var lastKnownVersion = this.scriptMap.getEntry(script.locationInfo.filename).version;
-            return this.getScriptTextChangeRangeSinceVersion(script.locationInfo.filename, lastKnownVersion);
+            var lastKnownVersion = this.scriptMap.getEntry(script.locationInfo.fileName).version;
+            return this.getScriptTextChangeRangeSinceVersion(script.locationInfo.fileName, lastKnownVersion);
         }
 
         public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {
@@ -307,7 +307,7 @@ module Services {
         }
 
         public getScriptSnapshot(script: TypeScript.Script) {
-            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(script.locationInfo.filename));
+            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(script.locationInfo.fileName));
         }
 
         public getScriptSnapshot2(fileName: string) {

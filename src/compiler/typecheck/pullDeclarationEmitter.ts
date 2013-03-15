@@ -26,13 +26,13 @@ module TypeScript {
 
         private emitTypeSignature(type: PullTypeSymbol) {
             var declarationContainerAst = this.getAstDeclarationContainer();
-            var declarationPullSymbol = this.semanticInfoChain.getSymbolForAST(declarationContainerAst, this.locationInfo.filename);
+            var declarationPullSymbol = this.semanticInfoChain.getSymbolForAST(declarationContainerAst, this.locationInfo.fileName);
             var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
 
         public emitTypeOfBoundDecl(boundDecl: BoundDecl) {
-            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDecl, this.locationInfo.filename);
+            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDecl, this.locationInfo.fileName);
             var type = pullSymbol.getType();
             if (!type) {
                 // PULLTODO
@@ -46,21 +46,21 @@ module TypeScript {
         }
 
         public isOverloadedConstructorSignature(funcDecl: FuncDecl) {
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.filename);
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.fileName);
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getConstructSignatures();
             return signatures && signatures.length > 1;
         }
 
         public isOverloadedCallSignature(funcDecl: FuncDecl) {
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.filename);
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.fileName);
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getCallSignatures();
             return signatures && signatures.length > 1;
         }
 
         public getFirstCallOverloadFuncDecl(funcDecl: FuncDecl) {
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.filename);
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl, this.locationInfo.fileName);
             var funcTypeSymbol = funcSymbol.getType();
             var signatures = funcTypeSymbol.getCallSignatures();
             Debug.assert(signatures && signatures.length > 1);
@@ -71,7 +71,7 @@ module TypeScript {
         }
 
         public emitReturnTypeOfFuncDecl(funcDecl: FuncDecl) {
-            var funcSignature = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, this.locationInfo.filename).signature;
+            var funcSignature = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, this.locationInfo.fileName).signature;
             var returnType = funcSignature.getReturnType();
             if (funcDecl.returnTypeAnnotation ||
                 (returnType && returnType != this.semanticInfoChain.anyTypeSymbol)) {
@@ -85,7 +85,7 @@ module TypeScript {
                 return false;
             }
 
-            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
+            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
             if (accessorSymbol.getGetter()) {
                 return true;
             }
@@ -98,7 +98,7 @@ module TypeScript {
                 return;
             }
 
-            var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
+            var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
             var comments: Comment[] = [];
             if (accessors.getter) {
                 comments = comments.concat(accessors.getter.getDocComments());
@@ -110,14 +110,14 @@ module TypeScript {
         }
 
         public emitPropertyTypeOfProperty(funcDecl: FuncDecl) {
-            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.filename);
+            var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.locationInfo.fileName);
             var type = accessorSymbol.getType();
             this.emitTypeSignature(type);
         }
 
         public emitBaseExpression(bases: ASTList, index: number, useExtendsList: bool) {
             var containerAst = this.getAstDeclarationContainer();
-            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.locationInfo.filename);
+            var containerSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(containerAst, this.locationInfo.fileName);
             var baseType: PullTypeSymbol
             if (useExtendsList) {
                 baseType = containerSymbol.getExtendedTypes()[index];

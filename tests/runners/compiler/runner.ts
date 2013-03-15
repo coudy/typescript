@@ -60,7 +60,7 @@ class CompilerBaselineRunner extends RunnerBase {
     { flag: 'usepull', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.usePull = value.toLowerCase() === 'true' ? true : false; } },
     ];
 
-    public checkTestCodeOutput(filename: string) {
+    public checkTestCodeOutput(fileName: string) {
         var that = this;
         function setSettings(tcSettings: Harness.TestCaseParser.CompilerSetting[], settings: TypeScript.CompilationSettings) {
             tcSettings.forEach((item) => {
@@ -73,16 +73,16 @@ class CompilerBaselineRunner extends RunnerBase {
             });
         }
 
-        // strips the filename from the path.
-        var justName = filename.replace(/^.*[\\\/]/, '');
-        var content = IO.readFile(filename);
+        // strips the fileName from the path.
+        var justName = fileName.replace(/^.*[\\\/]/, '');
+        var content = IO.readFile(fileName);
         var testCaseContent = Harness.TestCaseParser.makeUnitsFromTest(content, justName);
 
         var units = testCaseContent.testUnitData;
         var tcSettings = testCaseContent.settings;
 
         var lastUnit = units[units.length - 1];
-        describe('JS output and errors for ' + filename, function () {
+        describe('JS output and errors for ' + fileName, function () {
             assert.bugs(content);
 
             var jsOutputAsync = '';
@@ -107,7 +107,7 @@ class CompilerBaselineRunner extends RunnerBase {
 
                 // save away any generated .d.ts code for later verification
                 result.fileResults.forEach(r => {
-                    if (r.filename === declFileName) {
+                    if (r.fileName === declFileName) {
                         declFileCode = r.file.lines.join('\n');
                     }
                 });
@@ -129,7 +129,7 @@ class CompilerBaselineRunner extends RunnerBase {
 
             // check errors
             if (that.errors) {
-                Harness.Baseline.runBaseline('Correct errors for ' + filename + ' (commonjs)', justName.replace(/\.ts/, '.errors.txt'), () => {
+                Harness.Baseline.runBaseline('Correct errors for ' + fileName + ' (commonjs)', justName.replace(/\.ts/, '.errors.txt'), () => {
                     if (errorDescriptionLocal === '') {
                         return null;
                     } else {
@@ -159,11 +159,11 @@ class CompilerBaselineRunner extends RunnerBase {
                     }
                 });
 
-                Harness.Baseline.runBaseline('.d.ts for ' + filename + ' compiles without error', realDeclName.replace(/\.ts/, '.errors.txt'), () => {
+                Harness.Baseline.runBaseline('.d.ts for ' + fileName + ' compiles without error', realDeclName.replace(/\.ts/, '.errors.txt'), () => {
                     return (declErrors === '') ? null : declErrors;
                 });
 
-                //Harness.Baseline.runBaseline('.d.ts for ' + filename + ' matches the baseline', realDeclName, () => {
+                //Harness.Baseline.runBaseline('.d.ts for ' + fileName + ' matches the baseline', realDeclName, () => {
                 //    return declFileCode;
                 //});
             }
@@ -171,18 +171,18 @@ class CompilerBaselineRunner extends RunnerBase {
             if (!Harness.Compiler.isDeclareFile(lastUnit.name)) {
                 if (that.emit) {
                     // check js output
-                    Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + filename, justName.replace(/\.ts/, '.commonjs.js'), () => {
+                    Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + fileName, justName.replace(/\.ts/, '.commonjs.js'), () => {
                         return jsOutputSync;
                     });
 
-                    Harness.Baseline.runBaseline('Correct JS output (AMD) for ' + filename, justName.replace(/\.ts/, '.amd.js'), () => {
+                    Harness.Baseline.runBaseline('Correct JS output (AMD) for ' + fileName, justName.replace(/\.ts/, '.amd.js'), () => {
                         return jsOutputAsync;
                     });
                 }
 
                 if (that.output) {
                     // check runtime output
-                    Harness.Baseline.runBaseline('Correct runtime output for ' + filename, justName.replace(/\.ts/, '.output.txt'), () => {
+                    Harness.Baseline.runBaseline('Correct runtime output for ' + fileName, justName.replace(/\.ts/, '.output.txt'), () => {
                         var runResult = null;
                         Harness.Runner.runJSString(jsOutputSync, (error, result) => {
                             if (error === null) {

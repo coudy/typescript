@@ -28,7 +28,7 @@ module Services {
         }
 
         public getScriptId(): string {
-            return this.script.locationInfo.filename;
+            return this.script.locationInfo.fileName;
         }
 
         public getScript(): TypeScript.Script {

@@ -42,8 +42,8 @@ interface IIO {
     arguments: string[];
     stderr: ITextWriter;
     stdout: ITextWriter;
-    watchFile(filename: string, callback: (string) => void ): IFileWatcher;
-    run(source: string, filename: string): void;
+    watchFile(fileName: string, callback: (string) => void ): IFileWatcher;
+    run(source: string, fileName: string): void;
     getExecutingFilePath(): string;
     quit(exitCode?: number);
 }
@@ -295,11 +295,11 @@ var IO = (function() {
             stderr: WScript.StdErr,
             stdout: WScript.StdOut,
             watchFile: null,
-            run: function(source, filename) {
+            run: function(source, fileName) {
                 try {
                     eval(source);
                 } catch (e) {
-                    IOUtils.throwIOError("Error while executing file '" + filename + "'.", e);
+                    IOUtils.throwIOError("Error while executing file '" + fileName + "'.", e);
                 }
             },
             getExecutingFilePath: function () {
@@ -477,7 +477,7 @@ var IO = (function() {
                 WriteLine: function(str) { process.stdout.write(str + '\n'); },
                 Close: function() { }
             },
-            watchFile: function(filename: string, callback: (string) => void ): IFileWatcher {
+            watchFile: function(fileName: string, callback: (string) => void ): IFileWatcher {
                 var firstRun = true;
                 var processingChange = false;
 
@@ -487,32 +487,32 @@ var IO = (function() {
                             return;
                         }
 
-                        _fs.unwatchFile(filename, fileChanged);
+                        _fs.unwatchFile(fileName, fileChanged);
                         if (!processingChange) {
                             processingChange = true;
-                            callback(filename);
+                            callback(fileName);
                             setTimeout(function() { processingChange = false; }, 100);
                         }
                     }
                     firstRun = false;
-                    _fs.watchFile(filename, { persistent: true, interval: 500 }, fileChanged);
+                    _fs.watchFile(fileName, { persistent: true, interval: 500 }, fileChanged);
                 };
 
                 fileChanged();
                 return {
-                    filename: filename,
+                    fileName: fileName,
                     close: function() {
-                        _fs.unwatchFile(filename, fileChanged);
+                        _fs.unwatchFile(fileName, fileChanged);
                     }
                 };
             },
-            run: function(source, filename) {
-                require.main.filename = filename;
-                require.main.paths = _module._nodeModulePaths(_path.dirname(_fs.realpathSync(filename)));
-                require.main._compile(source, filename);
+            run: function(source, fileName) {
+                require.main.fileName = fileName;
+                require.main.paths = _module._nodeModulePaths(_path.dirname(_fs.realpathSync(fileName)));
+                require.main._compile(source, fileName);
             }, 
             getExecutingFilePath: function () {
-                return process.mainModule.filename;
+                return process.mainModule.fileName;
             },
             quit: process.exit
         }

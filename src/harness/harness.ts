@@ -735,15 +735,15 @@ module Harness {
 
             public reset() { this.fileCollection = {}; }
 
-            public toArray(): { filename: string; file: WriterAggregator; }[] {
-                var result: { filename: string; file: WriterAggregator; }[] = [];
+            public toArray(): { fileName: string; file: WriterAggregator; }[] {
+                var result: { fileName: string; file: WriterAggregator; }[] = [];
 
                 for (var p in this.fileCollection) {
                     if (this.fileCollection.hasOwnProperty(p)) {
                         var current = <Harness.Compiler.WriterAggregator>this.fileCollection[p];
                         if (current.lines.length > 0) {
                             if (p !== '0.js') { current.lines.unshift('////[' + p + ']'); }
-                            result.push({ filename: p, file: this.fileCollection[p] });
+                            result.push({ fileName: p, file: this.fileCollection[p] });
                         }
                     }
                 }
@@ -757,8 +757,8 @@ module Harness {
         var stdout = new EmitterIOHost();
         var stderr = new WriterAggregator();
 
-        export function isDeclareFile(filename: string) {
-            return /\.d\.ts$/.test(filename);
+        export function isDeclareFile(fileName: string) {
+            return /\.d\.ts$/.test(fileName);
         }
 
         export function makeDefaultCompilerForTest(c?: TypeScript.TypeScriptCompiler) {
@@ -782,7 +782,7 @@ module Harness {
 
         // pullUpdateUnit is sufficient if an existing unit is updated, if a new unit is added we need to do a full typecheck
         var needsFullTypeCheck = true;
-        export function compile(code?: string, filename?: string) {
+        export function compile(code?: string, fileName?: string) {
             if (usePull) {
                 if (needsFullTypeCheck) {
                     compiler.pullTypeCheck(true);
@@ -790,8 +790,8 @@ module Harness {
                 }
                 else {
                     // requires unit to already exist in the compiler
-                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(""), filename, true);
-                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), filename, true);
+                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(""), fileName, true);
+                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), fileName, true);
                 }
             }
             else {
@@ -996,7 +996,7 @@ module Harness {
                 else {
                     for (m = 0; m < compiler.scripts.members.length; m++) {
                         var script2 = <TypeScript.Script>compiler.scripts.members[m];
-                        if (script2.locationInfo.filename !== 'lib.d.ts') {
+                        if (script2.locationInfo.fileName !== 'lib.d.ts') {
                             if (targetPosition > -1) {
                                 var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
                                 var name = this.getTypeInfoName(tyInfo.ast);
@@ -1170,8 +1170,8 @@ module Harness {
             public code: string;
             public errors: CompilerError[];
 
-            /** @param fileResults an array of strings for the filename and an ITextWriter with its code */
-            constructor(public fileResults: { filename: string; file: WriterAggregator; }[], errorLines: string[], public scripts: TypeScript.Script[]) {
+            /** @param fileResults an array of strings for the fileName and an ITextWriter with its code */
+            constructor(public fileResults: { fileName: string; file: WriterAggregator; }[], errorLines: string[], public scripts: TypeScript.Script[]) {
                 var lines = [];
                 fileResults.forEach(v => lines = lines.concat(v.file.lines));
                 this.code = lines.join("\n")
@@ -1226,7 +1226,7 @@ module Harness {
             stdout.reset();
             stderr.reset();
 
-            var files = compiler.units.map((value) => value.filename);
+            var files = compiler.units.map((value) => value.fileName);
 
             for (var i = 0; i < files.length; i++) {
                 var fname = files[i];
@@ -1247,7 +1247,7 @@ module Harness {
         // Defines functions to invoke before compiling a piece of code and a post compile action intended to clean up the
         // effects of preCompile, preferably with something lighter weight than a full recreate()
         export interface CompilationContext {
-            filename: string;
+            fileName: string;
             preCompile: () => void;
             postCompile: () => void;
         }
@@ -1257,7 +1257,7 @@ module Harness {
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
 
             for (var i = 0; i < compiler.units.length; i++) {
-                if (compiler.units[i].filename === uName) {
+                if (compiler.units[i].fileName === uName) {
                     updateUnit(code, uName);
                     script = <TypeScript.Script>compiler.scripts.members[i];
                 }
@@ -1284,13 +1284,13 @@ module Harness {
 
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             path = switchToForwardSlashes(path);
-            var filename = path.match(/[^\/]*$/)[0];
+            var fileName = path.match(/[^\/]*$/)[0];
             var code = readFile(path);
 
-            compileUnit(code, filename, callback, settingsCallback, context, references);
+            compileUnit(code, fileName, callback, settingsCallback, context, references);
         }
 
-        export function compileUnit(code: string, filename: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
+        export function compileUnit(code: string, fileName: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
             // not recursive
             function clone/* <T> */(source: any, target: any) {
                 for (var prop in source) {
@@ -1310,7 +1310,7 @@ module Harness {
                 compiler.emitSettings = new TypeScript.EmitOptions(compiler.settings);
             }
             try {
-                compileString(code, filename, callback, context, references);
+                compileString(code, fileName, callback, context, references);
             } finally {
                 // If settingsCallback exists, assume that it modified the global compiler instance's settings in some way.
                 // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
@@ -1375,7 +1375,7 @@ module Harness {
         /** Returns a set of functions which can be later executed to add and remove given dependencies to the compiler so that
          *  a file can be successfully compiled. These functions will add/remove named units and code to the compiler for each dependency. 
          */
-        export function defineCompilationContextForTest(filename: string, dependencies: TestCaseParser.TestUnitData[]): CompilationContext {
+        export function defineCompilationContextForTest(fileName: string, dependencies: TestCaseParser.TestUnitData[]): CompilationContext {
             // if the given file has no dependencies, there is no context to return, it can be compiled without additional work
             if (dependencies.length == 0) {
                 return null;
@@ -1395,7 +1395,7 @@ module Harness {
                     });
                 };
                 var context = {
-                    filename: filename,
+                    fileName: fileName,
                     preCompile: precompile,
                     postCompile: postcompile
                 };
@@ -1442,7 +1442,7 @@ module Harness {
         }
 
         /** Given a test file containing // @Filename directives, return an array of named units of code to be added to an existing compiler instance */
-        export function makeUnitsFromTest(code: string, filename: string): { settings: CompilerSetting[]; testUnitData: TestUnitData[]; } {
+        export function makeUnitsFromTest(code: string, fileName: string): { settings: CompilerSetting[]; testUnitData: TestUnitData[]; } {
 
             var settings = extractCompilerSettings(code);
 
@@ -1496,7 +1496,7 @@ module Harness {
                                 content: currentFileContent,
                                 name: currentFileName,
                                 fileOptions: currentFileOptions,
-                                originalFilePath: filename,
+                                originalFilePath: fileName,
                                 references: refs
                             };
                         files.push(newTestFile);
@@ -1523,7 +1523,7 @@ module Harness {
                 }
             }
 
-            // normalize the filename for the single file case
+            // normalize the fileName for the single file case
             currentFileName = files.length > 0 ? currentFileName : '0.ts';
 
             // EOF, push whatever remains
@@ -1531,7 +1531,7 @@ module Harness {
                 content: currentFileContent || '',
                 name: currentFileName,
                 fileOptions: currentFileOptions,
-                originalFilePath: filename,
+                originalFilePath: fileName,
                 references: refs
             };
             files.push(newTestFile2);
@@ -1702,7 +1702,7 @@ module Harness {
             return script;
         }
 
-        /** Parse a file on disk given its filename */
+        /** Parse a file on disk given its fileName */
         public parseFile(fileName: string) {
             var sourceText = new TypeScript.StringScriptSnapshot(IO.readFile(fileName))
             return this.parseSourceText(fileName, sourceText);
@@ -1899,21 +1899,21 @@ module Harness {
             LineEndingSensitive?: bool;
         }
 
-        function localPath(filename: string) {
+        function localPath(fileName: string) {
             if (global.runners[0].testType === 'prototyping') {
-                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/local/' + filename;
+                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/local/' + fileName;
             }
             else {
-                return Harness.userSpecifiedroot + 'tests/baselines/local/' + filename;
+                return Harness.userSpecifiedroot + 'tests/baselines/local/' + fileName;
             }
         }
 
-        function referencePath(filename: string) {
+        function referencePath(fileName: string) {
             if (global.runners[0].testType === 'prototyping') {
-                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/reference/' + filename;
+                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/reference/' + fileName;
             }
             else {
-                return Harness.userSpecifiedroot + 'tests/baselines/reference/' + filename;
+                return Harness.userSpecifiedroot + 'tests/baselines/reference/' + fileName;
             }
         }
 

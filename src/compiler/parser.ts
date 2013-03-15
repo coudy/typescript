@@ -4289,12 +4289,12 @@ module TypeScript {
 
         private fname = "";
 
-        public quickParse(sourceText: IScriptSnapshot, filename: string, unitIndex: number): QuickParseResult {
+        public quickParse(sourceText: IScriptSnapshot, fileName: string, unitIndex: number): QuickParseResult {
             //TODO: REVIEW: We set this to avoid adding a "module" decl in the resulting script (see parse() method)
             var svGenTarget = TypeScript.moduleGenTarget;
             try {
                 TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Local;
-                var script = this.parse(sourceText, filename, unitIndex, AllowedElements.QuickParse);
+                var script = this.parse(sourceText, fileName, unitIndex, AllowedElements.QuickParse);
                 return new QuickParseResult(script, this.scanner.lexState);
             }
             finally {
@@ -4302,10 +4302,10 @@ module TypeScript {
             }
         }
 
-        public parse(sourceText: IScriptSnapshot, filename: string, unitIndex: number, allowedElements = AllowedElements.Global): Script {
+        public parse(sourceText: IScriptSnapshot, fileName: string, unitIndex: number, allowedElements = AllowedElements.Global): Script {
             // Reset all parser state here.  This allows us to be resilient to reentrancy if an 
             // exception is thrown.
-            this.fname = filename;
+            this.fname = fileName;
             this.currentUnitIndex = unitIndex;
 
             this.currentToken = null;
@@ -4343,7 +4343,7 @@ module TypeScript {
             var bod = new ASTList();
             bod.minChar = minChar;
 
-            this.parsingDeclareFile = isDSTRFile(filename) || isDTSFile(filename);
+            this.parsingDeclareFile = isDSTRFile(fileName) || isDTSFile(fileName);
 
             while (true) {
                 this.parseStatementList(
@@ -4367,7 +4367,7 @@ module TypeScript {
 
             var topLevelMod: ModuleDeclaration = null;
             if (moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport) {
-                var correctedFileName = switchToForwardSlashes(filename);
+                var correctedFileName = switchToForwardSlashes(fileName);
                 var id: Identifier = new Identifier(correctedFileName);
                 topLevelMod = new ModuleDeclaration(id, bod, this.topVarList(), null);
 
@@ -4398,7 +4398,7 @@ module TypeScript {
             this.popDeclLists();
             script.minChar = minChar;
             script.limChar = this.scanner.pos;
-            script.locationInfo = new LocationInfo(filename, this.scanner.lineMap, unitIndex);
+            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap, unitIndex);
             script.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
             script.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
             script.isDeclareFile = this.parsingDeclareFile;

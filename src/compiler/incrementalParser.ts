@@ -193,7 +193,7 @@ module TypeScript {
         private mergeLocationInfo(script: TypeScript.Script, partial: TypeScript.Script, editRange: TextChangeRange) {
             // Don't merger these fields, as the original script has the right values
             //script.locationInfo.unitIndex = partial.locationInfo.unitIndex;
-            //script.locationInfo.filename = partial.locationInfo.filename;
+            //script.locationInfo.fileName = partial.locationInfo.fileName;
 
             var lineMap1 = script.locationInfo.lineMap;
             var lineMap2 = partial.locationInfo.lineMap;
