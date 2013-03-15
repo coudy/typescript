@@ -4407,7 +4407,9 @@ module TypeScript.Parser1 {
         private parseSimplePropertyAssignment(): SimplePropertyAssignmentSyntax {
             // Debug.assert(this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false));
 
-            var propertyName = this.eatAnyToken();
+            var propertyName = ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken())
+                ? this.eatIdentifierNameToken()
+                : this.eatAnyToken();
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
             var expression = this.parseAssignmentExpression(/*allowIn:*/ true);
 

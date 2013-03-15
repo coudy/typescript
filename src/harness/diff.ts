@@ -14,6 +14,7 @@
 //
 
 /// <reference path='..\Compiler\Core\Environment.ts' />
+/// <reference path='..\Services\es5compat.ts' />
 
 module Diff {
     /// <summary>

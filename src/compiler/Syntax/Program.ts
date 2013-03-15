@@ -1,3 +1,4 @@
+/// <reference path='..\..\Services\es5compat.ts' />
 ///<reference path='..\parser.ts' />
 ///<reference path='Emitter.ts' />
 ///<reference path='Parser.ts' />
@@ -14,7 +15,7 @@ var timer = new TypeScript.Timer();
 var stringTable = TypeScript.Collections.createStringTable();
 
 var specificFile =
-    // "ExportAssignment1.ts";
+    // "KeywordsAsIdentifierName1.ts";
     undefined;
 
 var generate = false;
@@ -52,7 +53,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ true, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
@@ -159,16 +160,14 @@ class Program {
 
     private runTests(
         path: string,
-        action: (filePath: string) => void,
-        count: number = -1) {
+        action: (filePath: string) => void) {
 
         var testFiles = Environment.listFiles(path, null, { recursive: true });
         var indexNum = 0;
 
-        for (var index in testFiles) {
-            var filePath = testFiles[index];
+        testFiles.forEach(filePath => {
             if (specificFile !== undefined && filePath.indexOf(specificFile) < 0) {
-                continue;
+                return;
             }
 
             try {
@@ -177,13 +176,7 @@ class Program {
             catch (e) {
                 this.handleException(filePath, e);
             }
-
-            indexNum++;
-
-            if (count != -1 && indexNum > count) {
-                break;
-            }
-        }
+        });
     }
 
     private checkResult(filePath: string, result: any, verify: bool, generateBaseline: bool, justText: bool): void {
