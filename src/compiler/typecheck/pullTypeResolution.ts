@@ -590,6 +590,12 @@ module TypeScript {
                 return;
             }
 
+            if (symbol.isResolving()) {
+                symbol.setType(this.semanticInfoChain.anyTypeSymbol);
+
+                return symbol;
+            }
+
             var thisUnit = this.unitPath;
 
             var decls = symbol.getDeclarations();
@@ -1082,6 +1088,10 @@ module TypeScript {
                         this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", this.getPathToDecl(enclosingDecl), PullElementKind.Interface);
                     }
 
+                    if (this.cachedArrayInterfaceType && !this.cachedArrayInterfaceType.isResolved()) {
+                        this.resolveDeclaredSymbol(this.cachedArrayInterfaceType, enclosingDecl, context);
+                    }
+
                     arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, typeDeclSymbol, this, context);
 
                     if (!arraySymbol) {
@@ -1091,9 +1101,18 @@ module TypeScript {
 
                 if (typeRef.arrayCount > 1) {
                     var arity = typeRef.arrayCount - 1;
+                    var existingArraySymbol: PullTypeSymbol = null;
 
                     while (arity) {
-                        arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, arraySymbol, this, context);
+                        existingArraySymbol = arraySymbol.getArrayType();
+
+                        if (!existingArraySymbol) {
+                            arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, arraySymbol, this, context);
+                        }
+                        else {
+                            arraySymbol = existingArraySymbol;
+                        }
+
                         arity--;
                     }
                 }
@@ -2559,6 +2578,10 @@ module TypeScript {
                     this.cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", this.getPathToDecl(enclosingDecl), PullElementKind.Interface);
                 }
 
+                if (this.cachedArrayInterfaceType && !this.cachedArrayInterfaceType.isResolved()) {
+                    this.resolveDeclaredSymbol(this.cachedArrayInterfaceType, enclosingDecl, context);
+                }
+
                 arraySymbol = specializeToArrayType(this.semanticInfoChain.elementTypeSymbol, elementType, this, context);
 
                 if (!arraySymbol) {
@@ -2793,7 +2816,9 @@ module TypeScript {
                 var typeConstraint: PullTypeSymbol = null;
 
                 for (i = 0; i < signatures.length; i++) {
-                    if (signatures[i].isGeneric()) {
+                    typeParameters = signatures[i].getTypeParameters();
+                    
+                    if (signatures[i].isGeneric() && typeParameters.length) {
                         if (typeArgs) {
                             inferredTypeArgs = typeArgs;
                         }
@@ -2803,7 +2828,6 @@ module TypeScript {
 
                         // if we could infer Args, or we have type arguments, then attempt to specialize the signature
                         if (inferredTypeArgs) {
-                            typeParameters = signatures[i].getTypeParameters();
 
                             if (inferredTypeArgs.length != typeParameters.length) {
                                 continue;
@@ -3611,6 +3635,10 @@ module TypeScript {
 
                 return ret;
             }
+
+            if (target.isTypeParameter()) {
+                return true;
+            }            
 
             // this check ensures that we only operate on object types from this point forward,
             // since the checks involving primitives occurred above
@@ -4624,6 +4652,9 @@ module TypeScript {
             for (var i = 0; i < typeParameters.length; i++) {
                 typeArguments[i] = this.semanticInfoChain.anyTypeSymbol;
                 typeReplacementMap[typeParameters[i].getSymbolID().toString()] = typeArguments[i];
+            }
+            if (!typeArguments.length) {
+                typeArguments[0] = this.semanticInfoChain.anyTypeSymbol;
             }
 
             // no need to worry about returning 'null', since 'any' satisfies all constraints

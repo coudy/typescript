@@ -75,6 +75,10 @@ module TypeScript {
             for (var infoKey in this.candidateCache) {
                 info = <CandidateInferenceInfo>this.candidateCache[infoKey];
 
+                if (!info.inferenceCandidates.length) {
+                    continue;
+                }
+
                 collection = {
                     getLength: () => { return info.inferenceCandidates.length; },
                     setTypeAtIndex: (index: number, type: PullTypeSymbol) => { },
