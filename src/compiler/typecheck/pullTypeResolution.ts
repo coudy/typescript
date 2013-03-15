@@ -333,7 +333,7 @@ module TypeScript {
                         }
                     }
                 }
-                else /*if (pathDeclKind & DeclKind.Function)*/ {
+                else if (!(pathDeclKind & PullElementKind.Class)) {
                     childDecls = decl.findChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {

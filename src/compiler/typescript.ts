@@ -1186,6 +1186,18 @@ module TypeScript {
                                 foundAST = previousAST;
                             }
                             break;
+
+                        case NodeType.VarDecl:
+                            if (foundAST == (<VarDecl>previousAST).id) {
+                                foundAST = previousAST;
+                            }
+                            break;
+
+                        case NodeType.FuncDecl:
+                            if (foundAST == (<FuncDecl>previousAST).name) {
+                                foundAST = previousAST;
+                            }
+                            break;
                     }
                 }
 

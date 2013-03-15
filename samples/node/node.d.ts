@@ -114,7 +114,7 @@ class NodeProcess extends EventEmitter {
     execPath: string;
     abort(): void;
     chdir(directory: string): void;
-    cwd(): void;
+    cwd(): string;
     env: any;
     exit(code?: number): void;
     getgid(): number;
