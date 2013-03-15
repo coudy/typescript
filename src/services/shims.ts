@@ -223,6 +223,7 @@ module Services {
         public dispose(dummy: any): void {
             this.logger.log("dispose()")
             this.languageService = null;
+            this.pullLanguageService = null;
             this.logger = null;
         }
 
