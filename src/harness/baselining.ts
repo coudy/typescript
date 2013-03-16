@@ -27,7 +27,7 @@ function getStandardCompletionItems(): string[]{
         var svs = new Harness.TypeScriptLS();
         var filename = 'empty.ts';
         var contents = '\n\nconsole.log("hi");';
-        svs.addScript(filename, contents, true);
+        svs.addScript(filename, contents);
 
         var langSvc = svs.getLanguageService();
 
@@ -118,7 +118,7 @@ function getIntellisenseRegions(scriptText: string, getDataAtPoint: any): spanIn
     // Set up the compiler
     var typescriptLS = new Harness.TypeScriptLS();
     var filename = 'sample.ts';
-    typescriptLS.addScript(filename, scriptText, true);
+    typescriptLS.addScript(filename, scriptText);
 
     // Get the language service
     var ls = typescriptLS.getLanguageService();

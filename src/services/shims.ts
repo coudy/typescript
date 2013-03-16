@@ -26,7 +26,7 @@ module Services {
         getHostSettings(): string;
 
         getScriptCount(): number;
-        getScriptId(scriptIndex: number): string;
+        getScriptFileName(scriptIndex: number): string;
         getScriptVersion(scriptIndex: number): number;
         getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
 
@@ -116,8 +116,8 @@ module Services {
             return this.shimHost.getScriptCount();
         }
 
-        public getScriptId(scriptIndex: number): string {
-            return this.shimHost.getScriptId(scriptIndex);
+        public getScriptFileName(scriptIndex: number): string {
+            return this.shimHost.getScriptFileName(scriptIndex);
         }
 
         public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {

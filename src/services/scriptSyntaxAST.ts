@@ -27,7 +27,7 @@ module Services {
             return this.logger;
         }
 
-        public getScriptId(): string {
+        public getScriptFileName(): string {
             return this.script.locationInfo.fileName;
         }
 

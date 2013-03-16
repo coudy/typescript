@@ -58,7 +58,7 @@ module Services {
         constructor(
             private host: ILanguageServiceHost,
             public hostUnitIndex: number,
-            public id: string,
+            public fileName: string,
             version: number) {
             this._sourceText = null;
             this.version = version;
@@ -94,7 +94,7 @@ module Services {
 
         private init() {
             for (var i = 0, len = this.host.getScriptCount() ; i < len; i++) {
-                var fileName = this.host.getScriptId(i);
+                var fileName = this.host.getScriptFileName(i);
                 this.map.add(fileName, i);
                 this.reset(i);
             }
@@ -117,8 +117,8 @@ module Services {
             return this.array[scriptIndex].version;
         }
 
-        public getScriptId(scriptIndex: number): string {
-            return this.array[scriptIndex].id;
+        public getScriptFileName(scriptIndex: number): string {
+            return this.array[scriptIndex].fileName;
         }
 
         public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {
@@ -128,7 +128,7 @@ module Services {
         private reset(scriptIndex: number): void {
             this.array[scriptIndex] = new HostCacheEntry(
                 this.host, scriptIndex,
-                this.host.getScriptId(scriptIndex),
+                this.host.getScriptFileName(scriptIndex),
                 this.host.getScriptVersion(scriptIndex));
         }
     }
@@ -279,7 +279,7 @@ module Services {
         }
 
         private setUnitMapping(unitIndex: number, hostUnitIndex: number) {
-            this.scriptMap.setEntry(this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
+            this.scriptMap.setEntry(this.hostCache.getScriptFileName(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
             this.setUnitIndexMapping(unitIndex, hostUnitIndex);
         }
 
@@ -335,13 +335,14 @@ module Services {
             //      and we need unit mapping info to do that correctly.
             this.setUnitMapping(newUnitIndex, hostUnitIndex);
 
-            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(
+                this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptFileName(hostUnitIndex));
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler,
                                    hostUnitIndex: number,
                                    unitIndex: number): TypeScript.UpdateUnitResult {
-            var fileName = this.hostCache.getScriptId(hostUnitIndex);
+            var fileName = this.hostCache.getScriptFileName(hostUnitIndex);
 
             //Note: We need to call "_setUnitIndexMapping" _before_ calling into the compiler,
             //      in case the compiler fails (i.e. throws an exception). This is due to the way
@@ -483,7 +484,7 @@ module Services {
                         this.logger.log("compiler unit[" + i + "].fileName='" + this.compiler.units[i].fileName + "'");
                     }
                     for (var i = 0; i < this.hostCache.count() ; i++) {
-                        this.logger.log("host script[" + i + "].fileName='" + this.hostCache.getScriptId(i) + "', version=" + this.hostCache.getVersion(i));
+                        this.logger.log("host script[" + i + "].fileName='" + this.hostCache.getScriptFileName(i) + "', version=" + this.hostCache.getVersion(i));
                     }
                     for (var i = 0; i < this.unitIndexMap.length; i++) {
                         this.logger.log("unitIndexMap[" + i + "] = " + this.unitIndexMap[i]);
@@ -578,7 +579,7 @@ module Services {
             //   else
             //      add it
             for (var hostUnitIndex = 0, len = this.host.getScriptCount() ; hostUnitIndex < len; hostUnitIndex++) {
-                var fileName = this.hostCache.getScriptId(hostUnitIndex);
+                var fileName = this.hostCache.getScriptFileName(hostUnitIndex);
                 var unitIndex = this.compilerCache.getUnitIndex(fileName);
 
                 if (unitIndex >= 0) {

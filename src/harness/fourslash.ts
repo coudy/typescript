@@ -22,8 +22,7 @@ module FourSlash {
         // The contents of the file (with markers, etc stripped out)
         content: string;
 
-        // Filename
-        name: string;
+        fileName: string;
 
         // File-specific options (name/value pairs)
         fileOptions: { [index: string]: string; };
@@ -114,7 +113,7 @@ module FourSlash {
             this.langSvc = new Harness.TypeScriptLS();
 
             for (var i = 0; i < testData.files.length; i++) {
-                this.langSvc.addScript(testData.files[i].name, testData.files[i].content, false);
+                this.langSvc.addScript(testData.files[i].fileName, testData.files[i].content);
             }
 
             this.realLangSvc = this.langSvc.getLanguageService().languageService;
@@ -131,7 +130,7 @@ module FourSlash {
         // Entry points from fourslash.ts
         public goToMarker(name = '') {
             var marker = this.getMarkerByName(name);
-            if (this.activeFile.name !== marker.fileName) {
+            if (this.activeFile.fileName !== marker.fileName) {
                 this.openFile(marker.fileName);
             }
 
@@ -189,7 +188,7 @@ module FourSlash {
         private getAllDiagnostics(): TypeScript.IDiagnostic[] {
             var diagnostics: TypeScript.IDiagnostic[] = [];
             for (var i = 0, n = this.langSvc.scripts.length; i < n; i++) {
-                var fileName = this.langSvc.scripts[i].name;
+                var fileName = this.langSvc.scripts[i].fileName;
                 diagnostics.push.apply(this.getDiagnostics(fileName));
             }
 
@@ -251,7 +250,7 @@ module FourSlash {
         }
 
         public verifyNumberOfErrorsInCurrentFile(expected: number) {
-            var errors = this.getDiagnostics(this.activeFile.name);
+            var errors = this.getDiagnostics(this.activeFile.fileName);
             var actual = errors.length;
             if (actual != expected) {
                 var errorMsg = "Actual number of errors (" + actual + ") does not match expected number (" + expected + ")";
@@ -321,15 +320,15 @@ module FourSlash {
         }
 
         private getMemberListAtCaret() {
-            return this.realLangSvc.getCompletionsAtPosition(this.activeFile.name, this.currentCaretPosition, true);
+            return this.realLangSvc.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, true);
         }
 
         private getCompletionListAtCaret() {
-            return this.realLangSvc.getCompletionsAtPosition(this.activeFile.name, this.currentCaretPosition, false);
+            return this.realLangSvc.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, false);
         }
 
         public verifyQuickInfo(expectedTypeName: string, negative: number, docComment?: string, symbolName?: string, kind?: string) {
-            var actualQuickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var actualQuickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var actualQuickInfoMemberName = actualQuickInfo ? actualQuickInfo.memberName.toString() : "";
             var actualQuickInfoDocComment = actualQuickInfo ? actualQuickInfo.docComment : "";
             var actualQuickInfoSymbolName = actualQuickInfo ? actualQuickInfo.fullSymbolName : "";
@@ -398,13 +397,13 @@ module FourSlash {
         }
 
         public verifyCurrentSignatureHelpCount(expected: number) {
-            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var actual = help && help.formal ? help.formal.signatureGroup.length : 0;
             assert.equal(actual, expected);
         }
 
         public verifySignatureHelpPresent(shouldBePresent = true) {
-            var actual = this.realLangSvc.getSignatureAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var actual = this.realLangSvc.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             if (shouldBePresent) {
                 if (!actual) {
                     throw new Error("Expected signature help to be present, but it wasn't");
@@ -417,7 +416,7 @@ module FourSlash {
         }
 
         private getActiveSignatureHelp() {
-            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var activeFormal = help.activeFormal;
 
             // If the signature hasn't been narrowed down yet (e.g. no parameters have yet been entered),
@@ -432,7 +431,7 @@ module FourSlash {
 
         private getActiveParameter() {
             var currentSig = this.getActiveSignatureHelp();
-            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
 
             // Same logic as in getActiveSignatureHelp - this value might be -1 until a parameter value actually gets typed
             var currentParam = help.actual.currentParameter;
@@ -442,7 +441,7 @@ module FourSlash {
         }
 
         public getBreakpointStatementLocation(pos: number) {
-            var spanInfo = this.realLangSvc.getBreakpointStatementAtPosition(this.activeFile.name, pos);
+            var spanInfo = this.realLangSvc.getBreakpointStatementAtPosition(this.activeFile.fileName, pos);
             var resultString = "\n**Pos: " + pos + " SpanInfo: " + JSON2.stringify(spanInfo) + "\n** Statement: ";
             if (spanInfo !== null) {
                 resultString = resultString + this.activeFile.content.substr(spanInfo.minChar, spanInfo.limChar - spanInfo.minChar);
@@ -452,7 +451,7 @@ module FourSlash {
 
         public baselineCurrentFileBreakpointLocations() {
             Harness.Baseline.runBaseline(
-                "Breakpoint Locations for " + this.activeFile.name,
+                "Breakpoint Locations for " + this.activeFile.fileName,
                 this.testData.globalOptions['BaselineFile'],
                 () => {
                     var fileLength = this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength();
@@ -470,12 +469,12 @@ module FourSlash {
         }
 
         public printCurrentParameterHelp() {
-            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var help = this.realLangSvc.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             IO.printLine(JSON2.stringify(help));
         }
 
         public printCurrentQuickInfo() {
-            var quickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var quickInfo = this.realLangSvc.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             IO.printLine(JSON2.stringify(quickInfo));
         }
 
@@ -492,7 +491,7 @@ module FourSlash {
                 var file = this.testData.files[i];
                 var active = (this.activeFile === file);
                 var index = this.getScriptIndex(file);
-                IO.printLine('=== Script #' + index + ' (' + file.name + ') ' + (active ? '(active, cursor at |)' : '') + ' ===');
+                IO.printLine('=== Script #' + index + ' (' + file.fileName + ') ' + (active ? '(active, cursor at |)' : '') + ' ===');
                 var snapshot = this.langSvc.getScriptSnapshot(index);
                 var content = snapshot.getText(0, snapshot.getLength());
                 if (active) {
@@ -527,13 +526,13 @@ module FourSlash {
 
             for (var i = 0; i < count; i++) {
                 // Make the edit
-                this.langSvc.editScript(this.activeFile.name, offset, offset + 1, ch);
-                this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
+                this.langSvc.editScript(this.activeFile.fileName, offset, offset + 1, ch);
+                this.updateMarkersForEdit(this.activeFile.fileName, offset, offset + 1, ch);
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
-                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
-                    offset += this.applyEdits(this.activeFile.name, edits);
+                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, opts);
+                    offset += this.applyEdits(this.activeFile.fileName, edits);
                 }
             }
 
@@ -551,13 +550,13 @@ module FourSlash {
             for (var i = 0; i < count; i++) {
                 offset--;
                 // Make the edit
-                this.langSvc.editScript(this.activeFile.name, offset, offset + 1, ch);
-                this.updateMarkersForEdit(this.activeFile.name, offset, offset + 1, ch);
+                this.langSvc.editScript(this.activeFile.fileName, offset, offset + 1, ch);
+                this.updateMarkersForEdit(this.activeFile.fileName, offset, offset + 1, ch);
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
-                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
-                    offset += this.applyEdits(this.activeFile.name, edits);
+                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, opts);
+                    offset += this.applyEdits(this.activeFile.fileName, edits);
                 }
             }
 
@@ -574,14 +573,14 @@ module FourSlash {
             for (var i = 0; i < text.length; i++) {
                 // Make the edit
                 var ch = text.charAt(i);
-                this.langSvc.editScript(this.activeFile.name, offset, offset, ch);
-                this.updateMarkersForEdit(this.activeFile.name, offset, offset, ch);
+                this.langSvc.editScript(this.activeFile.fileName, offset, offset, ch);
+                this.updateMarkersForEdit(this.activeFile.fileName, offset, offset, ch);
                 offset++;
 
                 // Handle post-keystroke formatting
                 if (this.enableFormatting) {
-                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.name, offset, ch, opts);
-                    offset += this.applyEdits(this.activeFile.name, edits);
+                    var edits = this.realLangSvc.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, opts);
+                    offset += this.applyEdits(this.activeFile.fileName, edits);
                 }
             }
 
@@ -617,8 +616,8 @@ module FourSlash {
         }
 
         public formatDocument() {
-            var edits = this.realLangSvc.getFormattingEditsForRange(this.activeFile.name, 0, this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength(), new Services.FormatCodeOptions());
-            this.currentCaretPosition += this.applyEdits(this.activeFile.name, edits);
+            var edits = this.realLangSvc.getFormattingEditsForRange(this.activeFile.fileName, 0, this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength(), new Services.FormatCodeOptions());
+            this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits);
             this.fixCaretPosition();
         }
 
@@ -649,7 +648,7 @@ module FourSlash {
 
         public goToDefinition() {
             this.realLangSvc.refresh();
-            var defn = this.realLangSvc.getDefinitionAtPosition(this.activeFile.name, this.currentCaretPosition);
+            var defn = this.realLangSvc.getDefinitionAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             this.openFile(defn.unitIndex);
             this.currentCaretPosition = defn.minChar;
         }
@@ -666,8 +665,8 @@ module FourSlash {
 
         public verifyCaretAtMarker(markerName? = '') {
             var pos = this.getMarkerByName(markerName);
-            if (pos.fileName != this.activeFile.name) {
-                throw new Error('verifyCaretAtMarker failed - expected to be in file "' + pos.fileName + '", but was in file "' + this.activeFile.name + '"');
+            if (pos.fileName != this.activeFile.fileName) {
+                throw new Error('verifyCaretAtMarker failed - expected to be in file "' + pos.fileName + '", but was in file "' + this.activeFile.fileName + '"');
             }
             if (pos.position != this.currentCaretPosition) {
                 throw new Error('verifyCaretAtMarker failed - expected to be at marker "/*' + markerName + '*/, but was at position ' + this.currentCaretPosition + '(' + this.getLineColStringAtCaret() + ')');
@@ -675,7 +674,7 @@ module FourSlash {
         }
 
         public verifySmartIndentLevel(numberOfTabs: number) {
-            var actual = this.realLangSvc.getSmartIndentAtLineNumber(this.activeFile.name, this.getCurrentLineNumberZeroBased(), new Services.EditorOptions()) / 4;
+            var actual = this.realLangSvc.getSmartIndentAtLineNumber(this.activeFile.fileName, this.getCurrentLineNumberZeroBased(), new Services.EditorOptions()) / 4;
             if (actual != numberOfTabs) {
                 throw new Error('verifySmartIndentLevel failed - expected tab depth to be ' + numberOfTabs + ', but was ' + actual);
             }
@@ -700,7 +699,7 @@ module FourSlash {
         }
 
         public verifyCurrentNameOrDottedNameSpanText(text: string) {
-            var span = this.realLangSvc.getNameOrDottedNameSpan(this.activeFile.name, this.currentCaretPosition, this.currentCaretPosition);
+            var span = this.realLangSvc.getNameOrDottedNameSpan(this.activeFile.fileName, this.currentCaretPosition, this.currentCaretPosition);
             if (span === null) {
                 throw new Error('verifyCurrentNameOrDottedNameSpanText\n' +
                            '\tExpected: "' + text + '"\n' +
@@ -716,7 +715,7 @@ module FourSlash {
         }
 
         public verifyOutliningSpans(spans: TextSpan[]) {
-            var actual = this.pullLanguageService.getOutliningSpans(this.activeFile.name);
+            var actual = this.pullLanguageService.getOutliningSpans(this.activeFile.fileName);
 
             if (actual.length !== spans.length) {
                 throw new Error('verifyOutliningSpans failed - expected total spans to be ' + spans.length + ', but was ' + actual.length);
@@ -732,7 +731,7 @@ module FourSlash {
         }
 
         public verifyMatchingBracePosition(bracePosition: number, expectedMatchPosition: number) {
-            var actual = this.pullLanguageService.getMatchingBraceSpans(this.activeFile.name, bracePosition);
+            var actual = this.pullLanguageService.getMatchingBraceSpans(this.activeFile.fileName, bracePosition);
 
             if (actual.length !== 2) {
                 throw new Error('verifyMatchingBracePosition failed - expected result to contain 2 spans, but it had ' + actual.length);
@@ -753,7 +752,7 @@ module FourSlash {
         }
 
         public verifyNoMatchingBracePosition(bracePosition: number) {
-            var actual = this.pullLanguageService.getMatchingBraceSpans(this.activeFile.name, bracePosition);
+            var actual = this.pullLanguageService.getMatchingBraceSpans(this.activeFile.fileName, bracePosition);
 
             if (actual.length !== 0) {
                 throw new Error('verifyNoMatchingBracePosition failed - expected: 0 spans, actual: ' + actual.length);
@@ -761,7 +760,7 @@ module FourSlash {
         }
 
         public verifyIndentationLevelAtPosition(position:number, numberOfTabs: number) {
-            var actual = this.pullLanguageService.getIndentation(this.activeFile.name, position, new Services.EditorOptions());
+            var actual = this.pullLanguageService.getIndentation(this.activeFile.fileName, position, new Services.EditorOptions());
             if (actual !== numberOfTabs) {
                 throw new Error('verifyIndentationLevel failed - expected: ' + numberOfTabs + ', actual: ' + actual);
             }
@@ -782,15 +781,15 @@ module FourSlash {
                 var index = this.getScriptIndex(file);
                 var snapshot = this.langSvc.getScriptSnapshot(index);
                 var content = snapshot.getText(0, snapshot.getLength());
-                referenceLangSvc.addScript(this.testData.files[i].name, content, false);
+                referenceLangSvc.addScript(this.testData.files[i].fileName, content);
             }
             referencePullSvcParent.refresh(true);
             
             for (i = 0; i < positions.length; i++) {
                 var nameOf = (type) => type ? type.fullSymbolName : '(none)';
 
-                var referenceType = referencePullSvc.getTypeAtPosition(this.activeFile.name, positions[i]);
-                var pullType = this.pullLanguageService.getTypeAtPosition(this.activeFile.name, positions[i]);
+                var referenceType = referencePullSvc.getTypeAtPosition(this.activeFile.fileName, positions[i]);
+                var pullType = this.pullLanguageService.getTypeAtPosition(this.activeFile.fileName, positions[i]);
                 var refName = nameOf(referenceType);
                 var pullName = nameOf(pullType);
                 if (refName !== pullName) {
@@ -813,7 +812,7 @@ module FourSlash {
             // The current caret position (in line/col terms)
             var line = this.getCurrentCaretFilePosition().line;
             // The line/col of the start of this line
-            var pos = this.langSvc.lineColToPosition(this.activeFile.name, line, 1);
+            var pos = this.langSvc.lineColToPosition(this.activeFile.fileName, line, 1);
             // The index of the current file
             var fileIndex = this.getActiveFileIndex();
             // The text from the start of the line to the end of the file
@@ -833,7 +832,7 @@ module FourSlash {
         }
 
         private getCurrentCaretFilePosition() {
-            var result = this.langSvc.positionToZeroBasedLineCol(this.activeFile.name, this.currentCaretPosition);
+            var result = this.langSvc.positionToZeroBasedLineCol(this.activeFile.fileName, this.currentCaretPosition);
             if (result.line >= 0) {
                 result.line++;
             }
@@ -908,11 +907,11 @@ module FourSlash {
 
         private getScriptIndex(file: FourSlashFile) {
             for (var i = 0; i < this.langSvc.scripts.length; i++) {
-                if (this.langSvc.scripts[i].name == file.name) {
+                if (this.langSvc.scripts[i].fileName == file.fileName) {
                     return i;
                 }
             }
-            throw new Error("Couldn't determine the file index of " + file.name);
+            throw new Error("Couldn't determine the file index of " + file.fileName);
         }
 
         private findFile(indexOrName: any) {
@@ -929,7 +928,7 @@ module FourSlash {
                 var availableNames = [];
                 var foundIt = false;
                 for (var i = 0; i < this.testData.files.length; i++) {
-                    var fn = this.testData.files[i].name;
+                    var fn = this.testData.files[i].fileName;
                     if (fn) {
                         if (fn === name) {
                             result = this.testData.files[i];
@@ -959,11 +958,11 @@ module FourSlash {
         }
 
         private getCurrentLineNumberOneBased() {
-            return this.langSvc.positionToZeroBasedLineCol(this.activeFile.name, this.currentCaretPosition).line + 1;
+            return this.langSvc.positionToZeroBasedLineCol(this.activeFile.fileName, this.currentCaretPosition).line + 1;
         }
 
         private getLineColStringAtCaret() {
-            var pos = this.langSvc.positionToZeroBasedLineCol(this.activeFile.name, this.currentCaretPosition);
+            var pos = this.langSvc.positionToZeroBasedLineCol(this.activeFile.fileName, this.currentCaretPosition);
             return 'line ' + (pos.line + 1) + ', col ' + pos.col;
         }
 
@@ -1328,7 +1327,7 @@ module FourSlash {
                 content: output,
                 fileOptions: {},
                 version: 0,
-                name: fileName
+                fileName: fileName
             };
     }
 }

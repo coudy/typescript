@@ -185,7 +185,7 @@ module Services {
 
         private attemptIncrementalSyntaxAST(syntaxASTState: ScriptSyntaxASTState): ScriptSyntaxAST {
             var syntaxAST = syntaxASTState.syntaxAST;
-            var fileName = syntaxAST.getScriptId();
+            var fileName = syntaxAST.getScriptFileName();
             var newSourceText = this.pullCompilerState.getScriptSnapshot2(fileName);
 
             var editRange = this.pullCompilerState.getScriptTextChangeRangeSinceVersion(fileName, syntaxASTState.version);
@@ -196,7 +196,7 @@ module Services {
             }
 
             var incrementalParser = new TypeScript.IncrementalParser(this.logger)
-            var updateResult = incrementalParser.attemptIncrementalUpdateUnit(syntaxAST.getScript(), syntaxAST.getScriptId(), newSourceText, editRange);
+            var updateResult = incrementalParser.attemptIncrementalUpdateUnit(syntaxAST.getScript(), syntaxAST.getScriptFileName(), newSourceText, editRange);
             if (updateResult !== null && updateResult.kind === TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
                 incrementalParser.mergeTrees(updateResult);
                 return new ScriptSyntaxAST(this.logger, updateResult.script1, newSourceText);

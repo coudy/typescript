@@ -1544,14 +1544,13 @@ module Harness {
         public version: number;
         public editRanges: { length: number; textChangeRange: TypeScript.TextChangeRange; }[] = [];
 
-        constructor(public name: string, public content: string, public isResident: bool) {
+        constructor(public fileName: string, public content: string) {
             this.version = 1;
         }
 
-        public updateContent(content: string, isResident: bool) {
+        public updateContent(content: string) {
             this.editRanges = [];
             this.content = content;
-            this.isResident = isResident;
             this.version++;
         }
 
@@ -1592,33 +1591,33 @@ module Harness {
         public scripts: ScriptInfo[] = [];
 
         public addDefaultLibrary() {
-            this.addScript("lib.d.ts", Harness.Compiler.libText, true);
+            this.addScript("lib.d.ts", Harness.Compiler.libText);
         }
 
-        public addFile(name: string, isResident = false) {
+        public addFile(name: string) {
             var code: string = readFile(name);
-            this.addScript(name, code, isResident);
+            this.addScript(name, code);
         }
 
-        public addScript(name: string, content: string, isResident = false) {
-            var script = new ScriptInfo(name, content, isResident);
+        public addScript(fileName: string, content: string) {
+            var script = new ScriptInfo(fileName, content);
             this.scripts.push(script);
         }
 
-        public updateScript(name: string, content: string, isResident = false) {
+        public updateScript(fileName: string, content: string) {
             for (var i = 0; i < this.scripts.length; i++) {
-                if (this.scripts[i].name == name) {
-                    this.scripts[i].updateContent(content, isResident);
+                if (this.scripts[i].fileName == fileName) {
+                    this.scripts[i].updateContent(content);
                     return;
                 }
             }
 
-            this.addScript(name, content, isResident);
+            this.addScript(name, content);
         }
 
-        public editScript(name: string, minChar: number, limChar: number, newText: string) {
+        public editScript(fileName: string, minChar: number, limChar: number, newText: string) {
             for (var i = 0; i < this.scripts.length; i++) {
-                if (this.scripts[i].name == name) {
+                if (this.scripts[i].fileName == fileName) {
                     this.scripts[i].editContent(minChar, limChar, newText);
                     return;
                 }
@@ -1661,12 +1660,8 @@ module Harness {
             return new TypeScript.StringScriptSnapshot(this.scripts[scriptIndex].content);
         }
 
-        public getScriptId(scriptIndex: number): string {
-            return this.scripts[scriptIndex].name;
-        }
-
-        public getScriptIsResident(scriptIndex: number): bool {
-            return this.scripts[scriptIndex].isResident;
+        public getScriptFileName(scriptIndex: number): string {
+            return this.scripts[scriptIndex].fileName;
         }
 
         public getScriptVersion(scriptIndex: number): number {

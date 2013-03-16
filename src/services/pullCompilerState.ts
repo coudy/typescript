@@ -43,7 +43,7 @@ module Services {
         }
 
         private setUnitMapping(unitIndex: number, hostUnitIndex: number) {
-            this.scriptMap.setEntry(this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
+            this.scriptMap.setEntry(this.hostCache.getScriptFileName(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
             this.setUnitIndexMapping(unitIndex, hostUnitIndex);
         }
 
@@ -94,7 +94,7 @@ module Services {
             //      and we need unit mapping info to do that correctly.
             this.setUnitMapping(newUnitIndex, hostUnitIndex);
 
-            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptFileName(hostUnitIndex));
         }
 
         private getHostCompilationSettings() {
@@ -164,7 +164,7 @@ module Services {
                         this.logger.log("compiler unit[" + i + "].fileName='" + this.compiler.units[i].fileName + "'");
                     }
                     for (var i = 0; i < this.hostCache.count() ; i++) {
-                        this.logger.log("host script[" + i + "].fileName='" + this.hostCache.getScriptId(i) + "', version=" + this.hostCache.getVersion(i));
+                        this.logger.log("host script[" + i + "].fileName='" + this.hostCache.getScriptFileName(i) + "', version=" + this.hostCache.getVersion(i));
                     }
                     for (var i = 0; i < this.unitIndexMap.length; i++) {
                         this.logger.log("unitIndexMap[" + i + "] = " + this.unitIndexMap[i]);
@@ -361,7 +361,7 @@ module Services {
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): bool {
-            var fileName = this.hostCache.getScriptId(hostUnitIndex);
+            var fileName = this.hostCache.getScriptFileName(hostUnitIndex);
 
             //Note: We need to call "_setUnitIndexMapping" _before_ calling into the compiler,
             //      in case the compiler fails (i.e. throws an exception). This is due to the way
@@ -417,7 +417,7 @@ module Services {
             var fileAdded: bool = false;
 
             for (var hostUnitIndex = 0, len = this.host.getScriptCount() ; hostUnitIndex < len; hostUnitIndex++) {
-                var fileName = this.hostCache.getScriptId(hostUnitIndex);
+                var fileName = this.hostCache.getScriptFileName(hostUnitIndex);
                 var unitIndex = this.compilerCache.getUnitIndex(fileName);
 
                 if (unitIndex >= 0) {
