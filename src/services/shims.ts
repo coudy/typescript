@@ -23,15 +23,16 @@ module Services {
     //
     export interface ILanguageServiceShimHost extends TypeScript.ILogger {
         getCompilationSettings(): string;
+        getHostSettings(): string;
+
         getScriptCount(): number;
         getScriptId(scriptIndex: number): string;
-        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
         getScriptVersion(scriptIndex: number): number;
+        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
 
         // Returns either 'null' if there was no change, or a TextChangeRange object encoded in 
         // JSON in the form: { span: { start: number, length: number }, newLength: number }
         getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
-        getHostSettings(): string;
     }
 
     //

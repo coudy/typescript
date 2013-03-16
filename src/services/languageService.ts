@@ -22,12 +22,14 @@ module Services {
     //
     export interface ILanguageServiceHost extends TypeScript.ILogger {
         getCompilationSettings(): TypeScript.CompilationSettings;
+        getHostSettings(): TypeScript.IHostSettings;
+
         getScriptCount(): number;
         getScriptId(scriptIndex: number): string;
-        getScriptSnapshot(scriptIndex): TypeScript.IScriptSnapshot;
         getScriptVersion(scriptIndex: number): number;
+        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
+
         getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.TextChangeRange;
-        getHostSettings(): TypeScript.IHostSettings;
     }
 
     //
@@ -35,6 +37,8 @@ module Services {
     // with a language service host instance
     //
     export interface ILanguageService {
+        // TODO: This should be removed.  We should not be publicly exposing a way to refresh the 
+        // language service.
         refresh(): void;
 
         // TODO: Remove these. 
@@ -74,7 +78,6 @@ module Services {
     }
 
     export class ReferenceEntry {
-
         constructor (public unitIndex: number, public ast: TypeScript.AST, public isWriteAccess: bool) {
         }
 
