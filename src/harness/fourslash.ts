@@ -675,9 +675,16 @@ module FourSlash {
         }
 
         public verifySmartIndentLevel(numberOfTabs: number) {
-            var actual = this.realLangSvc.getSmartIndentAtLineNumber(this.activeFile.fileName, this.getCurrentLineNumberZeroBased(), new Services.EditorOptions()) / 4;
-            if (actual !== numberOfTabs) {
+            var actual = this.realLangSvc.getSmartIndentAtLineNumber(this.activeFile.fileName, this.currentCaretPosition, new Services.EditorOptions()) / 4;
+            if (actual != numberOfTabs) {
                 throw new Error('verifySmartIndentLevel failed - expected tab depth to be ' + numberOfTabs + ', but was ' + actual);
+            }
+        }
+
+        public verifyIndentationLevelAtPosition(position: number, numberOfTabs: number) {
+            var actual = this.realLangSvc.getSmartIndentAtLineNumber(this.activeFile.fileName, position, new Services.EditorOptions());
+            if (actual !== numberOfTabs) {
+                throw new Error('verifyIndentationLevelAtPosition failed - expected: ' + numberOfTabs + ', actual: ' + actual);
             }
         }
 
@@ -716,7 +723,7 @@ module FourSlash {
         }
 
         public verifyOutliningSpans(spans: TextSpan[]) {
-            var actual = this.pullLanguageService.getOutliningSpans(this.activeFile.fileName);
+            var actual = this.realLangSvc.getOutliningRegions(this.activeFile.fileName);
 
             if (actual.length !== spans.length) {
                 throw new Error('verifyOutliningSpans failed - expected total spans to be ' + spans.length + ', but was ' + actual.length);
@@ -732,7 +739,7 @@ module FourSlash {
         }
 
         public verifyMatchingBracePosition(bracePosition: number, expectedMatchPosition: number) {
-            var actual = this.pullLanguageService.getMatchingBraceSpans(this.activeFile.fileName, bracePosition);
+            var actual = this.realLangSvc.getBraceMatchingAtPosition(this.activeFile.fileName, bracePosition);
 
             if (actual.length !== 2) {
                 throw new Error('verifyMatchingBracePosition failed - expected result to contain 2 spans, but it had ' + actual.length);
@@ -753,17 +760,10 @@ module FourSlash {
         }
 
         public verifyNoMatchingBracePosition(bracePosition: number) {
-            var actual = this.pullLanguageService.getMatchingBraceSpans(this.activeFile.fileName, bracePosition);
+            var actual = this.realLangSvc.getBraceMatchingAtPosition(this.activeFile.fileName, bracePosition);
 
             if (actual.length !== 0) {
                 throw new Error('verifyNoMatchingBracePosition failed - expected: 0 spans, actual: ' + actual.length);
-            }
-        }
-
-        public verifyIndentationLevelAtPosition(position:number, numberOfTabs: number) {
-            var actual = this.pullLanguageService.getIndentation(this.activeFile.fileName, position, new Services.EditorOptions());
-            if (actual !== numberOfTabs) {
-                throw new Error('verifyIndentationLevel failed - expected: ' + numberOfTabs + ', actual: ' + actual);
             }
         }
 

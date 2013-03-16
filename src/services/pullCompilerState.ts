@@ -225,21 +225,6 @@ module Services {
             return this.hostCache.getScriptSnapshot(fileName);
         }
 
-        // Since we don't have incremental parsing or typecheck, we resort to parsing the whole source text
-        // and return a "syntax only" AST. For example, we use this for formatting engine.
-        // We will change this when we have incremental parsing.
-        public getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {
-            var sourceText = this.hostCache.getScriptSnapshot(fileName);
-
-            var parser = new TypeScript.Parser();
-            parser.setErrorRecovery(null);
-            parser.errorCallback = (a, b, c, d) => { };
-
-            var script = parser.parse(sourceText, fileName, 0);
-
-            return new ScriptSyntaxAST(this.logger, script, sourceText);
-        }
-
         //
         // New Pull stuff
         //

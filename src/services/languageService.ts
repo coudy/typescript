@@ -54,9 +54,9 @@ module Services {
         getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[];
         getNavigateToItems(searchValue: string): NavigateToItem[];
         getScriptLexicalStructure(fileName: string): NavigateToItem[];
-        getOutliningRegions(fileName: string): NavigateToItem[];
-        getBraceMatchingAtPosition(fileName: string, position: number): TextRange[];
-        getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: Services.EditorOptions): number;
+        getOutliningRegions(fileName: string): TypeScript.TextSpan[];
+        getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[];
+        getSmartIndentAtLineNumber(fileName: string, position: number, options: Services.EditorOptions): number;
 
         getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
@@ -396,6 +396,7 @@ module Services {
     export class ScriptSyntaxASTState {
         public version: number;
         public syntaxAST: ScriptSyntaxAST;
+        public syntaxTree: TypeScript.SyntaxTree;
         public fileName: string;
 
         constructor() {
@@ -1104,10 +1105,15 @@ module Services {
         // Given a script name and position in the script, return a string representing 
         // the desired smart indent text (assuming the line is empty).
         // Return "null" in case the smart indent cannot be determined.
-        public getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: EditorOptions): number {
+        public getSmartIndentAtLineNumber(fileName: string, position: number, options: EditorOptions): number {
             this.minimalRefresh();
-
+            
             var syntaxAST = this._getScriptSyntaxAST(fileName);
+
+            // find line and col
+            var lineMap = syntaxAST.getScript().locationInfo.lineMap;
+            var lineNumber = TypeScript.getZeroBasedLineNumberFromPosition(lineMap, position);
+
             var manager = new Formatting.SmartIndentManager(syntaxAST, options);
             return manager.getSmartIndentAtLineNumber(lineNumber);
         }
@@ -1115,12 +1121,25 @@ module Services {
         // Given a script name and position in the script, return a pair of text range if the 
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
-        public getBraceMatchingAtPosition(fileName: string, position: number): TextRange[] {
+        public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[]{
             this.minimalRefresh();
 
             var syntaxAST = this._getScriptSyntaxAST(fileName);
             var manager = new BraceMatchingManager(syntaxAST);
-            return manager.getBraceMatchingAtPosition(position);
+            return this.textRangesToTextSpans(manager.getBraceMatchingAtPosition(position));
+        }
+
+        private textRangesToTextSpans(items: TextRange[]): TypeScript.TextSpan[]{
+             if (!items) {
+                return null;
+            }
+
+            var result: TypeScript.TextSpan[] = [];
+            for (var i = 0; i < items.length; i++) {
+                result.push(TypeScript.TextSpan.fromBounds(items[i].minChar, items[i].limChar));
+            }
+
+            return result;
         }
 
         private getFullNameOfSymbol(symbol: TypeScript.Symbol, enclosingScopeContext: TypeScript.EnclosingScopeContext) {
@@ -1727,9 +1746,9 @@ module Services {
             var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
             var result = manager.FormatSelection(minChar, limChar);
 
-           if (this.logger.information()) {
-               this.logFormatCodeOptions(options);
-               this.logEditResults(syntaxAST, result)
+            if (this.logger.information()) {
+                this.logFormatCodeOptions(options);
+                this.logEditResults(syntaxAST, result)
             }
 
             return result;
@@ -1858,7 +1877,7 @@ module Services {
 
         /// Outlining
         ///
-        public getOutliningRegions(fileName: string): NavigateToItem[] {
+        public getOutliningRegions(fileName: string): TypeScript.TextSpan[] {
             this.refresh();
 
             var script = this.compilerState.getScriptAST(fileName);
@@ -1929,7 +1948,20 @@ module Services {
                 }
             }
 
-            return this.getASTItems(script.locationInfo.fileName, script, match, findMinChar, findLimChar);
+            return this.navigateToItemsToTextSpans(this.getASTItems(script.locationInfo.fileName, script, match, findMinChar, findLimChar));
+        }
+
+        private navigateToItemsToTextSpans(items: NavigateToItem[]): TypeScript.TextSpan[]{
+            if (!items) {
+                return null;
+            }
+
+            var result: TypeScript.TextSpan[] = [];
+            for (var i = 0; i < items.length; i++) {
+                result.push(TypeScript.TextSpan.fromBounds(items[i].minChar, items[i].limChar));
+            }
+
+            return result;
         }
 
         /// Emit

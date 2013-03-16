@@ -10,23 +10,19 @@ module Services {
     export interface IPullLanguageService extends ILanguageService {
         getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
         getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
-
-        getOutliningSpans(fileName: string): TypeScript.TextSpan[];
-        getMatchingBraceSpans(fileName: string, position: number): TypeScript.TextSpan[];
-        getIndentation(fileName: string, position: number, options: Services.EditorOptions): number;
     }
 
     export class PullLanguageService implements IPullLanguageService {
         private logger: TypeScript.ILogger;
         private pullCompilerState: PullCompilerState;
-        private syntaxASTState: ScriptSyntaxASTState;
-        private formattingRulesProvider: Formatting.RulesProvider;
+        private singleFileSyntaxTreeState: ScriptSyntaxASTState;
+        private formattingRulesProvider: TypeScript.Formatting2.RulesProvider;
 
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
             this.pullCompilerState = new PullCompilerState(this.host);
-            this.syntaxASTState = new ScriptSyntaxASTState();
-            this.formattingRulesProvider = new Formatting.RulesProvider(this.logger);
+            this.singleFileSyntaxTreeState = new ScriptSyntaxASTState();
+            this.formattingRulesProvider = new TypeScript.Formatting2.RulesProvider(this.logger);
         }
 
         public refresh(): void {
@@ -44,12 +40,6 @@ module Services {
         public getSymbolTree(): ISymbolTree {
             this.refresh();
             return this.pullCompilerState.getSymbolTree();
-        }
-
-        public getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {
-            this.minimalRefresh();
-
-            return this._getScriptSyntaxAST(fileName);
         }
 
         public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
@@ -155,328 +145,6 @@ module Services {
             }
 
             return positions;
-        }
-
-        private _getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {
-            return TypeScript.timeFunction(this.logger, "getScriptSyntaxAST(\"" + fileName + "\")", () => {
-                var version = this.pullCompilerState.getScriptVersion(fileName);
-
-                var syntaxAST = this.syntaxASTState.syntaxAST;
-                if (syntaxAST === null || this.syntaxASTState.fileName !== fileName) {
-                    syntaxAST = this.pullCompilerState.getScriptSyntaxAST(fileName);
-                }
-                else if (this.syntaxASTState.version !== version) {
-                    syntaxAST = this.attemptIncrementalSyntaxAST(this.syntaxASTState);
-                    if (syntaxAST === null) {
-                        syntaxAST = this.pullCompilerState.getScriptSyntaxAST(fileName);
-                    }
-                }
-
-                // All done, ensure state is up to date
-                this.syntaxASTState.version = version;
-                this.syntaxASTState.fileName = fileName;
-                this.syntaxASTState.syntaxAST = syntaxAST;
-                return this.syntaxASTState.syntaxAST;
-            });
-        }
-
-        private attemptIncrementalSyntaxAST(syntaxASTState: ScriptSyntaxASTState): ScriptSyntaxAST {
-            var syntaxAST = syntaxASTState.syntaxAST;
-            var fileName = syntaxAST.getScriptFileName();
-            var newSourceText = this.pullCompilerState.getScriptSnapshot(fileName);
-
-            var editRange = this.pullCompilerState.getScriptTextChangeRangeSinceVersion(fileName, syntaxASTState.version);
-
-            // If "no changes", ast is good to go as is
-            if (editRange === null) {
-                return syntaxAST;
-            }
-
-            var incrementalParser = new TypeScript.IncrementalParser(this.logger)
-            var updateResult = incrementalParser.attemptIncrementalUpdateUnit(syntaxAST.getScript(), syntaxAST.getScriptFileName(), newSourceText, editRange);
-            if (updateResult !== null && updateResult.kind === TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
-                incrementalParser.mergeTrees(updateResult);
-                return new ScriptSyntaxAST(this.logger, updateResult.script1, newSourceText);
-            }
-
-            return null;
-        }
-
-        public getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo {
-
-            return null;
-        }
-
-        // Gets breakpoint span in the statement depending on context
-        private getBreakpointInStatement(pos: number, astSpan: TypeScript.IASTSpan, verifyASTPos: bool,
-            existingResult: TypeScript.IASTSpan, forceFirstStatement: bool, isAst: bool): TypeScript.IASTSpan {
-            if (existingResult || !astSpan || (verifyASTPos && pos > astSpan.limChar)) {
-                return existingResult;
-            }
-
-            if (!isAst) {
-                // Satisfies the result
-                return astSpan;
-            }
-
-            var ast = <TypeScript.AST>astSpan;
-            var astList: TypeScript.ASTList = null;
-            if (ast.nodeType == TypeScript.NodeType.Block) {
-                var block = <TypeScript.Block>ast;
-                astList = block.statements;
-            } else if (ast.nodeType == TypeScript.NodeType.List) {
-                astList = <TypeScript.ASTList>ast;
-            } else {
-                return ast;
-            }
-
-            if (astList.members.length > 0) {
-                var lastAST = astList.members[astList.members.length - 1];
-                if (!forceFirstStatement && pos > lastAST.limChar) {
-                    // Use last one if the character after last statement in the block
-                    return lastAST;
-                } else {
-                    return astList.members[0];
-                }
-            }
-
-            return null;
-        }
-
-        public getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo {
-            this.refresh();
-            var script = this.pullCompilerState.getScriptAST(fileName);
-
-            var containerASTs: TypeScript.AST[] = [];
-
-            // Get the valid breakpoint location container list till position so we could choose where to set breakpoint
-            var pre = (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker): TypeScript.AST => {
-                if (TypeScript.isValidAstNode(cur)) {
-                    if (pos >= cur.minChar && pos <= cur.limChar) {
-                        switch (cur.nodeType) {
-                            // Can be used as breakpoint location
-                            case TypeScript.NodeType.ModuleDeclaration:
-                            case TypeScript.NodeType.ClassDeclaration:
-                            case TypeScript.NodeType.FuncDecl:
-                            case TypeScript.NodeType.Break:
-                            case TypeScript.NodeType.Continue:
-                                containerASTs.push(cur);
-                                break;
-
-                            // These are expressions we cant be used as statements
-                            case TypeScript.NodeType.Script:
-                            case TypeScript.NodeType.List:
-                            case TypeScript.NodeType.NumberLit:
-                            case TypeScript.NodeType.Regex:
-                            case TypeScript.NodeType.QString:
-                            case TypeScript.NodeType.ArrayLit:
-                            case TypeScript.NodeType.ObjectLit:
-                            case TypeScript.NodeType.TypeAssertion:
-                            case TypeScript.NodeType.Pos:
-                            case TypeScript.NodeType.Neg:
-                            case TypeScript.NodeType.Not:
-                            case TypeScript.NodeType.LogNot:
-                                break;
-
-                            // Type Reference cannot have breakpoint, nor can its children
-                            case TypeScript.NodeType.TypeRef:
-                                walker.options.goChildren = false;
-                                break;
-
-                            default:
-                                // If it is a statement or expression - they are debuggable
-                                // But expressions are debuggable as standalone statement only
-                                if (cur.isStatementOrExpression() &&
-                                    (!cur.isExpression() ||
-                                     containerASTs.length == 0 ||
-                                     (!containerASTs[containerASTs.length - 1].isExpression() &&
-                                      containerASTs[containerASTs.length - 1].nodeType != TypeScript.NodeType.VarDecl ||
-                                      containerASTs[containerASTs.length - 1].nodeType == TypeScript.NodeType.ConditionalExpression))) {
-                                    containerASTs.push(cur);
-                                }
-                                break;
-                        }
-                    } else {
-                        walker.options.goChildren = false;
-                    }
-                }
-                return cur;
-            }
-            TypeScript.getAstWalkerFactory().walk(script, pre);
-
-            if (containerASTs.length == 0) {
-                return null;
-            }
-
-            // We have container list in resultAST
-            // Use it to determine where to set the breakpoint
-            var resultAST: TypeScript.IASTSpan = null;
-            var cur = containerASTs[containerASTs.length - 1];
-            var customSpan: TypeScript.ASTSpan = null;
-
-            switch (cur.nodeType) {
-                // TODO : combine these as interface and use custom method instead of duplicate logic
-                case TypeScript.NodeType.ModuleDeclaration:
-                    var moduleDecl = <TypeScript.ModuleDeclaration>cur;
-                    // If inside another module the whole module is debuggable
-                    if (containerASTs.length > 1) {
-                        resultAST = moduleDecl;
-                    } else {
-                        // Use first statement - whatever it is 
-                        resultAST = this.getBreakpointInStatement(pos, moduleDecl.members, false, null, false, true);
-                    }
-                    // Can use ending token and if it cant find anything breakpoint cannot be set at this declaration
-                    customSpan = moduleDecl.endingToken;
-                    break;
-
-                case TypeScript.NodeType.FuncDecl:
-                    var funcDecl = <TypeScript.FuncDecl>cur;
-                    // If function is inside module/class then it can be used completely as statement
-                    if (containerASTs.length > 1) {
-                        resultAST = funcDecl;
-                    } else {
-                        // We want to use first statement in the body if present
-                        resultAST = this.getBreakpointInStatement(pos, funcDecl.bod, false, null, false, true);
-                    }
-                    // Can use ending token and if it cant find anything breakpoint cannot be set at this declaration
-                    customSpan = funcDecl.endingToken;
-                    break;
-
-                case TypeScript.NodeType.ClassDeclaration:
-                    var classDecl = <TypeScript.ClassDeclaration>cur;
-                    // If class is inside module then it can be used completely as statement
-                    if (containerASTs.length > 1) {
-                        resultAST = classDecl;
-                    } else {
-                        // We want to use first statement in the body if present
-                        resultAST = this.getBreakpointInStatement(pos, classDecl.members, false, null, false, true);
-                    }
-                    // Can use ending token and if it cant find anything breakpoint cannot be set at this declaration
-                    customSpan = classDecl.endingToken;
-                    break;
-
-                case TypeScript.NodeType.VarDecl:
-                    // Use varDecl only if it has initializer
-                    var varDecl = <TypeScript.VarDecl>cur;
-                    if (varDecl.init) {
-                        resultAST = varDecl;
-                    }
-                    break;
-
-                case TypeScript.NodeType.If:
-                    var ifStatement = <TypeScript.IfStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, ifStatement.statement, true, resultAST, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, ifStatement.thenBod, true, resultAST, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, ifStatement.elseBod, false, resultAST, false, true);
-                    break;
-
-                case TypeScript.NodeType.ForIn:
-                    var forInStatement = <TypeScript.ForInStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, forInStatement.statement, true, resultAST, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, forInStatement.body, false, resultAST, false, true);
-                    break;
-
-                case TypeScript.NodeType.For:
-                    var forStatement = <TypeScript.ForStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.init, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.cond, true, resultAST, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.incr, true, resultAST, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, forStatement.body, false, resultAST, false, true);
-                    break;
-
-                case TypeScript.NodeType.While:
-                    var whileStatement = <TypeScript.WhileStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, whileStatement.cond, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, whileStatement.body, false, resultAST, false, true);
-                    break;
-
-                case TypeScript.NodeType.DoWhile:
-                    var doWhileStatement = <TypeScript.DoWhileStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, doWhileStatement.body, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, doWhileStatement.cond, false, resultAST, false, true);
-                    break;
-
-                case TypeScript.NodeType.Switch:
-                    var switchStatement = <TypeScript.SwitchStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, switchStatement.statement, true, resultAST, false, false);
-                    // Loop through case statements and find the best one
-                    var caseListCount = switchStatement.caseList.members.length;
-                    if (caseListCount > 0) {
-                        var lastCase = switchStatement.caseList.members[caseListCount - 1];
-                        if (pos >= lastCase.limChar) {
-                            // Use last one if the character after last statement in the block
-                            var caseToUse = <TypeScript.CaseStatement>lastCase;
-                            resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, false, true);
-                        } else {
-                            caseToUse = <TypeScript.CaseStatement>switchStatement.caseList.members[0];
-                            resultAST = this.getBreakpointInStatement(pos, caseToUse.body.members[0], false, resultAST, true, true);
-                        }
-                    }
-                    break;
-
-                case TypeScript.NodeType.Case:
-                    var caseStatement = <TypeScript.CaseStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, caseStatement.body.members[0], false, null, false, true);
-                    break;
-
-                case TypeScript.NodeType.With:
-                    var withStatement = <TypeScript.WithStatement>cur;
-                    resultAST = this.getBreakpointInStatement(pos, withStatement.body, false, null, false, true);
-                    break;
-
-                case TypeScript.NodeType.Try:
-                    var tryNode = <TypeScript.Try>cur;
-                    resultAST = this.getBreakpointInStatement(pos, tryNode.body, false, null, false, true);
-                    break;
-
-                case TypeScript.NodeType.Catch:
-                    var catchNode = <TypeScript.Catch>cur;
-                    resultAST = this.getBreakpointInStatement(pos, catchNode.statement, true, null, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, catchNode.body, false, resultAST, false, true);
-                    break;
-
-                case TypeScript.NodeType.Finally:
-                    var finallyNode = <TypeScript.Finally>cur;
-                    resultAST = this.getBreakpointInStatement(pos, finallyNode, false, null, false, true);
-                    break;
-
-                case TypeScript.NodeType.TryCatch:
-                    var tryCatch = <TypeScript.TryCatch>cur;
-                    resultAST = this.getBreakpointInStatement(pos, tryCatch.tryNode.body, true, null, false, true);
-                    resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.statement, true, resultAST, false, false);
-                    resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.body, false, resultAST, false, true);
-                    break;
-
-                case TypeScript.NodeType.TryFinally:
-                    var tryFinally = <TypeScript.TryFinally>cur;
-                    if (tryFinally.nodeType == TypeScript.NodeType.Try) {
-                        resultAST = this.getBreakpointInStatement(pos, (<TypeScript.Try>tryFinally.tryNode).body, true, null, false, true);
-                    } else {
-                        tryCatch = <TypeScript.TryCatch>tryFinally.tryNode;
-                        resultAST = this.getBreakpointInStatement(pos, tryCatch.tryNode.body, true, null, false, true);
-                        resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.statement, true, resultAST, false, false);
-                        resultAST = this.getBreakpointInStatement(pos, tryCatch.catchNode.body, true, resultAST, false, true);
-                    }
-                    resultAST = this.getBreakpointInStatement(pos, tryFinally.finallyNode, false, resultAST, false, true);
-                    break;
-
-                default:
-                    resultAST = cur;
-                    break;
-            }
-
-            // If we have custom span check if it is better option
-            if (TypeScript.isValidAstNode(customSpan) && pos >= customSpan.minChar && pos <= customSpan.limChar) {
-                resultAST = customSpan;
-            }
-
-            // Use result AST to create span info
-            if (resultAST) {
-                var result = new SpanInfo(resultAST.minChar, resultAST.limChar);
-                return result;
-            }
-
-            return null;
         }
 
         public getSignatureAtPosition(fileName: string, position: number): SignatureInfo {
@@ -667,102 +335,6 @@ module Services {
             return result;
         }
 
-        // Given a script name and position in the script, return a string representing 
-        // the desired smart indent text (assuming the line is empty).
-        // Return "null" in case the smart indent cannot be determined.
-        public getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: EditorOptions): number {
-            this.minimalRefresh();
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.SmartIndentManager(syntaxAST, options);
-            return manager.getSmartIndentAtLineNumber(lineNumber);
-        }
-
-        // Given a script name and position in the script, return a pair of text range if the 
-        // position corresponds to a "brace matching" characters (e.g. "{" or "(", etc.)
-        // If the position is not on any range, return "null".
-        public getBraceMatchingAtPosition(fileName: string, position: number): TextRange[] {
-            this.minimalRefresh();
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new BraceMatchingManager(syntaxAST);
-            return manager.getBraceMatchingAtPosition(position);
-        }
-
-        public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[]{
-            this.minimalRefresh();
-
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatSelection(minChar, limChar);
-
-           if (this.logger.information()) {
-               this.logFormatCodeOptions(options);
-               this.logEditResults(syntaxAST, result)
-            }
-
-            return result;
-        }
-
-        public getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
-            this.minimalRefresh();
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatDocument(minChar, limChar);
-
-            if (this.logger.information()) {
-               this.logEditResults(syntaxAST, result)
-            }
-
-            return result;
-        }
-
-        public getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
-            this.minimalRefresh();
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatOnPaste(minChar, limChar);
-
-            if (this.logger.information()) {
-               this.logEditResults(syntaxAST, result)
-            }
-
-            return result;
-        }
-
-        public getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[] {
-            this.minimalRefresh();
-
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            if (key === "}") {
-                var syntaxAST = this._getScriptSyntaxAST(fileName);
-                var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnClosingCurlyBrace(position);
-            }
-            else if (key === ";") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnSemicolon(position);
-            }
-            else if (key === "\n") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnEnter(position);
-            }
-            return []; //TextEdit.createInsert(minChar, "/* format was invoked here!*/")];
-        }
-
         public getNavigateToItems(searchValue: string): NavigateToItem[] {
             this.refresh();
 
@@ -824,80 +396,6 @@ module Services {
             return this.getASTItems(script.locationInfo.fileName, script, (name) => MatchKind.exact);
         }
 
-        public getOutliningRegions(fileName: string): NavigateToItem[] {
-            this.minimalRefresh();
-
-            var script = this.pullCompilerState.getScriptAST(fileName);
-
-            var maxLim = (current: number, ...asts: TypeScript.AST[]) => {
-                var maxLim1 = (current: number, asts: TypeScript.AST[]) => {
-                    var result = current;
-                    for (var i = 0; i < asts.length; i++) {
-                        var ast = asts[i];
-                        if (ast != null && ast.limChar != 0 && ast.limChar > result) {
-                            result = ast.limChar;
-                        }
-                    }
-                    return result;
-                }
-
-                var result = maxLim1(current, asts);
-                for (var i = 0; i < asts.length; i++) {
-                    var ast = asts[i];
-                    if (ast != null && ast.nodeType == TypeScript.NodeType.List) {
-                        result = maxLim1(result, (<TypeScript.ASTList>ast).members);
-                    }
-                }
-                return result;
-            }
-
-            var findMinChar = (parent: TypeScript.AST, ast: TypeScript.AST) => {
-                var result = ast.minChar;
-                switch (ast.nodeType) {
-                    case TypeScript.NodeType.FuncDecl:
-                        result = maxLim(result, (<TypeScript.FuncDecl>ast).name, (<TypeScript.FuncDecl>ast).arguments, (<TypeScript.FuncDecl>ast).returnTypeAnnotation);
-                        break
-
-                    case TypeScript.NodeType.ModuleDeclaration:
-                        result = maxLim(result, (<TypeScript.ModuleDeclaration>ast).name);
-                        break;
-
-                    case TypeScript.NodeType.ClassDeclaration:
-                        result = maxLim(result, (<TypeScript.ClassDeclaration>ast).name, (<TypeScript.ClassDeclaration>ast).extendsList, (<TypeScript.ClassDeclaration>ast).implementsList);
-                        break;
-
-                    case TypeScript.NodeType.InterfaceDeclaration:
-                        result = maxLim(result, (<TypeScript.InterfaceDeclaration>ast).name, (<TypeScript.InterfaceDeclaration>ast).extendsList, (<TypeScript.InterfaceDeclaration>ast).implementsList);
-                        break;
-                }
-
-                //logger.log("findMinChar(" + Tools.NodeType._map[ast.nodeType] + ")=" + result + " (instead of " + ast.minChar + ")");
-                return result;
-            }
-
-            var findLimChar = (parent: TypeScript.AST, ast: TypeScript.AST) => {
-                return ast.limChar;
-            }
-
-            var match = (parent: TypeScript.AST, ast: TypeScript.AST, name: string) => {
-                switch (ast.nodeType) {
-                    case TypeScript.NodeType.FuncDecl:
-                        if ((<TypeScript.FuncDecl>ast).bod == null)
-                            return MatchKind.none;
-                    //fall through
-                    case TypeScript.NodeType.ClassDeclaration:
-                    case TypeScript.NodeType.ModuleDeclaration:
-                    case TypeScript.NodeType.InterfaceDeclaration:
-                        return MatchKind.exact;
-
-                    default:
-                        return null;
-                }
-            }
-
-            return this.getASTItems(script.locationInfo.fileName, script, match, findMinChar, findLimChar);
-        }
-
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh();
 
@@ -914,41 +412,6 @@ module Services {
 
         public getEmitOutput(fileName: string): IOutputFile[] {
             return [];
-        }
-
-        private getNameOrDottedNameSpanFromPosition(pos: number, script: TypeScript.Script): SpanInfo  {
-            var result: SpanInfo = null;
-
-            var pre = (cur: TypeScript.AST, parent: TypeScript.AST): TypeScript.AST => {
-                if (TypeScript.isValidAstNode(cur)) {
-                    if (pos >= cur.minChar && pos < cur.limChar) {
-                        if (cur.nodeType == TypeScript.NodeType.Dot) {
-                            // Dotted expression
-                            if (result == null) {
-                                result = new SpanInfo(cur.minChar, cur.limChar);
-                            }
-                        }
-                        else if (cur.nodeType == TypeScript.NodeType.Name) {
-                            // If it was the first thing we found, use it directly
-                            if (result == null) {
-                                result = new SpanInfo(cur.minChar, cur.limChar);
-                            }
-                            else {
-                                // Its a dotted expression, use the current end as the end of our span
-                                result.limChar = cur.limChar;
-                            }
-                        } else if (cur.nodeType == TypeScript.NodeType.QString || 
-                            cur.nodeType == TypeScript.NodeType.This || 
-                            cur.nodeType == TypeScript.NodeType.Super) {
-                            result = new SpanInfo(cur.minChar, cur.limChar);
-                        }
-                    }
-                }
-                return cur;
-            }
-
-            TypeScript.getAstWalkerFactory().walk(script, pre);
-            return result;
         }
 
         //
@@ -1537,71 +1000,173 @@ module Services {
             return result.length > 0 ? result.join(',') : ScriptElementKindModifier.none;
         }
 
-        // 
-        // New IPullLanguageService features using Fiedlity Syntax Tree directelly
-        //
-        public getOutliningSpans(fileName: string): TypeScript.TextSpan[] {
-            this.refresh();
 
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+        // 
+        // Syntactic Single-File features
+        //
+
+        public getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo {
+            return null;
+        }
+
+        public getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo {
+            return null;
+        }
+
+        public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
+            this.minimalRefresh();
+
+            var manager = this.getFormattingManager(fileName, options);
+           
+            return manager.formatSelection(minChar, limChar);
+        }
+
+        public getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
+            this.minimalRefresh();
+
+            var manager = this.getFormattingManager(fileName, options);
+
+            return manager.formatDocument(minChar, limChar);
+        }
+
+        public getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
+            this.minimalRefresh();
+
+            var manager = this.getFormattingManager(fileName, options);
+
+            return manager.formatOnPaste(minChar, limChar);
+        }
+
+        public getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[] {
+            this.minimalRefresh();
+
+            var manager = this.getFormattingManager(fileName, options);
+
+            if (key === "}") {
+                return manager.formatOnClosingCurlyBrace(position);
+            }
+            else if (key === ";") {
+                return manager.formatOnSemicolon(position);
+            }
+            else if (key === "\n") {
+                return manager.formatOnEnter(position);
+            }
+
+            return [];
+        }
+
+        private getFormattingManager(fileName: string, options: FormatCodeOptions) {
+            // Ensure rules are initialized and up to date wrt to formatting options
+            this.formattingRulesProvider.ensureUptodate(options);
+
+            // Get the Syntax Tree
+            var syntaxTree = this.getSyntaxTree(fileName);
+
+            // Convert IScriptSnapshot to ITextSnapshot
+            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var segmentedScriptSnapshot = new TypeScript.SegmentedScriptSnapshot(scriptSnapshot);
+            var textSnapshot = new TypeScript.Formatting2.TextSnapshot(segmentedScriptSnapshot);
+
+            var manager = new TypeScript.Formatting2.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
+
+            return manager;
+        }
+
+        public getOutliningRegions(fileName: string): TypeScript.TextSpan[] {
+            this.minimalRefresh();
+
+            var syntaxTree = this.getSyntaxTree(fileName);
+
             return OutliningElementsCollector.collectElements(syntaxTree.sourceUnit());
         }
 
-        public getMatchingBraceSpans(fileName: string, position: number): TypeScript.TextSpan[] {
-            this.refresh();
+        // Given a script name and position in the script, return a string representing 
+        // the desired smart indent text (assuming the line is empty).
+        // Return "null" in case the smart indent cannot be determined.
+        public getSmartIndentAtLineNumber(fileName: string, position: number, editorOptions: EditorOptions): number {
+            this.minimalRefresh();
 
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            var syntaxTree = this.getSyntaxTree(fileName);
+
+            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var segmentedScriptSnapshot = new TypeScript.SegmentedScriptSnapshot(scriptSnapshot);
+            var textSnapshot = new TypeScript.Formatting2.TextSnapshot(segmentedScriptSnapshot);
+            var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
+            
+            return TypeScript.Formatting2.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
+        }
+
+        // Given a script name and position in the script, return a pair of text range if the 
+        // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
+        // If the position is not on any range, return "null".
+        public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[] {
+            this.minimalRefresh();
+
+            var syntaxTree = this.getSyntaxTree(fileName);
+
             return BraceMatcher.getMatchSpans(syntaxTree, position);
         }
 
-        public getIndentation(fileName: string, position: number, options: Services.EditorOptions): number {
-            this.refresh();
 
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            var sourceText = this.pullCompilerState.getScriptSnapshot(fileName);
-            return Indenter.getIndentation(syntaxTree.sourceUnit(), sourceText, position, options);
+        public logSyntaxTree(fileName: string): void {
+            this.minimalRefresh();
+
+            var syntaxTree = this.getSyntaxTree(fileName);
+
+            var serializedTree = SyntaxNodeSerializer.serialize(syntaxTree.sourceUnit());
+            this.logger.log("");
+            this.logger.log(serializedTree);
         }
 
         //
-        // Private methods
+        // Manage Single file syntax tree state
         //
-        private logFormatCodeOptions(options: FormatCodeOptions) {
-            if (this.logger.information()) {
-                this.logger.log("options.InsertSpaceAfterCommaDelimiter=" + options.InsertSpaceAfterCommaDelimiter);
-                this.logger.log("options.InsertSpaceAfterSemicolonInForStatements=" + options.InsertSpaceAfterSemicolonInForStatements);
-                this.logger.log("options.InsertSpaceBeforeAndAfterBinaryOperators=" + options.InsertSpaceBeforeAndAfterBinaryOperators);
-                this.logger.log("options.InsertSpaceAfterKeywordsInControlFlowStatements=" + options.InsertSpaceAfterKeywordsInControlFlowStatements);
-                this.logger.log("options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions=" + options.InsertSpaceAfterFunctionKeywordForAnonymousFunctions);
-                this.logger.log("options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis=" + options.InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis);
-                this.logger.log("options.PlaceOpenBraceOnNewLineForFunctions=" + options.PlaceOpenBraceOnNewLineForFunctions);
-                this.logger.log("options.PlaceOpenBraceOnNewLineForControlBlocks=" + options.PlaceOpenBraceOnNewLineForControlBlocks);
+        private getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
+            var version = this.pullCompilerState.getScriptVersion(fileName);
+            var syntaxTree: TypeScript.SyntaxTree = null;
+
+            if (this.singleFileSyntaxTreeState.syntaxTree === null || this.singleFileSyntaxTreeState.fileName !== fileName) {
+                syntaxTree = this.createSyntaxTree(fileName);
             }
+            else if (this.singleFileSyntaxTreeState.version !== version) {
+                syntaxTree = this.updateSyntaxTree(fileName, this.singleFileSyntaxTreeState.syntaxTree, this.singleFileSyntaxTreeState.version);
+            }
+
+            if (syntaxTree !== null) {
+                // All done, ensure state is up to date
+                this.singleFileSyntaxTreeState.version = version;
+                this.singleFileSyntaxTreeState.fileName = fileName;
+                this.singleFileSyntaxTreeState.syntaxTree = syntaxTree;
+            }
+            return this.singleFileSyntaxTreeState.syntaxTree;
         }
 
-        private logEditResults(syntaxAST: ScriptSyntaxAST, result: Services.TextEdit[]) {
-            if (this.logger.information()) {
-                var logSourceText = (text: string) => {
-                    var textLines = text.replace(/^\s+|\s+$/g, "").replace(/\r\n?/g, "\n").split(/\n/);
-                    for (var i = 0; i < textLines.length; i++) {
-                        var textLine = textLines[i];
-                        var msg = "line #" + i + "(length=" + textLine.length + "): \"" + textLine + "\"";
-                        this.logger.log(msg);
-                    }
-                }
+        private createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
+            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var segmentedScriptSnapshot = new TypeScript.SegmentedScriptSnapshot(scriptSnapshot);
 
-                var sourceText = syntaxAST.getScriptSnapshot();
-                logSourceText(sourceText.getText(0, sourceText.getLength()));
-                for (var i = 0; i < result.length; i++) {
-                    var edit = result[i];
-                    var oldSourceText = sourceText.getText(edit.minChar, edit.limChar);
-                    var text = "edit #" + i + ": minChar=" + edit.minChar + ", " +
-                        "limChar=" + edit.limChar + ", " +
-                        "oldText=\"" + TypeScript.stringToLiteral(oldSourceText, 30) + "\", " +
-                        "textLength=" + edit.text.length + ", " +
-                        "text=\"" + TypeScript.stringToLiteral(edit.text, 30) + "\"";
-                    this.logger.log(text);
-                }
+            var syntaxTree = TypeScript.Parser1.parse(segmentedScriptSnapshot);
+
+            return syntaxTree
+        }
+
+        private updateSyntaxTree(fileName: string, previousSyntaxTree: TypeScript.SyntaxTree, previousFileVersion: number): TypeScript.SyntaxTree {
+            var editRange = this.pullCompilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
+
+            // If "no changes", tree is good to go as is
+            if (editRange === null) {
+                return previousSyntaxTree;
             }
+
+            // Debug.assert(newLength >= 0);
+
+            var newScriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var newSegmentedScriptSnapshot = new TypeScript.SegmentedScriptSnapshot(newScriptSnapshot);
+
+            var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
+                previousSyntaxTree, editRange, newSegmentedScriptSnapshot);
+
+            return nextSyntaxTree;
         }
     }
 }

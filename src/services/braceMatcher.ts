@@ -63,7 +63,7 @@ module Services {
                 currentToken = currentToken.previousToken();
             }
 
-            if (currentToken.start() === (position - 1)) {
+            if (currentToken !== null && currentToken.start() === (position - 1)) {
                 var openBraceKind = getMatchingOpenBraceTokenKind(currentToken);
                 if (openBraceKind !== null) {
                     var parentElement = currentToken.parentElement();

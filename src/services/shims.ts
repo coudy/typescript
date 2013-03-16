@@ -89,7 +89,7 @@ module Services {
         getOutliningRegions(fileName: string): string;
 
         getBraceMatchingAtPosition(fileName: string, pos: number): string;
-        getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: string/*Services.EditorOptions*/): string;
+        getSmartIndentAtLineNumber(fileName: string, position: number, options: string/*Services.EditorOptions*/): string;
 
         getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: string/*Services.FormatCodeOptions*/): string;
@@ -360,12 +360,12 @@ module Services {
         }
 
         /// GET SMART INDENT
-        public getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: string /*Services.EditorOptions*/): string {
+        public getSmartIndentAtLineNumber(fileName: string, position: number, options: string /*Services.EditorOptions*/): string {
             return this.forwardJSONCall(
-                "getSmartIndentAtLineNumber(\"" + fileName + "\", " + lineNumber + ")",
+                "getSmartIndentAtLineNumber(\"" + fileName + "\", " + position + ")",
                 () => {
                     var localOptions: Services.EditorOptions = JSON.parse(options);
-                    var columnOffset = this.languageService.getSmartIndentAtLineNumber(fileName, lineNumber, localOptions);
+                    var columnOffset = this.languageService.getSmartIndentAtLineNumber(fileName, position, localOptions);
                     return _resultToJSON({ value: columnOffset });
                 });
         }
@@ -497,6 +497,7 @@ module Services {
                     return result;
                 });
         }
+        
 
         // GET OUTLINING REGIONS
         //
@@ -505,8 +506,7 @@ module Services {
                 "getOutliningRegions(\"" + fileName + "\")",
                 () => {
                     var items = this.languageService.getOutliningRegions(fileName);
-                    var result = this._navigateToItemsToString(items);
-                    return result;
+                    return _resultToJSON(items);
                 });
         }
 
