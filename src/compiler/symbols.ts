@@ -68,8 +68,11 @@ module TypeScript {
 
         public passSymbolCreated: number = CompilerDiagnostics.analysisPass;
 
-        constructor(public name: string, public location: number, public length: number,
-                 public unitIndex: number) { }
+        constructor(public name: string,
+                    public location: number,
+                    public length: number,
+                    public fileName: string) {
+        }
 
         public isInstanceProperty() {
             return hasFlag(this.flags, SymbolFlags.Property) && (!hasFlag(this.flags, SymbolFlags.ModuleMember));
@@ -326,8 +329,8 @@ module TypeScript {
     }
 
     export class InferenceSymbol extends Symbol {
-        constructor (name: string, location: number, length: number, unitIndex: number) {
-            super(name, location, length, unitIndex);
+        constructor (name: string, location: number, length: number, fileName: string) {
+            super(name, location, length, fileName);
         }
 
         public typeCheckStatus = TypeCheckStatus.NotStarted;
@@ -366,8 +369,8 @@ module TypeScript {
         public expansionsDeclAST: AST[] = [];
         public isDynamic = false;
 
-        constructor (locName: string, location: number, length: number, unitIndex: number, public type: Type) {
-            super(locName, location, length, unitIndex);
+        constructor (locName: string, location: number, length: number, fileName: string, public type: Type) {
+            super(locName, location, length, fileName);
             this.prettyName = this.name;
         }
 
@@ -419,7 +422,7 @@ module TypeScript {
             else {
                 var replType = this.type.specializeType(pattern, replacement, checker, false);
                 if (replType != this.type) {
-                    var result = new TypeSymbol(this.name, -1, 0, -1, replType);
+                    var result = new TypeSymbol(this.name, -1, 0, unknownLocationInfo.fileName, replType);
                     return result;
                 }
                 else {
@@ -487,8 +490,8 @@ module TypeScript {
     }
 
     export class WithSymbol extends TypeSymbol {
-        constructor (location: number, unitIndex: number, withType: Type) {
-            super("with", location, 4, unitIndex, withType);
+        constructor (location: number, fileName: string, withType: Type) {
+            super("with", location, 4, fileName, withType);
         }
         public isWith() { return true; }
     }
@@ -497,10 +500,10 @@ module TypeScript {
         public name: string;
         public location: number;
 
-        constructor (name: string, location: number, unitIndex: number, public canWrite: bool,
+        constructor (name: string, location: number, fileName: string, public canWrite: bool,
                       public field: ValueLocation) {
 
-            super(name, location, name.length, unitIndex);
+            super(name, location, name.length, fileName);
             this.name = name;
             this.location = location;
         }
@@ -528,7 +531,7 @@ module TypeScript {
             var rType = this.field.typeLink.type.specializeType(pattern, replacement, checker, false);
             if (rType != this.field.typeLink.type) {
                 var fieldDef = new ValueLocation();
-                var result = new FieldSymbol(this.name, 0, checker.locationInfo.unitIndex,
+                var result = new FieldSymbol(this.name, 0, checker.locationInfo.fileName,
                                            this.canWrite, fieldDef);
                 result.flags = this.flags;
                 fieldDef.symbol = result;
@@ -568,9 +571,9 @@ module TypeScript {
         private paramDocComment: string = null;
         public funcDecl: AST = null;
         
-        constructor (name: string, location: number, unitIndex: number,
+        constructor (name: string, location: number, fileName: string,
                           public parameter: ValueLocation) {
-            super(name, location, name.length, unitIndex);
+            super(name, location, name.length, fileName);
 
             this.name = name;
             this.location = location;
@@ -602,7 +605,7 @@ module TypeScript {
             var rType = this.parameter.typeLink.type.specializeType(pattern, replacement, checker, false);
             if (this.parameter.typeLink.type != rType) {
                 var paramDef = new ValueLocation();
-                var result = new ParameterSymbol(this.name, 0, checker.locationInfo.unitIndex,
+                var result = new ParameterSymbol(this.name, 0, checker.locationInfo.fileName,
                                                paramDef);
                 paramDef.symbol = result;
                 result.setType(rType);
@@ -640,10 +643,10 @@ module TypeScript {
     }
 
     export class VariableSymbol extends InferenceSymbol {
-
-        constructor (name: string, location: number, unitIndex: number, public variable: ValueLocation) {
-            super(name, location, name.length, unitIndex);
+        constructor (name: string, location: number, fileName: string, public variable: ValueLocation) {
+            super(name, location, name.length, fileName);
         }
+
         public kind() { return SymbolKind.Variable; }
         public writeable() { return true; }
         public getType() { return this.variable.typeLink.type; }

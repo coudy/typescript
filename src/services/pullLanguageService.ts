@@ -18,17 +18,20 @@ module Services {
     }
 
     export class PullLanguageService implements IPullLanguageService {
-
         public  logger: TypeScript.ILogger;
         private pullCompilerState: PullCompilerState;
         private syntaxASTState: ScriptSyntaxASTState;
         private formattingRulesProvider: Formatting.RulesProvider;
 
-        constructor (public host: ILanguageServiceHost) {
+        constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
             this.pullCompilerState = new PullCompilerState(this.host);
             this.syntaxASTState = new ScriptSyntaxASTState();
             this.formattingRulesProvider = new Formatting.RulesProvider(this.logger);
+        }
+
+        public getHostIndex(fileName: string): number {
+            return this.pullCompilerState.getHostIndex(fileName);
         }
 
         public refresh(): void {
@@ -77,8 +80,9 @@ module Services {
 
             var symbol = symbolInfoAtPosition.symbol;
             
-            for (var i = 0, len = this.pullCompilerState.getScriptCount() ; i < len; i++) {
-                result = result.concat(this.getReferencesInFile(i, symbol));
+            var fileNames = this.pullCompilerState.getFileNames();
+            for (var i = 0, len = fileNames.length; i < len; i++) {
+                result = result.concat(this.getReferencesInFile(fileNames[i], symbol));
             }
 
             return result;
@@ -105,23 +109,21 @@ module Services {
                 return result;
             }
 
-           
             var symbol = symbolInfoAtPosition.symbol;
-
-            return this.getReferencesInFile(this.pullCompilerState.getUnitIndex(fileName), symbol);
+            return this.getReferencesInFile(fileName, symbol);
         }
 
         public getImplementorsAtPosition(fileName: string, position: number): ReferenceEntry[] {
             return [];
         }
 
-        private getReferencesInFile(unitIndex: number, symbol: TypeScript.PullSymbol): ReferenceEntry[] {
+        private getReferencesInFile(fileName: string, symbol: TypeScript.PullSymbol): ReferenceEntry[] {
             var result: ReferenceEntry[] = [];
             var symbolName = symbol.getName();
             
-            var possiblePositions = this.getPossibleSymbolReferencePositions(unitIndex, symbol);
+            var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbol);
             if (possiblePositions && possiblePositions.length > 0) {
-                var searchScript = this.pullCompilerState.getScript(unitIndex);
+                var searchScript = this.pullCompilerState.getScript(fileName);
 
                 possiblePositions.forEach(p => {
                     var path = this.getAstPathToPosition(searchScript, p);
@@ -132,7 +134,7 @@ module Services {
                     var searchSymbolInfoAtPosition = this.pullCompilerState.getSymbolInformationFromPath(path, searchScript);
                     if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
                         var isWriteAccess = false; // this.isWriteAccess(searchSymbolInfoAtPosition.ast, searchSymbolInfoAtPosition.parentAST);
-                        result.push(new ReferenceEntry(unitIndex, searchSymbolInfoAtPosition.ast, isWriteAccess));
+                        result.push(new ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast, isWriteAccess));
                     }
                 });
             }
@@ -141,13 +143,13 @@ module Services {
             return result;
         }
 
-        private getPossibleSymbolReferencePositions(unitIndex: number, symbol: TypeScript.PullSymbol): number []{
+        private getPossibleSymbolReferencePositions(fileName: string, symbol: TypeScript.PullSymbol): number []{
             var positions: number[] = [];
 
             /// TODO: Cache symbol existence for files to save text search
             /// TODO: Use a smarter search mechanism to avoid picking up partial matches, matches in comments and in string literals
 
-            var sourceText = this.pullCompilerState.getScriptSnapshot3(unitIndex);
+            var sourceText = this.pullCompilerState.getScriptSnapshot2(fileName);
             var text = sourceText.getText(0, sourceText.getLength());
             var symbolName = symbol.getName();
 
@@ -650,12 +652,10 @@ module Services {
             var containerName = container ? container.getName() : "<global>";//this.getSymbolContainerName(sym)
             var containerKind = "";//this.getSymbolContainerKind(sym)
 
-
             var entries: DefinitionInfo[] = [];
             var mainEntry = 0;
             for (var i = 0, n = declarations.length; i < n; i++) {
                 var declaration = declarations[i];
-                var unitIndex = this.pullCompilerState.getUnitIndex(declaration.getScriptName());
                 var span = declaration.getSpan();
 
                 // For functions, pick the definition to be the main entry
@@ -665,7 +665,7 @@ module Services {
                 }
                 // TODO: find a better way of selecting the main entry for none-function overloaded types instead of selecting the first one
 
-                entries.push(new DefinitionInfo(this.pullCompilerState.mapToHostUnitIndex(unitIndex), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName, null));
+                entries.push(new DefinitionInfo(declaration.getScriptName(), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName, null));
             }
 
             result = entries[mainEntry];
@@ -806,23 +806,25 @@ module Services {
             // Process all script ASTs and look for matchin symbols
             var len = 0;
             
-            for (i = 0, len = this.pullCompilerState.getScriptCount() ; i < len; i++) {
+            var fileNames = this.pullCompilerState.getFileNames();
+            for (i = 0, len = fileNames.length; i < len; i++) {
                 // Add the item for the script name if needed
-                var script = this.pullCompilerState.getScript(i);
-                var fileName = script.locationInfo.fileName;
+                var fileName = fileNames[i];
+                var script = this.pullCompilerState.getScript(fileName);
+
                 var matchKind = match(null, script, fileName);
                 if (matchKind != null) {
                     var item = new NavigateToItem();
                     item.name = fileName;
                     item.matchKind = matchKind;
                     item.kind = ScriptElementKind.scriptElement;
-                    item.unitIndex = this.pullCompilerState.mapToHostUnitIndex(i);
+                    item.fileName = fileName;
                     item.minChar = script.minChar;
                     item.limChar = script.limChar;
                     result.push(item);
                 }
 
-                var items = this.getASTItems(i, script, match);
+                var items = this.getASTItems(fileName, script, match);
                 for (var j = 0; j < items.length; j++) {
                     result.push(items[j]);
                 }
@@ -834,7 +836,7 @@ module Services {
             this.refresh();
 
             var script = this.pullCompilerState.getScriptAST(fileName);
-            return this.getASTItems(script.locationInfo.unitIndex, script, (name) => MatchKind.exact);
+            return this.getASTItems(script.locationInfo.fileName, script, (name) => MatchKind.exact);
         }
 
         public getOutliningRegions(fileName: string): NavigateToItem[] {
@@ -908,7 +910,7 @@ module Services {
                 }
             }
 
-            return this.getASTItems(script.locationInfo.unitIndex, script, match, findMinChar, findLimChar);
+            return this.getASTItems(script.locationInfo.fileName, script, match, findMinChar, findLimChar);
         }
 
         /// LOG AST
@@ -932,14 +934,12 @@ module Services {
         public getSyntacticErrors(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
 
-            var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             return syntaxTree.diagnostics();
         }
 
         public getSemanticErrors(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
-            var unitIndex = this.pullCompilerState.getUnitIndex(fileName);
 
             // JOE: Here is where you should call and get the right set of semantic errors for this file.
             return this.pullCompilerState.pullGetErrorsForFile(fileName);
@@ -1095,7 +1095,7 @@ module Services {
         }
 
         private getASTItems(
-            unitIndex: number,
+            fileName: string,
             ast: TypeScript.AST,
             match: (parent: TypeScript.AST, ast: TypeScript.AST, name: string) => string,
             findMinChar?: (parent: TypeScript.AST, ast: TypeScript.AST) => number,
@@ -1114,7 +1114,7 @@ module Services {
             }
 
             var context = new NavigateToContext();
-            context.unitIndex = unitIndex;
+            context.fileName = fileName;
 
             var addItem = (parent: TypeScript.AST, ast: TypeScript.AST, name: string, kind: string): NavigateToItem => {
                 // Compiler generated nodes have no positions (e.g. the "_map" of an enum)
@@ -1130,7 +1130,7 @@ module Services {
                     item.matchKind = matchKind;
                     item.kind = kind;
                     item.kindModifiers = this.getDeclNodeElementKindModifiers(ast);
-                    item.unitIndex = this.pullCompilerState.mapToHostUnitIndex(context.unitIndex);
+                    item.fileName = context.fileName;
                     item.minChar = minChar;
                     item.limChar = limChar;
                     item.containerName = (TypeScript.lastOf(context.containerSymbols) === null ? "" : TypeScript.lastOf(context.containerSymbols).fullName());

@@ -51,7 +51,7 @@ module TypeScript {
 
         var fieldSymbol =
             new FieldSymbol("prototype", ast.minChar,
-                            context.checker.locationInfo.unitIndex, true, field);
+                            context.checker.locationInfo.fileName, true, field);
         fieldSymbol.flags |= (SymbolFlags.Property | SymbolFlags.BuiltIn);
         field.symbol = fieldSymbol;
         fieldSymbol.declAST = ast;
@@ -178,7 +178,7 @@ module TypeScript {
         }
 
         typeSymbol = new TypeSymbol(importDecl.id.text, importDecl.id.minChar, importDecl.limChar - importDecl.minChar,
-                                    context.checker.locationInfo.unitIndex, modType);
+                                    context.checker.locationInfo.fileName, modType);
 
         typeSymbol.aliasLink = importDecl;
 
@@ -246,7 +246,7 @@ module TypeScript {
             }
 
             typeSymbol = new TypeSymbol(modName, moduleDecl.name.minChar, modName.length,
-                                        context.checker.locationInfo.unitIndex, modType);
+                                        context.checker.locationInfo.fileName, modType);
             typeSymbol.isDynamic = isQuoted(moduleDecl.prettyName);
 
             if (context.scopeChain.moduleDecl) {
@@ -379,7 +379,7 @@ module TypeScript {
             instanceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             instanceType.ambientMembers = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
             typeSymbol = new TypeSymbol(className, classDecl.name.minChar, className.length,
-                                        context.checker.locationInfo.unitIndex, classType);
+                                        context.checker.locationInfo.fileName, classType);
             typeSymbol.declAST = classDecl;
             typeSymbol.instanceType = instanceType;
             classType.symbol = typeSymbol;
@@ -464,7 +464,7 @@ module TypeScript {
             interfaceSymbol = new TypeSymbol(interfaceName,
                                         interfaceDecl.name.minChar,
                                         interfaceName.length,
-                                        context.checker.locationInfo.unitIndex,
+                                        context.checker.locationInfo.fileName,
                                         interfaceType);
             interfaceType.symbol = interfaceSymbol;
             // REVIEW: Shouldn't allocate another table for interface privates
@@ -510,7 +510,7 @@ module TypeScript {
             var isPrivate = hasFlag(argDecl.varFlags, VarFlags.Private);
             var fieldSymbol =
                 new FieldSymbol(argDecl.id.text, argDecl.id.minChar,
-                                context.checker.locationInfo.unitIndex,
+                                context.checker.locationInfo.fileName,
                                 !hasFlag(argDecl.varFlags, VarFlags.Readonly),
                                 field);
             fieldSymbol.transferVarFlags(argDecl.varFlags);
@@ -563,7 +563,7 @@ module TypeScript {
             var field = new ValueLocation();
             var fieldSymbol =
                 new FieldSymbol(varDecl.id.text, varDecl.id.minChar,
-                                context.checker.locationInfo.unitIndex,
+                                context.checker.locationInfo.fileName,
                                 (varDecl.varFlags & VarFlags.Readonly) == VarFlags.None,
                                 field);
             fieldSymbol.transferVarFlags(varDecl.varFlags);
@@ -634,7 +634,7 @@ module TypeScript {
             containerScope = scopeChain.previous.scope;
         }
 
-        funcDecl.unitIndex = context.checker.locationInfo.unitIndex;
+        funcDecl.fileName = context.checker.locationInfo.fileName;
         
         // If the parent is the constructor, and this isn't an instance method, skip it.
         // That way, we'll set the type during scope assignment, and can be sure that the

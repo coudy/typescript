@@ -46,7 +46,7 @@ module TypeScript {
         public useFullAst = false;
         private scriptFragment: Script;
 
-        constructor (public logger: ILogger,
+        constructor(public logger: ILogger,
                     public script: Script,
                     public text: IScriptSnapshot,
                     public pos: number,
@@ -82,7 +82,7 @@ module TypeScript {
                 var ast = this.getScriptFragmentStartAST();
                 var minChar = ast.minChar;
                 var limChar = (this.isMemberCompletion ? this.pos : this.pos + 1);
-                this.scriptFragment = TypeScript.quickParse(this.logger, ast, this.text, minChar, limChar, null/*errorCapture*/).Script;
+                this.scriptFragment = TypeScript.quickParse(this.logger, ast, this.text, minChar, limChar, this.script.locationInfo.fileName, null/*errorCapture*/).Script;
             }
             return this.scriptFragment;
         }

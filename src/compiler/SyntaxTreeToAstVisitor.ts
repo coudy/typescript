@@ -67,13 +67,12 @@ module TypeScript {
 
         constructor(private syntaxPositionMap: SyntaxPositionMap,
                     private fileName: string,
-                    private unitIndex: number,
                     private lineMap: ILineMap) {
         }
 
-        public static visit(syntaxTree: SyntaxTree, fileName: string, unitIndex: number): Script {
+        public static visit(syntaxTree: SyntaxTree, fileName: string): Script {
             var map = checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
-            var visitor = new SyntaxTreeToAstVisitor(map, fileName, unitIndex, syntaxTree.lineMap());
+            var visitor = new SyntaxTreeToAstVisitor(map, fileName, syntaxTree.lineMap());
             return syntaxTree.sourceUnit().accept(visitor);
         }
 
@@ -387,7 +386,7 @@ module TypeScript {
             this.popDeclLists();
 
             result.bod = bod;
-            result.locationInfo = new LocationInfo(this.fileName, this.lineMap.lineStarts(), this.unitIndex);
+            result.locationInfo = new LocationInfo(this.fileName, this.lineMap.lineStarts());
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
             result.requiresExtendsBlock = this.requiresExtendsBlock;

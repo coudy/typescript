@@ -980,9 +980,11 @@ module Harness {
                 if (!usePull) {
                     // This will find the requested identifier in the first script where it's present, a naive search of each member in each script,
                     // which means this won't play nicely if the same identifier is used in multiple units, but it will enable this to work on multi-file tests.
-                    // m = 1 because the first script will always be lib.d.ts which we don't want to search.                                
-                    for (var m = 1; m < compiler.scripts.members.length; m++) {
-                        var script = compiler.scripts.members[m];
+                    // m = 1 because the first script will always be lib.d.ts which we don't want to search.
+
+                    var fileNames = compiler.fileNameToScript.getAllKeys();
+                    for (var m = 1; m < fileNames.length; m++) {
+                        var script: TypeScript.Script = compiler.fileNameToScript.lookup(fileNames[m]);
                         var enclosingScopeContext = TypeScript.findEnclosingScopeAt(new TypeScript.NullLogger(), <TypeScript.Script>script, new TypeScript.StringScriptSnapshot(code), 0, false);
                         var entries = new TypeScript.ScopeTraversal(compiler).getScopeEntries(enclosingScopeContext);
 
@@ -994,8 +996,9 @@ module Harness {
                     }
                 }
                 else {
-                    for (m = 0; m < compiler.scripts.members.length; m++) {
-                        var script2 = <TypeScript.Script>compiler.scripts.members[m];
+                    var fileNames = compiler.fileNameToScript.getAllKeys();
+                    for (m = 0; m < fileNames.length; m++) {
+                        var script2 = <TypeScript.Script>compiler.fileNameToScript.lookup(fileNames[m]);
                         if (script2.locationInfo.fileName !== 'lib.d.ts') {
                             if (targetPosition > -1) {
                                 var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
@@ -1226,13 +1229,13 @@ module Harness {
             stdout.reset();
             stderr.reset();
 
-            var files = compiler.units.map((value) => value.fileName);
+            var files = compiler.fileNameToLocationInfo.getAllKeys();
 
             for (var i = 0; i < files.length; i++) {
                 var fname = files[i];
-                if(fname !== 'lib.d.ts') {
+                if (fname !== 'lib.d.ts') {
                     updateUnit('', fname);
-                    }
+                }
             }
 
             if(Harness.usePull) {
@@ -1256,10 +1259,11 @@ module Harness {
             var script: TypeScript.Script = null;
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
 
-            for (var i = 0; i < compiler.units.length; i++) {
-                if (compiler.units[i].fileName === uName) {
+            var fileNames = compiler.fileNameToLocationInfo.getAllKeys();
+            for (var i = 0; i < fileNames.length; i++) {
+                if (compiler.fileNameToLocationInfo.lookup(fileNames[i]).fileName === uName) {
                     updateUnit(code, uName);
-                    script = <TypeScript.Script>compiler.scripts.members[i];
+                    script = <TypeScript.Script>compiler.fileNameToScript.lookup(fileNames[i]);
                 }
             }
             if (!script) {

@@ -309,5 +309,4 @@ module TypeScript {
             return true;
         }
     }
-
 }

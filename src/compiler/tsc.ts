@@ -225,8 +225,8 @@ class BatchCompiler {
                 compiler.typeCheck();
             }
 
-            var mapInputToOutput = (unitIndex: number, outFile: string): void => {
-                this.compilationEnvironment.inputOutputMap[unitIndex] = outFile;
+            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
             };
             compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
             compiler.emitDeclarations(this.compilationSettings.usePull);
@@ -244,7 +244,7 @@ class BatchCompiler {
     // Execute the provided inputs
     public run() {
         for (var i in this.compilationEnvironment.code) {
-            var outputFileName: string = this.compilationEnvironment.inputOutputMap[i];
+            var outputFileName: string = this.compilationEnvironment.inputFileNameToOutputFileName.lookup(i);
             if (this.ioHost.fileExists(outputFileName)) {
                 var unitRes = this.ioHost.readFile(outputFileName)
                 this.ioHost.run(unitRes, outputFileName);

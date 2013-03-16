@@ -82,11 +82,12 @@ module TypeScript {
 
             // Capture parsing errors so that they are part of "updateResult"
             var parseErrors: TypeScript.ErrorEntry[] = [];
-            var errorCapture = function(minChar: number, charLen: number, message: string, unitIndex: number): void {
-                parseErrors.push(new TypeScript.ErrorEntry(unitIndex, minChar, minChar + charLen, message));
+            var errorCapture = function(minChar: number, charLen: number, message: string, fileName: string): void {
+                parseErrors.push(new TypeScript.ErrorEntry(fileName, minChar, minChar + charLen, message));
             };
 
-            var quickParseResult = TypeScript.quickParse(this.logger, scope1.scopeStartAST, newSourceText, scope1.scopeStartAST.minChar, scope1.scopeStartAST.minChar + newScopeLength, errorCapture);
+            var quickParseResult = TypeScript.quickParse(
+                this.logger, scope1.scopeStartAST, newSourceText, scope1.scopeStartAST.minChar, scope1.scopeStartAST.minChar + newScopeLength, fileName, errorCapture);
             if (quickParseResult.endLexState != TypeScript.LexState.Start) {
                 this.logger.log("  Bailing out because scope contains unterminated comment");
                 return null;

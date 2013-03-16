@@ -12,10 +12,8 @@ module Services {
         //
         private compiler: TypeScript.TypeScriptCompiler;
         private errorCollector: CompilerErrorCollector;
-        private unitIndexMap: number[];
         private scriptMap: ScriptMap;
         private hostCache: HostCache;
-        private compilerCache: CompilerCache;
         private symbolTree: SymbolTree;
         private compilationSettings: TypeScript.CompilationSettings;
 
@@ -26,14 +24,12 @@ module Services {
             //
             this.compiler = null;
             this.errorCollector = null;
-            this.unitIndexMap = []; // Map from compiler unit index to host unitindex
             this.scriptMap = null; // Map from fileName to FileMapEntry
 
             //
             // State recomputed at every "refresh" call (performance)
             //
             this.hostCache = null;
-            this.compilerCache = null;
             this.symbolTree = null;
             this.compilationSettings = null;
         }
@@ -42,13 +38,8 @@ module Services {
             return this.compilationSettings;
         }
 
-        private setUnitMapping(unitIndex: number, hostUnitIndex: number) {
-            this.scriptMap.setEntry(this.hostCache.getScriptFileName(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
-            this.setUnitIndexMapping(unitIndex, hostUnitIndex);
-        }
-
-        private setUnitIndexMapping(unitIndex: number, hostUnitIndex: number) {
-            this.unitIndexMap[unitIndex] = hostUnitIndex;
+        private setUnitMapping(fileName: string) {
+            this.scriptMap.setEntry(fileName, this.hostCache.getVersion(fileName));
         }
 
         private onTypeCheckStarting(): void {
@@ -60,44 +51,43 @@ module Services {
             return this.symbolTree;
         }
 
-        public mapToHostUnitIndex(unitIndex: number): number {
-            return this.unitIndexMap[unitIndex];
-        }        
-
-        public getScriptCount() {
-            return this.compiler.scripts.members.length;
+        public getFileNames(): string[]{
+            return this.compiler.fileNameToScript.getAllKeys();
         }
 
-        public getScript(index: number): TypeScript.Script {
-            return <TypeScript.Script>this.compiler.scripts.members[index];
+        public getScriptCount(): number {
+            return this.compiler.fileNameToScript.count();
         }
 
-        public getScripts(): TypeScript.Script[] {
-            return <TypeScript.Script[]>this.compiler.scripts.members;
+        public getScript(fileName: string): TypeScript.Script {
+            return this.compiler.fileNameToScript.lookup(fileName)
         }
 
-        public getUnitIndex(fileName: string) {
-            return this.compilerCache.getUnitIndex(fileName);
+        public getScripts(): TypeScript.Script[]{
+            return this.compiler.getScripts();
+        }
+
+        public getHostIndex(fileName: string): number {
+            return this.hostCache.getHostIndex(fileName);
         }
 
         public getScriptVersion(fileName: string) {
-            return this.hostCache.getVersion(this.hostCache.getUnitIndex(fileName));
+            return this.hostCache.getVersion(fileName);
         }
 
-        private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number) {
-            var newUnitIndex = compiler.units.length;
-            this.errorCollector.startParsing(newUnitIndex);
+        private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
+            this.errorCollector.startParsing(fileName);
 
             //Note: We need to call "_setUnitMapping" _before_ calling into the compiler,
             //      in case the compiler fails (i.e. throws an exception). This is due to the way
             //      we recover from those failure (we still report errors to the host, 
             //      and we need unit mapping info to do that correctly.
-            this.setUnitMapping(newUnitIndex, hostUnitIndex);
+            this.setUnitMapping(fileName);
 
-            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptFileName(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         }
 
-        private getHostCompilationSettings() {
+        private getHostCompilationSettings(): TypeScript.CompilationSettings {
             var settings = this.host.getCompilationSettings();
             if (settings !== null) {
                 return settings;
@@ -123,7 +113,6 @@ module Services {
             this.compilationSettings.usePull = true;
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
             this.scriptMap = new ScriptMap();
-            this.unitIndexMap = [];
             this.errorCollector = new CompilerErrorCollector(this.logger);
 
             //TODO: "bind" doesn't work here in the context of running unit tests
@@ -133,10 +122,9 @@ module Services {
 
             // Add unit for all source files
             for (var i = 0, length = this.host.getScriptCount() ; i < length; i++) {
-                this.addCompilerUnit(this.compiler, i);
+                var fileName = this.host.getScriptFileName(i);
+                this.addCompilerUnit(this.compiler, fileName);
             }
-
-            this.compilerCache = new CompilerCache(this.compiler);
 
             // Initial typecheck
             this.onTypeCheckStarting();
@@ -149,44 +137,26 @@ module Services {
         }
 
         public refresh(throwOnError: bool = true): void {
-            try {
-                // Reset the cache at start of every refresh
-                this.hostCache = new HostCache(this.host);
+            // Reset the cache at start of every refresh
+            this.hostCache = new HostCache(this.host);
 
-                // If full refresh not needed, attempt partial refresh
-                if (!this.fullRefresh()) {
-                    this.partialRefresh();
-                }
-
-                // Debugging: log version and unit index mapping data
-                if (this.logger.information()) {
-                    for (var i = 0; i < this.compiler.units.length; i++) {
-                        this.logger.log("compiler unit[" + i + "].fileName='" + this.compiler.units[i].fileName + "'");
-                    }
-                    for (var i = 0; i < this.hostCache.count() ; i++) {
-                        this.logger.log("host script[" + i + "].fileName='" + this.hostCache.getScriptFileName(i) + "', version=" + this.hostCache.getVersion(i));
-                    }
-                    for (var i = 0; i < this.unitIndexMap.length; i++) {
-                        this.logger.log("unitIndexMap[" + i + "] = " + this.unitIndexMap[i]);
-                    }
-                }
+            // If full refresh not needed, attempt partial refresh
+            if (!this.fullRefresh()) {
+                this.partialRefresh();
             }
-            catch (err) {
-                var lastUnitIndex = 0;
-                if (this.compiler != null) {
-                    lastUnitIndex = this.compiler.units.length - 1;
+
+            // Debugging: log version and unit index mapping data
+            if (this.logger.information()) {
+                var fileNames = this.compiler.fileNameToLocationInfo.getAllKeys();
+                for (var i = 0; i < fileNames.length; i++) {
+                    this.logger.log("compiler unit[" + i + "].fileName='" + fileNames[i] + "'");
                 }
-                this.compiler = null;
 
-                this.logger.log("WARNING: PERF: Internal error during \"Refresh\":");
-                logInternalError(this.logger, err);
-                this.logger.log("WARNING: PERF:    Compiler state is lost and will be re-initiliazed during next call.");
-
-                this.errorCollector.reportError(0, 1, "Internal error: " + err.message, lastUnitIndex);
-                this.errorCollector.reportError(0, 1, "Internal error: IntelliSense features are disabled. Try making edits to source files to restore a valid compilation state.", lastUnitIndex);
-
-                if (throwOnError)
-                    throw err;
+                var fileNames = this.hostCache.getFileNames();
+                for (var i = 0; i < fileNames.length; i++) {
+                    var fileName = fileNames[i];
+                    this.logger.log("host script[" + i + "].fileName='" + fileName + "', version=" + this.hostCache.getVersion(fileName));
+                }
             }
         }
 
@@ -212,10 +182,11 @@ module Services {
             /// If any file was deleted, we need to create a new compiler, because we are not
             /// even close to supporting removing symbols (unitindex will be all over the place
             /// if we remove scripts from the list).
-            for (var unitIndex = 0, len = this.compiler.units.length; unitIndex < len; unitIndex++) {
-                var fileName = this.compiler.units[unitIndex].fileName;
+            var fileNames = this.compiler.fileNameToLocationInfo.getAllKeys();
+            for (var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
+                var fileName = fileNames[unitIndex];
 
-                var hostUnitIndex = this.hostCache.getUnitIndex(fileName);
+                var hostUnitIndex = this.hostCache.getHostIndex(fileName);
                 if (hostUnitIndex < 0) {
                     this.logger.log("Creating new compiler instance because of unit is not part of program anymore: " + unitIndex + "-" + fileName);
                     this.createCompiler();
@@ -228,54 +199,31 @@ module Services {
         }
 
         public getScriptAST(fileName: string): TypeScript.Script {
-            var unitIndex = this.compilerCache.getUnitIndex(fileName);
-            if (unitIndex < 0) {
-                throw new Error("Interal error: No AST found for file \"" + fileName + "\".");
-            }
-
-            return <TypeScript.Script>this.compiler.scripts.members[unitIndex];
+            return <TypeScript.Script>this.compiler.fileNameToScript.lookup(fileName);
         }
 
         public createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var unitIndex = this.compilerCache.getUnitIndex(fileName);
-            if (unitIndex < 0) {
-                throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
-            }
-
             var sourceText = this.getScriptSnapshot2(fileName);
             var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
             return TypeScript.Parser1.parse(text);
         }
 
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var unitIndex = this.compilerCache.getUnitIndex(fileName);
-            if (unitIndex < 0) {
-                throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
+            var syntaxTree = this.compiler.fileNameToSyntaxTree.lookup(fileName);
+            if (syntaxTree === null) {
+                syntaxTree = this.createSyntaxTree(fileName);
+                this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
             }
 
-            if (!this.compiler.syntaxTrees[unitIndex]) {
-                this.compiler.syntaxTrees[unitIndex] = this.createSyntaxTree(fileName);
-            }
-
-            return <TypeScript.SyntaxTree>this.compiler.syntaxTrees[unitIndex];
+            return syntaxTree;
         }
 
         public setSyntaxTree(fileName: string, syntaxTree: TypeScript.SyntaxTree): void {
-            var unitIndex = this.compilerCache.getUnitIndex(fileName);
-            if (unitIndex < 0) {
-                throw new Error("Interal error: No SyntaxTree found for file \"" + fileName + "\".");
-            }
-
-            this.compiler.syntaxTrees[unitIndex] = syntaxTree;
+            this.compiler.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
         }
 
         public getLineMap(fileName: string): number[] {
-            var unitIndex = this.compilerCache.getUnitIndex(fileName);
-            if (unitIndex < 0) {
-                throw new Error("Interal error: No AST found for file \"" + fileName + "\".");
-            }
-
-            return this.compiler.units[unitIndex].lineMap;
+            return this.compiler.fileNameToLocationInfo.lookup(fileName).lineMap;
         }
 
         public getScopeEntries(enclosingScopeContext: TypeScript.EnclosingScopeContext) {
@@ -296,33 +244,28 @@ module Services {
         }
 
         public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {
-            var hostUnitIndex = this.hostCache.getUnitIndex(fileName);
-
-            var currentVersion = this.hostCache.getVersion(hostUnitIndex);
+            var currentVersion = this.hostCache.getVersion(fileName);
             if (lastKnownVersion === currentVersion) {
                 return null; // "No changes"
             }
 
-            return this.host.getScriptTextChangeRangeSinceVersion(hostUnitIndex, lastKnownVersion);
+            var hostIndex = this.hostCache.getHostIndex(fileName);
+            return this.host.getScriptTextChangeRangeSinceVersion(hostIndex, lastKnownVersion);
         }
 
         public getScriptSnapshot(script: TypeScript.Script) {
-            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(script.locationInfo.fileName));
+            return this.hostCache.getScriptSnapshot(script.locationInfo.fileName);
         }
 
         public getScriptSnapshot2(fileName: string) {
-            return this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(fileName));
-        }
-
-        public getScriptSnapshot3(unitIndex: number) {
-            return this.hostCache.getScriptSnapshot(unitIndex);
+            return this.hostCache.getScriptSnapshot(fileName);
         }
 
         // Since we don't have incremental parsing or typecheck, we resort to parsing the whole source text
         // and return a "syntax only" AST. For example, we use this for formatting engine.
         // We will change this when we have incremental parsing.
         public getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {
-            var sourceText = this.hostCache.getScriptSnapshot(this.hostCache.getUnitIndex(fileName));
+            var sourceText = this.hostCache.getScriptSnapshot(fileName);
 
             var parser = new TypeScript.Parser();
             parser.setErrorRecovery(null);
@@ -360,21 +303,13 @@ module Services {
             return this.compiler.pullGetVisibleSymbolsFromPath(path, script);
         }
 
-        private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, hostUnitIndex: number, unitIndex: number): bool {
-            var fileName = this.hostCache.getScriptFileName(hostUnitIndex);
-
-            //Note: We need to call "_setUnitIndexMapping" _before_ calling into the compiler,
-            //      in case the compiler fails (i.e. throws an exception). This is due to the way
-            //      we recover from those failure (we still report errors to the host, 
-            //      and we need unit mapping info to do that correctly.
-            this.setUnitIndexMapping(unitIndex, hostUnitIndex);
-
+        private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): bool {
             var previousEntry = this.scriptMap.getEntry(fileName);
 
             //
             // If file version is the same, assume no update
             //
-            var version = this.hostCache.getVersion(hostUnitIndex);
+            var version = this.hostCache.getVersion(fileName);
             if (previousEntry.version === version) {
                 //logger.log("Assumed unchanged unit: " + unitIndex + "-"+ fileName);
                 return false;
@@ -388,8 +323,8 @@ module Services {
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
 
-            var sourceText = this.hostCache.getScriptSnapshot(hostUnitIndex);
-            this.setUnitMapping(unitIndex, hostUnitIndex);
+            var sourceText = this.hostCache.getScriptSnapshot(fileName);
+            this.setUnitMapping(fileName);
             return compiler.pullUpdateUnit(sourceText, fileName, true/*setRecovery*/);
         }
 
@@ -412,19 +347,17 @@ module Services {
         // Attempt an incremental refresh of the compiler state.
         private partialRefresh(): void {
             this.logger.log("Updating files...");
-            this.compilerCache = new CompilerCache(this.compiler);
 
             var fileAdded: bool = false;
 
             for (var hostUnitIndex = 0, len = this.host.getScriptCount() ; hostUnitIndex < len; hostUnitIndex++) {
-                var fileName = this.hostCache.getScriptFileName(hostUnitIndex);
-                var unitIndex = this.compilerCache.getUnitIndex(fileName);
+                var fileName = this.host.getScriptFileName(hostUnitIndex);
 
-                if (unitIndex >= 0) {
-                    this.updateCompilerUnit(this.compiler, hostUnitIndex, unitIndex);
+                if (this.compiler.fileNameToLocationInfo.lookup(fileName)) {
+                    this.updateCompilerUnit(this.compiler, fileName);
                 }
                 else {
-                    this.addCompilerUnit(this.compiler, hostUnitIndex);
+                    this.addCompilerUnit(this.compiler, fileName);
                     fileAdded = true;
                 }
             }

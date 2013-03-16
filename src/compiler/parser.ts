@@ -60,12 +60,11 @@ module TypeScript {
         private incremental = false;
         public errorRecovery = false;
         public outfile: ITextWriter = undefined;
-        public errorCallback: (minChar: number, charLen: number, message: string, unit: number) => void = null;
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string) => void = null;
         private ambientModule = false;
         private ambientClass = false;
         private topLevel = true;
         private allowImportDeclaration = true;
-        private currentUnitIndex = (-1);
         private prevIDTok: Token = null;
         private statementInfoStack: IStatementInfo[] = [];
         private hasTopLevelImportOrExport = false; // for imports, only true if it's a dynamic module
@@ -165,17 +164,17 @@ module TypeScript {
         public reportParseError(message: string, startPos = this.scanner.startPos, pos = this.scanner.pos) {
             var len = Math.max(1, pos - startPos);
             if (this.errorCallback) {
-                this.errorCallback(startPos, len, message, this.currentUnitIndex);
+                this.errorCallback(startPos, len, message, this.fileName);
             }
             else if (this.errorRecovery) {
                 var lineCol = { line: -1, col: -1 };
                 this.getZeroBasedSourceLineCol(lineCol, startPos);
                 if (this.outfile) {
-                    this.outfile.WriteLine("// " + this.fname + " (" + (lineCol.line + 1) + "," + lineCol.col + "): " + message);
+                    this.outfile.WriteLine("// " + this.fileName + " (" + (lineCol.line + 1) + "," + lineCol.col + "): " + message);
                 }
             }
             else {
-                throw new SyntaxError(this.fname + " (" + this.scanner.line + "," + this.scanner.col + "): " + message);
+                throw new SyntaxError(this.fileName + " (" + this.scanner.line + "," + this.scanner.col + "): " + message);
             }
         }
 
@@ -4287,14 +4286,14 @@ module TypeScript {
             }
         }
 
-        private fname = "";
+        private fileName = "";
 
-        public quickParse(sourceText: IScriptSnapshot, fileName: string, unitIndex: number): QuickParseResult {
+        public quickParse(sourceText: IScriptSnapshot, fileName: string): QuickParseResult {
             //TODO: REVIEW: We set this to avoid adding a "module" decl in the resulting script (see parse() method)
             var svGenTarget = TypeScript.moduleGenTarget;
             try {
                 TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Local;
-                var script = this.parse(sourceText, fileName, unitIndex, AllowedElements.QuickParse);
+                var script = this.parse(sourceText, fileName, AllowedElements.QuickParse);
                 return new QuickParseResult(script, this.scanner.lexState);
             }
             finally {
@@ -4302,11 +4301,10 @@ module TypeScript {
             }
         }
 
-        public parse(sourceText: IScriptSnapshot, fileName: string, unitIndex: number, allowedElements = AllowedElements.Global): Script {
+        public parse(sourceText: IScriptSnapshot, fileName: string, allowedElements = AllowedElements.Global): Script {
             // Reset all parser state here.  This allows us to be resilient to reentrancy if an 
             // exception is thrown.
-            this.fname = fileName;
-            this.currentUnitIndex = unitIndex;
+            this.fileName = fileName;
 
             this.currentToken = null;
             this.needTerminator = false;
@@ -4398,7 +4396,7 @@ module TypeScript {
             this.popDeclLists();
             script.minChar = minChar;
             script.limChar = this.scanner.pos;
-            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap, unitIndex);
+            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap);
             script.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
             script.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
             script.isDeclareFile = this.parsingDeclareFile;
@@ -4410,8 +4408,14 @@ module TypeScript {
         }
     }
 
-    export function quickParse(logger: TypeScript.ILogger, scopeStartAST: AST, sourceText: IScriptSnapshot, minChar: number, limChar: number,
-        errorCapture: (minChar: number, charLen: number, message: string, unitIndex: number) => void ): QuickParseResult {
+    export function quickParse(
+        logger: TypeScript.ILogger,
+        scopeStartAST: AST,
+        sourceText: IScriptSnapshot,
+        minChar: number,
+        limChar: number,
+        fileName: string,
+        errorCapture: (minChar: number, charLen: number, message: string, fileName: string) => void ): QuickParseResult {
 
         var fragment = sourceText.getText(minChar, limChar);
         logger.log("Quick parse range (" + minChar + "," + limChar + "): \"" + TypeScript.stringToLiteral(fragment, 100) + "\"");
@@ -4425,7 +4429,8 @@ module TypeScript {
         var quickClassDecl = new ClassDeclaration(null, null, null, null, null);
         quickParser.currentClassDecl = quickClassDecl;
 
-        var result = quickParser.quickParse(new StringScriptSnapshot(fragment), "", 0);
+        // TODO: why are we passing an empty file name here?
+        var result = quickParser.quickParse(new StringScriptSnapshot(fragment), fileName);
         return result;
     }
 }

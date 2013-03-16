@@ -41,6 +41,8 @@ module Services {
         // language service.
         refresh(): void;
 
+        getHostIndex(fileName: string): number;
+
         // TODO: Remove these. 
         logAST(fileName: string): void;
         logSyntaxAST(fileName: string): void;
@@ -78,22 +80,22 @@ module Services {
     }
 
     export class ReferenceEntry {
-        constructor (public unitIndex: number, public ast: TypeScript.AST, public isWriteAccess: bool) {
+        constructor (public fileName: string, public ast: TypeScript.AST, public isWriteAccess: bool) {
         }
 
         public getHashCode(): number {
             return TypeScript.combineHashes(
-                    TypeScript.numberHashFn(this.unitIndex),
+                    TypeScript.Hash.computeSimple31BitStringHashCode(this.fileName),
                     TypeScript.combineHashes(
                         TypeScript.numberHashFn(this.ast.minChar),
                         TypeScript.numberHashFn(this.ast.limChar)));
         }
-
+        
         public equals(other: ReferenceEntry): bool {
             if (other === null || other === undefined)
                 return false;
 
-            return (this.unitIndex === other.unitIndex) &&
+            return (this.fileName === other.fileName) &&
                 (this.ast.minChar === other.ast.minChar) &&
                 (this.ast.limChar === other.ast.limChar);
         }
@@ -114,9 +116,9 @@ module Services {
             return this.entries;
         }
 
-        public addAst(unitIndex: number, ast: TypeScript.AST, isWriteAccess: bool): void {
+        public addAst(fileName: string, ast: TypeScript.AST, isWriteAccess: bool): void {
             // Avoid duplicate entries
-            var reference = new ReferenceEntry(unitIndex, ast, isWriteAccess);
+            var reference = new ReferenceEntry(fileName, ast, isWriteAccess);
             if (this.hashTable.lookup(reference) !== null)
                 return;
             this.hashTable.add(reference, reference);
@@ -127,8 +129,8 @@ module Services {
         }
 
         public addSymbol(sym: TypeScript.Symbol): void {
-            var unitIndex = sym.unitIndex;
-            if (unitIndex < 0)
+            var fileName = sym.fileName;
+            if (fileName === TypeScript.unknownLocationInfo.fileName)
                 return;
 
             var ast = sym.declAST;
@@ -164,7 +166,7 @@ module Services {
             if (symbolLocation === null)
                 symbolLocation = ast;
 
-            this.addAst(unitIndex, symbolLocation, /*isWriteAccess:*/false);
+            this.addAst(fileName, symbolLocation, /*isWriteAccess:*/false);
         }
     }
 
@@ -173,7 +175,7 @@ module Services {
         public kind: string = "";            // see ScriptElementKind
         public kindModifiers: string = "";   // see ScriptElementKindModifier, comma separated
         public matchKind: string = "";
-        public unitIndex: number = -1;
+        public fileName: string = TypeScript.unknownLocationInfo.fileName;
         public minChar: number = -1;
         public limChar: number = -1;
         public containerName: string = "";
@@ -182,7 +184,7 @@ module Services {
 
     export class NavigateToContext {
         public options = new TypeScript.AstWalkOptions();
-        public unitIndex: number = 0;
+        public fileName: string = TypeScript.unknownLocationInfo.fileName;
         public containerSymbols: TypeScript.Symbol[] = [];
         public containerKinds: string[] = [];
         public containerASTs: TypeScript.AST[] = [];
@@ -230,12 +232,12 @@ module Services {
 
     export class GetReferencesContext {
         // list of scripts (index) to collect references from
-        public scope: number[] = [];
+        public scope: string[] = [];
     }
 
     export class DefinitionInfo {
         constructor (
-            public unitIndex: number,
+            public fileName: string,
             public minChar: number,
             public limChar: number,
             public kind: string,
@@ -428,11 +430,15 @@ module Services {
         private syntaxASTState: ScriptSyntaxASTState;
         private formattingRulesProvider: Formatting.RulesProvider;
 
-        constructor (private host: ILanguageServiceHost) {
+        constructor(private host: ILanguageServiceHost) {
             this.logger = this.host;
             this.compilerState = new CompilerState(this.host);
             this.syntaxASTState = new ScriptSyntaxASTState();
             this.formattingRulesProvider = new Formatting.RulesProvider(this.logger);
+        }
+
+        public getHostIndex(fileName: string): number {
+            return this.compilerState.getHostIndex(fileName);
         }
 
         public refresh(): void {
@@ -1096,12 +1102,11 @@ module Services {
                 return null;
             }
 
-            var unitIndex = sym.unitIndex;
             var minChar = sym.declAST.minChar;
             var limChar = sym.declAST.limChar;
 
             return new DefinitionInfo(
-                this.compilerState.mapToHostUnitIndex(unitIndex),
+                sym.fileName,
                 minChar,
                 limChar,
                 this.getSymbolElementKind(sym),
@@ -1256,21 +1261,23 @@ module Services {
             this.refresh();
 
             var context = new GetReferencesContext();
+
             // Whole program scope
-            for (var i = 0, len = this.compilerState.getScriptCount() ; i < len; i++) {
-                context.scope.push(i);
+            var fileNames = this.compilerState.getFileNames();
+            for (var i = 0, len = fileNames.length; i < len; i++) {
+                context.scope.push(fileNames[i]);
             }
-            return this.getReferencesForSourceLocation(context, this.compilerState.getUnitIndex(fileName), pos);
+
+            return this.getReferencesForSourceLocation(context, fileName, pos);
         }
 
         public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
             this.refresh();
 
-            var unitIndex = this.compilerState.getUnitIndex(fileName);
             var context = new GetReferencesContext();
             // Single source file scope
-            context.scope.push(unitIndex);
-            return this.getReferencesForSourceLocation(context, unitIndex, pos);
+            context.scope.push(fileName);
+            return this.getReferencesForSourceLocation(context, fileName, pos);
         }
 
         public getImplementorsAtPosition(fileName: string, position: number): ReferenceEntry[] {
@@ -1294,12 +1301,12 @@ module Services {
             var symbolSet = collector.findImplementors(sym);
             var references = new ReferenceEntrySet();
             symbolSet.getAll().forEach(x => { references.addSymbol(x); })
-            return this.mapUnitIndexInReferenceEntrySet(references);
+            return references.getEntries();
         }
 
 
-        private getReferencesForSourceLocation(context: GetReferencesContext, unitIndex: number, position: number): ReferenceEntry[] {
-            var script = this.compilerState.getScript(unitIndex);
+        private getReferencesForSourceLocation(context: GetReferencesContext, fileName: string, position: number): ReferenceEntry[] {
+            var script = this.compilerState.getScript(fileName);
 
             var path = this.getIdentifierPathToPosition(script, position);
             if (path === null) {
@@ -1363,9 +1370,9 @@ module Services {
             var symbolSet = collector.findMemberOverrides(sym);
             var references = new ReferenceEntrySet();
 
-            var match = (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => {
+            var match = (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => {
                 //logger.log("Found reference: " + unitIndex + ", " + ast.minChar);
-                references.addAst(unitIndex, cur, this.isWriteAccess(parent, cur));
+                references.addAst(fileName, cur, this.isWriteAccess(parent, cur));
             }
 
             if (sym.kind() == TypeScript.SymbolKind.Field) {
@@ -1388,15 +1395,7 @@ module Services {
                 this.logger.log("No recognized symbol at the specified location (" + sym.kind() + ").");
             }
 
-            return this.mapUnitIndexInReferenceEntrySet(references);
-        }
-
-        private mapUnitIndexInReferenceEntrySet(references: ReferenceEntrySet): ReferenceEntry[] {
-            var result = references.getEntries();
-            result.forEach(x => {
-                x.unitIndex = this.compilerState.mapToHostUnitIndex(x.unitIndex);
-            });
-            return result;
+            return references.getEntries();
         }
 
         /// COMPLETION LISTS
@@ -1839,9 +1838,11 @@ module Services {
             var result: NavigateToItem[] = [];
 
             // Process all script ASTs and look for matchin symbols
-            for (i = 0, len = this.compilerState.getScriptCount() ; i < len; i++) {
+            var fileNames = this.compilerState.getFileNames();
+            for (i = 0, len = fileNames.length; i < len; i++) {
                 // Add the item for the script name if needed
-                var script = this.compilerState.getScript(i);
+                var fileName = fileNames[i];
+                var script = this.compilerState.getScript(fileName);
                 var fileName = script.locationInfo.fileName;
                 var matchKind = match(null, script, fileName);
                 if (matchKind != null) {
@@ -1849,13 +1850,13 @@ module Services {
                     item.name = fileName;
                     item.matchKind = matchKind;
                     item.kind = ScriptElementKind.scriptElement;
-                    item.unitIndex = this.compilerState.mapToHostUnitIndex(i);
+                    item.fileName = fileName;
                     item.minChar = script.minChar;
                     item.limChar = script.limChar;
                     result.push(item);
                 }
 
-                var items = this.getASTItems(i, script, match);
+                var items = this.getASTItems(fileName, script, match);
                 for (var j = 0; j < items.length; j++) {
                     result.push(items[j]);
                 }
@@ -1867,7 +1868,7 @@ module Services {
             this.refresh();
 
             var script = this.compilerState.getScriptAST(fileName);
-            return this.getASTItems(script.locationInfo.unitIndex, script, (name) => MatchKind.exact);
+            return this.getASTItems(script.locationInfo.fileName, script, (name) => MatchKind.exact);
         }
 
         /// Outlining
@@ -1943,7 +1944,7 @@ module Services {
                 }
             }
 
-            return this.getASTItems(script.locationInfo.unitIndex, script, match, findMinChar, findLimChar);
+            return this.getASTItems(script.locationInfo.fileName, script, match, findMinChar, findLimChar);
         }
 
         /// LOG AST
@@ -2073,57 +2074,57 @@ module Services {
             return result;
         }
 
-        private getReferencesToField(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
-            var fieldMatch = (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => {
+        private getReferencesToField(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
+            var fieldMatch = (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => {
                 if (cur.nodeType == TypeScript.NodeType.Name) {
-                    match(unitIndex, parent, cur);
+                    match(fileName, parent, cur);
                 }
             }
             return this.getReferencesToSymbolSet(context, symbolSet, fieldMatch);
         }
 
-        private getReferencesToType(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
-            var typeMatch = (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => {
+        private getReferencesToType(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
+            var typeMatch = (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => {
                 if (cur.nodeType == TypeScript.NodeType.Name) {
-                    match(unitIndex, parent, cur);
+                    match(fileName, parent, cur);
                 }
             }
             return this.getReferencesToSymbolSet(context, symbolSet, typeMatch);
         }
 
-        private getReferencesToParameter(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
-            var parameterMatch = (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => {
+        private getReferencesToParameter(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
+            var parameterMatch = (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => {
                 if (cur.nodeType == TypeScript.NodeType.Name) {
-                    match(unitIndex, parent, cur);
+                    match(fileName, parent, cur);
                 }
             }
             //TODO: Limit search to scope of function defining the parameter
             return this.getReferencesToSymbolSet(context, symbolSet, parameterMatch);
         }
 
-        private getReferencesToVariable(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
-            var variableMatch = (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => {
+        private getReferencesToVariable(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => void ) {
+            var variableMatch = (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => {
                 if (cur.nodeType == TypeScript.NodeType.Name) {
-                    match(unitIndex, parent, cur);
+                    match(fileName, parent, cur);
                 }
             }
             //TODO: Limit search to scope of function defining the variable
             return this.getReferencesToSymbolSet(context, symbolSet, variableMatch);
         }
 
-        private getReferencesToSymbolSet(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (unitIndex: number, parent: TypeScript.AST, cur: TypeScript.AST) => void ): void {
-            var processScript = (unitIndex: number) => {
+        private getReferencesToSymbolSet(context: GetReferencesContext, symbolSet: Services.SymbolSet, match: (fileName: string, parent: TypeScript.AST, cur: TypeScript.AST) => void ): void {
+            var processScript = (fileName: string) => {
                 var pre = (cur: TypeScript.AST, parent: TypeScript.AST): TypeScript.AST => {
                     if (TypeScript.isValidAstNode(cur)) {
                         var sym = (<any>cur).sym;
                         if (sym != null && symbolSet.contains(sym)) {
-                            match(unitIndex, parent, cur);
+                            match(fileName, parent, cur);
                         }
                     }
                     return cur;
                 }
 
-                TypeScript.getAstWalkerFactory().walk(this.compilerState.getScript(unitIndex), pre);
+                TypeScript.getAstWalkerFactory().walk(this.compilerState.getScript(fileName), pre);
                 //this.compilerState.getScript(unitIndex).walk(pre, null, null, new Tools.BaseWalkContext());
             }
 
@@ -2231,7 +2232,7 @@ module Services {
         }
 
         private getASTItems(
-            unitIndex: number,
+            fileName: string,
             ast: TypeScript.AST,
             match: (parent: TypeScript.AST, ast: TypeScript.AST, name: string) => string,
             findMinChar?: (parent: TypeScript.AST, ast: TypeScript.AST) => number,
@@ -2250,7 +2251,7 @@ module Services {
             }
 
             var context = new NavigateToContext();
-            context.unitIndex = unitIndex;
+            context.fileName = fileName;
 
             var addItem = (parent: TypeScript.AST, ast: TypeScript.AST, name: string, kind: string): NavigateToItem => {
                 // Compiler generated nodes have no positions (e.g. the "_map" of an enum)
@@ -2266,7 +2267,7 @@ module Services {
                     item.matchKind = matchKind;
                     item.kind = kind;
                     item.kindModifiers = this.getDeclNodeElementKindModifiers(ast);
-                    item.unitIndex = this.compilerState.mapToHostUnitIndex(context.unitIndex);
+                    item.fileName = context.fileName;
                     item.minChar = minChar;
                     item.limChar = limChar;
                     item.containerName = (TypeScript.lastOf(context.containerSymbols) === null ? "" : TypeScript.lastOf(context.containerSymbols).fullName());

@@ -1190,7 +1190,7 @@ module TypeScript {
                                     this.writeToOutput(".");
                                 }
                             }
-                            else if ((sym.unitIndex != this.checker.locationInfo.unitIndex) || (!this.declEnclosed(sym.declModule))) {
+                            else if ((sym.fileName != this.checker.locationInfo.fileName) || (!this.declEnclosed(sym.declModule))) {
                                 this.writeToOutput(sym.container.name + ".")
                             }
                         }

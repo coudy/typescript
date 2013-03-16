@@ -172,7 +172,7 @@ module TypeScript {
         var ambientMembers = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
 
         withType = new Type();
-        var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.unitIndex, withType);
+        var withSymbol = new WithSymbol(withStmt.minChar, context.typeFlow.checker.locationInfo.fileName, withType);
         withType.members = members;
         withType.ambientMembers = ambientMembers;
         withType.symbol = withSymbol;
@@ -318,7 +318,7 @@ module TypeScript {
         var ambientFuncStaticMembers = new ScopedMembers(new DualStringHashTable(ambientFuncStaticTable, new StringHashTable()));
 
         // REVIEW: Is it a problem that this is being set twice for properties and constructors?
-        funcDecl.unitIndex = context.typeFlow.checker.locationInfo.unitIndex;
+        funcDecl.fileName = context.typeFlow.checker.locationInfo.fileName;
 
         var locals = new SymbolScopeBuilder(funcMembers, ambientFuncMembers, null, null, parentScope, localContainer);
         var statics = new SymbolScopeBuilder(funcStaticMembers, ambientFuncStaticMembers, null, null, parentScope, null);

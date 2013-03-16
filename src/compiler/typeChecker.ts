@@ -138,7 +138,7 @@ module TypeScript {
             // shared global state is resident
             this.setCollectionMode(TypeCheckCollectionMode.Resident);
 
-            this.wildElm = new TypeSymbol("_element", -1, 0, -1, new Type());
+            this.wildElm = new TypeSymbol("_element", -1, 0, unknownLocationInfo.fileName, new Type());
             this.importedGlobalsTypeTable.addPublicMember(this.wildElm.name, this.wildElm);
 
             this.mod = new ModuleType(dualGlobalScopedEnclosedTypes, dualGlobalScopedAmbientEnclosedTypes);
@@ -146,7 +146,7 @@ module TypeScript {
             this.mod.ambientMembers = dualGlobalScopedAmbientMembers;
             this.mod.containedScope = this.globalScope;
 
-            this.gloMod = new TypeSymbol(globalId, -1, 0, -1, this.mod);
+            this.gloMod = new TypeSymbol(globalId, -1, 0, unknownLocationInfo.fileName, this.mod);
             this.mod.members.addPublicMember(this.gloMod.name, this.gloMod);
 
             this.defineGlobalValue("undefined", this.undefinedType);
@@ -156,7 +156,7 @@ module TypeScript {
         public enterPrimitive(flags: number, name: string) {
             var primitive = new Type();
             primitive.primitiveTypeClass = flags;
-            var symbol = new TypeSymbol(name, -1, name.length, -1, primitive);
+            var symbol = new TypeSymbol(name, -1, name.length, unknownLocationInfo.fileName, primitive);
             symbol.typeCheckStatus = TypeCheckStatus.Finished;
             primitive.symbol = symbol;
             this.importedGlobals.enter(null, null, symbol, this.errorReporter, true, true, true);
@@ -196,7 +196,7 @@ module TypeScript {
         public defineGlobalValue(name: string, type: Type) {
             var valueLocation = new ValueLocation();
             valueLocation.typeLink = new TypeLink();
-            var sym = new VariableSymbol(name, 0, -1, valueLocation);
+            var sym = new VariableSymbol(name, 0, unknownLocationInfo.fileName, valueLocation);
             sym.setType(type);
             sym.typeCheckStatus = TypeCheckStatus.Finished;
             sym.container = this.gloMod;
@@ -241,7 +241,7 @@ module TypeScript {
         public checkControlFlowUseDef = false;
         public styleSettings: StyleSettings = null;
 
-        public units: LocationInfo[] = null;
+        public fileNameToLocationInfo: StringHashTable = null;
 
         public voidType: Type;
         public booleanType: Type;
@@ -423,7 +423,7 @@ module TypeScript {
                     var parameter = <ArgDecl>args.members[i];
                     var paramDef = new ValueLocation();
                     var parameterSymbol = new ParameterSymbol(parameter.id.text, parameter.minChar,
-                                                            this.locationInfo.unitIndex, paramDef);
+                                                            this.locationInfo.fileName, paramDef);
                     parameterSymbol.declAST = parameter;
                     parameterSymbol.funcDecl = funcDecl;
                     parameter.id.sym = parameterSymbol;
@@ -550,7 +550,7 @@ module TypeScript {
                 groupType.symbol =
                     new TypeSymbol(funcName ? funcName : this.anon,
                                     funcDecl.minChar, funcDecl.limChar - funcDecl.minChar,
-                                    this.locationInfo.unitIndex,
+                                    this.locationInfo.fileName,
                                     groupType);
                 if (!useOverloadGroupSym) {
                     groupType.symbol.declAST = funcDecl;
@@ -684,7 +684,7 @@ module TypeScript {
 
             if (fgSym == null) {
                 var field = new ValueLocation();
-                accessorSym = new FieldSymbol(nameText, funcDecl.minChar, this.locationInfo.unitIndex, false, field);
+                accessorSym = new FieldSymbol(nameText, funcDecl.minChar, this.locationInfo.fileName, false, field);
                 field.symbol = accessorSym;
                 accessorSym.declAST = funcDecl; // REVIEW: need to reset for getters and setters
 
@@ -1012,7 +1012,7 @@ module TypeScript {
         public resolveVarDecl(varDecl: VarDecl, scope: SymbolScope): Symbol {
             var field = new ValueLocation();
             var fieldSymbol =
-                new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.unitIndex,
+                new FieldSymbol(varDecl.id.text, varDecl.minChar, this.locationInfo.fileName,
                                 (varDecl.varFlags & VarFlags.Readonly) == VarFlags.None,
                                 field);
             fieldSymbol.transferVarFlags(varDecl.varFlags);
@@ -1076,7 +1076,7 @@ module TypeScript {
                                 var interfaceSymbol = new TypeSymbol((<Identifier>interfaceDecl.name).text,
                                                                    ast.minChar,
                                                                    ast.limChar - ast.minChar,
-                                                                   this.locationInfo.unitIndex,
+                                                                   this.locationInfo.fileName,
                                                                    interfaceType);
                                 interfaceType.symbol = interfaceSymbol;
                                 interfaceType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));

@@ -823,10 +823,10 @@ module TypeScript {
                     this.scope = instanceScope;
                     var container = sym.container;
                     var svCurrentModDecl = this.checker.currentModDecl;
-                    if (this.checker.units &&
-                        (sym.unitIndex >= 0) &&
-                        (sym.unitIndex < this.checker.units.length)) {
-                        this.checker.locationInfo = this.checker.units[sym.unitIndex];
+                    if (this.checker.fileNameToLocationInfo &&
+                        (sym.fileName != unknownLocationInfo.fileName) &&
+                        this.checker.fileNameToLocationInfo.lookup(sym.fileName)) {
+                        this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(sym.fileName);
                     }
                     else {
                         this.checker.locationInfo = unknownLocationInfo;
@@ -1730,12 +1730,12 @@ module TypeScript {
                         if (hasFlag(local.varFlags, VarFlags.Static)) {
                             local.varFlags |= VarFlags.LocalStatic;
                             varSym = new FieldSymbol(local.id.text, local.minChar,
-                                                      this.checker.locationInfo.unitIndex,
+                                                      this.checker.locationInfo.fileName,
                                                       true, localVar);
                         }
                         else {
                             varSym = new VariableSymbol(local.id.text, local.minChar,
-                                                      this.checker.locationInfo.unitIndex,
+                                                      this.checker.locationInfo.fileName,
                                                       localVar);
                         }
                         varSym.transferVarFlags(local.varFlags);
@@ -1765,7 +1765,7 @@ module TypeScript {
                     var argLoc = new ValueLocation();
                     argLoc.typeLink = new TypeLink();
                     var theArgSym = new VariableSymbol("arguments", vars.minChar,
-                                                     this.checker.locationInfo.unitIndex,
+                                                     this.checker.locationInfo.fileName,
                                                      argLoc);
 
                     // if the user is using a custom lib.d.ts where IArguments has not been defined
@@ -1803,7 +1803,7 @@ module TypeScript {
                             var localVar: ValueLocation = new ValueLocation();
                             localVar.typeLink = new TypeLink();
                             var varSym = new ParameterSymbol(local.id.text, local.minChar,
-                                                                   this.checker.locationInfo.unitIndex,
+                                                                   this.checker.locationInfo.fileName,
                                                                    localVar);
                             varSym.funcDecl = constructorDecl;
                             varSym.declAST = local;
@@ -2349,10 +2349,10 @@ module TypeScript {
                 }
             }
 
-            if (funcDecl.unitIndex > 0) {
-                if (this.checker.units &&
-                    (funcDecl.unitIndex < this.checker.units.length)) {
-                    this.checker.locationInfo = this.checker.units[funcDecl.unitIndex];
+            if (funcDecl.fileName !== unknownLocationInfo.fileName) {
+                if (this.checker.fileNameToLocationInfo &&
+                    this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName)) {
+                    this.checker.locationInfo = this.checker.fileNameToLocationInfo.lookup(funcDecl.fileName);
                 }
                 else {
                     this.checker.locationInfo = unknownLocationInfo;
@@ -3153,7 +3153,7 @@ module TypeScript {
             var resultType = new Type();
             resultType.symbol = new TypeSymbol(this.checker.anon, objectLit.minChar,
                                              objectLit.limChar - objectLit.minChar,
-                                             this.checker.locationInfo.unitIndex,
+                                             this.checker.locationInfo.fileName,
                                              resultType);
 
             resultType.members = new ScopedMembers(new DualStringHashTable(new StringHashTable(), new StringHashTable()));
@@ -3249,7 +3249,7 @@ module TypeScript {
                         var field = new ValueLocation();
                         fieldSymbol =
                             new FieldSymbol(text, id.minChar,
-                                            this.checker.locationInfo.unitIndex,
+                                            this.checker.locationInfo.fileName,
                                             true, field);
                         fieldSymbol.flags |= SymbolFlags.Property;
                         field.symbol = fieldSymbol;

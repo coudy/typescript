@@ -64,7 +64,7 @@ module TypeScript {
     export class CompilationEnvironment {
         constructor (public compilationSettings: CompilationSettings, public ioHost: IFileSystemObject) { }
         public code: SourceUnit[] = [];
-        public inputOutputMap = [];
+        public inputFileNameToOutputFileName = new StringHashTable();
     }
 
     export interface IResolutionDispatcher {

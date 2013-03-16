@@ -69,11 +69,13 @@ module TypeScript {
         constructor(public textWriter: ITextWriter) {
         }
 
-        public setUnits(units: LocationInfo[]) {
+        public setUnits(fileNameToLocationInfo: TypeScript.StringHashTable) {
             this.locationInfoCache = {};
 
-            for (var i = 0; i < units.length; i++) {
-                this.locationInfoCache[units[i].fileName] = units[i];
+            var fileNames = fileNameToLocationInfo.getAllKeys();
+            for (var i = 0; i < fileNames.length; i++) {
+                var fileName = fileNames[i];
+                this.locationInfoCache[fileName] = fileNameToLocationInfo.lookup(fileName);
             }
         }
 

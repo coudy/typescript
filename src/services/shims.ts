@@ -323,7 +323,7 @@ module Services {
                     var definition = this.languageService.getDefinitionAtPosition(fileName, pos);
                     var result = "";
                     if (definition !== null) {
-                        result = definition.unitIndex + '\t' +
+                        result = this.languageService.getHostIndex(definition.fileName) + '\t' +
                             definition.minChar + '\t' +
                             definition.limChar + '\t' +
                             definition.kind + '\t' +
@@ -392,7 +392,7 @@ module Services {
             var result = "";
             for (var i = 0; i < entries.length; i++) {
                 var entry = entries[i];
-                result += entry.unitIndex + " " + entry.ast.minChar + " " + entry.ast.limChar + " " + entry.isWriteAccess + "\n";
+                result += this.languageService.getHostIndex(entry.fileName) + " " + entry.ast.minChar + " " + entry.ast.limChar + " " + entry.isWriteAccess + "\n";
             }
             return result;
         }
@@ -539,7 +539,7 @@ module Services {
                     item.containerName + "\t" +
                     item.containerKind + "\t" +
                     item.matchKind + "\t" +
-                    item.unitIndex + "\t" +
+                    this.languageService.getHostIndex(item.fileName) + "\t" +
                     item.minChar + "\t" +
                     item.limChar + "\n";
             }

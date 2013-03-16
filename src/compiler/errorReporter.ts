@@ -95,7 +95,7 @@ module TypeScript {
             this.hasErrors = true;
             if (ast && this.parser.errorRecovery && this.parser.errorCallback) {
                 var len = (ast.limChar - ast.minChar);
-                this.parser.errorCallback(ast.minChar, len, message, this.checker.locationInfo.unitIndex);
+                this.parser.errorCallback(ast.minChar, len, message, this.checker.locationInfo.fileName);
             }
             else {
                 this.writePrefix(ast);
@@ -111,7 +111,7 @@ module TypeScript {
 
             this.hasErrors = true;
             if (this.parser.errorRecovery && this.parser.errorCallback) {
-                this.parser.errorCallback(symbol.location, symbol.length, message, this.checker.locationInfo.unitIndex);
+                this.parser.errorCallback(symbol.location, symbol.length, message, this.checker.locationInfo.fileName);
             }
             else {
                 this.writePrefixFromSym(symbol);

@@ -1011,7 +1011,7 @@ module TypeScript {
         public tmp1Declared = false;
         public enclosingFnc: FuncDecl = null;
         public freeVariables: Symbol[] = [];
-        public unitIndex = -1;
+        public fileName = unknownLocationInfo.fileName;
         public classDecl: NamedDeclaration = null;
         public boundToProperty: VarDecl = null;
         public isOverload = false;
@@ -1154,12 +1154,11 @@ module TypeScript {
 
     export class LocationInfo {
         constructor(public fileName: string,
-                    public lineMap: number[],
-                    public unitIndex) {
+                    public lineMap: number[]) {
         }
     }
 
-    export var unknownLocationInfo = new LocationInfo("unknown", null, -1);
+    export var unknownLocationInfo = new LocationInfo("unknown", null);
 
     export class Script extends FuncDecl {
         public locationInfo: LocationInfo = null;
@@ -2396,7 +2395,7 @@ module TypeScript {
             var exceptVar = new ValueLocation();
             var varSym = new VariableSymbol((<VarDecl>this.param).id.text,
                                           this.param.minChar,
-                                          typeFlow.checker.locationInfo.unitIndex,
+                                          typeFlow.checker.locationInfo.fileName,
                                           exceptVar);
             exceptVar.symbol = varSym;
             exceptVar.typeLink = new TypeLink();

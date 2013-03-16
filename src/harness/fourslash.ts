@@ -649,7 +649,7 @@ module FourSlash {
         public goToDefinition() {
             this.realLangSvc.refresh();
             var defn = this.realLangSvc.getDefinitionAtPosition(this.activeFile.fileName, this.currentCaretPosition);
-            this.openFile(defn.unitIndex);
+            this.openFile(defn.fileName);
             this.currentCaretPosition = defn.minChar;
         }
 
