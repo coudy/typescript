@@ -773,7 +773,7 @@ module Harness {
 
             compiler.parseEmitOption(stdout);
             TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
-            compiler.addUnit(Harness.Compiler.libText, "lib.d.ts", true);
+            compiler.addUnit(Harness.Compiler.libText, "lib.d.ts");
             return compiler;
         }
 
@@ -1114,7 +1114,7 @@ module Harness {
                     compilationContext.preCompile();
                 }
 
-                addUnit(code, unitName, false, false, references);
+                addUnit(code, unitName, false, references);
                 compiler.reTypeCheck();
 
                 var outputs = {};
@@ -1252,7 +1252,7 @@ module Harness {
             postCompile: () => void;
         }
 
-        export function addUnit(code: string, unitName?: string, isResident?: bool, isDeclareFile?: bool, references?: TypeScript.IFileReference[]) {
+        export function addUnit(code: string, unitName?: string, isDeclareFile?: bool, references?: TypeScript.IFileReference[]) {
             var script: TypeScript.Script = null;
             var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
 
@@ -1267,7 +1267,7 @@ module Harness {
                 // but without it subsequent tests are treated as edits, making for somewhat useful stress testing
                 // of persistent typecheck state
                 //compiler.addUnit("", uName, isResident, references); // equivalent to compiler.deleteUnit(...)
-                script = compiler.addUnit(code, uName, isResident, references);
+                script = compiler.addUnit(code, uName, references);
                 needsFullTypeCheck = true;
             }
 
@@ -1352,7 +1352,7 @@ module Harness {
             var isDeclareFile = Harness.Compiler.isDeclareFile(unitName);
             // for single file tests just add them as using the old '0.ts' naming scheme
             var uName = context ? unitName : ((isDeclareFile) ? '0.d.ts' : '0.ts');
-            scripts.push(addUnit(code, uName, false, isDeclareFile, references));
+            scripts.push(addUnit(code, uName, isDeclareFile, references));
             compile(code, uName);
 
             if (usePull) {
@@ -1385,7 +1385,7 @@ module Harness {
                     // REVIEW: if any dependency has a triple slash reference then does postCompile potentially have to do a recreate since we can't update references with updateUnit?
                     // easy enough to do if so, prefer to avoid the recreate cost until it proves to be an issue
                     dependencies.forEach(dep => {
-                        addUnit(dep.content, dep.name, false, Harness.Compiler.isDeclareFile(dep.name));
+                        addUnit(dep.content, dep.name, Harness.Compiler.isDeclareFile(dep.name));
                         addedFiles.push(dep.name);
                     });
                 };

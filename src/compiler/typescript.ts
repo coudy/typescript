@@ -258,10 +258,6 @@ module TypeScript {
             return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
                 for (var i = 0, len = this.units.length; i < len; i++) {
                     if (this.units[i].fileName == fileName) {
-                        if ((<Script>this.scripts.members[i]).isResident) {
-                            return UpdateUnitResult.noEdits(i);
-                        }
-
                         if (setRecovery) {
                             this.parser.setErrorRecovery(null);
                         }
@@ -292,16 +288,16 @@ module TypeScript {
             });
         }
 
-        public addUnit(prog: string, fileName: string, keepResident? = false, referencedFiles?: IFileReference[] = []): Script {
-            return this.addSourceUnit(new StringScriptSnapshot(prog), fileName, keepResident, referencedFiles);
+        public addUnit(prog: string, fileName: string, referencedFiles?: IFileReference[] = []): Script {
+            return this.addSourceUnit(new StringScriptSnapshot(prog), fileName, referencedFiles);
         }
 
         private stringTable: Collections.StringTable = Collections.createStringTable();
         
         private typeCollectionTime = 0;
 
-        public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, keepResident:bool, referencedFiles?: IFileReference[] = []): Script {
-            return this.timeFunction("addSourceUnit(" + fileName + ", " + keepResident + ")", () => {
+        public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
+            return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
                 //if (fileName.indexOf("getCompletionsAtPosition5") < 0) {
                 //    return;
                 //}
@@ -320,8 +316,7 @@ module TypeScript {
                     var oldParseTime = timer.time;
 
                     script.referencedFiles = referencedFiles;
-                    script.isResident = keepResident;
-                    this.persistentTypeState.setCollectionMode(keepResident ? TypeCheckCollectionMode.Resident : TypeCheckCollectionMode.Transient);
+                    this.persistentTypeState.setCollectionMode(TypeCheckCollectionMode.Transient);
                 }
                 else {
                     var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
@@ -347,7 +342,6 @@ module TypeScript {
                             //}
 
                             script2.referencedFiles = referencedFiles;
-                            script2.isResident = keepResident;
 
                             reParsedScript = script2;
                              
@@ -463,36 +457,16 @@ module TypeScript {
                 var script: Script = null;
                 var len = this.scripts.members.length;
 
-
-                this.persistentTypeState.setCollectionMode(TypeCheckCollectionMode.Resident);
-                // first, typecheck resident "lib" scripts, if necessary
-                for (i = 0; i < len; i++) {
-                    script = <Script>this.scripts.members[i];
-                    if (!script.isResident || script.hasBeenTypeChecked) { continue; }
-
-                    this.typeFlow.assignScopes(script);
-                    this.typeFlow.initLibs();
-                }
-                for (i = 0; i < len; i++) {
-                    script = <Script>this.scripts.members[i];
-                    if (!script.isResident || script.hasBeenTypeChecked) { continue; }
-
-                    this.typeFlow.typeCheck(script);
-                    script.hasBeenTypeChecked = true;
-                }
-
                 // next typecheck scripts that may change
                 this.persistentTypeState.setCollectionMode(TypeCheckCollectionMode.Transient);
                 len = this.scripts.members.length;
                 for (i = 0; i < len; i++) {
                     script = <Script>this.scripts.members[i];
-                    if (script.isResident) { continue; }
                     this.typeFlow.assignScopes(script);
                     this.typeFlow.initLibs();
                 }
                 for (i = 0; i < len; i++) {
                     script = <Script>this.scripts.members[i];
-                    if (script.isResident) { continue; }
                     this.typeFlow.typeCheck(script);
                 }
 
@@ -547,9 +521,6 @@ module TypeScript {
             return this.timeFunction("cleanTypesForReTypeCheck()", () => {
                 for (var i = 0, len = this.scripts.members.length; i < len; i++) {
                     var script = this.scripts.members[i];
-                    if ((<Script>script).isResident) {
-                        continue;
-                    }
                     this.cleanASTTypesForReTypeCheck(script);
                     this.typeChecker.collectTypes(script);
                 }
@@ -687,7 +658,7 @@ module TypeScript {
             }
 
             // If its already a declare file or is resident or does not contain body 
-            if (!!script && (script.isDeclareFile || script.isResident || script.bod == null)) {
+            if (!!script && (script.isDeclareFile || script.bod == null)) {
                 return false;
             }
 

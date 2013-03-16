@@ -18,6 +18,19 @@
 module Services {
 
     //
+    // Public interface of the host of a language service instance.
+    //
+    export interface ILanguageServiceHost extends TypeScript.ILogger {
+        getCompilationSettings(): TypeScript.CompilationSettings;
+        getScriptCount(): number;
+        getScriptId(scriptIndex: number): string;
+        getScriptSnapshot(scriptIndex): TypeScript.IScriptSnapshot;
+        getScriptVersion(scriptIndex: number): number;
+        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.TextChangeRange;
+        getHostSettings(): TypeScript.IHostSettings;
+    }
+
+    //
     // Public services of a language service instance associated
     // with a language service host instance
     //
@@ -54,20 +67,6 @@ module Services {
 
         getSymbolTree(): Services.ISymbolTree;
         getEmitOutput(fileName: string) : IOutputFile[];
-    }
-
-    //
-    // Public interface of the host of a language service instance.
-    //
-    export interface ILanguageServiceHost extends TypeScript.ILogger {
-        getCompilationSettings(): TypeScript.CompilationSettings;
-        getScriptCount(): number;
-        getScriptId(scriptIndex: number): string;
-        getScriptSnapshot(scriptIndex): TypeScript.IScriptSnapshot;
-        getScriptIsResident(scriptIndex: number): bool;
-        getScriptVersion(scriptIndex: number): number;
-        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.TextChangeRange;
-        getHostSettings(): TypeScript.IHostSettings;
     }
 
     export function logInternalError(logger: TypeScript.ILogger, err: Error) {

@@ -43,7 +43,7 @@ module Services {
         }
 
         private setUnitMapping(unitIndex: number, hostUnitIndex: number) {
-            this.scriptMap.setEntry(this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
+            this.scriptMap.setEntry(this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
             this.setUnitIndexMapping(unitIndex, hostUnitIndex);
         }
 
@@ -94,7 +94,7 @@ module Services {
             //      and we need unit mapping info to do that correctly.
             this.setUnitMapping(newUnitIndex, hostUnitIndex);
 
-            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex));
         }
 
         private getHostCompilationSettings() {

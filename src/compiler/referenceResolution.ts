@@ -63,7 +63,6 @@ module TypeScript {
 
     export class CompilationEnvironment {
         constructor (public compilationSettings: CompilationSettings, public ioHost: IFileSystemObject) { }
-        public residentCode: SourceUnit[] = [];
         public code: SourceUnit[] = [];
         public inputOutputMap = [];
     }

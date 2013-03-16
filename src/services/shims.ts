@@ -19,6 +19,22 @@
 module Services {
 
     //
+    // Public interface of the host of a language service shim instance.
+    //
+    export interface ILanguageServiceShimHost extends TypeScript.ILogger {
+        getCompilationSettings(): string;
+        getScriptCount(): number;
+        getScriptId(scriptIndex: number): string;
+        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
+        getScriptVersion(scriptIndex: number): number;
+
+        // Returns either 'null' if there was no change, or a TextChangeRange object encoded in 
+        // JSON in the form: { span: { start: number, length: number }, newLength: number }
+        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
+        getHostSettings(): string;
+    }
+
+    //
     // Public interface of of a language service instance shim.
     //
     export interface ILanguageServiceShim {
@@ -56,23 +72,6 @@ module Services {
         getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: string/*Services.FormatCodeOptions*/): string;
 
         getEmitOutput(fileName: string): string;
-    }
-
-    //
-    // Public interface of the host of a language service shim instance.
-    //
-    export interface ILanguageServiceShimHost extends TypeScript.ILogger {
-        getCompilationSettings(): string;
-        getScriptCount(): number;
-        getScriptId(scriptIndex: number): string;
-        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
-        getScriptIsResident(scriptIndex: number): bool;
-        getScriptVersion(scriptIndex: number): number;
-
-        // Returns either 'null' if there was no change, or a TextChangeRange object encoded in 
-        // JSON in the form: { span: { start: number, length: number }, newLength: number }
-        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
-        getHostSettings(): string;
     }
 
     export class LanguageServiceShimHostAdapter implements Services.ILanguageServiceHost {
@@ -122,10 +121,6 @@ module Services {
 
         public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {
             return this.shimHost.getScriptSnapshot(scriptIndex);
-        }
-
-        public getScriptIsResident(scriptIndex: number): bool {
-            return this.shimHost.getScriptIsResident(scriptIndex);
         }
 
         public getScriptVersion(scriptIndex: number): number {

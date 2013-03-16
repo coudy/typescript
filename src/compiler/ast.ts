@@ -1166,7 +1166,6 @@ module TypeScript {
         public referencedFiles: IFileReference[] = [];
         public requiresGlobal = false;
         public requiresExtendsBlock = false;
-        public isResident = false;
         public isDeclareFile = false;
         public hasBeenTypeChecked = false;
         public topLevelMod: ModuleDeclaration = null;
@@ -1201,7 +1200,7 @@ module TypeScript {
                 return this.cachedEmitRequired;
             }
 
-            if (!this.isDeclareFile && !this.isResident && this.bod) {
+            if (!this.isDeclareFile && this.bod) {
                 if (this.bod.members.length == 0) {
                     // allow empty files that are not declare files 
                     return this.setCachedEmitRequired(true);

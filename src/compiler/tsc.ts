@@ -177,7 +177,7 @@ class BatchCompiler {
             compiler.emitCommentsToOutput();
         }
 
-        var consumeUnit = (code: TypeScript.SourceUnit, addAsResident: bool) => {
+        var consumeUnit = (code: TypeScript.SourceUnit) => {
             try {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
@@ -196,7 +196,7 @@ class BatchCompiler {
                         compiler.parser.setErrorRecovery(this.errorReporter);
                     }
 
-                    compiler.addUnit(code.content, code.path, addAsResident, code.referencedFiles);
+                    compiler.addUnit(code.content, code.path, code.referencedFiles);
                 }
             }
             catch (err) {
@@ -207,7 +207,7 @@ class BatchCompiler {
         }
 
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            consumeUnit(this.resolvedEnvironment.code[iCode], false);
+            consumeUnit(this.resolvedEnvironment.code[iCode]);
         }
 
         var emitterIOHost = {

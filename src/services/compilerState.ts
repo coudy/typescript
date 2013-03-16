@@ -27,14 +27,13 @@ module Services {
             this.map = new TypeScript.StringHashTable();
         }
 
-        public setEntry(id: string, isResident: bool, version: number) {
+        public setEntry(id: string, version: number) {
             var entry: ScriptMapEntry = this.map.lookup(id);
             if (entry == null) {
-                entry = new ScriptMapEntry(isResident, version);
+                entry = new ScriptMapEntry(version);
                 this.map.add(id, entry);
             }
             else {
-                entry.isResident = isResident;
                 entry.version = version;
             }
         }
@@ -45,7 +44,7 @@ module Services {
     }
 
     export class ScriptMapEntry {
-        constructor(public isResident: bool, public version: number) {
+        constructor(public version: number) {
         }
     }
 
@@ -60,8 +59,7 @@ module Services {
             private host: ILanguageServiceHost,
             public hostUnitIndex: number,
             public id: string,
-            version: number,
-            public isResident: bool) {
+            version: number) {
             this._sourceText = null;
             this.version = version;
         }
@@ -119,10 +117,6 @@ module Services {
             return this.array[scriptIndex].version;
         }
 
-        public getIsResident(scriptIndex: number): bool {
-            return this.array[scriptIndex].isResident;
-        }
-
         public getScriptId(scriptIndex: number): string {
             return this.array[scriptIndex].id;
         }
@@ -135,8 +129,7 @@ module Services {
             this.array[scriptIndex] = new HostCacheEntry(
                 this.host, scriptIndex,
                 this.host.getScriptId(scriptIndex),
-                this.host.getScriptVersion(scriptIndex),
-                this.host.getScriptIsResident(scriptIndex));
+                this.host.getScriptVersion(scriptIndex));
         }
     }
 
@@ -286,7 +279,7 @@ module Services {
         }
 
         private setUnitMapping(unitIndex: number, hostUnitIndex: number) {
-            this.scriptMap.setEntry(this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
+            this.scriptMap.setEntry(this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getVersion(hostUnitIndex));
             this.setUnitIndexMapping(unitIndex, hostUnitIndex);
         }
 
@@ -342,7 +335,7 @@ module Services {
             //      and we need unit mapping info to do that correctly.
             this.setUnitMapping(newUnitIndex, hostUnitIndex);
 
-            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex), this.hostCache.getIsResident(hostUnitIndex));
+            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(hostUnitIndex), this.hostCache.getScriptId(hostUnitIndex));
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler,
@@ -357,15 +350,6 @@ module Services {
             this.setUnitIndexMapping(unitIndex, hostUnitIndex);
 
             var previousEntry = this.scriptMap.getEntry(fileName);
-
-            //
-            // If file is resident, no update for sure
-            //
-            var isResident = this.hostCache.getIsResident(hostUnitIndex);
-            if (isResident) {
-                //logger.log("Resident unit are always unchanged (until they become resident): " + unitIndex + "-" + fileName);
-                return TypeScript.UpdateUnitResult.noEdits(unitIndex); // not updated
-            }
 
             //
             // If file version is the same, assume no update
@@ -553,21 +537,6 @@ module Services {
                 var hostUnitIndex = this.hostCache.getUnitIndex(fileName);
                 if (hostUnitIndex < 0) {
                     this.logger.log("Creating new compiler instance because of unit is not part of program anymore: " + unitIndex + "-" + fileName);
-                    this.createCompiler();
-                    return true;
-                }
-            }
-
-            //
-            // If any file "isResident" status has changed, create a new compiler instance
-            //
-            for (unitIndex = 0, len = this.compiler.units.length; unitIndex < len; unitIndex++) {
-                fileName = this.compiler.units[unitIndex].fileName;
-                var isResident = (<TypeScript.Script>this.compiler.scripts.members[unitIndex]).isResident;
-                hostUnitIndex = this.hostCache.getUnitIndex(fileName);
-
-                if (this.hostCache.getIsResident(hostUnitIndex) != isResident) {
-                    this.logger.log("Creating new compiler instance because of unit 'isResident' status has changed: " + unitIndex + "-" + fileName);
                     this.createCompiler();
                     return true;
                 }

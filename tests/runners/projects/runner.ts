@@ -10,7 +10,6 @@ class HarnessHost implements TypeScript.IResolverHost {
         var resolvedEnv = new TypeScript.CompilationEnvironment(preEnv.compilationSettings, preEnv.ioHost);
 
         var nCode = preEnv.code.length;
-        var nRCode = preEnv.residentCode.length;
         var resolvedPaths: any = {};
 
         var postResolutionError =
@@ -27,20 +26,6 @@ class HarnessHost implements TypeScript.IResolverHost {
                 }
             }
         };
-
-        var residentResolutionDispatcher: TypeScript.IResolutionDispatcher = {
-            postResolutionError: postResolutionError,
-            postResolution: function (path: string, code: TypeScript.IScriptSnapshot) {
-                if (!resolvedPaths[path]) {
-                    resolvedEnv.residentCode.push(<TypeScript.SourceUnit>code);
-                    resolvedPaths[path] = true;
-                }
-            }
-        };
-
-        for (var i = 0; i < nRCode; i++) {
-            resolver.resolveCode(TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.residentCode[i].path)), "", false, residentResolutionDispatcher);
-        }
 
         for (var i = 0; i < nCode; i++) {
             resolver.resolveCode(TypeScript.switchToForwardSlashes(preEnv.ioHost.resolvePath(preEnv.code[i].path)), "", false, resolutionDispatcher);
@@ -115,7 +100,7 @@ class HarnessBatch {
             compiler.emitCommentsToOutput();
         }
 
-        function consumeUnit(code: TypeScript.SourceUnit, addAsResident: bool) {
+        function consumeUnit(code: TypeScript.SourceUnit) {
             try {
             // if file resolving is disabled, the file's content will not yet be loaded
                 if (!(_self.compilationSettings.resolve)) {
@@ -131,7 +116,7 @@ class HarnessBatch {
                     if (_self.compilationSettings.errorRecovery) {
                         compiler.parser.setErrorRecovery(this.errorOut);
                     }
-                    compiler.addUnit(code.content, code.path, addAsResident);
+                    compiler.addUnit(code.content, code.path);
                 }
             }
             catch (err) {
@@ -144,12 +129,8 @@ class HarnessBatch {
             }
         }
 
-        for (var iResCode = 0 ; iResCode < this.resolvedEnvironment.residentCode.length; iResCode++) {
-            consumeUnit(this.resolvedEnvironment.residentCode[iResCode], true);
-        }
-
         for (var iCode = 0 ; iCode < this.resolvedEnvironment.code.length; iCode++) {
-            consumeUnit(this.resolvedEnvironment.code[iCode], false);
+            consumeUnit(this.resolvedEnvironment.code[iCode]);
         }
 
         compiler.typeCheck();
