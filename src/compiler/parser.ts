@@ -3433,7 +3433,7 @@ module TypeScript {
 
             function mayNotBeExported() {
                 if (hasFlag(modifiers, Modifiers.Exported)) {
-                    this.reportError("Statement may not be exported");
+                    this.reportParseError("Statement may not be exported");
                 }
             }
 

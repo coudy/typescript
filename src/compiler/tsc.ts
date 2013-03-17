@@ -630,7 +630,7 @@ class BatchCompiler {
             }
 
             // All remaing unmatched items in the new list have been added
-            for (var k = j; k < newFiles.length; k++) {
+            for (k = j; k < newFiles.length; k++) {
                 addWatcher(newFiles[k]);
             }
 

@@ -157,7 +157,7 @@ module TypeScript {
                     }
                 }
 
-                recordSourceMappingSiblings(sourceMapper.sourceMappings, -1);
+                recordSourceMappingSiblings(sourceMapper.sourceMappings);
                 namesCount = namesCount + sourceMapper.names.length;
             }
 

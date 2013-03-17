@@ -201,6 +201,12 @@ module TypeScript {
                                                     PullElementKind.ConstructorType)) &&
                 (decls[decls.length - 1] != decl)) {
 
+                var parent = decl.getParentDecl();
+
+                if (parent && decls[decls.length - 1] != parent) {
+                    decls[decls.length] = parent;
+                }
+
                 decls[decls.length] = decl;
             }
 
@@ -2285,7 +2291,11 @@ module TypeScript {
                     declFlags = decl.getFlags();
 
                     if (declFlags & PullElementFlags.Static) {
-                        this.semanticInfoChain.anyTypeSymbol;
+                        return this.semanticInfoChain.anyTypeSymbol;
+                    }
+
+                    if (declKind == PullElementKind.FunctionExpression && !(declFlags & PullElementFlags.FatArrow)) {
+                        return this.semanticInfoChain.anyTypeSymbol;
                     }
 
                     if (declKind == PullElementKind.Class) {
@@ -4020,7 +4030,7 @@ module TypeScript {
 
                 returnType = signature.getReturnType();
 
-                this.getCandidateSignatures(signature, actuals, exactCandidates, conversionCandidates, context, comparisonInfo);
+                this.getCandidateSignatures(signature, actuals, exactCandidates, conversionCandidates, enclosingDecl, context, comparisonInfo);
             }
             if (exactCandidates.length == 0) {
 
@@ -4067,7 +4077,7 @@ module TypeScript {
             return candidate;
         }
 
-        public getCandidateSignatures(signature: PullSignatureSymbol, actuals: PullTypeSymbol[], exactCandidates: PullSignatureSymbol[], conversionCandidates: PullSignatureSymbol[], context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
+        public getCandidateSignatures(signature: PullSignatureSymbol, actuals: PullTypeSymbol[], exactCandidates: PullSignatureSymbol[], conversionCandidates: PullSignatureSymbol[], enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
             var parameters = signature.getParameters();
             var lowerBound = signature.getNonOptionalParameterCount(); // required parameters
             var upperBound = parameters.length; // required and optional parameters
@@ -4107,6 +4117,14 @@ module TypeScript {
                     }
 
                     typeB = actuals[i];
+
+                    if (typeA && !typeA.isResolved()) {
+                        this.resolveDeclaredSymbol(typeA, enclosingDecl, context);
+                    }
+
+                    if (typeB && !typeB.isResolved()) {
+                        this.resolveDeclaredSymbol(typeB, enclosingDecl, context);
+                    }
 
                     if (!typeA || !typeB || !(this.typesAreIdentical(typeA, typeB))) {
                         exact = false;

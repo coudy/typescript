@@ -730,8 +730,8 @@ module TypeScript {
                             try {
                                 // Closing files could result in exceptions, report them if they occur
                                 this.declFile.Close();
-                            } catch (ex) {
-                                this.errorReporter.emitterError(null, ex.message);
+                            } catch (ex2) {
+                                this.errorReporter.emitterError(null, ex2.message);
                             }
                             this.declFile = this.singleDeclFile;
                         }

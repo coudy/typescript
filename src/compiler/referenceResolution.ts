@@ -118,7 +118,7 @@ module TypeScript {
                         try {
                             resolvedFile.content = ioHost.readFile(normalizedPath);
                         }
-                        catch (err) {
+                        catch (err1) {
                             try {
                                 if (isSTRFile(normalizedPath)) {
                                     normalizedPath = changePathToTS(normalizedPath);
@@ -129,14 +129,14 @@ module TypeScript {
                                 CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
                                 resolvedFile.content = ioHost.readFile(normalizedPath);
                             }
-                            catch (err) {
+                            catch (err2) {
                                 normalizedPath = changePathToDSTR(normalizedPath);
                                 CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
 
                                 try {
                                     resolvedFile.content = ioHost.readFile(normalizedPath);
                                 }
-                                catch (err) {
+                                catch (err3) {
                                     normalizedPath = changePathToDTS(normalizedPath);
                                     CompilerDiagnostics.debugPrint("   Reading code from " + normalizedPath);
                                     resolvedFile.content = ioHost.readFile(normalizedPath);
@@ -148,7 +148,7 @@ module TypeScript {
                         resolvedFile.path = normalizedPath;
                         this.visited[absoluteModuleID] = true;
                     }
-                    catch (err) {
+                    catch (err4) {
                         CompilerDiagnostics.debugPrint("   Did not find code for " + referencePath);
                         // Resolution failed
                         return false;
