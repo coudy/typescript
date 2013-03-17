@@ -5,8 +5,8 @@
 
 module Services {
     export class PullCompilerState {
+        private logger: TypeScript.ILogger;
 
-        public logger: TypeScript.ILogger;
         //
         // State related to compiler instance
         //
