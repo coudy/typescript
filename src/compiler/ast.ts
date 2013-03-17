@@ -192,7 +192,7 @@ module TypeScript {
             var i = 0;
             while(i <= name.length - 6) {
                 // Look for escape sequence \uxxxx
-                if (name.charAt(i) == '\\' && name.charAt(i+1) == 'u') {
+                if (name.charAt(i) === '\\' && name.charAt(i+1) === 'u') {
                     var charCode = parseInt(name.substr(i + 2, 4), 16);
                     resolved += name.substr(start, i - start);
                     resolved += String.fromCharCode(charCode);
@@ -208,7 +208,7 @@ module TypeScript {
         }
 
         public getDocComments() : Comment[] {
-            if (!this.isDeclaration() || !this.preComments || this.preComments.length == 0) {
+            if (!this.isDeclaration() || !this.preComments || this.preComments.length === 0) {
                 return [];
             }
 
@@ -218,9 +218,9 @@ module TypeScript {
                 for (var i = preCommentsLength - 1; i >= 0; i--) {
                     if (this.preComments[i].isDocComment()) {
                         var prevDocComment = docComments.length > 0 ? docComments[docComments.length - 1] : null;
-                        if (prevDocComment == null || // If the help comments were not yet set then this is the comment
-                             (this.preComments[i].limLine == prevDocComment.minLine ||
-                              this.preComments[i].limLine + 1 == prevDocComment.minLine)) { // On same line or next line
+                        if (prevDocComment === null || // If the help comments were not yet set then this is the comment
+                             (this.preComments[i].limLine === prevDocComment.minLine ||
+                              this.preComments[i].limLine + 1 === prevDocComment.minLine)) { // On same line or next line
                             docComments.push(this.preComments[i]);
                             continue;
                         }
@@ -272,7 +272,7 @@ module TypeScript {
         }
 
         public appendAll(ast: AST) {
-            if (ast.nodeType == NodeType.List) {
+            if (ast.nodeType === NodeType.List) {
                 var list = <ASTList>ast;
                 for (var i = 0, len = list.members.length; i < len; i++) {
                     this.append(list.members[i]);
@@ -423,7 +423,7 @@ module TypeScript {
         public addToControlFlow(context: ControlFlowContext): void {
             super.addToControlFlow(context);
             // TODO: add successor as catch block/finally block if present
-            if (this.nodeType == NodeType.Throw) {
+            if (this.nodeType === NodeType.Throw) {
                 context.returnStmt();
             }
         }
@@ -522,14 +522,14 @@ module TypeScript {
                     break;
                 case NodeType.Neg:
                     emitter.writeToOutput("-");
-                    if (this.operand.nodeType == NodeType.Neg) {
+                    if (this.operand.nodeType === NodeType.Neg) {
                         this.operand.isParenthesized = true;
                     }
                     emitter.emitJavascript(this.operand, TokenID.Minus, false);
                     break;
                 case NodeType.Pos:
                     emitter.writeToOutput("+");
-                    if (this.operand.nodeType == NodeType.Pos) {
+                    if (this.operand.nodeType === NodeType.Pos) {
                         this.operand.isParenthesized = true;
                     }
                     emitter.emitJavascript(this.operand, TokenID.Plus, false);
@@ -582,7 +582,7 @@ module TypeScript {
         public signature: Signature = null;
 
         public typeCheck(typeFlow: TypeFlow) {
-            if (this.nodeType == NodeType.New) {
+            if (this.nodeType === NodeType.New) {
                 return typeFlow.typeCheckNew(this);
             }
             else {
@@ -594,7 +594,7 @@ module TypeScript {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
 
-            if (this.nodeType == NodeType.New) {
+            if (this.nodeType === NodeType.New) {
                 emitter.emitNew(this.target, this.arguments);
             }
             else {
@@ -636,7 +636,7 @@ module TypeScript {
                     }
                     else if (typeFlow.checker.styleSettings.eqnull) {
                         text = nodeTypeTable[this.nodeType];
-                        if ((this.operand2 !== null) && (this.operand2.nodeType == NodeType.Null)) {
+                        if ((this.operand2 !== null) && (this.operand2.nodeType === NodeType.Null)) {
                             typeFlow.checker.errorReporter.styleError(this, "use of " + text + " to compare with null");
                         }
                     }
@@ -697,10 +697,10 @@ module TypeScript {
             if (this.nodeType != NodeType.Comma && binTokenId != undefined) {
                 emitter.emitJavascript(this.operand1, binTokenId, false);
 
-                if (tokenTable[binTokenId].text == "instanceof") {
+                if (tokenTable[binTokenId].text === "instanceof") {
                     emitter.writeToOutput(" instanceof ");
                 }
-                else if (tokenTable[binTokenId].text == "in") {
+                else if (tokenTable[binTokenId].text === "in") {
                     emitter.writeToOutput(" in ");
                 }
                 else {
@@ -723,7 +723,7 @@ module TypeScript {
                         break;
 
                     case NodeType.Member:
-                        if (this.operand2.nodeType == NodeType.FuncDecl && (<FuncDecl>this.operand2).isAccessor()) {
+                        if (this.operand2.nodeType === NodeType.FuncDecl && (<FuncDecl>this.operand2).isAccessor()) {
                             var funcDecl = <FuncDecl>this.operand2;
                             if (hasFlag(funcDecl.fncFlags, FncFlags.GetAccessor)) {
                                 emitter.writeToOutput("get ");
@@ -904,7 +904,7 @@ module TypeScript {
         }
 
         public getAliasName(aliasAST?: AST = this.alias) : string {
-            if (aliasAST.nodeType == NodeType.Name) {
+            if (aliasAST.nodeType === NodeType.Name) {
                 return (<Identifier>aliasAST).actualText;
             } else {
                 var dotExpr = <BinaryExpression>aliasAST;
@@ -913,7 +913,7 @@ module TypeScript {
         }
 
         public firstAliasedModToString() {
-            if (this.alias.nodeType == NodeType.Name) {
+            if (this.alias.nodeType === NodeType.Name) {
                 return (<Identifier>this.alias).actualText;
             }
             else {
@@ -1042,7 +1042,7 @@ module TypeScript {
         }
 
         public internalName(): string {
-            if (this.internalNameCache == null) {
+            if (this.internalNameCache === null) {
                 var extName = this.getNameText();
                 if (extName) {
                     this.internalNameCache = "_internal_" + extName;
@@ -1061,7 +1061,7 @@ module TypeScript {
         public setHasSuperReferenceInFatArrowFunction() { this.fncFlags |= FncFlags.HasSuperReferenceInFatArrowFunction; }
 
         public addCloRef(id: Identifier, sym: Symbol): number {
-            if (this.envids == null) {
+            if (this.envids === null) {
                 this.envids = [];
             }
             this.envids[this.envids.length] = id;
@@ -1076,7 +1076,7 @@ module TypeScript {
         }
 
         public addJumpRef(sym: Symbol): void {
-            if (this.jumpRefs == null) {
+            if (this.jumpRefs === null) {
                 this.jumpRefs = [];
             }
             var id = new Identifier(sym.name);
@@ -1139,7 +1139,7 @@ module TypeScript {
         public isStatic() { return hasFlag(this.fncFlags, FncFlags.Static); }
 
         public treeViewLabel() {
-            if (this.name == null) {
+            if (this.name === null) {
                 return "funcExpr";
             }
             else {
@@ -1202,29 +1202,29 @@ module TypeScript {
             }
 
             if (!this.isDeclareFile && this.bod) {
-                if (this.bod.members.length == 0) {
+                if (this.bod.members.length === 0) {
                     // allow empty files that are not declare files 
                     return this.setCachedEmitRequired(true);
                 }
 
                 for (var i = 0, len = this.bod.members.length; i < len; i++) {
                     var stmt = this.bod.members[i];
-                    if (stmt.nodeType == NodeType.ModuleDeclaration) {
+                    if (stmt.nodeType === NodeType.ModuleDeclaration) {
                         if (!hasFlag((<ModuleDeclaration>stmt).modFlags, ModuleFlags.ShouldEmitModuleDecl | ModuleFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType == NodeType.ClassDeclaration) {
+                    else if (stmt.nodeType === NodeType.ClassDeclaration) {
                         if (!hasFlag((<ClassDeclaration>stmt).varFlags, VarFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType == NodeType.VarDecl) {
+                    else if (stmt.nodeType === NodeType.VarDecl) {
                         if (!hasFlag((<VarDecl>stmt).varFlags, VarFlags.Ambient)) {
                             return this.setCachedEmitRequired(true);
                         }
                     }
-                    else if (stmt.nodeType == NodeType.FuncDecl) {
+                    else if (stmt.nodeType === NodeType.FuncDecl) {
                         if (!(<FuncDecl>stmt).isSignature()) {
                             return this.setCachedEmitRequired(true);
                         }
@@ -1270,7 +1270,7 @@ module TypeScript {
 
         public isExternallyVisibleSymbol(symbol: Symbol) {
             for (var i = 0 ; i < this.externallyVisibleImportedSymbols.length; i++) {
-                if (this.externallyVisibleImportedSymbols[i] == symbol) {
+                if (this.externallyVisibleImportedSymbols[i] === symbol) {
                     return true;
                 }
             }
@@ -1486,7 +1486,7 @@ module TypeScript {
 
         public typeCheck(typeFlow: TypeFlow) {
             if (!typeFlow.checker.styleSettings.emptyBlocks) {
-                if ((this.statements === null) || (this.statements.members.length == 0)) {
+                if ((this.statements === null) || (this.statements.members.length === 0)) {
                     typeFlow.checker.errorReporter.styleError(this, "empty block");
                 }
             }
@@ -1515,7 +1515,7 @@ module TypeScript {
                 return false;
             }
             else {
-                if ((stmt.nodeType == NodeType.Switch) || this.hasExplicitTarget()) {
+                if ((stmt.nodeType === NodeType.Switch) || this.hasExplicitTarget()) {
                     this.resolvedTarget = stmt;
                     return true;
                 }
@@ -1528,13 +1528,13 @@ module TypeScript {
 
         public addToControlFlow(context: ControlFlowContext): void {
             super.addToControlFlow(context);
-            context.unconditionalBranch(this.resolvedTarget, (this.nodeType == NodeType.Continue));
+            context.unconditionalBranch(this.resolvedTarget, (this.nodeType === NodeType.Continue));
         }
 
         public emit(emitter: Emitter, tokenId: TokenID, startLine: bool) {
             emitter.emitParensAndCommentsInPlace(this, true);
             emitter.recordSourceMappingStart(this);
-            if (this.nodeType == NodeType.Break) {
+            if (this.nodeType === NodeType.Break) {
                 emitter.writeToOutput("break");
             }
             else {
@@ -1796,7 +1796,7 @@ module TypeScript {
     export class ForInStatement extends Statement {
         constructor (public lval: AST, public obj: AST) {
             super(NodeType.ForIn);
-            if (this.lval && (this.lval.nodeType == NodeType.VarDecl)) {
+            if (this.lval && (this.lval.nodeType === NodeType.VarDecl)) {
                 (<BoundDecl>this.lval).varFlags |= VarFlags.AutoInit;
             }
         }
@@ -1808,9 +1808,9 @@ module TypeScript {
         public isFiltered() {
             if (this.body) {
                 var singleItem: AST = null;
-                if (this.body.nodeType == NodeType.List) {
+                if (this.body.nodeType === NodeType.List) {
                     var stmts = <ASTList>this.body;
-                    if (stmts.members.length == 1) {
+                    if (stmts.members.length === 1) {
                         singleItem = stmts.members[0];
                     }
                 }
@@ -1819,29 +1819,29 @@ module TypeScript {
                 }
                 // match template for filtering 'own' properties from obj
                 if (singleItem !== null) {
-                    if (singleItem.nodeType == NodeType.Block) {
+                    if (singleItem.nodeType === NodeType.Block) {
                         var block = <Block>singleItem;
-                        if ((block.statements !== null) && (block.statements.members.length == 1)) {
+                        if ((block.statements !== null) && (block.statements.members.length === 1)) {
                             singleItem = block.statements.members[0];
                         }
                     }
-                    if (singleItem.nodeType == NodeType.If) {
+                    if (singleItem.nodeType === NodeType.If) {
                         var cond = (<IfStatement>singleItem).cond;
-                        if (cond.nodeType == NodeType.Call) {
+                        if (cond.nodeType === NodeType.Call) {
                             var target = (<CallExpression>cond).target;
-                            if (target.nodeType == NodeType.Dot) {
+                            if (target.nodeType === NodeType.Dot) {
                                 var binex = <BinaryExpression>target;
-                                if ((binex.operand1.nodeType == NodeType.Name) &&
-                                    (this.obj.nodeType == NodeType.Name) &&
-                                    ((<Identifier>binex.operand1).actualText == (<Identifier>this.obj).actualText)) {
+                                if ((binex.operand1.nodeType === NodeType.Name) &&
+                                    (this.obj.nodeType === NodeType.Name) &&
+                                    ((<Identifier>binex.operand1).actualText === (<Identifier>this.obj).actualText)) {
                                     var prop = <Identifier>binex.operand2;
-                                    if (prop.actualText == "hasOwnProperty") {
+                                    if (prop.actualText === "hasOwnProperty") {
                                         var args = (<CallExpression>cond).arguments;
-                                        if ((args !== null) && (args.members.length == 1)) {
+                                        if ((args !== null) && (args.members.length === 1)) {
                                             var arg = args.members[0];
-                                            if ((arg.nodeType == NodeType.Name) &&
-                                                 (this.lval.nodeType == NodeType.Name)) {
-                                                if (((<Identifier>this.lval).actualText) == (<Identifier>arg).actualText) {
+                                            if ((arg.nodeType === NodeType.Name) &&
+                                                 (this.lval.nodeType === NodeType.Name)) {
+                                                if (((<Identifier>this.lval).actualText) === (<Identifier>arg).actualText) {
                                                     return true;
                                                 }
                                             }
@@ -1983,7 +1983,7 @@ module TypeScript {
             }
             if (this.incr) {
                 if (context.noContinuation) {
-                    if (incrBB.predecessors.length == 0) {
+                    if (incrBB.predecessors.length === 0) {
                         context.addUnreachable(this.incr);
                     }
                 }
@@ -2100,8 +2100,8 @@ module TypeScript {
             context.walk(this.caseList, this);
             context.popSwitch();
             var targetInfo = context.popStatement();
-            var hasCondContinuation = (this.defaultCase == null);
-            if (this.defaultCase == null) {
+            var hasCondContinuation = (this.defaultCase === null);
+            if (this.defaultCase === null) {
                 condBlock.addSuccessor(afterSwitch);
             }
             if (afterSwitch.predecessors.length > 0) {
@@ -2137,7 +2137,7 @@ module TypeScript {
             emitter.recordSourceMappingStart(this.colonSpan);
             emitter.writeToOutput(":");
             emitter.recordSourceMappingEnd(this.colonSpan);
-            if (this.body.members.length == 1 && this.body.members[0].nodeType == NodeType.Block) {
+            if (this.body.members.length === 1 && this.body.members[0].nodeType === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
                 emitter.emitJavascriptStatements(this.body, false);
             }
@@ -2470,7 +2470,7 @@ module TypeScript {
         }
 
         public getText(): string[] {
-            if (this.text == null) {
+            if (this.text === null) {
                 if (this.isBlockComment) {
                     this.text = this.content.split("\n");
                     for (var i = 0; i < this.text.length; i++) {
@@ -2487,14 +2487,14 @@ module TypeScript {
 
         public isDocComment() {
             if (this.isBlockComment) {
-                return this.content.charAt(2) == "*" && this.content.charAt(3) != "/";
+                return this.content.charAt(2) === "*" && this.content.charAt(3) != "/";
             }
 
             return false;
         }
 
         public getDocCommentText() {
-            if (this.docCommentText == null) {
+            if (this.docCommentText === null) {
                 this.docCommentText = Comment.cleanJSDocComment(this.content);
             }
 
@@ -2526,18 +2526,18 @@ module TypeScript {
             if (index < length) {
                 var charCode = line.charCodeAt(index);
                 // If the character is space
-                return charCode == LexCodeSpace || charCode == LexCodeTAB;
+                return charCode === LexCodeSpace || charCode === LexCodeTAB;
             }
 
             // If the index is end of the line it is space
-            return index == length;
+            return index === length;
         }
 
         static cleanDocCommentLine(line: string, jsDocStyleComment: bool, jsDocLineSpaceToRemove?: number) {
             var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
             if (nonSpaceIndex != -1) {
                 var jsDocSpacesRemoved = nonSpaceIndex;
-                if (jsDocStyleComment && line.charAt(nonSpaceIndex) == '*') { // remove leading * in case of jsDocComment
+                if (jsDocStyleComment && line.charAt(nonSpaceIndex) === '*') { // remove leading * in case of jsDocComment
                     var startIndex = nonSpaceIndex + 1;
                     nonSpaceIndex = Comment.consumeLeadingSpace(line, startIndex, jsDocLineSpaceToRemove);
 
@@ -2550,7 +2550,7 @@ module TypeScript {
 
                 return {
                     minChar: nonSpaceIndex,
-                    limChar: line.charAt(line.length - 1) == "\r" ? line.length - 1 : line.length,
+                    limChar: line.charAt(line.length - 1) === "\r" ? line.length - 1 : line.length,
                     jsDocSpacesRemoved: jsDocSpacesRemoved
                 };
             }
@@ -2562,7 +2562,7 @@ module TypeScript {
 
             var docCommentLines: string[] = [];
             content = content.replace("/**", ""); // remove /**
-            if (content.length >= 2 && content.charAt(content.length - 1) == "/" && content.charAt(content.length - 2) == "*") {
+            if (content.length >= 2 && content.charAt(content.length - 1) === "/" && content.charAt(content.length - 2) === "*") {
                 content = content.substring(0, content.length - 2); // remove last */
             }
             var lines = content.split("\n");
@@ -2584,7 +2584,7 @@ module TypeScript {
                     var wasInParamtag = inParamTag;
 
                     // Parse contents next to @
-                    if (line.indexOf("param", i + 1) == i + 1 && Comment.isSpaceChar(line, i + 6)) {
+                    if (line.indexOf("param", i + 1) === i + 1 && Comment.isSpaceChar(line, i + 6)) {
                         // It is param tag. 
 
                         // If we were not in param tag earlier, push the contents from prev pos of the tag this tag start as docComment
@@ -2609,7 +2609,7 @@ module TypeScript {
                 // Add line to comment text if it is not only white space line
                 var newCleanPos = Comment.cleanDocCommentLine(docCommentText, false);
                 if (newCleanPos) {
-                    if (spacesToRemove == undefined) {
+                    if (spacesToRemove === undefined) {
                         spacesToRemove = cleanLinePos.jsDocSpacesRemoved;
                     }
                     docCommentLines.push(docCommentText);
@@ -2631,7 +2631,7 @@ module TypeScript {
         }
 
         static getParameterDocCommentText(param: string, fncDocComments: Comment[]) {
-            if (fncDocComments.length == 0 || !fncDocComments[0].isBlockComment) {
+            if (fncDocComments.length === 0 || !fncDocComments[0].isBlockComment) {
                 // there were no fnc doc comments and the comment is not block comment then it cannot have 
                 // @param comment that can be parsed
                 return "";
@@ -2648,27 +2648,27 @@ module TypeScript {
 
                     // This is param tag. Check if it is what we are looking for
                     j = Comment.consumeLeadingSpace(commentContents, j);
-                    if (j == -1) {
+                    if (j === -1) {
                         break;
                     }
                     
                     // Ignore the type expression
-                    if (commentContents.charCodeAt(j) == LexCodeLC) {
+                    if (commentContents.charCodeAt(j) === LexCodeLC) {
                         j++;
                         // Consume the type
                         var charCode = 0;
                         for (var curlies = 1; j < commentContents.length; j++) {
                             charCode = commentContents.charCodeAt(j);
                             // { character means we need to find another } to match the found one
-                            if (charCode == LexCodeLC) {
+                            if (charCode === LexCodeLC) {
                                 curlies++;
                                 continue;
                             }
 
                             // } char
-                            if (charCode == LexCodeRC) {
+                            if (charCode === LexCodeRC) {
                                 curlies--;
-                                if (curlies == 0) {
+                                if (curlies === 0) {
                                     // We do not have any more } to match the type expression is ignored completely
                                     break;
                                 } else {
@@ -2678,23 +2678,23 @@ module TypeScript {
                             }
 
                             // Found start of another tag
-                            if (charCode == LexCodeAtSign) {
+                            if (charCode === LexCodeAtSign) {
                                 break;
                             }
                         }
 
                         // End of the comment
-                        if (j == commentContents.length) {
+                        if (j === commentContents.length) {
                             break;
                         }
 
                         // End of the tag, go onto looking for next tag
-                        if (charCode == LexCodeAtSign) {
+                        if (charCode === LexCodeAtSign) {
                             continue;
                         }
 
                         j = Comment.consumeLeadingSpace(commentContents, j + 1);
-                        if (j == -1) {
+                        if (j === -1) {
                             break;
                         }
                     }
@@ -2707,7 +2707,7 @@ module TypeScript {
 
                     // Found the parameter we were looking for
                     j = Comment.consumeLeadingSpace(commentContents, j + param.length);
-                    if (j == -1) {
+                    if (j === -1) {
                         return "";
                     }
                     
@@ -2718,12 +2718,12 @@ module TypeScript {
                     var paramSpacesToRemove: number = undefined;
                     var paramLineIndex = commentContents.substring(0, j).lastIndexOf("\n") + 1;
                     if (paramLineIndex != 0) {
-                        if (paramLineIndex < j && commentContents.charAt(paramLineIndex + 1) == "\r") {
+                        if (paramLineIndex < j && commentContents.charAt(paramLineIndex + 1) === "\r") {
                             paramLineIndex++;
                         }
                     }
                     var startSpaceRemovalIndex = Comment.consumeLeadingSpace(commentContents, paramLineIndex);
-                    if (startSpaceRemovalIndex != j && commentContents.charAt(startSpaceRemovalIndex) == "*") {
+                    if (startSpaceRemovalIndex != j && commentContents.charAt(startSpaceRemovalIndex) === "*") {
                         paramSpacesToRemove = j - startSpaceRemovalIndex - 1;
                     }
 
@@ -2738,7 +2738,7 @@ module TypeScript {
         static getDocCommentFirstOverloadSignature(signatureGroup: SignatureGroup) {
             for (var i = 0; i < signatureGroup.signatures.length; i++) {
                 var signature = signatureGroup.signatures[i];
-                if (signature == signatureGroup.definitionSignature) {
+                if (signature === signatureGroup.definitionSignature) {
                     continue;
                 }
 

@@ -83,12 +83,12 @@ class CommandLineHost implements TypeScript.IResolverHost {
 
         var postResolutionError = 
             (errorFile: string, errorMessage: string) => {
-                this.errorReporter(errorFile + (errorMessage == "" ? "" : ": " + errorMessage));
+                this.errorReporter(errorFile + (errorMessage === "" ? "" : ": " + errorMessage));
             }
 
         var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
             postResolutionError: (errorFile, line, col, errorMessage) => {
-                this.errorReporter(errorFile + "(" + line + "," + col + ") " + (errorMessage == "" ? "" : ": " + errorMessage));
+                this.errorReporter(errorFile + "(" + line + "," + col + ") " + (errorMessage === "" ? "" : ": " + errorMessage));
             },
             postResolution: (path: string, code: TypeScript.IScriptSnapshot) => {
                 var pathId = this.getPathIdentifier(path);
@@ -149,7 +149,7 @@ class BatchCompiler {
     public compile(): bool {
         var compiler: TypeScript.TypeScriptCompiler;
 
-        if (typeof localizedDiagnosticMessages == "undefined") {
+        if (typeof localizedDiagnosticMessages === "undefined") {
             localizedDiagnosticMessages = null;
         }
         
@@ -186,7 +186,7 @@ class BatchCompiler {
                     // If declaration files are going to be emitted, 
                     // preprocess the file contents and add in referenced files as well
                     if (this.compilationSettings.generateDeclarationFiles) {
-                        TypeScript.CompilerDiagnostics.assert(code.referencedFiles == null, "With no resolve option, referenced files need to null");
+                        TypeScript.CompilerDiagnostics.assert(code.referencedFiles === null, "With no resolve option, referenced files need to null");
                         code.referencedFiles = TypeScript.getReferencedFiles(code);
                     }
                 }
@@ -505,7 +505,7 @@ class BatchCompiler {
         }
 
         // If no source files provided to compiler - print usage information
-        if (this.compilationEnvironment.code.length == (this.compilationSettings.useDefaultLib ? 1 : 0)) {
+        if (this.compilationEnvironment.code.length === (this.compilationSettings.useDefaultLib ? 1 : 0)) {
             if (!printedUsage && !this.printedVersion) {
                 this.printVersion();
                 opts.printUsage();
@@ -597,7 +597,7 @@ class BatchCompiler {
             while (i < oldFiles.length && j < newFiles.length) {
 
                 var compareResult = oldFiles[i].localeCompare(newFiles[j]);
-                if (compareResult == 0) {
+                if (compareResult === 0) {
                     // No change here
                     i++;
                     j++;

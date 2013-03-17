@@ -471,19 +471,19 @@ module TypeScript {
         public cleanASTTypesForReTypeCheck(ast: AST) {
             function cleanASTType(ast: AST, parent: AST): AST {
                 ast.type = null;
-                if (ast.nodeType == NodeType.VarDecl) {
+                if (ast.nodeType === NodeType.VarDecl) {
                     var vardecl = <VarDecl>ast;
                     vardecl.sym = null;
                 }
-                else if (ast.nodeType == NodeType.ArgDecl) {
+                else if (ast.nodeType === NodeType.ArgDecl) {
                     var argdecl = <ArgDecl>ast;
                     argdecl.sym = null;
                 }
-                else if (ast.nodeType == NodeType.Name) {
+                else if (ast.nodeType === NodeType.Name) {
                     var name = <Identifier>ast;
                     name.sym = null;
                 }
-                else if (ast.nodeType == NodeType.FuncDecl) {
+                else if (ast.nodeType === NodeType.FuncDecl) {
                     var funcdecl = <FuncDecl>ast;
                     funcdecl.signature = null;
                     funcdecl.freeVariables = []
@@ -491,14 +491,14 @@ module TypeScript {
                     funcdecl.accessorSymbol = null;
                     funcdecl.scopeType = null;
                 }
-                else if (ast.nodeType == NodeType.ModuleDeclaration) {
+                else if (ast.nodeType === NodeType.ModuleDeclaration) {
                     var modDecl = <ModuleDeclaration>ast;
                     modDecl.mod = null;
                 }
-                else if (ast.nodeType == NodeType.With) {
+                else if (ast.nodeType === NodeType.With) {
                     (<WithStatement>ast).withSym = null;
                 }
-                else if (ast.nodeType == NodeType.Catch) {
+                else if (ast.nodeType === NodeType.Catch) {
                     (<Catch>ast).containedScope = null;
                 }
                 else if (ast.nodeType === NodeType.Script) {
@@ -527,9 +527,9 @@ module TypeScript {
         // Return "false" if incremental typecheck failed, requiring a full typecheck
         public attemptIncrementalTypeCheck(updateResult: TypeScript.UpdateUnitResult): bool {
             return this.timeFunction("attemptIncrementalTypeCheck()", () => {
-                // updateResult.kind == editsInsideFunction
-                // updateResult.scope1 == old function
-                // updateResult.scope2 == new function
+                // updateResult.kind === editsInsideFunction
+                // updateResult.scope1 === old function
+                // updateResult.scope2 === new function
                 //REVIEW: What about typecheck errors? How do we replace the old ones with the new ones?
                 return false;
             });
@@ -566,7 +566,7 @@ module TypeScript {
                 if (script.emitRequired(this.emitSettings)) {
                     var fileName = script.locationInfo.fileName;
                     var fileComponents = filePathComponents(fileName);
-                    if (commonComponentsLength == -1) {
+                    if (commonComponentsLength === -1) {
                         // First time at finding common path
                         // So common path = directory of file
                         commonComponents = fileComponents;
@@ -579,7 +579,7 @@ module TypeScript {
                                 commonComponentsLength = j;
                                 updatedPath = true;
 
-                                if (j == 0) {
+                                if (j === 0) {
                                     // Its error to not have common path
                                     this.errorReporter.emitterError(null, "Cannot find the common subdirectory path for the input files");
                                     return;
@@ -605,7 +605,7 @@ module TypeScript {
 
         public parseEmitOption(ioHost: EmitterIOHost) {
             this.emitSettings.ioHost = ioHost;
-            if (this.emitSettings.outputOption == "") {
+            if (this.emitSettings.outputOption === "") {
                 this.emitSettings.outputMany = true;
                 this.emitSettings.commonDirectoryPath = "";
                 return;
@@ -666,7 +666,7 @@ module TypeScript {
             }
 
             // If its already a declare file or is resident or does not contain body 
-            if (!!script && (script.isDeclareFile || script.bod == null)) {
+            if (!!script && (script.isDeclareFile || script.bod === null)) {
                 return false;
             }
 
@@ -709,7 +709,7 @@ module TypeScript {
                 return;
             }
 
-            if (this.fileNameToScript.count() == 0) {
+            if (this.fileNameToScript.count() === 0) {
                 return;
             }
 
@@ -718,7 +718,7 @@ module TypeScript {
             var fileNames = this.fileNameToScript.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]); 
-                if (this.emitSettings.outputMany || declarationEmitter == null) {
+                if (this.emitSettings.outputMany || declarationEmitter === null) {
                     // Create or reuse file
                     declarationEmitter = this.emitDeclarationsUnit(script, usePullEmitter, !this.emitSettings.outputMany);
                 } else {
@@ -797,7 +797,7 @@ module TypeScript {
             var fileNames = this.fileNameToScript.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
-                if (this.emitSettings.outputMany || emitter == null) {
+                if (this.emitSettings.outputMany || emitter === null) {
                     emitter = this.emitUnit(script, !this.emitSettings.outputMany, null, usePullEmitter, inputOutputMapper);
                 } else {
                     this.emitUnit(script, true, emitter, usePullEmitter);
@@ -1035,10 +1035,10 @@ module TypeScript {
                     for (i = 0; i < diffResults.length; i++) {
                         diff = diffResults[i];
 
-                        if (diff.kind == PullDeclEdit.DeclRemoved) {
+                        if (diff.kind === PullDeclEdit.DeclRemoved) {
                             graphUpdater.removeDecl(diff.oldDecl);
                         }
-                        else if (diff.kind == PullDeclEdit.DeclAdded) {
+                        else if (diff.kind === PullDeclEdit.DeclAdded) {
                             graphUpdater.addDecl(diff.newDecl);                        
                             graphUpdater.invalidateType(diff.oldDecl.getSymbol());
                         }
@@ -1113,7 +1113,7 @@ module TypeScript {
 
                         var previous = resultASTs[resultASTs.length - 1];
 
-                        if (previous == undefined || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
+                        if (previous === undefined || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
 
                             var decl = semanticInfo.getDeclForAST(cur);
 
@@ -1122,22 +1122,22 @@ module TypeScript {
                                 lastDeclAST = cur;
                             }
 
-                            if (cur.nodeType == NodeType.FuncDecl && hasFlag((<FuncDecl>cur).fncFlags, FncFlags.IsFunctionExpression)) {
+                            if (cur.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>cur).fncFlags, FncFlags.IsFunctionExpression)) {
                                 lambdaAST = <FuncDecl>cur;
                             }
-                            else if (cur.nodeType == NodeType.VarDecl) {
+                            else if (cur.nodeType === NodeType.VarDecl) {
                                 declarationInitASTs[declarationInitASTs.length] = <VarDecl>cur;
                             }
-                            else if (cur.nodeType == NodeType.ObjectLit) {
+                            else if (cur.nodeType === NodeType.ObjectLit) {
                                 objectLitAST = <UnaryExpression>cur;
                             }
-                            else if (cur.nodeType == NodeType.TypeAssertion) {
+                            else if (cur.nodeType === NodeType.TypeAssertion) {
                                 typeAssertionASTs[typeAssertionASTs.length] = <UnaryExpression>cur;
                             }
-                            else if (cur.nodeType == NodeType.Asg) {
+                            else if (cur.nodeType === NodeType.Asg) {
                                 asgAST = <BinaryExpression>cur;
                             }
-                            else if (cur.nodeType == NodeType.TypeRef) {
+                            else if (cur.nodeType === NodeType.TypeRef) {
                                 inTypeReference = true;
                             }
 
@@ -1157,7 +1157,7 @@ module TypeScript {
                 foundAST = resultASTs[resultASTs.length - 1];
 
                 // Check if is a name of a container
-                if (foundAST.nodeType == NodeType.Name && resultASTs.length > 1) {
+                if (foundAST.nodeType === NodeType.Name && resultASTs.length > 1) {
                     var previousAST = resultASTs[resultASTs.length - 2];
                     switch (previousAST.nodeType) {
                         case NodeType.InterfaceDeclaration:
@@ -1169,13 +1169,13 @@ module TypeScript {
                             break;
 
                         case NodeType.VarDecl:
-                            if (foundAST == (<VarDecl>previousAST).id) {
+                            if (foundAST === (<VarDecl>previousAST).id) {
                                 foundAST = previousAST;
                             }
                             break;
 
                         case NodeType.FuncDecl:
-                            if (foundAST == (<FuncDecl>previousAST).name) {
+                            if (foundAST === (<FuncDecl>previousAST).name) {
                                 foundAST = previousAST;
                             }
                             break;
@@ -1184,11 +1184,11 @@ module TypeScript {
 
                 // are we within a decl?  if so, just grab its symbol
                 var funcDecl: FuncDecl = null;
-                if (lastDeclAST == foundAST) {
+                if (lastDeclAST === foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
                     this.pullTypeChecker.resolver.resolveDeclaredSymbol(symbol, null, resolutionContext);
                     enclosingDecl = declStack[declStack.length - 1].getParentDecl();
-                    if (foundAST.nodeType == NodeType.FuncDecl) {
+                    if (foundAST.nodeType === NodeType.FuncDecl) {
                         funcDecl = <FuncDecl>foundAST;
                     }
                 }
@@ -1210,17 +1210,17 @@ module TypeScript {
                     // if the found AST is a named, we want to check for previous dotted expressions,
                     // since those will give us the right typing
                     var callExpression: CallExpression = null;
-                    if (foundAST.nodeType == NodeType.Name && resultASTs.length > 1) {
+                    if (foundAST.nodeType === NodeType.Name && resultASTs.length > 1) {
                         for (i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType === NodeType.Dot &&
                                 (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
                                 foundAST = resultASTs[i];   
                             }
-                            else if ((resultASTs[i].nodeType == NodeType.Call || resultASTs[i].nodeType == NodeType.New) &&
-                                (<CallExpression>resultASTs[i]).target == resultASTs[i + 1]) {
+                            else if ((resultASTs[i].nodeType === NodeType.Call || resultASTs[i].nodeType === NodeType.New) &&
+                                (<CallExpression>resultASTs[i]).target === resultASTs[i + 1]) {
                                 callExpression = <CallExpression>resultASTs[i];
                                 break;
-                            } else if (resultASTs[i].nodeType == NodeType.FuncDecl && (<FuncDecl>resultASTs[i]).name == resultASTs[i + 1]) {
+                            } else if (resultASTs[i].nodeType === NodeType.FuncDecl && (<FuncDecl>resultASTs[i]).name === resultASTs[i + 1]) {
                                 funcDecl = <FuncDecl>resultASTs[i];
                                 break;
                             } else {
@@ -1230,7 +1230,7 @@ module TypeScript {
                     }
 
                     // if it's a list, we may not have an exact AST, so find the next nearest one
-                    if (foundAST.nodeType == NodeType.List) {
+                    if (foundAST.nodeType === NodeType.List) {
                         for (i = 0; i < (<ASTList>foundAST).members.length; i++) {
                             if ((<ASTList>foundAST).members[i].minChar > pos) {
                                 foundAST = (<ASTList>foundAST).members[i];
@@ -1289,14 +1289,14 @@ module TypeScript {
                     symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, isTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
                         var typeSymbol = symbol.getType();
-                        callSignatures = callExpression.nodeType == NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
+                        callSignatures = callExpression.nodeType === NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
                         var callResolutionResults: PullAdditionalCallResolutionData = {
                             targetSymbol: null,
                             resolvedSignatures: null,
                             candidateSignature: null
                         };
 
-                        if (callExpression.nodeType == NodeType.Call) {
+                        if (callExpression.nodeType === NodeType.Call) {
                             this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
                         } else {
                             this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
@@ -1318,7 +1318,7 @@ module TypeScript {
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
                     }
-                } else if (symbol && symbol.getKind() == PullElementKind.Method) {
+                } else if (symbol && symbol.getKind() === PullElementKind.Method) {
                     var typeSym = symbol.getType()
                     if (typeSym) {
                         callSignatures = typeSym.getCallSignatures();
@@ -1343,7 +1343,7 @@ module TypeScript {
             var resolutionContext = new PullTypeResolutionContext();
             resolutionContext.resolveAggressively = true;
 
-            if (path.count() == 0) {
+            if (path.count() === 0) {
                 return null;
             }
 
@@ -1579,7 +1579,7 @@ module TypeScript {
 
         public getScopeEntries(enclosingScopeContext: EnclosingScopeContext, getPrettyTypeName?: bool): ScopeEntry[] {
             var scope = this.getScope(enclosingScopeContext);
-            if (scope == null) {
+            if (scope === null) {
                 return [];
             }
 
@@ -1592,7 +1592,7 @@ module TypeScript {
                 var name = allSymbolNames[i];
 
                 // Skip global/internal symbols that won't compile in user code
-                if (name == globalId || name == "_Core" || name == "_element") {
+                if (name === globalId || name === "_Core" || name === "_element") {
                     continue;
                 }
 
@@ -1621,16 +1621,16 @@ module TypeScript {
                 // if the scope is aggregate
                 var publicsOnly = enclosingScopeContext.publicsOnly && enclosingScopeContext.isMemberCompletion;
                 var symbol = scope.find(name, publicsOnly, false/*typespace*/);  // REVIEW: Should search public members only?
-                if (symbol == null) {
+                if (symbol === null) {
                     symbol = scope.find(name, publicsOnly, true/*typespace*/);
                 }
 
-                var displayThisMember = symbol && symbol.flags & SymbolFlags.Private ? symbol.container == scope.container : true;
+                var displayThisMember = symbol && symbol.flags & SymbolFlags.Private ? symbol.container === scope.container : true;
 
                 if (symbol) {
                     // Do not add dynamic module names to the list, since they're not legal as identifiers
                     if (displayThisMember && !isQuoted(symbol.name) && !isRelative(symbol.name)) {
-                        var getPrettyOverload = getPrettyTypeName && symbol.declAST && symbol.declAST.nodeType == NodeType.FuncDecl;
+                        var getPrettyOverload = getPrettyTypeName && symbol.declAST && symbol.declAST.nodeType === NodeType.FuncDecl;
                         var type = symbol.getType();
                         var typeName = type ? type.getScopedTypeName(enclosingScope, getPrettyOverload) : "";
                         result.push(new ScopeEntry(name, typeName, symbol));
@@ -1639,7 +1639,7 @@ module TypeScript {
                 else {
                     // Special case for "true" and "false"
                     // REVIEW: This may no longer be necessary?
-                    if (name == "true" || name == "false") {
+                    if (name === "true" || name === "false") {
                         result.push(new ScopeEntry(name, "bool", this.compiler.typeChecker.booleanType.symbol));
                     }
                 }
