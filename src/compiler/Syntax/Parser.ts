@@ -4199,6 +4199,7 @@ module TypeScript.Parser1 {
             }
 
             var token1 = this.peekToken(1);
+            var token2: ISyntaxToken;
 
             if (token1.tokenKind === SyntaxKind.CloseParenToken) {
                 // ()
@@ -4208,7 +4209,7 @@ module TypeScript.Parser1 {
                 // To prevent this, we are a little stricter, and we require that we at least see:
                 //      "():"  or  "() =>"  or "() {}".  Note: the last one is illegal.  However it
                 // most likely is a missing => and not a parenthesized expression.
-                var token2 = this.peekToken(2);
+                token2 = this.peekToken(2);
                 return token2.tokenKind === SyntaxKind.ColonToken ||
                        token2.tokenKind === SyntaxKind.EqualsGreaterThanToken ||
                        token2.tokenKind === SyntaxKind.OpenBraceToken;
@@ -4230,7 +4231,7 @@ module TypeScript.Parser1 {
             //
             // Lots of options here.  Check for things that make us certain it's an
             // arrow function.
-            var token2 = this.peekToken(2);
+            token2 = this.peekToken(2);
             if (token2.tokenKind === SyntaxKind.ColonToken) {
                 // (id:
                 // Definitely an arrow function.  Could never be a parenthesized expression.

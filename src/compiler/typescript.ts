@@ -952,9 +952,9 @@ module TypeScript {
 
                 var findErrorsStartTime = new Date().getTime();
                 // type check
-                var fileNames = this.fileNameToScript.getAllKeys();
+                fileNames = this.fileNameToScript.getAllKeys();
                 for (i = 0; i < fileNames.length; i++) {
-                    var fileName = fileNames[i];
+                    fileName = fileNames[i];
                     this.logger.log("Type checking " + fileName);
                     this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
                 }

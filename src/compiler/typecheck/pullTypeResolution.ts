@@ -339,7 +339,7 @@ module TypeScript {
                         }
                     }
                 }
-                else if (!(pathDeclKind & PullElementKind.Class)) {
+                else /*if (!(pathDeclKind & PullElementKind.Class))*/ {
                     childDecls = decl.findChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
@@ -1665,7 +1665,7 @@ module TypeScript {
                     return this.resolveDeclaration(ast, context, enclosingDecl);
 
                 case NodeType.FuncDecl:
-                    if (isTypedAssignment) {
+                    if (isTypedAssignment || ((<FuncDecl>ast).fncFlags & FncFlags.IsFunctionExpression)) {
                         return this.resolveStatementOrExpression(ast, isTypedAssignment, enclosingDecl, context);
                     }
                     else {
