@@ -1,5 +1,6 @@
 var foo = (function () {
-    function foo(a) {
+    function foo(static, number) {
+        if (typeof static === "undefined") { static = a; }
     }
     return foo;
 })();

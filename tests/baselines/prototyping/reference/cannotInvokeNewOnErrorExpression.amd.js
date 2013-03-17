@@ -5,4 +5,4 @@ var M;
         return ClassA;
     })();    
 })(M || (M = {}));
-var t = ;
+var t = new M.ClassA[]();

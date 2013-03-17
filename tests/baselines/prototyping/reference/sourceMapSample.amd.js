@@ -21,7 +21,7 @@ var Foo;
             for (var _i = 0; _i < (arguments.length - 1); _i++) {
                 restGreetings[_i] = arguments[_i + 1];
             }
-            var greeters = new Array();
+            var greeters = new Greeter[]();
             greeters[0] = new Greeter(greeting);
             for(var i = 0; i < restGreetings.length; i++) {
                 greeters.push(new Greeter(restGreetings[i]));
