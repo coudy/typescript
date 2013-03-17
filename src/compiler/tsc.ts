@@ -415,15 +415,6 @@ class BatchCompiler {
             }
         });
 
-
-        opts.flag('inferProperties', {
-            usage: 'Infer class properties from top-level assignments to \'this\'',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.inferPropertiesFromThisAssignment = true;
-            }
-        });
-
         opts.flag('diagnostics', {
             usage: 'gather diagnostic info about the compilation process',
             experimental: true,

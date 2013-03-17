@@ -77,7 +77,6 @@ module TypeScript {
         private parsingClassConstructorDefinition = false;
         private parsingDeclareFile = false;
         private amdDependencies: string[] = [];
-        public inferPropertiesFromThisAssignment = false;
         public requiresExtendsBlock = false;
 
         private resetStmtStack() {
@@ -1140,17 +1139,6 @@ module TypeScript {
                 var argFlags = VarFlags.None;
                 var argMinChar = this.scanner.startPos;
 
-                if (this.inferPropertiesFromThisAssignment && this.currentToken.tokenId == TokenID.This) {
-                    if (!isClassConstr) {
-                        this.reportParseError("Instance property declarations using 'this' may only be used in class constructors");
-                    }
-                    this.currentToken = this.scanner.scan(); // consume the '.'
-
-                    argFlags |= (VarFlags.Public | VarFlags.Property);
-                    if (this.currentClassDefinition) {
-                        this.currentClassDefinition.varFlags |= VarFlags.ClassSuperMustBeFirstCallInConstructor;
-                    }
-                }
                 if (this.currentToken.tokenId == TokenID.Public) {
                     argFlags |= (VarFlags.Public | VarFlags.Property);
 
@@ -1178,14 +1166,6 @@ module TypeScript {
 
                     if (isModifier(this.currentToken)) {
                         this.reportParseError("Multiple modifiers may not be applied to parameters");
-                        this.currentToken = this.scanner.scan();
-                    }
-
-                    if (this.inferPropertiesFromThisAssignment && this.currentToken.tokenId == TokenID.This) {
-                        if (!isClassConstr) {
-                            this.reportParseError("Instance property declarations using 'this' may only be used in class constructors");
-                        }
-                        this.currentToken = this.scanner.scan(); // consume the '.'
                         this.currentToken = this.scanner.scan();
                     }
                 }
@@ -3037,22 +3017,6 @@ module TypeScript {
                     // transform the dotted expression into a member declaration
                     var subsumedExpr = false;
 
-                    if (this.inferPropertiesFromThisAssignment &&
-                        (this.currentToken.tokenId == TokenID.Colon || this.currentToken.tokenId == TokenID.Equals) &&
-                         this.parsingClassConstructorDefinition &&
-                         this.nestingLevel == this.currentClassDefinition.constructorNestingLevel && // this nesting level means we're at the top-level in the constructor
-                         (<BinaryExpression>ast).operand1.nodeType == NodeType.This) {
-
-                        if ((<BinaryExpression>ast).operand2.nodeType == NodeType.Name) {
-                            var op2ID: Identifier = (<Identifier>(<BinaryExpression>ast).operand2);
-
-                            if (!this.currentClassDefinition.knownMemberNames[op2ID.actualText]) {
-                                ast = this.parseClassMemberVariableDeclaration(op2ID, ast.minChar, true, errorRecoverySet, Modifiers.Public);
-                                subsumedExpr = true;
-                            }
-                        }
-                    }
-
                     if (!subsumedExpr) {
                         temp = ast;
                         while (temp.nodeType == NodeType.Dot) {
@@ -3525,28 +3489,18 @@ module TypeScript {
 
                         if (this.parsingClassConstructorDefinition) {
 
-                            if (!this.inferPropertiesFromThisAssignment) {
-                                this.reportParseError("Property declarations are not permitted within constructor bodies");
-                            }
+                            this.reportParseError("Property declarations are not permitted within constructor bodies");
 
                             minChar = this.scanner.pos;
-                            if (this.inferPropertiesFromThisAssignment && (this.currentToken.tokenId != TokenID.This || (this.currentToken = this.scanner.scan()).tokenId != TokenID.Dot)) {
-                                this.reportParseError("Expected 'this.' for property declaration");
-                                this.currentToken = this.scanner.scan();
-                                ast = new AST(NodeType.Error);
-                                ast.minChar = minChar;
-                                ast.limChar = this.scanner.lastTokenLimChar();
-                            }
-                            else {
-                                this.currentToken = this.scanner.scan();
+                            
+                            this.currentToken = this.scanner.scan();
 
-                                id = Identifier.fromToken(this.currentToken);
-                                id.minChar = this.scanner.startPos;
-                                id.limChar = this.scanner.pos;
+                            id = Identifier.fromToken(this.currentToken);
+                            id.minChar = this.scanner.startPos;
+                            id.limChar = this.scanner.pos;
 
-                                this.currentToken = this.scanner.scan();
-                                ast = this.parseClassMemberVariableDeclaration(id, minChar, this.parsingClassConstructorDefinition, errorRecoverySet, modifiers);
-                            }
+                            this.currentToken = this.scanner.scan();
+                            ast = this.parseClassMemberVariableDeclaration(id, minChar, this.parsingClassConstructorDefinition, errorRecoverySet, modifiers);
                         }
                         else {
                             if (this.currentToken.tokenId != TokenID.Interface) {
@@ -3585,30 +3539,19 @@ module TypeScript {
                     case TokenID.Public:
                         if (this.parsingClassConstructorDefinition) {
 
-                            if (!this.inferPropertiesFromThisAssignment) {
-                                this.reportParseError("Property declarations are not permitted within constructor bodies");
-                            }
+                            this.reportParseError("Property declarations are not permitted within constructor bodies");
 
                             this.currentToken = this.scanner.scan();
                             minChar = this.scanner.pos;
                             modifiers |= Modifiers.Public;
-                            if (this.inferPropertiesFromThisAssignment && (this.currentToken.tokenId != TokenID.This || (this.currentToken = this.scanner.scan()).tokenId != TokenID.Dot)) {
-                                this.reportParseError("Expected 'this.' for property declaration");
-                                this.currentToken = this.scanner.scan();
-                                ast = new AST(NodeType.Error);
-                                ast.minChar = minChar;
-                                ast.limChar = this.scanner.lastTokenLimChar();
-                            }
-                            else {
-                                this.currentToken = this.scanner.scan();
+                            this.currentToken = this.scanner.scan();
 
-                                id = Identifier.fromToken(this.currentToken);
-                                id.minChar = this.scanner.startPos;
-                                id.limChar = this.scanner.pos;
+                            id = Identifier.fromToken(this.currentToken);
+                            id.minChar = this.scanner.startPos;
+                            id.limChar = this.scanner.pos;
 
-                                this.currentToken = this.scanner.scan();
-                                ast = this.parseClassMemberVariableDeclaration(id, minChar, this.parsingClassConstructorDefinition, errorRecoverySet, modifiers);
-                            }
+                            this.currentToken = this.scanner.scan();
+                            ast = this.parseClassMemberVariableDeclaration(id, minChar, this.parsingClassConstructorDefinition, errorRecoverySet, modifiers);
                         }
                         else {
                             if ((allowedElements & AllowedElements.Properties) == AllowedElements.None) {
@@ -4325,7 +4268,6 @@ module TypeScript {
             this.parsingClassConstructorDefinition = false;
             this.parsingDeclareFile = false;
             this.amdDependencies = [];
-            this.inferPropertiesFromThisAssignment = false;
             this.requiresExtendsBlock = false;
 
             this.scanner.resetComments();

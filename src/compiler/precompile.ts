@@ -99,7 +99,6 @@ module TypeScript {
         public preprocess = true;
         public canCallDefinitionSignature = false;
 
-        public inferPropertiesFromThisAssignment = false;
         public useDefaultLib = true;
 
         public codeGenTarget = CodeGenTarget.ES3;

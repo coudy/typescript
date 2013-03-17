@@ -171,7 +171,6 @@ module TypeScript {
 
             this.parser.style_requireSemi = this.settings.styleSettings.requireSemi;
             this.parser.style_funcInLoop = this.settings.styleSettings.funcInLoop;
-            this.parser.inferPropertiesFromThisAssignment = this.settings.inferPropertiesFromThisAssignment;
             this.emitSettings = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
