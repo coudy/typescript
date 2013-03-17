@@ -28,7 +28,10 @@ module Services {
         getScriptVersion(fileName: string): number;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
 
-        getScriptTextChangeRangeSinceVersion(fielName: string, scriptVersion: number): TypeScript.TextChangeRange;
+        // Returns a text change range representing what text has changed since the specified version.
+        // If the change cannot be determined (say, because a file was opened/closed), then 'null' 
+        // should be returned.
+        getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): TypeScript.TextChangeRange;
     }
 
     //
