@@ -486,7 +486,7 @@ module Services {
         private attemptIncrementalSyntaxAST(syntaxASTState: ScriptSyntaxASTState): ScriptSyntaxAST {
             var syntaxAST = syntaxASTState.syntaxAST;
             var fileName = syntaxAST.getScriptFileName();
-            var newSourceText = this.compilerState.getScriptSnapshot2(fileName);
+            var newSourceText = this.compilerState.getScriptSnapshot(fileName);
 
             var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, syntaxASTState.version);
 
@@ -560,7 +560,7 @@ module Services {
             this.refresh();
 
             var script = this.compilerState.getScriptAST(fileName);
-            var sourceText = this.compilerState.getScriptSnapshot(script);
+            var sourceText = this.compilerState.getScriptSnapshot(fileName);
 
             // Look for AST node containing the position
             var typeInfo = this.getTypeInfoAtPosition(pos, script, true);
@@ -930,7 +930,7 @@ module Services {
                 return null;
             }
 
-            var sourceText = this.compilerState.getScriptSnapshot(script);
+            var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, /*isMemberCompletion*/false);
             if (enclosingScopeContext == null) {
                 this.logger.log("No context found at the specified location.");
@@ -1431,7 +1431,7 @@ module Services {
             }
 
             // Find the enclosing scope so we can parse the corresponding fragment
-            var sourceText = this.compilerState.getScriptSnapshot(script);
+            var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var enclosingScopeContext = new TypeScript.IncrementalParser(this.logger).getEnclosingScopeContextIfSingleScopeEdit(script, fileName, sourceText, editRange);
             if (enclosingScopeContext === null) {
                 this.logger.log("Full refresh required: range of edits may affect more than one scope");
@@ -1471,7 +1471,7 @@ module Services {
 
             // Find the enclosing scope so we can parse the corresponding fragment
             var script = this.compilerState.getScriptAST(fileName);
-            var sourceText = this.compilerState.getScriptSnapshot(script);
+            var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, isMemberCompletion);
             if (enclosingScopeContext == null) {
                 this.logger.log("No context found at the specified location.");

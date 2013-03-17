@@ -199,7 +199,7 @@ module Services {
         }
 
         public createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var sourceText = this.getScriptSnapshot2(fileName);
+            var sourceText = this.getScriptSnapshot(fileName);
             var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
             return TypeScript.Parser1.parse(text);
         }
@@ -248,11 +248,7 @@ module Services {
             return this.host.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
-        public getScriptSnapshot(script: TypeScript.Script) {
-            return this.hostCache.getScriptSnapshot(script.locationInfo.fileName);
-        }
-
-        public getScriptSnapshot2(fileName: string) {
+        public getScriptSnapshot(fileName: string) {
             return this.hostCache.getScriptSnapshot(fileName);
         }
 
@@ -324,7 +320,7 @@ module Services {
         }
 
         private updateSyntaxTree(fileName: string): void {
-            var newText = new TypeScript.SegmentedScriptSnapshot(this.getScriptSnapshot2(fileName));
+            var newText = new TypeScript.SegmentedScriptSnapshot(this.getScriptSnapshot(fileName));
 
             var editRange = this.getScriptTextChangeRange(fileName);
             if (editRange === null) {

@@ -295,7 +295,7 @@ module Services {
         }
 
         private updateSyntaxTree(fileName: string): void {
-            var newText = new TypeScript.SegmentedScriptSnapshot(this.getScriptSnapshot2(fileName));
+            var newText = new TypeScript.SegmentedScriptSnapshot(this.getScriptSnapshot(fileName));
 
             var editRange = this.getScriptTextChangeRange(fileName);
             if (editRange === null) {
@@ -313,7 +313,7 @@ module Services {
         private attemptIncrementalUpdateUnit(fileName: string): TypeScript.UpdateUnitResult {
             var previousScript = this.getScriptAST(fileName);
             
-            var newSourceText = this.getScriptSnapshot(previousScript);
+            var newSourceText = this.getScriptSnapshot(fileName);
             var editRange = this.getScriptTextChangeRange(fileName);
 
             var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, fileName, newSourceText, editRange);
@@ -628,11 +628,7 @@ module Services {
             return this.host.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
-        public getScriptSnapshot(script: TypeScript.Script): TypeScript.IScriptSnapshot {
-            return this.hostCache.getScriptSnapshot(script.locationInfo.fileName);
-        }
-
-        public getScriptSnapshot2(fileName: string): TypeScript.IScriptSnapshot {
+        public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
             return this.hostCache.getScriptSnapshot(fileName);
         }
 
