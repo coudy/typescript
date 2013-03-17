@@ -380,7 +380,6 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.resolve = false;
-                this.compilationSettings.preprocess = false;
             }
         });
 

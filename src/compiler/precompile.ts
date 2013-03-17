@@ -96,13 +96,13 @@ module TypeScript {
         public printControlFlow = false;
         public controlFlowUseDef = false;
         public errorOnWith = true;
-        public preprocess = true;
         public canCallDefinitionSignature = false;
 
         public useDefaultLib = true;
 
         public codeGenTarget = CodeGenTarget.ES3;
         public moduleGenTarget = ModuleGenTarget.Synchronous;
+
         // --out option passed. 
         // Default is the "" which leads to multiple files generated next to the.ts files
         public outputOption: string = "";
