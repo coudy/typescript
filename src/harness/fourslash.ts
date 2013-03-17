@@ -168,7 +168,7 @@ module FourSlash {
 
             var exists = this.anyErrorInRange(predicate, startMarker, endMarker);
 
-            if (exists != negative) {
+            if (exists !== negative) {
                 this.printErrorLog(negative, this.getAllDiagnostics());
                 throw new Error("Failure between markers: " + startMarkerName + ", " + endMarkerName);
             }
@@ -213,7 +213,7 @@ module FourSlash {
             var exists = this.anyErrorInRange(predicate, marker);
             var diagnostics = this.getAllDiagnostics();
 
-            if (exists != negative) {
+            if (exists !== negative) {
                 this.printErrorLog(negative, diagnostics);
                 throw new Error("Failure at marker: " + markerName);
             }
@@ -253,7 +253,7 @@ module FourSlash {
         public verifyNumberOfErrorsInCurrentFile(expected: number) {
             var errors = this.getDiagnostics(this.activeFile.fileName);
             var actual = errors.length;
-            if (actual != expected) {
+            if (actual !== expected) {
                 var errorMsg = "Actual number of errors (" + actual + ") does not match expected number (" + expected + ")";
                 IO.printLine(errorMsg);
                 throw new Error(errorMsg);
@@ -267,7 +267,7 @@ module FourSlash {
         
         public verifyMemberListDoesNotContain(symbol: string) {
             var members = this.getMemberListAtCaret();
-            if (members.entries.filter(e => e.name == symbol).length !== 0) {
+            if (members.entries.filter(e => e.name === symbol).length !== 0) {
                 throw new Error('Member list did contain ' + symbol);
             }
         }
@@ -315,7 +315,7 @@ module FourSlash {
 
         public verifyCompletionListDoesNotContain(symbol: string) {
             var completions = this.getCompletionListAtCaret();
-            if (completions.entries.filter(e => e.name == symbol).length !== 0) {
+            if (completions.entries.filter(e => e.name === symbol).length !== 0) {
                 throw new Error('Completion list did contain ' + symbol);
             }
         }
@@ -335,29 +335,29 @@ module FourSlash {
             var actualQuickInfoSymbolName = actualQuickInfo ? actualQuickInfo.fullSymbolName : "";
             var actualQuickInfoKind = actualQuickInfo ? actualQuickInfo.kind : "";
             if (negative) {
-                if (expectedTypeName != undefined) {
+                if (expectedTypeName !== undefined) {
                     assert.notEqual(actualQuickInfoMemberName, expectedTypeName);
                 }
-                if (this.verifyDocComments && docComment != undefined) {
+                if (this.verifyDocComments && docComment !== undefined) {
                     assert.notEqual(actualQuickInfoDocComment, docComment);
                 }
-                if (symbolName != undefined) {
+                if (symbolName !== undefined) {
                     assert.notEqual(actualQuickInfoSymbolName, symbolName);
                 }
-                if (kind != undefined) {
+                if (kind !== undefined) {
                     assert.notEqual(actualQuickInfoKind, kind);
                 }
             } else {
-                if (expectedTypeName != undefined) {
+                if (expectedTypeName !== undefined) {
                     assert.equal(actualQuickInfoMemberName, expectedTypeName);
                 }
-                if (this.verifyDocComments && docComment != undefined) {
+                if (this.verifyDocComments && docComment !== undefined) {
                     assert.equal(actualQuickInfoDocComment, docComment);
                 }
-                if (symbolName != undefined) {
+                if (symbolName !== undefined) {
                     assert.equal(actualQuickInfoSymbolName, symbolName);
                 }
-                if (kind != undefined) {
+                if (kind !== undefined) {
                     assert.equal(actualQuickInfoKind, kind);
                 }
             }
@@ -666,17 +666,17 @@ module FourSlash {
 
         public verifyCaretAtMarker(markerName? = '') {
             var pos = this.getMarkerByName(markerName);
-            if (pos.fileName != this.activeFile.fileName) {
+            if (pos.fileName !== this.activeFile.fileName) {
                 throw new Error('verifyCaretAtMarker failed - expected to be in file "' + pos.fileName + '", but was in file "' + this.activeFile.fileName + '"');
             }
-            if (pos.position != this.currentCaretPosition) {
+            if (pos.position !== this.currentCaretPosition) {
                 throw new Error('verifyCaretAtMarker failed - expected to be at marker "/*' + markerName + '*/, but was at position ' + this.currentCaretPosition + '(' + this.getLineColStringAtCaret() + ')');
             }
         }
 
         public verifySmartIndentLevel(numberOfTabs: number) {
             var actual = this.realLangSvc.getSmartIndentAtLineNumber(this.activeFile.fileName, this.getCurrentLineNumberZeroBased(), new Services.EditorOptions()) / 4;
-            if (actual != numberOfTabs) {
+            if (actual !== numberOfTabs) {
                 throw new Error('verifySmartIndentLevel failed - expected tab depth to be ' + numberOfTabs + ', but was ' + actual);
             }
         }
@@ -825,7 +825,7 @@ module FourSlash {
             if (newlinePos === -1) {
                 return text;
             } else {
-                if (text.charAt(newlinePos - 1) == '\r') {
+                if (text.charAt(newlinePos - 1) === '\r') {
                     newlinePos--;
                 }
                 return text.substr(0, newlinePos);
@@ -858,17 +858,17 @@ module FourSlash {
 
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                if (item.name == name) {
-                    if (this.verifyDocComments && docComment != undefined) {
+                if (item.name === name) {
+                    if (this.verifyDocComments && docComment !== undefined) {
                         assert.equal(item.docComment, docComment);
                     }
-                    if (type != undefined) {
+                    if (type !== undefined) {
                         assert.equal(item.type, type);
                     }
-                    if (fullSymbolName != undefined) {
+                    if (fullSymbolName !== undefined) {
                         assert.equal(item.fullSymbolName, fullSymbolName);
                     }
-                    if (kind != undefined) {
+                    if (kind !== undefined) {
                         assert.equal(item.kind, kind);
                     }
                     return;
@@ -876,21 +876,21 @@ module FourSlash {
             }
 
             var getItemString = (item: { name: string; type: string; docComment: string; fullSymbolName: string; kind: string; }) => {
-                if (docComment == undefined && type == undefined && fullSymbolName == undefined && kind == undefined) {
+                if (docComment === undefined && type === undefined && fullSymbolName === undefined && kind === undefined) {
                     return item.name;
                 }
 
                 var returnString = "\n{ name: " + item.name;
-                if (type != undefined) {
+                if (type !== undefined) {
                     returnString += ",type: " + item.type;
                 }
-                if (this.verifyDocComments && docComment != undefined) {
+                if (this.verifyDocComments && docComment !== undefined) {
                     returnString += ",docComment: " + item.docComment;
                 }
-                if (fullSymbolName != undefined) {
+                if (fullSymbolName !== undefined) {
                     returnString += ",fullSymbolName: " + item.fullSymbolName;
                 }
-                if (kind != undefined) {
+                if (kind !== undefined) {
                     returnString += ",kind: " + item.kind;
                 }
                 returnString += " }"
@@ -1069,7 +1069,7 @@ module FourSlash {
             var line = lines[i];
             var lineLength = line.length;
             
-            if (lineLength > 0 && line.charAt(lineLength - 1) == '\r') {
+            if (lineLength > 0 && line.charAt(lineLength - 1) === '\r') {
                 line = line.substr(0, lineLength - 1);
             }
 
@@ -1091,8 +1091,8 @@ module FourSlash {
                 if (match) {
                     var globalNameIndex = globalMetadataNames.indexOf(match[1]);
                     var fileNameIndex = fileMetadataNames.indexOf(match[1]);
-                    if (globalNameIndex == -1) {
-                        if (fileNameIndex == -1) {
+                    if (globalNameIndex === -1) {
+                        if (fileNameIndex === -1) {
                             throw new Error('Unrecognized metadata name "' + match[1] + '". Available global metadata names are: ' + globalMetadataNames.join(', ') + '; file metadata names are: ' + fileMetadataNames.join(', '));
                         } else {
                             currentFileOptions[match[1]] = match[2];
