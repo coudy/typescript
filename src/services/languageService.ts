@@ -28,7 +28,7 @@ module Services {
         getScriptVersion(fileName: string): number;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
 
-        getScriptTextChangeRangeSinceVersion(fielName: string, scriptVersion: number): TypeScript.TextChangeRange;
+        getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): TypeScript.TextChangeRange;
     }
 
     //
