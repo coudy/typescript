@@ -30,10 +30,6 @@ module Services {
             this.formattingRulesProvider = new Formatting.RulesProvider(this.logger);
         }
 
-        public getHostIndex(fileName: string): number {
-            return this.pullCompilerState.getHostIndex(fileName);
-        }
-
         public refresh(): void {
             TypeScript.timeFunction(this.logger, "refresh()", () => {
                 this.pullCompilerState.refresh();

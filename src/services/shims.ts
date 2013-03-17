@@ -25,14 +25,17 @@ module Services {
         getCompilationSettings(): string;
         getHostSettings(): string;
 
-        getScriptCount(): number;
-        getScriptFileName(scriptIndex: number): string;
-        getScriptVersion(scriptIndex: number): number;
-        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
+        // Returns a JSON encoded value of the type:
+        // string[]
+        getScriptFileNames(): string;
+        getScriptVersion(fileName: string): number;
+        getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
 
-        // Returns either 'null' if there was no change, or a TextChangeRange object encoded in 
-        // JSON in the form: { span: { start: number, length: number }, newLength: number }
-        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): string;
+        // Returns a JSON encoded value of the type:
+        // { span: { start: number; length: number }; newLength: number }
+        //
+        // Or null value if there was no change.
+        getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): string;
     }
 
     //
@@ -57,13 +60,37 @@ module Services {
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;
         getBreakpointStatementAtPosition(fileName: string, pos: number): string;
         getSignatureAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; kind: string; name: string; containerKind: string; containerName: string }
+        //
+        // Or null value if no definition can be found.
         getDefinitionAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
         getReferencesAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
         getOccurrencesAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { fileName: string; minChar: number; limChar: number; isWriteAccess: bool }[]
         getImplementorsAtPosition(fileName: string, pos: number): string;
+
+        // Returns a JSON encoded value of the type:
+        // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
         getNavigateToItems(searchValue: string): string;
+
+        // Returns a JSON encoded value of the type:
+        // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
         getScriptLexicalStructure(fileName: string): string;
+
+        // Returns a JSON encoded value of the type:
+        // { name: string; kind: string; kindModifiers: string; containerName: string; containerKind: string; matchKind: string; fileName: string; minChar: number; limChar: number; } [] = [];
         getOutliningRegions(fileName: string): string;
+
         getBraceMatchingAtPosition(fileName: string, pos: number): string;
         getSmartIndentAtLineNumber(fileName: string, lineNumber: number, options: string/*Services.EditorOptions*/): string;
 
@@ -112,29 +139,26 @@ module Services {
             return settings;
         }
 
-        public getScriptCount(): number {
-            return this.shimHost.getScriptCount();
+        public getScriptFileNames(): string[] {
+            var encoded = this.shimHost.getScriptFileNames();
+            return JSON.parse(encoded);
         }
 
-        public getScriptFileName(scriptIndex: number): string {
-            return this.shimHost.getScriptFileName(scriptIndex);
+        public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
+            return this.shimHost.getScriptSnapshot(fileName);
         }
 
-        public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {
-            return this.shimHost.getScriptSnapshot(scriptIndex);
+        public getScriptVersion(fileName: string): number {
+            return this.shimHost.getScriptVersion(fileName);
         }
 
-        public getScriptVersion(scriptIndex: number): number {
-            return this.shimHost.getScriptVersion(scriptIndex);
-        }
-
-        public getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.TextChangeRange {
-            var rangeText = this.shimHost.getScriptTextChangeRangeSinceVersion(scriptIndex, scriptVersion);
-            var result: { span: { start: number; length: number; }; newLength: number; } = JSON.parse(rangeText);
-            if (result === null) {
+        public getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): TypeScript.TextChangeRange {
+            var encoded = this.shimHost.getScriptTextChangeRangeSinceVersion(fileName, scriptVersion);
+            if (encoded === null) {
                 return null;
             }
 
+            var result: { span: { start: number; length: number; }; newLength: number; } = JSON.parse(encoded);
             return new TypeScript.TextChangeRange(
                 new TypeScript.TextSpan(result.span.start, result.span.length), result.newLength);
         }
@@ -321,17 +345,18 @@ module Services {
                 "getDefinitionAtPosition(\"" + fileName + "\", " + pos + ")",
                 () => {
                     var definition = this.languageService.getDefinitionAtPosition(fileName, pos);
-                    var result = "";
-                    if (definition !== null) {
-                        result = this.languageService.getHostIndex(definition.fileName) + '\t' +
-                            definition.minChar + '\t' +
-                            definition.limChar + '\t' +
-                            definition.kind + '\t' +
-                            definition.name + '\t' +
-                            definition.containerKind + '\t' +
-                            definition.containerName;
+                    if (definition === null) {
+                        return null;
                     }
-                    return result;
+
+                    return JSON.stringify({
+                        fileName: definition.fileName,
+                        minChar: definition.minChar,
+                        limChar: definition.limChar,
+                        kind: definition.kind,
+                        name: definition.name,
+                        containerKind: definition.containerKind,
+                        containerName: definition.containerName });
                 });
         }
 
@@ -389,12 +414,13 @@ module Services {
         }
 
         private _referencesToResult(entries: Services.ReferenceEntry[]): string {
-            var result = "";
+            var result: { fileName: string; minChar: number; limChar: number; isWriteAccess: bool; }[] = [];
             for (var i = 0; i < entries.length; i++) {
                 var entry = entries[i];
-                result += this.languageService.getHostIndex(entry.fileName) + " " + entry.ast.minChar + " " + entry.ast.limChar + " " + entry.isWriteAccess + "\n";
+                result.push({ fileName: entry.fileName, minChar: entry.ast.minChar, limChar: entry.ast.limChar, isWriteAccess: entry.isWriteAccess });
             }
-            return result;
+
+            return JSON.stringify(result);
         }
 
         /// COMPLETION LISTS
@@ -529,21 +555,35 @@ module Services {
         }
 
         private _navigateToItemsToString(items: Services.NavigateToItem[]): string {
-            var result = "";
+            var result: {
+                name: string;
+                kind: string;
+                kindModifiers: string;
+                containerName: string;
+                containerKind: string;
+                matchKind: string;
+                fileName: string;
+                minChar: number;
+                limChar: number;
+            }[] = [];
+
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
 
-                result += item.name + "\t" +
-                    item.kind + "\t" +
-                    item.kindModifiers + "\t" +
-                    item.containerName + "\t" +
-                    item.containerKind + "\t" +
-                    item.matchKind + "\t" +
-                    this.languageService.getHostIndex(item.fileName) + "\t" +
-                    item.minChar + "\t" +
-                    item.limChar + "\n";
+                result.push({
+                    name: item.name,
+                    kind: item.kind,
+                    kindModifiers: item.kindModifiers,
+                    containerName: item.containerName,
+                    containerKind: item.containerKind,
+                    matchKind: item.matchKind,
+                    fileName: item.fileName,
+                    minChar: item.minChar,
+                    limChar: item.limChar
+                });
             }
-            return result;
+
+            return JSON.stringify(result);
         }
     }
 

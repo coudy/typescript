@@ -55,15 +55,15 @@ module Services {
         private _sourceText: TypeScript.IScriptSnapshot;
 
         constructor(
+            private fileName: string,
             private host: ILanguageServiceHost,
-            public hostIndex: number,
             public version: number) {
             this._sourceText = null;
         }
         
         public getScriptSnapshot(): TypeScript.IScriptSnapshot {
             if (this._sourceText === null) {
-                this._sourceText = this.host.getScriptSnapshot(this.hostIndex);
+                this._sourceText = this.host.getScriptSnapshot(this.fileName);
             }
 
             return this._sourceText;
@@ -82,32 +82,22 @@ module Services {
             // script id => script index
             this.map = new TypeScript.StringHashTable();
 
-            for (var scriptIndex = 0, n = this.host.getScriptCount() ; scriptIndex < n; scriptIndex++) {
-                var fileName = this.host.getScriptFileName(scriptIndex);
+            var fileNames = this.host.getScriptFileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
                 this.map.add(fileName, new HostCacheEntry(
-                    this.host, scriptIndex,
-                    this.host.getScriptVersion(scriptIndex)));
+                    fileName, this.host, this.host.getScriptVersion(fileName)));
             }
         }
 
-        public count(): number {
-            return this.map.count();
+        public contains(fileName: string): bool {
+            return this.map.lookup(fileName) !== null;
         }
 
         public getFileNames(): string[]{
             return this.map.getAllKeys();
         }
 
-        public getHostIndex(fileName: string): number {
-            var result: number = this.map.lookup(fileName);
-            if (result == null) {
-                // TODO: this should never happen.  Remove and replace with assert.
-                return -1;
-            }
-
-            return result;
-        }
-        
         public getVersion(fileName: string): number {
             return this.map.lookup(fileName).version;
         }
@@ -245,10 +235,6 @@ module Services {
             return this.compiler.typeFlow.anyType;
         }
 
-        public getScriptCount(): number {
-            return this.compiler.fileNameToScript.count();
-        }
-
         public getFileNames(): string[]{
             return this.compiler.fileNameToScript.getAllKeys();
         }
@@ -259,10 +245,6 @@ module Services {
 
         public getScripts(): TypeScript.Script[]{
             return this.compiler.getScripts();
-        }
-
-        public getHostIndex(fileName: string): number {
-            return this.hostCache.getHostIndex(fileName);
         }
 
         public getScriptVersion(fileName: string) {
@@ -385,8 +367,9 @@ module Services {
             this.compiler.parser.errorRecovery = true;
 
             // Add unit for all source files
-            for (var i = 0, length = this.host.getScriptCount() ; i < length; i++) {
-                this.addCompilerUnit(this.compiler, this.host.getScriptFileName(i));
+            var fileNames = this.host.getScriptFileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                this.addCompilerUnit(this.compiler, fileNames[i]);
             }
 
             // Initial typecheck
@@ -395,6 +378,11 @@ module Services {
         }
 
         public minimalRefresh(): void {
+            if (this.compiler === null) {
+                this.refresh();
+                return;
+            }
+
             // Reset the cache at start of every refresh
             this.hostCache = new HostCache(this.host);
         }
@@ -449,8 +437,7 @@ module Services {
             for (var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
                 var fileName = fileNames[unitIndex];
 
-                var hostUnitIndex = this.hostCache.getHostIndex(fileName);
-                if (hostUnitIndex < 0) {
+                if (!this.hostCache.contains(fileName)) {
                     this.logger.log("Creating new compiler instance because of unit is not part of program anymore: " + unitIndex + "-" + fileName);
                     this.createCompiler();
                     return true;
@@ -491,8 +478,9 @@ module Services {
             //      update it if content has changed
             //   else
             //      add it
-            for (var hostUnitIndex = 0, len = this.host.getScriptCount() ; hostUnitIndex < len; hostUnitIndex++) {
-                var fileName = this.host.getScriptFileName(hostUnitIndex);
+            var fileNames = this.host.getScriptFileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
 
                 if (this.compiler.fileNameToLocationInfo.lookup(fileName)) {
                     var updateResult = this.updateCompilerUnit(this.compiler, fileName);
@@ -517,7 +505,8 @@ module Services {
                 // Apply changes to units
                 var anythingUpdated = false;
                 var i = 0;
-                for (i = 0, len = updateResults.length; i < len; i++) {
+
+                for (i = 0, n = updateResults.length; i < n; i++) {
                     var entry = updateResults[i];
                     if (this.applyUpdateResult(entry))
                         anythingUpdated = true;
@@ -635,8 +624,7 @@ module Services {
                 return null; // "No changes"
             }
 
-            var hostUnitIndex = this.hostCache.getHostIndex(fileName);
-            return this.host.getScriptTextChangeRangeSinceVersion(hostUnitIndex, lastKnownVersion);
+            return this.host.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
         public getScriptSnapshot(script: TypeScript.Script): TypeScript.IScriptSnapshot {

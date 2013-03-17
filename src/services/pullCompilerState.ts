@@ -55,20 +55,12 @@ module Services {
             return this.compiler.fileNameToScript.getAllKeys();
         }
 
-        public getScriptCount(): number {
-            return this.compiler.fileNameToScript.count();
-        }
-
         public getScript(fileName: string): TypeScript.Script {
             return this.compiler.fileNameToScript.lookup(fileName)
         }
 
         public getScripts(): TypeScript.Script[]{
             return this.compiler.getScripts();
-        }
-
-        public getHostIndex(fileName: string): number {
-            return this.hostCache.getHostIndex(fileName);
         }
 
         public getScriptVersion(fileName: string) {
@@ -121,9 +113,9 @@ module Services {
             this.compiler.parser.errorRecovery = true;
 
             // Add unit for all source files
-            for (var i = 0, length = this.host.getScriptCount() ; i < length; i++) {
-                var fileName = this.host.getScriptFileName(i);
-                this.addCompilerUnit(this.compiler, fileName);
+            var fileNames = this.host.getScriptFileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                this.addCompilerUnit(this.compiler, fileNames[i]);
             }
 
             // Initial typecheck
@@ -132,6 +124,11 @@ module Services {
         }
 
         public minimalRefresh(): void {
+            if (this.compiler === null) {
+                this.refresh();
+                return;
+            }
+
             // Reset the cache at start of every refresh
             this.hostCache = new HostCache(this.host);
         }
@@ -186,8 +183,7 @@ module Services {
             for (var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
                 var fileName = fileNames[unitIndex];
 
-                var hostUnitIndex = this.hostCache.getHostIndex(fileName);
-                if (hostUnitIndex < 0) {
+                if (!this.hostCache.contains(fileName)) {
                     this.logger.log("Creating new compiler instance because of unit is not part of program anymore: " + unitIndex + "-" + fileName);
                     this.createCompiler();
                     return true;
@@ -248,9 +244,8 @@ module Services {
             if (lastKnownVersion === currentVersion) {
                 return null; // "No changes"
             }
-
-            var hostIndex = this.hostCache.getHostIndex(fileName);
-            return this.host.getScriptTextChangeRangeSinceVersion(hostIndex, lastKnownVersion);
+            
+            return this.host.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
         public getScriptSnapshot(script: TypeScript.Script) {
@@ -350,8 +345,9 @@ module Services {
 
             var fileAdded: bool = false;
 
-            for (var hostUnitIndex = 0, len = this.host.getScriptCount() ; hostUnitIndex < len; hostUnitIndex++) {
-                var fileName = this.host.getScriptFileName(hostUnitIndex);
+            var fileNames = this.host.getScriptFileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
 
                 if (this.compiler.fileNameToLocationInfo.lookup(fileName)) {
                     this.updateCompilerUnit(this.compiler, fileName);

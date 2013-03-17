@@ -24,12 +24,11 @@ module Services {
         getCompilationSettings(): TypeScript.CompilationSettings;
         getHostSettings(): TypeScript.IHostSettings;
 
-        getScriptCount(): number;
-        getScriptFileName(scriptIndex: number): string;
-        getScriptVersion(scriptIndex: number): number;
-        getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot;
+        getScriptFileNames(): string[];
+        getScriptVersion(fileName: string): number;
+        getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
 
-        getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): TypeScript.TextChangeRange;
+        getScriptTextChangeRangeSinceVersion(fielName: string, scriptVersion: number): TypeScript.TextChangeRange;
     }
 
     //
@@ -40,8 +39,6 @@ module Services {
         // TODO: This should be removed.  We should not be publicly exposing a way to refresh the 
         // language service.
         refresh(): void;
-
-        getHostIndex(fileName: string): number;
 
         // TODO: Remove these. 
         logAST(fileName: string): void;
@@ -435,10 +432,6 @@ module Services {
             this.compilerState = new CompilerState(this.host);
             this.syntaxASTState = new ScriptSyntaxASTState();
             this.formattingRulesProvider = new Formatting.RulesProvider(this.logger);
-        }
-
-        public getHostIndex(fileName: string): number {
-            return this.compilerState.getHostIndex(fileName);
         }
 
         public refresh(): void {

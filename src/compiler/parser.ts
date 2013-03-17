@@ -39,6 +39,8 @@ module TypeScript {
     }
 
     export class Parser {
+        private fileName = "";
+
         private varLists: ASTList[] = [];
         private scopeLists: ASTList[] = [];
         private staticsLists: ASTList[] = [];
@@ -4286,8 +4288,6 @@ module TypeScript {
             }
         }
 
-        private fileName = "";
-
         public quickParse(sourceText: IScriptSnapshot, fileName: string): QuickParseResult {
             //TODO: REVIEW: We set this to avoid adding a "module" decl in the resulting script (see parse() method)
             var svGenTarget = TypeScript.moduleGenTarget;
@@ -4429,7 +4429,6 @@ module TypeScript {
         var quickClassDecl = new ClassDeclaration(null, null, null, null, null);
         quickParser.currentClassDecl = quickClassDecl;
 
-        // TODO: why are we passing an empty file name here?
         var result = quickParser.quickParse(new StringScriptSnapshot(fragment), fileName);
         return result;
     }
