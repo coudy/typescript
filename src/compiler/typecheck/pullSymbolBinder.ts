@@ -2136,7 +2136,21 @@ module TypeScript {
             var i = 0;
             var j = 0;
 
-            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
+            if (!isStatic) {
+                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
+            }
+            else {
+                var candidate: PullSymbol;
+
+                for (var m = 0; m < this.staticClassMembers.length; m++) {
+                    candidate = this.staticClassMembers[m];
+
+                    if (candidate.getName() == funcName) {
+                        accessorSymbol = <PullAccessorSymbol>candidate;
+                        break;
+                    }
+                }
+            }
 
             if (codeGenTarget < CodeGenTarget.ES5) {
                 getAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));
@@ -2306,7 +2320,21 @@ module TypeScript {
             var i = 0;
             var j = 0;
 
-            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
+            if (!isStatic) {
+                accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName);
+            }
+            else {
+                var candidate: PullSymbol;
+
+                for (var m = 0; m < this.staticClassMembers.length; m++) {
+                    candidate = this.staticClassMembers[m];
+
+                    if (candidate.getName() == funcName) {
+                        accessorSymbol = <PullAccessorSymbol>candidate;
+                        break;
+                    }
+                }
+            }
 
             if (codeGenTarget < CodeGenTarget.ES5) {
                 setAccessorDeclaration.addError(new PullError(funcDeclAST.minChar, funcDeclAST.getLength(), this.semanticInfo.getPath(), "Property accessors are only available when targeting ES5 or greater"));

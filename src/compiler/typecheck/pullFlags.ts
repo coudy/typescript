@@ -81,6 +81,8 @@ module TypeScript {
                     Enum | Array | TypeAlias | ObjectType | FunctionType | ConstructorType | TypeParameter,
 
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
+
+        SomeAccessor = GetAccessor | SetAccessor,
     }
 
     export enum SymbolLinkKind {

@@ -225,6 +225,9 @@ module TypeScript {
                 case NodeType.Finally:
                     return this.typeCheckFinallyBlock(ast, typeCheckContext);
 
+                case NodeType.Return:
+                    return this.typeCheckReturnExpression(ast, typeCheckContext);
+
                 default:
                     break;
             }
@@ -455,7 +458,23 @@ module TypeScript {
         // validate:
         //
         public typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var objectLitAST = <UnaryExpression>ast;
+
+            var objectLitType = this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var memberDecls = <ASTList>objectLitAST.operand;
+
+            // PULLTODO: Contextually type the members
+            if (memberDecls) {
+                var binex: BinaryExpression;
+                for (var i = 0; i < memberDecls.members.length; i++) {
+                    binex = <BinaryExpression>memberDecls.members[i];
+
+                    this.typeCheckAST(binex.operand2, typeCheckContext);
+                }
+            }
+
+
+            return objectLitType;
         }
 
         // Array literals
@@ -723,6 +742,13 @@ module TypeScript {
             this.typeCheckAST(finallyAST.body, typeCheckContext);
 
             return null;
-        }        
+        }
+
+        public typeCheckReturnExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var returnAST = <ReturnStatement>ast;
+
+            return this.typeCheckAST(returnAST.returnExpression, typeCheckContext);
+        }
+
     }
 }
