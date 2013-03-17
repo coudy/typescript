@@ -924,14 +924,14 @@ module Services {
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
-            this.pullCompilerState.refresh(false/*throwOnError*/);
+            this.pullCompilerState.refresh();
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             return syntaxTree.diagnostics();
         }
 
         public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
-            this.pullCompilerState.refresh(false/*throwOnError*/);
+            this.pullCompilerState.refresh();
 
             // JOE: Here is where you should call and get the right set of semantic errors for this file.
             return this.pullCompilerState.pullGetErrorsForFile(fileName);

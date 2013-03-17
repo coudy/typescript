@@ -133,7 +133,7 @@ module Services {
             this.hostCache = new HostCache(this.host);
         }
 
-        public refresh(throwOnError: bool = true): void {
+        public refresh(): void {
             // Reset the cache at start of every refresh
             this.hostCache = new HostCache(this.host);
 
