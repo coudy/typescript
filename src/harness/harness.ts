@@ -1592,46 +1592,44 @@ module Harness {
     export class TypeScriptLS implements Services.ILanguageServiceShimHost {
         private ls: Services.ILanguageServiceShim = null;
 
-        public scripts: ScriptInfo[] = [];
+        private fileNameToScript = new TypeScript.StringHashTable();
 
         public addDefaultLibrary() {
             this.addScript("lib.d.ts", Harness.Compiler.libText);
         }
 
-        public addFile(name: string) {
+        public addFile(fileName: string) {
             var code: string = readFile(name);
             this.addScript(name, code);
         }
 
+        private getScriptInfo(fileName: string): ScriptInfo {
+            return this.fileNameToScript.lookup(fileName);
+        }
+
         public addScript(fileName: string, content: string) {
             var script = new ScriptInfo(fileName, content);
-            this.scripts.push(script);
+            this.fileNameToScript.add(fileName, script);
         }
 
         public updateScript(fileName: string, content: string) {
-            for (var i = 0; i < this.scripts.length; i++) {
-                if (this.scripts[i].fileName == fileName) {
-                    this.scripts[i].updateContent(content);
-                    return;
-                }
+            var script = this.getScriptInfo(fileName);
+            if (script !== null) {
+                script.updateContent(content);
+                return;
             }
 
             this.addScript(name, content);
         }
 
         public editScript(fileName: string, minChar: number, limChar: number, newText: string) {
-            for (var i = 0; i < this.scripts.length; i++) {
-                if (this.scripts[i].fileName == fileName) {
-                    this.scripts[i].editContent(minChar, limChar, newText);
-                    return;
-                }
+            var script = this.getScriptInfo(fileName);
+            if (script !== null) {
+                script.editContent(minChar, limChar, newText);
+                return;
             }
 
             throw new Error("No script with name '" + name + "'");
-        }
-
-        public getScriptContent(scriptIndex: number): string {
-            return this.scripts[scriptIndex].content;
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -1656,24 +1654,20 @@ module Harness {
             return ""; // i.e. default settings
         }
 
-        public getScriptCount(): number {
-            return this.scripts.length;
+        public getScriptFileNames(): string {
+            return JSON2.stringify(this.fileNameToScript.getAllKeys());
         }
 
-        public getScriptSnapshot(scriptIndex: number): TypeScript.IScriptSnapshot {
-            return new TypeScript.StringScriptSnapshot(this.scripts[scriptIndex].content);
+        public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
+            return new TypeScript.StringScriptSnapshot(this.getScriptInfo(fileName).content);
         }
 
-        public getScriptFileName(scriptIndex: number): string {
-            return this.scripts[scriptIndex].fileName;
+        public getScriptVersion(fileName: string): number {
+            return this.getScriptInfo(fileName).version;
         }
 
-        public getScriptVersion(scriptIndex: number): number {
-            return this.scripts[scriptIndex].version;
-        }
-
-        public getScriptTextChangeRangeSinceVersion(scriptIndex: number, scriptVersion: number): string {
-            var range = this.scripts[scriptIndex].getTextChangeRangeSinceVersion(scriptVersion);
+        public getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): string {
+            var range = this.getScriptInfo(fileName).getTextChangeRangeSinceVersion(scriptVersion);
             if (range === null) {
                 return null;
             }

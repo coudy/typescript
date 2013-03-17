@@ -134,7 +134,7 @@ module FourSlash {
                 this.openFile(marker.fileName);
             }
 
-            var scriptSnapshot = this.langSvc.getScriptSnapshot(this.getActiveFileIndex());
+            var scriptSnapshot = this.langSvc.getScriptSnapshot(marker.fileName);
             if (marker.position === -1 || marker.position > scriptSnapshot.getLength()) {
                 throw new Error('Marker "' + name + '" has been invalidated by unrecoverable edits to the file.');
             }
@@ -148,7 +148,7 @@ module FourSlash {
 
         public moveCaretRight(count? = 1) {
             this.currentCaretPosition += count;
-            this.currentCaretPosition = Math.min(this.currentCaretPosition, this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength());
+            this.currentCaretPosition = Math.min(this.currentCaretPosition, this.langSvc.getScriptSnapshot(this.activeFile.fileName).getLength());
         }
 
         // Opens a file given its 0-based index or fileName
@@ -187,9 +187,10 @@ module FourSlash {
 
         private getAllDiagnostics(): TypeScript.IDiagnostic[] {
             var diagnostics: TypeScript.IDiagnostic[] = [];
-            for (var i = 0, n = this.langSvc.scripts.length; i < n; i++) {
-                var fileName = this.langSvc.scripts[i].fileName;
-                diagnostics.push.apply(this.getDiagnostics(fileName));
+
+            var fileNames = this.langSvc.getScriptFileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                diagnostics.push.apply(this.getDiagnostics(fileNames[i]));
             }
 
             return diagnostics;
@@ -454,7 +455,7 @@ module FourSlash {
                 "Breakpoint Locations for " + this.activeFile.fileName,
                 this.testData.globalOptions['BaselineFile'],
                 () => {
-                    var fileLength = this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength();
+                    var fileLength = this.langSvc.getScriptSnapshot(this.activeFile.fileName).getLength();
                     var resultString = "";
                     for (var pos = 0; pos < fileLength; pos++) {
                         resultString = resultString + this.getBreakpointStatementLocation(pos);
@@ -490,9 +491,9 @@ module FourSlash {
             for (var i = 0; i < this.testData.files.length; i++) {
                 var file = this.testData.files[i];
                 var active = (this.activeFile === file);
-                var index = this.getScriptIndex(file);
-                IO.printLine('=== Script #' + index + ' (' + file.fileName + ') ' + (active ? '(active, cursor at |)' : '') + ' ===');
-                var snapshot = this.langSvc.getScriptSnapshot(index);
+
+                IO.printLine('=== Script (' + file.fileName + ') ' + (active ? '(active, cursor at |)' : '') + ' ===');
+                var snapshot = this.langSvc.getScriptSnapshot(file.fileName);
                 var content = snapshot.getText(0, snapshot.getLength());
                 if (active) {
                     content = content.substr(0, this.currentCaretPosition) + '|' + content.substr(this.currentCaretPosition);
@@ -594,7 +595,7 @@ module FourSlash {
             // The caret can potentially end up between the \r and \n, which is confusing. If
             // that happens, move it back one character
             if (this.currentCaretPosition > 0) {
-                var ch = this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getText(this.currentCaretPosition - 1, this.currentCaretPosition);
+                var ch = this.langSvc.getScriptSnapshot(this.activeFile.fileName).getText(this.currentCaretPosition - 1, this.currentCaretPosition);
                 if (ch === '\r') {
                     this.currentCaretPosition--;
                 }
@@ -616,7 +617,7 @@ module FourSlash {
         }
 
         public formatDocument() {
-            var edits = this.realLangSvc.getFormattingEditsForRange(this.activeFile.fileName, 0, this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength(), new Services.FormatCodeOptions());
+            var edits = this.realLangSvc.getFormattingEditsForRange(this.activeFile.fileName, 0, this.langSvc.getScriptSnapshot(this.activeFile.fileName).getLength(), new Services.FormatCodeOptions());
             this.currentCaretPosition += this.applyEdits(this.activeFile.fileName, edits);
             this.fixCaretPosition();
         }
@@ -643,7 +644,7 @@ module FourSlash {
         }
 
         public goToEOF() {
-            this.currentCaretPosition = this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength();
+            this.currentCaretPosition = this.langSvc.getScriptSnapshot(this.activeFile.fileName).getLength();
         }
 
         public goToDefinition() {
@@ -690,7 +691,7 @@ module FourSlash {
         }
 
         public verifyTextAtCaretIs(text: string) {
-            var actual = this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getText(this.currentCaretPosition, this.currentCaretPosition + text.length);
+            var actual = this.langSvc.getScriptSnapshot(this.activeFile.fileName).getText(this.currentCaretPosition, this.currentCaretPosition + text.length);
             if (actual !== text) {
                 throw new Error('verifyTextAtCaretIs\n' +
                 '\tExpected: "' + text + '"\n' +
@@ -706,7 +707,7 @@ module FourSlash {
                            '\t  Actual: null');
             }
 
-            var actual = this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getText(span.minChar, span.limChar);
+            var actual = this.langSvc.getScriptSnapshot(this.activeFile.fileName).getText(span.minChar, span.limChar);
             if (actual !== text) {
                 throw new Error('verifyCurrentNameOrDottedNameSpanText\n' +
                                '\tExpected: "' + text + '"\n' +
@@ -778,8 +779,8 @@ module FourSlash {
 
             for (var i = 0; i < this.testData.files.length; i++) {
                 var file = this.testData.files[i];
-                var index = this.getScriptIndex(file);
-                var snapshot = this.langSvc.getScriptSnapshot(index);
+
+                var snapshot = this.langSvc.getScriptSnapshot(file.fileName);
                 var content = snapshot.getText(0, snapshot.getLength());
                 referenceLangSvc.addScript(this.testData.files[i].fileName, content);
             }
@@ -804,7 +805,7 @@ module FourSlash {
         }
 
         private getEOF(): number {
-            return this.langSvc.getScriptSnapshot(this.getActiveFileIndex()).getLength();
+            return this.langSvc.getScriptSnapshot(this.activeFile.fileName).getLength();
         }
 
         // Get the text of the entire line the caret is currently at
@@ -814,9 +815,9 @@ module FourSlash {
             // The line/col of the start of this line
             var pos = this.langSvc.lineColToPosition(this.activeFile.fileName, line, 1);
             // The index of the current file
-            var fileIndex = this.getActiveFileIndex();
+
             // The text from the start of the line to the end of the file
-            var snapshot = this.langSvc.getScriptSnapshot(fileIndex);
+            var snapshot = this.langSvc.getScriptSnapshot(this.activeFile.fileName);
             var text = snapshot.getText(pos, snapshot.getLength());
 
             // Truncate to the first newline
@@ -905,15 +906,6 @@ module FourSlash {
             throw new Error('Expected "' + getItemString({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
         }
 
-        private getScriptIndex(file: FourSlashFile) {
-            for (var i = 0; i < this.langSvc.scripts.length; i++) {
-                if (this.langSvc.scripts[i].fileName == file.fileName) {
-                    return i;
-                }
-            }
-            throw new Error("Couldn't determine the file index of " + file.fileName);
-        }
-
         private findFile(indexOrName: any) {
             var result: FourSlashFile = null;
             if (typeof indexOrName === 'number') {
@@ -947,10 +939,6 @@ module FourSlash {
             }
 
             return result;
-        }
-
-        private getActiveFileIndex() {
-            return this.getScriptIndex(this.activeFile);
         }
 
         private getCurrentLineNumberZeroBased() {
