@@ -29,7 +29,7 @@ module Services {
 
         public setEntry(id: string, version: number) {
             var entry: ScriptMapEntry = this.map.lookup(id);
-            if (entry == null) {
+            if (entry === null) {
                 entry = new ScriptMapEntry(version);
                 this.map.add(id, entry);
             }
@@ -317,7 +317,7 @@ module Services {
             var editRange = this.getScriptTextChangeRange(fileName);
 
             var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, fileName, newSourceText, editRange);
-            if (result == null)
+            if (result === null)
                 return null;
 
             if (result.kind === TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
@@ -418,7 +418,7 @@ module Services {
         //
         private fullRefresh(): bool {
             // Initial state: no compiler yet
-            if (this.compiler == null) {
+            if (this.compiler === null) {
                 this.logger.log("Creating new compiler instance because there is no currently active instance");
                 this.createCompiler();
                 return true;
@@ -458,14 +458,14 @@ module Services {
                 var result: TypeScript.UpdateUnitResult = null;
                 for (var i = 0, len = updateResults.length; i < len; i++) {
                     var entry = updateResults[i];
-                    if (entry.kind == TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
+                    if (entry.kind === TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
                         if (result === null)
                             result = entry;
                         else {
                             result = null;
                             break;
                         }
-                    } else if (entry.kind == TypeScript.UpdateUnitKind.Unknown) {
+                    } else if (entry.kind === TypeScript.UpdateUnitKind.Unknown) {
                         result = null;
                         break;
                     }
@@ -672,7 +672,7 @@ module Services {
             this.compiler.parseEmitOption(emitterIOHost)
             this.compiler.emitUnit(script);
             // Only emit declarations if there are no type errors
-            if (errors == undefined || errors.typeCheckErrors.length == 0) {
+            if (errors === undefined || errors.typeCheckErrors.length === 0) {
                 this.compiler.emitDeclarationsUnit(script);
             }
 

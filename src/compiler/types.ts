@@ -60,7 +60,7 @@ module TypeScript {
         static create(text: string): MemberName;
         static create(entry: MemberName, prefix: string, suffix: string): MemberName;
         static create(arg1: any, arg2?: any, arg3?: any): MemberName {
-            if (typeof arg1 == "string") {
+            if (typeof arg1 === "string") {
                 return new MemberNameString(arg1);
             }
             else {
@@ -218,11 +218,11 @@ module TypeScript {
                 return MemberName.create(this.elementType.getMemberTypeNameEx(prefix, false, true, scope), "", "[]");
             }
             else if (this.symbol && this.symbol.name && this.symbol.name != "_anonymous" &&
-                     (((this.call == null) && (this.construct == null) && (this.index == null)) ||
+                     (((this.call === null) && (this.construct === null) && (this.index === null)) ||
                       (hasFlag(this.typeFlags, TypeFlags.BuildingName)) ||
                       (this.members && (!this.isClass())))) {
                 var tn = this.symbol.scopeRelativeName(scope);
-                return MemberName.create(tn == "null" ? "any" : tn); // REVIEW: GROSS!!!
+                return MemberName.create(tn === "null" ? "any" : tn); // REVIEW: GROSS!!!
             }
             else {
                 if (this.members || this.call || this.construct) {
@@ -242,7 +242,7 @@ module TypeScript {
                                 // Remove the delimiter character from the generated type name, since
                                 // our "allMemberNames" array takes care of storing delimiters
                                 var typeNameMember = sym.getTypeNameEx(scope);
-                                if (typeNameMember.isArray() && (<MemberNameArray>typeNameMember).delim == delim) {
+                                if (typeNameMember.isArray() && (<MemberNameArray>typeNameMember).delim === delim) {
                                     allMemberNames.addAll((<MemberNameArray>typeNameMember).entries);
                                 } else {
                                     allMemberNames.add(typeNameMember);
@@ -257,7 +257,7 @@ module TypeScript {
                     var j: number;
                     var len = 0;
                     var getPrettyFunctionOverload = getPrettyTypeName && !curlies && this.call && this.call.signatures.length > 1 && !this.members && !this.construct;
-                    var shortform = !curlies && (signatureCount == 1 || getPrettyFunctionOverload) && topLevel;
+                    var shortform = !curlies && (signatureCount === 1 || getPrettyFunctionOverload) && topLevel;
                     if (this.call) {
                         allMemberNames.addAll(this.call.toStrings(prefix, shortform, scope, getPrettyFunctionOverload));
                     }
@@ -279,7 +279,7 @@ module TypeScript {
                     }
 
                     this.typeFlags &= (~TypeFlags.BuildingName);
-                    if ((signatureCount == 0) && (memCount == 0)) {
+                    if ((signatureCount === 0) && (memCount === 0)) {
                         return MemberName.create("{}");
                     }
                     else {
@@ -301,7 +301,7 @@ module TypeScript {
         }
 
         public getMemberScope(flow: TypeFlow) {
-            if (this == flow.anyType) {
+            if (this === flow.anyType) {
                 return null;
             }
             else if (this.isDouble()) {
@@ -320,7 +320,7 @@ module TypeScript {
                     return null;
                 }
             }
-            else if (this == flow.stringType) {
+            else if (this === flow.stringType) {
                 if (flow.stringInterfaceType) {
                     return flow.stringInterfaceType.memberScope;
                 }
@@ -349,7 +349,7 @@ module TypeScript {
         }
 
         public specializeType(pattern: Type, replacement: Type, checker: TypeChecker, membersOnly: bool): Type {
-            if (pattern == this) {
+            if (pattern === this) {
                 return replacement;
             }
             var result = this;
@@ -392,11 +392,11 @@ module TypeScript {
             }
             else {
                 if (this.elementType) {
-                    if (this.elementType == pattern) {
+                    if (this.elementType === pattern) {
                         result = checker.makeArrayType(replacement);
                     }
                     else {
-                        if (this.elementType.elementType == pattern) {
+                        if (this.elementType.elementType === pattern) {
                             result = checker.makeArrayType(checker.makeArrayType(replacement));
                         }
                     }
@@ -410,7 +410,7 @@ module TypeScript {
         }
 
         public hasBase(baseType: Type): bool {
-            if (baseType == this) {
+            if (baseType === this) {
                 return true;
             }
             else {
@@ -426,37 +426,37 @@ module TypeScript {
         }
 
         public mergeOrdered(b: Type, checker: TypeChecker, acceptVoid: bool, comparisonInfo?: TypeComparisonInfo): Type {
-            if ((this == checker.anyType) || (b == checker.anyType)) {
+            if ((this === checker.anyType) || (b === checker.anyType)) {
                 return checker.anyType;
             }
-            else if (this == b) {
+            else if (this === b) {
                 return this;
             }
-            else if ((b == checker.nullType) && this != checker.nullType) {
+            else if ((b === checker.nullType) && this != checker.nullType) {
                 return this;
             }
-            else if ((this == checker.nullType) && (b != checker.nullType)) {
+            else if ((this === checker.nullType) && (b != checker.nullType)) {
                 return b;
             }
-            else if (acceptVoid && (b == checker.voidType) && this != checker.voidType) {
+            else if (acceptVoid && (b === checker.voidType) && this != checker.voidType) {
                 return this;
             }
-            else if (acceptVoid && (this == checker.voidType) && (b != checker.voidType)) {
+            else if (acceptVoid && (this === checker.voidType) && (b != checker.voidType)) {
                 return b;
             }
-            else if ((b == checker.undefinedType) && this != checker.undefinedType) {
+            else if ((b === checker.undefinedType) && this != checker.undefinedType) {
                 return this;
             }
-            else if ((this == checker.undefinedType) && (b != checker.undefinedType)) {
+            else if ((this === checker.undefinedType) && (b != checker.undefinedType)) {
                 return b;
             }
             else if (this.elementType && b.elementType) {
-                if (this.elementType == b.elementType) {
+                if (this.elementType === b.elementType) {
                     return this;
                 }
                 else {
                     var mergedET = this.elementType.mergeOrdered(b.elementType, checker, acceptVoid, comparisonInfo);
-                    if (mergedET == null) {
+                    if (mergedET === null) {
                         return checker.makeArrayType(checker.anyType);
                     }
                     else {
@@ -488,7 +488,7 @@ module TypeScript {
             }
 
             if (this.isClassInstance() || this.isClass()) {
-                if (this.symbol.declAST.nodeType == NodeType.FuncDecl) {
+                if (this.symbol.declAST.nodeType === NodeType.FuncDecl) {
                     // Its a constructor - use the class declaration instead
                     return (<FuncDecl>this.symbol.declAST).classDecl.getDocComments();
                 } else {
@@ -498,7 +498,7 @@ module TypeScript {
             }
 
             if (this.symbol.name && this.symbol.name != "_anonymous" &&
-                (((this.call == null) && (this.construct == null) && (this.index == null))
+                (((this.call === null) && (this.construct === null) && (this.index === null))
                   || this.members)) {
                 return this.symbol.getDocComments();
             }
@@ -533,10 +533,10 @@ module TypeScript {
         static findDynamicModuleNameInHashTable(moduleType: Type, members: IHashTable) {
             var moduleName: { name: string; symbol: Symbol; } = null;
             members.map((key, s, c) => {
-                if (moduleName == null && !isQuoted(key)) {
+                if (moduleName === null && !isQuoted(key)) {
                     var symbol = <Symbol>s;
                     var type = symbol.getType();
-                    if (type == moduleType) {
+                    if (type === moduleType) {
                         // If this is the module type we were looking for
                         moduleName = { name: key, symbol: symbol };
                     }
@@ -552,7 +552,7 @@ module TypeScript {
             var moduleName: { name: string; symbol: Symbol; } = null;
             // Not cached, so seach and add to the cache
             moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.members.allMembers);
-            if (moduleName == null) {
+            if (moduleName === null) {
                 moduleName = ModuleType.findDynamicModuleNameInHashTable(moduleType, this.ambientMembers.allMembers);
             }
             return moduleName;
@@ -569,7 +569,7 @@ module TypeScript {
 
         result.ast = ast;
 
-        if ((ast == null) && (autoVar)) {
+        if ((ast === null) && (autoVar)) {
             result.type = checker.anyType;
         }
         else {

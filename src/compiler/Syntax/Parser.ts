@@ -2587,7 +2587,7 @@ module TypeScript.Parser1 {
 
         private isCallSignature(tokenIndex: number): bool {
             var tokenKind = this.peekToken(tokenIndex).tokenKind;
-            return tokenKind === SyntaxKind.OpenParenToken || tokenKind == SyntaxKind.LessThanToken;
+            return tokenKind === SyntaxKind.OpenParenToken || tokenKind === SyntaxKind.LessThanToken;
         }
 
         private isConstructSignature(): bool {

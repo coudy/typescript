@@ -500,7 +500,7 @@ module TypeScript {
             // Fix up interface method flags
             if (members.members) {
                 for (var i = 0; i < members.members.length; i++) {
-                    if (members.members[i].nodeType == NodeType.FuncDecl) {
+                    if (members.members[i].nodeType === NodeType.FuncDecl) {
                         (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Method;
                         (<FuncDecl>members.members[i]).fncFlags |= FncFlags.Signature;
                     }
@@ -858,7 +858,7 @@ module TypeScript {
                     member.varFlags |= (VarFlags.Readonly | VarFlags.Property);
                     this.setSpan(member, memberStart, this.position);
 
-                    if (memberValue.nodeType == NodeType.NumberLit) {
+                    if (memberValue.nodeType === NodeType.NumberLit) {
                         member.varFlags |= VarFlags.Constant;
                     }
                     else if (memberValue.nodeType === NodeType.Lsh) {
@@ -1034,7 +1034,7 @@ module TypeScript {
 
             result.typeExpr = typeExpr;
             result.init = init;
-            if (init && init.nodeType == NodeType.FuncDecl) {
+            if (init && init.nodeType === NodeType.FuncDecl) {
                 var funcDecl = <FuncDecl>init;
                 funcDecl.hint = name.actualText;
             }
@@ -1329,7 +1329,7 @@ module TypeScript {
 
             if (typeMembers.members) {
                 for (var i = 0; i < typeMembers.members.length; i++) {
-                    if (typeMembers.members[i].nodeType == NodeType.FuncDecl) {
+                    if (typeMembers.members[i].nodeType === NodeType.FuncDecl) {
                         (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Method;
                         (<FuncDecl>typeMembers.members[i]).fncFlags |= FncFlags.Signature;
                     }
@@ -2376,7 +2376,7 @@ module TypeScript {
             var result = new BinaryExpression(NodeType.Member, left, right);
             this.setSpan(result, start, this.position);
 
-            if (right.nodeType == NodeType.FuncDecl) {
+            if (right.nodeType === NodeType.FuncDecl) {
                 var funcDecl = <FuncDecl>right;
                 funcDecl.hint = left.text;
             }

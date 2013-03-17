@@ -71,7 +71,7 @@ module Diff {
         }
 
         public equals(otherChunk: Chunk): bool {
-            if (otherChunk == null) throw new Error("otherChunk is null");
+            if (otherChunk === null) throw new Error("otherChunk is null");
 
             if (this.hashCode != otherChunk.hashCode) return false;
             return this.content === otherChunk.content;
@@ -128,7 +128,7 @@ module Diff {
         /// <param name="delimiters">Delimiter characters</param>
         /// <returns>Array of chunks broken on delimiter boundaries.</returns>
         static SplitSeparateDelimiters(content: string, delimiters: string[]): Chunk[] {
-            if (content == null || content.length == 0) return [];
+            if (content === null || content.length === 0) return [];
             var set: Chunk[] = [];
             var wantDelimiter = isDelimiter(content[0], delimiters);
 
@@ -140,7 +140,7 @@ module Diff {
                 currentLength = 0;
 
                 //...read until we hit a delimiter boundary
-                while (index < length && wantDelimiter == isDelimiter(content[index], delimiters)) {
+                while (index < length && wantDelimiter === isDelimiter(content[index], delimiters)) {
                     currentLength++;
                     index++;
                 }
@@ -169,7 +169,7 @@ module Diff {
         /// <param name="content">String to Split</param>
         /// <returns>Chunk array broken up on Unicode category boundaries</returns>
         static SplitCategory(content: string): Chunk[] {
-            if (content == null || content.length == 0) return [];
+            if (content === null || content.length === 0) return [];
 
             var set: Chunk[] = [];
             var categoryToMatch = GetCategory(content[0]);
@@ -201,9 +201,9 @@ module Diff {
 
         static CategoryMatches(left: UnicodeCategory, right: UnicodeCategory): bool {
             // Spacing never matches. This causes each space to be broken up
-            if (left == UnicodeCategory.SpaceSeparator || right == UnicodeCategory.SpaceSeparator) return false;
+            if (left === UnicodeCategory.SpaceSeparator || right === UnicodeCategory.SpaceSeparator) return false;
 
-            return left == right;
+            return left === right;
         }
 
         /// <summary>
@@ -243,7 +243,7 @@ module Diff {
         }
 
         public equals(other: UniquenessEntry) {
-            return this.content == other.content;
+            return this.content === other.content;
         }
 
         public Increment() {
@@ -263,7 +263,7 @@ module Diff {
 
         public AddSegment(content: string, type: SegmentType) {
             // Check the new chunk to add against the current segment we're holding...
-            if (this.segmentExists && this.currentType == type) {
+            if (this.segmentExists && this.currentType === type) {
                 //...if the type is the same, lump them together
                 this.currentContent += content;
             }
@@ -360,7 +360,7 @@ module Diff {
                         for (var y = 0; y < oldEntries.length; y++) {
                             var oldEntry = oldEntries[y];
 
-                            if (newEntry && oldEntry && newEntry.MatchCount == 1 && oldEntry.MatchCount == 1 && (newEntry.content.localeCompare(oldEntry.content) === 0)) {
+                            if (newEntry && oldEntry && newEntry.MatchCount === 1 && oldEntry.MatchCount === 1 && (newEntry.content.localeCompare(oldEntry.content) === 0)) {
                                 var oldIndex = oldEntry.index;
                                 newContent[i].matchingIndex = oldIndex;
                                 oldContent[oldIndex].matchingIndex = i;
@@ -386,7 +386,7 @@ module Diff {
                 //...if we have a matching index for the other side...
                 if (j != -1 && j < oldEnd && j >= oldStart) {
                     //...AND that index points back to us...
-                    if (oldContent[j].matchingIndex == i) {
+                    if (oldContent[j].matchingIndex === i) {
                         //...TRY matching the next chunks with each other
                         TryMatch(oldContent, j + 1, newContent, i + 1);
                     }
@@ -400,7 +400,7 @@ module Diff {
                 //...if we have a matching index for the other side...
                 if (j != -1 && j <= oldEnd && j > oldStart) {
                     //...AND that index points back to us...
-                    if (oldContent[j].matchingIndex == i) {
+                    if (oldContent[j].matchingIndex === i) {
                         //...TRY matching the previous chunks with each other
                         TryMatch(oldContent, j - 1, newContent, i - 1);
                     }
@@ -413,7 +413,7 @@ module Diff {
             var oldChunk = oldContent[oldIndex];
 
             //...if these are not already matched up
-            if (newChunk.matchingIndex == -1 && oldChunk.matchingIndex == -1) {
+            if (newChunk.matchingIndex === -1 && oldChunk.matchingIndex === -1) {
                 //...AND the chunks match...
                 if (newChunk.content === oldChunk.content) {
                     //...THEN point those chunks to each other
@@ -428,7 +428,7 @@ module Diff {
             var table: any = {};
             for (var i = start; i <= end; ++i) {
                 var entries: UniquenessEntry[] = table[content[i].hashCode];
-                if (entries == null) {
+                if (entries === null) {
                     entries = [];
                 }
 
@@ -466,7 +466,7 @@ module Diff {
                 //...if we have a matching index for the other side...
                 if (j != -1 && j < oldContent.length - 1 && j >= 0) {
                     //...AND that index points back to us...
-                    if (oldContent[j].matchingIndex == i) {
+                    if (oldContent[j].matchingIndex === i) {
                         //...TRY inner comparison (will map indexes if it works)
                         TryInnerMatch(oldContent, j + 1, newContent, i + 1);
                     }
@@ -480,7 +480,7 @@ module Diff {
                 //...if we have a matching index for the other side...
                 if (j != -1 && j < oldContent.length && j > 0) {
                     //...AND that index points back to us...
-                    if (oldContent[j].matchingIndex == i) {
+                    if (oldContent[j].matchingIndex === i) {
                         //...TRY inner comparison (will map indexes if it works)
                         TryInnerMatch(oldContent, j - 1, newContent, i - i);
                     }
@@ -493,7 +493,7 @@ module Diff {
             var oldChunk = oldContent[oldIndex];
 
             //...if these are not already matched up
-            if (newChunk.matchingIndex == -1 && oldChunk.matchingIndex == -1) {
+            if (newChunk.matchingIndex === -1 && oldChunk.matchingIndex === -1) {
                 //...AND the chunks match...
                 var difference = new InnerDiff(oldContent[oldIndex].content, newContent[newIndex].content);
                 if (AreSimilarEnough(difference)) {
@@ -536,10 +536,10 @@ module Diff {
                 }
 
                 //...skip counting whitespace only segments
-                if (s.content.trim().length == 0) continue;
+                if (s.content.trim().length === 0) continue;
 
                 //...count the characters. I double the unchanged length because moved sections and removed/added sections come in pairs and count twice.
-                if (s.type == SegmentType.Unchanged)
+                if (s.type === SegmentType.Unchanged)
                     identicalChars += s.content.length * 2;
                 else
                     differentChars += s.content.length;
@@ -548,11 +548,11 @@ module Diff {
             var totalChars = identicalChars + differentChars;
 
             // Empty lines match
-            if (totalChars == 0) return true;
+            if (totalChars === 0) return true;
 
             // Lines which are added/unchanged or removed/unchanged only match
-            if (removedCount == 0 && movedCount == 0) return true;
-            if (addedCount == 0 && movedCount == 0) return true;
+            if (removedCount === 0 && movedCount === 0) return true;
+            if (addedCount === 0 && movedCount === 0) return true;
 
             // Lines with enough identical characters match
             return (identicalChars / totalChars) > 0.50;
@@ -568,9 +568,9 @@ module Diff {
 
             // Loop while there is remaining content in both files
             while (oldIndex < oldContent.length && newIndex < newContent.length) {
-                if (oldContent[oldIndex].matchingIndex == newIndex) {
+                if (oldContent[oldIndex].matchingIndex === newIndex) {
                     // Matching chunks - output as-is
-                    if (newContent[newIndex].innerDiff == null) {
+                    if (newContent[newIndex].innerDiff === null) {
                         builder.AddSegment(newContent[newIndex].mergedContent(), SegmentType.Unchanged);
 
                         // No range diff for unchanged
@@ -586,12 +586,12 @@ module Diff {
 
                     oldIndex++; newIndex++;
                 }
-                else if (oldContent[oldIndex].matchingIndex == -1) {
+                else if (oldContent[oldIndex].matchingIndex === -1) {
                     // Removed chunks - add to output
                     builder.AddSegment(oldContent[oldIndex].mergedContent(), SegmentType.Removed);
                     oldIndex++;
                 }
-                else if (newContent[newIndex].matchingIndex == -1) {
+                else if (newContent[newIndex].matchingIndex === -1) {
                     // Added chunks - add to output
                     builder.AddSegment(newContent[newIndex].mergedContent(), SegmentType.Added);
                     newIndex++;
@@ -632,7 +632,7 @@ module Diff {
 
             // If there is remaining content in the old file, emit it
             while (oldIndex < oldContent.length) {
-                if (oldContent[oldIndex].matchingIndex == -1) {
+                if (oldContent[oldIndex].matchingIndex === -1) {
                     builder.AddSegment(oldContent[oldIndex].mergedContent(), SegmentType.Removed);
                     //dBuilder.Append(-1, oldIndex);
                 }
@@ -646,7 +646,7 @@ module Diff {
 
             // If there is remaining content in the new file, emit it
             while (newIndex < newContent.length) {
-                if (newContent[newIndex].matchingIndex == -1) {
+                if (newContent[newIndex].matchingIndex === -1) {
                     builder.AddSegment(newContent[newIndex].mergedContent(), SegmentType.Added);
                     //dBuilder.Append(newIndex, -1);
                 }
