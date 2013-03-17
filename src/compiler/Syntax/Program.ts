@@ -123,7 +123,7 @@ class Program {
             
             var changeLength = i * 2;
             var tree2 = TypeScript.Parser1.incrementalParse(
-                tree.sourceUnit(), [new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength)], text, TypeScript.LanguageVersion.EcmaScript5, stringTable);
+                tree, new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength), text, TypeScript.LanguageVersion.EcmaScript5, stringTable);
             
             timer.end();
 
@@ -307,7 +307,7 @@ class Program {
             TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
             
             TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
-            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "", 0);
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
 
             this.checkResult(filePath, tree, verify, generateBaseline, false);
         }
@@ -332,7 +332,9 @@ class Program {
 
         var tree1 = TypeScript.Parser1.parse(text, languageVersion, stringTable);
         var tree2 = TypeScript.Parser1.incrementalParse(
-            TypeScript.Syntax.emptySourceUnit(), [new TypeScript.TextChangeRange(new TypeScript.TextSpan(0, 0), text.length())], text, languageVersion, stringTable);
+            new TypeScript.SyntaxTree(TypeScript.Syntax.emptySourceUnit(), [], null),
+            new TypeScript.TextChangeRange(new TypeScript.TextSpan(0, 0), text.length()),
+            text, languageVersion, stringTable);
 
         TypeScript.Debug.assert(tree1.structuralEquals(tree2));
     }

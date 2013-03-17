@@ -1579,7 +1579,7 @@ module Harness {
         public getTextChangeRangeSinceVersion(version: number): TypeScript.TextChangeRange {
             if (this.version == version) {
                 // No edits!
-                return null;
+                return TypeScript.TextChangeRange.unchanged;
             }
 
             var initialEditRangeIndex = this.editRanges.length - (this.version - version);

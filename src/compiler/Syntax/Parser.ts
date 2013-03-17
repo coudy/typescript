@@ -641,7 +641,7 @@ module TypeScript.Parser1 {
         private _oldSourceUnitCursor: SyntaxCursor;
 
         constructor(oldSourceUnit: SourceUnitSyntax,
-                    changeRanges: TextChangeRange[],
+                    textChangeRange: TextChangeRange,
                     newText: ISimpleText,
                     languageVersion: LanguageVersion,
                     stringTable: Collections.StringTable) {
@@ -652,9 +652,7 @@ module TypeScript.Parser1 {
             // time this could be problematic would be if the user made a ton of discontinuous edits.
             // For example, doing a column select on a *large* section of a code.  If this is a 
             // problem, we can always update this code to handle multiple changes.
-            this._changeRange = IncrementalParserSource.extendToAffectedRange(
-                TextChangeRange.collapse(changeRanges),
-                oldSourceUnit);
+            this._changeRange = IncrementalParserSource.extendToAffectedRange(textChangeRange, oldSourceUnit);
 
             // The old tree's length, plus whatever length change was caused by the edit better 
             // equal the new text's length!
@@ -5621,14 +5619,18 @@ module TypeScript.Parser1 {
         return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree();
     }
 
-    export function incrementalParse(oldSourceUnit: SourceUnitSyntax,
-                                     textChangeRanges: TextChangeRange[],
+    export function incrementalParse(oldSyntaxTree: SyntaxTree,
+                                     textChangeRange: TextChangeRange,
                                      newText: ISimpleText,
                                      languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
                                      stringTable: Collections.StringTable = null,
                                      options?: ParseOptions = null): SyntaxTree {
+        if (textChangeRange.isUnchanged()) {
+            return oldSyntaxTree;
+        }
+        
         var source = new IncrementalParserSource(
-            oldSourceUnit, textChangeRanges, newText, languageVersion, stringTable);
+            oldSyntaxTree.sourceUnit(), textChangeRange, newText, languageVersion, stringTable);
         options = options || new ParseOptions();
 
         return new ParserImpl(newText.lineMap(), source, options).parseSyntaxTree();

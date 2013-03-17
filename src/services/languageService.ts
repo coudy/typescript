@@ -28,7 +28,7 @@ module Services {
         getScriptVersion(fileName: string): number;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
 
-        getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): TypeScript.TextChangeRange;
+        getScriptTextChangeRangeSinceVersion(fielName: string, scriptVersion: number): TypeScript.TextChangeRange;
     }
 
     //
@@ -1420,7 +1420,7 @@ module Services {
         //
         private getQuickCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {
             var script = this.compilerState.getScriptAST(fileName);
-            var editRange = this.compilerState.getScriptTextChangeRange(script);
+            var editRange = this.compilerState.getScriptTextChangeRange(fileName);
 
             if (editRange == null) {
                 this.logger.log("Full refresh required: there are no pending edits for the script. Be conservative and try again with accurate algorithm.");

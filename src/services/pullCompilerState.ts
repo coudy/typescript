@@ -234,15 +234,15 @@ module Services {
             this.compiler.cleanASTTypesForReTypeCheck(ast);
         }
 
-        public getScriptTextChangeRange(script: TypeScript.Script): TypeScript.TextChangeRange {
-            var lastKnownVersion = this.scriptMap.getEntry(script.locationInfo.fileName).version;
-            return this.getScriptTextChangeRangeSinceVersion(script.locationInfo.fileName, lastKnownVersion);
+        public getScriptTextChangeRange(fileName: string): TypeScript.TextChangeRange {
+            var lastKnownVersion = this.scriptMap.getEntry(fileName).version;
+            return this.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
         public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {
             var currentVersion = this.hostCache.getVersion(fileName);
             if (lastKnownVersion === currentVersion) {
-                return null; // "No changes"
+                return TypeScript.TextChangeRange.unchanged; // "No changes"
             }
             
             return this.host.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
@@ -324,18 +324,18 @@ module Services {
         }
 
         private updateSyntaxTree(fileName: string): void {
-            var previousScript = this.getScriptAST(fileName);
-            var editRange = this.getScriptTextChangeRange(previousScript);
+            var newText = new TypeScript.SegmentedScriptSnapshot(this.getScriptSnapshot2(fileName));
 
-            if (editRange !== null) {
-                var newSourceText = this.getScriptSnapshot(previousScript);
-                var newText = new TypeScript.SegmentedScriptSnapshot(newSourceText);
-
-                var previousSyntaxTree = this.getSyntaxTree(fileName);
-                var nextSyntaxTree = TypeScript.Parser1.incrementalParse(
-                    previousSyntaxTree.sourceUnit(), [editRange], newText);
-
-                this.setSyntaxTree(fileName, nextSyntaxTree);
+            var editRange = this.getScriptTextChangeRange(fileName);
+            if (editRange === null) {
+                // Unknown edit.  Do a full parse.
+                this.setSyntaxTree(fileName, TypeScript.Parser1.parse(newText));
+            }
+            else {
+                // DO an incremental parser.
+                this.setSyntaxTree(
+                    fileName,
+                    TypeScript.Parser1.incrementalParse(this.getSyntaxTree(fileName), editRange, newText));
             }
         }
 

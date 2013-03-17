@@ -3,6 +3,8 @@
 
 module TypeScript {
     export class TextChangeRange {
+        public static unchanged = new TextChangeRange(new TextSpan(0, 0), 0);
+
         private _span: TextSpan;
         private _newLength: number;
 
@@ -36,6 +38,10 @@ module TypeScript {
 
         public newSpan(): TextSpan {
             return new TextSpan(this.span().start(), this.newLength());
+        }
+
+        public isUnchanged(): bool {
+            return this.span().isEmpty() && this.newLength() === 0;
         }
 
         public static collapse(changes: TextChangeRange[]): TextChangeRange {

@@ -68,7 +68,7 @@ module TypeScript {
 
             var newTree = Parser1.parse(newText, LanguageVersion.EcmaScript5, stringTable);
             var incrementalNewTree = Parser1.incrementalParse(
-                oldTree.sourceUnit(), [textChangeRange], newText, LanguageVersion.EcmaScript5, stringTable);
+                oldTree, textChangeRange, newText, LanguageVersion.EcmaScript5, stringTable);
 
             // We should get the same tree when doign a full or incremental parse.
             Debug.assert(newTree.structuralEquals(incrementalNewTree));
