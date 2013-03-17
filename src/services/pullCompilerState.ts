@@ -11,7 +11,6 @@ module Services {
         // State related to compiler instance
         //
         private compiler: TypeScript.TypeScriptCompiler;
-        private errorCollector: CompilerErrorCollector;
         private scriptMap: ScriptMap;
         private hostCache: HostCache;
         private symbolTree: SymbolTree;
@@ -23,7 +22,6 @@ module Services {
             // State related to compiler instance
             //
             this.compiler = null;
-            this.errorCollector = null;
             this.scriptMap = null; // Map from fileName to FileMapEntry
 
             //
@@ -43,7 +41,6 @@ module Services {
         }
 
         private onTypeCheckStarting(): void {
-            this.errorCollector.startTypeChecking();
             this.symbolTree = new SymbolTree(this);
         }
 
@@ -68,8 +65,6 @@ module Services {
         }
 
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
-            this.errorCollector.startParsing(fileName);
-
             //Note: We need to call "_setUnitMapping" _before_ calling into the compiler,
             //      in case the compiler fails (i.e. throws an exception). This is due to the way
             //      we recover from those failure (we still report errors to the host, 
@@ -105,11 +100,8 @@ module Services {
             this.compilationSettings.usePull = true;
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
             this.scriptMap = new ScriptMap();
-            this.errorCollector = new CompilerErrorCollector(this.logger);
 
             //TODO: "bind" doesn't work here in the context of running unit tests
-            //compiler.setErrorCallback(errorCollector.reportError.bind(errorCollector));
-            this.compiler.setErrorCallback((a, b, c, d) => { this.errorCollector.reportError(a, b, c, d); });
             this.compiler.parser.errorRecovery = true;
 
             // Add unit for all source files
