@@ -28,7 +28,7 @@ module TypeScript {
         code: number;
     }
 
-    export enum DiagnosticMessages {
+    export enum PullDiagnosticMessages {
         error_2,
         warning_2,
 

@@ -164,8 +164,8 @@ module TypeScript {
         return result;
     }
 
-    export function getDiagnosticMessage(diagnosticType: DiagnosticMessages, args: any[]): string {
-        var diagnosticName: string = (<any>DiagnosticMessages)._map[diagnosticType];
+    export function getDiagnosticMessage(diagnosticType: PullDiagnosticMessages, args: any[]): string {
+        var diagnosticName: string = (<any>PullDiagnosticMessages)._map[diagnosticType];
 
         var diagnostic = <Diagnostic> typescriptDiagnosticMessages[diagnosticName];
 
@@ -192,10 +192,10 @@ module TypeScript {
 
         var message: string;
 
-        if (diagnosticType != DiagnosticMessages.error_2 && diagnosticType != DiagnosticMessages.warning_2) {
+        if (diagnosticType != PullDiagnosticMessages.error_2 && diagnosticType != PullDiagnosticMessages.warning_2) {
             var errorOrWarning = diagnostic.category == DiagnosticCategory.Error ?
-                                    DiagnosticMessages.error_2 :
-                                    DiagnosticMessages.warning_2;
+                                    PullDiagnosticMessages.error_2 :
+                                    PullDiagnosticMessages.warning_2;
 
             message = getDiagnosticMessage(errorOrWarning, [diagnostic.code, diagnosticMessage]);
         }

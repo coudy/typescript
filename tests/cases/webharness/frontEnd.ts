@@ -38,7 +38,6 @@ class BatchCompiler {
     public compile() {
         var settings = new TypeScript.CompilationSettings();
         settings.usePull = true;
-        settings.useFidelity = true;
 
         this.compiler = new TypeScript.TypeScriptCompiler(new StringTextWriter(), new DiagnosticsLogger(), settings);
 

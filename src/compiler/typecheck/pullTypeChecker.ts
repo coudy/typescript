@@ -30,6 +30,8 @@ module TypeScript {
 
     export class PullTypeChecker {
 
+        static globalPullTypeCheckPhase = 0;
+        
         public resolver: PullTypeResolver = null;
 
         public context: PullTypeResolutionContext = new PullTypeResolutionContext();
@@ -50,6 +52,13 @@ module TypeScript {
 
             if (!ast) {
                 return null;
+            }
+
+            if (ast.typeCheckPhase >= PullTypeChecker.globalPullTypeCheckPhase) {
+                return null;
+            }
+            else {
+                ast.typeCheckPhase = PullTypeChecker.globalPullTypeCheckPhase;
             }
            
             switch (ast.nodeType) {
@@ -237,6 +246,8 @@ module TypeScript {
             var scriptDecl = typeCheckContext.semanticInfo.getTopLevelDecls()[0];
             typeCheckContext.pushEnclosingDecl(scriptDecl);
 
+            PullTypeChecker.globalPullTypeCheckPhase++;
+
             if (script.bod.members) {
                 for (var i = 0; i < script.bod.members.length; i++) {
                     this.typeCheckAST(script.bod.members[i], typeCheckContext);
@@ -286,7 +297,7 @@ module TypeScript {
                     var errorMessage = comparisonInfo.message;
 
                     // ignore comparison info for now
-                    var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
+                    var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [initTypeSymbol.toString(), varTypeSymbol.toString()]);
 
                     this.context.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, message, enclosingDecl);
                 }
@@ -329,7 +340,7 @@ module TypeScript {
 
             typeCheckContext.pushEnclosingDecl(functionDecl);
 
-            this.typeCheckList(funcDeclAST.bod, typeCheckContext);
+            this.typeCheckAST(funcDeclAST.bod, typeCheckContext);
 
             typeCheckContext.popEnclosingDecl();
 
@@ -389,7 +400,7 @@ module TypeScript {
             typeCheckContext.pushEnclosingDecl(moduleDecl);
 
             if (moduleDeclAST.members) {
-                this.typeCheckList(moduleDeclAST.members, typeCheckContext);
+                this.typeCheckAST(moduleDeclAST.members, typeCheckContext);
             }
 
             typeCheckContext.popEnclosingDecl();
@@ -423,7 +434,7 @@ module TypeScript {
                 var span = enclosingDecl.getSpan();
 
                 // ignore comparison info for now
-                var message = getDiagnosticMessage(DiagnosticMessages.incompatibleTypes_2, [rightType.toString(), leftType.toString()]);
+                var message = getDiagnosticMessage(PullDiagnosticMessages.incompatibleTypes_2, [rightType.toString(), leftType.toString()]);
 
                 this.context.postError(assignmentAST.operand1.minChar, span.length(), typeCheckContext.scriptName, message, enclosingDecl);
             }
@@ -675,8 +686,8 @@ module TypeScript {
         public typeCheckTryFinallyStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var tryFinallyAST = <TryFinally>ast;
 
-            this.typeCheckTryBlock(tryFinallyAST.tryNode, typeCheckContext);
-            this.typeCheckFinallyBlock(tryFinallyAST.finallyNode, typeCheckContext);
+            this.typeCheckAST(tryFinallyAST.tryNode, typeCheckContext);
+            this.typeCheckAST(tryFinallyAST.finallyNode, typeCheckContext);
 
             return null;
         }
@@ -684,8 +695,8 @@ module TypeScript {
         public typeCheckTryCatchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var tryCatchAST = <TryCatch>ast;
 
-            this.typeCheckTryBlock(tryCatchAST.tryNode, typeCheckContext);
-            this.typeCheckFinallyBlock(tryCatchAST.catchNode, typeCheckContext);
+            this.typeCheckAST(tryCatchAST.tryNode, typeCheckContext);
+            this.typeCheckAST(tryCatchAST.catchNode, typeCheckContext);
 
             return null;
         }

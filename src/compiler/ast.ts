@@ -35,6 +35,8 @@ module TypeScript {
         public type: Type = null;
         public flags = ASTFlags.Writeable;
 
+        public typeCheckPhase = -1;
+
         private astID = astID++;
 
         // REVIEW: for diagnostic purposes

@@ -1777,17 +1777,22 @@ module TypeScript.Parser1 {
                 return null;
             }
 
+            var lessThanToken: ISyntaxToken;
+            var greaterThanToken: ISyntaxToken;
+            var result: { skippedTokens: ISyntaxToken[]; list: ISeparatedSyntaxList; };
+            var typeArguments: ISeparatedSyntaxList;
+
             if (!inExpression) {
                 // if we're not in an expression, this must be a type argument list.  Just parse
                 // it out as such.
-                var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+                lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
                 // Debug.assert(lessThanToken.fullWidth() > 0);
 
-                var result = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
-                var typeArguments = result.list;
+                result = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                typeArguments = result.list;
                 lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
 
-                var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+                greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
 
                 return this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
             }
@@ -1798,14 +1803,14 @@ module TypeScript.Parser1 {
             var rewindPoint = this.getRewindPoint();
             try {
                 // We've seen a '<'.  Try to parse it out as a type argument list.
-                var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
+                lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
                 // Debug.assert(lessThanToken.fullWidth() > 0);
 
-                var result = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
-                var typeArguments = result.list;
+                result = this.parseSeparatedSyntaxList(ListParsingState.TypeArgumentList_Types);
+                typeArguments = result.list;
                 lessThanToken = this.addSkippedTokensAfterToken(lessThanToken, result.skippedTokens);
 
-                var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
+                greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
 
                 // We're in a context where '<' could be the start of a type argument list, or part
                 // of an arithmetic expression.  We'll presume it's the latter unless we see the '>'
