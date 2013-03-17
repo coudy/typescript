@@ -177,7 +177,7 @@ module TypeScript {
     }
 
     export function LexIsUnicodeDigit(code: number): bool {
-        if (codeGenTarget == CodeGenTarget.ES3) {
+        if (codeGenTarget === CodeGenTarget.ES3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdCont);
         } else {
             return LexLookUpUnicodeMap(code, unicodeES5IdCont);
@@ -185,7 +185,7 @@ module TypeScript {
     }
 
     export function LexIsUnicodeIdStart(code: number): bool {
-        if (codeGenTarget == CodeGenTarget.ES3) {
+        if (codeGenTarget === CodeGenTarget.ES3) {
             return LexLookUpUnicodeMap(code, unicodeES3IdStart);
         } else {
             return LexLookUpUnicodeMap(code, unicodeES5IdStart);
@@ -222,10 +222,10 @@ module TypeScript {
     }
 
     export function LexAdjustIndent(code, indentAmt) {
-        if ((code == LexCodeLBR) || (code == LexCodeLC) || (code == LexCodeLPR)) {
+        if ((code === LexCodeLBR) || (code === LexCodeLC) || (code === LexCodeLPR)) {
             return indentAmt + 1;
         }
-        else if ((code == LexCodeRBR) || (code == LexCodeRC) || (code == LexCodeRPR)) {
+        else if ((code === LexCodeRBR) || (code === LexCodeRC) || (code === LexCodeRPR)) {
             return indentAmt - 1;
         }
         else return indentAmt;
@@ -234,8 +234,8 @@ module TypeScript {
     export function LexIsIdentifierStartChar(code): bool {
         return (((code >= 97) && (code <= 122)) ||
                 ((code >= 65) && (code <= 90)) ||
-                (code == LexCodeDollar) ||
-                (code == LexCodeUnderscore));
+                (code === LexCodeDollar) ||
+                (code === LexCodeUnderscore));
     }
 
     export function LexIsDigit(code): bool {
@@ -247,11 +247,11 @@ module TypeScript {
     }
 
     export function LexMatchingOpen(code) {
-        if (code == LexCodeRBR)
+        if (code === LexCodeRBR)
             return LexCodeLBR;
-        else if (code == LexCodeRC)
+        else if (code === LexCodeRC)
             return LexCodeLC;
-        else if (code == LexCodeRPR)
+        else if (code === LexCodeRPR)
             return LexCodeLPR;
         else return 0;
     }
@@ -461,7 +461,7 @@ module TypeScript {
             // TODO: curly count
             this.startLine = this.line;
             this.startPos = this.col;
-            if (this.currentTokenIndex == this.currentTokens.length) {
+            if (this.currentTokenIndex === this.currentTokens.length) {
                 if (this.line < this.lineMap.length) {
                     this.line++;
                     this.col = 0;
@@ -510,8 +510,8 @@ module TypeScript {
 
         public getCommentsForLine(line: number) {
             var comments: CommentToken[] = null;
-            while ((this.commentStack.length > 0) && (this.commentStack[0].line == line)) {
-                if (comments == null) {
+            while ((this.commentStack.length > 0) && (this.commentStack[0].line === line)) {
+                if (comments === null) {
                     comments = [this.commentStack.shift()];
                 }
                 else {
@@ -699,13 +699,13 @@ module TypeScript {
             for (; ;) {
                 if (LexIsDigit(this.ch)) {
                     atLeastOneDigit = true;
-                    if (this.ch != LexCode_0 && state == NumberScanState.InEmptyFraction) {
+                    if (this.ch != LexCode_0 && state === NumberScanState.InEmptyFraction) {
                         state = NumberScanState.InFraction;
                     }
                     this.nextChar();
                 }
-                else if (this.ch == LexCodeDOT) {
-                    if (state == NumberScanState.Start) {
+                else if (this.ch === LexCodeDOT) {
+                    if (state === NumberScanState.Start) {
                         // DecimalDigit* .
                         this.nextChar();
                         state = NumberScanState.InEmptyFraction;
@@ -723,8 +723,8 @@ module TypeScript {
                             return null;
                         }
                     }
-                } else if ((this.ch == LexCode_e) || (this.ch == LexCode_E)) {
-                    if (state == NumberScanState.Start) {
+                } else if ((this.ch === LexCode_e) || (this.ch === LexCode_E)) {
+                    if (state === NumberScanState.Start) {
                         if (atLeastOneDigit) {
                             // DecimalDigit+ (. DecimalDigit*) [eE] [+-]DecimalDigit+
                             atLeastOneDigit = false;
@@ -737,7 +737,7 @@ module TypeScript {
                             return null;
                         }
                     }
-                    else if (state == NumberScanState.InFraction || state == NumberScanState.InEmptyFraction) {
+                    else if (state === NumberScanState.InFraction || state === NumberScanState.InEmptyFraction) {
                         // DecimalDigit+ . DecimalDigit* [eE]
                         this.nextChar();
                         state = NumberScanState.InExponent;
@@ -756,8 +756,8 @@ module TypeScript {
                         }
                     }
                 }
-                else if ((this.ch == LexCodePLS) || (this.ch == LexCodeMIN)) {
-                    if (state == NumberScanState.InExponent) {
+                else if ((this.ch === LexCodePLS) || (this.ch === LexCodeMIN)) {
+                    if (state === NumberScanState.InExponent) {
                         if (!atLeastOneDigit) {
                             this.nextChar();
                         }
@@ -767,7 +767,7 @@ module TypeScript {
                             return null;
                         }
                     }
-                    else if (state == NumberScanState.InEmptyFraction || state == NumberScanState.InFraction) {
+                    else if (state === NumberScanState.InEmptyFraction || state === NumberScanState.InFraction) {
                         // This case will not generate bad javascript if we miss the fractional part, but we just want to be consistent with the dot case
                         text = this.src.substring(this.startPos, this.pos);
                         return new NumberLiteralToken(parseFloat(text), text);
@@ -804,7 +804,7 @@ module TypeScript {
         // decimalDigits? fraction? exponent?
 
         public scanNumber(): Token {
-            if (this.peekChar() == LexCode_0) {
+            if (this.peekChar() === LexCode_0) {
                 switch (this.peekCharAt(this.pos + 1)) {
                     case LexCode_x:
                     case LexCode_X:
@@ -831,7 +831,7 @@ module TypeScript {
 
         public newLine(): void {
             this.col = 0;
-            if (this.mode == LexMode.File) {
+            if (this.mode === LexMode.File) {
                 this.line++;
                 this.lineMap[this.line] = this.pos + 1;
             }
@@ -841,20 +841,20 @@ module TypeScript {
             var ch2: number;
             this.lexState = LexState.InMultilineComment;
             while (this.pos < this.len) {
-                if (this.ch == LexCodeMUL) {
+                if (this.ch === LexCodeMUL) {
                     ch2 = this.peekCharAt(this.pos + 1);
-                    if (ch2 == LexCodeSLH) {
+                    if (ch2 === LexCodeSLH) {
                         this.advanceChar(2);
-                        if (this.mode == LexMode.File) {
+                        if (this.mode === LexMode.File) {
                             this.tokenStart();
                         }
                         this.lexState = LexState.Start;
                         return true;
                     }
                 }
-                else if (this.ch == LexCodeNWL) {
+                else if (this.ch === LexCodeNWL) {
                     this.newLine();
-                    if (this.mode == LexMode.Line) {
+                    if (this.mode === LexMode.Line) {
                         this.nextChar();
                         return false;
                     }
@@ -879,8 +879,8 @@ module TypeScript {
 
         public getCommentsForLine(line: number) {
             var comments: CommentToken[] = null;
-            while ((this.commentStack.length > 0) && (this.commentStack[0].line == line)) {
-                if (comments == null) {
+            while ((this.commentStack.length > 0) && (this.commentStack[0].line === line)) {
+                if (comments === null) {
                     comments = [this.commentStack.shift()];
                 }
                 else {
@@ -896,7 +896,7 @@ module TypeScript {
         }
 
         public endsLine(c: number) {
-            return (c == LexCodeNWL) || (c == LexCodeRET) || (c == LexCodeLS) || (c == LexCodePS);
+            return (c === LexCodeNWL) || (c === LexCodeRET) || (c === LexCodeLS) || (c === LexCodePS);
         }
 
         public finishSinglelineComment() {
@@ -909,7 +909,7 @@ module TypeScript {
                 this.nextChar();
             }
 
-            if (this.mode == LexMode.File) {
+            if (this.mode === LexMode.File) {
                 this.tokenStart();
             }
         }
@@ -920,7 +920,7 @@ module TypeScript {
             var prevCh = 0;
             var liveEsc = false;
             while (!this.endsLine(ch2) && (index < this.len)) {
-                if ((ch2 == LexCodeSLH) && (!liveEsc)) {
+                if ((ch2 === LexCodeSLH) && (!liveEsc)) {
                     return index;
                 }
                 prevCh = ch2;
@@ -929,7 +929,7 @@ module TypeScript {
                     liveEsc = false;
                 }
                 else {
-                    liveEsc = (prevCh == LexCodeBSL);
+                    liveEsc = (prevCh === LexCodeBSL);
                 }
 
                 ch2 = this.src.charCodeAt(index);
@@ -953,7 +953,7 @@ module TypeScript {
                 this.ch = this.peekChar();
                 var flagsStart = this.pos;
                 // TODO: check for duplicate flags
-                while ((this.ch == LexCode_i) || (this.ch == LexCode_g) || (this.ch == LexCode_m)) {
+                while ((this.ch === LexCode_i) || (this.ch === LexCode_g) || (this.ch === LexCode_m)) {
                     this.nextChar();
                 }
 
@@ -1055,7 +1055,7 @@ module TypeScript {
         }
 
         public scanInLine(): Token {
-            if ((this.lexState == LexState.InMultilineComment) && (this.scanComments)) {
+            if ((this.lexState === LexState.InMultilineComment) && (this.scanComments)) {
                 this.ch = this.peekChar();
                 var commentLine = this.line;
                 this.finishMultilineComment();
@@ -1068,12 +1068,12 @@ module TypeScript {
                     return staticTokens[TokenID.EndOfFile];
                 }
             }
-            else if (this.lexState == LexState.InMultilineSingleQuoteString && this.pos < this.len) {
+            else if (this.lexState === LexState.InMultilineSingleQuoteString && this.pos < this.len) {
                 this.ch = this.peekChar();
                 this.lexState = LexState.Start;
                 return this.scanStringConstant(LexCodeAPO);
             }
-            else if (this.lexState == LexState.InMultilineDoubleQuoteString && this.pos < this.len) {
+            else if (this.lexState === LexState.InMultilineDoubleQuoteString && this.pos < this.len) {
                 this.ch = this.peekChar();
                 this.lexState = LexState.Start;
                 return this.scanStringConstant(LexCodeQUO);
@@ -1125,7 +1125,7 @@ module TypeScript {
 
                     case LexCodeAPO:
                     case LexCodeQUO:
-                        if (this.ch == endCode) {
+                        if (this.ch === endCode) {
                             // Found string terminator. Skip past end code.
                             this.nextChar();
                             break scanStringConstantLoop;
@@ -1151,24 +1151,24 @@ module TypeScript {
                             case LexCodeRET:
                             case LexCodeNWL:
                                 // Skip /r in a /r/n sequence
-                                if (this.ch == LexCodeRET && this.peekCharAt(this.pos + 1) == LexCodeNWL) {
+                                if (this.ch === LexCodeRET && this.peekCharAt(this.pos + 1) === LexCodeNWL) {
                                     this.nextChar();
                                 }
 
                                 // Record new line
                                 this.newLine();
 
-                                if (this.mode == LexMode.Line) {
+                                if (this.mode === LexMode.Line) {
                                     // Consume the new line char
                                     this.nextChar();
-                                    this.lexState = endCode == LexCodeAPO ? LexState.InMultilineSingleQuoteString : LexState.InMultilineDoubleQuoteString;
+                                    this.lexState = endCode === LexCodeAPO ? LexState.InMultilineSingleQuoteString : LexState.InMultilineDoubleQuoteString;
                                     break scanStringConstantLoop;
                                 }
                                 break;
 
                             case LexCode_x:
                             case LexCode_u:
-                                var expectedHexDigits = this.ch == LexCode_x ? 2 : 4;
+                                var expectedHexDigits = this.ch === LexCode_x ? 2 : 4;
                                 this.nextChar();
                                 for (var i = 0; i < expectedHexDigits; i++) {
                                     if (this.IsHexDigit(this.ch)) {
@@ -1197,7 +1197,7 @@ module TypeScript {
 
         private scanIdentifier(): Token {
             var hasEscape = false;
-            var isFirstChar = (this.ch == LexCodeBSL);
+            var isFirstChar = (this.ch === LexCodeBSL);
             var hasUnicode: any = false;
 
             for (; ;) {
@@ -1205,9 +1205,9 @@ module TypeScript {
                       (this.ch >= LexCodeASCIIChars && this.isValidUnicodeIdentifierChar())) {
                     this.nextChar();
                 }
-                if (this.ch == LexCodeBSL) {
+                if (this.ch === LexCodeBSL) {
                     this.nextChar();
-                    if (this.ch == LexCode_u) {
+                    if (this.ch === LexCode_u) {
                         // 4 hex digits
                         this.nextChar();
                         for (var h = 0; h < 4 ; h++) {
@@ -1257,18 +1257,18 @@ module TypeScript {
             this.ch = this.peekChar();
 
             start: while (this.pos < this.len) {
-                if (lexIdStartTable[this.ch] || this.ch == LexCodeBSL || (this.ch >= LexCodeASCIIChars && LexIsUnicodeIdStart(this.ch))) {
+                if (lexIdStartTable[this.ch] || this.ch === LexCodeBSL || (this.ch >= LexCodeASCIIChars && LexIsUnicodeIdStart(this.ch))) {
                     // identifier or keyword
                     return this.scanIdentifier();
                 }
-                else if (this.ch == LexCodeSpace) {
+                else if (this.ch === LexCodeSpace) {
                     if (!this.interveningWhitespace) {
                         this.interveningWhitespacePos = this.pos;
                     }
                     do {
                         this.nextChar();
-                    } while (this.ch == LexCodeSpace);
-                    if (this.mode == LexMode.Line) {
+                    } while (this.ch === LexCodeSpace);
+                    if (this.mode === LexMode.Line) {
                         var whitespaceText = this.src.substring(this.startPos, this.pos);
                         return new WhitespaceToken(TokenID.Whitespace, whitespaceText);
                     }
@@ -1277,10 +1277,10 @@ module TypeScript {
                         this.interveningWhitespace = true;
                     }
                 }
-                else if (this.ch == LexCodeSLH) {
+                else if (this.ch === LexCodeSLH) {
                     this.nextChar();
                     var commentText;
-                    if (this.ch == LexCodeSLH) {
+                    if (this.ch === LexCodeSLH) {
                         if (!this.interveningWhitespace) {
                             this.interveningWhitespacePos = this.pos - 1;
                         }
@@ -1300,7 +1300,7 @@ module TypeScript {
 
                         this.interveningWhitespace = true;
                     }
-                    else if (this.ch == LexCodeMUL) {
+                    else if (this.ch === LexCodeMUL) {
                         if (!this.interveningWhitespace) {
                             this.interveningWhitespacePos = this.pos - 1;
                         }
@@ -1327,7 +1327,7 @@ module TypeScript {
                             return regexTok;
                         }
                         else {
-                            if (this.peekCharAt(this.pos) == LexCodeEQ) {
+                            if (this.peekCharAt(this.pos) === LexCodeEQ) {
                                 this.nextChar();
                                 return staticTokens[TokenID.SlashEquals];
                             }
@@ -1337,11 +1337,11 @@ module TypeScript {
                         }
                     }
                 }
-                else if (this.ch == LexCodeSMC) {
+                else if (this.ch === LexCodeSMC) {
                     this.nextChar();
                     return staticTokens[TokenID.Semicolon];
                 }
-                else if ((this.ch == LexCodeAPO) || (this.ch == LexCodeQUO)) {
+                else if ((this.ch === LexCodeAPO) || (this.ch === LexCodeQUO)) {
                     // Skip the first quote
                     var endCode = this.ch;
                     this.nextChar();
@@ -1349,10 +1349,10 @@ module TypeScript {
                 }
                 else if (autoToken[this.ch]) {
                     var atok = autoToken[this.ch];
-                    if (atok.tokenId == TokenID.OpenBrace) {
+                    if (atok.tokenId === TokenID.OpenBrace) {
                         this.leftCurlyCount++;
                     }
-                    else if (atok.tokenId == TokenID.CloseBrace) {
+                    else if (atok.tokenId === TokenID.CloseBrace) {
                         this.rightCurlyCount++;
                     }
                     this.nextChar();
@@ -1375,10 +1375,10 @@ module TypeScript {
                         if (!this.interveningWhitespace) {
                             this.interveningWhitespacePos = this.pos;
                         }
-                        if (this.mode == LexMode.Line) {
+                        if (this.mode === LexMode.Line) {
                             do {
                                 this.nextChar();
-                            } while ((this.ch == LexCodeSpace) || (this.ch == 9));
+                            } while ((this.ch === LexCodeSpace) || (this.ch === 9));
                             var wsText = this.src.substring(this.startPos, this.pos);
                             return new WhitespaceToken(TokenID.Whitespace, wsText);
                         }
@@ -1395,9 +1395,9 @@ module TypeScript {
                     case LexCodePS:
                     case LexCodeNWL:
                     case LexCodeRET:
-                        if (this.ch == LexCodeNWL) {
+                        if (this.ch === LexCodeNWL) {
                             this.newLine();
-                            if (this.mode == LexMode.Line) {
+                            if (this.mode === LexMode.Line) {
                                 return staticTokens[TokenID.EndOfFile];
                             }
                         }
@@ -1409,8 +1409,8 @@ module TypeScript {
                         this.interveningWhitespace = true;
                         break;
                     case LexCodeDOT: {
-                        if (this.peekCharAt(this.pos + 1) == LexCodeDOT) {
-                            if (this.peekCharAt(this.pos + 2) == LexCodeDOT) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeDOT) {
+                            if (this.peekCharAt(this.pos + 2) === LexCodeDOT) {
                                 this.advanceChar(3);
                                 return staticTokens[TokenID.DotDotDot];
                             }
@@ -1432,8 +1432,8 @@ module TypeScript {
                         // break;
                     }
                     case LexCodeEQ:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
-                            if (this.peekCharAt(this.pos + 2) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
+                            if (this.peekCharAt(this.pos + 2) === LexCodeEQ) {
                                 this.advanceChar(3);
                                 return staticTokens[TokenID.EqualsEqualsEquals];
                             }
@@ -1442,7 +1442,7 @@ module TypeScript {
                                 return staticTokens[TokenID.EqualsEquals];
                             }
                         }
-                        else if (this.peekCharAt(this.pos + 1) == LexCodeGT) {
+                        else if (this.peekCharAt(this.pos + 1) === LexCodeGT) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.EqualsGreaterThan];
                         }
@@ -1452,8 +1452,8 @@ module TypeScript {
                         }
                     // break;
                     case LexCodeBNG:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
-                            if (this.peekCharAt(this.pos + 2) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
+                            if (this.peekCharAt(this.pos + 2) === LexCodeEQ) {
                                 this.advanceChar(3);
                                 return staticTokens[TokenID.ExclamationEqualsEquals];
                             }
@@ -1468,11 +1468,11 @@ module TypeScript {
                         }
                     // break;
                     case LexCodePLS:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.PlusEquals];
                         }
-                        else if (this.peekCharAt(this.pos + 1) == LexCodePLS) {
+                        else if (this.peekCharAt(this.pos + 1) === LexCodePLS) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.PlusPlus];
                         }
@@ -1482,11 +1482,11 @@ module TypeScript {
                         }
                     // break;
                     case LexCodeMIN:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.MinusEquals];
                         }
-                        else if (this.peekCharAt(this.pos + 1) == LexCodeMIN) {
+                        else if (this.peekCharAt(this.pos + 1) === LexCodeMIN) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.MinusMinus];
                         }
@@ -1496,7 +1496,7 @@ module TypeScript {
                         }
                     // break;
                     case LexCodeMUL:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.AsteriskEquals];
                         }
@@ -1506,7 +1506,7 @@ module TypeScript {
                         }
                     // break;
                     case LexCodePCT:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.PercentEquals];
                         }
@@ -1516,8 +1516,8 @@ module TypeScript {
                         }
                     // break;
                     case LexCodeLT:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeLT) {
-                            if (this.peekCharAt(this.pos + 2) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeLT) {
+                            if (this.peekCharAt(this.pos + 2) === LexCodeEQ) {
                                 this.advanceChar(3);
                                 return staticTokens[TokenID.LessThanLessThanEquals];
                             }
@@ -1526,7 +1526,7 @@ module TypeScript {
                                 return staticTokens[TokenID.LessThanLessThan];
                             }
                         }
-                        else if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        else if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.LessThanEquals];
                         }
@@ -1536,13 +1536,13 @@ module TypeScript {
                         }
                     //  break;
                     case LexCodeGT:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeGT) {
-                            if (this.peekCharAt(this.pos + 2) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeGT) {
+                            if (this.peekCharAt(this.pos + 2) === LexCodeEQ) {
                                 this.advanceChar(3);
                                 return staticTokens[TokenID.GreaterThanGreaterThanEquals];
                             }
-                            else if (this.peekCharAt(this.pos + 2) == LexCodeGT) {
-                                if (this.peekCharAt(this.pos + 3) == LexCodeEQ) {
+                            else if (this.peekCharAt(this.pos + 2) === LexCodeGT) {
+                                if (this.peekCharAt(this.pos + 3) === LexCodeEQ) {
                                     this.advanceChar(4);
                                     return staticTokens[TokenID.GreaterThanGreaterThanGreaterThanEquals];
                                 }
@@ -1556,7 +1556,7 @@ module TypeScript {
                                 return staticTokens[TokenID.GreaterThanGreaterThan];
                             }
                         }
-                        else if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        else if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.GreaterThanEquals];
                         }
@@ -1566,7 +1566,7 @@ module TypeScript {
                         }
                     // break;
                     case LexCodeXOR:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.CaretEquals];
                         }
@@ -1576,11 +1576,11 @@ module TypeScript {
                         }
                     //  break;
                     case LexCodeBAR:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.BarEquals];
                         }
-                        else if (this.peekCharAt(this.pos + 1) == LexCodeBAR) {
+                        else if (this.peekCharAt(this.pos + 1) === LexCodeBAR) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.BarBar];
                         }
@@ -1590,11 +1590,11 @@ module TypeScript {
                         }
                     //  break;
                     case LexCodeAMP:
-                        if (this.peekCharAt(this.pos + 1) == LexCodeEQ) {
+                        if (this.peekCharAt(this.pos + 1) === LexCodeEQ) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.AmpersandEquals];
                         }
-                        else if (this.peekCharAt(this.pos + 1) == LexCodeAMP) {
+                        else if (this.peekCharAt(this.pos + 1) === LexCodeAMP) {
                             this.advanceChar(2);
                             return staticTokens[TokenID.AmpersandAmpersand];
                         }

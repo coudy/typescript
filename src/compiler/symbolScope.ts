@@ -89,7 +89,7 @@ module TypeScript {
 
     function symbolCanBeUsed(sym: Symbol, publicOnly) {
         return publicOnly ? !(hasFlag(sym.flags, SymbolFlags.Private) ||
-                            (sym.declAST && sym.declAST.nodeType == NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
+                            (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
                           : true;
     }
 
@@ -182,7 +182,7 @@ module TypeScript {
             if (implCache &&
                 ((sym = implCache.lookup(name)) != null) &&
                 (publicOnly ? !(hasFlag(sym.flags, SymbolFlags.Private) ||
-                                        (sym.declAST && sym.declAST.nodeType == NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
+                                        (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
                                         : true)) {
                 return sym;
             }
@@ -219,7 +219,7 @@ module TypeScript {
             if (cache &&
                 ((sym = cache.lookup(name)) != null) &&
                 (publicOnly ? !(hasFlag(sym.flags, SymbolFlags.Private) ||
-                                        (sym.declAST && sym.declAST.nodeType == NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
+                                        (sym.declAST && sym.declAST.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>sym.declAST).fncFlags, FncFlags.Private)))
                                         : true)) {
                 return sym;
             }
@@ -231,7 +231,7 @@ module TypeScript {
                     }
                 }
             }
-            if (cache == null) {
+            if (cache === null) {
                 if (typespace) {
                     this.typeCache = new StringHashTable();
                     cache = this.typeCache;
@@ -263,7 +263,7 @@ module TypeScript {
                     }
                 }
             }
-            if (cache == null) {
+            if (cache === null) {
                 if (typespace) {
                     this.typeAmbientCache = new StringHashTable();
                     cache = this.typeAmbientCache;
@@ -278,7 +278,7 @@ module TypeScript {
         }
 
         public addParentScope(parent: SymbolScope): void {
-            if (this.parents == null) {
+            if (this.parents === null) {
                 this.parents = [];
             }
             this.parents[this.parents.length] = parent;
@@ -339,15 +339,15 @@ module TypeScript {
             var ambientTable: IHashTable = null;
 
             if (typespace) {
-                table = (this.enclosedTypes == null) ? null :
+                table = (this.enclosedTypes === null) ? null :
                             publicOnly ? this.enclosedTypes.publicMembers : this.enclosedTypes.allMembers;
-                ambientTable = (this.ambientEnclosedTypes == null) ? null :
+                ambientTable = (this.ambientEnclosedTypes === null) ? null :
                                     publicOnly ? this.ambientEnclosedTypes.publicMembers : this.ambientEnclosedTypes.allMembers;
             }
             else {
-                table = (this.valueMembers == null) ? null :
+                table = (this.valueMembers === null) ? null :
                                 publicOnly ? this.valueMembers.publicMembers : this.valueMembers.allMembers;
-                ambientTable = (this.ambientValueMembers == null) ? null :
+                ambientTable = (this.ambientValueMembers === null) ? null :
                                     publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             }
             var s: Symbol;
@@ -365,10 +365,10 @@ module TypeScript {
         }
 
         public findAmbient(name: string, publicOnly: bool, typespace: bool): Symbol {
-            var ambientTable = (this.ambientValueMembers == null) ? null :
+            var ambientTable = (this.ambientValueMembers === null) ? null :
                                 publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             if (typespace) {
-                ambientTable = (this.ambientEnclosedTypes == null) ? null :
+                ambientTable = (this.ambientEnclosedTypes === null) ? null :
                                     publicOnly ? this.ambientEnclosedTypes.publicMembers : this.ambientEnclosedTypes.allMembers;
             }
             if (ambientTable) {
@@ -406,14 +406,14 @@ module TypeScript {
         public findImplementation(name: string, publicOnly: bool, typespace: bool): Symbol {
             var sym = this.find(name, publicOnly, typespace);
             if (sym) {
-                if (sym.kind() == SymbolKind.Type) {
+                if (sym.kind() === SymbolKind.Type) {
                     var typeSym = <TypeSymbol>sym;
                     if (!typeSym.type.hasImplementation()) {
                         sym = null;
                     }
                 }
                 else if (sym.container) {
-                    if (sym.container.kind() == SymbolKind.Type) {
+                    if (sym.container.kind() === SymbolKind.Type) {
                         var ctypeSym = <TypeSymbol>sym.container;
                         if (!ctypeSym.type.hasImplementation()) {
                             sym = null;
@@ -485,14 +485,14 @@ module TypeScript {
 
         public search(filter: ScopeSearchFilter, name: string, publicOnly: bool, typespace: bool) {
             var sym: Symbol = null;
-            var table = (this.valueMembers == null) ? null :
+            var table = (this.valueMembers === null) ? null :
                             publicOnly ? this.valueMembers.publicMembers : this.valueMembers.allMembers;
-            var ambientTable = (this.ambientValueMembers == null) ? null :
+            var ambientTable = (this.ambientValueMembers === null) ? null :
                                 publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             if (typespace) {
-                table = (this.enclosedTypes == null) ? null :
+                table = (this.enclosedTypes === null) ? null :
                             publicOnly ? this.enclosedTypes.publicMembers : this.enclosedTypes.allMembers;
-                ambientTable = (this.ambientEnclosedTypes == null) ? null :
+                ambientTable = (this.ambientEnclosedTypes === null) ? null :
                                     publicOnly ? this.ambientEnclosedTypes.publicMembers : this.ambientEnclosedTypes.allMembers;
             }
             if (ambientTable) {
@@ -553,14 +553,14 @@ module TypeScript {
 
         public find(name: string, publicOnly: bool, typespace: bool): Symbol {
             var sym: Symbol = null;
-            var table = (this.valueMembers == null) ? null :
+            var table = (this.valueMembers === null) ? null :
                             publicOnly ? this.valueMembers.publicMembers : this.valueMembers.allMembers;
-            var ambientTable = (this.ambientValueMembers == null) ? null :
+            var ambientTable = (this.ambientValueMembers === null) ? null :
                                 publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             if (typespace) {
-                table = (this.enclosedTypes == null) ? null :
+                table = (this.enclosedTypes === null) ? null :
                             publicOnly ? this.enclosedTypes.publicMembers : this.enclosedTypes.allMembers;
-                ambientTable = (this.ambientEnclosedTypes == null) ? null :
+                ambientTable = (this.ambientEnclosedTypes === null) ? null :
                                     publicOnly ? this.ambientEnclosedTypes.publicMembers : this.ambientEnclosedTypes.allMembers;
             }
             if (ambientTable && ((sym = ambientTable.lookup(name)) != null)) {
@@ -577,10 +577,10 @@ module TypeScript {
 
         public findAmbient(name: string, publicOnly: bool, typespace: bool): Symbol {
             var sym: Symbol = null;
-            var ambientTable = (this.ambientValueMembers == null) ? null :
+            var ambientTable = (this.ambientValueMembers === null) ? null :
                                 publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             if (typespace) {
-                ambientTable = (this.ambientEnclosedTypes == null) ? null :
+                ambientTable = (this.ambientEnclosedTypes === null) ? null :
                                     publicOnly ? this.ambientEnclosedTypes.publicMembers : this.ambientEnclosedTypes.allMembers;
             }
             if (ambientTable && ((sym = ambientTable.lookup(name)) != null)) {
@@ -594,14 +594,14 @@ module TypeScript {
 
         public findLocal(name: string, publicOnly: bool, typespace: bool): Symbol {
             var sym: Symbol = null;
-            var table = (this.valueMembers == null) ? null :
+            var table = (this.valueMembers === null) ? null :
                             publicOnly ? this.valueMembers.publicMembers : this.valueMembers.allMembers;
-            var ambientTable = (this.ambientValueMembers == null) ? null :
+            var ambientTable = (this.ambientValueMembers === null) ? null :
                                 publicOnly ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.allMembers;
             if (typespace) {
-                table = (this.enclosedTypes == null) ? null :
+                table = (this.enclosedTypes === null) ? null :
                             publicOnly ? this.enclosedTypes.publicMembers : this.enclosedTypes.allMembers;
-                ambientTable = (this.ambientEnclosedTypes == null) ? null :
+                ambientTable = (this.ambientEnclosedTypes === null) ? null :
                                     publicOnly ? this.ambientEnclosedTypes.publicMembers : this.ambientEnclosedTypes.allMembers;
             }
             if (table) {
@@ -622,21 +622,21 @@ module TypeScript {
 
             if (ambient) {
                 if (typespace) {
-                    table = (this.ambientEnclosedTypes == null) ? null :
+                    table = (this.ambientEnclosedTypes === null) ? null :
                                     insertAsPublic ? this.ambientEnclosedTypes.publicMembers : this.ambientEnclosedTypes.privateMembers;
                 }
                 else {
-                    table = (this.ambientValueMembers == null) ? null :
+                    table = (this.ambientValueMembers === null) ? null :
                                 insertAsPublic ? this.ambientValueMembers.publicMembers : this.ambientValueMembers.privateMembers;
                 }
             }
             else {
                 if (typespace) {
-                    table = (this.enclosedTypes == null) ? null :
+                    table = (this.enclosedTypes === null) ? null :
                                 insertAsPublic ? this.enclosedTypes.publicMembers : this.enclosedTypes.privateMembers;
                 }
                 else {
-                    table = (this.valueMembers == null) ? null :
+                    table = (this.valueMembers === null) ? null :
                                 insertAsPublic ? this.valueMembers.publicMembers : this.valueMembers.privateMembers;
                 }
             }

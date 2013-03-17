@@ -25,7 +25,7 @@ module TypeScript {
 
     // For lexically-scoped constructs
     export function aLexicallyEnclosesB(a: Symbol, b: Symbol) {
-        if (a.declAST && b && b.declAST && a.declAST.nodeType == NodeType.FuncDecl) {
+        if (a.declAST && b && b.declAST && a.declAST.nodeType === NodeType.FuncDecl) {
             return a.declAST.minChar <= b.declAST.minChar && a.declAST.limChar >= b.declAST.limChar;
         }
         else {
@@ -35,7 +35,7 @@ module TypeScript {
 
     export function aEnclosesB(a: Symbol, b: Symbol) {
         while (a.container) {
-            if (a == b || aLexicallyEnclosesB(a.container, b)) {
+            if (a === b || aLexicallyEnclosesB(a.container, b)) {
                 return true;
             }
             a = a.container;
@@ -101,7 +101,7 @@ module TypeScript {
         }
 
         public findCommonAncestorPath(b: Symbol): Symbol[] {
-            if (this.container == null) {
+            if (this.container === null) {
                 return [];
             }
             var aPath = this.container.pathToRoot();
@@ -117,7 +117,7 @@ module TypeScript {
                 var aNode = aPath[i];
                 for (var j = 0, bLen = bPath.length; j < bLen; j++) {
                     var bNode = bPath[j];
-                    if (aNode == bNode) {
+                    if (aNode === bNode) {
                         commonNodeIndex = i;
                         break;
                     }
@@ -140,16 +140,16 @@ module TypeScript {
         }
 
         public scopeRelativeName(scope: SymbolScope): string {
-            if (scope == null) {
+            if (scope === null) {
                 return this.getPrettyName(null) + this.getOptionalNameString();
             }
             var lca = this.findCommonAncestorPath(scope.container);
             var builder = "";
             for (var i = 0, len = lca.length; i < len; i++) {
-                var prettyName = lca[i].getPrettyName(i == len - 1 ? scope.container : lca[i + 1]);
+                var prettyName = lca[i].getPrettyName(i === len - 1 ? scope.container : lca[i + 1]);
                 builder = prettyName + "." + builder;
             }
-            builder += this.getPrettyName(len == 0 ? scope.container : lca[0]) + this.getOptionalNameString();
+            builder += this.getPrettyName(len === 0 ? scope.container : lca[0]) + this.getOptionalNameString();
             return builder;
         }
 
@@ -158,7 +158,7 @@ module TypeScript {
             var scopeRootPath: Symbol[] = !scopeSymbol ? [] : scopeSymbol.pathToRoot();
             var dynamicModuleRoot: Symbol = null;
             if (scopeRootPath.length > 0 && scopeRootPath[scopeRootPath.length - 1].declAST &&
-                scopeRootPath[scopeRootPath.length - 1].declAST.nodeType == NodeType.ModuleDeclaration &&
+                scopeRootPath[scopeRootPath.length - 1].declAST.nodeType === NodeType.ModuleDeclaration &&
                 (<ModuleDeclaration>scopeRootPath[scopeRootPath.length - 1].declAST).isWholeFile()) {
                 dynamicModuleRoot = scopeRootPath[scopeRootPath.length - 1];
             }
@@ -173,7 +173,7 @@ module TypeScript {
 
         public isExternallyVisible(checker: TypeChecker) {
             // Global module is not hidden
-            if (this == checker.gloMod) {
+            if (this === checker.gloMod) {
                 return true;
             }
 
@@ -185,7 +185,7 @@ module TypeScript {
             // If the current container is not exported
             // If its in global - it is visible, otherwise it isn't
             if (!hasFlag(this.flags, SymbolFlags.Exported)) {
-                return this.container == checker.gloMod;
+                return this.container === checker.gloMod;
             }
 
             // It is visible if its container is visible too
@@ -193,7 +193,7 @@ module TypeScript {
         }
 
         public visible(scope: SymbolScope, checker: TypeChecker) {
-            if (checker == null || this.container == checker.gloMod) {
+            if (checker === null || this.container === checker.gloMod) {
                 return true;
             }
 
@@ -218,7 +218,7 @@ module TypeScript {
                     // as we reference the actual module fragment of declaration
                     // during typecheck.  Doing this also prevents us from printing
                     // multiple error messages if the symbol is not visible.
-                    return checker && (checker.currentModDecl == this.declModule) ||
+                    return checker && (checker.currentModDecl === this.declModule) ||
                                                 (checker.currentModDecl &&
                                                     checker.currentModDecl.mod &&
                                                     checker.currentModDecl.mod.symbol &&
@@ -230,7 +230,7 @@ module TypeScript {
             }
             else {
                 // field or method
-                var isFunction = this.declAST && this.declAST.nodeType == NodeType.FuncDecl;
+                var isFunction = this.declAST && this.declAST.nodeType === NodeType.FuncDecl;
                 var isMethod = isFunction && (<FuncDecl>this.declAST).isMethod();
                 var isStaticFunction = isFunction && hasFlag((<FuncDecl>this.declAST).fncFlags, FncFlags.Static)
                 var isPrivateMethod = isMethod && hasFlag((<FuncDecl>this.declAST).fncFlags, FncFlags.Private);
@@ -238,11 +238,11 @@ module TypeScript {
 
                 if (this.isMember() || isMethod || isStaticFunction || isAlias) {
                     if (hasFlag(this.flags, SymbolFlags.Private) || isPrivateMethod) {
-                        if (scope.container == null && this.container != scope.container) {
+                        if (scope.container === null && this.container != scope.container) {
                             return false; // it's an inner member being accessed by the global scope
                         }
                         else {
-                            return this.container == null ? true : aEnclosesB(scope.container, this.container);
+                            return this.container === null ? true : aEnclosesB(scope.container, this.container);
                         }
                     }
                     else {
@@ -292,9 +292,9 @@ module TypeScript {
 
         public getInterfaceDeclFromSymbol(checker: TypeChecker) {
             if (this.declAST != null) {
-                if (this.declAST.nodeType == NodeType.InterfaceDeclaration) {
+                if (this.declAST.nodeType === NodeType.InterfaceDeclaration) {
                     return <InterfaceDeclaration>this.declAST;
-                } else if (this.container != null && this.container != checker.gloMod && this.container.declAST.nodeType == NodeType.InterfaceDeclaration) {
+                } else if (this.container != null && this.container != checker.gloMod && this.container.declAST.nodeType === NodeType.InterfaceDeclaration) {
                     return <InterfaceDeclaration>this.container.declAST;
                 }
             }
@@ -303,7 +303,7 @@ module TypeScript {
         }
 
         public getVarDeclFromSymbol() {
-            if (this.declAST != null && this.declAST.nodeType == NodeType.VarDecl) {
+            if (this.declAST != null && this.declAST.nodeType === NodeType.VarDecl) {
                 return <VarDecl>this.declAST;
             }
 
@@ -375,7 +375,7 @@ module TypeScript {
         }
 
         public addLocation(loc: number) {
-            if (this.additionalLocations == null) {
+            if (this.additionalLocations === null) {
                 this.additionalLocations = [];
             }
             this.additionalLocations[this.additionalLocations.length] = loc;
@@ -413,10 +413,10 @@ module TypeScript {
         }
 
         public isClass() { return this.instanceType != null; }
-        public isFunction() { return this.declAST != null && this.declAST.nodeType == NodeType.FuncDecl; }
+        public isFunction() { return this.declAST != null && this.declAST.nodeType === NodeType.FuncDecl; }
 
         public specializeType(pattern: Type, replacement: Type, checker: TypeChecker): Symbol {
-            if (this.type == pattern) {
+            if (this.type === pattern) {
                 return replacement.symbol;
             }
             else {
@@ -465,7 +465,7 @@ module TypeScript {
 
                 }
 
-                if (externalSymbol == null) {
+                if (externalSymbol === null) {
                     // Check in this module
                     moduleType = <ModuleType>scopeSymbolPath[scopeSymbolPathLength - 1].getType();
                     externalSymbol = moduleType.findDynamicModuleName(this.type);
