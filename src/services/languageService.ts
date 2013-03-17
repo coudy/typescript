@@ -1962,12 +1962,12 @@ module Services {
         }
 
         public getErrors(maxCount: number): TypeScript.ErrorEntry[]{
-            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
             return [];
         }
 
         public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[] {
-            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
             return [];
         }
 

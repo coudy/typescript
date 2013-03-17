@@ -8,8 +8,8 @@ module Services {
     /// IPullLanguageService represent language service features that use Fidelity Syntax Tree directelly without having to
     /// rely on the old AST format.
     export interface IPullLanguageService extends ILanguageService {
-        getSyntacticErrors(fileName: string): TypeScript.IDiagnostic[];
-        getSemanticErrors(fileName: string): TypeScript.IDiagnostic[];
+        getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
+        getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
 
         getOutliningSpans(fileName: string): TypeScript.TextSpan[];
         getMatchingBraceSpans(fileName: string, position: number): TypeScript.TextSpan[];
@@ -18,7 +18,7 @@ module Services {
     }
 
     export class PullLanguageService implements IPullLanguageService {
-        public  logger: TypeScript.ILogger;
+        private logger: TypeScript.ILogger;
         private pullCompilerState: PullCompilerState;
         private syntaxASTState: ScriptSyntaxASTState;
         private formattingRulesProvider: Formatting.RulesProvider;
@@ -674,8 +674,6 @@ module Services {
             return result;
         }
 
-
-
         // Given a script name and position in the script, return a string representing 
         // the desired smart indent text (assuming the line is empty).
         // Return "null" in case the smart indent cannot be determined.
@@ -687,6 +685,9 @@ module Services {
             return manager.getSmartIndentAtLineNumber(lineNumber);
         }
 
+        // Given a script name and position in the script, return a pair of text range if the 
+        // position corresponds to a "brace matching" characters (e.g. "{" or "(", etc.)
+        // If the position is not on any range, return "null".
         public getBraceMatchingAtPosition(fileName: string, position: number): TextRange[] {
             this.minimalRefresh();
 
@@ -695,12 +696,7 @@ module Services {
             return manager.getBraceMatchingAtPosition(position);
         }
 
-        // Given a script name and position in the script, return a pair of text range if the 
-        // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
-        // If the position is not on any range, return "null".
-    
-
-        public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
+        public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[]{
             this.minimalRefresh();
 
             // Ensure rules are initialized and up to date wrt to formatting options
@@ -927,14 +923,14 @@ module Services {
             new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
         }
 
-        public getSyntacticErrors(fileName: string): TypeScript.IDiagnostic[] {
+        public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             return syntaxTree.diagnostics();
         }
 
-        public getSemanticErrors(fileName: string): TypeScript.IDiagnostic[] {
+        public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh(false/*throwOnError*/);
 
             // JOE: Here is where you should call and get the right set of semantic errors for this file.
@@ -942,12 +938,12 @@ module Services {
         }
 
         public getErrors(maxCount: number): TypeScript.ErrorEntry[]{
-            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
             return [];
         }
 
         public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[]{
-            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
             return [];
         }
 
@@ -989,8 +985,6 @@ module Services {
             TypeScript.getAstWalkerFactory().walk(script, pre);
             return result;
         }
-
-        
 
         //
         // Return the comma separated list of modifers (from the ScriptElementKindModifier list of constants) 

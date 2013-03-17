@@ -175,8 +175,8 @@ module FourSlash {
         }
 
         private getDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
-            var syntacticErrors = this.pullLanguageService.getSyntacticErrors(fileName);
-            var semanticErrors = this.pullLanguageService.getSemanticErrors(fileName);
+            var syntacticErrors = this.pullLanguageService.getSyntacticDiagnostics(fileName);
+            var semanticErrors = this.pullLanguageService.getSemanticDiagnostics(fileName);
 
             var diagnostics: TypeScript.IDiagnostic[] = [];
             diagnostics.push.apply(diagnostics, syntacticErrors);

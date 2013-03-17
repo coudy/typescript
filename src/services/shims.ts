@@ -52,8 +52,8 @@ module Services {
         logAST(fileName: string): void;
         logSyntaxAST(fileName: string): void;
 
-        getSyntacticErrors(fileName: string): string;
-        getSemanticErrors(fileName: string): string;
+        getSyntacticDiagnostics(fileName: string): string;
+        getSemanticDiagnostics(fileName: string): string;
 
         getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool);
         getTypeAtPosition(fileName: string, pos: number): string;
@@ -260,7 +260,7 @@ module Services {
         /// SQUIGGLES
         ///
         public getErrors(maxCount: number): string {
-            // Deprecated.  Call IPullLanguageService.getSyntacticErrors and getSemanticErrors instead.
+            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
             return _resultToJSON([]);
         }
 
@@ -272,20 +272,20 @@ module Services {
             return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
         }
 
-        public getSyntacticErrors(fileName: string): string {
+        public getSyntacticDiagnostics(fileName: string): string {
             return this.forwardJSONCall(
-                "getSyntacticErrors(\"" + fileName + "\")",
+                "getSyntacticDiagnostics(\"" + fileName + "\")",
                 () => {
-                    var errors = this.pullLanguageService.getSyntacticErrors(fileName);
+                    var errors = this.pullLanguageService.getSyntacticDiagnostics(fileName);
                     return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }
 
-        public getSemanticErrors(fileName: string): string {
+        public getSemanticDiagnostics(fileName: string): string {
             return this.forwardJSONCall(
-                "getSemanticErrors(\"" + fileName + "\")",
+                "getSemanticDiagnostics(\"" + fileName + "\")",
                 () => {
-                    var errors = this.pullLanguageService.getSemanticErrors(fileName);
+                    var errors = this.pullLanguageService.getSemanticDiagnostics(fileName);
                     return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }
