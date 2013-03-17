@@ -171,7 +171,7 @@ the Apache 2.0 License, whether by implication, estoppel or otherwise.
 // methods in a closure to avoid creating global variables.
 
 ///<reference path='json2Stringify.ts'/>
-var JSON: any = (typeof JSON === "undefined") ? JSON2 : JSON;
+var JSON = (typeof JSON === "undefined") ? JSON2 : JSON;
 (function() {
     'use strict';
 

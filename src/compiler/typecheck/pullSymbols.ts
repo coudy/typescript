@@ -549,10 +549,13 @@ module TypeScript {
         public getNonOptionalParameterCount() { return this.nonOptionalParamCount; }
 
         public setReturnType(returnType: PullTypeSymbol) {
-            if (this.returnTypeLink) {
-                this.removeOutgoingLink(this.returnTypeLink);
+
+            if (returnType) {
+                if (this.returnTypeLink) {
+                    this.removeOutgoingLink(this.returnTypeLink);
+                }
+                this.returnTypeLink = this.addOutgoingLink(returnType, SymbolLinkKind.ReturnType);
             }
-            this.returnTypeLink = this.addOutgoingLink(returnType, SymbolLinkKind.ReturnType);
         }
 
         public getParameters() {
@@ -644,11 +647,16 @@ module TypeScript {
                     this.addParameter(parameter);
                 }
             }
-            var returnType = signature.getReturnType();
 
-            if (returnType) {
-                this.setReturnType(returnType);
-            }
+            // Don't set the return type, since that will just lead to redundant
+            // calls to setReturnType when we re-resolve the signature for
+            // specialization
+
+            // var returnType = signature.getReturnType();
+
+            // if (returnType) {
+            //     this.setReturnType(returnType);
+            // }
         }
 
         public getReturnType(): PullTypeSymbol {
@@ -2277,6 +2285,7 @@ module TypeScript {
         var declAST: AST = null;
         var parameters: PullSymbol[];
         var newParameters: PullSymbol[];
+        var returnType: PullTypeSymbol = null;
         var p = 0;
 
         for (i = 0; i < callSignatures.length; i++) {
@@ -2310,6 +2319,12 @@ module TypeScript {
             newSignature.setResolved();
 
             resolver.setUnitPath(unitPath);
+
+            returnType = newSignature.getReturnType();
+
+            if (!returnType) {
+                newSignature.setReturnType(signature.getReturnType());
+            }
 
             signature.setIsBeingSpecialized();
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
@@ -2361,6 +2376,12 @@ module TypeScript {
 
             resolver.setUnitPath(unitPath);
 
+            returnType = newSignature.getReturnType();
+
+            if (!returnType) {
+                newSignature.setReturnType(signature.getReturnType());
+            }            
+
             signature.setIsBeingSpecialized();
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
             signature.setIsSpecialized();
@@ -2410,6 +2431,12 @@ module TypeScript {
             newSignature.setResolved();
 
             resolver.setUnitPath(unitPath);
+
+            returnType = newSignature.getReturnType();
+
+            if (!returnType) {
+                newSignature.setReturnType(signature.getReturnType());
+            }            
 
             signature.setIsBeingSpecialized();
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
