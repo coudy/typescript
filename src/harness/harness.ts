@@ -215,7 +215,7 @@ module Harness {
         }
 
         var content = IO.readFile(Harness.userSpecifiedroot + path);
-        if (content == null) {
+        if (content === null) {
             throw new Error("failed to read file at: '" + Harness.userSpecifiedroot + path + "'");
         }
 
@@ -1079,7 +1079,7 @@ module Harness {
                         name = (<TypeScript.ClassDeclaration>ast).name.actualText;
                         break;
                     case TypeScript.NodeType.FuncDecl:
-                        name = !(<TypeScript.FuncDecl>ast).name ? "" : (<TypeScript.FuncDecl>ast).name.actualText; // name == null for lambdas
+                        name = !(<TypeScript.FuncDecl>ast).name ? "" : (<TypeScript.FuncDecl>ast).name.actualText; // name === null for lambdas
                         break;
                     default:
                         // TODO: is there a reason to mess with all the special cases above and not just do this (ie take whatever property is there and works?)
@@ -1381,7 +1381,7 @@ module Harness {
          */
         export function defineCompilationContextForTest(fileName: string, dependencies: TestCaseParser.TestUnitData[]): CompilationContext {
             // if the given file has no dependencies, there is no context to return, it can be compiled without additional work
-            if (dependencies.length == 0) {
+            if (dependencies.length === 0) {
                 return null;
             } else {
                 var addedFiles = [];
@@ -1484,9 +1484,9 @@ module Harness {
                     // Comment line, check for global/file @options and record them
                     optionRegex.lastIndex = 0;
                     var fileNameIndex = fileMetadataNames.indexOf(testMetaData[1].toLowerCase());
-                    if (fileNameIndex == -1) {
+                    if (fileNameIndex === -1) {
                         throw new Error('Unrecognized metadata name "' + testMetaData[1] + '". Available file metadata names are: ' + fileMetadataNames.join(', '));
-                    } else if (fileNameIndex == 0) {
+                    } else if (fileNameIndex === 0) {
                         currentFileOptions[testMetaData[1]] = testMetaData[2];
                     } else {
                         continue;
@@ -1577,7 +1577,7 @@ module Harness {
         }
 
         public getTextChangeRangeSinceVersion(version: number): TypeScript.TextChangeRange {
-            if (this.version == version) {
+            if (this.version === version) {
                 // No edits!
                 return TypeScript.TextChangeRange.unchanged;
             }
@@ -1770,7 +1770,7 @@ module Harness {
 
             var temp = mapEdits(edits).sort(function (a, b) {
                 var result = a.edit.minChar - b.edit.minChar;
-                if (result == 0)
+                if (result === 0)
                     result = a.index - b.index;
                 return result;
             });
