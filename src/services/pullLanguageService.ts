@@ -937,16 +937,6 @@ module Services {
             return this.pullCompilerState.pullGetErrorsForFile(fileName);
         }
 
-        public getErrors(maxCount: number): TypeScript.ErrorEntry[]{
-            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
-            return [];
-        }
-
-        public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[]{
-            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
-            return [];
-        }
-
         public getEmitOutput(fileName: string): IOutputFile[] {
             return [];
         }

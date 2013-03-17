@@ -1961,16 +1961,6 @@ module Services {
             new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
         }
 
-        public getErrors(maxCount: number): TypeScript.ErrorEntry[]{
-            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
-            return [];
-        }
-
-        public getScriptErrors(fileName: string, maxCount: number): TypeScript.ErrorEntry[] {
-            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
-            return [];
-        }
-
         /// Emit
         public getEmitOutput(fileName: string): IOutputFile[] {
             this.refresh();

@@ -259,14 +259,6 @@ module Services {
 
         /// SQUIGGLES
         ///
-        public getErrors(maxCount: number): string {
-            // Deprecated.  Call IPullLanguageService.getSyntacticDiagnostics and getSemanticDiagnostics instead.
-            return _resultToJSON([]);
-        }
-
-        public getScriptErrors(fileName: string, maxCount: number): string {
-            return _resultToJSON([]);
-        }
 
         private static realizeDiagnostic(diagnostic: TypeScript.IDiagnostic): { message: string; start: number; length: number; } {
             return { message: diagnostic.message(), start: diagnostic.start(), length: diagnostic.length() };
