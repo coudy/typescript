@@ -72,13 +72,13 @@ module TypeScript {
         }
 
         public down() {
-            if (this.top == this.ast.length - 1)
+            if (this.top === this.ast.length - 1)
                 throw new Error("Invalid call to 'down'");
             this.top++;
         }
 
         public nodeType(): TypeScript.NodeType {
-            if (this.ast() == null)
+            if (this.ast() === null)
                 return TypeScript.NodeType.None;
             return this.ast().nodeType;
         }
@@ -208,126 +208,126 @@ module TypeScript {
             return this.count() >= 2 &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ModuleDeclaration &&
-                 (<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).members == this.asts[this.top - 0] &&
+                 (<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0] &&
                 TypeScript.hasFlag((<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).modFlags, TypeScript.ModuleFlags.IsWholeFile);
         }
 
         public isBodyOfScript(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Script &&
-                 (<TypeScript.Script>this.asts[this.top - 1]).bod == this.asts[this.top - 0];
+                 (<TypeScript.Script>this.asts[this.top - 1]).bod === this.asts[this.top - 0];
         }
 
         public isBodyOfSwitch(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Switch &&
-                 (<TypeScript.SwitchStatement>this.asts[this.top - 1]).caseList == this.asts[this.top - 0];
+                 (<TypeScript.SwitchStatement>this.asts[this.top - 1]).caseList === this.asts[this.top - 0];
         }
 
         public isBodyOfModule(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ModuleDeclaration &&
-                 (<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).members == this.asts[this.top - 0];
+                 (<TypeScript.ModuleDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0];
         }
 
         public isBodyOfClass(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ClassDeclaration &&
-                 (<TypeScript.ClassDeclaration>this.asts[this.top - 1]).members == this.asts[this.top - 0];
+                 (<TypeScript.ClassDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0];
         }
 
         public isBodyOfFunction(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.FuncDecl &&
-                 (<TypeScript.FuncDecl>this.asts[this.top - 1]).bod == this.asts[this.top - 0];
+                 (<TypeScript.FuncDecl>this.asts[this.top - 1]).bod === this.asts[this.top - 0];
         }
 
         public isBodyOfInterface(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.InterfaceDeclaration &&
-                 (<TypeScript.InterfaceDeclaration>this.asts[this.top - 1]).members == this.asts[this.top - 0];
+                 (<TypeScript.InterfaceDeclaration>this.asts[this.top - 1]).members === this.asts[this.top - 0];
         }
 
         public isBodyOfBlock(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Block &&
-                (<TypeScript.Block>this.asts[this.top - 1]).statements == this.asts[this.top - 0];
+                (<TypeScript.Block>this.asts[this.top - 1]).statements === this.asts[this.top - 0];
         }
 
         public isBodyOfFor(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.For &&
-                (<TypeScript.ForStatement>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.ForStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfCase(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Case &&
-                (<TypeScript.CaseStatement>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.CaseStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfTry(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Try &&
-                (<TypeScript.Try>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.Try>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfCatch(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Catch &&
-                (<TypeScript.Catch>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.Catch>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfDoWhile(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.DoWhile &&
-                (<TypeScript.DoWhileStatement>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.DoWhileStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfWhile(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.While &&
-                (<TypeScript.WhileStatement>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.WhileStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfForIn(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ForIn &&
-                (<TypeScript.ForInStatement>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.ForInStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfWith(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.With &&
-                (<TypeScript.WithStatement>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.WithStatement>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isBodyOfFinally(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Finally &&
-                (<TypeScript.Finally>this.asts[this.top - 1]).body == this.asts[this.top - 0];
+                (<TypeScript.Finally>this.asts[this.top - 1]).body === this.asts[this.top - 0];
         }
 
         public isCaseOfSwitch(): bool {
             return this.count() >= 3 &&
                 this.asts[this.top - 2].nodeType === TypeScript.NodeType.Switch &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList == this.asts[this.top - 1];
+                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList === this.asts[this.top - 1];
         }
 
         public isDefaultCaseOfSwitch(): bool {
             return this.count() >= 3 &&
                 this.asts[this.top - 2].nodeType === TypeScript.NodeType.Switch &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList == this.asts[this.top - 1] &&
-                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).defaultCase == this.asts[this.top - 0];
+                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).caseList === this.asts[this.top - 1] &&
+                (<TypeScript.SwitchStatement>this.asts[this.top - 2]).defaultCase === this.asts[this.top - 0];
         }
 
         public isListOfObjectLit(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLit &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand == this.asts[this.top - 0];
+                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0];
         }
 
         public isBodyOfObjectLit(): bool {
@@ -338,8 +338,8 @@ module TypeScript {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ObjectLit &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand == this.asts[this.top - 0] &&
-                (<TypeScript.ASTList>this.asts[this.top - 0]).members.length == 0;
+                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0] &&
+                (<TypeScript.ASTList>this.asts[this.top - 0]).members.length === 0;
         }
 
         public isMemberOfObjectLit(): bool {
@@ -347,7 +347,7 @@ module TypeScript {
                 this.asts[this.top - 2].nodeType === TypeScript.NodeType.ObjectLit &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.Member &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 2]).operand == this.asts[this.top - 1];
+                (<TypeScript.UnaryExpression>this.asts[this.top - 2]).operand === this.asts[this.top - 1];
         }
 
         public isNameOfMemberOfObjectLit(): bool {
@@ -356,14 +356,14 @@ module TypeScript {
                 this.asts[this.top - 2].nodeType === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.Member &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.Name &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 3]).operand == this.asts[this.top - 2];
+                (<TypeScript.UnaryExpression>this.asts[this.top - 3]).operand === this.asts[this.top - 2];
         }
 
         public isListOfArrayLit(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.ArrayLit &&
                 this.asts[this.top - 0].nodeType === TypeScript.NodeType.List &&
-                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand == this.asts[this.top - 0];
+                (<TypeScript.UnaryExpression>this.asts[this.top - 1]).operand === this.asts[this.top - 0];
         }
 
         public isTargetOfMember(): bool {
@@ -387,13 +387,13 @@ module TypeScript {
         public isThenOfIf(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.If &&
-                (<TypeScript.IfStatement>this.asts[this.top - 1]).thenBod == this.asts[this.top - 0];
+                (<TypeScript.IfStatement>this.asts[this.top - 1]).thenBod === this.asts[this.top - 0];
         }
 
         public isElseOfIf(): bool {
             return this.count() >= 2 &&
                 this.asts[this.top - 1].nodeType === TypeScript.NodeType.If &&
-                (<TypeScript.IfStatement>this.asts[this.top - 1]).elseBod == this.asts[this.top - 0];
+                (<TypeScript.IfStatement>this.asts[this.top - 1]).elseBod === this.asts[this.top - 0];
         }
 
         public isBodyOfDefaultCase(): bool {
@@ -524,7 +524,7 @@ module TypeScript {
                 // For example:
                 //  bar
                 //  0123
-                // If "position == 3", the caret is at the "right" of the "r" character, which should be considered valid
+                // If "position === 3", the caret is at the "right" of the "r" character, which should be considered valid
                 var inclusive =
                     hasFlag(options, GetAstPathOptions.EdgeInclusive) ||
                     cur.nodeType === TypeScript.NodeType.Name ||
@@ -538,7 +538,7 @@ module TypeScript {
                     // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
                     //       than top of the stack.
                     var previous = ctx.path.ast();
-                    if (previous == null || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
+                    if (previous === null || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
                         ctx.path.push(cur);
                     }
                     else {

@@ -146,7 +146,7 @@ module TypeScript {
             if (this.emitOptions.minWhitespace) {
                 this.writeToOutput(s);
                 var c = s.charCodeAt(s.length - 1);
-                if (!((c == LexCodeSpace) || (c == LexCodeSMC) || (c == LexCodeLBR))) {
+                if (!((c === LexCodeSpace) || (c === LexCodeSMC) || (c === LexCodeLBR))) {
                     this.writeToOutput(' ');
                 }
             }
@@ -199,7 +199,7 @@ module TypeScript {
             var hadNewLine = false;
 
             if (comment.isBlockComment) {
-                if (this.emitState.column == 0) {
+                if (this.emitState.column === 0) {
                     this.emitIndent();
                 }
                 this.recordSourceMappingStart(comment);
@@ -219,7 +219,7 @@ module TypeScript {
                 }
             }
             else {
-                if (this.emitState.column == 0) {
+                if (this.emitState.column === 0) {
                     this.emitIndent();
                 }
                 this.recordSourceMappingStart(comment);
@@ -285,7 +285,7 @@ module TypeScript {
 
         public emitNew(target: AST, args: ASTList) {
             this.writeToOutput("new ");
-            if (target.nodeType == NodeType.TypeRef) {
+            if (target.nodeType === NodeType.TypeRef) {
                 var typeRef = <TypeReference>target;
                 if (typeRef.arrayCount) {
                     this.writeToOutput("Array()");
@@ -375,21 +375,21 @@ module TypeScript {
         public emitCall(callNode: CallExpression, target: AST, args: ASTList) {
             if (!this.emitSuperCall(callNode)) {
                 if (!hasFlag(callNode.flags, ASTFlags.ClassBaseConstructorCall)) {
-                    if (target.nodeType == NodeType.FuncDecl && !target.isParenthesized) {
+                    if (target.nodeType === NodeType.FuncDecl && !target.isParenthesized) {
                         this.writeToOutput("(");
                     }
-                    if (callNode.target.nodeType == NodeType.Super && this.emitState.container == EmitContainer.Constructor) {
+                    if (callNode.target.nodeType === NodeType.Super && this.emitState.container === EmitContainer.Constructor) {
                         this.writeToOutput("_super.call");
                     }
                     else {
                         this.emitJavascript(target, TokenID.OpenParen, false);
                     }
-                    if (target.nodeType == NodeType.FuncDecl && !target.isParenthesized) {
+                    if (target.nodeType === NodeType.FuncDecl && !target.isParenthesized) {
                         this.writeToOutput(")");
                     }
                     this.recordSourceMappingStart(args);
                     this.writeToOutput("(");
-                    if (callNode.target.nodeType == NodeType.Super && this.emitState.container == EmitContainer.Constructor) {
+                    if (callNode.target.nodeType === NodeType.Super && this.emitState.container === EmitContainer.Constructor) {
                         this.writeToOutput("this");
                         if (args && args.members.length) {
                             this.writeToOutput(", ");
@@ -412,7 +412,7 @@ module TypeScript {
         }
 
         public emitConstructorCalls(bases: ASTList, classDecl: TypeDeclaration) {
-            if (bases == null) {
+            if (bases === null) {
                 return;
             }
             var basesLen = bases.members.length;
@@ -420,7 +420,7 @@ module TypeScript {
             for (var i = 0; i < basesLen; i++) {
                 var baseExpr = bases.members[i];
                 var baseSymbol: Symbol = null;
-                if (baseExpr.nodeType == NodeType.Call) {
+                if (baseExpr.nodeType === NodeType.Call) {
                     baseSymbol = (<CallExpression>baseExpr).target.type.symbol;
                 }
                 else {
@@ -430,7 +430,7 @@ module TypeScript {
                 if (baseSymbol.declModule != classDecl.type.symbol.declModule) {
                     baseName = baseSymbol.fullName();
                 }
-                if (baseExpr.nodeType == NodeType.Call) {
+                if (baseExpr.nodeType === NodeType.Call) {
                     this.emitIndent();
                     this.writeToOutput("_super.call(this");
                     var args = (<CallExpression>baseExpr).arguments;
@@ -629,7 +629,7 @@ module TypeScript {
                 var nProps = (<ASTList>this.thisClassNode.members).members.length;
 
                 for (i = 0; i < nProps; i++) {
-                    if ((<ASTList>this.thisClassNode.members).members[i].nodeType == NodeType.VarDecl) {
+                    if ((<ASTList>this.thisClassNode.members).members[i].nodeType === NodeType.VarDecl) {
                         var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[i];
                         if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
                             this.emitIndent();
@@ -720,15 +720,15 @@ module TypeScript {
         }
 
         public shouldCaptureThis(ast: AST) {
-            if (ast == null) {
+            if (ast === null) {
                 return this.checker.mustCaptureGlobalThis;
             }
 
-            if (ast.nodeType == NodeType.ModuleDeclaration) {
+            if (ast.nodeType === NodeType.ModuleDeclaration) {
                 return hasFlag((<ModuleDeclaration>ast).modFlags,  ModuleFlags.MustCaptureThis);
-            } else if (ast.nodeType == NodeType.ClassDeclaration) {
+            } else if (ast.nodeType === NodeType.ClassDeclaration) {
                 return hasFlag((<ClassDeclaration>ast).varFlags, VarFlags.MustCaptureThis);
-            } else if (ast.nodeType == NodeType.FuncDecl) {
+            } else if (ast.nodeType === NodeType.FuncDecl) {
                 var func = <FuncDecl>ast;
                 // Super calls use 'this' reference. If super call is in a lambda, 'this' value needs to be captured in the parent.
                 return func.hasSelfReference() || func.hasSuperReferenceInFatArrowFunction();
@@ -792,7 +792,7 @@ module TypeScript {
                     this.setContainer(EmitContainer.DynamicModule); // discard the previous 'Module' container
 
                     this.recordSourceMappingStart(moduleDecl);
-                    if (moduleGenTarget == ModuleGenTarget.Asynchronous) { // AMD
+                    if (moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
                         var dependencyList = "[\"require\", \"exports\"";
                         var importList = "require, exports";
 
@@ -833,7 +833,7 @@ module TypeScript {
                 }
 
                 // body - don't indent for Node
-                if (!isDynamicMod || moduleGenTarget == ModuleGenTarget.Asynchronous) {
+                if (!isDynamicMod || moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.increaseIndent();
                 }
 
@@ -842,14 +842,14 @@ module TypeScript {
                 }
 
                 this.emitJavascriptList(moduleDecl.members, null, TokenID.Semicolon, true, false, false);
-                if (!isDynamicMod || moduleGenTarget == ModuleGenTarget.Asynchronous) {
+                if (!isDynamicMod || moduleGenTarget === ModuleGenTarget.Asynchronous) {
                     this.indenter.decreaseIndent();
                 }
                 this.emitIndent();
 
                 // epilogue
                 if (isDynamicMod) {
-                    if (moduleGenTarget == ModuleGenTarget.Asynchronous) { // AMD
+                    if (moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
                         this.writeLineToOutput("})");
                     }
                     else { // Node
@@ -875,7 +875,7 @@ module TypeScript {
                 else {
                     var parentIsDynamic = this.isParentDynamicModule(moduleDecl);
                     this.recordSourceMappingStart(moduleDecl.endingToken);
-                    if (temp == EmitContainer.Prog && isExported) {
+                    if (temp === EmitContainer.Prog && isExported) {
                         this.writeToOutput("}");
                         if (!isWholeFile) {
                             this.recordSourceMappingNameEnd();
@@ -883,7 +883,7 @@ module TypeScript {
                         this.recordSourceMappingEnd(moduleDecl.endingToken);
                         this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
                     }
-                    else if (isExported || temp == EmitContainer.Prog) {
+                    else if (isExported || temp === EmitContainer.Prog) {
                         var dotMod = svModuleName != "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
                         this.writeToOutput("}");
                         if (!isWholeFile) {
@@ -963,7 +963,7 @@ module TypeScript {
 
             if ((this.emitState.inObjectLiteral || !funcDecl.isAccessor()) &&
                 ((temp != EmitContainer.Constructor) ||
-                ((funcDecl.fncFlags & FncFlags.Method) == FncFlags.None))) {
+                ((funcDecl.fncFlags & FncFlags.Method) === FncFlags.None))) {
                 var tempLit = this.setInObjectLiteral(false);
                 hasSelfRef = this.shouldCaptureThis(funcDecl);
                 this.recordSourceMappingStart(funcDecl);
@@ -988,9 +988,9 @@ module TypeScript {
                         }
                     }
                 }
-                else if ((this.emitState.container == EmitContainer.Module || this.emitState.container == EmitContainer.DynamicModule) && hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported)) {
+                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(funcDecl.fncFlags, FncFlags.Exported | FncFlags.ClassPropertyMethodExported)) {
                     this.emitIndent();
-                    var modName = this.emitState.container == EmitContainer.Module ? this.moduleName : "exports";
+                    var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
                     this.recordSourceMappingStart(funcDecl);
                     this.writeLineToOutput(modName + "." + funcName +
                                       " = " + funcName + ";");
@@ -1041,7 +1041,7 @@ module TypeScript {
         public isContainedInClassDeclaration(varDecl: VarDecl) {
             var sym = varDecl.sym;
             if (sym && sym.isMember() && sym.container &&
-                    (sym.container.kind() == SymbolKind.Type)) {
+                    (sym.container.kind() === SymbolKind.Type)) {
                 var type = (<TypeSymbol>sym.container).type;
                 if (type.isClass() && (!hasFlag(sym.flags, SymbolFlags.ModuleMember))) {
                     return true;
@@ -1054,7 +1054,7 @@ module TypeScript {
         public isContainedInModuleOrEnumDeclaration(varDecl: VarDecl) {
             var sym = varDecl.sym;
             if (sym && sym.isMember() && sym.container &&
-                    (sym.container.kind() == SymbolKind.Type)) {
+                    (sym.container.kind() === SymbolKind.Type)) {
                 var type = (<TypeSymbol>sym.container).type;
                 if (type.hasImplementation()) {
                     return true;
@@ -1069,7 +1069,7 @@ module TypeScript {
         }
 
         public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
-            if ((varDecl.varFlags & VarFlags.Ambient) == VarFlags.Ambient) {
+            if ((varDecl.varFlags & VarFlags.Ambient) === VarFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
                 this.onEmitVar();
             }
@@ -1093,7 +1093,7 @@ module TypeScript {
                         this.emitVarDeclVar();
                     }
                     else {
-                        if (this.emitState.container == EmitContainer.DynamicModule) {
+                        if (this.emitState.container === EmitContainer.DynamicModule) {
                             this.writeToOutput("exports.");
                         }
                         else {
@@ -1135,11 +1135,11 @@ module TypeScript {
         }
 
         public declEnclosed(moduleDecl: ModuleDeclaration): bool {
-            if (moduleDecl == null) {
+            if (moduleDecl === null) {
                 return true;
             }
             for (var i = 0, len = this.moduleDeclList.length; i < len; i++) {
-                if (this.moduleDeclList[i] == moduleDecl) {
+                if (this.moduleDeclList[i] === moduleDecl) {
                     return true;
                 }
             }
@@ -1162,7 +1162,7 @@ module TypeScript {
                                 this.writeToOutput(sym.container.name + ".");
                             }
                         }
-                        else if (sym.kind() == SymbolKind.Field) {
+                        else if (sym.kind() === SymbolKind.Field) {
                             var fieldSym = <FieldSymbol>sym;
                             if (hasFlag(fieldSym.flags, SymbolFlags.ModuleMember)) {
                                 if ((sym.container != this.checker.gloMod) && ((hasFlag(sym.flags, SymbolFlags.Property)) || hasFlag(sym.flags, SymbolFlags.Exported))) {
@@ -1181,7 +1181,7 @@ module TypeScript {
                                 }
                             }
                         }
-                        else if (sym.kind() == SymbolKind.Type) {
+                        else if (sym.kind() === SymbolKind.Type) {
                             if (sym.isInstanceProperty()) {
                                 var typeSym = <TypeSymbol>sym;
                                 var type = typeSym.type;
@@ -1195,14 +1195,14 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (sym.container == this.checker.gloMod &&
+                    else if (sym.container === this.checker.gloMod &&
                                 hasFlag(sym.flags, SymbolFlags.Exported) &&
                                 !hasFlag(sym.flags, SymbolFlags.Ambient) &&
                                 // check that it's a not a member of an ambient module...
                                 !((sym.isType() || sym.isMember()) &&
                                     sym.declModule &&
                                     hasFlag(sym.declModule.modFlags, ModuleFlags.Ambient)) &&
-                                this.emitState.container == EmitContainer.Prog &&
+                                this.emitState.container === EmitContainer.Prog &&
                                 sym.declAST.nodeType != NodeType.FuncDecl) {
                         this.writeToOutput("this.");
                     }
@@ -1211,11 +1211,11 @@ module TypeScript {
                 // If it's a dynamic module, we need to print the "require" invocation
                 if (sym &&
                     sym.declAST &&
-                    sym.declAST.nodeType == NodeType.ModuleDeclaration &&
+                    sym.declAST.nodeType === NodeType.ModuleDeclaration &&
                     (hasFlag((<ModuleDeclaration>sym.declAST).modFlags, ModuleFlags.IsDynamic))) {
                     var moduleDecl: ModuleDeclaration = <ModuleDeclaration>sym.declAST;
 
-                    if (moduleGenTarget == ModuleGenTarget.Asynchronous) {
+                    if (moduleGenTarget === ModuleGenTarget.Asynchronous) {
                         this.writeLineToOutput("__" + this.modAliasId + "__;");
                     }
                     else {
@@ -1243,8 +1243,8 @@ module TypeScript {
                 if (stmts.nodeType != NodeType.Block) {
                     var hasContents = (stmts && (stmts.nodeType != NodeType.List || ((<ASTList>stmts).members.length > 0)));
                     if (emitEmptyBod || hasContents) {
-                        var hasOnlyBlockStatement = ((stmts.nodeType == NodeType.Block) ||
-                            ((stmts.nodeType == NodeType.List) && ((<ASTList>stmts).members.length == 1) && ((<ASTList>stmts).members[0].nodeType == NodeType.Block)));
+                        var hasOnlyBlockStatement = ((stmts.nodeType === NodeType.Block) ||
+                            ((stmts.nodeType === NodeType.List) && ((<ASTList>stmts).members.length === 1) && ((<ASTList>stmts).members[0].nodeType === NodeType.Block)));
 
                         this.recordSourceMappingStart(stmts);
                         if (!hasOnlyBlockStatement) {
@@ -1273,11 +1273,11 @@ module TypeScript {
         public emitBareJavascriptStatements(stmts: AST, emitClassPropertiesAfterSuperCall: bool = false) {
             // just the statements without enclosing curly braces
             if (stmts.nodeType != NodeType.Block) {
-                if (stmts.nodeType == NodeType.List) {
+                if (stmts.nodeType === NodeType.List) {
                     var stmtList = <ASTList>stmts;
-                    if ((stmtList.members.length == 2) &&
-                        (stmtList.members[0].nodeType == NodeType.Block) &&
-                        (stmtList.members[1].nodeType == NodeType.EndCode)) {
+                    if ((stmtList.members.length === 2) &&
+                        (stmtList.members[0].nodeType === NodeType.Block) &&
+                        (stmtList.members[1].nodeType === NodeType.EndCode)) {
                         this.emitJavascript(stmtList.members[0], TokenID.Semicolon, true);
                         this.writeLineToOutput("");
                     }
@@ -1370,7 +1370,7 @@ module TypeScript {
         }
 
         public emitJavascriptList(ast: AST, delimiter: string, tokenId: TokenID, startLine: bool, onlyStatics: bool, emitClassPropertiesAfterSuperCall: bool = false, emitPrologue? = false, requiresExtendsBlock?: bool) {
-            if (ast == null) {
+            if (ast === null) {
                 return;
             }
             else if (ast.nodeType != NodeType.List) {
@@ -1380,7 +1380,7 @@ module TypeScript {
             else {
                 var list = <ASTList>ast;
                 this.emitParensAndCommentsInPlace(ast, true);
-                if (list.members.length == 0) {
+                if (list.members.length === 0) {
                     this.emitParensAndCommentsInPlace(ast, false);
                     return;
                 }
@@ -1390,7 +1390,7 @@ module TypeScript {
                     if (emitPrologue) {
                         // If the list has Strict mode flags, emit prologue after first statement
                         // otherwise emit before first statement
-                        if (i == 1 || !hasFlag(list.flags, ASTFlags.StrictMode)) {
+                        if (i === 1 || !hasFlag(list.flags, ASTFlags.StrictMode)) {
                             this.emitPrologue(requiresExtendsBlock);
                             emitPrologue = false;
                         }
@@ -1398,7 +1398,7 @@ module TypeScript {
 
                     // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
                     // call which, in these cases, must be the first statement in the constructor body
-                    if (i == 1 && emitClassPropertiesAfterSuperCall) {
+                    if (i === 1 && emitClassPropertiesAfterSuperCall) {
 
                         // emit any parameter properties first
                         var constructorDecl = (<ClassDeclaration>this.thisClassNode).constructorDecl;
@@ -1426,7 +1426,7 @@ module TypeScript {
                         var nProps = (<ASTList>this.thisClassNode.members).members.length;
 
                         for (var iMember = 0; iMember < nProps; iMember++) {
-                            if ((<ASTList>this.thisClassNode.members).members[iMember].nodeType == NodeType.VarDecl) {
+                            if ((<ASTList>this.thisClassNode.members).members[iMember].nodeType === NodeType.VarDecl) {
                                 var varDecl = <VarDecl>(<ASTList>this.thisClassNode.members).members[iMember];
                                 if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
                                     this.emitIndent();
@@ -1440,8 +1440,8 @@ module TypeScript {
                     var emitNode = list.members[i];
 
                     var isStaticDecl =
-                                (emitNode.nodeType == NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).fncFlags, FncFlags.Static)) ||
-                                (emitNode.nodeType == NodeType.VarDecl && hasFlag((<VarDecl>emitNode).varFlags, VarFlags.Static))
+                                (emitNode.nodeType === NodeType.FuncDecl && hasFlag((<FuncDecl>emitNode).fncFlags, FncFlags.Static)) ||
+                                (emitNode.nodeType === NodeType.VarDecl && hasFlag((<VarDecl>emitNode).varFlags, VarFlags.Static))
 
                     if (onlyStatics ? !isStaticDecl : isStaticDecl) {
                         continue;
@@ -1459,9 +1459,9 @@ module TypeScript {
                     else if (startLine &&
                              (emitNode.nodeType != NodeType.ModuleDeclaration) &&
                              (emitNode.nodeType != NodeType.InterfaceDeclaration) &&
-                             (!((emitNode.nodeType == NodeType.VarDecl) &&
-                                ((((<VarDecl>emitNode).varFlags) & VarFlags.Ambient) == VarFlags.Ambient) &&
-                                (((<VarDecl>emitNode).init) == null)) && this.varListCount() >= 0) &&
+                             (!((emitNode.nodeType === NodeType.VarDecl) &&
+                                ((((<VarDecl>emitNode).varFlags) & VarFlags.Ambient) === VarFlags.Ambient) &&
+                                (((<VarDecl>emitNode).init) === null)) && this.varListCount() >= 0) &&
                              (emitNode.nodeType != NodeType.Block || (<Block>emitNode).isStatementBlock) &&
                              (emitNode.nodeType != NodeType.EndCode) &&
                              (emitNode.nodeType != NodeType.FuncDecl)) {
@@ -1474,7 +1474,7 @@ module TypeScript {
 
         // tokenId is the id the preceding token
         public emitJavascript(ast: AST, tokenId: TokenID, startLine: bool) {
-            if (ast == null) {
+            if (ast === null) {
                 return;
             }
 
@@ -1482,9 +1482,9 @@ module TypeScript {
             if (startLine && (this.indenter.indentAmt > 0) && (ast.nodeType != NodeType.List) &&
                 (ast.nodeType != NodeType.Block)) {
                 if ((ast.nodeType != NodeType.InterfaceDeclaration) &&
-                    (!((ast.nodeType == NodeType.VarDecl) &&
-                       ((((<VarDecl>ast).varFlags) & VarFlags.Ambient) == VarFlags.Ambient) &&
-                       (((<VarDecl>ast).init) == null)) && this.varListCount() >= 0) &&
+                    (!((ast.nodeType === NodeType.VarDecl) &&
+                       ((((<VarDecl>ast).varFlags) & VarFlags.Ambient) === VarFlags.Ambient) &&
+                       (((<VarDecl>ast).init) === null)) && this.varListCount() >= 0) &&
                     (ast.nodeType != NodeType.EndCode) &&
                     ((ast.nodeType != NodeType.FuncDecl) ||
                      (this.emitState.container != EmitContainer.Constructor))) {
@@ -1494,7 +1494,7 @@ module TypeScript {
 
             ast.emit(this, tokenId, startLine);
 
-            if ((tokenId == TokenID.Semicolon) && (ast.nodeType < NodeType.GeneralNode)) {
+            if ((tokenId === TokenID.Semicolon) && (ast.nodeType < NodeType.GeneralNode)) {
                 this.writeToOutput(";");
             }
         }
@@ -1560,7 +1560,7 @@ module TypeScript {
         }
 
         public emitPrototypeMember(member: AST, className: string) {
-            if (member.nodeType == NodeType.FuncDecl) {
+            if (member.nodeType === NodeType.FuncDecl) {
                 var funcDecl = <FuncDecl>member;
                 if (funcDecl.isAccessor()) {
                     this.emitPropertyAccessor(funcDecl, className, true);
@@ -1573,7 +1573,7 @@ module TypeScript {
                     this.writeLineToOutput(";");
                 }
             }
-            else if (member.nodeType == NodeType.VarDecl) {
+            else if (member.nodeType === NodeType.VarDecl) {
                 var varDecl = <VarDecl>member;
 
                 if (varDecl.init) {
@@ -1602,8 +1602,8 @@ module TypeScript {
                 this.recordSourceMappingStart(classDecl);
                 this.writeToOutput("var " + className);
 
-                //if (hasFlag(classDecl.varFlags, VarFlags.Exported) && (temp == EmitContainer.Module || temp == EmitContainer.DynamicModule)) {
-                //    var modName = temp == EmitContainer.Module ? this.moduleName : "exports";
+                //if (hasFlag(classDecl.varFlags, VarFlags.Exported) && (temp === EmitContainer.Module || temp === EmitContainer.DynamicModule)) {
+                //    var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
                 //    this.writeToOutput(" = " + modName + "." + className);
                 //}
 
@@ -1623,7 +1623,7 @@ module TypeScript {
 
                 if (hasBaseClass) {
                     baseNameDecl = classDecl.extendsList.members[0];
-                    baseName = baseNameDecl.nodeType == NodeType.Call ? (<CallExpression>baseNameDecl).target : baseNameDecl;
+                    baseName = baseNameDecl.nodeType === NodeType.Call ? (<CallExpression>baseNameDecl).target : baseNameDecl;
                     this.emitIndent();
                     this.writeLineToOutput("__extends(" + className + ", _super);");
                 }
@@ -1661,7 +1661,7 @@ module TypeScript {
 
                     // output initialized properties
                     for (i = 0; i < members.length; i++) {
-                        if (members[i].nodeType == NodeType.VarDecl) {
+                        if (members[i].nodeType === NodeType.VarDecl) {
                             varDecl = <VarDecl>members[i];
                             if (!hasFlag(varDecl.varFlags, VarFlags.Static) && varDecl.init) {
                                 this.writeLineToOutput("");
@@ -1690,7 +1690,7 @@ module TypeScript {
 
                     var memberDecl: AST = classDecl.members.members[j];
 
-                    if (memberDecl.nodeType == NodeType.FuncDecl) {
+                    if (memberDecl.nodeType === NodeType.FuncDecl) {
                         var fn = <FuncDecl>memberDecl;
 
                         if (hasFlag(fn.fncFlags, FncFlags.Method) && !fn.isSignature()) {
@@ -1712,7 +1712,7 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (memberDecl.nodeType == NodeType.VarDecl) {
+                    else if (memberDecl.nodeType === NodeType.VarDecl) {
                         varDecl = <VarDecl>memberDecl;
                         if (hasFlag(varDecl.varFlags, VarFlags.Static)) {
 
@@ -1751,10 +1751,10 @@ module TypeScript {
                 this.writeToOutput(");");
                 this.recordSourceMappingEnd(classDecl);
 
-                if ((temp == EmitContainer.Module || temp == EmitContainer.DynamicModule) && hasFlag(classDecl.varFlags, VarFlags.Exported)) {
+                if ((temp === EmitContainer.Module || temp === EmitContainer.DynamicModule) && hasFlag(classDecl.varFlags, VarFlags.Exported)) {
                     this.writeLineToOutput("");
                     this.emitIndent();
-                    var modName = temp == EmitContainer.Module ? this.moduleName : "exports";
+                    var modName = temp === EmitContainer.Module ? this.moduleName : "exports";
                     this.recordSourceMappingStart(classDecl);
                     this.writeToOutput(modName + "." + className + " = " + className + ";");
                     this.recordSourceMappingEnd(classDecl);
@@ -1793,9 +1793,9 @@ module TypeScript {
         }
 
         public emitSuperCall(callEx: CallExpression): bool {
-            if (callEx.target.nodeType == NodeType.Dot) {
+            if (callEx.target.nodeType === NodeType.Dot) {
                 var dotNode = <BinaryExpression>callEx.target;
-                if (dotNode.operand1.nodeType == NodeType.Super) {
+                if (dotNode.operand1.nodeType === NodeType.Super) {
                     this.emitJavascript(dotNode, TokenID.OpenParen, false);
                     this.writeToOutput(".call(");
                     this.emitThis();

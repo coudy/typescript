@@ -51,7 +51,7 @@ module TypeScript {
         }
 
         private emitDottedModuleName() {
-            return (this.isDottedModuleName.length == 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
+            return (this.isDottedModuleName.length === 0) ? false : this.isDottedModuleName[this.isDottedModuleName.length - 1];
         }
 
         constructor (public checker: TypeChecker, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
@@ -95,11 +95,11 @@ module TypeScript {
                 container = this.declarationContainerStack[this.declarationContainerStack.length - 2];
             }
 
-            if (container.nodeType == NodeType.ModuleDeclaration && !hasFlag(declFlags, DeclFlags.Exported)) {
+            if (container.nodeType === NodeType.ModuleDeclaration && !hasFlag(declFlags, DeclFlags.Exported)) {
                 return false;
             }
 
-            if (!canEmitGlobalAmbientDecl && container.nodeType == NodeType.Script && hasFlag(declFlags, DeclFlags.Ambient)) {
+            if (!canEmitGlobalAmbientDecl && container.nodeType === NodeType.Script && hasFlag(declFlags, DeclFlags.Ambient)) {
                 return false;
             }
 
@@ -125,7 +125,7 @@ module TypeScript {
 
             // Emit export only for global export statements. The container for this would be dynamic module which is whole file
             var container = this.getAstDeclarationContainer();
-            if (container.nodeType == NodeType.ModuleDeclaration &&
+            if (container.nodeType === NodeType.ModuleDeclaration &&
                 hasFlag((<ModuleDeclaration>container).modFlags, ModuleFlags.IsWholeFile) &&
                 hasFlag(declFlags, DeclFlags.Exported)) {
                 result += "export ";
@@ -172,7 +172,7 @@ module TypeScript {
         }
 
         public emitTypeNamesMember(memberName: MemberName, emitIndent? : bool = false) {
-            if (memberName.prefix == "{ ") {
+            if (memberName.prefix === "{ ") {
                 if (emitIndent) {
                     this.emitIndent();
                 }
@@ -196,13 +196,13 @@ module TypeScript {
                 var ar = <MemberNameArray>memberName;
                 for (var index = 0; index < ar.entries.length; index++) {
                     this.emitTypeNamesMember(ar.entries[index], emitIndent);
-                    if (ar.delim == "; ") {
+                    if (ar.delim === "; ") {
                         this.declFile.WriteLine(";");
                     }
                 }
             }
 
-            if (memberName.suffix == "}") {
+            if (memberName.suffix === "}") {
                 this.indenter.decreaseIndent();
                 this.emitIndent();
                 this.declFile.Write(memberName.suffix);
@@ -305,7 +305,7 @@ module TypeScript {
             else if (boundDecl.sym) {
                 type = (<FieldSymbol>boundDecl.sym).getType();
                 // Dont emit inferred any
-                if (type == this.checker.anyType) {
+                if (type === this.checker.anyType) {
                     type = null;
                 }
             }
@@ -318,7 +318,7 @@ module TypeScript {
 
         public VarDeclCallback(pre: bool, varDecl: VarDecl): bool {
             if (pre && this.canEmitSignature(ToDeclFlags(varDecl.varFlags), false)) {
-                var interfaceMember = (this.getAstDeclarationContainer().nodeType == NodeType.InterfaceDeclaration);
+                var interfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
                 if (!interfaceMember) {
                     // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
@@ -419,7 +419,7 @@ module TypeScript {
                 return this.emitPropertyAccessorSignature(funcDecl);
             }
 
-            var isInterfaceMember = (this.getAstDeclarationContainer().nodeType == NodeType.InterfaceDeclaration);
+            var isInterfaceMember = (this.getAstDeclarationContainer().nodeType === NodeType.InterfaceDeclaration);
             if (funcDecl.bod) {
                 if (this.isOverloadedConstructorSignature(funcDecl)) {
                     return false;
@@ -686,7 +686,7 @@ module TypeScript {
             var membersLen = moduleDecl.members.members.length;
             for (var j = 1; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.members.members[j];
-                if (memberDecl.nodeType == NodeType.VarDecl) {
+                if (memberDecl.nodeType === NodeType.VarDecl) {
                     this.emitDeclarationComments(memberDecl);
                     this.emitIndent();
                     this.declFile.WriteLine((<VarDecl>memberDecl).id.text + ",");
@@ -710,7 +710,7 @@ module TypeScript {
                     if (pre) {
                         if (!this.emitOptions.outputMany) {
                             this.singleDeclFile = this.declFile;
-                            CompilerDiagnostics.assert(this.indenter.indentAmt == 0, "Indent has to be 0 when outputing new file");
+                            CompilerDiagnostics.assert(this.indenter.indentAmt === 0, "Indent has to be 0 when outputing new file");
                             // Create new file
                             var tsFileName = (<Script>this.getAstDeclarationContainer()).locationInfo.fileName;
                             var declareFileName = this.emitOptions.mapOutputFileName(tsFileName, TypeScriptCompiler.mapToDTSFileName);
@@ -726,7 +726,7 @@ module TypeScript {
                     } else {
                         if (!this.emitOptions.outputMany) {
                             CompilerDiagnostics.assert(this.singleDeclFile != this.declFile, "singleDeclFile cannot be null as we are going to revert back to it");
-                            CompilerDiagnostics.assert(this.indenter.indentAmt == 0, "Indent has to be 0 when outputing new file");
+                            CompilerDiagnostics.assert(this.indenter.indentAmt === 0, "Indent has to be 0 when outputing new file");
                             try {
                                 // Closing files could result in exceptions, report them if they occur
                                 this.declFile.Close();
@@ -761,14 +761,14 @@ module TypeScript {
                 }
                 this.dottedModuleEmit += moduleDecl.name.text;
 
-                var isCurrentModuleDotted = (moduleDecl.members.members.length == 1 &&
-                    moduleDecl.members.members[0].nodeType == NodeType.ModuleDeclaration &&
+                var isCurrentModuleDotted = (moduleDecl.members.members.length === 1 &&
+                    moduleDecl.members.members[0].nodeType === NodeType.ModuleDeclaration &&
                     !(<ModuleDeclaration>moduleDecl.members.members[0]).isEnum() &&
                     hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).modFlags, ModuleFlags.Exported));
 
                 // Module is dotted only if it does not have doc comments for it
                 var moduleDeclComments = moduleDecl.getDocComments();
-                isCurrentModuleDotted = isCurrentModuleDotted && (moduleDeclComments == null || moduleDeclComments.length == 0);
+                isCurrentModuleDotted = isCurrentModuleDotted && (moduleDeclComments === null || moduleDeclComments.length === 0);
 
                 this.isDottedModuleName.push(isCurrentModuleDotted);
                 this.pushDeclarationContainer(moduleDecl);
