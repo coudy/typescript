@@ -794,8 +794,8 @@ module FourSlash {
                 var refName = nameOf(referenceType);
                 var pullName = nameOf(pullType);
                 if (refName !== pullName) {
-                    var textAtPosition = this.testData.files[i].content.substr(i, 10);
-                    throw new Error('verifyTypeAgainstFullCheck at position ' + positions[i] + ' ("' + i + '...") failed - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '"');
+                    var textAtPosition = this.activeFile.content.substr(i, 10);
+                    throw new Error('verifyTypeAgainstFullCheck at position ' + positions[i] + ' ("' + i + '"...) failed - expected full typecheck type "' + refName + '" to equal pull type "' + pullName + '"');
                 }
             }
         }
