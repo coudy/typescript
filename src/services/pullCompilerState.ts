@@ -197,7 +197,7 @@ module Services {
 
         public createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             var sourceText = this.getScriptSnapshot(fileName);
-            var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
+            var text = new TypeScript.ScriptSnapshotText(sourceText);
             return TypeScript.Parser1.parse(text);
         }
 
@@ -300,7 +300,7 @@ module Services {
         }
 
         private updateSyntaxTree(fileName: string): void {
-            var newText = new TypeScript.SegmentedScriptSnapshot(this.getScriptSnapshot(fileName));
+            var newText = new TypeScript.ScriptSnapshotText(this.getScriptSnapshot(fileName));
 
             var editRange = this.getScriptTextChangeRange(fileName);
             if (editRange === null) {

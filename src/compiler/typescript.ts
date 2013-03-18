@@ -309,7 +309,7 @@ module TypeScript {
                     this.persistentTypeState.setCollectionMode(TypeCheckCollectionMode.Transient);
                 }
                 else {
-                    var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
+                    var text = new TypeScript.ScriptSnapshotText(sourceText);
 
                     timer.start();
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
@@ -1517,7 +1517,7 @@ module TypeScript {
 
                 var oldScript = <Script>this.fileNameToScript.lookup(fileName);
 
-                var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
+                var text = new TypeScript.ScriptSnapshotText(sourceText);
 
                 var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
                 var newScript: Script = null;

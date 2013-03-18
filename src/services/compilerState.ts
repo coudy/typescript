@@ -242,7 +242,7 @@ module Services {
         }
 
         private updateSyntaxTree(fileName: string): void {
-            var newText = new TypeScript.SegmentedScriptSnapshot(this.getScriptSnapshot(fileName));
+            var newText = new TypeScript.ScriptSnapshotText(this.getScriptSnapshot(fileName));
 
             var editRange = this.getScriptTextChangeRange(fileName);
             if (editRange === null) {

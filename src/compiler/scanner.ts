@@ -296,9 +296,8 @@ module TypeScript {
         getLineStartPositions(): string;
     }
 
-    // Class which wraps a host IScriptSnapshot and exposes both an IScriptSnapshot (for older
-    // compiler code) and an ISimpleText for newer compiler code. 
-    export class SegmentedScriptSnapshot implements IScriptSnapshot, ISimpleText {
+    // Class which wraps a host IScriptSnapshot and exposes an ISimpleText for newer compiler code. 
+    export class ScriptSnapshotText implements ISimpleText {
         private _length: number;
         public segment: string;
         public segmentStart: number;
@@ -311,10 +310,6 @@ module TypeScript {
             this.segment = "";
             this.segmentStart = 0;
             this.fetchSegment(0, 1024);
-        }
-
-        public getLength() {
-            return this._length;
         }
 
         // Ensures we have a segment that contains the range [start, end).  The segment may start 
@@ -346,12 +341,7 @@ module TypeScript {
             return this.segment[index - this.segmentStart];
         }
 
-        public getText(start: number, end: number): string {
-            this.fetchSegment(start, end);
-            return this.segment.substr(start - this.segmentStart, end - start);
-        }
-
-        public getLineStartPositions(): string {
+        private getLineStartPositions(): string {
             return this.scriptSnapshot.getLineStartPositions();
         }
 
