@@ -79,13 +79,18 @@ module TypeScript {
             }
         }
 
-        private reportError(error: SemanticError) {
-            var locationInfo = this.locationInfoCache[error.fileName];
+        public reportError(error: SemanticError, lineMap: ILineMap = null) {
+            if (lineMap === null) {
+                var locationInfo = this.locationInfoCache[error.fileName];
+                if (locationInfo && locationInfo.lineMap) {
+                    lineMap = locationInfo.lineMap;
+                }
+            }
 
-            if (locationInfo && locationInfo.lineMap) {
-                locationInfo.lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
+            if (lineMap) {
+                lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
 
-                this.textWriter.Write(locationInfo.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
+                this.textWriter.Write(error.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
             }
             else {
                 this.textWriter.Write(error.fileName + "(0,0): ");

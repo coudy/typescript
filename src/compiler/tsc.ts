@@ -147,14 +147,12 @@ class BatchCompiler {
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
     public compile(): bool {
-        var compiler: TypeScript.TypeScriptCompiler;
-
         if (typeof localizedDiagnosticMessages === "undefined") {
             localizedDiagnosticMessages = null;
         }
         
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        compiler = new TypeScript.TypeScriptCompiler(
+        var compiler = new TypeScript.TypeScriptCompiler(
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
         compiler.setErrorOutput(this.errorReporter);
 
@@ -196,6 +194,16 @@ class BatchCompiler {
                     }
 
                     compiler.addUnit(code.content, code.path, code.referencedFiles);
+
+                    // TODO: remove this code.  This is not how we should be reporting errors.
+                    var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);
+                    var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
+                    for (var i = 0, n = diagnostics.length; i < n; i++) {
+                        var diagnostic = diagnostics[i];
+                        compiler.pullErrorReporter.reportError(
+                            new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
+                            syntaxTree.lineMap());
+                    }
                 }
             }
             catch (err) {
