@@ -1360,9 +1360,13 @@ module Harness {
             compile(code, uName);
 
             if (usePull) {
-                var errors: TypeScript.SemanticError[] = compiler.pullGetErrorsForFile(uName);
                 compiler.pullErrorReporter.textWriter = stderr;
-                compiler.pullErrorReporter.reportErrors(errors);
+
+                var syntacticDiagnostics = compiler.fileNameToSyntaxTree.lookup(uName).diagnostics();
+                compiler.pullErrorReporter.reportErrors(syntacticDiagnostics.map(d => new TypeScript.PullError(d.start(), d.length(), uName, d.message())));
+
+                var semanticErrors = compiler.pullGetErrorsForFile(uName);
+                compiler.pullErrorReporter.reportErrors(semanticErrors);
             }
 
             var errorLines = stderr.lines;
