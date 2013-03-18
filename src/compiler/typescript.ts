@@ -42,7 +42,6 @@
 ///<reference path='pathUtils.ts' />
 ///<reference path='referenceResolution.ts' />
 ///<reference path='precompile.ts' />
-///<reference path='incrementalParser.ts' />
 ///<reference path='declarationEmitter.ts' />
 ///<reference path='Syntax\ISyntaxNodeOrToken.ts' />
 ///<reference path='Syntax\Parser.ts' />
@@ -76,7 +75,6 @@ module TypeScript {
     export enum UpdateUnitKind {
         Unknown,
         NoEdits,
-        EditsInsideSingleScope,
     }
 
     export class UpdateUnitResult {
@@ -95,15 +93,6 @@ module TypeScript {
             var result = new UpdateUnitResult(UpdateUnitKind.Unknown, script1.locationInfo.fileName, script1, script2);
             result.parseErrors = parseErrors;
 
-            return result;
-        }
-
-        static singleScopeEdits(script1: Script, script2: Script, scope1: AST, scope2: AST, editRange: TextChangeRange, parseErrors: ErrorEntry[]) {
-            var result = new UpdateUnitResult(UpdateUnitKind.EditsInsideSingleScope, script1.locationInfo.fileName, script1, script2);
-            result.scope1 = scope1;
-            result.scope2 = scope2;
-            result.editRange = editRange;
-            result.parseErrors = parseErrors;
             return result;
         }
     }
@@ -244,10 +233,6 @@ module TypeScript {
                             this.parser.errorCallback(e.minChar, e.limChar - e.minChar, e.message, e.fileName);
                         }
                     }
-                    return true;
-
-                case UpdateUnitKind.EditsInsideSingleScope:
-                    new IncrementalParser(this.logger).mergeTrees(updateResult);
                     return true;
             }
         }

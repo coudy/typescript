@@ -46,7 +46,6 @@ var compilerSources = [
 	"emitter.ts",
 	"declarationEmitter.ts",
 	"precompile.ts",
-	"incrementalParser.ts",
 	"pathUtils.ts",
 	"referenceResolution.ts",
 	"typecheck/dataMap.ts",

@@ -486,14 +486,6 @@ module Services {
                 return syntaxAST;
             }
 
-            var incrementalParser = new TypeScript.IncrementalParser(this.logger)
-            var updateResult = incrementalParser.attemptIncrementalUpdateUnit(
-                syntaxAST.getScript(), syntaxAST.getScriptFileName(), newSourceText, editRange);
-            if (updateResult !== null && updateResult.kind === TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
-                incrementalParser.mergeTrees(updateResult);
-                return new ScriptSyntaxAST(this.logger, updateResult.script1, newSourceText);
-            }
-
             return null;
         }
 
@@ -1410,64 +1402,6 @@ module Services {
             //this.minimalRefresh();
             this.refresh();
 
-            var result = this.getQuickCompletionsAtPosition(fileName, pos, isMemberCompletion);
-            if (result === null) {
-                this.refresh();
-                result = this.getAccurateCompletionsAtPosition(fileName, pos, isMemberCompletion);
-            }
-
-            return result;
-        }
-
-        //
-        // Try returning completions from an possibly out of date AST.
-        // Return "null" if there was no heuristic available to return meaningful completions.
-        // The caller will then retry with the "accurate" completions entry point.
-        //
-        private getQuickCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {
-            var script = this.compilerState.getScriptAST(fileName);
-            var editRange = this.compilerState.getScriptTextChangeRange(fileName);
-
-            if (editRange === null) {
-                this.logger.log("Full refresh required: there are no pending edits for the script. Be conservative and try again with accurate algorithm.");
-                return null;
-            }
-
-            // Find the enclosing scope so we can parse the corresponding fragment
-            var sourceText = this.compilerState.getScriptSnapshot(fileName);
-            var enclosingScopeContext = new TypeScript.IncrementalParser(this.logger).getEnclosingScopeContextIfSingleScopeEdit(script, fileName, sourceText, editRange);
-            if (enclosingScopeContext === null) {
-                this.logger.log("Full refresh required: range of edits may affect more than one scope");
-                return null;
-            }
-
-            if (enclosingScopeContext.enclosingObjectLit !== null) {
-                this.logger.log("Full refresh required: quick completion list does not work inside object literals, because full typecheck is required to obtain the target type of the object literal.");
-                return null;
-            }
-
-            // Update scope: we know the scope is ok, but for the remaining of completion list
-            // work, we need to have the "pos" member be the caret position in the new source text, so that
-            // we can extract the correct script fragment for partial parsing.
-            enclosingScopeContext.pos = pos;
-            enclosingScopeContext.isMemberCompletion = isMemberCompletion;
-            this.logger.log("Found scope context in previous script AST: " + editRange + ", pos=" + pos + ", scopePos=" + enclosingScopeContext.getScopePosition());
-
-            // Compute completion entries
-            var result = new CompletionInfo();
-            result.maybeInaccurate = true;
-            result.isMemberCompletion = isMemberCompletion;
-            enclosingScopeContext.useFullAst = false;
-            this.getCompletionsFromEnclosingScopeContext(enclosingScopeContext, result);
-            if (result.entries.length === 0) {
-                this.logger.log("Full refresh required: QuickCompletion returned an empty list. Be conservative and try again with accurate algorithm.");
-                return null;
-            }
-
-            return result;
-        }
-
-        private getAccurateCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {
             var result = new CompletionInfo();
             result.maybeInaccurate = false;
             result.isMemberCompletion = isMemberCompletion;

@@ -228,14 +228,6 @@ module Services {
                 this.updateSyntaxTree(fileName);
             }
 
-            //
-            // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
-            //
-            var result = this.attemptIncrementalUpdateUnit(fileName);
-            if (result != null) {
-                return result;
-            }
-
             // Keep track of the version of the script that we're updating.
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
             return compiler.partialUpdateUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
@@ -254,33 +246,6 @@ module Services {
                 this.setSyntaxTree(
                     fileName,
                     TypeScript.Parser1.incrementalParse(this.getSyntaxTree(fileName), editRange, newText));
-            }
-        }
-        
-        private attemptIncrementalUpdateUnit(fileName: string): TypeScript.UpdateUnitResult {
-            var previousScript = this.getScriptAST(fileName);
-            
-            var newSourceText = this.getScriptSnapshot(fileName);
-            var editRange = this.getScriptTextChangeRange(fileName);
-
-            var result = new TypeScript.IncrementalParser(this.logger).attemptIncrementalUpdateUnit(previousScript, fileName, newSourceText, editRange);
-            if (result === null)
-                return null;
-
-            if (result.kind === TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
-                if (result.scope1.nodeType != TypeScript.NodeType.FuncDecl) {
-                    this.logger.log("  Bailing out because containing scope is not a function");
-                    return null;
-                }
-            }
-
-            //TODO: We don't enable incremental right now, as it would break IDE error reporting
-            if (true) {
-                this.logger.log("  Bailing out because incremental typecheck is not implemented yet");
-                return null;
-            }
-            else {
-                return result;
             }
         }
 
@@ -401,24 +366,6 @@ module Services {
             this.logger.log("Updating files...");
 
             var updateResults: TypeScript.UpdateUnitResult[] = [];
-            function getSingleFunctionEdit(updateResults: TypeScript.UpdateUnitResult[]) {
-                var result: TypeScript.UpdateUnitResult = null;
-                for (var i = 0, len = updateResults.length; i < len; i++) {
-                    var entry = updateResults[i];
-                    if (entry.kind === TypeScript.UpdateUnitKind.EditsInsideSingleScope) {
-                        if (result === null)
-                            result = entry;
-                        else {
-                            result = null;
-                            break;
-                        }
-                    } else if (entry.kind === TypeScript.UpdateUnitKind.Unknown) {
-                        result = null;
-                        break;
-                    }
-                }
-                return result;
-            }
             var fileAdded: bool = false;
 
             // foreach file in the list of new files
@@ -442,32 +389,25 @@ module Services {
 
             // Are we in an incremental update situation?
             var incrementalTypeCheckSuccessful = false;
-            var singleEdit = getSingleFunctionEdit(updateResults);
-            if (fileAdded === false && singleEdit !== null) {
-                this.logger.log("Attempting incremental type check because there was a single edit to the function \"" + (<TypeScript.FuncDecl>singleEdit.scope1).name.actualText + "\"");
-                incrementalTypeCheckSuccessful = this.attemptIncrementalTypeCheck(singleEdit);
+
+            // Apply changes to units
+            var anythingUpdated = false;
+            var i = 0;
+
+            for (i = 0, n = updateResults.length; i < n; i++) {
+                var entry = updateResults[i];
+                if (this.applyUpdateResult(entry)) {
+                    anythingUpdated = true;
+                }
             }
 
-            // Incremental was not applicable, fall back to full typecheck
-            if (!incrementalTypeCheckSuccessful) {
-                // Apply changes to units
-                var anythingUpdated = false;
-                var i = 0;
-
-                for (i = 0, n = updateResults.length; i < n; i++) {
-                    var entry = updateResults[i];
-                    if (this.applyUpdateResult(entry))
-                        anythingUpdated = true;
-                }
-
-                if (anythingUpdated) {
-                    this.logger.log("Incremental type check not applicable, processing unit updates");
-                    this.onTypeCheckStarting();
-                    this.compiler.reTypeCheck();
-                }
-                else {
-                    this.logger.log("No updates to source files, no typecheck needed");
-                }
+            if (anythingUpdated) {
+                this.logger.log("Incremental type check not applicable, processing unit updates");
+                this.onTypeCheckStarting();
+                this.compiler.reTypeCheck();
+            }
+            else {
+                this.logger.log("No updates to source files, no typecheck needed");
             }
         }
 
@@ -484,7 +424,6 @@ module Services {
                 case TypeScript.UpdateUnitKind.NoEdits:
                     return false;
                 case TypeScript.UpdateUnitKind.Unknown:
-                case TypeScript.UpdateUnitKind.EditsInsideSingleScope:
                     this.errorCollector.startParsing(updateResult.fileName);
                     return this.compiler.applyUpdateResult(updateResult);
             }
