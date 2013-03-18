@@ -131,7 +131,7 @@ module TypeScript {
         public showRef(ast: AST, text: string, symbol: Symbol) {
             var defLineCol = { line: -1, character: -1 };
             // TODO: multiple def locations
-            this.parser.getZeroBasedSourceLineCol(defLineCol, symbol.location);
+            this.parser.getLineMap().fillLineAndCharacterFromPosition(symbol.location, defLineCol);
             this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.character + ")");
         }
 

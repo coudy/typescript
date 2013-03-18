@@ -150,8 +150,8 @@ module TypeScript {
             var lineCol = { line: -1, character: -1 };
             var limLineCol = { line: -1, character: -1 };
             if (context.parser !== null) {
-                context.parser.getZeroBasedSourceLineCol(lineCol, this.minChar);
-                context.parser.getZeroBasedSourceLineCol(limLineCol, this.limChar);
+                context.parser.getLineMap().fillLineAndCharacterFromPosition(this.minChar, lineCol);
+                context.parser.getLineMap().fillLineAndCharacterFromPosition(this.limChar, limLineCol);
                 context.write("(" + lineCol.line + "," + lineCol.character + ")--" +
                               "(" + limLineCol.line + "," + limLineCol.character + "): ");
             }

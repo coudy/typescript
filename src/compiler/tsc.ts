@@ -162,7 +162,7 @@ class BatchCompiler {
             (minChar, charLen, message, fileName: string) => {
                 compiler.errorReporter.hasErrors = true;
                 var lineCol = { line: -1, character: -1 };
-                compiler.parser.getZeroBasedSourceLineCol(lineCol, minChar);
+                compiler.parser.getLineMap().fillLineAndCharacterFromPosition(minChar, lineCol);
 
                 var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
                 if (this.compilationSettings.errorRecovery) {
