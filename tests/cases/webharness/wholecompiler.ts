@@ -4445,7 +4445,7 @@ module TypeScript {
     // This is helpful as our tree don't have parents.
     //
     export class AstPath {
-        public asts: TypeScript.AST[] = [];
+        public asts: AST[] = [];
         public top: number = -1;
 
         static reverseIndexOf(items: any[], index: number): any {
@@ -12985,15 +12985,19 @@ module TypeScript {
         // Get's the length of this script snapshot.
         getLength(): number;
 
-        // This call returns the JSON encoded array containing the start position of every line.  
+        // This call returns the array containing the start position of every line.  
         // i.e."[0, 10, 55]".  TODO: consider making this optional.  The language service could
         // always determine this (albeit in a more expensive manner).
-        getLineStartPositions(): string;
+        getLineStartPositions(): number[];
+
+        // Returns a text change range representing what text has changed since the specified version.
+        // If the change cannot be determined (say, because a file was opened/closed), then 'null' 
+        // should be returned.
+        getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange;
     }
 
-    // Class which wraps a host IScriptSnapshot and exposes both an IScriptSnapshot (for older
-    // compiler code) and an ISimpleText for newer compiler code. 
-    export class SegmentedScriptSnapshot implements IScriptSnapshot, ISimpleText {
+    // Class which wraps a host IScriptSnapshot and exposes an ISimpleText for newer compiler code. 
+    export class ScriptSnapshotText implements ISimpleText {
         private _length: number;
         public segment: string;
         public segmentStart: number;
@@ -13006,10 +13010,6 @@ module TypeScript {
             this.segment = "";
             this.segmentStart = 0;
             this.fetchSegment(0, 1024);
-        }
-
-        public getLength() {
-            return this._length;
         }
 
         // Ensures we have a segment that contains the range [start, end).  The segment may start 
@@ -13041,15 +13041,6 @@ module TypeScript {
             return this.segment[index - this.segmentStart];
         }
 
-        public getText(start: number, end: number): string {
-            this.fetchSegment(start, end);
-            return this.segment.substr(start - this.segmentStart, end - start);
-        }
-
-        public getLineStartPositions(): string {
-            return this.scriptSnapshot.getLineStartPositions();
-        }
-
         public length(): number {
             return this._length;
         }
@@ -13070,7 +13061,7 @@ module TypeScript {
         
         public lineMap(): ILineMap {
             if (this._lineMap === null) {
-                var lineStartPositions = JSON2.parse(this.getLineStartPositions());
+                var lineStartPositions = this.scriptSnapshot.getLineStartPositions();
                 this._lineMap = new LineMap(lineStartPositions, this.length());
             }
 
@@ -13090,9 +13081,12 @@ module TypeScript {
             return this.text.length;
         }
 
-        public getLineStartPositions(): string {
-            var lineStarts = TextUtilities.parseLineStarts(TextFactory.createSimpleText(this.text));
-            return JSON2.stringify(lineStarts);
+        public getLineStartPositions(): number[] {
+            return TextUtilities.parseLineStarts(TextFactory.createSimpleText(this.text));
+        }
+
+        public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
+            throw Errors.notYetImplemented();
         }
     }
     
@@ -25072,7 +25066,11 @@ module TypeScript {
             return this.content.length;
         }
 
-        public getLineStartPositions(): string {
+        public getLineStartPositions(): number[] {
+            throw Errors.notYetImplemented();
+        }
+
+        public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
             throw Errors.notYetImplemented();
         }
     }
@@ -25385,6 +25383,10 @@ module TypeScript {
 
         public useCaseSensitiveFileResolution = false;
         public usePull = false;
+        public usePullTC = true;
+
+        public tcOnly = false;
+        public parseOnly = false;
 
         public gatherDiagnostics = false;
 
@@ -29916,7 +29918,7 @@ module TypeScript {
               4166287, 4999559, 5999471, 7199369];
 
         public static getPrime(min: number): number {
-            for (var i = 0; i < primes.length; i++) {
+            for (var i = 0; i < Hash.primes.length; i++) {
                 var num = Hash.primes[i];
                 if (num >= min) {
                     return num;
@@ -58526,35 +58528,64 @@ module TypeScript {
         // validate:
         //  - lhs and rhs are compatible
         public typeCheckLogicalOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Logical 'And' and 'Or' expressions 
         // validate:
         // - lhs and rhs are compatible
         public typeCheckLogicalAndOrExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Binary arithmetic expressions 
         // validate:
         //  - lhs and rhs are compatible
         public typeCheckBinaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Unary arithmetic expressions 
         // validate:
         //  -
         public typeCheckUnaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var unex = <UnaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(unex.operand, typeCheckContext);
+
+            return type;
         }
 
         // Bitwise operations 
         // validate:
         //  -
         public typeCheckBitwiseOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Index expression 
@@ -58582,7 +58613,15 @@ module TypeScript {
         // validate:
         //  -
         public typeCheckConditionalExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            
+            var condAST = <ConditionalExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(condAST.operand1, typeCheckContext);
+            this.typeCheckAST(condAST.operand2, typeCheckContext);
+            this.typeCheckAST(condAST.operand3, typeCheckContext);
+
+            return type;
         }
 
         // new expression types
@@ -58592,13 +58631,21 @@ module TypeScript {
         }
 
         public typeCheckDeleteExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
-            return this.semanticInfoChain.boolTypeSymbol;
+            var unex = <UnaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(unex.operand, typeCheckContext);
+
+            return type;
         }
 
         public typeCheckVoidExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
-            return this.semanticInfoChain.undefinedTypeSymbol;
+            var unex = <UnaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(unex.operand, typeCheckContext);
+
+            return type;
         }
 
         public typeCheckRegExpExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -68405,7 +68452,7 @@ module TypeScript {
                     this.persistentTypeState.setCollectionMode(TypeCheckCollectionMode.Transient);
                 }
                 else {
-                    var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
+                    var text = new TypeScript.ScriptSnapshotText(sourceText);
 
                     timer.start();
                     var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
@@ -69620,7 +69667,7 @@ module TypeScript {
 
                 var oldScript = <Script>this.fileNameToScript.lookup(fileName);
 
-                var text = new TypeScript.SegmentedScriptSnapshot(sourceText);
+                var text = new TypeScript.ScriptSnapshotText(sourceText);
 
                 var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
                 var newScript: Script = null;
@@ -69766,7 +69813,7 @@ declare module process {
         export function write(str: string);
     }
     export module mainModule {
-        export var fileName: string;
+        export var filename: string;
     }
     export function exit(exitCode?: number);
 }
@@ -70284,7 +70331,7 @@ var IO = (function() {
                 require.main._compile(source, fileName);
             }, 
             getExecutingFilePath: function () {
-                return process.mainModule.fileName;
+                return process.mainModule.filename;
             },
             quit: process.exit
         }
@@ -70751,24 +70798,28 @@ class BatchCompiler {
             resolvePath: this.ioHost.resolvePath
         };
 
-        try {
-            if (this.compilationSettings.usePull) {
-                compiler.pullTypeCheck(true, true);
-            }
-            else {
-                compiler.typeCheck();
-            }
+        if (!this.compilationSettings.parseOnly) {
+            try {
+                if (this.compilationSettings.usePull) {
+                    compiler.pullTypeCheck(true, this.compilationSettings.usePullTC);
+                }
+                else {
+                    compiler.typeCheck();
+                }
 
-            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-            };
-            compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
-            compiler.emitDeclarations(this.compilationSettings.usePull);
-        } catch (err) {
-            compiler.errorReporter.hasErrors = true;
-            // Catch emitter exceptions
-            if (err.message != "EmitError") {
-                throw err;
+                if (!this.compilationSettings.tcOnly) {
+                    var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                        this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+                    };
+                    compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
+                    compiler.emitDeclarations(this.compilationSettings.usePull);
+                }
+            } catch (err) {
+                compiler.errorReporter.hasErrors = true;
+                // Catch emitter exceptions
+                if (err.message != "EmitError") {
+                    throw err;
+                }
             }
         }
 
@@ -70963,6 +71014,30 @@ class BatchCompiler {
                 this.compilationSettings.usePull = true;
             }
         });
+
+        opts.flag('nopulltc', {
+            usage: 'When using "pull", resolve only',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.usePullTC = false;
+            }
+        });
+
+        opts.flag('tconly', {
+            usage: 'Typecheck only - do not emit',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.tcOnly = true;
+            }
+        });
+
+        opts.flag('parseonly', {
+            usage: 'Parse only - do not emit or type check',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.parseOnly = true;
+            }
+        });    
 
         opts.option('target', {
             usage: 'Specify ECMAScript target version: "ES3" (default), or "ES5"',

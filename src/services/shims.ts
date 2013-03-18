@@ -532,7 +532,6 @@ module Services {
                     return result;
                 });
         }
-        
 
         // GET OUTLINING REGIONS
         //

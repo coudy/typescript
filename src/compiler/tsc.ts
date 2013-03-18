@@ -159,13 +159,12 @@ class BatchCompiler {
         compiler.setErrorOutput(this.errorReporter);
 
         compiler.setErrorCallback(
-            (minChar, charLen, message, unitIndex) => {
+            (minChar, charLen, message, fileName: string) => {
                 compiler.errorReporter.hasErrors = true;
-                var fname = this.resolvedEnvironment.code[unitIndex].path;
                 var lineCol = { line: -1, col: -1 };
                 compiler.parser.getZeroBasedSourceLineCol(lineCol, minChar);
 
-                var msg = fname + " (" + (lineCol.line + 1) + "," + (lineCol.col + 1) + "): " + message;
+                var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.col + 1) + "): " + message;
                 if (this.compilationSettings.errorRecovery) {
                     this.errorReporter.WriteLine(msg);
                 } else {
