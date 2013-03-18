@@ -1321,17 +1321,17 @@ module TypeScript {
 
         public recordSourceMappingStart(ast: IASTSpan) {
             if (this.sourceMapper && isValidAstNode(ast)) {
-                var lineCol = { line: -1, col: -1 };
+                var lineCol = { line: -1, character: -1 };
                 var sourceMapping = new SourceMapping();
                 sourceMapping.start.emittedColumn = this.emitState.column;
                 sourceMapping.start.emittedLine = this.emitState.line;
                 // REVIEW: check time consumed by this binary search (about two per leaf statement)
                 var lineMap = this.getLineMap();
-                getZeroBasedSourceLineColFromMap(lineCol, ast.minChar, lineMap);
-                sourceMapping.start.sourceColumn = lineCol.col;
+                lineMap.fillLineAndCharacterFromPosition(ast.minChar, lineCol);
+                sourceMapping.start.sourceColumn = lineCol.character;
                 sourceMapping.start.sourceLine = lineCol.line + 1;
-                getZeroBasedSourceLineColFromMap(lineCol, ast.limChar, lineMap);
-                sourceMapping.end.sourceColumn = lineCol.col;
+                lineMap.fillLineAndCharacterFromPosition(ast.limChar, lineCol);
+                sourceMapping.end.sourceColumn = lineCol.character;
                 sourceMapping.end.sourceLine = lineCol.line + 1;
                 if (this.sourceMapper.currentNameIndex.length > 0) {
                     sourceMapping.nameIndex = this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1];

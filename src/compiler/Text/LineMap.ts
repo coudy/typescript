@@ -9,6 +9,7 @@ module TypeScript {
         lineCount(): number;
         getLineNumberFromPosition(position: number): number;
         getLineAndCharacterFromPosition(position: number): LineAndCharacter;
+        fillLineAndCharacterFromPosition(position: number, lineAndCharacter: ILineAndCharacter): void;
         getLineStartPosition(lineNumber: number): number;
         getPosition(line: number, character: number): number;
     }
@@ -64,6 +65,16 @@ module TypeScript {
 
         public getLineStartPosition(lineNumber: number): number {
             return this.lineStarts()[lineNumber];
+        }
+
+        public fillLineAndCharacterFromPosition(position: number, lineAndCharacter: ILineAndCharacter): void {
+            if (position < 0 || position > this.length) {
+                throw Errors.argumentOutOfRange("position");
+            }
+
+            var lineNumber = this.getLineNumberFromPosition(position);
+            lineAndCharacter.line = lineNumber;
+            lineAndCharacter.character = position - this.lineStarts()[lineNumber];
         }
 
         public getLineAndCharacterFromPosition(position: number): LineAndCharacter {

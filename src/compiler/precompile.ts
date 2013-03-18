@@ -307,16 +307,16 @@ module TypeScript {
                     referencedCode.minChar = comment.startPos;
                     referencedCode.limChar = referencedCode.minChar + comment.value.length;
                     // Get the startLine and startCol
-                    var result = { line: -1, col: -1 };
-                    getZeroBasedSourceLineColFromMap(result, comment.startPos, scanner.lineMap1);
+                    var result = { line: -1, character: -1 };
+                    scanner.lineMap1.fillLineAndCharacterFromPosition(comment.startPos, result);
                     if (result.line >= 0) {
                         result.line++;   // Make it 1-based
                     }
-                    if (result.col >= 0) {
-                        result.col++;   // Make it 1-based
+                    if (result.character >= 0) {
+                        result.character++;   // Make it 1-based
                     }
                     referencedCode.startLine = result.line;
-                    referencedCode.startCol = result.col;
+                    referencedCode.startCol = result.character;
                     referencedFiles.push(referencedCode);
                 }
 

@@ -838,8 +838,8 @@ module FourSlash {
                 result.line++;
             }
 
-            if (result.col >= 0) {
-                result.col++;
+            if (result.character >= 0) {
+                result.character++;
             }
 
             return result;
@@ -951,7 +951,7 @@ module FourSlash {
 
         private getLineColStringAtCaret() {
             var pos = this.langSvc.positionToZeroBasedLineCol(this.activeFile.fileName, this.currentCaretPosition);
-            return 'line ' + (pos.line + 1) + ', col ' + pos.col;
+            return 'line ' + (pos.line + 1) + ', col ' + pos.character;
         }
 
         private getMarkerByName(markerName: string) {

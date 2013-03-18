@@ -1751,7 +1751,7 @@ module Harness {
          * @param line 0 based index
          * @param col 0 based index
         */
-        public positionToZeroBasedLineCol(fileName: string, position: number): TypeScript.ILineCol {
+        public positionToZeroBasedLineCol(fileName: string, position: number): TypeScript.ILineAndCharacter {
             var script: ScriptInfo = this.fileNameToScript.lookup(fileName);
             assert.notNull(script);
 
@@ -1759,7 +1759,7 @@ module Harness {
             
             assert.is(result.line() >= 0);
             assert.is(result.character() >= 0);
-            return { line: result.line(), col: result.character() };
+            return { line: result.line(), character: result.character() };
         }
 
         /** Verify that applying edits to sourceFileName result in the content of the file baselineFileName */

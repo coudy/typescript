@@ -147,13 +147,13 @@ module TypeScript {
 
         public print(context: PrintContext) {
             context.startLine();
-            var lineCol = { line: -1, col: -1 };
-            var limLineCol = { line: -1, col: -1 };
+            var lineCol = { line: -1, character: -1 };
+            var limLineCol = { line: -1, character: -1 };
             if (context.parser !== null) {
                 context.parser.getZeroBasedSourceLineCol(lineCol, this.minChar);
                 context.parser.getZeroBasedSourceLineCol(limLineCol, this.limChar);
-                context.write("(" + lineCol.line + "," + lineCol.col + ")--" +
-                              "(" + limLineCol.line + "," + limLineCol.col + "): ");
+                context.write("(" + lineCol.line + "," + lineCol.character + ")--" +
+                              "(" + limLineCol.line + "," + limLineCol.character + "): ");
             }
             var lab = this.printLabel();
             if (hasFlag(this.flags, ASTFlags.Error)) {

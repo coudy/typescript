@@ -16,15 +16,15 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export interface ILineCol {
+    export interface ILineAndCharacter {
         line: number;
-        col: number;
+        character: number;
     }
 
     export class ErrorReporter {
         public parser: Parser = null;
         public checker: TypeChecker = null;
-        public lineCol = { line: 0, col: 0 };
+        public lineCol = { line: 0, character: 0 };
         public emitAsComments = true;
         public hasErrors = false;
         public pushToErrorSink = false;
@@ -45,7 +45,7 @@ module TypeScript {
             if (this.emitAsComments) {
                 this.outfile.Write("// ");
             }
-            this.outfile.Write(this.checker.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
+            this.outfile.Write(this.checker.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.character + "): ");
         }
 
         public writePrefix(ast: AST): void {
@@ -54,21 +54,21 @@ module TypeScript {
             }
             else {
                 this.lineCol.line = 0;
-                this.lineCol.col = 0;
+                this.lineCol.character = 0;
             }
             this.emitPrefix();
         }
 
         public writePrefixFromSym(symbol: Symbol): void {
             if (symbol && this.checker.locationInfo.lineMap1) {
-                getZeroBasedSourceLineColFromMap(this.lineCol, symbol.location, this.checker.locationInfo.lineMap1);
+                this.checker.locationInfo.lineMap1.fillLineAndCharacterFromPosition(symbol.location, this.lineCol);
                 if (this.lineCol.line >= 0) {
                     this.lineCol.line++;
                 }
             }
             else {
                 this.lineCol.line = -1;
-                this.lineCol.col = -1;
+                this.lineCol.character = -1;
             }
             this.emitPrefix();
         }
@@ -77,7 +77,7 @@ module TypeScript {
             if (ast) {
                 ast.flags |= ASTFlags.Error;
                 if (this.checker.locationInfo.lineMap1) {
-                    getZeroBasedSourceLineColFromMap(this.lineCol, ast.minChar, this.checker.locationInfo.lineMap1);
+                    this.checker.locationInfo.lineMap1.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
                     if (this.lineCol.line >= 0) {
                         this.lineCol.line++;
                     }
@@ -129,10 +129,10 @@ module TypeScript {
         }
 
         public showRef(ast: AST, text: string, symbol: Symbol) {
-            var defLineCol = { line: -1, col: -1 };
+            var defLineCol = { line: -1, character: -1 };
             // TODO: multiple def locations
             this.parser.getZeroBasedSourceLineCol(defLineCol, symbol.location);
-            this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.col + ")");
+            this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.character + ")");
         }
 
         public unresolvedSymbol(ast: AST, name: string) {

@@ -62,7 +62,7 @@ module TypeScript {
     }
 
     export class PullErrorReporter {
-        public lineCol = { line: 0, col: 0 };
+        public lineCol = { line: 0, character: 0 };
         public locationInfoCache: any = {};
         public hasErrors = false;
 
@@ -83,9 +83,9 @@ module TypeScript {
             var locationInfo = this.locationInfoCache[error.fileName];
 
             if (locationInfo && locationInfo.lineMap) {
-                getZeroBasedSourceLineColFromMap(this.lineCol, error.start(), locationInfo.lineMap);
+                locationInfo.lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
 
-                this.textWriter.Write(locationInfo.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
+                this.textWriter.Write(locationInfo.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
             }
             else {
                 this.textWriter.Write(error.fileName + "(0,0): ");

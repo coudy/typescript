@@ -148,8 +148,8 @@ module TypeScript {
             this.errorRecovery = true;
         }
 
-        public getZeroBasedSourceLineCol(lineCol: ILineCol, minChar: number): void {
-            getZeroBasedSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap1);
+        public getZeroBasedSourceLineCol(lineCol: ILineAndCharacter, minChar: number): void {
+            this.scanner.lineMap1.fillLineAndCharacterFromPosition(minChar, lineCol);
         }
 
         private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
@@ -168,10 +168,10 @@ module TypeScript {
                 this.errorCallback(startPos, len, message, this.fileName);
             }
             else if (this.errorRecovery) {
-                var lineCol = { line: -1, col: -1 };
+                var lineCol = { line: -1, character: -1 };
                 this.getZeroBasedSourceLineCol(lineCol, startPos);
                 if (this.outfile) {
-                    this.outfile.WriteLine("// " + this.fileName + " (" + (lineCol.line + 1) + "," + lineCol.col + "): " + message);
+                    this.outfile.WriteLine("// " + this.fileName + " (" + (lineCol.line + 1) + "," + lineCol.character + "): " + message);
                 }
             }
             else {
@@ -252,7 +252,7 @@ module TypeScript {
                 var c: Comment = new Comment(comment.value, comment.isBlock, comment.endsLine);
                 c.minChar = comment.startPos;
                 c.limChar = comment.startPos + comment.value.length;
-                var lineCol = { line: -1, col: -1 };
+                var lineCol = { line: -1, character: -1 };
                 this.getZeroBasedSourceLineCol(lineCol, c.minChar);
                 c.minLine = lineCol.line;
                 this.getZeroBasedSourceLineCol(lineCol, c.limChar);

@@ -1526,30 +1526,6 @@ module TypeScript {
         }
     }
 
-    // Return the (0-based) line number from a character offset using the provided linemap.
-    export function getZeroBasedLineNumberFromPosition(lineMap1: ILineMap, position: number): number {
-        if (position === -1) {
-            return -1;
-        }
-        
-        return lineMap1.getLineNumberFromPosition(position);
-    }
-
-    /// Return the [line, column] data for a given offset and a lineMap.
-    /// Note that the returned line is 0-based, while the column is 0-based.
-    export function getZeroBasedSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap1: ILineMap): void {
-        var linePos = lineMap1.getLineAndCharacterFromPosition(minChar);
-        lineCol.line = linePos.line();
-        lineCol.col = linePos.character();
-    }
-
-    //
-    // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
-    //
-    export function getPositionFromZeroBasedLineColumn(locationInfo: TypeScript.LocationInfo, line: number, column: number): number {
-        return locationInfo.lineMap1.getPosition(line, column);
-    }
-
     // Return true if the token is a primitive type
     export function isPrimitiveTypeToken(token: Token) {
         switch (token.tokenId) {
