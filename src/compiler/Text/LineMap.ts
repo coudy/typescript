@@ -9,6 +9,7 @@ module TypeScript {
         lineCount(): number;
         getLineNumberFromPosition(position: number): number;
         getLinePosition(position: number): LinePosition;
+        getPosition(line: number, character: number): number;
     }
 
     export class LineMap implements ILineMap {
@@ -32,6 +33,10 @@ module TypeScript {
 
         public lineCount(): number {
             return this.lineStarts().length;
+        }
+
+        public getPosition(line: number, character: number): number {
+            return this.lineStarts()[line] + character;
         }
 
         public getLineNumberFromPosition(position: number): number {
@@ -66,10 +71,14 @@ module TypeScript {
             return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
         }
 
-        public static createFrom(text: ISimpleText): LineMap {
+        public static createFromText(text: ISimpleText): LineMap {
             var lineStarts = TextUtilities.parseLineStarts(text);
 
             return new LineMap(lineStarts, text.length());
+        }
+
+        public static createFromString(text: string): LineMap {
+            return LineMap.createFromText(TextFactory.createSimpleText(text));
         }
     }
 }

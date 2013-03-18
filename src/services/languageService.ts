@@ -43,9 +43,6 @@ module Services {
         // language service.
         refresh(): void;
 
-        // TODO: Remove these. 
-        getScriptAST(fileName: string): TypeScript.Script;
-
         getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo;
         getTypeAtPosition(fileName: string, pos: number): TypeInfo;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;
@@ -502,12 +499,6 @@ module Services {
             }
 
             return null;
-        }
-
-        public getScriptAST(fileName: string): TypeScript.Script {
-            this.refresh();
-
-            return this.compilerState.getScriptAST(fileName);
         }
 
         private getTypeInfo(type: TypeScript.Type, symbol: TypeScript.Symbol, typeInfoAtPosition: TypeInfoAtPosition, enclosingScopeContext: TypeScript.EnclosingScopeContext): TypeInfo {

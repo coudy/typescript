@@ -1697,8 +1697,8 @@ module TypeScript {
     //
     // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
     //
-    export function getPositionFromZeroBasedLineColumn(script: TypeScript.Script, line: number, column: number): number {
-        return script.locationInfo.lineMap[line] + column;
+    export function getPositionFromZeroBasedLineColumn(locationInfo: TypeScript.LocationInfo, line: number, column: number): number {
+        return locationInfo.lineMap[line] + column;
     }
 
     // Return true if the token is a primitive type

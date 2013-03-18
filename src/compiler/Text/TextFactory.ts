@@ -440,7 +440,7 @@ module TypeScript.TextFactory {
         }
 
         public lineMap(): LineMap {
-            return LineMap.createFrom(this);
+            return LineMap.createFromText(this);
         }
     }
 
@@ -480,7 +480,7 @@ module TypeScript.TextFactory {
         }
 
         public lineMap(): LineMap {
-            return LineMap.createFrom(this);
+            return LineMap.createFromText(this);
         }
     }
 

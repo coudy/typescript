@@ -1545,25 +1545,31 @@ module Harness {
     }
 
     export class ScriptInfo {
-        public version: number;
+        public version: number = 1;
         public editRanges: { length: number; textChangeRange: TypeScript.TextChangeRange; }[] = [];
+        public lineMap: TypeScript.ILineMap = null;
 
         constructor(public fileName: string, public content: string) {
-            this.version = 1;
+            this.setContent(content);
         }
 
-        public updateContent(content: string) {
-            this.editRanges = [];
+        private setContent(content: string): void {
             this.content = content;
+            this.lineMap = TypeScript.LineMap.createFromString(content);
+        }
+
+        public updateContent(content: string): void {
+            this.editRanges = [];
+            this.setContent(content);
             this.version++;
         }
 
-        public editContent(minChar: number, limChar: number, newText: string) {
+        public editContent(minChar: number, limChar: number, newText: string): void {
             // Apply edits
             var prefix = this.content.substring(0, minChar);
             var middle = newText;
             var suffix = this.content.substring(limChar);
-            this.content = prefix + middle + suffix;
+            this.setContent(prefix + middle + suffix);
 
             // Store edit range + new length of script
             this.editRanges.push({
@@ -1706,13 +1712,12 @@ module Harness {
          * @param col 1 based index
         */
         public lineColToPosition(fileName: string, line: number, col: number): number {
-            var script = this.ls.languageService.getScriptAST(fileName);
+            var script: ScriptInfo = this.fileNameToScript.lookup(fileName);
             assert.notNull(script);
             assert.is(line >= 1);
             assert.is(col >= 1);
-            assert.is(line <= script.locationInfo.lineMap.length);
 
-            return TypeScript.getPositionFromZeroBasedLineColumn(script, line - 1, col - 1);
+            return script.lineMap.getPosition(line - 1, col - 1);
         }
 
         /**
@@ -1720,14 +1725,14 @@ module Harness {
          * @param col 0 based index
         */
         public positionToZeroBasedLineCol(fileName: string, position: number): TypeScript.ILineCol {
-            var script = this.ls.languageService.getScriptAST(fileName);
+            var script: ScriptInfo = this.fileNameToScript.lookup(fileName);
             assert.notNull(script);
 
-            var result = TypeScript.getZeroBasedLineColumnFromPosition(script, position);
-
-            assert.is(result.line >= 0);
-            assert.is(result.col >= 0);
-            return result;
+            var result = script.lineMap.getLinePosition(position);
+            
+            assert.is(result.line() >= 0);
+            assert.is(result.character() >= 0);
+            return { line: result.line(), col: result.character() };
         }
 
         /** Verify that applying edits to sourceFileName result in the content of the file baselineFileName */

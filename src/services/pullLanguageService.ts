@@ -13,7 +13,6 @@ module Services {
 
         getOutliningSpans(fileName: string): TypeScript.TextSpan[];
         getMatchingBraceSpans(fileName: string, position: number): TypeScript.TextSpan[];
-        logSyntaxTree(fileName: string): void;
         getIndentation(fileName: string, position: number, options: Services.EditorOptions): number;
     }
 
@@ -201,12 +200,6 @@ module Services {
             }
 
             return null;
-        }
-
-        public getScriptAST(fileName: string): TypeScript.Script {
-            this.refresh();
-
-            return this.pullCompilerState.getScriptAST(fileName);
         }
 
         public getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo {
@@ -1579,19 +1572,6 @@ module Services {
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             var sourceText = this.pullCompilerState.getScriptSnapshot(fileName);
             return Indenter.getIndentation(syntaxTree.sourceUnit(), sourceText, position, options);
-        }
-
-        public logSyntaxTree(fileName: string): void {
-            this.refresh();
-
-            if (!this.pullCompilerState.getCompilationSettings().usePull) {
-                throw new Error("logSyntaxTree is only available when usePull flag is set.");
-            }
-
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
-            var serializedTree = SyntaxNodeSerializer.serialize(syntaxTree.sourceUnit());
-            this.logger.log("");
-            this.logger.log(serializedTree);
         }
 
         //
