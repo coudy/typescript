@@ -26,6 +26,7 @@ module TypeScript {
     /// where we need an ISourceText object
     export class SourceUnit implements IScriptSnapshot, IResolvedFile {
         public referencedFiles: IFileReference[] = null;
+        private lineStarts: number[] = null;
 
         constructor(public path: string,
                     public content: string) {
@@ -39,8 +40,12 @@ module TypeScript {
             return this.content.length;
         }
 
-        public getLineStartPositions(): number[] {
-            throw Errors.notYetImplemented();
+        public getLineStartPositions(): number[]{
+            if (this.lineStarts === null) {
+                this.lineStarts = LineMap.createFromString(this.content).lineStarts();
+            }
+
+            return this.lineStarts;
         }
 
         public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
