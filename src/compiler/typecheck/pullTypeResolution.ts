@@ -1831,6 +1831,12 @@ module TypeScript {
 
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
+            var nameSymbol: PullSymbol = this.getSymbolForAST(nameAST);
+
+            if (nameSymbol /*&& nameSymbol.isResolved()*/) {
+                return nameSymbol;
+            }
+
             var id = nameAST.actualText;
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
@@ -1838,8 +1844,6 @@ module TypeScript {
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
-
-            var nameSymbol: PullSymbol = null
 
             nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
@@ -1861,10 +1865,18 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
+            this.setSymbolForAST(nameAST, nameSymbol);
+
             return nameSymbol;
         }
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+
+            var nameSymbol: PullSymbol = this.getSymbolForAST(dottedNameAST);
+
+            if (nameSymbol /*&& nameSymbol.isResolved()*/) {
+                return nameSymbol;
+            }
 
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
@@ -1909,7 +1921,7 @@ module TypeScript {
             }
 
             // now for the name...
-            var nameSymbol = lhsType.findMember(rhsName);
+            nameSymbol = lhsType.findMember(rhsName);
 
             if (!nameSymbol) {
 
@@ -1958,10 +1970,19 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
+            this.setSymbolForAST(dottedNameAST, nameSymbol);
+            this.setSymbolForAST(dottedNameAST.operand2, nameSymbol);
+
             return nameSymbol;
         }
 
         public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+
+            var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST);
+
+            if (typeNameSymbol /*&& typeNameSymbol.isResolved()*/) {
+                return typeNameSymbol;
+            }
 
             var id = nameAST.actualText;
 
@@ -1970,8 +1991,6 @@ module TypeScript {
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
-
-            var typeNameSymbol: PullTypeSymbol = null
 
             typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
@@ -1985,6 +2004,8 @@ module TypeScript {
             if (!typeNameSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
             }
+
+            this.setSymbolForAST(nameAST, typeNameSymbol);
 
             return typeNameSymbol;
         }
@@ -2066,6 +2087,12 @@ module TypeScript {
 
         public resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
+            var childTypeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST);
+
+            if (childTypeSymbol /*&& childTypeSymbol.isResolved()*/) {
+                return childTypeSymbol;
+            }
+
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
 
@@ -2089,7 +2116,7 @@ module TypeScript {
 
 
             // now for the name...
-            var childTypeSymbol = lhsType.findNestedType(rhsName);
+            childTypeSymbol = lhsType.findNestedType(rhsName);
 
             if (!childTypeSymbol) {
                 context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted type name '" + rhsName + "'", enclosingDecl);
@@ -2099,6 +2126,8 @@ module TypeScript {
             if (!childTypeSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(childTypeSymbol, enclosingDecl, context);
             }
+
+            this.setSymbolForAST(dottedNameAST, childTypeSymbol);
 
             return childTypeSymbol;
         }
