@@ -48,7 +48,7 @@ module TypeScript {
             else {
                 var ar = <MemberNameArray>memberName;
                 for (var index = 0; index < ar.entries.length; index++) {
-membername
+
                     result += MemberName.memberNameToString(ar.entries[index]);
                     result += ar.delim;
                 }
