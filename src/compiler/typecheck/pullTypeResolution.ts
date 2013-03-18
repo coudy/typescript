@@ -339,7 +339,7 @@ module TypeScript {
                         }
                     }
                 }
-                else if (!(pathDeclKind & PullElementKind.Class)) {
+                else if ((declSearchKind & PullElementKind.SomeType) || !(pathDeclKind & PullElementKind.Class)) {
                     childDecls = decl.findChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
@@ -4601,6 +4601,15 @@ module TypeScript {
 
             var i = 0;
             var j = 0;
+
+            var objectTypeArguments = objectType.getTypeArguments();
+            var parameterTypeParameters = parameterType.getTypeParameters();
+
+            if (objectTypeArguments && (objectTypeArguments.length == parameterTypeParameters.length)) {
+                for (i = 0; i < objectTypeArguments.length; i++) {
+                    argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i], shouldFix);
+                }
+            }
 
             for (i = 0; i < parameterTypeMembers.length; i++) {
                 objectMember = objectType.findMember(parameterTypeMembers[i].getName());
