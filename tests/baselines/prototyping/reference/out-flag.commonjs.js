@@ -7,8 +7,8 @@ var MyClass = (function () {
         return 42;
     };
     MyClass.prototype.SetCount = function (value) {
-        //
-            };
+
+    };
     return MyClass;
 })();
 //@ sourceMappingURL=0.js.map

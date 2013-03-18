@@ -8,9 +8,9 @@ var M;
 (function (M) {
     function tungsten() {
         function oxygen() {
-            return 6;
+            6;
+            return oxygen();
         }
-        return oxygen();
     }
     M.tungsten = tungsten;
 })(M || (M = {}));

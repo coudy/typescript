@@ -4632,6 +4632,11 @@ module TypeScript {
             var objectMember: PullSymbol;
             var objectSignatures: PullSignatureSymbol[];
 
+
+            if (argContext.alreadyRelatingTypes(objectType, parameterType)) {
+                return;
+            }
+
             var i = 0;
             var j = 0;
 

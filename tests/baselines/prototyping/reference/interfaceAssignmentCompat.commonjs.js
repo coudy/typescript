@@ -19,23 +19,23 @@ var M;
     }
     M.CompareYeux = CompareYeux;
     function test() {
-        var x = new Array();
+        var x = new M.IEye[]();
         var result = "";
         x[0] = {
-            color: Color.Brown
+            color: M.Color.Brown
         };
         x[1] = {
-            color: Color.Blue
+            color: M.Color.Blue
         };
         x[2] = {
-            color: Color.Green
+            color: M.Color.Green
         };
         x = x.sort(CompareYeux);
         var z = x.sort(CompareEyes);
         for(var i = 0, len = z.length; i < len; i++) {
-            result += ((Color._map[z[i].color]) + "\r\n");
+            result += ((M.Color._map[z[i].color]) + "\r\n");
         }
-        var eeks = new Array();
+        var eeks = new M.IFrenchEye[]();
         for(var j = z.length = 1; j >= 0; j--) {
             eeks[j] = z[j];
         }

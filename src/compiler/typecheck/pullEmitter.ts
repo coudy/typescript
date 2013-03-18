@@ -252,8 +252,10 @@ module TypeScript {
                             }
                         }
                         else if (pullSymbolKind == PullElementKind.Property) {
-                            this.emitThis();
-                            this.writeToOutput(".");
+                            if (pullSymbolContainer.getKind() == PullElementKind.Class) {
+                                this.emitThis();
+                                this.writeToOutput(".");
+                            }
                         }
                         else {
                             var pullDecls = pullSymbol.getDeclarations();

@@ -17,6 +17,7 @@ var myCls = (function () {
     function myCls() {
         var _this = this;
         myFn(function () {
+            var _this = this;
             myFn(function () {
                 console.log(_this);
             });

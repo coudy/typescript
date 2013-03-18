@@ -31,3 +31,25 @@ var M;
     })();
     M.D = D;    
 })(M || (M = {}));
+////[0.d.ts]
+module M {
+    class E {
+    }
+    interface I1 {
+    }
+    class D {
+        private c;
+        public m1: number;
+        public m2: string;
+        public m22: C;
+        public m23: E;
+        public m24: I1;
+        public m25: I2;
+        public m232(): E;
+        public m242(): I1;
+        public m252(): I2;
+        public m26(i: I1): void;
+        public m262(i: I2): void;
+        public m3(): C;
+    }
+}

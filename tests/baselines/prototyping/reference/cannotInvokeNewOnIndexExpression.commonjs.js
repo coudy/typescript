@@ -1,1 +1,1 @@
-var test = ;
+var test = new any[1]();

@@ -34,6 +34,12 @@ module Services {
             if (currentNode === null) {
                 return indentation;
             }
+            
+            // Check if this is a valid node to provide indentation
+            if (currentNode.kind() === TypeScript.SyntaxKind.StringLiteral ||
+                currentNode.kind() === TypeScript.SyntaxKind.RegularExpressionLiteral) {
+                return indentation;
+            }
 
             var currentElement = currentNode.element();
             var parent = currentNode.parent();

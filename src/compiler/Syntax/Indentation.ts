@@ -140,7 +140,7 @@ module TypeScript.Indentation {
         var numberOfSpaces = MathPrototype.max(0, column);
 
         if (options.useTabs) {
-            numberOfTabs = column / options.spacesPerTab;
+            numberOfTabs = Math.floor(column / options.spacesPerTab);
             numberOfSpaces -= numberOfTabs * options.spacesPerTab;
         }
 

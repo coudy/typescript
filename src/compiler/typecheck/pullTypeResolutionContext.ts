@@ -17,7 +17,21 @@ module TypeScript {
     }
 
     export class ArgumentInferenceContext {
+        public inferenceCache: any = {};
         public candidateCache: any = {};
+
+
+        public alreadyRelatingTypes(objectType: PullTypeSymbol, parameterType: PullTypeSymbol) {
+            var comboID = (objectType.getSymbolID() << 16) | parameterType.getSymbolID();
+
+            if (this.inferenceCache[comboID]) {
+                return true;
+            }
+            else {
+                this.inferenceCache[comboID] = true;
+                return false;
+            }            
+        }
 
         public getInferenceInfo(param: PullTypeParameterSymbol) {
             var info = <CandidateInferenceInfo>this.candidateCache[param.getSymbolID().toString()];

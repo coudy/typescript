@@ -23,7 +23,8 @@ var a = (function () {
                 x: 30,
                 y: 40
             };
-        },
+        }
+,
         enumerable: true,
         configurable: true
     });
@@ -32,7 +33,8 @@ var a = (function () {
     Object.defineProperty(a, "p3", {
         get: function () {
             return "string";
-        },
+        }
+,
         enumerable: true,
         configurable: true
     });
@@ -135,12 +137,12 @@ module m1 {
 module m2.m3 {
     class c extends b {
     }
-    class ib2 implements m1.ib {
+    class ib2 implements ib {
     }
 }
-class c extends m1.b {
+class c extends b {
 }
-class ib2 implements m1.ib {
+class ib2 implements ib {
 }
 class aAmbient {
     constructor(n: number);
@@ -148,10 +150,7 @@ class aAmbient {
     public pgF(): void;
     public pv;
     public d: number;
-    static p2: {
-        x: number;
-        y: number;
-    };
+    static p2: {};
     static d2();
     static p3;
     private pv3;

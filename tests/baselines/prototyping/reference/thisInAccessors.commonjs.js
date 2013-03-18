@@ -2,7 +2,6 @@ var GetterOnly = (function () {
     function GetterOnly() { }
     Object.defineProperty(GetterOnly.prototype, "Value", {
         get: function () {
-            var _this = this;
             var fn = function () {
                 return _this;
             };
@@ -22,7 +21,6 @@ var SetterOnly = (function () {
             return '';
         },
         set: function (val) {
-            var _this = this;
             var fn = function () {
                 return _this;
             };
@@ -36,14 +34,12 @@ var GetterAndSetter = (function () {
     function GetterAndSetter() { }
     Object.defineProperty(GetterAndSetter.prototype, "Value", {
         get: function () {
-            var _this = this;
             var fn = function () {
                 return _this;
             };
             return '';
         },
         set: function (val) {
-            var _this = this;
             var fn = function () {
                 return _this;
             };

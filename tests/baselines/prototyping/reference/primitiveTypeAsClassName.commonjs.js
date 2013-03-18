@@ -1,4 +1,4 @@
-var __missing = (function () {
-    function __missing() { }
-    return __missing;
+var any = (function () {
+    function any() { }
+    return any;
 })();

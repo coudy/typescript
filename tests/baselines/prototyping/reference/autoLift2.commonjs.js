@@ -1,10 +1,8 @@
 var A = (function () {
     function A() {
         this.foo;
-        ;
         any;
         this.bar;
-        ;
         any;
     }
     A.prototype.baz = function () {

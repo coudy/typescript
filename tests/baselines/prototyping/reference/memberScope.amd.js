@@ -5,5 +5,5 @@ var Salt;
         return Pepper;
     })();
     Salt.Pepper = Pepper;    
-        var z = Basil.Pepper;
+        var z = Salt.Basil.Pepper;
 })(Salt || (Salt = {}));

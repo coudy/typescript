@@ -28,6 +28,7 @@
 ///<reference path='pullLanguageService.ts' />
 ///<reference path='shims.ts' />
 ///<reference path='formatting\formatting.ts' />
+///<reference path='formatting2\formatting.ts' />
 ///<reference path='outliningElementsCollector.ts' />
 ///<reference path='braceMatcher.ts' />
 ///<reference path='syntaxNodeSerializer.ts' />
