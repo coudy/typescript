@@ -167,6 +167,30 @@ module Services {
             return false;
         }
 
+        // Attempt an incremental refresh of the compiler state.
+        private partialRefresh(): void {
+            this.logger.log("Updating files...");
+
+            var fileAdded: bool = false;
+
+            var fileNames = this.host.getScriptFileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
+
+                if (this.compiler.fileNameToLocationInfo.lookup(fileName)) {
+                    this.updateCompilerUnit(this.compiler, fileName);
+                }
+                else {
+                    this.addCompilerUnit(this.compiler, fileName);
+                    fileAdded = true;
+                }
+            }
+
+            if (fileAdded) {
+                this.compiler.pullTypeCheck(true);
+            }
+        }
+
         public getScriptAST(fileName: string): TypeScript.Script {
             return <TypeScript.Script>this.compiler.fileNameToScript.lookup(fileName);
         }
@@ -303,30 +327,6 @@ module Services {
                 this.setSyntaxTree(
                     fileName,
                     TypeScript.Parser1.incrementalParse(this.getSyntaxTree(fileName), editRange, newText));
-            }
-        }
-
-        // Attempt an incremental refresh of the compiler state.
-        private partialRefresh(): void {
-            this.logger.log("Updating files...");
-
-            var fileAdded: bool = false;
-
-            var fileNames = this.host.getScriptFileNames();
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = fileNames[i];
-
-                if (this.compiler.fileNameToLocationInfo.lookup(fileName)) {
-                    this.updateCompilerUnit(this.compiler, fileName);
-                }
-                else {
-                    this.addCompilerUnit(this.compiler, fileName);
-                    fileAdded = true;
-                }
-            }
-
-            if (fileAdded) {
-                this.compiler.pullTypeCheck(true);
             }
         }
     }
