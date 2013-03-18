@@ -242,7 +242,8 @@ module Services {
                 return TypeScript.TextChangeRange.unchanged; // "No changes"
             }
             
-            return this.host.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
+            var scriptSnapshot = this.hostCache.getScriptSnapshot(fileName);
+            return scriptSnapshot.getTextChangeRangeSinceVersion(lastKnownVersion);
         }
 
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {

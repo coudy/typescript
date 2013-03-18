@@ -1595,6 +1595,38 @@ module Harness {
         }
     }
 
+    class ScriptSnapshotShim implements Services.IScriptSnapshotShim {
+        private lineMap: TypeScript.ILineMap = null;
+
+        constructor(private scriptInfo: ScriptInfo) {
+        }
+
+        public getText(start: number, end: number): string {
+            return this.scriptInfo.content.substring(start, end);
+        }
+
+        public getLength(): number {
+            return this.scriptInfo.content.length;
+        }
+
+        public getLineStartPositions(): string {
+            if (this.lineMap === null) {
+                this.lineMap = TypeScript.LineMap.createFromString(this.scriptInfo.content);
+            }
+
+            return JSON2.stringify(this.lineMap.lineStarts());
+        }
+
+        public getTextChangeRangeSinceVersion(scriptVersion: number): string {
+            var range = this.scriptInfo.getTextChangeRangeSinceVersion(scriptVersion);
+            if (range === null) {
+                return null;
+            }
+
+            return JSON2.stringify({ span: { start: range.span().start(), length: range.span().length() }, newLength: range.newLength() });
+        }
+    }
+
     export class TypeScriptLS implements Services.ILanguageServiceShimHost {
         private ls: Services.ILanguageServiceShim = null;
 
@@ -1664,21 +1696,12 @@ module Harness {
             return JSON2.stringify(this.fileNameToScript.getAllKeys());
         }
 
-        public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
-            return new TypeScript.StringScriptSnapshot(this.getScriptInfo(fileName).content);
+        public getScriptSnapshot(fileName: string): Services.IScriptSnapshotShim {
+            return new ScriptSnapshotShim(this.getScriptInfo(fileName));
         }
 
         public getScriptVersion(fileName: string): number {
             return this.getScriptInfo(fileName).version;
-        }
-
-        public getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): string {
-            var range = this.getScriptInfo(fileName).getTextChangeRangeSinceVersion(scriptVersion);
-            if (range === null) {
-                return null;
-            }
-
-            return JSON2.stringify({ span: { start: range.span().start(), length: range.span().length() }, newLength: range.newLength() });
         }
 
         /** Return a new instance of the language service shim, up-to-date wrt to typecheck.

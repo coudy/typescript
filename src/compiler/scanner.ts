@@ -290,10 +290,15 @@ module TypeScript {
         // Get's the length of this script snapshot.
         getLength(): number;
 
-        // This call returns the JSON encoded array containing the start position of every line.  
+        // This call returns the array containing the start position of every line.  
         // i.e."[0, 10, 55]".  TODO: consider making this optional.  The language service could
         // always determine this (albeit in a more expensive manner).
-        getLineStartPositions(): string;
+        getLineStartPositions(): number[];
+
+        // Returns a text change range representing what text has changed since the specified version.
+        // If the change cannot be determined (say, because a file was opened/closed), then 'null' 
+        // should be returned.
+        getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange;
     }
 
     // Class which wraps a host IScriptSnapshot and exposes an ISimpleText for newer compiler code. 
@@ -341,10 +346,6 @@ module TypeScript {
             return this.segment[index - this.segmentStart];
         }
 
-        private getLineStartPositions(): string {
-            return this.scriptSnapshot.getLineStartPositions();
-        }
-
         public length(): number {
             return this._length;
         }
@@ -365,7 +366,7 @@ module TypeScript {
         
         public lineMap(): ILineMap {
             if (this._lineMap === null) {
-                var lineStartPositions = JSON2.parse(this.getLineStartPositions());
+                var lineStartPositions = this.scriptSnapshot.getLineStartPositions();
                 this._lineMap = new LineMap(lineStartPositions, this.length());
             }
 
@@ -385,9 +386,12 @@ module TypeScript {
             return this.text.length;
         }
 
-        public getLineStartPositions(): string {
-            var lineStarts = TextUtilities.parseLineStarts(TextFactory.createSimpleText(this.text));
-            return JSON2.stringify(lineStarts);
+        public getLineStartPositions(): number[] {
+            return TextUtilities.parseLineStarts(TextFactory.createSimpleText(this.text));
+        }
+
+        public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
+            throw Errors.notYetImplemented();
         }
     }
     

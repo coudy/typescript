@@ -39,7 +39,11 @@ module TypeScript {
             return this.content.length;
         }
 
-        public getLineStartPositions(): string {
+        public getLineStartPositions(): number[] {
+            throw Errors.notYetImplemented();
+        }
+
+        public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
             throw Errors.notYetImplemented();
         }
     }

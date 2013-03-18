@@ -18,6 +18,24 @@
 
 module Services {
 
+    export interface IScriptSnapshotShim {
+        // Get's a portion of the script snapshot specified by [start, end).  
+        getText(start: number, end: number): string;
+
+        // Get's the length of this script snapshot.
+        getLength(): number;
+
+        // This call returns the JSON encoded array of the type:
+        //  number[]
+        getLineStartPositions(): string;
+
+        // Returns a JSON encoded value of the type:
+        //  { span: { start: number; length: number }; newLength: number }
+        //
+        // Or null value if there was no change.
+        getTextChangeRangeSinceVersion(scriptVersion: number): string;
+    }
+
     //
     // Public interface of the host of a language service shim instance.
     //
@@ -29,13 +47,7 @@ module Services {
         // string[]
         getScriptFileNames(): string;
         getScriptVersion(fileName: string): number;
-        getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
-
-        // Returns a JSON encoded value of the type:
-        // { span: { start: number; length: number }; newLength: number }
-        //
-        // Or null value if there was no change.
-        getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): string;
+        getScriptSnapshot(fileName: string): IScriptSnapshotShim;
     }
 
     //
@@ -99,8 +111,42 @@ module Services {
         getEmitOutput(fileName: string): string;
     }
 
+    class ScriptSnapshotShimAdapter implements TypeScript.IScriptSnapshot {
+        private lineStartPositions: number[] = null;
+
+        constructor(private scriptSnapshotShim: IScriptSnapshotShim) {
+        }
+
+        public getText(start: number, end: number): string {
+            return this.scriptSnapshotShim.getText(start, end);
+        }
+
+        public getLength(): number {
+            return this.scriptSnapshotShim.getLength();
+        }
+
+        public getLineStartPositions(): number[]{
+            if (this.lineStartPositions === null) {
+                this.lineStartPositions = JSON.parse(this.scriptSnapshotShim.getLineStartPositions());
+            }
+
+            return this.lineStartPositions;
+        }
+
+        public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
+            var encoded = this.scriptSnapshotShim.getTextChangeRangeSinceVersion(scriptVersion);
+            if (encoded === null) {
+                return null;
+            }
+
+            var decoded: { span: { start: number; length: number; }; newLength: number; } = JSON.parse(encoded);
+            return new TypeScript.TextChangeRange(
+                new TypeScript.TextSpan(decoded.span.start, decoded.span.length), decoded.newLength);
+        }
+    }
+
     export class LanguageServiceShimHostAdapter implements Services.ILanguageServiceHost {
-        constructor (private shimHost: ILanguageServiceShimHost) {
+        constructor(private shimHost: ILanguageServiceShimHost) {
         }
 
         public information(): bool {
@@ -142,22 +188,11 @@ module Services {
         }
 
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
-            return this.shimHost.getScriptSnapshot(fileName);
+            return new ScriptSnapshotShimAdapter(this.shimHost.getScriptSnapshot(fileName));
         }
 
         public getScriptVersion(fileName: string): number {
             return this.shimHost.getScriptVersion(fileName);
-        }
-
-        public getScriptTextChangeRangeSinceVersion(fileName: string, scriptVersion: number): TypeScript.TextChangeRange {
-            var encoded = this.shimHost.getScriptTextChangeRangeSinceVersion(fileName, scriptVersion);
-            if (encoded === null) {
-                return null;
-            }
-
-            var result: { span: { start: number; length: number; }; newLength: number; } = JSON.parse(encoded);
-            return new TypeScript.TextChangeRange(
-                new TypeScript.TextSpan(result.span.start, result.span.length), result.newLength);
         }
 
         public getHostSettings(): TypeScript.IHostSettings {
