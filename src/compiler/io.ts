@@ -512,7 +512,7 @@ var IO = (function() {
                 require.main._compile(source, fileName);
             }, 
             getExecutingFilePath: function () {
-                return process.mainModule.fileName;
+                return process.mainModule.filename;
             },
             quit: process.exit
         }

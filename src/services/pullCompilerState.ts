@@ -52,7 +52,7 @@ module Services {
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
             // Keep track of the version of script we're adding to the compiler.
             this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
-            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
+            compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         }
 
         private getHostCompilationSettings(): TypeScript.CompilationSettings {
