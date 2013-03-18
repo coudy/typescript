@@ -115,7 +115,6 @@ module TypeScript {
         public usePullTC = true;
 
         public tcOnly = false;
-        public parseOnly = false;
 
         public gatherDiagnostics = false;
 
