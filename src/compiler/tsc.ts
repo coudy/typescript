@@ -217,24 +217,28 @@ class BatchCompiler {
             resolvePath: this.ioHost.resolvePath
         };
 
-        try {
-            if (this.compilationSettings.usePull) {
-                compiler.pullTypeCheck(true, true);
-            }
-            else {
-                compiler.typeCheck();
-            }
+        if (!this.compilationSettings.parseOnly) {
+            try {
+                if (this.compilationSettings.usePull) {
+                    compiler.pullTypeCheck(true, this.compilationSettings.usePullTC);
+                }
+                else {
+                    compiler.typeCheck();
+                }
 
-            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-            };
-            compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
-            compiler.emitDeclarations(this.compilationSettings.usePull);
-        } catch (err) {
-            compiler.errorReporter.hasErrors = true;
-            // Catch emitter exceptions
-            if (err.message != "EmitError") {
-                throw err;
+                if (!this.compilationSettings.tcOnly) {
+                    var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                        this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+                    };
+                    compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
+                    compiler.emitDeclarations(this.compilationSettings.usePull);
+                }
+            } catch (err) {
+                compiler.errorReporter.hasErrors = true;
+                // Catch emitter exceptions
+                if (err.message != "EmitError") {
+                    throw err;
+                }
             }
         }
 
@@ -429,6 +433,30 @@ class BatchCompiler {
                 this.compilationSettings.usePull = true;
             }
         });
+
+        opts.flag('nopulltc', {
+            usage: 'When using "pull", resolve only',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.usePullTC = false;
+            }
+        });
+
+        opts.flag('tconly', {
+            usage: 'Typecheck only - do not emit',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.tcOnly = true;
+            }
+        });
+
+        opts.flag('parseonly', {
+            usage: 'Parse only - do not emit or type check',
+            experimental: true,
+            set: () => {
+                this.compilationSettings.parseOnly = true;
+            }
+        });    
 
         opts.option('target', {
             usage: 'Specify ECMAScript target version: "ES3" (default), or "ES5"',

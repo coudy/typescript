@@ -953,8 +953,15 @@ module TypeScript {
                 fileNames = this.fileNameToScript.getAllKeys();
                 for (i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
-                    this.logger.log("Type checking " + fileName);
-                    this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
+
+                    if ( reportErrors ) {
+                        this.logger.log( "Type checking " + fileName );
+                        this.pullTypeChecker.typeCheckScript( <Script>this.fileNameToScript.lookup( fileName ), fileName, this );
+                    }
+                    else {
+                        this.logger.log( "Resolving " + fileName );
+                        this.pullResolveFile(fileName);
+                    }
                 }
                 var findErrorsEndTime = new Date().getTime();                
 

@@ -49,7 +49,7 @@ class BatchCompiler {
 
     // use this to test "clean" re-typecheck speed
     public reTypeCheck() {
-        this.compiler.pullTypeCheck(true);
+        this.compiler.pullTypeCheck(true, true);
     }
 
     public oldParse(): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {

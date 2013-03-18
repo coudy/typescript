@@ -93,7 +93,7 @@ module Services {
 
             // Initial typecheck
             this.onTypeCheckStarting();
-            this.compiler.pullTypeCheck();
+            this.compiler.pullTypeCheck(false, true);
         }
 
         public minimalRefresh(): void {

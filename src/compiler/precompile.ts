@@ -112,6 +112,10 @@ module TypeScript {
 
         public useCaseSensitiveFileResolution = false;
         public usePull = false;
+        public usePullTC = true;
+
+        public tcOnly = false;
+        public parseOnly = false;
 
         public gatherDiagnostics = false;
 
