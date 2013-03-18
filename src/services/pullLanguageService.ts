@@ -563,7 +563,7 @@ module Services {
             var hasOverloads = signatures.length > 1;
             signatures
                 // Same test as in "typeFlow.str: resolveOverload()": filter out the definition signature if there are overloads
-                .filter(signature => !(hasOverloads && signature.isDefinition() && !this.pullCompilerState.getCompilationSettings().canCallDefinitionSignature))
+                .filter(signature => !(hasOverloads && signature.isDefinition() && !this.pullCompilerState.compilationSettings().canCallDefinitionSignature))
                 .forEach(signature => {
                     var signatureGroupInfo = new FormalSignatureItemInfo();
                     signatureGroupInfo.docComment = signature.getDocComments();
@@ -1543,10 +1543,6 @@ module Services {
         public getOutliningSpans(fileName: string): TypeScript.TextSpan[] {
             this.refresh();
 
-            if (!this.pullCompilerState.getCompilationSettings().usePull) {
-                throw new Error("getOutliningSpans is only available when usePull flag is set.");
-            }
-
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             return OutliningElementsCollector.collectElements(syntaxTree.sourceUnit());
         }
@@ -1554,20 +1550,12 @@ module Services {
         public getMatchingBraceSpans(fileName: string, position: number): TypeScript.TextSpan[] {
             this.refresh();
 
-            if (!this.pullCompilerState.getCompilationSettings().usePull) {
-                throw new Error("getMatchingBraceSpans is only available when usePull flag is set.");
-            }
-
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             return BraceMatcher.getMatchSpans(syntaxTree, position);
         }
 
         public getIndentation(fileName: string, position: number, options: Services.EditorOptions): number {
             this.refresh();
-
-            if (!this.pullCompilerState.getCompilationSettings().usePull) {
-                throw new Error("getIndentation is only available when usePull flag is set.");
-            }
 
             var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
             var sourceText = this.pullCompilerState.getScriptSnapshot(fileName);

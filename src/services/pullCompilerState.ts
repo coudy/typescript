@@ -14,7 +14,7 @@ module Services {
         private scriptMap: ScriptMap;
         private hostCache: HostCache;
         private symbolTree: SymbolTree;
-        private compilationSettings: TypeScript.CompilationSettings;
+        private _compilationSettings: TypeScript.CompilationSettings = null;
 
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
@@ -29,11 +29,10 @@ module Services {
             //
             this.hostCache = null;
             this.symbolTree = null;
-            this.compilationSettings = null;
         }
 
-        public getCompilationSettings() {
-            return this.compilationSettings;
+        public compilationSettings() {
+            return this._compilationSettings;
         }
 
         private setUnitMapping(fileName: string) {
@@ -94,11 +93,11 @@ module Services {
             // Create and initialize compiler
             this.logger.log("Initializing compiler");
 
-            this.compilationSettings = new TypeScript.CompilationSettings();
+            this._compilationSettings = new TypeScript.CompilationSettings();
             
-            Services.copyDataObject(this.compilationSettings, this.getHostCompilationSettings());
-            this.compilationSettings.usePull = true;
-            this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
+            Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
+            this._compilationSettings.usePull = true;
+            this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings());
             this.scriptMap = new ScriptMap();
 
             //TODO: "bind" doesn't work here in the context of running unit tests
@@ -240,7 +239,7 @@ module Services {
             return this.host.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
-        public getScriptSnapshot(fileName: string) {
+        public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
             return this.hostCache.getScriptSnapshot(fileName);
         }
 
@@ -298,9 +297,7 @@ module Services {
                 return false;
             }
 
-            if (this.compilationSettings.usePull) {
-                this.updateSyntaxTree(fileName);
-            }
+            this.updateSyntaxTree(fileName);
 
             //
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
