@@ -188,7 +188,7 @@ module FourSlash {
         private getAllDiagnostics(): TypeScript.IDiagnostic[] {
             var diagnostics: TypeScript.IDiagnostic[] = [];
 
-            var fileNames = this.langSvc.getScriptFileNames();
+            var fileNames = JSON2.parse(this.langSvc.getScriptFileNames());
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 diagnostics.push.apply(this.getDiagnostics(fileNames[i]));
             }
