@@ -428,7 +428,7 @@ module Diff {
             var table: any = {};
             for (var i = start; i <= end; ++i) {
                 var entries: UniquenessEntry[] = table[content[i].hashCode];
-                if (entries === null) {
+                if (!entries) {
                     entries = [];
                 }
 
