@@ -13,15 +13,7 @@ var MyClass = (function () {
 })();
 //@ sourceMappingURL=0.js.map
 ////[0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["MyClass","MyClass.constructor","MyClass.get_Count","MyClass.set_Count"],"mappings":"AACA;IAAAA;AAWCA,IATGA;QAAAA,KAAAA;YAEIE,OAAOA,EAAEA,CAACA;QACdA,CAACA;QAEDF,KAAAA,UAAiBA,KAAaA;QAG9BG,CAACA;;;;AALAH,IAMLA;AAACA,CAAAA,IAAA"}
-////[strings.js]
-//@ sourceMappingURL=strings.js.map
-////[strings.js.map]
-{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
-////[test.js]
-//@ sourceMappingURL=test.js.map
-////[test.js.map]
-{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
+{"version":3,"file":"0.js","sources":["0.ts"],"names":["MyClass","MyClass.constructor","MyClass.get_Count","MyClass.set_Count"],"mappings":"AAAA;IAAAA;AAYCA,IATDA;QAAAA,KAAAA;YAEAE,OAAeA,EAAEA,CACjBA;SACAF;QAAAA,KAAAA,UACqBA,KAAaA;SAIlCA;;;;AALAA;CAPA,IAYC"}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]
@@ -46,14 +38,6 @@ var MyClass = (function () {
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map]
 {"version":3,"file":"duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js","sources":["duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts"],"names":[],"mappings":""}
-////[module1.js]
-//@ sourceMappingURL=module1.js.map
-////[module1.js.map]
-{"version":3,"file":"module1.js","sources":["module1.ts"],"names":[],"mappings":""}
-////[module2.js]
-//@ sourceMappingURL=module2.js.map
-////[module2.js.map]
-{"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[importInsideModule_file1.js.map]
@@ -62,10 +46,6 @@ var MyClass = (function () {
 //@ sourceMappingURL=importInsideModule_file2.js.map
 ////[importInsideModule_file2.js.map]
 {"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
-////[moduleWithAmbientCallSignatureTest.js]
-//@ sourceMappingURL=moduleWithAmbientCallSignatureTest.js.map
-////[moduleWithAmbientCallSignatureTest.js.map]
-{"version":3,"file":"moduleWithAmbientCallSignatureTest.js","sources":["moduleWithAmbientCallSignatureTest.ts"],"names":[],"mappings":""}
 ////[0.d.ts]
 class MyClass {
     public Count : number;
