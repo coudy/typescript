@@ -559,35 +559,64 @@ module TypeScript {
         // validate:
         //  - lhs and rhs are compatible
         public typeCheckLogicalOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Logical 'And' and 'Or' expressions 
         // validate:
         // - lhs and rhs are compatible
         public typeCheckLogicalAndOrExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Binary arithmetic expressions 
         // validate:
         //  - lhs and rhs are compatible
         public typeCheckBinaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Unary arithmetic expressions 
         // validate:
         //  -
         public typeCheckUnaryArithmeticOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var unex = <UnaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(unex.operand, typeCheckContext);
+
+            return type;
         }
 
         // Bitwise operations 
         // validate:
         //  -
         public typeCheckBitwiseOperation(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var binex = <BinaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(binex.operand1, typeCheckContext);
+            this.typeCheckAST(binex.operand2, typeCheckContext);
+
+            return type;
         }
 
         // Index expression 
@@ -615,7 +644,15 @@ module TypeScript {
         // validate:
         //  -
         public typeCheckConditionalExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            
+            var condAST = <ConditionalExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(condAST.operand1, typeCheckContext);
+            this.typeCheckAST(condAST.operand2, typeCheckContext);
+            this.typeCheckAST(condAST.operand3, typeCheckContext);
+
+            return type;
         }
 
         // new expression types
@@ -625,13 +662,21 @@ module TypeScript {
         }
 
         public typeCheckDeleteExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
-            return this.semanticInfoChain.boolTypeSymbol;
+            var unex = <UnaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(unex.operand, typeCheckContext);
+
+            return type;
         }
 
         public typeCheckVoidExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            this.resolver.resolveAST((<UnaryExpression>ast).operand, false, typeCheckContext.getEnclosingDecl(), this.context);
-            return this.semanticInfoChain.undefinedTypeSymbol;
+            var unex = <UnaryExpression>ast;
+            var type = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+
+            this.typeCheckAST(unex.operand, typeCheckContext);
+
+            return type;
         }
 
         public typeCheckRegExpExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {

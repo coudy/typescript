@@ -14392,8 +14392,8 @@ module TypeScript {
     //
     // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
     //
-    export function getPositionFromZeroBasedLineColumn(script: TypeScript.Script, line: number, column: number): number {
-        return script.locationInfo.lineMap[line] + column;
+    export function getPositionFromZeroBasedLineColumn(locationInfo: TypeScript.LocationInfo, line: number, column: number): number {
+        return locationInfo.lineMap[line] + column;
     }
 
     // Return true if the token is a primitive type
@@ -28527,9 +28527,9 @@ module TypeScript {
 }
 module TypeScript {
     export class Debug {
-        public static assert(expression: bool): void {
+        public static assert(expression: bool, message?: string): void {
             if (!expression) {
-                throw new Error("Debug Failure. False expression.");
+                throw new Error("Debug Failure. False expression." + (message ? message : ""));
             }
         }
     }
@@ -30979,6 +30979,7 @@ module TypeScript {
         lineCount(): number;
         getLineNumberFromPosition(position: number): number;
         getLinePosition(position: number): LinePosition;
+        getPosition(line: number, character: number): number;
     }
 
     export class LineMap implements ILineMap {
@@ -31002,6 +31003,10 @@ module TypeScript {
 
         public lineCount(): number {
             return this.lineStarts().length;
+        }
+
+        public getPosition(line: number, character: number): number {
+            return this.lineStarts()[line] + character;
         }
 
         public getLineNumberFromPosition(position: number): number {
@@ -31036,10 +31041,14 @@ module TypeScript {
             return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
         }
 
-        public static createFrom(text: ISimpleText): LineMap {
+        public static createFromText(text: ISimpleText): LineMap {
             var lineStarts = TextUtilities.parseLineStarts(text);
 
             return new LineMap(lineStarts, text.length());
+        }
+
+        public static createFromString(text: string): LineMap {
+            return LineMap.createFromText(TextFactory.createSimpleText(text));
         }
     }
 }
@@ -49735,7 +49744,7 @@ module TypeScript.TextFactory {
         }
 
         public lineMap(): LineMap {
-            return LineMap.createFrom(this);
+            return LineMap.createFromText(this);
         }
     }
 
@@ -49775,7 +49784,7 @@ module TypeScript.TextFactory {
         }
 
         public lineMap(): LineMap {
-            return LineMap.createFrom(this);
+            return LineMap.createFromText(this);
         }
     }
 
@@ -52980,7 +52989,21 @@ module TypeScript {
     }
 
     export class ArgumentInferenceContext {
+        public inferenceCache: any = {};
         public candidateCache: any = {};
+
+
+        public alreadyRelatingTypes(objectType: PullTypeSymbol, parameterType: PullTypeSymbol) {
+            var comboID = (objectType.getSymbolID() << 16) | parameterType.getSymbolID();
+
+            if (this.inferenceCache[comboID]) {
+                return true;
+            }
+            else {
+                this.inferenceCache[comboID] = true;
+                return false;
+            }            
+        }
 
         public getInferenceInfo(param: PullTypeParameterSymbol) {
             var info = <CandidateInferenceInfo>this.candidateCache[param.getSymbolID().toString()];
@@ -53106,6 +53129,8 @@ module TypeScript {
         public searchTypeSpace = false;
 
         public specializingToAny = false;
+
+        constructor (public emitting = false) {}
 
         public pushContextualType(type: PullTypeSymbol, provisional: bool, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
@@ -53734,6 +53759,10 @@ module TypeScript {
         }
 
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
+            if (!type) {
+                return false;
+            }
+
             if (!type.isGeneric()) {
                 return false;
             }
@@ -55035,6 +55064,12 @@ module TypeScript {
 
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
+            var nameSymbol: PullSymbol = this.getSymbolForAST(nameAST);
+
+            if (nameSymbol /*&& nameSymbol.isResolved()*/) {
+                return nameSymbol;
+            }
+
             var id = nameAST.actualText;
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
@@ -55042,8 +55077,6 @@ module TypeScript {
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
-
-            var nameSymbol: PullSymbol = null
 
             nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
@@ -55065,10 +55098,18 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
+            this.setSymbolForAST(nameAST, nameSymbol);
+
             return nameSymbol;
         }
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+
+            var nameSymbol: PullSymbol = this.getSymbolForAST(dottedNameAST);
+
+            if (nameSymbol /*&& nameSymbol.isResolved()*/) {
+                return nameSymbol;
+            }
 
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
@@ -55113,7 +55154,7 @@ module TypeScript {
             }
 
             // now for the name...
-            var nameSymbol = lhsType.findMember(rhsName);
+            nameSymbol = lhsType.findMember(rhsName);
 
             if (!nameSymbol) {
 
@@ -55162,10 +55203,19 @@ module TypeScript {
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
+            this.setSymbolForAST(dottedNameAST, nameSymbol);
+            this.setSymbolForAST(dottedNameAST.operand2, nameSymbol);
+
             return nameSymbol;
         }
 
         public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+
+            var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST);
+
+            if (typeNameSymbol /*&& typeNameSymbol.isResolved()*/) {
+                return typeNameSymbol;
+            }
 
             var id = nameAST.actualText;
 
@@ -55174,8 +55224,6 @@ module TypeScript {
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
             }
-
-            var typeNameSymbol: PullTypeSymbol = null
 
             typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeType);
 
@@ -55189,6 +55237,8 @@ module TypeScript {
             if (!typeNameSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
             }
+
+            this.setSymbolForAST(nameAST, typeNameSymbol);
 
             return typeNameSymbol;
         }
@@ -55270,6 +55320,12 @@ module TypeScript {
 
         public resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
+            var childTypeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST);
+
+            if (childTypeSymbol /*&& childTypeSymbol.isResolved()*/) {
+                return childTypeSymbol;
+            }
+
             // assemble the dotted name path
             var rhsName = (<Identifier>dottedNameAST.operand2).actualText;
 
@@ -55293,7 +55349,7 @@ module TypeScript {
 
 
             // now for the name...
-            var childTypeSymbol = lhsType.findNestedType(rhsName);
+            childTypeSymbol = lhsType.findNestedType(rhsName);
 
             if (!childTypeSymbol) {
                 context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted type name '" + rhsName + "'", enclosingDecl);
@@ -55303,6 +55359,8 @@ module TypeScript {
             if (!childTypeSymbol.isResolved()) {
                 this.resolveDeclaredSymbol(childTypeSymbol, enclosingDecl, context);
             }
+
+            this.setSymbolForAST(dottedNameAST, childTypeSymbol);
 
             return childTypeSymbol;
         }
@@ -57807,6 +57865,11 @@ module TypeScript {
             var objectMember: PullSymbol;
             var objectSignatures: PullSignatureSymbol[];
 
+
+            if (argContext.alreadyRelatingTypes(objectType, parameterType)) {
+                return;
+            }
+
             var i = 0;
             var j = 0;
 
@@ -58132,6 +58195,18 @@ module TypeScript {
                 case NodeType.Return:
                     return this.typeCheckReturnExpression(ast, typeCheckContext);
 
+                case NodeType.Name:
+                    return this.typeCheckNameExpression(ast, typeCheckContext);
+
+                case NodeType.Dot:
+                    return this.typeCheckDottedNameExpression(ast, typeCheckContext);
+
+                case NodeType.Switch:
+                    return this.typeCheckSwitchStatement(ast, typeCheckContext);
+
+                case NodeType.Case:
+                    return this.typeCheckCaseStatement(ast, typeCheckContext);
+
                 default:
                     break;
             }
@@ -58410,6 +58485,7 @@ module TypeScript {
             var callEx = <CallExpression>ast;
             var resultType = this.resolver.resolveAST(callEx, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
 
+
             var args = callEx.arguments;
 
             if (args) {
@@ -58418,7 +58494,7 @@ module TypeScript {
                 }
             }
 
-            return null;
+            return resultType;
         }
 
         // 'New' expressions 
@@ -58538,7 +58614,7 @@ module TypeScript {
             this.typeCheckAST(forStatementAST.cond, typeCheckContext);
             this.typeCheckAST(forStatementAST.body, typeCheckContext);            
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckForInStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58561,7 +58637,7 @@ module TypeScript {
             varSym.setType(this.semanticInfoChain.stringTypeSymbol);
             varSym.setResolved();            
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58570,7 +58646,7 @@ module TypeScript {
             this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
             this.typeCheckAST(whileStatementAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckDoWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58579,7 +58655,7 @@ module TypeScript {
             this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
             this.typeCheckAST(whileStatementAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckIfStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58590,7 +58666,7 @@ module TypeScript {
             this.typeCheckAST(ifStatementAST.thenBod, typeCheckContext);
             this.typeCheckAST(ifStatementAST.elseBod, typeCheckContext);
                 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckBlockStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58598,12 +58674,12 @@ module TypeScript {
 
             this.typeCheckAST(blockStatement.statements, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckWithStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // PULLTODO: "With" statements
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckTryFinallyStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58612,7 +58688,7 @@ module TypeScript {
             this.typeCheckAST(tryFinallyAST.tryNode, typeCheckContext);
             this.typeCheckAST(tryFinallyAST.finallyNode, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckTryCatchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58621,7 +58697,7 @@ module TypeScript {
             this.typeCheckAST(tryCatchAST.tryNode, typeCheckContext);
             this.typeCheckAST(tryCatchAST.catchNode, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckTryBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58629,7 +58705,7 @@ module TypeScript {
 
             this.typeCheckAST(tryAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckCatchBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58637,7 +58713,7 @@ module TypeScript {
 
             this.typeCheckAST(catchAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckFinallyBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -58645,13 +58721,40 @@ module TypeScript {
 
             this.typeCheckAST(finallyAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckReturnExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var returnAST = <ReturnStatement>ast;
 
             return this.typeCheckAST(returnAST.returnExpression, typeCheckContext);
+        }
+
+        public typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            return this.resolver.resolveNameExpression(<Identifier>ast, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        }
+
+        public typeCheckDottedNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            return this.resolver.resolveDottedNameExpression(<BinaryExpression>ast, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        }
+
+        public typeCheckSwitchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var switchAST = <SwitchStatement>ast;
+
+            this.typeCheckAST(switchAST.val, typeCheckContext);
+            this.typeCheckAST(switchAST.caseList, typeCheckContext);
+            this.typeCheckAST(switchAST.defaultCase, typeCheckContext);
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        public typeCheckCaseStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var caseAST = <CaseStatement>ast;
+
+            this.typeCheckAST(caseAST.expr, typeCheckContext);
+            this.typeCheckAST(caseAST.body, typeCheckContext);
+
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
     }
@@ -64272,10 +64375,22 @@ module TypeScript {
 module TypeScript {
     export class PullEmitter extends Emitter {
         public locationInfo: LocationInfo = null;
+        private pullTypeChecker: PullTypeChecker = null;
         private declStack: PullDecl[] = [];
+
+        private setTypeCheckerUnit(fileName: string) {
+            if (!this.pullTypeChecker.resolver) {
+                this.pullTypeChecker.setUnit(fileName);
+                return;
+            }
+
+            this.pullTypeChecker.resolver.setUnitPath(fileName);
+        }
 
         constructor(emittingFileName: string, outfile: ITextWriter, emitOptions: EmitOptions, errorReporter: ErrorReporter, private semanticInfoChain: SemanticInfoChain) {
             super(null, emittingFileName, outfile, emitOptions, errorReporter);
+
+            this.pullTypeChecker = new PullTypeChecker(semanticInfoChain);
         }
 
         public setUnit(locationInfo: LocationInfo) {
@@ -64290,8 +64405,8 @@ module TypeScript {
 
         public getVarDeclFromIdentifier(ident: Identifier) {
             var resolvingContext = new PullTypeResolutionContext();
-            var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.fileName);
-            var pullSymbol = typeResolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
+            this.setTypeCheckerUnit(this.locationInfo.fileName);
+            var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
@@ -64308,8 +64423,8 @@ module TypeScript {
 
         public getConstantDecl(dotExpr: BinaryExpression) {
             var resolvingContext = new PullTypeResolutionContext();
-            var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.fileName);
-            var pullSymbol = typeResolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
+            this.setTypeCheckerUnit(this.locationInfo.fileName);
+            var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
@@ -64463,8 +64578,8 @@ module TypeScript {
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
                 var resolvingContext = new PullTypeResolutionContext();
-                var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.fileName);
-                var pullSymbol = typeResolver.resolveNameExpression(name,
+                this.setTypeCheckerUnit(this.locationInfo.fileName);
+                var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(name,
                     this.getEnclosingDecl(), resolvingContext);
                 var pullSymbolKind = pullSymbol.getKind();
                 if (addThis && (this.emitState.container != EmitContainer.Args) && pullSymbol) {
@@ -64494,8 +64609,10 @@ module TypeScript {
                             }
                         }
                         else if (pullSymbolKind == PullElementKind.Property) {
-                            this.emitThis();
-                            this.writeToOutput(".");
+                            if (pullSymbolContainer.getKind() == PullElementKind.Class) {
+                                this.emitThis();
+                                this.writeToOutput(".");
+                            }
                         }
                         else {
                             var pullDecls = pullSymbol.getDeclarations();
@@ -68196,13 +68313,13 @@ module TypeScript {
             this.parser.errorCallback = fn;
         }
 
-        public updateUnit(prog: string, fileName: string, setRecovery: bool) {
-            return this.updateSourceUnit(new StringScriptSnapshot(prog), fileName, setRecovery);
+        public updateUnit(prog: string, fileName: string) {
+            return this.updateSourceUnit(new StringScriptSnapshot(prog), fileName);
         }
 
-        public updateSourceUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): bool {
+        public updateSourceUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("updateSourceUnit(" + fileName + ")", () => {
-                var updateResult = this.partialUpdateUnit(sourceText, fileName, setRecovery);
+                var updateResult = this.partialUpdateUnit(sourceText, fileName);
                 return this.applyUpdateResult(updateResult);
             });
         }
@@ -68231,11 +68348,9 @@ module TypeScript {
             }
         }
 
-        public partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): UpdateUnitResult {
+        public partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string): UpdateUnitResult {
             return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
-                if (setRecovery) {
-                    this.parser.setErrorRecovery(null);
-                }
+                this.parser.setErrorRecovery(null);
 
                 var updateResult: UpdateUnitResult;
 
@@ -68773,6 +68888,7 @@ module TypeScript {
 
             var emitter: Emitter = null;
             var fileNames = this.fileNameToScript.getAllKeys();
+            var startEmitTime = (new Date()).getTime();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
                 if (this.emitSettings.outputMany || emitter === null) {
@@ -68781,6 +68897,7 @@ module TypeScript {
                     this.emitUnit(script, true, emitter, usePullEmitter);
                 }
             }
+            this.logger.log("Emit: " + ((new Date()).getTime() - startEmitTime));
 
             if (emitter) {
                 emitter.Close();
@@ -68932,8 +69049,15 @@ module TypeScript {
                 fileNames = this.fileNameToScript.getAllKeys();
                 for (i = 0; i < fileNames.length; i++) {
                     fileName = fileNames[i];
-                    this.logger.log("Type checking " + fileName);
-                    this.pullTypeChecker.typeCheckScript(<Script>this.fileNameToScript.lookup(fileName), fileName, this);
+
+                    if ( reportErrors ) {
+                        this.logger.log( "Type checking " + fileName );
+                        this.pullTypeChecker.typeCheckScript( <Script>this.fileNameToScript.lookup( fileName ), fileName, this );
+                    }
+                    else {
+                        this.logger.log( "Resolving " + fileName );
+                        this.pullResolveFile(fileName);
+                    }
                 }
                 var findErrorsEndTime = new Date().getTime();                
 
@@ -69479,11 +69603,9 @@ module TypeScript {
             });
         }
 
-        public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): bool {
+        public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
-                if (setRecovery) {
-                    this.parser.setErrorRecovery(null);
-                }
+                this.parser.setErrorRecovery(null);
 
                 var updateResult: UpdateUnitResult;
 

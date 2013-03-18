@@ -160,7 +160,7 @@ module TypeScript {
               4166287, 4999559, 5999471, 7199369];
 
         public static getPrime(min: number): number {
-            for (var i = 0; i < primes.length; i++) {
+            for (var i = 0; i < Hash.primes.length; i++) {
                 var num = Hash.primes[i];
                 if (num >= min) {
                     return num;
