@@ -905,24 +905,6 @@ module Services {
             return this.getASTItems(script.locationInfo.fileName, script, match, findMinChar, findLimChar);
         }
 
-        /// LOG AST
-        ///
-        public logAST(fileName: string): void {
-            this.refresh();
-
-            var script = this.pullCompilerState.getScriptAST(fileName);
-            new TypeScript.AstLogger(this.logger).logScript(script);
-        }
-
-        /// LOG SYNTAX AST
-        ///
-        public logSyntaxAST(fileName: string): void {
-            this.minimalRefresh();
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            new TypeScript.AstLogger(this.logger).logScript(syntaxAST.getScript());
-        }
-
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
             this.pullCompilerState.refresh();
 
@@ -1264,18 +1246,7 @@ module Services {
                 this.logger.log("getAstPathToPosition(" + script + ", " + pos + ")");
             }
 
-            var path = TypeScript.getAstPathToPosition(script, pos, options);
-
-            if (this.logger.information()) {
-                if (path.count() == 0) {
-                    this.logger.log("getAstPathToPosition: no ast found at position");
-                }
-                else {
-                    new TypeScript.AstLogger(this.logger).logNode(<TypeScript.Script>script, path.ast(), 0);
-                }
-            }
-
-            return path;
+            return TypeScript.getAstPathToPosition(script, pos, options);
         }
 
         public getIdentifierPathToPosition(script: TypeScript.AST, pos: number): TypeScript.AstPath {

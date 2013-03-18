@@ -16,13 +16,8 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-
     export class IncrementalParser {
-        
-        private astLogger: AstLogger;
-
-        constructor (private logger: TypeScript.ILogger) {
-            this.astLogger = new AstLogger(this.logger);
+        constructor(private logger: TypeScript.ILogger) {
         }
 
         //
@@ -199,14 +194,6 @@ module TypeScript {
             var lineMap1 = script.locationInfo.lineMap;
             var lineMap2 = partial.locationInfo.lineMap;
 
-            if (this.logger.information()) {
-                this.logger.log("lineMap1 (before):");
-                this.astLogger.logLinemap(lineMap1);
-                this.logger.log("lineMap2 (quick parse):");
-                this.astLogger.logLinemap(lineMap2);
-                this.logger.log("EditRange=" + editRange);
-            }
-
             // Skip entries < minChar
             var i1 = 1; // lineMap[0] is always 0.
             var i2 = 1; // lineMap[0] is always 0.
@@ -259,11 +246,6 @@ module TypeScript {
                 for (; i2 < len2; i2++) {
                     lineMap1.push(lineMap2[i2] + editRange.span().start());
                 }
-            }
-
-            if (this.logger.information()) {
-                this.logger.log("lineMap1 (after merge):");
-                this.astLogger.logLinemap(lineMap1);
             }
         }
 

@@ -49,9 +49,6 @@ module Services {
 
         refresh(throwOnError: bool): void;
 
-        logAST(fileName: string): void;
-        logSyntaxAST(fileName: string): void;
-
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
@@ -510,28 +507,6 @@ module Services {
                     var items = this.languageService.getOutliningRegions(fileName);
                     var result = this._navigateToItemsToString(items);
                     return result;
-                });
-        }
-
-        /// LOG AST
-        ///
-        public logAST(fileName: string): void {
-            this.forwardCall(
-                "logAST(\"" + fileName + "\")",
-                () => {
-                    this.languageService.logAST(fileName);
-                    return null;
-                });
-        }
-
-        /// LOG SYNTAX AST
-        ///
-        public logSyntaxAST(fileName: string): void {
-            this.forwardCall(
-                "logSyntaxAST(\"" + fileName + "\")",
-                () => {
-                    this.languageService.logSyntaxAST(fileName);
-                    return null;
                 });
         }
 

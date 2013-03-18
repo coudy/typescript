@@ -21,7 +21,6 @@
 ///<reference path='astWalker.ts' />
 ///<reference path='astWalkerCallback.ts' />
 ///<reference path='astPath.ts' />
-///<reference path='astLogger.ts' />
 ///<reference path='binder.ts' />
 ///<reference path='base64.ts' />
 ///<reference path='sourceMapping.ts' />
