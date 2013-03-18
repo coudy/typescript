@@ -526,6 +526,10 @@ module TypeScript {
         }
 
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
+            if (!type) {
+                return false;
+            }
+
             if (!type.isGeneric()) {
                 return false;
             }
