@@ -30,8 +30,7 @@ module TypeScript.Formatting2 {
         }
 
         public getLineNumberFromPosition(position: number): number {
-            var lineNumber = TypeScript.getZeroBasedLineNumberFromPosition(this.snapshot.lineMap(), position);
-            return lineNumber;   // We want to be 0-based.
+            return this.snapshot.lineMap().getLineNumberFromPosition(position);
         }
 
         public getLineFromPosition(position: number): ITextSnapshotLine {

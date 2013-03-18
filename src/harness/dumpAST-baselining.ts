@@ -104,10 +104,12 @@ module DumpAST {
         entry.nodeType = (<any>TypeScript.NodeType)._map[ast.nodeType];
         entry.minChar = ast.minChar;
         entry.limChar = ast.limChar;
-        entry.startLine = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.minChar).line;
-        entry.startCol = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.minChar).col;
-        entry.endLine = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.limChar).line;
-        entry.endCol = TypeScript.getZeroBasedLineColumnFromPosition(script, ast.limChar).col;
+
+        var lineMap = script.locationInfo.lineMap1;
+        entry.startLine = lineMap.getLineAndCharacterFromPosition(ast.minChar).line();
+        entry.startCol = lineMap.getLineAndCharacterFromPosition(ast.minChar).character();
+        entry.endLine = lineMap.getLineAndCharacterFromPosition(ast.limChar).line();
+        entry.endCol = lineMap.getLineAndCharacterFromPosition(ast.limChar).character();
 
         if (entry.startLine >= 0) {
             entry.startLine++;

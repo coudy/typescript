@@ -1543,13 +1543,6 @@ module TypeScript {
         lineCol.col = linePos.character();
     }
 
-    // Return the [line, column] (both 0 based) corresponding to a given position in a given script.
-    export function getZeroBasedLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
-        var result = { line: -1, col: -1 };
-        getZeroBasedSourceLineColFromMap(result, position, script.locationInfo.lineMap1);
-        return result;
-    }
-
     //
     // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
     //

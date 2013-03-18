@@ -851,8 +851,7 @@ module Formatting {
         }
 
         public GetLineNumberFromPosition(position: number): number {
-            var lineNumber = TypeScript.getZeroBasedLineNumberFromPosition(this.script.locationInfo.lineMap1, position);
-            return lineNumber;   // We want to be 0-based.
+            return this.script.locationInfo.lineMap1.getLineNumberFromPosition(position);
         }
 
         public GetLineFromPosition(position: number): ITextSnapshotLine {
