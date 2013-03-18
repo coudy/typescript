@@ -228,6 +228,18 @@ module TypeScript {
                 case NodeType.Return:
                     return this.typeCheckReturnExpression(ast, typeCheckContext);
 
+                case NodeType.Name:
+                    return this.typeCheckNameExpression(ast, typeCheckContext);
+
+                case NodeType.Dot:
+                    return this.typeCheckDottedNameExpression(ast, typeCheckContext);
+
+                case NodeType.Switch:
+                    return this.typeCheckSwitchStatement(ast, typeCheckContext);
+
+                case NodeType.Case:
+                    return this.typeCheckCaseStatement(ast, typeCheckContext);
+
                 default:
                     break;
             }
@@ -506,6 +518,7 @@ module TypeScript {
             var callEx = <CallExpression>ast;
             var resultType = this.resolver.resolveAST(callEx, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
 
+
             var args = callEx.arguments;
 
             if (args) {
@@ -514,7 +527,7 @@ module TypeScript {
                 }
             }
 
-            return null;
+            return resultType;
         }
 
         // 'New' expressions 
@@ -634,7 +647,7 @@ module TypeScript {
             this.typeCheckAST(forStatementAST.cond, typeCheckContext);
             this.typeCheckAST(forStatementAST.body, typeCheckContext);            
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckForInStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -657,7 +670,7 @@ module TypeScript {
             varSym.setType(this.semanticInfoChain.stringTypeSymbol);
             varSym.setResolved();            
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -666,7 +679,7 @@ module TypeScript {
             this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
             this.typeCheckAST(whileStatementAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckDoWhileStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -675,7 +688,7 @@ module TypeScript {
             this.typeCheckAST(whileStatementAST.cond, typeCheckContext);
             this.typeCheckAST(whileStatementAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckIfStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -686,7 +699,7 @@ module TypeScript {
             this.typeCheckAST(ifStatementAST.thenBod, typeCheckContext);
             this.typeCheckAST(ifStatementAST.elseBod, typeCheckContext);
                 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckBlockStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -694,12 +707,12 @@ module TypeScript {
 
             this.typeCheckAST(blockStatement.statements, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckWithStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             // PULLTODO: "With" statements
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckTryFinallyStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -708,7 +721,7 @@ module TypeScript {
             this.typeCheckAST(tryFinallyAST.tryNode, typeCheckContext);
             this.typeCheckAST(tryFinallyAST.finallyNode, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckTryCatchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -717,7 +730,7 @@ module TypeScript {
             this.typeCheckAST(tryCatchAST.tryNode, typeCheckContext);
             this.typeCheckAST(tryCatchAST.catchNode, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckTryBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -725,7 +738,7 @@ module TypeScript {
 
             this.typeCheckAST(tryAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckCatchBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -733,7 +746,7 @@ module TypeScript {
 
             this.typeCheckAST(catchAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckFinallyBlock(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
@@ -741,13 +754,40 @@ module TypeScript {
 
             this.typeCheckAST(finallyAST.body, typeCheckContext);
 
-            return null;
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
         public typeCheckReturnExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
             var returnAST = <ReturnStatement>ast;
 
             return this.typeCheckAST(returnAST.returnExpression, typeCheckContext);
+        }
+
+        public typeCheckNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            return this.resolver.resolveNameExpression(<Identifier>ast, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        }
+
+        public typeCheckDottedNameExpression(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            return this.resolver.resolveDottedNameExpression(<BinaryExpression>ast, typeCheckContext.getEnclosingDecl(), this.context).getType();
+        }
+
+        public typeCheckSwitchStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var switchAST = <SwitchStatement>ast;
+
+            this.typeCheckAST(switchAST.val, typeCheckContext);
+            this.typeCheckAST(switchAST.caseList, typeCheckContext);
+            this.typeCheckAST(switchAST.defaultCase, typeCheckContext);
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        public typeCheckCaseStatement(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
+            var caseAST = <CaseStatement>ast;
+
+            this.typeCheckAST(caseAST.expr, typeCheckContext);
+            this.typeCheckAST(caseAST.body, typeCheckContext);
+
+            return this.semanticInfoChain.voidTypeSymbol;
         }
 
     }

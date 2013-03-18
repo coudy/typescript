@@ -144,6 +144,8 @@ module TypeScript {
 
         public specializingToAny = false;
 
+        constructor (public emitting = false) {}
+
         public pushContextualType(type: PullTypeSymbol, provisional: bool, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
         }

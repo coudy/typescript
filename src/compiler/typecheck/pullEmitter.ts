@@ -18,10 +18,22 @@
 module TypeScript {
     export class PullEmitter extends Emitter {
         public locationInfo: LocationInfo = null;
+        private pullTypeChecker: PullTypeChecker = null;
         private declStack: PullDecl[] = [];
+
+        private setTypeCheckerUnit(fileName: string) {
+            if (!this.pullTypeChecker.resolver) {
+                this.pullTypeChecker.setUnit(fileName);
+                return;
+            }
+
+            this.pullTypeChecker.resolver.setUnitPath(fileName);
+        }
 
         constructor(emittingFileName: string, outfile: ITextWriter, emitOptions: EmitOptions, errorReporter: ErrorReporter, private semanticInfoChain: SemanticInfoChain) {
             super(null, emittingFileName, outfile, emitOptions, errorReporter);
+
+            this.pullTypeChecker = new PullTypeChecker(semanticInfoChain);
         }
 
         public setUnit(locationInfo: LocationInfo) {
@@ -36,8 +48,8 @@ module TypeScript {
 
         public getVarDeclFromIdentifier(ident: Identifier) {
             var resolvingContext = new PullTypeResolutionContext();
-            var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.fileName);
-            var pullSymbol = typeResolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
+            this.setTypeCheckerUnit(this.locationInfo.fileName);
+            var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
@@ -54,8 +66,8 @@ module TypeScript {
 
         public getConstantDecl(dotExpr: BinaryExpression) {
             var resolvingContext = new PullTypeResolutionContext();
-            var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.fileName);
-            var pullSymbol = typeResolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
+            this.setTypeCheckerUnit(this.locationInfo.fileName);
+            var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
@@ -209,8 +221,8 @@ module TypeScript {
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
                 var resolvingContext = new PullTypeResolutionContext();
-                var typeResolver = new PullTypeResolver(this.semanticInfoChain, this.locationInfo.fileName);
-                var pullSymbol = typeResolver.resolveNameExpression(name,
+                this.setTypeCheckerUnit(this.locationInfo.fileName);
+                var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(name,
                     this.getEnclosingDecl(), resolvingContext);
                 var pullSymbolKind = pullSymbol.getKind();
                 if (addThis && (this.emitState.container != EmitContainer.Args) && pullSymbol) {

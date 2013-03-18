@@ -792,6 +792,7 @@ module TypeScript {
 
             var emitter: Emitter = null;
             var fileNames = this.fileNameToScript.getAllKeys();
+            var startEmitTime = (new Date()).getTime();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]);
                 if (this.emitSettings.outputMany || emitter === null) {
@@ -800,6 +801,7 @@ module TypeScript {
                     this.emitUnit(script, true, emitter, usePullEmitter);
                 }
             }
+            this.logger.log("Emit: " + ((new Date()).getTime() - startEmitTime));
 
             if (emitter) {
                 emitter.Close();
