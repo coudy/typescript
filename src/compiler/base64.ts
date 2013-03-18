@@ -18,14 +18,14 @@ module TypeScript {
         static encodedValues = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
         static encode(inValue: number) {
             if (inValue < 64) {
-                return encodedValues.charAt(inValue);
+                return Base64Format.encodedValues.charAt(inValue);
             }
             throw TypeError(inValue + ": not a 64 based value");
         }
 
         static decodeChar(inChar: string) {
             if (inChar.length === 1) {
-                return encodedValues.indexOf(inChar);
+                return Base64Format.encodedValues.indexOf(inChar);
             } else {
                 throw TypeError('"' + inChar + '" must have length 1');
             }

@@ -8,14 +8,14 @@ module TypeScript {
         }
 
         public static isHexDigit(c: number): bool {
-            return isDecimalDigit(c) ||
+            return CharacterInfo.isDecimalDigit(c) ||
                    (c >= CharacterCodes.A && c <= CharacterCodes.F) ||
                    (c >= CharacterCodes.a && c <= CharacterCodes.f);
         }
 
         public static hexValue(c: number): number {
             // Debug.assert(isHexDigit(c));
-            return isDecimalDigit(c)
+            return CharacterInfo.isDecimalDigit(c)
                 ? (c - CharacterCodes._0)
                 : (c >= CharacterCodes.A && c <= CharacterCodes.F)
                     ? c - CharacterCodes.A + 10

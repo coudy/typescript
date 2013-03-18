@@ -339,7 +339,7 @@ module TypeScript {
                         }
                     }
                 }
-                else /*if (!(pathDeclKind & PullElementKind.Class))*/ {
+                else if (!(pathDeclKind & PullElementKind.Class)) {
                     childDecls = decl.findChildDecls(symbolName, declSearchKind);
 
                     if (childDecls.length) {
@@ -4173,6 +4173,11 @@ module TypeScript {
                     if (j >= parameters.length) {
                         continue;
                     }
+
+                    if (!parameters[j].isResolved()) {
+                        this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
+                    }
+
                     memberType = parameters[j].getType();
 
                     // account for varargs

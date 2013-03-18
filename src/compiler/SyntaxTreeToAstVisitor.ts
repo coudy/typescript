@@ -71,7 +71,7 @@ module TypeScript {
         }
 
         public static visit(syntaxTree: SyntaxTree, fileName: string): Script {
-            var map = checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
+            var map = SyntaxTreeToAstVisitor.checkPositions ? SyntaxPositionMap.create(syntaxTree.sourceUnit()) : null;
             var visitor = new SyntaxTreeToAstVisitor(map, fileName, syntaxTree.lineMap());
             return syntaxTree.sourceUnit().accept(visitor);
         }

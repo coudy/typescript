@@ -7,11 +7,11 @@ module TypeScript {
         private static FNV_PRIME = 16777619;
 
         private static computeFnv1aCharArrayHashCode(text: number[], start: number, len: number): number {
-            var hashCode = FNV_BASE;
+            var hashCode = Hash.FNV_BASE;
             var end = start + len;
 
             for (var i = start; i < end; i++) {
-                hashCode = (hashCode ^ text[i]) * FNV_PRIME;
+                hashCode = (hashCode ^ text[i]) * Hash.FNV_PRIME;
             }
 
             return hashCode;
@@ -161,7 +161,7 @@ module TypeScript {
 
         public static getPrime(min: number): number {
             for (var i = 0; i < primes.length; i++) {
-                var num = primes[i];
+                var num = Hash.primes[i];
                 if (num >= min) {
                     return num;
                 }
@@ -176,7 +176,7 @@ module TypeScript {
                 // NOTE: 2146435069 fits in 31 bits.
                 return 2146435069;
             }
-            return getPrime(num);
+            return Hash.getPrime(num);
         }
 
         public static combine(value: number, currentHash: number): number {
