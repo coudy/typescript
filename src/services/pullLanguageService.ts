@@ -35,7 +35,7 @@ module Services {
             });
         }
 
-        public minimalRefresh(): void {
+        private minimalRefresh(): void {
             TypeScript.timeFunction(this.logger, "minimalRefresh()", () => {
                 this.pullCompilerState.minimalRefresh();
             });
