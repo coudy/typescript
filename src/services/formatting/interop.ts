@@ -851,7 +851,7 @@ module Formatting {
         }
 
         public GetLineNumberFromPosition(position: number): number {
-            var lineNumber = TypeScript.getZeroBasedLineNumberFromPosition(this.script.locationInfo.lineMap, position);
+            var lineNumber = TypeScript.getZeroBasedLineNumberFromPosition(this.script.locationInfo.lineMap1, position);
             return lineNumber;   // We want to be 0-based.
         }
 
@@ -870,20 +870,21 @@ module Formatting {
         }
 
         private GetLineFromLineNumberWorker(lineNumber: number): ITextSnapshotLine {
-            var lineMap = this.script.locationInfo.lineMap;
+            var lineMap1 = this.script.locationInfo.lineMap1;
             var lineMapIndex = lineNumber; //Note: lineMap is 0-based
-            if (lineMapIndex < 0 || lineMapIndex >= lineMap.length)
+            var lineStarts = lineMap1.lineStarts();
+            if (lineMapIndex < 0 || lineMapIndex >= lineStarts.length)
                 throw new Error("invalid line number (" + lineMapIndex + ")");
-            var start = lineMap[lineMapIndex];
+            var start = lineMap1.getLineStartPosition(lineMapIndex);
 
             var end: number;
             var endIncludingLineBreak: number;
             var lineBreak = "";
-            if (lineMapIndex == lineMap.length) {
+            if (lineMapIndex == lineStarts.length) {
                 end = endIncludingLineBreak = this.sourceText.getLength();
             }
             else {
-                endIncludingLineBreak = (lineMapIndex >= lineMap.length - 1 ? this.sourceText.getLength() : this.script.locationInfo.lineMap[lineMapIndex + 1]);
+                endIncludingLineBreak = (lineMapIndex >= lineStarts.length - 1 ? this.sourceText.getLength() : lineStarts[lineMapIndex + 1]);
                 for (var p = endIncludingLineBreak - 1; p >= start; p--) {
                     var c = this.sourceText.getText(p, p + 1);
                     //TODO: Other ones?
@@ -898,7 +899,7 @@ module Formatting {
             return result;
         }
     }
-
+    
     export interface ITextSnapshotLine {
         snapshot(): ITextSnapshot;
 

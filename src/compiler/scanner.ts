@@ -411,124 +411,12 @@ module TypeScript {
         getComments(): CommentToken[];
         getCommentsForLine(line: number): CommentToken[];
         resetComments(): void;
-        lineMap: number[];
+        lineMap1: ILineMap;
         setSourceText(newSrc: IScriptSnapshot, textMode: number): void;
         setErrorHandler(reportError: (message: string) => void ): void;
         seenUnicodeChar: bool;
         seenUnicodeCharInComment: bool;
         getLookAheadToken(): Token;
-    }
-
-    export class SavedTokens implements IScanner {
-        public prevToken: Token = null;
-        public curSavedToken: SavedToken = null;
-        public prevSavedToken: SavedToken = null;
-        public currentTokenIndex: number;
-        public currentTokens: SavedToken[];
-        public tokensByLine: SavedToken[][];
-        public lexStateByLine: LexState[];
-        public previousToken(): Token { return this.prevToken; }
-        public currentToken = 0;
-        public tokens: SavedToken[] = [];
-        public startPos: number;
-        public pos: number;
-        public seenUnicodeChar: bool = false;
-        seenUnicodeCharInComment: bool = false;
-
-        public startLine: number;
-        public prevLine = 0;
-        public line = 0;
-        public col = 0;
-        public leftCurlyCount: number;
-        public rightCurlyCount: number;
-
-        public lexState = LexState.Start;
-        public commentStack: CommentToken[] = [];
-
-        public lineMap: number[] = [];
-
-        public addToken(tok: Token, scanner: IScanner) {
-            this.tokens[this.currentToken++] = new SavedToken(tok, scanner.startPos, scanner.pos);
-        }
-
-        public scan(): Token {
-            // TODO: curly count
-            this.startLine = this.line;
-            this.startPos = this.col;
-            if (this.currentTokenIndex === this.currentTokens.length) {
-                if (this.line < this.lineMap.length) {
-                    this.line++;
-                    this.col = 0;
-                    this.currentTokenIndex = 0;
-                    this.currentTokens = this.tokensByLine[this.line];
-                }
-                else {
-                    return staticTokens[TokenID.EndOfFile];
-                }
-            }
-
-            if (this.currentTokenIndex < this.currentTokens.length) {
-                this.prevToken = this.curSavedToken.tok;
-                this.prevSavedToken = this.curSavedToken;
-                this.curSavedToken = this.currentTokens[this.currentTokenIndex++];
-                var curToken = this.curSavedToken.tok;
-                this.pos = this.curSavedToken.limChar;
-                this.col += (this.curSavedToken.limChar - this.curSavedToken.minChar);
-                this.startPos = this.curSavedToken.minChar;
-                this.prevLine = this.line;
-                return curToken;
-            }
-            else {
-                return staticTokens[TokenID.EndOfFile];
-            }
-        }
-
-        public lastTokenLimChar(): number {
-            if (this.prevSavedToken !== null) {
-                return this.prevSavedToken.limChar;
-            }
-            else {
-                return 0;
-            }
-        }
-
-        public lastTokenHadNewline(): bool {
-            return this.prevLine != this.startLine;
-        }
-
-        public getComments() {
-            var stack = this.commentStack;
-            this.commentStack = [];
-            return stack;
-        }
-
-        public getCommentsForLine(line: number) {
-            var comments: CommentToken[] = null;
-            while ((this.commentStack.length > 0) && (this.commentStack[0].line === line)) {
-                if (comments === null) {
-                    comments = [this.commentStack.shift()];
-                }
-                else {
-                    comments = comments.concat([this.commentStack.shift()]);
-                }
-
-            }
-            return comments;
-        }
-
-        public resetComments() {
-            this.commentStack = [];
-        }
-
-        public setSourceText(newSrc: IScriptSnapshot, textMode: number) {
-        }
-
-        public setErrorHandler(reportError: (message: string) => void ) {
-        }
-
-        public getLookAheadToken(): Token {
-            throw new Error("Invalid operation.");
-        }
     }
 
     export class Scanner implements IScanner {
@@ -544,7 +432,7 @@ module TypeScript {
         public startLine: number;
         public src: string;
         public len = 0;
-        public lineMap: number[] = [];
+        public lineMap1: ILineMap = null;
 
         public ch = LexEOF;
         public lexState = LexState.Start;
@@ -555,7 +443,6 @@ module TypeScript {
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
         public commentStack: CommentToken[] = [];
-        public saveScan: SavedTokens = null;
         public seenUnicodeChar: bool = false;
         seenUnicodeCharInComment: bool = false;
 
@@ -566,7 +453,6 @@ module TypeScript {
         constructor() {
             this.startCol = this.col;
             this.startLine = this.line;
-            this.lineMap[0] = 0;
 
             if (!LexKeywordTable) {
                 LexInitialize();
@@ -588,8 +474,7 @@ module TypeScript {
             this.len = 0;
             this.src = newSrc.getText(0, newSrc.getLength());
             this.len = this.src.length;
-            this.lineMap = [];
-            this.lineMap[0] = 0;
+            this.lineMap1 = LineMap.createFromScriptSnapshot(newSrc);
             this.commentStack = [];
             this.leftCurlyCount = 0;
             this.rightCurlyCount = 0;
@@ -827,7 +712,6 @@ module TypeScript {
             this.col = 0;
             if (this.mode === LexMode.File) {
                 this.line++;
-                this.lineMap[this.line] = this.pos + 1;
             }
         }
 
@@ -1085,9 +969,6 @@ module TypeScript {
         public scan(): Token {
             this.prevLine = this.line;
             this.prevTok = this.innerScan();
-            if (this.saveScan) {
-                this.saveScan.addToken(this.prevTok, this);
-            }
             return this.prevTok;
         }
 
@@ -1646,45 +1527,26 @@ module TypeScript {
     }
 
     // Return the (0-based) line number from a character offset using the provided linemap.
-    export function getZeroBasedLineNumberFromPosition(lineMap: number[], position: number): number {
+    export function getZeroBasedLineNumberFromPosition(lineMap1: ILineMap, position: number): number {
         if (position === -1) {
             return -1;
         }
-
-        // Binary search
-        var min = 0;
-        var max = lineMap.length - 1;
-        while (min < max) {
-            var med = (min + max) >> 1;
-            if (position < lineMap[med]) {
-                max = med - 1;
-            }
-            else if (position < lineMap[med + 1]) {
-                min = max = med; // found it
-            }
-            else {
-                min = med + 1;
-            }
-        }
-
-        return min;
+        
+        return lineMap1.getLineNumberFromPosition(position);
     }
 
     /// Return the [line, column] data for a given offset and a lineMap.
     /// Note that the returned line is 0-based, while the column is 0-based.
-    export function getZeroBasedSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap: number[]): void {
-        var line = getZeroBasedLineNumberFromPosition(lineMap, minChar);
-
-        if (line >= 0) {
-            lineCol.line = line;
-            lineCol.col = (minChar - lineMap[line]);
-        }
+    export function getZeroBasedSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap1: ILineMap): void {
+        var linePos = lineMap1.getLineAndCharacterFromPosition(minChar);
+        lineCol.line = linePos.line();
+        lineCol.col = linePos.character();
     }
 
     // Return the [line, column] (both 0 based) corresponding to a given position in a given script.
     export function getZeroBasedLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
         var result = { line: -1, col: -1 };
-        getZeroBasedSourceLineColFromMap(result, position, script.locationInfo.lineMap);
+        getZeroBasedSourceLineColFromMap(result, position, script.locationInfo.lineMap1);
         return result;
     }
 
@@ -1692,7 +1554,7 @@ module TypeScript {
     // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
     //
     export function getPositionFromZeroBasedLineColumn(locationInfo: TypeScript.LocationInfo, line: number, column: number): number {
-        return locationInfo.lineMap[line] + column;
+        return locationInfo.lineMap1.getPosition(line, column);
     }
 
     // Return true if the token is a primitive type

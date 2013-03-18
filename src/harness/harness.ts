@@ -1755,7 +1755,7 @@ module Harness {
             var script: ScriptInfo = this.fileNameToScript.lookup(fileName);
             assert.notNull(script);
 
-            var result = script.lineMap.getLinePosition(position);
+            var result = script.lineMap.getLineAndCharacterFromPosition(position);
             
             assert.is(result.line() >= 0);
             assert.is(result.character() >= 0);

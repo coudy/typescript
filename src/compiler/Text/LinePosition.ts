@@ -1,7 +1,7 @@
 ///<reference path='..\Core\Errors.ts' />
 
 module TypeScript {
-    export class LinePosition {
+    export class LineAndCharacter {
         private _line: number = 0;
         private _character: number = 0;
 

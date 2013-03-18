@@ -1156,7 +1156,7 @@ module TypeScript {
 
     export class LocationInfo {
         constructor(public fileName: string,
-                    public lineMap: number[]) {
+                    public lineMap1: ILineMap) {
         }
     }
 

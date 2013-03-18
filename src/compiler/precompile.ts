@@ -308,7 +308,7 @@ module TypeScript {
                     referencedCode.limChar = referencedCode.minChar + comment.value.length;
                     // Get the startLine and startCol
                     var result = { line: -1, col: -1 };
-                    getZeroBasedSourceLineColFromMap(result, comment.startPos, scanner.lineMap);
+                    getZeroBasedSourceLineColFromMap(result, comment.startPos, scanner.lineMap1);
                     if (result.line >= 0) {
                         result.line++;   // Make it 1-based
                     }

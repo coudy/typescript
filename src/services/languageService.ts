@@ -1098,7 +1098,7 @@ module Services {
             var syntaxAST = this._getScriptSyntaxAST(fileName);
 
             // find line and col
-            var lineMap = syntaxAST.getScript().locationInfo.lineMap;
+            var lineMap = syntaxAST.getScript().locationInfo.lineMap1;
             var lineNumber = TypeScript.getZeroBasedLineNumberFromPosition(lineMap, position);
 
             var manager = new Formatting.SmartIndentManager(syntaxAST, options);

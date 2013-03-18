@@ -8,7 +8,8 @@ module TypeScript {
         lineStarts(): number[];
         lineCount(): number;
         getLineNumberFromPosition(position: number): number;
-        getLinePosition(position: number): LinePosition;
+        getLineAndCharacterFromPosition(position: number): LineAndCharacter;
+        getLineStartPosition(lineNumber: number): number;
         getPosition(line: number, character: number): number;
     }
 
@@ -61,20 +62,28 @@ module TypeScript {
             return lineNumber;
         }
 
-        public getLinePosition(position: number): LinePosition {
+        public getLineStartPosition(lineNumber: number): number {
+            return this.lineStarts()[lineNumber];
+        }
+
+        public getLineAndCharacterFromPosition(position: number): LineAndCharacter {
             if (position < 0 || position > this.length) {
                 throw Errors.argumentOutOfRange("position");
             }
 
             var lineNumber = this.getLineNumberFromPosition(position);
 
-            return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
+            return new LineAndCharacter(lineNumber, position - this.lineStarts()[lineNumber]);
         }
 
         public static createFromText(text: ISimpleText): LineMap {
             var lineStarts = TextUtilities.parseLineStarts(text);
 
             return new LineMap(lineStarts, text.length());
+        }
+
+        public static createFromScriptSnapshot(scriptSnapshot: IScriptSnapshot): LineMap {
+            return new LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());
         }
 
         public static createFromString(text: string): LineMap {

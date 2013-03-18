@@ -234,14 +234,14 @@ module TypeScript.TextFactory {
             return lineNumber;
         }
 
-        public getLinePosition(position: number): LinePosition {
+        public getLinePosition(position: number): LineAndCharacter {
             if (position < 0 || position > this.length()) {
                 throw Errors.argumentOutOfRange("position");
             }
 
             var lineNumber = this.getLineNumberFromPosition(position);
 
-            return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
+            return new LineAndCharacter(lineNumber, position - this.lineStarts()[lineNumber]);
         }
     }
 

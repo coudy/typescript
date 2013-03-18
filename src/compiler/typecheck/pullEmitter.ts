@@ -295,8 +295,8 @@ module TypeScript {
             this.emitParensAndCommentsInPlace(name, false);
         }
 
-        public getLineMap() {
-            return this.locationInfo.lineMap;
+        public getLineMap(): ILineMap {
+            return this.locationInfo.lineMap1;
         }
 
         public isAccessorEmitted(funcDecl: FuncDecl) {

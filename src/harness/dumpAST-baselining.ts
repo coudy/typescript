@@ -219,12 +219,14 @@ module DumpAST {
         text += indentStr;
         text += addKey("sourceText");
         text += ": [\r\n";
-        for (var i = 0; i < script.locationInfo.lineMap.length; i++) {
+
+        var lineStarts = script.locationInfo.lineMap1.lineStarts();
+        for (var i = 0; i < lineStarts.length; i++) {
             if (i > 0) {
                 text += ",\r\n";
             }
-            var start = script.locationInfo.lineMap[i];
-            var end = (i < script.locationInfo.lineMap.length - 1 ? script.locationInfo.lineMap[i + 1] : sourceText.getLength());
+            var start = lineStarts[i];
+            var end = (i < lineStarts.length - 1 ? lineStarts[i + 1] : sourceText.getLength());
             text += indentStr + indentStr + JSON2.stringify(sourceText.getText(start, end));
         }
         text += "],";

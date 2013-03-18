@@ -149,7 +149,7 @@ module TypeScript {
         }
 
         public getZeroBasedSourceLineCol(lineCol: ILineCol, minChar: number): void {
-            getZeroBasedSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap);
+            getZeroBasedSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap1);
         }
 
         private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
@@ -4338,7 +4338,7 @@ module TypeScript {
             this.popDeclLists();
             script.minChar = minChar;
             script.limChar = this.scanner.pos;
-            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap);
+            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap1);
             script.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
             script.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
             script.isDeclareFile = this.parsingDeclareFile;

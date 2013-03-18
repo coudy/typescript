@@ -67,7 +67,7 @@ module TypeScript {
         /// Gets a line number, and position within that line, for the character at the 
         /// specified position
         /// </summary>
-        getLinePosition(position: number): LinePosition;
+        getLinePosition(position: number): LineAndCharacter;
 
         /// <summary>
         /// Returns a string representation of the contents of this IText within the given span.
