@@ -375,7 +375,7 @@ module TypeScript {
         }
 
         public addLocation(loc: number) {
-            if (this.additionalLocations === null) {
+            if (!this.additionalLocations) {
                 this.additionalLocations = [];
             }
             this.additionalLocations[this.additionalLocations.length] = loc;

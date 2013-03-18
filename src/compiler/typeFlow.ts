@@ -865,7 +865,7 @@ module TypeScript {
             if (varDecl.typeExpr) {
                 if (varDecl.typeExpr.type === null ||
                     (varDecl.typeExpr.type && varDecl.typeExpr.type === this.anyType && this.scope) ||
-                    varDecl.typeExpr.type.symbol === null ||
+                    (!varDecl.typeExpr.type.symbol) ||
                     !this.checker.typeStatusIsFinished(varDecl.typeExpr.type.symbol.typeCheckStatus)) {
                     this.typeCheck(varDecl.typeExpr);
                 }
@@ -1488,7 +1488,7 @@ module TypeScript {
                     leftScope = leftType.memberScope;
                 }
             }
-            if (leftScope === null) {
+            if (!leftScope) {
                 this.checker.errorReporter.expectedClassOrInterface(binex);
                 binex.type = this.anyType;
             }
