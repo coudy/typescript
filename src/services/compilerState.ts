@@ -15,38 +15,6 @@
 ///<reference path='typescriptServices.ts' />
 
 module Services {
-    //
-    // Cache known state of scripts information from host across language service calls.
-    // Used to help with incremental behavior of language service.
-    //
-    export class ScriptMap {
-        private map: TypeScript.StringHashTable;
-
-        constructor() {
-            // script id => ScriptMapEntry
-            this.map = new TypeScript.StringHashTable();
-        }
-
-        public setEntry(id: string, version: number) {
-            var entry: ScriptMapEntry = this.map.lookup(id);
-            if (entry === null) {
-                entry = new ScriptMapEntry(version);
-                this.map.add(id, entry);
-            }
-            else {
-                entry.version = version;
-            }
-        }
-
-        public getEntry(id: string): ScriptMapEntry {
-            return this.map.lookup(id);
-        }
-    }
-
-    export class ScriptMapEntry {
-        constructor(public version: number) {
-        }
-    }
 
     //
     // An cache entry in HostCache 
@@ -190,36 +158,20 @@ module Services {
         //
         // State related to compiler instance
         //
-        private compiler: TypeScript.TypeScriptCompiler;
-        private errorCollector: CompilerErrorCollector;
-        private scriptMap: ScriptMap;
-        private hostCache: HostCache;
-        private symbolTree: SymbolTree;
-        private compilationSettings: TypeScript.CompilationSettings;
+        private compiler: TypeScript.TypeScriptCompiler = null;
+        private errorCollector: CompilerErrorCollector = null;
 
-        constructor(public host: ILanguageServiceHost) {
+        private fileNameToCompilerScriptVersion: TypeScript.StringHashTable = null;
+        private hostCache: HostCache = null;
+        private symbolTree: SymbolTree = null;
+        private compilationSettings: TypeScript.CompilationSettings = null;
+
+        constructor(private host: ILanguageServiceHost) {
             this.logger = this.host;
-            //
-            // State related to compiler instance
-            //
-            this.compiler = null;
-            this.errorCollector = null;
-            this.scriptMap = null; // Map from fileName to FileMapEntry
-
-            //
-            // State recomputed at every "refresh" call (performance)
-            //
-            this.hostCache = null;
-            this.symbolTree = null;
-            this.compilationSettings = null;
         }
 
         public getCompilationSettings() {
             return this.compilationSettings;
-        }
-
-        private setUnitMapping(fileName: string) {
-            this.scriptMap.setEntry(fileName, this.hostCache.getVersion(fileName));
         }
 
         private onTypeCheckStarting(): void {
@@ -251,28 +203,23 @@ module Services {
             return this.hostCache.getVersion(fileName);
         }
 
-        private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
+        private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             this.errorCollector.startParsing(fileName);
 
-            //Note: We need to call "_setUnitMapping" _before_ calling into the compiler,
-            //      in case the compiler fails (i.e. throws an exception). This is due to the way
-            //      we recover from those failure (we still report errors to the host, 
-            //      and we need unit mapping info to do that correctly.
-            this.setUnitMapping(fileName);
-
-            var newScript = compiler.addSourceUnit(
-                this.hostCache.getScriptSnapshot(fileName), fileName);
+            // Keep track of the version of the script that we're adding to the compiler.
+            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
+            var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler,
                                    fileName: string): TypeScript.UpdateUnitResult {
-            var previousEntry = this.scriptMap.getEntry(fileName);
+            var compilerScriptVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
 
             //
             // If file version is the same, assume no update
             //
             var version = this.hostCache.getVersion(fileName);
-            if (previousEntry.version === version) {
+            if (compilerScriptVersion === version) {
                 //logger.log("Assumed unchanged unit: " + unitIndex + "-"+ fileName);
                 return TypeScript.UpdateUnitResult.noEdits(fileName); // not updated
             }
@@ -289,9 +236,9 @@ module Services {
                 return result;
             }
 
-            var sourceText = this.hostCache.getScriptSnapshot(fileName);
-            this.setUnitMapping(fileName);
-            return compiler.partialUpdateUnit(sourceText, fileName, true/*setRecovery*/);
+            // Keep track of the version of the script that we're updating.
+            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
+            return compiler.partialUpdateUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         }
 
         private updateSyntaxTree(fileName: string): void {
@@ -359,7 +306,7 @@ module Services {
             
             Services.copyDataObject(this.compilationSettings, this.getHostCompilationSettings());
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
-            this.scriptMap = new ScriptMap();
+            this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
             this.errorCollector = new CompilerErrorCollector(this.logger);
 
             //TODO: "bind" doesn't work here in the context of running unit tests
@@ -615,7 +562,7 @@ module Services {
         }
 
         public getScriptTextChangeRange(fileName: string): TypeScript.TextChangeRange {
-            var lastKnownVersion = this.scriptMap.getEntry(fileName).version;
+            var lastKnownVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
             return this.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 

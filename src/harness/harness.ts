@@ -790,8 +790,8 @@ module Harness {
                 }
                 else {
                     // requires unit to already exist in the compiler
-                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(""), fileName, true);
-                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), fileName, true);
+                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(""), fileName);
+                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), fileName);
                 }
             }
             else {
@@ -1278,11 +1278,11 @@ module Harness {
             return script;
         }
 
-        export function updateUnit(code: string, unitName: string, setRecovery?: bool) {
+        export function updateUnit(code: string, unitName: string) {
             if (Harness.usePull) {
-                compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), unitName, setRecovery);
+                compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), unitName);
             } else {
-                compiler.updateUnit(code, unitName, setRecovery);
+                compiler.updateUnit(code, unitName);
             }
         }
 

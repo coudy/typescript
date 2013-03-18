@@ -217,13 +217,13 @@ module TypeScript {
             this.parser.errorCallback = fn;
         }
 
-        public updateUnit(prog: string, fileName: string, setRecovery: bool) {
-            return this.updateSourceUnit(new StringScriptSnapshot(prog), fileName, setRecovery);
+        public updateUnit(prog: string, fileName: string) {
+            return this.updateSourceUnit(new StringScriptSnapshot(prog), fileName);
         }
 
-        public updateSourceUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): bool {
+        public updateSourceUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("updateSourceUnit(" + fileName + ")", () => {
-                var updateResult = this.partialUpdateUnit(sourceText, fileName, setRecovery);
+                var updateResult = this.partialUpdateUnit(sourceText, fileName);
                 return this.applyUpdateResult(updateResult);
             });
         }
@@ -252,11 +252,9 @@ module TypeScript {
             }
         }
 
-        public partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): UpdateUnitResult {
+        public partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string): UpdateUnitResult {
             return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
-                if (setRecovery) {
-                    this.parser.setErrorRecovery(null);
-                }
+                this.parser.setErrorRecovery(null);
 
                 var updateResult: UpdateUnitResult;
 
@@ -1500,11 +1498,9 @@ module TypeScript {
             });
         }
 
-        public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string, setRecovery: bool): bool {
+        public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
-                if (setRecovery) {
-                    this.parser.setErrorRecovery(null);
-                }
+                this.parser.setErrorRecovery(null);
 
                 var updateResult: UpdateUnitResult;
 

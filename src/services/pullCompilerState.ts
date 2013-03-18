@@ -10,33 +10,19 @@ module Services {
         //
         // State related to compiler instance
         //
-        private compiler: TypeScript.TypeScriptCompiler;
-        private scriptMap: ScriptMap;
-        private hostCache: HostCache;
-        private symbolTree: SymbolTree;
+        private compiler: TypeScript.TypeScriptCompiler = null;
+
+        private fileNameToCompilerScriptVersion: TypeScript.StringHashTable = null;
+        private hostCache: HostCache = null;
+        private symbolTree: SymbolTree = null;
         private _compilationSettings: TypeScript.CompilationSettings = null;
 
-        constructor(public host: ILanguageServiceHost) {
+        constructor(private host: ILanguageServiceHost) {
             this.logger = this.host;
-            //
-            // State related to compiler instance
-            //
-            this.compiler = null;
-            this.scriptMap = null; // Map from fileName to FileMapEntry
-
-            //
-            // State recomputed at every "refresh" call (performance)
-            //
-            this.hostCache = null;
-            this.symbolTree = null;
         }
 
         public compilationSettings() {
             return this._compilationSettings;
-        }
-
-        private setUnitMapping(fileName: string) {
-            this.scriptMap.setEntry(fileName, this.hostCache.getVersion(fileName));
         }
 
         private onTypeCheckStarting(): void {
@@ -64,12 +50,8 @@ module Services {
         }
 
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string) {
-            //Note: We need to call "_setUnitMapping" _before_ calling into the compiler,
-            //      in case the compiler fails (i.e. throws an exception). This is due to the way
-            //      we recover from those failure (we still report errors to the host, 
-            //      and we need unit mapping info to do that correctly.
-            this.setUnitMapping(fileName);
-
+            // Keep track of the version of script we're adding to the compiler.
+            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
             var newScript = compiler.addSourceUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         }
 
@@ -98,7 +80,7 @@ module Services {
             Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
             this._compilationSettings.usePull = true;
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings());
-            this.scriptMap = new ScriptMap();
+            this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
 
             //TODO: "bind" doesn't work here in the context of running unit tests
             this.compiler.parser.errorRecovery = true;
@@ -226,7 +208,7 @@ module Services {
         }
 
         public getScriptTextChangeRange(fileName: string): TypeScript.TextChangeRange {
-            var lastKnownVersion = this.scriptMap.getEntry(fileName).version;
+            var lastKnownVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
             return this.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);
         }
 
@@ -286,13 +268,13 @@ module Services {
         }
 
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): bool {
-            var previousEntry = this.scriptMap.getEntry(fileName);
+            var compilerScriptVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
 
             //
             // If file version is the same, assume no update
             //
             var version = this.hostCache.getVersion(fileName);
-            if (previousEntry.version === version) {
+            if (compilerScriptVersion === version) {
                 //logger.log("Assumed unchanged unit: " + unitIndex + "-"+ fileName);
                 return false;
             }
@@ -303,9 +285,9 @@ module Services {
             // Otherwise, we need to re-parse/retypecheck the file (maybe incrementally)
             //
 
-            var sourceText = this.hostCache.getScriptSnapshot(fileName);
-            this.setUnitMapping(fileName);
-            return compiler.pullUpdateUnit(sourceText, fileName, true/*setRecovery*/);
+            // Keep track of the version of script we're adding to the compiler.
+            this.fileNameToCompilerScriptVersion.addOrUpdate(fileName, this.hostCache.getVersion(fileName));
+            return compiler.pullUpdateUnit(this.hostCache.getScriptSnapshot(fileName), fileName);
         }
 
         private updateSyntaxTree(fileName: string): void {
