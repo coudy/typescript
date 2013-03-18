@@ -31,9 +31,9 @@ class DiagnosticsLogger implements TypeScript.ILogger {
 
 class BatchCompiler {
     public compiler: TypeScript.TypeScriptCompiler;
-    private stringTable = Collections.createStringTable();
-    private simpleText = TextFactory.createSimpleText(compilerString);
-    private sourceText = new TypeScript.StringSourceText(compilerString);
+    private stringTable = TypeScript.Collections.createStringTable();
+    private simpleText = TypeScript.TextFactory.createSimpleText(compilerString);
+    private sourceText = new TypeScript.StringScriptSnapshot(compilerString);
 
     public compile() {
         var settings = new TypeScript.CompilationSettings();
@@ -41,8 +41,8 @@ class BatchCompiler {
 
         this.compiler = new TypeScript.TypeScriptCompiler(new StringTextWriter(), new DiagnosticsLogger(), settings);
 
-        this.compiler.addUnit(libString, "lib.d.ts", false, []);
-        this.compiler.addUnit(compilerString, "compiler.ts", false, []);
+        this.compiler.addUnit(libString, "lib.d.ts", []);
+        this.compiler.addUnit(compilerString, "compiler.ts", []);
 
         this.compiler.pullTypeCheck();
     }
@@ -52,14 +52,14 @@ class BatchCompiler {
         this.compiler.pullTypeCheck(true);
     }
 
-    public oldParse(): { script: TypeScript.Script; sourceText: TypeScript.ISourceText; } {
+    public oldParse(): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
         var parser1 = new TypeScript.Parser();
         parser1.errorRecovery = true;
         return { script: parser1.parse(this.sourceText, "", 0), sourceText: this.sourceText };
     }
 
-    private changeText(previous: { script: TypeScript.Script; sourceText: TypeScript.ISourceText; },
-                       newMiddle: string): { script: TypeScript.Script; sourceText: TypeScript.ISourceText; } {
+    private changeText(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; },
+                       newMiddle: string): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
         var previousScript = previous.script;
         var searchText = "export interface IDiagnosticWriter {";
 
@@ -68,43 +68,42 @@ class BatchCompiler {
         var end = text.indexOf("}", start);
 
         var newCompilerString = text.substr(0, start) + newMiddle + text.substr(end);
-        var newSourceText = new TypeScript.StringSourceText(newCompilerString);
+        var newSourceText = new TypeScript.StringScriptSnapshot(newCompilerString);
 
         var parser = new TypeScript.IncrementalParser(new TypeScript.NullLogger());
 
-        var originalLength = end - start;
-        var range = new TypeScript.ScriptEditRange(start, end, newMiddle.length - originalLength);
+        var range = new TypeScript.TextChangeRange(TypeScript.TextSpan.fromBounds(start, end), newMiddle.length);
         var result = parser.attemptIncrementalUpdateUnit(previousScript, "", newSourceText, range);
 
         parser.mergeTrees(result);
         return { script: previousScript, sourceText: newSourceText };
     }
 
-    private insertText(previous: { script: TypeScript.Script; sourceText: TypeScript.ISourceText; }): { script: TypeScript.Script; sourceText: TypeScript.ISourceText; } {
+    private insertText(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; }): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
         var newMiddle = " Alert1(output: string): void; ";
         return this.changeText(previous, newMiddle);
     }
 
-    private deleteText(previous: { script: TypeScript.Script; sourceText: TypeScript.ISourceText; }): { script: TypeScript.Script; sourceText: TypeScript.ISourceText; } {
+    private deleteText(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; }): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
         var newMiddle = " Alert1(output: string): void; ";
         return this.changeText(previous, newMiddle);
     }
 
-    public oldIncrementalParse(previous: { script: TypeScript.Script; sourceText: TypeScript.ISourceText; }): { script: TypeScript.Script; sourceText: TypeScript.ISourceText; } {
+    public oldIncrementalParse(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; }): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
         // Insert some text, and delete some text.
         previous = this.insertText(previous);
         return this.deleteText(previous);
     }
 
-    public newParse(): SyntaxTree {
-        return Parser1.parse(this.simpleText, LanguageVersion.EcmaScript5, this.stringTable);
+    public newParse(): TypeScript.SyntaxTree {
+        return TypeScript.Parser1.parse(this.simpleText, TypeScript.LanguageVersion.EcmaScript5, this.stringTable);
     }
 
-    public newIncrementalParse(tree: SyntaxTree): SyntaxTree {
+    public newIncrementalParse(tree: TypeScript.SyntaxTree): TypeScript.SyntaxTree {
         var width = 100;
-        var span = new TextSpan(IntegerUtilities.integerDivide(compilerString.length - width, 2), width);
-        var range = new TextChangeRange(span, width);
-        return Parser1.incrementalParse(tree.sourceUnit(), [range], this.simpleText, LanguageVersion.EcmaScript5, this.stringTable);
+        var span = new TypeScript.TextSpan(TypeScript.IntegerUtilities.integerDivide(compilerString.length - width, 2), width);
+        var range = new TypeScript.TextChangeRange(span, width);
+        return TypeScript.Parser1.incrementalParse(tree, range, this.simpleText, TypeScript.LanguageVersion.EcmaScript5, this.stringTable);
     }
 
     /*

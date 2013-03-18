@@ -35,7 +35,7 @@
 
         function lineMap() {
             run(function () {
-                var text = TextFactory.createText(compilerString.substr(0, IntegerUtilities.integerDivide(compilerString.length, 10)));
+                var text = TypeScript.TextFactory.createText(compilerString.substr(0, TypeScript.IntegerUtilities.integerDivide(compilerString.length, 10)));
                 var start = new Date().getTime();
                 text.lineCount();
                 var end = new Date().getTime();
@@ -77,7 +77,7 @@
                 var start = new Date().getTime();
 
                 var tree = batch.newParse();
-                TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+                TypeScript.TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
 
                 var end = new Date().getTime();
                 appendTime("AST", end - start);
@@ -97,12 +97,12 @@
 
         function newIncrementalParseAndAST() {
             var tree = batch.newParse();
-            TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
 
             run(function () {
                 var start = new Date().getTime();
                 tree = batch.incrementalParse(tree);
-                TypeScript.SyntaxTreeToAstVisitor.visit(tree.sourceUnit(), "", 0);
+                TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
                 var end = new Date().getTime();
                 appendTime("Incremental Parse and AST", end - start);
             });
