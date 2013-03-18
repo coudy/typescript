@@ -1465,7 +1465,7 @@ module TypeScript {
                         return binex;
                     }
                 }
-                else if ((leftType.call || leftType.construct) && leftType.members === null) {
+                else if ((leftType.call || leftType.construct) && !leftType.members) {
                     if (this.functionInterfaceType) {
                         leftScope = this.functionInterfaceType.memberScope;
                     }
