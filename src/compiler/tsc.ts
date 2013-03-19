@@ -246,7 +246,7 @@ class BatchCompiler {
     }
 
     // Execute the provided inputs
-    public run() {
+    private run() {
         for (var i in this.compilationEnvironment.code) {
             var outputFileName: string = this.compilationEnvironment.inputFileNameToOutputFileName.lookup(i);
             if (this.ioHost.fileExists(outputFileName)) {
