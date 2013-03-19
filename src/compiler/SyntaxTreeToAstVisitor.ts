@@ -228,6 +228,22 @@ module TypeScript {
             return result;
         }
 
+        /*
+                    var previousTokenTrailingComments = this.previousTokenTrailingComments;
+            this.previousTokenTrailingComments = null;
+
+            if (previousTokenTrailingComments === null) {
+                return preComments;
+            }
+
+            if (preComments === null) {
+                return previousTokenTrailingComments;
+            }
+
+            return previousTokenTrailingComments.concat(preComments);
+
+*/
+
         private convertTokenLeadingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
             if (token === null) {
                 return null;
@@ -239,6 +255,7 @@ module TypeScript {
 
             var previousTokenTrailingComments = this.previousTokenTrailingComments;
             this.previousTokenTrailingComments = null;
+
             if (previousTokenTrailingComments === null) {
                 return preComments;
             }
@@ -247,11 +264,11 @@ module TypeScript {
                 return previousTokenTrailingComments;
             }
 
-            return this.previousTokenTrailingComments.concat(preComments);
+            return previousTokenTrailingComments.concat(preComments);
         }
 
         private convertTokenTrailingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
-            if (token === null || !token.hasTrailingComment()) {
+            if (token === null || !token.hasTrailingComment() || token.hasTrailingNewLine()) {
                 return null;
             }
 
@@ -270,7 +287,8 @@ module TypeScript {
             this.assertElementAtPosition(token);
 
             var result: AST = null;
-
+            var start = this.position;
+            
             if (token.kind() === SyntaxKind.ThisKeyword) {
                 result = new AST(NodeType.This);
             }
@@ -293,8 +311,12 @@ module TypeScript {
                 result = new RegexLiteral(token.text());
             }
             else if (token.kind() === SyntaxKind.NumericLiteral) {
+                var preComments = this.convertTokenLeadingComments(token, start);
+
                 var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
                 result = new NumberLiteral(value, token.text());
+
+                result.preComments = preComments;
             }
             else {
                 result = this.identifierFromToken(token, /*isOptional:*/ false);
@@ -1057,8 +1079,14 @@ module TypeScript {
         private visitEqualsValueClause(node: EqualsValueClauseSyntax): AST {
             this.assertElementAtPosition(node);
 
+            this.previousTokenTrailingComments = this.convertTokenTrailingComments(node.equalsToken,
+                this.position + node.equalsToken.leadingTriviaWidth() + node.equalsToken.width());
+
             this.movePast(node.equalsToken);
-            return node.value.accept(this);
+            var result = node.value.accept(this);
+
+            this.previousTokenTrailingComments = null;
+            return result;
         }
 
         private visitColonValueClause(node: ColonValueClauseSyntax): AST {
@@ -1196,6 +1224,9 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
@@ -1213,6 +1244,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(result);
 
+            result.preComments = preComments;
             result.returnTypeAnnotation = returnType;
             result.fncFlags |= FncFlags.IsFunctionExpression;
             result.fncFlags |= FncFlags.IsFatArrowFunction;
