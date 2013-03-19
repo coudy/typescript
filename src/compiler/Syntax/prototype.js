@@ -39327,7 +39327,6 @@ var TypeScript;
             this.outgoingLinks = new TypeScript.LinkList();
             this.incomingLinks = new TypeScript.LinkList();
             this.declarations = new TypeScript.LinkList();
-            this.thisInToString = false;
             this.cachedPathIDs = {};
             this.cachedContainerLink = null;
             this.cachedTypeLink = null;
@@ -39633,12 +39632,7 @@ var TypeScript;
             }
         };
         PullSymbol.prototype.toString = function () {
-            if (this.thisInToString) {
-                return "";
-            }
-            this.thisInToString = true;
             var str = this.getNameAndTypeName();
-            this.thisInToString = false;
             return str;
         };
         PullSymbol.prototype.fullName = function () {
@@ -39710,7 +39704,7 @@ var TypeScript;
                     if (i) {
                         typarString += ", ";
                     }
-                    typarString += typars[i].getScopedName(scopeSymbol);
+                    typarString += typars[i].getScopedNameEx(scopeSymbol).toString();
                 }
                 typarString += ">";
             }
@@ -39947,12 +39941,7 @@ var TypeScript;
             return result;
         };
         PullSignatureSymbol.prototype.toString = function () {
-            if (this.thisInToString) {
-                return "";
-            }
-            this.thisInToString = true;
-            var s = this.getSignatureTypeNameEx(this.getScopedName(), false, false).toString();
-            this.thisInToString = false;
+            var s = this.getSignatureTypeNameEx(this.getScopedNameEx().toString(), false, false).toString();
             return s;
         };
         PullSignatureSymbol.prototype.getSignatureTypeNameEx = function (prefix, shortform, brackets, scopeSymbol) {
@@ -39970,7 +39959,7 @@ var TypeScript;
             for(var i = 0; i < params.length; i++) {
                 var paramType = params[i].getType();
                 var typeString = paramType ? ": " : "";
-                builder.add(TypeScript.MemberName.create(params[i].getScopedName(scopeSymbol) + (params[i].getIsOptional() ? "?" : "") + typeString));
+                builder.add(TypeScript.MemberName.create(params[i].getScopedNameEx(scopeSymbol).toString() + (params[i].getIsOptional() ? "?" : "") + typeString));
                 if (paramType) {
                     builder.add(paramType.getScopedNameEx(scopeSymbol));
                 }
@@ -40644,17 +40633,7 @@ var TypeScript;
             return false;
         };
         PullTypeSymbol.prototype.toString = function () {
-            if (this.thisInToString) {
-                return "";
-            }
-            var s = null;
-            this.thisInToString = true;
-            if (!this.isNamedTypeSymbol()) {
-                s = this.getMemberTypeNameEx(true).toString();
-            } else {
-                s = this.getScopedName();
-            }
-            this.thisInToString = false;
+            var s = this.getScopedNameEx().toString();
             return s;
         };
         PullTypeSymbol.prototype.getScopedNameEx = function (scopeSymbol, getPrettyTypeName) {
@@ -40980,6 +40959,10 @@ var TypeScript;
         };
         PullArrayTypeSymbol.prototype.setElementType = function (type) {
             this.elementType = type;
+        };
+        PullArrayTypeSymbol.prototype.getScopedNameEx = function (scopeSymbol, getPrettyTypeName) {
+            var elementMemberName = this.elementType.getScopedNameEx(scopeSymbol, getPrettyTypeName);
+            return TypeScript.MemberName.create(elementMemberName, "", "[]");
         };
         PullArrayTypeSymbol.prototype.getMemberTypeNameEx = function (topLevel, scopeSymbol, getPrettyTypeName) {
             var elementMemberName = this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName);
@@ -61141,8 +61124,7 @@ var Diff;
     Diff.HtmlBaselineReport = HtmlBaselineReport;    
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
-var specificFile = "643728.ts";
-undefined;
+var specificFile = undefined;
 var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
