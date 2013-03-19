@@ -2430,6 +2430,10 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
 
             var left = node.propertyName.accept(this);
+
+            this.previousTokenTrailingComments = this.convertTokenTrailingComments(
+                node.colonToken, this.position + node.colonToken.leadingTriviaWidth() + node.colonToken.width());
+
             this.movePast(node.colonToken);
             var right = node.expression.accept(this);
 
@@ -2526,6 +2530,9 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             this.movePast(node.functionKeyword);
             var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
@@ -2551,6 +2558,7 @@ module TypeScript {
             var scopeList = this.topScopeList();
             scopeList.append(funcDecl);
 
+            funcDecl.preComments = preComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
             funcDecl.fncFlags |= FncFlags.IsFunctionExpression;
