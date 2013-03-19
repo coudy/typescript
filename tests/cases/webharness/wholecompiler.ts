@@ -52192,9 +52192,7 @@ module TypeScript {
             if (newSignature.hasGenericParameter()) {
                 newType.setHasGenericSignature();
             }
-        }
-
-        
+        }        
 
         // specialize members
 
@@ -52232,7 +52230,7 @@ module TypeScript {
                 fieldType = new PullTypeVariableSymbol("tyvar" + globalTyvarID);
             }
 
-            newField.setType(fieldType);
+            //newField.setType(fieldType);
 
             replacementType = <PullTypeSymbol>typeReplacementMap[fieldType.getSymbolID().toString()];
 
@@ -70335,12 +70333,15 @@ class BatchCompiler {
 
                     // TODO: remove this code.  This is not how we should be reporting errors.
                     var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);
-                    var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
-                    for (var i = 0, n = diagnostics.length; i < n; i++) {
-                        var diagnostic = diagnostics[i];
-                        compiler.pullErrorReporter.reportError(
-                            new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
-                            syntaxTree.lineMap());
+
+                    if (syntaxTree !== null) {
+                        var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
+                        for (var i = 0, n = diagnostics.length; i < n; i++) {
+                            var diagnostic = diagnostics[i];
+                            compiler.pullErrorReporter.reportError(
+                                new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
+                                syntaxTree.lineMap());
+                        }
                     }
                 }
             }

@@ -58,43 +58,6 @@ class BatchCompiler {
         return { script: parser1.parse(this.sourceText, "", 0), sourceText: this.sourceText };
     }
 
-    private changeText(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; },
-                       newMiddle: string): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
-        var previousScript = previous.script;
-        var searchText = "export interface IDiagnosticWriter {";
-
-        var text = previous.sourceText.getText(0, previous.sourceText.getLength());
-        var start = text.indexOf(searchText) + searchText.length;
-        var end = text.indexOf("}", start);
-
-        var newCompilerString = text.substr(0, start) + newMiddle + text.substr(end);
-        var newSourceText = new TypeScript.StringScriptSnapshot(newCompilerString);
-
-        var parser = new TypeScript.IncrementalParser(new TypeScript.NullLogger());
-
-        var range = new TypeScript.TextChangeRange(TypeScript.TextSpan.fromBounds(start, end), newMiddle.length);
-        var result = parser.attemptIncrementalUpdateUnit(previousScript, "", newSourceText, range);
-
-        parser.mergeTrees(result);
-        return { script: previousScript, sourceText: newSourceText };
-    }
-
-    private insertText(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; }): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
-        var newMiddle = " Alert1(output: string): void; ";
-        return this.changeText(previous, newMiddle);
-    }
-
-    private deleteText(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; }): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
-        var newMiddle = " Alert1(output: string): void; ";
-        return this.changeText(previous, newMiddle);
-    }
-
-    public oldIncrementalParse(previous: { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; }): { script: TypeScript.Script; sourceText: TypeScript.IScriptSnapshot; } {
-        // Insert some text, and delete some text.
-        previous = this.insertText(previous);
-        return this.deleteText(previous);
-    }
-
     public newParse(): TypeScript.SyntaxTree {
         return TypeScript.Parser1.parse(this.simpleText, TypeScript.LanguageVersion.EcmaScript5, this.stringTable);
     }

@@ -52,17 +52,6 @@
             });
         }
 
-        function oldIncrementalParse() {
-            var script = batch.oldParse();
-
-            run(function () {
-                var start = new Date().getTime();
-                script = batch.oldIncrementalParse(script);
-                var end = new Date().getTime();
-                appendTime("Old Parse", end - start);
-            });
-        }
-
         function newParse() {
             run(function () {
                 var start = new Date().getTime();
@@ -128,7 +117,6 @@
 <body>
     <h1>TypeScript Perf Testbed</h1>
     <button onclick="oldParse()">Old Parse</button>
-    <button onclick="oldIncrementalParse()">Old Incremental Parse</button>
     <button onclick="newParse()">New Parse</button>
     <button onclick="newParseAndAST()">New Parse + AST</button>
     <button onclick="newIncrementalParse()">New Incremental Parse</button>
