@@ -21,8 +21,8 @@ i3_i = {
         return "Hello" + a;
     },
     l: this.f,
-    x: /** own x*/
-    this.f(10),
+    /** own x*/
+    x: this.f(10),
     nc_x: this.l(this.x),
     nc_f: this.f,
     nc_l: this.l
