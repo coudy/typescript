@@ -552,7 +552,7 @@ class BatchCompiler {
         }
     }
 
-    public watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
+    private watchFiles(sourceFiles: TypeScript.SourceUnit[]) {
         if (!this.ioHost.watchFile) {
             this.errorReporter.WriteLine("Error: Current host does not support -w[atch] option");
             return;
