@@ -311,7 +311,8 @@ module TypeScript {
                 result = this.identifierFromToken(token, /*isOptional:*/ false);
             }
 
-            this.setSpan(result, this.position, this.position + token.width());
+            start = this.position + token.leadingTriviaWidth();
+            this.setSpan(result, start, start + token.width());
             this.movePast(token);
             return result;
         }
