@@ -8256,7 +8256,7 @@ interface ITextWriter {
 }
 
 declare var WScript : {
-    Echo(s);
+    Echo(s: any);
     StdErr: ITextWriter;
     StdOut: ITextWriter;
     Arguments: { length: number; Item(n: number): string; };
