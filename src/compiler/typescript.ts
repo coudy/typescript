@@ -287,7 +287,7 @@ module TypeScript {
                     timer.end();
 
                     reParsedScript = script;
-                    
+
                     var oldParseTime = timer.time;
 
                     script.referencedFiles = referencedFiles;
@@ -302,31 +302,16 @@ module TypeScript {
 
                     var newParseTime = timer.time;
 
-                    if (true || syntaxTree.diagnostics().length === 0) {
-                        try {
-                            timer.start();
-                            var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
-                            timer.end();
+                    timer.start();
+                    var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
+                    timer.end();
 
-                            var translateTime = timer.time;
+                    var translateTime = timer.time;
 
-                            //if (fileName.indexOf("lib.d.ts") >= 0) {
-                            //    // IO.stdout.WriteLine("");
-                            //    IO.stdout.WriteLine("Old - New - Translate: " + oldParseTime + "\t" + newParseTime + "\t" + translateTime);
-                            //    // IO.stdout.WriteLine("    Diff %: " + ((newParseTime + translateTime) / oldParseTime));
-                            //}
+                    script2.referencedFiles = referencedFiles;
 
-                            script2.referencedFiles = referencedFiles;
+                    reParsedScript = script2;
 
-                            reParsedScript = script2;
-                             
-                            // TypeScriptCompiler.compareObjects(script, script2);
-                        } catch (e1) {
-                            IO.stdout.WriteLine("Error converting: " + fileName);
-                            IO.stdout.WriteLine("\t" + e1.message);
-                        }
-                    }
-                     
                     this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
                 }
 
@@ -342,80 +327,6 @@ module TypeScript {
 
                 return reParsedScript;
             });
-        }
-
-        private static compareObjects(obj1: any, obj2: any): void {
-            if (obj1.alreadySeenObject) {
-                // Prevent recursion.
-                return;
-            }
-            obj1.alreadySeenObject = true;
-
-            var value1, value2;
-
-            for (var name in obj1) {
-                if (name === "limChar" ||
-                    name === "minChar" ||
-                    name === "astID" ||
-                    name === "leftCurlyCount" ||
-                    name === "rightCurlyCount" ||
-                    name === "flags" ||
-                    name === "varFlags" ||
-                    name === "fncFlags" ||
-                    name === "modFlags" ||
-                    name === "nestingLevel" ||
-                    name === "constructorNestingLevel" ||
-                    name === "alreadySeenObject" ||
-                    name === "containsUnicodeCharInComment" ||
-                    name === "containsUnicodeChar" ||
-                    name === "isOverload") {
-                    continue; 
-                }
-
-                value1 = obj1[name];
-                if (value1) {
-                    if (typeof value1 === 'number' ||
-                        typeof value1 === 'string' ||
-                        typeof value1 === 'boolean') {
-
-                        value2 = obj2[name];
-
-                        if (typeof value1 !== typeof value2) {
-                            throw new Error("Objects differed in type for key: " + name);
-                        }
-
-                        if (value1 !== value2) {
-                            throw new Error("Objects differed in value for key: " + name);
-                        }
-                    }
-                }
-            }
-
-            for (var name2 in obj1) {
-                if (name2 === "preComments" ||
-                    name2 === "postComments" ||
-                    name2 === "docComments" ||
-                    name2 === "sym" ||
-                    name2 === "lineMap" ||
-                    name2 === "resolvedTarget") {
-                    continue;
-                } 
-
-                value1 = obj1[name];
-                if (value1) {
-                    if (typeof value1 === 'object') {
-                        value2 = obj2[name];
-
-                        if (typeof value1 !== typeof value2) {
-                            throw new Error("Objects differed in type for key: " + name);
-                        }
-
-                        this.compareObjects(value1, value2);
-                    }
-                }
-            }
-
-            // obj1.alreadySeenObject = false;
         }
 
         public typeCheck() {
