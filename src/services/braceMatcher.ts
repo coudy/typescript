@@ -28,15 +28,15 @@ module Services {
 
             var currentToken = syntaxTree.sourceUnit().findToken(position);
 
-            getMatchingCloseBrace(currentToken, position, result);
-            getMatchingOpenBrace(currentToken, position, result);
+            BraceMatcher.getMatchingCloseBrace(currentToken, position, result);
+            BraceMatcher.getMatchingOpenBrace(currentToken, position, result);
 
             return result;
         }
 
         private static getMatchingCloseBrace(currentToken: TypeScript.PositionedToken, position: number, result: TypeScript.TextSpan[]) {
             if (currentToken.start() === position) {
-                var closingBraceKind = getMatchingCloseBraceTokenKind(currentToken);
+                var closingBraceKind = BraceMatcher.getMatchingCloseBraceTokenKind(currentToken);
                 if (closingBraceKind !== null) {
                     var parentElement = currentToken.parentElement();
                     var currentPosition = currentToken.parent().fullStart();
@@ -64,7 +64,7 @@ module Services {
             }
 
             if (currentToken !== null && currentToken.start() === (position - 1)) {
-                var openBraceKind = getMatchingOpenBraceTokenKind(currentToken);
+                var openBraceKind = BraceMatcher.getMatchingOpenBraceTokenKind(currentToken);
                 if (openBraceKind !== null) {
                     var parentElement = currentToken.parentElement();
                     var currentPosition = currentToken.parent().fullStart() + parentElement.fullWidth();

@@ -338,20 +338,20 @@ module Harness {
         static errorHandlerStack: { (e: Error): void; }[] = [];
 
         static pushGlobalErrorHandler(done: IDone) {
-            errorHandlerStack.push(function (e) {
+            Runnable.errorHandlerStack.push(function (e) {
                 done(e);
             });
         }
 
         static popGlobalErrorHandler() {
-            errorHandlerStack.pop();
+            Runnable.errorHandlerStack.pop();
         }
 
         static handleError(e: Error) {
-            if (errorHandlerStack.length === 0) {
+            if (Runnable.errorHandlerStack.length === 0) {
                 IO.printLine('Global error: ' + e);
             } else {
-                errorHandlerStack[errorHandlerStack.length - 1](e);
+                Runnable.errorHandlerStack[Runnable.errorHandlerStack.length - 1](e);
             }
         }
     }
@@ -996,7 +996,7 @@ module Harness {
                     }
                 }
                 else {
-                    var fileNames = compiler.fileNameToScript.getAllKeys();
+                    fileNames = compiler.fileNameToScript.getAllKeys();
                     for (m = 0; m < fileNames.length; m++) {
                         var script2 = <TypeScript.Script>compiler.fileNameToScript.lookup(fileNames[m]);
                         if (script2.locationInfo.fileName !== 'lib.d.ts') {

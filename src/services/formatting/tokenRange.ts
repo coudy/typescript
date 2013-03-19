@@ -136,7 +136,7 @@ module Formatting {
                 return this.tokenAccess.toString();
             }
 
-            static Any: TokenRange = AllTokens();
+            static Any: TokenRange = TokenRange.AllTokens();
             static Keywords = TokenRange.FromRange(AuthorTokenKind.atkBreak, AuthorTokenKind.atkWith);
             static Operators = TokenRange.FromRange(AuthorTokenKind.atkSColon, AuthorTokenKind.atkScope);
             static BinaryOperators = TokenRange.FromRange(AuthorTokenKind.atkArrow, AuthorTokenKind.atkPct);

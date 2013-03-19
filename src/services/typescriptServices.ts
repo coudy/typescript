@@ -92,7 +92,7 @@ module Services {
                     languageService = pullLanguageService;
                 }
                 else {
-                    var languageService = this.createLanguageService(hostAdapter);
+                    languageService = this.createLanguageService(hostAdapter);
                 }
                 return new LanguageServiceShim(host, languageService, pullLanguageService);
             }

@@ -31,7 +31,7 @@ module Services {
             var closeBraces = "})]";
             var closeBracesTokens = [TypeScript.TokenID.CloseBrace, TypeScript.TokenID.CloseParen, TypeScript.TokenID.CloseBracket];
 
-            var result = new TextRange[]();
+            var result: TextRange[] = [];
             var character = this.scriptSyntaxAST.getScriptSnapshot().getText(position, position + 1);
             var openBraceIndex = openBraces.indexOf(character);
             if (openBraceIndex >= 0) {

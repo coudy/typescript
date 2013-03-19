@@ -64,7 +64,7 @@ module DumpAST {
     }
 
     function createDumpTree(script: TypeScript.Script): DumpEntry {
-        var entries = new DumpEntry[];
+        var entries: DumpEntry[] = [];
         var root: DumpEntry = null;
 
         var pre = (cur: TypeScript.AST, parent: TypeScript.AST): TypeScript.AST => {

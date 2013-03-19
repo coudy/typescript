@@ -133,7 +133,7 @@ module TypeScript.Formatting2 {
                 return this.tokenAccess.toString();
             }
 
-            static Any: TokenRange = AllTokens();
+            static Any: TokenRange = TokenRange.AllTokens();
             static Keywords = TokenRange.FromRange(SyntaxKind.FirstKeyword, SyntaxKind.LastKeyword);
             static Operators = TokenRange.FromRange(SyntaxKind.SemicolonToken, SyntaxKind.SlashEqualsToken);
             static BinaryOperators = TokenRange.FromRange(SyntaxKind.CommaToken, SyntaxKind.SlashEqualsToken);

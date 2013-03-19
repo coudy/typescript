@@ -107,7 +107,7 @@ module Diff {
 
                 //...then, read until we get to the last one
                 delimiterCount = 0;
-                while (index < length && isDelimiter(content.substr(index, 1), delimiters)) {
+                while (index < length && Chunk.isDelimiter(content.substr(index, 1), delimiters)) {
                     currentLength++;
                     index++;
                     delimiterCount++;
@@ -130,7 +130,7 @@ module Diff {
         static SplitSeparateDelimiters(content: string, delimiters: string[]): Chunk[] {
             if (content === null || content.length === 0) return [];
             var set: Chunk[] = [];
-            var wantDelimiter = isDelimiter(content[0], delimiters);
+            var wantDelimiter = Chunk.isDelimiter(content[0], delimiters);
 
             var currentIndex: number, currentLength: number;
             var index = 0;
@@ -140,7 +140,7 @@ module Diff {
                 currentLength = 0;
 
                 //...read until we hit a delimiter boundary
-                while (index < length && wantDelimiter === isDelimiter(content[index], delimiters)) {
+                while (index < length && wantDelimiter === Chunk.isDelimiter(content[index], delimiters)) {
                     currentLength++;
                     index++;
                 }
@@ -157,7 +157,7 @@ module Diff {
 
         static SplitInner(content: string): Chunk[] {
             //return SplitSeparateDelimiters(content, new char[] { ' ', '\t', '=', ':', ';', ',', '\r', '\n' });
-            return SplitCategory(content);
+            return Chunk.SplitCategory(content);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ module Diff {
             if (content === null || content.length === 0) return [];
 
             var set: Chunk[] = [];
-            var categoryToMatch = GetCategory(content[0]);
+            var categoryToMatch = Chunk.GetCategory(content[0]);
 
             var currentIndex: number, currentLength: number;
             var index = 0;
@@ -184,13 +184,13 @@ module Diff {
                 index++;
 
                 //...read until we hit a boundary
-                while (index < length && CategoryMatches(GetCategory(content[index]), categoryToMatch)) {
+                while (index < length && Chunk.CategoryMatches(Chunk.GetCategory(content[index]), categoryToMatch)) {
                     currentLength++;
                     index++;
                 }
 
                 //...swap what we're looking for
-                if (index < length) categoryToMatch = GetCategory(content[index]);
+                if (index < length) categoryToMatch = Chunk.GetCategory(content[index]);
 
                 //...add the new Section to the set
                 set.push(new Chunk(content.substr(currentIndex, currentLength), ''));
@@ -345,8 +345,8 @@ module Diff {
 
         static Compare(oldContent: Chunk[], oldStart: number, oldEnd: number, newContent: Chunk[], newStart: number, newEnd: number): void {
             //...add all old and new chunks to uniqueness Hashtables
-            var oldTable = BuildUniquenessTable(oldContent, oldStart, oldEnd);
-            var newTable = BuildUniquenessTable(newContent, newStart, newEnd);
+            var oldTable = StringDiff.BuildUniquenessTable(oldContent, oldStart, oldEnd);
+            var newTable = StringDiff.BuildUniquenessTable(newContent, newStart, newEnd);
 
             //...associate unique lines with each other
             for (var i = newStart; i <= newEnd; ++i) {
@@ -375,8 +375,8 @@ module Diff {
 
             //...check the first and last lines from each side
             if (oldStart <= oldEnd && newStart <= newEnd) {
-                TryMatch(oldContent, oldStart, newContent, newStart);
-                TryMatch(oldContent, oldEnd, newContent, newEnd);
+                StringDiff.TryMatch(oldContent, oldStart, newContent, newStart);
+                StringDiff.TryMatch(oldContent, oldEnd, newContent, newEnd);
             }
 
             //...add lines after matching lines
@@ -388,7 +388,7 @@ module Diff {
                     //...AND that index points back to us...
                     if (oldContent[j].matchingIndex === i) {
                         //...TRY matching the next chunks with each other
-                        TryMatch(oldContent, j + 1, newContent, i + 1);
+                        StringDiff.TryMatch(oldContent, j + 1, newContent, i + 1);
                     }
                 }
             }
@@ -402,7 +402,7 @@ module Diff {
                     //...AND that index points back to us...
                     if (oldContent[j].matchingIndex === i) {
                         //...TRY matching the previous chunks with each other
-                        TryMatch(oldContent, j - 1, newContent, i - 1);
+                        StringDiff.TryMatch(oldContent, j - 1, newContent, i - 1);
                     }
                 }
             }
@@ -455,8 +455,8 @@ module Diff {
         static PerformNestedDiff(oldContent: Chunk[], newContent: Chunk[]): void {
             //...check the first and last lines from each side
             if (oldContent.length > 0 && newContent.length > 0) {
-                TryInnerMatch(oldContent, 0, newContent, 0);
-                TryInnerMatch(oldContent, oldContent.length - 1, newContent, newContent.length - 1);
+                StringDiff.TryInnerMatch(oldContent, 0, newContent, 0);
+                StringDiff.TryInnerMatch(oldContent, oldContent.length - 1, newContent, newContent.length - 1);
             }
 
             //...add lines after matching lines
@@ -468,7 +468,7 @@ module Diff {
                     //...AND that index points back to us...
                     if (oldContent[j].matchingIndex === i) {
                         //...TRY inner comparison (will map indexes if it works)
-                        TryInnerMatch(oldContent, j + 1, newContent, i + 1);
+                        StringDiff.TryInnerMatch(oldContent, j + 1, newContent, i + 1);
                     }
                 }
             }
@@ -482,7 +482,7 @@ module Diff {
                     //...AND that index points back to us...
                     if (oldContent[j].matchingIndex === i) {
                         //...TRY inner comparison (will map indexes if it works)
-                        TryInnerMatch(oldContent, j - 1, newContent, i - i);
+                        StringDiff.TryInnerMatch(oldContent, j - 1, newContent, i - i);
                     }
                 }
             }
@@ -496,7 +496,7 @@ module Diff {
             if (newChunk.matchingIndex === -1 && oldChunk.matchingIndex === -1) {
                 //...AND the chunks match...
                 var difference = new InnerDiff(oldContent[oldIndex].content, newContent[newIndex].content);
-                if (AreSimilarEnough(difference)) {
+                if (StringDiff.AreSimilarEnough(difference)) {
                     //...THEN point those chunks to each other
                     newChunk.innerDiff = difference;
                     oldChunk.innerDiff = difference;
@@ -750,23 +750,23 @@ module Diff {
         }
 
         static addedStringHtml(text: string) {
-            return "<span class=\"new\">" + fullHtmlEncode(text) + "</span>";
+            return "<span class=\"new\">" + StringDiff.fullHtmlEncode(text) + "</span>";
         }
 
         static removedStringHtml(text: string) {
-            return "<span class=\"old\">" + fullHtmlEncode(text) + "</span>";
+            return "<span class=\"old\">" + StringDiff.fullHtmlEncode(text) + "</span>";
         }
 
         static movedFromStringHtml(text: string) {
-            return "<span class=\"from\">" + fullHtmlEncode(text) + "</span>";
+            return "<span class=\"from\">" + StringDiff.fullHtmlEncode(text) + "</span>";
         }
 
         static movedToStringHtml(text: string) {
-            return "<span class=\"to\">" + fullHtmlEncode(text) + "</span>";
+            return "<span class=\"to\">" + StringDiff.fullHtmlEncode(text) + "</span>";
         }
 
         static unchangedStringHtml(text: string) {
-            return fullHtmlEncode(text);
+            return StringDiff.fullHtmlEncode(text);
         }
 
         static fullHtmlEncode(text: string) {

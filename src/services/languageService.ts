@@ -999,7 +999,7 @@ module Services {
                 if ((<any>callExpr.target).sym != null) {
                     sym = (<any>callExpr.target).sym;
                 } else if (callExpr.target.type.symbol !== null) {
-                    var sym = callExpr.target.type.symbol;
+                    sym = callExpr.target.type.symbol;
                 }
 
                 if (sym != null) {
@@ -1769,13 +1769,13 @@ module Services {
 
             var result: NavigateToItem[] = [];
 
-            // Process all script ASTs and look for matchin symbols
+            // Process all script ASTs and look for matching symbols
             var fileNames = this.compilerState.getFileNames();
             for (i = 0, len = fileNames.length; i < len; i++) {
                 // Add the item for the script name if needed
                 var fileName = fileNames[i];
                 var script = this.compilerState.getScript(fileName);
-                var fileName = script.locationInfo.fileName;
+                fileName = script.locationInfo.fileName;
                 var matchKind = match(null, script, fileName);
                 if (matchKind != null) {
                     var item = new NavigateToItem();
@@ -1969,7 +1969,7 @@ module Services {
                                 break;
                         }
                     } else if (result && callExpr.length > 0) {
-                        var curCallExpr = callExpr[callExpr.length - 1];
+                        curCallExpr = callExpr[callExpr.length - 1];
                         if (curCallExpr.target.minChar >= cur.minChar && curCallExpr.target.minChar < cur.limChar) {
                             result.callSignature = null;
                         }
@@ -2266,7 +2266,7 @@ module Services {
 
                     case TypeScript.NodeType.FuncDecl: {
                         var funcDecl = <TypeScript.FuncDecl>ast;
-                        var kind: string = null;
+                        kind = null;
                         var name: string = (funcDecl.name !== null ? funcDecl.name.actualText : null);
                         if (funcDecl.isGetAccessor()) {
                             kind = ScriptElementKind.memberGetAccessorElement;

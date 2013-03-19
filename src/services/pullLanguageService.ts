@@ -630,7 +630,7 @@ module Services {
 
                     case TypeScript.NodeType.FuncDecl: {
                         var funcDecl = <TypeScript.FuncDecl>ast;
-                        var kind: string = null;
+                        kind = null;
                         var name: string = (funcDecl.name !== null ? funcDecl.name.actualText : null);
                         if (funcDecl.isGetAccessor()) {
                             kind = ScriptElementKind.memberGetAccessorElement;

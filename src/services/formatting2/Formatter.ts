@@ -306,8 +306,6 @@ module TypeScript.Formatting2 {
                             betweenSpan = new TextSpan(t1.end(), t2.start() - t1.end());
                         }
                         else {
-                            var lengthBetween: number;
-
                             if (this.getLineNumber(t1) == this.getLineNumber(t2)) {
                                 lengthBetween = t2.start() - t1.end();
                             }

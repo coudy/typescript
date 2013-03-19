@@ -247,13 +247,13 @@ opts.flag('services', {
 });
 
 opts.flag('harness', {
-    set: function () => {
+    set: function () {
         runners.push(new UnitTestRunner('harness'));
     }
 });
 
 opts.option('dump', {
-    set: function (file) => Harness.registerLogger(new JSONLogger(file))
+    set: function (file) { Harness.registerLogger(new JSONLogger(file)); }
 });
 
 opts.option('root', {

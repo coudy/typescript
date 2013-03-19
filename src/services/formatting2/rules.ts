@@ -565,7 +565,7 @@ module TypeScript.Formatting2 {
         }
 
         static IsBlockContext(context: FormattingContext): bool {
-            if (IsTypeScriptDeclWithBlockContext(context)) {
+            if (Rules.IsTypeScriptDeclWithBlockContext(context)) {
                 return true;
             }
 
@@ -653,7 +653,7 @@ module TypeScript.Formatting2 {
         }
 
         static IsFunctionCallOrNewContext(context: FormattingContext): bool {
-            return IsFunctionCallContext(context) || IsNewContext(context);
+            return Rules.IsFunctionCallContext(context) || Rules.IsNewContext(context);
         }
 
         static IsSameLineTokenContext(context: FormattingContext): bool {
@@ -706,11 +706,11 @@ module TypeScript.Formatting2 {
             //// }
             ////      * ) and { are on differnet lines. We only need to format if the block is multiline context. So in this case we format.
 
-            return context.TokensAreOnSameLine() || IsMultilineBlockContext(context);
+            return context.TokensAreOnSameLine() || Rules.IsMultilineBlockContext(context);
         }
 
         static IsFunctionOrGetSetDeclContext(context: FormattingContext): bool {
-            return IsFunctionDeclContext(context) || IsGetSetMemberContext(context);
+            return Rules.IsFunctionDeclContext(context) || Rules.IsGetSetMemberContext(context);
         }
 
         static IsGetSetMemberContext(context: FormattingContext): bool {

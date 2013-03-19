@@ -28,7 +28,7 @@ module Formatting {
 
         static FindChildrenWithEdge(node: ParseNode, edge: AuthorParseNodeEdge): List_ParseNode {
             var result = new List_ParseNode();
-            GetChildren(node).foreach((item) => {
+            ParseNodeExtensions.GetChildren(node).foreach((item) => {
                 if (item.AuthorNode.EdgeLabel == edge) {
                     result.add(item);
                 }
@@ -37,11 +37,11 @@ module Formatting {
         }
 
         static FindChildWithEdge(node: ParseNode, edge: AuthorParseNodeEdge): ParseNode {
-            return FirstOrDefault(GetChildren(node).Where((c) => { return c.AuthorNode.EdgeLabel == edge; }), () => { return true; });
+            return FirstOrDefault(ParseNodeExtensions.GetChildren(node).Where((c) => { return c.AuthorNode.EdgeLabel == edge; }), () => { return true; });
         }
 
         static ForAllChildren(node: ParseNode, action: (item: ParseNode) => void ) {
-            GetChildren(node).foreach(action);
+            ParseNodeExtensions.GetChildren(node).foreach(action);
         }
 
         static comparer(position: number, item: ParseNode): number {
@@ -58,7 +58,7 @@ module Formatting {
         static TryFindNodeIndexForStartOffset(nodes: IList_ParseNode, startOffset: number): number/*?*/ {
             var targetNodeIndex = -1;
             if (nodes.count() > 0) {
-                var pivot = BinarySearch(nodes, startOffset, comparer);
+                var pivot = BinarySearch(nodes, startOffset, ParseNodeExtensions.comparer);
                 if (pivot < 0) {
                     pivot = ~pivot - 1;
                     targetNodeIndex = pivot;
@@ -72,7 +72,7 @@ module Formatting {
         }
 
         static TryFindNodeForSpan(nodes: IList_ParseNode, span: Span): ParseNode {
-            var nodeIndex = TryFindNodeIndexForStartOffset(nodes, span.start());
+            var nodeIndex = ParseNodeExtensions.TryFindNodeIndexForStartOffset(nodes, span.start());
 
             if (nodeIndex >= 0 && nodeIndex < nodes.count()) {
                 var node = nodes.get(nodeIndex);

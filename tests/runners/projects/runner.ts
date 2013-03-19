@@ -113,7 +113,7 @@ class HarnessBatch {
                         bugs.forEach(bug => assert.bug(bug));
                     }
 
-                    compiler.parser.setErrorRecovery(this.errorOut);
+                    compiler.parser.setErrorRecovery(this.errout);
                     compiler.addUnit(code.content, code.path);
                 }
             }
@@ -213,8 +213,8 @@ class ProjectRunner extends RunnerBase {
                 }
 
                 var outputFiles = [];
-                for (var i = 0; i < spec.outputFiles.length; i++) {
-                    outputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.outputFiles[i]);
+                for (var j = 0; j < spec.outputFiles.length; j++) {
+                    outputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.outputFiles[j]);
                 }
 
                 var generatedDeclareFiles: { fname: string; file: Harness.Compiler.WriterAggregator;  }[] = [];
