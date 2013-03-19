@@ -316,10 +316,10 @@ module Services {
                     this.logger.log("compiler unit[" + i + "].fileName='" + fileNames[i] + "'");
                 }
 
-                var fileNames = this.hostCache.getFileNames();
-                for (var i = 0; i < fileNames.length; i++) {
-                    var fileName = fileNames[i];
-                    this.logger.log("host script[" + i + "].fileName='" + fileName + "', version=" + this.hostCache.getVersion(fileName));
+                fileNames = this.hostCache.getFileNames();
+                for (var j = 0; j < fileNames.length; j++) {
+                    var fileName = fileNames[j];
+                    this.logger.log("host script[" + j + "].fileName='" + fileName + "', version=" + this.hostCache.getVersion(fileName));
                 }
             }
         }
@@ -392,9 +392,9 @@ module Services {
 
             // Apply changes to units
             var anythingUpdated = false;
-            var i = 0;
+            var j = 0;
 
-            for (i = 0, n = updateResults.length; i < n; i++) {
+            for (j = 0, n = updateResults.length; j < n; j++) {
                 var entry = updateResults[i];
                 if (this.applyUpdateResult(entry)) {
                     anythingUpdated = true;

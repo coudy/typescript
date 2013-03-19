@@ -27,17 +27,17 @@ module Formatting {
         }
 
         static create1(left: AuthorTokenKind, right: AuthorTokenKind): RuleDescriptor {
-            return create4(Shared.TokenRange.FromToken(left), Shared.TokenRange.FromToken(right))
+            return RuleDescriptor.create4(Shared.TokenRange.FromToken(left), Shared.TokenRange.FromToken(right))
         }
 
         static create2(left: Shared.TokenRange, right: AuthorTokenKind): RuleDescriptor {
-            return create4(left, Shared.TokenRange.FromToken(right));
+            return RuleDescriptor.create4(left, Shared.TokenRange.FromToken(right));
         }
 
         static create3(left: AuthorTokenKind, right: Shared.TokenRange): RuleDescriptor
             //: this(TokenRange.FromToken(left), right)
         {
-            return create4(Shared.TokenRange.FromToken(left), right);
+            return RuleDescriptor.create4(Shared.TokenRange.FromToken(left), right);
         }
 
         static create4(left: Shared.TokenRange, right: Shared.TokenRange): RuleDescriptor {

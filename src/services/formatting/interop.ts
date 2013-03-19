@@ -2239,10 +2239,10 @@ module Formatting {
         private tokenMap: AuthorTokenKind[];
 
         static getInstance() {
-            if (instance === null) {
-                instance = new AuthorTokenKindMap();
+            if (AuthorTokenKindMap.instance === null) {
+                AuthorTokenKindMap.instance = new AuthorTokenKindMap();
             }
-            return instance;
+            return AuthorTokenKindMap.instance;
         }
 
         constructor () {
@@ -2388,7 +2388,7 @@ module Formatting {
         }
 
         static Fail(msg: string): void {
-            Assert(false, msg);
+            Debug.Assert(false, msg);
         }
     }
 

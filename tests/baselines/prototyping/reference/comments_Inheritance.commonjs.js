@@ -116,8 +116,11 @@ i2_i = i3_i;
 ////[0.d.ts]
 /** i1 is interface with properties*/
 interface i1 {
+    /** i1_p1*/
     i1_p1: number;
+    /** i1_f1*/
     i1_f1(): void;
+    /** i1_l1*/
     i1_l1: () => void;
     i1_nc_p1: number;
     i1_nc_f1(): void;
@@ -191,22 +194,33 @@ class c4 extends c2 {
 }
 var c4_i: c4;
 interface i2 {
+    /** i2_p1*/
     i2_p1: number;
+    /** i2_f1*/
     i2_f1(): void;
+    /** i2_l1*/
     i2_l1: () => void;
     i2_nc_p1: number;
     i2_nc_f1(): void;
     i2_nc_l1: () => void;
+    /** i2 p1*/
     p1: number;
+    /** i2 f1*/
     f1(): void;
+    /** i2 l1*/
     l1: () => void;
     nc_p1: number;
     nc_f1(): void;
     nc_l1: () => void;
 }
 interface i3 extends i2 {
+    /** i3 p1 */
     p1: number;
+    /**
+    * i3 f1
+    */
     f1(): void;
+    /** i3 l1*/
     l1: () => void;
     nc_p1: number;
     nc_f1(): void;

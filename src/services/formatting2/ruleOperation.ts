@@ -32,7 +32,7 @@ module TypeScript.Formatting2 {
         }
 
         static create1(action: RuleAction) {
-            return create2(RuleOperationContext.Any, action)
+            return RuleOperation.create2(RuleOperationContext.Any, action)
         }
 
         static create2(context: RuleOperationContext, action: RuleAction) {

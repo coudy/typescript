@@ -514,7 +514,7 @@ module Formatting {
         }
 
         static IsBlockContext(node: ParseNode): bool {
-            if (IsTypeScriptDeclWithBlockContextNode(node))
+            if (Rules.IsTypeScriptDeclWithBlockContextNode(node))
                 return true;
 
             switch (node.AuthorNode.Details.Kind) {
@@ -576,7 +576,7 @@ module Formatting {
         }
 
         static IsTypeScriptDeclWithBlockContext(context: FormattingContext): bool {
-            return IsTypeScriptDeclWithBlockContextNode(context.contextNode);
+            return Rules.IsTypeScriptDeclWithBlockContextNode(context.contextNode);
         }
 
         static IsControlDeclContext(context: FormattingContext): bool {
@@ -615,7 +615,7 @@ module Formatting {
         }
 
         static IsFunctionCallOrNewContext(context: FormattingContext): bool {
-            return IsFunctionCallContext(context) || IsNewContext(context);
+            return Rules.IsFunctionCallContext(context) || Rules.IsNewContext(context);
         }
 
         static IsSameLineTokenContext(context: FormattingContext): bool {
@@ -632,7 +632,7 @@ module Formatting {
             if (parent == null)
                 return false;
 
-            return parent.AuthorNode.Details.EndOffset == context.nextTokenSpan.Span.startPosition() && IsMultilineBlockContext(context);
+            return parent.AuthorNode.Details.EndOffset == context.nextTokenSpan.Span.startPosition() && Rules.IsMultilineBlockContext(context);
         }
 
         static IsNotFormatOnEnter(context: FormattingContext): bool {
@@ -657,11 +657,11 @@ module Formatting {
             //// }
             ////      * ) and { are on differnet lines. We only need to format if the block is multiline context. So in this case we format.
 
-            return context.TokensAreOnSameLine() || IsMultilineBlockContext(context);
+            return context.TokensAreOnSameLine() || Rules.IsMultilineBlockContext(context);
         }
 
         static IsFunctionOrGetSetDeclContext(context: FormattingContext): bool {
-            return IsFunctionDeclContext(context) || IsGetSetMemberContext(context);
+            return Rules.IsFunctionDeclContext(context) || Rules.IsGetSetMemberContext(context);
         }
 
         static IsGetSetMemberContext(context: FormattingContext): bool {

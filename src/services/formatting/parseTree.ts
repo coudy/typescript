@@ -62,7 +62,7 @@ module Formatting {
                     var child: ParseNode = ParseNodeExtensions.TryFindNodeForSpan(context.children(), leftSpan);
                     if (child != null && child.CoverSpan(rightSpan)) {
                         // The child covers both spans, check the child recursively
-                        return FindCommonParentNode(leftSpan, rightSpan, child);
+                        return ParseTree.FindCommonParentNode(leftSpan, rightSpan, child);
                     }
                 }
 
@@ -76,7 +76,7 @@ module Formatting {
                 }
                 else {
                     // Check the parent
-                    return FindCommonParentNode(leftSpan, rightSpan, context.Parent);
+                    return ParseTree.FindCommonParentNode(leftSpan, rightSpan, context.Parent);
                 }
             }
         }
@@ -207,7 +207,7 @@ module Formatting {
             for (; i > 0; i--) {
                 var node = nodes[i];
                 if (node.Level == siblingLevel
-                    && IsSiblingEdge(node.EdgeLabel)
+                    && ParseTree.IsSiblingEdge(node.EdgeLabel)
                     && node.Details.EndOffset < startNodeSelf.Details.StartOffset) {
                     previousSibling = node;
                     break;
@@ -299,7 +299,7 @@ module Formatting {
 
                 logger.log(text);
 
-                ParseNodeExtensions.GetChildren(parseNode).foreach((child) => { DumpTree(logger, child); });
+                ParseNodeExtensions.GetChildren(parseNode).foreach((child) => { ParseTree.DumpTree(logger, child); });
             }
         }
 

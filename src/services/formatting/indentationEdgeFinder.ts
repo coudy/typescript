@@ -30,7 +30,7 @@ module Formatting {
             nodeStack.Push(node);
 
             while (nodeStack.Count() > 0) {
-                FillIndentationLevels2(nodeStack.Pop(), nodeStack);
+                IndentationEdgeFinder.FillIndentationLevels2(nodeStack.Pop(), nodeStack);
             }
         }
 
@@ -55,7 +55,7 @@ module Formatting {
                 case TypeScript.NodeType.ModuleDeclaration:
                 case TypeScript.NodeType.ClassDeclaration:
                 case TypeScript.NodeType.InterfaceDeclaration:
-                    FillBodyIndentation(node, nextNodesToVisit);
+                    IndentationEdgeFinder.FillBodyIndentation(node, nextNodesToVisit);
                     // Still visit all children. This covers for example right hand of assignments and functions declared in arguments for function calls
                     ParseNodeExtensions.ForAllChildren(node, (child) => { nextNodesToVisit.Push(child); });
                     return;
@@ -92,11 +92,11 @@ module Formatting {
                         // }
                         if ((node.AuthorNode.Details.Flags & AuthorParseNodeFlags.apnfSyntheticNode) != AuthorParseNodeFlags.apnfSyntheticNode) {
                             // Real block
-                            FillIndentationEdgesForBlock(node, /*childrenLevel:*/ 1);
+                            IndentationEdgeFinder.FillIndentationEdgesForBlock(node, /*childrenLevel:*/ 1);
                         }
                         else {
                             // virtual block, still check its children.  Note, must do this one recursively, see below comment.
-                            ParseNodeExtensions.ForAllChildren(node, function (child) { FillIndentationLevels(child); });
+                            ParseNodeExtensions.ForAllChildren(node, function (child) { IndentationEdgeFinder.FillIndentationLevels(child); });
 
                             // virtual block should have no indentation. Reset it after calling the children, in case a child
                             // needs to know where its parent stands, i.e., in the cases of try/catch/finally
@@ -110,7 +110,7 @@ module Formatting {
                 case AuthorParseNodeKind.apnkTryFinally:
                     {
                         // virtual block, still check its children.  Note, must do this one recursively, see below comment.
-                        ParseNodeExtensions.ForAllChildren(node, function(child) { FillIndentationLevels(child); });
+                        ParseNodeExtensions.ForAllChildren(node, function(child) { IndentationEdgeFinder.FillIndentationLevels(child); });
 
                         // TryCatch and TryFinally nodes are treated as virtual blocks, and hold indentation for try/Catch/Finally nodes.
                         // They should have no indentation. Reset it after calling the children, in case a child
@@ -126,7 +126,7 @@ module Formatting {
                         // function foo() {
                         //      statement;
                         // }
-                        FillBodyIndentation(node, nextNodesToVisit);
+                        IndentationEdgeFinder.FillBodyIndentation(node, nextNodesToVisit);
                     }
                     break;
 
@@ -168,7 +168,7 @@ module Formatting {
                             }
                             else if (child.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkBlock) {
                                 child.IndentationDelta = 1;
-                                FillIndentationEdgesForBlock(child, /*childrenLevel:*/ 1);
+                                IndentationEdgeFinder.FillIndentationEdgesForBlock(child, /*childrenLevel:*/ 1);
                             }
                             else {
                                 child.IndentationDelta = 1;
@@ -189,10 +189,10 @@ module Formatting {
                         node.ChildrenIndentationDelta = 1;
 
                         var thenChild = ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneThen);
-                        FillIndentationEdgesForBlockOrNot(thenChild, /*childrenLevel:*/ 1);
+                        IndentationEdgeFinder.FillIndentationEdgesForBlockOrNot(thenChild, /*childrenLevel:*/ 1);
 
                         var elseChild = ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneElse);
-                        FillIndentationEdgesForBlockOrNot(elseChild, /*childrenLevel:*/ 1);
+                        IndentationEdgeFinder.FillIndentationEdgesForBlockOrNot(elseChild, /*childrenLevel:*/ 1);
                     }
                     break;
 
@@ -208,7 +208,7 @@ module Formatting {
                         // }
                         node.ChildrenIndentationDelta = 1;
                         child = ParseNodeExtensions.FindChildWithEdge(node, AuthorParseNodeEdge.apneBody);
-                        FillIndentationEdgesForBlockOrNot(child, /*childrenLevel:*/ 1);
+                        IndentationEdgeFinder.FillIndentationEdgesForBlockOrNot(child, /*childrenLevel:*/ 1);
                     }
                     break;
 
@@ -307,7 +307,7 @@ module Formatting {
                         }
 
                         if (body != null && body.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkBlock) {
-                            FillIndentationEdgesForBlock(body, /*childrenLevel:*/ 1);
+                            IndentationEdgeFinder.FillIndentationEdgesForBlock(body, /*childrenLevel:*/ 1);
                         }
                         else {
                             ParseNodeExtensions.ForAllChildren(node, function (child) { nextNodesToVisit.Push(child); });
@@ -367,11 +367,11 @@ module Formatting {
             node.ChildrenIndentationDelta = childrenLevel;
 
             if (node.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkBlock) {
-                FillIndentationEdgesForBlock(node, childrenLevel);
+                IndentationEdgeFinder.FillIndentationEdgesForBlock(node, childrenLevel);
             }
             else {
                 node.IndentationDelta = childrenLevel;
-                FillIndentationLevels(node);
+                IndentationEdgeFinder.FillIndentationLevels(node);
             }
         }
 
@@ -392,12 +392,12 @@ module Formatting {
                 if (child.AuthorNode.Details.Kind == AuthorParseNodeKind.apnkList) {
                     ParseNodeExtensions.ForAllChildren(child, (grandChild) => {
                         grandChild.IndentationDelta = node.ChildrenIndentationDelta;
-                        FillIndentationLevels(grandChild);
+                        IndentationEdgeFinder.FillIndentationLevels(grandChild);
                     });
                 }
                 else {
                     child.IndentationDelta = node.ChildrenIndentationDelta;
-                    FillIndentationLevels(child);
+                    IndentationEdgeFinder.FillIndentationLevels(child);
                 }
             }
         }

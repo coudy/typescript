@@ -67,7 +67,7 @@ module Formatting {
                     // the insertion point in lexical order.
                     var pivot = ParseNodeExtensions.findNodeInsertionPivot(this._children, node.AuthorNode.Details.StartOffset);
                     if (pivot < 0) {
-                        this._children.insert(~pivot, node);
+                        this._children.insert(<number>~pivot, node);
                     }
                     else {
                         this._children.insert(pivot + 1, node);

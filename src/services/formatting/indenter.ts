@@ -180,7 +180,7 @@ module Formatting {
         }
 
         static GetIndentSizeFromIndentText(indentText: string, editorOptions: Services.EditorOptions): number {
-            return GetIndentSizeFromText(indentText, editorOptions, /*includeNonIndentChars:*/ false);
+            return Indenter.GetIndentSizeFromText(indentText, editorOptions, /*includeNonIndentChars:*/ false);
         }
 
         static GetIndentSizeFromText(text: string, editorOptions: Services.EditorOptions, includeNonIndentChars: bool): number {

@@ -122,10 +122,10 @@ module Services {
                     this.logger.log("compiler unit[" + i + "].fileName='" + fileNames[i] + "'");
                 }
 
-                var fileNames = this.hostCache.getFileNames();
-                for (var i = 0; i < fileNames.length; i++) {
-                    var fileName = fileNames[i];
-                    this.logger.log("host script[" + i + "].fileName='" + fileName + "', version=" + this.hostCache.getVersion(fileName));
+                fileNames = this.hostCache.getFileNames();
+                for (var j = 0; j < fileNames.length; j++) {
+                    var fileName = fileNames[j];
+                    this.logger.log("host script[" + j + "].fileName='" + fileName + "', version=" + this.hostCache.getVersion(fileName));
                 }
             }
         }

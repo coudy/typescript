@@ -142,7 +142,6 @@ if (!Array.prototype.filter)
       throw new TypeError();
  
     var res = [];
-    var thisp = arguments[1];
     for (var i = 0; i < len; i++)
     {
       if (<any>i in t)

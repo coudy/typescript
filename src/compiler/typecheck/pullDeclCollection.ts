@@ -757,9 +757,18 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(constructorDeclAST.minChar, constructorDeclAST.limChar);
 
-        var decl = new PullDecl(constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);
-
         var parent = context.getParent();
+
+        if (parent) {
+            // if the parent is exported, the constructor decl must be as well
+            var parentFlags = parent.getFlags();
+
+            if (parentFlags & PullElementFlags.Exported) {
+                declFlags |= PullElementFlags.Exported;
+            }
+        }
+
+        var decl = new PullDecl(constructorDeclAST.name.actualText, declType, declFlags, span, context.scriptName);        
 
         if (parent) {
             parent.addChildDecl(decl);
