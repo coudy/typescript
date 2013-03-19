@@ -17,8 +17,6 @@ module TypeScript {
         private incomingLinks: LinkList = new LinkList();
         private declarations: LinkList = new LinkList();
 
-        public thisInToString = false;
-
         private name: string;
 
         private cachedPathIDs: any = {};
@@ -376,12 +374,7 @@ module TypeScript {
         }
 
         public toString() {
-            if (this.thisInToString) {
-                return "";
-            }
-            this.thisInToString = true;
             var str = this.getNameAndTypeName();
-            this.thisInToString = false;
             return str;
         }
 
@@ -461,7 +454,7 @@ module TypeScript {
                     if (i) {
                         typarString += ", ";
                     }
-                    typarString += typars[i].getScopedName(scopeSymbol);
+                    typarString += typars[i].getScopedNameEx(scopeSymbol).toString();
                 }
                 typarString += ">";
             }
@@ -756,13 +749,7 @@ module TypeScript {
         }
 
         public toString() {
-            if (this.thisInToString) {
-                return "";
-            }
-            this.thisInToString = true;            
-            var s = this.getSignatureTypeNameEx(this.getScopedName(), false, false).toString();
-            this.thisInToString = false;
-
+            var s = this.getSignatureTypeNameEx(this.getScopedNameEx().toString(), false, false).toString();
             return s;
         }
 
@@ -784,7 +771,7 @@ module TypeScript {
             for (var i = 0 ; i < params.length; i++) {
                 var paramType = params[i].getType();
                 var typeString = paramType ? ": " : "";
-                builder.add(MemberName.create(params[i].getScopedName(scopeSymbol) + (params[i].getIsOptional() ? "?" : "") + typeString));
+                builder.add(MemberName.create(params[i].getScopedNameEx(scopeSymbol).toString() + (params[i].getIsOptional() ? "?" : "") + typeString));
                 if (paramType) {
                     builder.add(paramType.getScopedNameEx(scopeSymbol));
                 }
@@ -1622,19 +1609,7 @@ module TypeScript {
         }
 
         public toString() {
-            if (this.thisInToString) {
-                return "";
-            }
-            var s: string = null;
-            this.thisInToString = true;
-
-            if (!this.isNamedTypeSymbol()) {
-                s = this.getMemberTypeNameEx(true).toString();
-            } else {
-                s = this.getScopedName();
-            }
-
-            this.thisInToString = false;
+            var s = this.getScopedNameEx().toString();
             return s;
         }
 
@@ -2001,6 +1976,11 @@ module TypeScript {
 
         public setElementType(type: PullTypeSymbol) {
             this.elementType = type;
+        }
+
+        public getScopedNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
+            var elementMemberName = this.elementType.getScopedNameEx(scopeSymbol, getPrettyTypeName);
+            return MemberName.create(elementMemberName, "", "[]");
         }
 
         public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
