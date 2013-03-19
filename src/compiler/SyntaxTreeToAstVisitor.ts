@@ -229,11 +229,25 @@ module TypeScript {
         }
 
         private convertTokenLeadingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
-            if (token === null || !token.hasLeadingComment()) {
+            if (token === null) {
                 return null;
             }
 
-            return this.convertComments(token.leadingTrivia(), commentStartPosition);
+            var preComments = token.hasLeadingComment()
+                ? this.convertComments(token.leadingTrivia(), commentStartPosition)
+                : null;
+
+            var previousTokenTrailingComments = this.previousTokenTrailingComments;
+            this.previousTokenTrailingComments = null;
+            if (previousTokenTrailingComments === null) {
+                return preComments;
+            }
+
+            if (preComments === null) {
+                return previousTokenTrailingComments;
+            }
+
+            return this.previousTokenTrailingComments.concat(preComments);
         }
 
         private convertTokenTrailingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
@@ -245,11 +259,7 @@ module TypeScript {
         }
 
         private convertNodeLeadingComments(node: SyntaxNode, nodeStart: number): Comment[] {
-            var preComments = this.convertTokenLeadingComments(node.firstToken(), nodeStart);
-
-            return this.previousTokenTrailingComments === null
-                ? preComments
-                : this.previousTokenTrailingComments.concat(preComments);
+            return this.convertTokenLeadingComments(node.firstToken(), nodeStart);
         }
 
         private convertNodeTrailingComments(node: SyntaxNode, nodeStart: number): Comment[] {
@@ -1624,6 +1634,9 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             this.movePast(node.newKeyword);
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
             var parameters = node.callSignature.parameterList.accept(this);
@@ -1632,6 +1645,7 @@ module TypeScript {
             var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, start, this.position);
 
+            result.preComments = preComments;
             result.returnTypeAnnotation = returnType;
 
             result.hint = "_construct";
@@ -1648,6 +1662,9 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             var name = this.identifierFromToken(node.identifier, !!node.questionToken);
             this.movePast(node.identifier);
             this.movePast(node.questionToken);
@@ -1659,6 +1676,7 @@ module TypeScript {
             var funcDecl = new FuncDecl(name, null, false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(funcDecl, start, this.position);
 
+            funcDecl.preComments = preComments;
             funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
 
@@ -1670,13 +1688,11 @@ module TypeScript {
 
         private visitIndexSignature(node: IndexSignatureSyntax): FuncDecl {
             this.assertElementAtPosition(node);
-            /*
-            public openBracketToken: ISyntaxToken,
-                public parameter: ParameterSyntax,
-                public closeBracketToken: ISyntaxToken,
-                public typeAnnotation*/
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             this.movePast(node.openBracketToken);
             var parameter = node.parameter.accept(this);
             this.movePast(node.closeBracketToken);
@@ -1691,6 +1707,7 @@ module TypeScript {
             var result = new FuncDecl(name, null, /*isConstructor:*/ false, null, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, start, this.position);
 
+            result.preComments = preComments;
             result.variableArgList = !!node.parameter.dotDotDotToken;
             result.returnTypeAnnotation = returnType;
 
@@ -1706,6 +1723,9 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             var name = this.identifierFromToken(node.identifier, !!node.questionToken);
             this.movePast(node.identifier);
             this.movePast(node.questionToken);
@@ -1714,6 +1734,7 @@ module TypeScript {
             var result = new VarDecl(name, 0);
             this.setSpan(result, start, this.position);
 
+            result.preComments = preComments;
             result.typeExpr = typeExpr;
             result.varFlags |= VarFlags.Property;
 
@@ -1740,6 +1761,9 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
@@ -1747,6 +1771,7 @@ module TypeScript {
             var result = new FuncDecl(null, null, /*isConstructor:*/ false, typeParameters, parameters, new ASTList(), new ASTList(), new ASTList(), NodeType.FuncDecl);
             this.setSpan(result, start, this.position);
 
+            result.preComments = preComments;
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
 
