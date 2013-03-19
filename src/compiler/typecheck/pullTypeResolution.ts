@@ -1831,6 +1831,10 @@ module TypeScript {
 
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
+            if (nameAST.isMissing()) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
             var nameSymbol: PullSymbol = this.getSymbolForAST(nameAST);
 
             if (nameSymbol /*&& nameSymbol.isResolved()*/) {
@@ -1871,6 +1875,10 @@ module TypeScript {
         }
 
         public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+
+            if ((<Identifier>dottedNameAST.operand2).isMissing()) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }            
 
             var nameSymbol: PullSymbol = this.getSymbolForAST(dottedNameAST);
 
@@ -1978,6 +1986,10 @@ module TypeScript {
 
         public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
+            if (nameAST.isMissing()) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
             var typeNameSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST);
 
             if (typeNameSymbol /*&& typeNameSymbol.isResolved()*/) {
@@ -2010,8 +2022,14 @@ module TypeScript {
             return typeNameSymbol;
         }
 
-        public resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {          
+
             var nameAST = <Identifier> genericTypeAST.name;
+
+            if (nameAST.isMissing()) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }  
+
             var id = nameAST.actualText;
 
             var declPath: PullDecl[] = enclosingDecl !== null ? this.getPathToDecl(enclosingDecl) : [];
@@ -2086,6 +2104,10 @@ module TypeScript {
         }
 
         public resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+
+            if ((<Identifier>dottedNameAST.operand2).isMissing()) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }  
 
             var childTypeSymbol: PullTypeSymbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST);
 

@@ -21,6 +21,18 @@ module TypeScript {
         private pullTypeChecker: PullTypeChecker = null;
         private declStack: PullDecl[] = [];
 
+        private pushDecl(decl: PullDecl) {
+            if (decl) {
+                this.declStack[this.declStack.length] = decl;
+            }
+        }
+
+        private popDecl(decl: PullDecl) {
+            if (decl) {
+                this.declStack.length--;
+            }
+        }
+
         private setTypeCheckerUnit(fileName: string) {
             if (!this.pullTypeChecker.resolver) {
                 this.pullTypeChecker.setUnit(fileName);
@@ -44,6 +56,63 @@ module TypeScript {
             var declStackLen = this.declStack.length;
             var enclosingDecl = declStackLen > 0 ? this.declStack[declStackLen - 1] : null;
             return enclosingDecl;
+        }
+
+        private symbolIsUsedInItsEnclosingContainer(symbol: PullSymbol) {            
+
+            var symDecls = symbol.getDeclarations();
+
+            if (symDecls.length) {
+
+                var enclosingDecl = this.getEnclosingDecl();
+
+                if (enclosingDecl) {
+
+                    var parentDecl = symDecls[0].getParentDecl();
+
+                    if (parentDecl) {
+
+                        var symbolDeclarationEnclosingContainer = parentDecl;
+                        var enclosingContainer = enclosingDecl;
+
+                        // compute the closing container of the symbol's declaration
+                        while (symbolDeclarationEnclosingContainer) {
+
+                            if (symbolDeclarationEnclosingContainer.getKind() == PullElementKind.Container) {
+                                break;
+                            }
+
+                            symbolDeclarationEnclosingContainer = symbolDeclarationEnclosingContainer.getParentDecl();
+                        }
+
+                        // if the symbol in question is not a global, compute the nearest
+                        // enclosing declaration from the point of usage
+                        if (symbolDeclarationEnclosingContainer) {
+
+                            while(enclosingContainer) {
+                                if (enclosingContainer.getKind() == PullElementKind.Container) {
+                                    break;
+                                }
+
+                                enclosingContainer = enclosingContainer.getParentDecl();
+                            }
+                        }
+
+                        if (symbolDeclarationEnclosingContainer && enclosingContainer) {
+                            var same = symbolDeclarationEnclosingContainer == enclosingContainer;
+
+                            // initialized module object variables are bound to their parent's decls
+                            if (!same && symbol.hasFlag(PullElementFlags.InitializedModule)) {
+                                same = symbolDeclarationEnclosingContainer == enclosingContainer.getParentDecl();
+                            }
+
+                            return same;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         public getVarDeclFromIdentifier(ident: Identifier) {
@@ -92,9 +161,9 @@ module TypeScript {
         public emitInnerFunction(funcDecl: FuncDecl, printName: bool, isMember: bool,
             hasSelfRef: bool, classDecl: TypeDeclaration) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.locationInfo.fileName);
-            this.declStack.push(pullDecl);
+            this.pushDecl(pullDecl);
             super.emitInnerFunction(funcDecl, printName, isMember, hasSelfRef, classDecl);
-            this.declStack.pop();
+            this.popDecl(pullDecl);
         }
 
         // PULLTODO
@@ -162,9 +231,9 @@ module TypeScript {
 
         public emitJavascriptModule(moduleDecl: ModuleDeclaration) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl, this.locationInfo.fileName);
-            this.declStack.push(pullDecl);
+            this.pushDecl(pullDecl);
             super.emitJavascriptModule(moduleDecl);
-            this.declStack.pop();
+            this.popDecl(pullDecl);
         }
 
         public isContainedInClassDeclaration(varDecl: VarDecl) {
@@ -213,9 +282,9 @@ module TypeScript {
 
         public emitJavascriptVarDecl(varDecl: VarDecl, tokenId: TokenID) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.locationInfo.fileName);
-            this.declStack.push(pullDecl);
+            this.pushDecl(pullDecl);
             super.emitJavascriptVarDecl(varDecl, tokenId);
-            this.declStack.pop();
+            this.popDecl(pullDecl);
         }
 
         public emitJavascriptName(name: Identifier, addThis: bool) {
@@ -231,6 +300,7 @@ module TypeScript {
                     var pullSymbolContainer = pullSymbol.getContainer();
                     if (pullSymbolContainer) {
                         var pullSymbolContainerKind = pullSymbolContainer.getKind();
+
                         if (pullSymbolContainerKind == PullElementKind.Class) {
                             if (pullSymbol.hasFlag(PullElementFlags.Static)) {
                                 // This is static symbol
@@ -241,11 +311,27 @@ module TypeScript {
                                 this.writeToOutput(".");
                             }
                         }
-                        else if (pullSymbolContainerKind == PullElementKind.Container || pullSymbolContainerKind == PullElementKind.Enum) {
-                            // If property
-                            if (pullSymbolKind == PullElementKind.Property || pullSymbol.hasFlag(PullElementFlags.Exported)) {
+                        else if (pullSymbolContainerKind == PullElementKind.Container || pullSymbolContainerKind == PullElementKind.Enum || 
+                                    pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule)) {
+                            // If property or, say, a constructor being invoked locally within the module of its definition
+                            if (pullSymbolKind == PullElementKind.Property) {
                                 this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
+                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 
+                                pullSymbolKind == PullElementKind.Variable && 
+                                !pullSymbol.hasFlag(PullElementFlags.InitializedModule))  {
+                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                            }
+                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
+                                !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
+                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                            }
+                            // else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 
+                            //             pullSymbolKind != PullElementKind.Class && 
+                            //             pullSymbolKind != PullElementKind.ConstructorMethod && 
+                            //             !pullSymbol.hasFlag(PullElementFlags.ClassConstructorVariable)) {
+                            //         this.writeToOutput(pullSymbolContainer.getName() + ".");
+                            // }
                         }
                         else if (pullSymbolContainerKind == PullElementKind.DynamicModule) {
                             if (pullSymbolKind == PullElementKind.Property || pullSymbol.hasFlag(PullElementFlags.Exported)) {
@@ -328,9 +414,9 @@ module TypeScript {
 
         public emitJavascriptClass(classDecl: ClassDeclaration) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.locationInfo.fileName);
-            this.declStack.push(pullDecl);
+            this.pushDecl(pullDecl);
             super.emitJavascriptClass(classDecl);
-            this.declStack.pop();
+            this.popDecl(pullDecl);
         }
     }
 }

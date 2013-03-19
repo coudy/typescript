@@ -2613,10 +2613,10 @@ module TypeScript {
         var newReturnType = specializeType(returnType, typeArguments, resolver, enclosingDecl, context, ast);
         context.popTypeSpecializationCache();      
 
-        if (newReturnType != returnType) {
+        // if (newReturnType != returnType) {
 
-            newReturnType.addDeclaration(returnType.getDeclarations()[0]);
-        }
+        //     newReturnType.addDeclaration(returnType.getDeclarations()[0]);
+        // }
 
         newSignature.setReturnType(newReturnType);
 
@@ -2647,9 +2647,9 @@ module TypeScript {
             newParameterType = !localTypeParameters[parameterType.getName()] ? specializeType(parameterType, typeArguments, resolver, enclosingDecl, context, ast) : parameterType;
             context.popTypeSpecializationCache();
 
-            if (newParameterType != parameterType) {
-                newParameterType.addDeclaration(parameterType.getDeclarations()[0]);
-            }
+            // if (newParameterType != parameterType) {
+            //     newParameterType.addDeclaration(parameterType.getDeclarations()[0]);
+            // }
 
             if (parameters[k].getIsOptional()) {
                 newParameter.setIsOptional();
