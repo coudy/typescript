@@ -26,8 +26,6 @@ module TypeScript {
     }
 
     export class IncrementalParserTests {
-        private static stringTable = Collections.createStringTable();
-
         public static runAllTests() {
             for (var name in IncrementalParserTests) {
                 if (IncrementalParserTests.hasOwnProperty(name) && StringUtilities.startsWith(name, "test")) {
@@ -64,11 +62,11 @@ module TypeScript {
         // be a good thing.  If it decreases, that's not great (less reusability), but that may be 
         // unavoidable.  If it does decrease an investigation 
         private static compareTrees(oldText: IText, newText: IText, textChangeRange: TextChangeRange, reusedElements: number): void {
-            var oldTree = Parser1.parse(oldText, LanguageVersion.EcmaScript5, stringTable);
+            var oldTree = Parser1.parse(oldText, LanguageVersion.EcmaScript5);
 
-            var newTree = Parser1.parse(newText, LanguageVersion.EcmaScript5, stringTable);
+            var newTree = Parser1.parse(newText, LanguageVersion.EcmaScript5);
             var incrementalNewTree = Parser1.incrementalParse(
-                oldTree, textChangeRange, newText, LanguageVersion.EcmaScript5, stringTable);
+                oldTree, textChangeRange, newText, LanguageVersion.EcmaScript5);
 
             // We should get the same tree when doign a full or incremental parse.
             Debug.assert(newTree.structuralEquals(incrementalNewTree));

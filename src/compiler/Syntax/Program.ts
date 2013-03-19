@@ -12,7 +12,6 @@
 ///<reference path='..\..\Harness\Diff.ts' />
 
 var timer = new TypeScript.Timer();
-var stringTable = TypeScript.Collections.createStringTable();
 
 var specificFile =
     // "AstSpans1.ts";
@@ -112,7 +111,7 @@ class Program {
         // Environment.standardOut.WriteLine(filePath);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser1.parse(text, TypeScript.LanguageVersion.EcmaScript5, stringTable);
+        var tree = TypeScript.Parser1.parse(text, TypeScript.LanguageVersion.EcmaScript5);
 
         var totalIncrementalTime = 0;
         var count = 1000;
@@ -123,7 +122,7 @@ class Program {
             
             var changeLength = i * 2;
             var tree2 = TypeScript.Parser1.incrementalParse(
-                tree, new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength), text, TypeScript.LanguageVersion.EcmaScript5, stringTable);
+                tree, new TypeScript.TextChangeRange(new TypeScript.TextSpan((text.length() / 2) - i, changeLength), changeLength), text, TypeScript.LanguageVersion.EcmaScript5);
             
             timer.end();
 
@@ -234,7 +233,7 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
 
-        var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+        var tree = TypeScript.Parser1.parse(text, languageVersion);
         var emitted = TypeScript.Emitter1.emit(<TypeScript.SourceUnitSyntax>tree.sourceUnit());
 
         var result = justText
@@ -262,7 +261,7 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
         
-        var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+        var tree = TypeScript.Parser1.parse(text, languageVersion);
         var result = TypeScript.PrettyPrinter.prettyPrint(tree.sourceUnit());
 
         this.checkResult(filePath, result, verify, generateBaseline, true);
@@ -301,7 +300,7 @@ class Program {
             var text = TypeScript.TextFactory.createText(contents);
 
             timer.start();
-            var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+            var tree = TypeScript.Parser1.parse(text, languageVersion);
             timer.end();
 
             TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
@@ -330,11 +329,11 @@ class Program {
 
         var text = TypeScript.TextFactory.createText(contents);
 
-        var tree1 = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+        var tree1 = TypeScript.Parser1.parse(text, languageVersion);
         var tree2 = TypeScript.Parser1.incrementalParse(
             new TypeScript.SyntaxTree(TypeScript.Syntax.emptySourceUnit(), [], null),
             new TypeScript.TextChangeRange(new TypeScript.TextSpan(0, 0), text.length()),
-            text, languageVersion, stringTable);
+            text, languageVersion);
 
         TypeScript.Debug.assert(tree1.structuralEquals(tree2));
     }
@@ -353,7 +352,7 @@ class Program {
         // Environment.standardOut.WriteLine(filePath);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var tree = TypeScript.Parser1.parse(text, languageVersion, stringTable);
+        var tree = TypeScript.Parser1.parse(text, languageVersion);
         var sourceUnit = tree.sourceUnit();
 
         TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
@@ -413,7 +412,7 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var scanner = new TypeScript.Scanner1(text, languageVersion, stringTable);
+        var scanner = new TypeScript.Scanner1(text, languageVersion);
 
         var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
@@ -439,7 +438,7 @@ class Program {
         var contents = Environment.readFile(filePath, /*useUTF8:*/ true);
 
         var text = TypeScript.TextFactory.createText(contents);
-        var scanner = new TypeScript.Scanner1(text, languageVersion, stringTable);
+        var scanner = new TypeScript.Scanner1(text, languageVersion);
 
         var tokens: TypeScript.ISyntaxToken[] = [];
         var textArray: string[] = [];
@@ -507,7 +506,7 @@ class Program {
 
             try {
                 var stringText = TypeScript.TextFactory.createText(contents);
-                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5, stringTable);
+                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5);
 
                 if (isNegative) {
                     var fileName = filePath.substr(filePath.lastIndexOf("\\") + 1);
@@ -577,7 +576,7 @@ class Program {
 
             try {
                 var stringText = TypeScript.TextFactory.createText(contents);
-                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5, stringTable);
+                var tree = TypeScript.Parser1.parse(stringText, TypeScript.LanguageVersion.EcmaScript5);
 
             //Environment.standardOut.WriteLine(filePath);
             // Environment.standardOut.Write(".");
