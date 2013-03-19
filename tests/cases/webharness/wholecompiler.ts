@@ -1051,13 +1051,13 @@ module TypeScript {
 
         public print(context: PrintContext) {
             context.startLine();
-            var lineCol = { line: -1, col: -1 };
-            var limLineCol = { line: -1, col: -1 };
+            var lineCol = { line: -1, character: -1 };
+            var limLineCol = { line: -1, character: -1 };
             if (context.parser !== null) {
-                context.parser.getZeroBasedSourceLineCol(lineCol, this.minChar);
-                context.parser.getZeroBasedSourceLineCol(limLineCol, this.limChar);
-                context.write("(" + lineCol.line + "," + lineCol.col + ")--" +
-                              "(" + limLineCol.line + "," + limLineCol.col + "): ");
+                context.parser.getLineMap().fillLineAndCharacterFromPosition(this.minChar, lineCol);
+                context.parser.getLineMap().fillLineAndCharacterFromPosition(this.limChar, limLineCol);
+                context.write("(" + lineCol.line + "," + lineCol.character + ")--" +
+                              "(" + limLineCol.line + "," + limLineCol.character + "): ");
             }
             var lab = this.printLabel();
             if (hasFlag(this.flags, ASTFlags.Error)) {
@@ -2060,7 +2060,7 @@ module TypeScript {
 
     export class LocationInfo {
         constructor(public fileName: string,
-                    public lineMap: number[]) {
+                    public lineMap1: ILineMap) {
         }
     }
 
@@ -7247,23 +7247,23 @@ module TypeScript {
             }
         }
 
-        public getLineMap() {
-            return this.checker.locationInfo.lineMap;
+        public getLineMap(): ILineMap {
+            return this.checker.locationInfo.lineMap1;
         }
 
         public recordSourceMappingStart(ast: IASTSpan) {
             if (this.sourceMapper && isValidAstNode(ast)) {
-                var lineCol = { line: -1, col: -1 };
+                var lineCol = { line: -1, character: -1 };
                 var sourceMapping = new SourceMapping();
                 sourceMapping.start.emittedColumn = this.emitState.column;
                 sourceMapping.start.emittedLine = this.emitState.line;
                 // REVIEW: check time consumed by this binary search (about two per leaf statement)
                 var lineMap = this.getLineMap();
-                getZeroBasedSourceLineColFromMap(lineCol, ast.minChar, lineMap);
-                sourceMapping.start.sourceColumn = lineCol.col;
+                lineMap.fillLineAndCharacterFromPosition(ast.minChar, lineCol);
+                sourceMapping.start.sourceColumn = lineCol.character;
                 sourceMapping.start.sourceLine = lineCol.line + 1;
-                getZeroBasedSourceLineColFromMap(lineCol, ast.limChar, lineMap);
-                sourceMapping.end.sourceColumn = lineCol.col;
+                lineMap.fillLineAndCharacterFromPosition(ast.limChar, lineCol);
+                sourceMapping.end.sourceColumn = lineCol.character;
                 sourceMapping.end.sourceLine = lineCol.line + 1;
                 if (this.sourceMapper.currentNameIndex.length > 0) {
                     sourceMapping.nameIndex = this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1];
@@ -7778,15 +7778,15 @@ module TypeScript {
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export interface ILineCol {
+    export interface ILineAndCharacter {
         line: number;
-        col: number;
+        character: number;
     }
 
     export class ErrorReporter {
         public parser: Parser = null;
         public checker: TypeChecker = null;
-        public lineCol = { line: 0, col: 0 };
+        public lineCol = { line: 0, character: 0 };
         public emitAsComments = true;
         public hasErrors = false;
         public pushToErrorSink = false;
@@ -7807,7 +7807,7 @@ module TypeScript {
             if (this.emitAsComments) {
                 this.outfile.Write("// ");
             }
-            this.outfile.Write(this.checker.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.col + "): ");
+            this.outfile.Write(this.checker.locationInfo.fileName + "(" + this.lineCol.line + "," + this.lineCol.character + "): ");
         }
 
         public writePrefix(ast: AST): void {
@@ -7816,22 +7816,21 @@ module TypeScript {
             }
             else {
                 this.lineCol.line = 0;
-                this.lineCol.col = 0;
+                this.lineCol.character = 0;
             }
             this.emitPrefix();
         }
 
         public writePrefixFromSym(symbol: Symbol): void {
-            if (symbol && this.checker.locationInfo.lineMap) {
-                getZeroBasedSourceLineColFromMap(this.lineCol, symbol.location,
-                                        this.checker.locationInfo.lineMap);
+            if (symbol && this.checker.locationInfo.lineMap1) {
+                this.checker.locationInfo.lineMap1.fillLineAndCharacterFromPosition(symbol.location, this.lineCol);
                 if (this.lineCol.line >= 0) {
                     this.lineCol.line++;
                 }
             }
             else {
                 this.lineCol.line = -1;
-                this.lineCol.col = -1;
+                this.lineCol.character = -1;
             }
             this.emitPrefix();
         }
@@ -7839,8 +7838,8 @@ module TypeScript {
         public setError(ast: AST) {
             if (ast) {
                 ast.flags |= ASTFlags.Error;
-                if (this.checker.locationInfo.lineMap) {
-                    getZeroBasedSourceLineColFromMap(this.lineCol, ast.minChar, this.checker.locationInfo.lineMap);
+                if (this.checker.locationInfo.lineMap1) {
+                    this.checker.locationInfo.lineMap1.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
                     if (this.lineCol.line >= 0) {
                         this.lineCol.line++;
                     }
@@ -7892,10 +7891,10 @@ module TypeScript {
         }
 
         public showRef(ast: AST, text: string, symbol: Symbol) {
-            var defLineCol = { line: -1, col: -1 };
+            var defLineCol = { line: -1, character: -1 };
             // TODO: multiple def locations
-            this.parser.getZeroBasedSourceLineCol(defLineCol, symbol.location);
-            this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.col + ")");
+            this.parser.getLineMap().fillLineAndCharacterFromPosition(symbol.location, defLineCol);
+            this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.character + ")");
         }
 
         public unresolvedSymbol(ast: AST, name: string) {
@@ -8125,8 +8124,8 @@ module TypeScript {
             this.errorRecovery = true;
         }
 
-        public getZeroBasedSourceLineCol(lineCol: ILineCol, minChar: number): void {
-            getZeroBasedSourceLineColFromMap(lineCol, minChar, this.scanner.lineMap);
+        public getLineMap(): ILineMap {
+            return this.scanner.lineMap1;
         }
 
         private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
@@ -8145,10 +8144,10 @@ module TypeScript {
                 this.errorCallback(startPos, len, message, this.fileName);
             }
             else if (this.errorRecovery) {
-                var lineCol = { line: -1, col: -1 };
-                this.getZeroBasedSourceLineCol(lineCol, startPos);
+                var lineCol = { line: -1, character: -1 };
+                this.getLineMap().fillLineAndCharacterFromPosition(startPos, lineCol);
                 if (this.outfile) {
-                    this.outfile.WriteLine("// " + this.fileName + " (" + (lineCol.line + 1) + "," + lineCol.col + "): " + message);
+                    this.outfile.WriteLine("// " + this.fileName + " (" + (lineCol.line + 1) + "," + lineCol.character + "): " + message);
                 }
             }
             else {
@@ -8229,10 +8228,10 @@ module TypeScript {
                 var c: Comment = new Comment(comment.value, comment.isBlock, comment.endsLine);
                 c.minChar = comment.startPos;
                 c.limChar = comment.startPos + comment.value.length;
-                var lineCol = { line: -1, col: -1 };
-                this.getZeroBasedSourceLineCol(lineCol, c.minChar);
+                var lineCol = { line: -1, character: -1 };
+                this.getLineMap().fillLineAndCharacterFromPosition(c.minChar, lineCol);
                 c.minLine = lineCol.line;
-                this.getZeroBasedSourceLineCol(lineCol, c.limChar);
+                this.getLineMap().fillLineAndCharacterFromPosition(c.limChar, lineCol);
                 c.limLine = lineCol.line;
 
                 if (!comment.isBlock && comment.value.length > 3 && comment.value.substring(0, 3) === "///") {
@@ -12315,7 +12314,7 @@ module TypeScript {
             this.popDeclLists();
             script.minChar = minChar;
             script.limChar = this.scanner.pos;
-            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap);
+            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap1);
             script.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
             script.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
             script.isDeclareFile = this.parsingDeclareFile;
@@ -13106,124 +13105,12 @@ module TypeScript {
         getComments(): CommentToken[];
         getCommentsForLine(line: number): CommentToken[];
         resetComments(): void;
-        lineMap: number[];
+        lineMap1: ILineMap;
         setSourceText(newSrc: IScriptSnapshot, textMode: number): void;
         setErrorHandler(reportError: (message: string) => void ): void;
         seenUnicodeChar: bool;
         seenUnicodeCharInComment: bool;
         getLookAheadToken(): Token;
-    }
-
-    export class SavedTokens implements IScanner {
-        public prevToken: Token = null;
-        public curSavedToken: SavedToken = null;
-        public prevSavedToken: SavedToken = null;
-        public currentTokenIndex: number;
-        public currentTokens: SavedToken[];
-        public tokensByLine: SavedToken[][];
-        public lexStateByLine: LexState[];
-        public previousToken(): Token { return this.prevToken; }
-        public currentToken = 0;
-        public tokens: SavedToken[] = [];
-        public startPos: number;
-        public pos: number;
-        public seenUnicodeChar: bool = false;
-        seenUnicodeCharInComment: bool = false;
-
-        public startLine: number;
-        public prevLine = 0;
-        public line = 0;
-        public col = 0;
-        public leftCurlyCount: number;
-        public rightCurlyCount: number;
-
-        public lexState = LexState.Start;
-        public commentStack: CommentToken[] = [];
-
-        public lineMap: number[] = [];
-
-        public addToken(tok: Token, scanner: IScanner) {
-            this.tokens[this.currentToken++] = new SavedToken(tok, scanner.startPos, scanner.pos);
-        }
-
-        public scan(): Token {
-            // TODO: curly count
-            this.startLine = this.line;
-            this.startPos = this.col;
-            if (this.currentTokenIndex === this.currentTokens.length) {
-                if (this.line < this.lineMap.length) {
-                    this.line++;
-                    this.col = 0;
-                    this.currentTokenIndex = 0;
-                    this.currentTokens = this.tokensByLine[this.line];
-                }
-                else {
-                    return staticTokens[TokenID.EndOfFile];
-                }
-            }
-
-            if (this.currentTokenIndex < this.currentTokens.length) {
-                this.prevToken = this.curSavedToken.tok;
-                this.prevSavedToken = this.curSavedToken;
-                this.curSavedToken = this.currentTokens[this.currentTokenIndex++];
-                var curToken = this.curSavedToken.tok;
-                this.pos = this.curSavedToken.limChar;
-                this.col += (this.curSavedToken.limChar - this.curSavedToken.minChar);
-                this.startPos = this.curSavedToken.minChar;
-                this.prevLine = this.line;
-                return curToken;
-            }
-            else {
-                return staticTokens[TokenID.EndOfFile];
-            }
-        }
-
-        public lastTokenLimChar(): number {
-            if (this.prevSavedToken !== null) {
-                return this.prevSavedToken.limChar;
-            }
-            else {
-                return 0;
-            }
-        }
-
-        public lastTokenHadNewline(): bool {
-            return this.prevLine != this.startLine;
-        }
-
-        public getComments() {
-            var stack = this.commentStack;
-            this.commentStack = [];
-            return stack;
-        }
-
-        public getCommentsForLine(line: number) {
-            var comments: CommentToken[] = null;
-            while ((this.commentStack.length > 0) && (this.commentStack[0].line === line)) {
-                if (comments === null) {
-                    comments = [this.commentStack.shift()];
-                }
-                else {
-                    comments = comments.concat([this.commentStack.shift()]);
-                }
-
-            }
-            return comments;
-        }
-
-        public resetComments() {
-            this.commentStack = [];
-        }
-
-        public setSourceText(newSrc: IScriptSnapshot, textMode: number) {
-        }
-
-        public setErrorHandler(reportError: (message: string) => void ) {
-        }
-
-        public getLookAheadToken(): Token {
-            throw new Error("Invalid operation.");
-        }
     }
 
     export class Scanner implements IScanner {
@@ -13239,7 +13126,7 @@ module TypeScript {
         public startLine: number;
         public src: string;
         public len = 0;
-        public lineMap: number[] = [];
+        public lineMap1: ILineMap = null;
 
         public ch = LexEOF;
         public lexState = LexState.Start;
@@ -13250,7 +13137,6 @@ module TypeScript {
         public leftCurlyCount = 0;
         public rightCurlyCount = 0;
         public commentStack: CommentToken[] = [];
-        public saveScan: SavedTokens = null;
         public seenUnicodeChar: bool = false;
         seenUnicodeCharInComment: bool = false;
 
@@ -13261,7 +13147,6 @@ module TypeScript {
         constructor() {
             this.startCol = this.col;
             this.startLine = this.line;
-            this.lineMap[0] = 0;
 
             if (!LexKeywordTable) {
                 LexInitialize();
@@ -13283,8 +13168,7 @@ module TypeScript {
             this.len = 0;
             this.src = newSrc.getText(0, newSrc.getLength());
             this.len = this.src.length;
-            this.lineMap = [];
-            this.lineMap[0] = 0;
+            this.lineMap1 = LineMap.createFromScriptSnapshot(newSrc);
             this.commentStack = [];
             this.leftCurlyCount = 0;
             this.rightCurlyCount = 0;
@@ -13522,7 +13406,6 @@ module TypeScript {
             this.col = 0;
             if (this.mode === LexMode.File) {
                 this.line++;
-                this.lineMap[this.line] = this.pos + 1;
             }
         }
 
@@ -13780,9 +13663,6 @@ module TypeScript {
         public scan(): Token {
             this.prevLine = this.line;
             this.prevTok = this.innerScan();
-            if (this.saveScan) {
-                this.saveScan.addToken(this.prevTok, this);
-            }
             return this.prevTok;
         }
 
@@ -14338,56 +14218,6 @@ module TypeScript {
         else {
             return false;
         }
-    }
-
-    // Return the (0-based) line number from a character offset using the provided linemap.
-    export function getZeroBasedLineNumberFromPosition(lineMap: number[], position: number): number {
-        if (position === -1) {
-            return -1;
-        }
-
-        // Binary search
-        var min = 0;
-        var max = lineMap.length - 1;
-        while (min < max) {
-            var med = (min + max) >> 1;
-            if (position < lineMap[med]) {
-                max = med - 1;
-            }
-            else if (position < lineMap[med + 1]) {
-                min = max = med; // found it
-            }
-            else {
-                min = med + 1;
-            }
-        }
-
-        return min;
-    }
-
-    /// Return the [line, column] data for a given offset and a lineMap.
-    /// Note that the returned line is 0-based, while the column is 0-based.
-    export function getZeroBasedSourceLineColFromMap(lineCol: ILineCol, minChar: number, lineMap: number[]): void {
-        var line = getZeroBasedLineNumberFromPosition(lineMap, minChar);
-
-        if (line >= 0) {
-            lineCol.line = line;
-            lineCol.col = (minChar - lineMap[line]);
-        }
-    }
-
-    // Return the [line, column] (both 0 based) corresponding to a given position in a given script.
-    export function getZeroBasedLineColumnFromPosition(script: TypeScript.Script, position: number): ILineCol {
-        var result = { line: -1, col: -1 };
-        getZeroBasedSourceLineColFromMap(result, position, script.locationInfo.lineMap);
-        return result;
-    }
-
-    //
-    // Return the position (offset) corresponding to a given [line, column] (both 0-based) in a given script.
-    //
-    export function getPositionFromZeroBasedLineColumn(locationInfo: TypeScript.LocationInfo, line: number, column: number): number {
-        return locationInfo.lineMap[line] + column;
     }
 
     // Return true if the token is a primitive type
@@ -25053,6 +24883,7 @@ module TypeScript {
     /// where we need an ISourceText object
     export class SourceUnit implements IScriptSnapshot, IResolvedFile {
         public referencedFiles: IFileReference[] = null;
+        private lineStarts: number[] = null;
 
         constructor(public path: string,
                     public content: string) {
@@ -25066,8 +24897,12 @@ module TypeScript {
             return this.content.length;
         }
 
-        public getLineStartPositions(): number[] {
-            throw Errors.notYetImplemented();
+        public getLineStartPositions(): number[]{
+            if (this.lineStarts === null) {
+                this.lineStarts = LineMap.createFromString(this.content).lineStarts();
+            }
+
+            return this.lineStarts;
         }
 
         public getTextChangeRangeSinceVersion(scriptVersion: number): TypeScript.TextChangeRange {
@@ -25386,7 +25221,6 @@ module TypeScript {
         public usePullTC = true;
 
         public tcOnly = false;
-        public parseOnly = false;
 
         public gatherDiagnostics = false;
 
@@ -25578,16 +25412,16 @@ module TypeScript {
                     referencedCode.minChar = comment.startPos;
                     referencedCode.limChar = referencedCode.minChar + comment.value.length;
                     // Get the startLine and startCol
-                    var result = { line: -1, col: -1 };
-                    getZeroBasedSourceLineColFromMap(result, comment.startPos, scanner.lineMap);
+                    var result = { line: -1, character: -1 };
+                    scanner.lineMap1.fillLineAndCharacterFromPosition(comment.startPos, result);
                     if (result.line >= 0) {
                         result.line++;   // Make it 1-based
                     }
-                    if (result.col >= 0) {
-                        result.col++;   // Make it 1-based
+                    if (result.character >= 0) {
+                        result.character++;   // Make it 1-based
                     }
                     referencedCode.startLine = result.line;
-                    referencedCode.startCol = result.col;
+                    referencedCode.startCol = result.character;
                     referencedFiles.push(referencedCode);
                 }
 
@@ -25608,293 +25442,6 @@ module TypeScript {
     }
 
 } // Tools
-﻿//﻿
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-///<reference path='typescript.ts' />
-
-module TypeScript {
-    export class IncrementalParser {
-        constructor(private logger: TypeScript.ILogger) {
-        }
-
-        //
-        // Return "null" if "editRange" cannot be safely determined to be inside a single scope.
-        //
-        public getEnclosingScopeContextIfSingleScopeEdit(previousScript: Script, fileName: string, newSourceText: IScriptSnapshot, editRange: TextChangeRange): EnclosingScopeContext {
-            this.logger.log("checkEditsInsideSingleScope(\"" + fileName + "\")");
-
-            if (editRange === null) {
-                throw new Error("editRange should be valid");
-            }
-
-            var scope1 = TypeScript.findEnclosingScopeAt(this.logger, previousScript, newSourceText, editRange.span().start(), false/*isMemberCompletion*/);
-            var scope2 = TypeScript.findEnclosingScopeAt(this.logger, previousScript, newSourceText, editRange.span().end(), false/*isMemberCompletion*/);
-            if (scope1 == null || scope2 == null) {
-                this.logger.log("  Bailing out because containing scopes cannot be determined");
-                return null;
-            }
-
-            // We only support changes within a single containing scope
-            if (scope1.scopeStartAST !== scope2.scopeStartAST) {
-                this.logger.log("  Bailing out because edit overlaps 2 disctint scopes");
-                return null;
-            }
-
-            var delta = editRange.newLength() - editRange.span().length();
-            var newScopeLength = scope1.scopeStartAST.limChar - scope1.scopeStartAST.minChar + delta;
-            if (newScopeLength <= 0) {
-                this.logger.log("  Bailing out because scope has been entirely removed from new source text");
-                return null;
-            }
-
-            return scope1;
-        }
-
-        public attemptIncrementalUpdateUnit(previousScript: Script, fileName: string, newSourceText: IScriptSnapshot, editRange: TextChangeRange): UpdateUnitResult {
-            this.logger.log("attemptIncrementalUpdateUnit(\"" + fileName + "\")");
-
-            if (editRange === null) {
-                throw new Error("editRange should be valid");
-            }
-
-            var scope1 = this.getEnclosingScopeContextIfSingleScopeEdit(previousScript, fileName, newSourceText, editRange);
-            if (scope1 === null) {
-                return null;
-            }
-
-            var delta = editRange.newLength() - editRange.span().length();
-            var newScopeLength = scope1.scopeStartAST.limChar - scope1.scopeStartAST.minChar + delta;
-
-            // Heuristic: if the range to reparse is too big, bail out. 
-            // This is because a full parse will be faster than an incremental parse followed by all the necessary fix-ups 
-            if (newScopeLength >= newSourceText.getLength() / 2) {
-                this.logger.log("  Bailing out because range of scope to reparse (" + newScopeLength + " characters) is greater than half the size of the source text");
-                return null;
-            }
-
-            // Capture parsing errors so that they are part of "updateResult"
-            var parseErrors: TypeScript.ErrorEntry[] = [];
-            var errorCapture = function(minChar: number, charLen: number, message: string, fileName: string): void {
-                parseErrors.push(new TypeScript.ErrorEntry(fileName, minChar, minChar + charLen, message));
-            };
-
-            var quickParseResult = TypeScript.quickParse(
-                this.logger, scope1.scopeStartAST, newSourceText, scope1.scopeStartAST.minChar, scope1.scopeStartAST.minChar + newScopeLength, fileName, errorCapture);
-            if (quickParseResult.endLexState != TypeScript.LexState.Start) {
-                this.logger.log("  Bailing out because scope contains unterminated comment");
-                return null;
-            }
-
-            var scriptFragment = quickParseResult.Script;
-            if (scriptFragment.vars.members.length !== 0) {
-                this.logger.log("  Bailing out because new source text defines variables");
-                return null;
-            }
-
-            //if (scriptFragment.scopes.members.length !== 1) {
-            //    logger.log("  Bailing out because new source text defines more than one scope (or none)");
-            //    return null;
-            //}
-
-            // This detects adding close curlies, since they have the side effect of having the parser 
-            // parse more members in the scope range.
-            if (scriptFragment.bod.members.length !== 1) {
-                this.logger.log("  Bailing out because new source text defines more than one scope (or none)");
-                return null;
-            }
-
-            var oldScope = scope1.scopeStartAST;
-            var newScope = scriptFragment.bod.members[0];
-
-            if (oldScope.nodeType != newScope.nodeType) {
-                this.logger.log("  Bailing out because new source text does not define the same scope type as the existing scope");
-                return null;
-            }
-
-            if (!(<any>oldScope).leftCurlyCount || !(<any>oldScope).rightCurlyCount) {
-                this.logger.log("  Bailing out because sopce doesn't have left/right curly count");
-                return null;
-            }
-
-            if ((<any>oldScope).leftCurlyCount !== (<any>newScope).leftCurlyCount) {
-                this.logger.log("  Bailing out because new source text contains more (or fewer) left curly braces");
-                return null;
-            }
-
-            if ((<any>oldScope).rightCurlyCount !== (<any>newScope).rightCurlyCount) {
-                this.logger.log("  Bailing out because new source text contains more (or fewer) right curly braces");
-                return null;
-            }
-
-            if (newScope.minChar !== 0) {
-                this.logger.log("  Bailing out because new function declaration does not start at position 0");
-                return null;
-            }
-
-            if (newScope.limChar !== newScopeLength) {
-                this.logger.log("  Bailing out because new function declaration does not end at the new end position");
-                return null;
-            }
-
-            return TypeScript.UpdateUnitResult.singleScopeEdits(previousScript, scriptFragment, oldScope, newScope, editRange, parseErrors);
-        }
-
-        public mergeTrees(updateResult: UpdateUnitResult): void {
-            TypeScript.timeFunction(this.logger, "mergeTrees()", () => {
-                var delta = updateResult.editRange.newLength() - updateResult.editRange.span().length();
-                var oldSpan = TextSpan.fromBounds(updateResult.scope1.minChar, updateResult.scope1.limChar);
-                var editRange = new TextChangeRange(
-                    oldSpan, oldSpan.length() + delta);
-
-                // Update positions in current ast
-                this.applyDeltaPosition(updateResult.script1, editRange.span().end(), delta);
-                // Update positions in new (partial) ast
-                this.applyDeltaPosition(updateResult.script2, 0, editRange.span().start());
-                // Merge linemaps
-                this.mergeLocationInfo(updateResult.script1, updateResult.script2, editRange);
-                //  Replace old AST for scope with new one
-                this.replaceAST(updateResult.script1, updateResult.scope1, updateResult.scope2);
-            });
-        }
-
-        private replaceAST(script: TypeScript.AST, oldAst: TypeScript.AST, newAst: TypeScript.AST) {
-            var pre = (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) => {
-                if (cur === oldAst) {
-                    // Transfer comments ownership to new AST. We need this because when "quick parsing" the
-                    // new AST, we don't take into account the text before and after the "minChar/limChar" pair
-                    // of the scope, which don't include pre/post-comments.
-                    newAst.preComments = cur.preComments;
-                    newAst.postComments = cur.postComments;
-
-                    this.logger.log("replaced old AST node with new one in script AST");
-                    walker.options.stopWalk();
-                    return newAst;
-                }
-
-                // Avoid visiting sub-trees outside of the edit range
-                if (TypeScript.isValidAstNode(cur)) {
-                    if (cur.limChar < oldAst.minChar || cur.minChar > oldAst.limChar) {
-                        walker.options.goChildren = false;
-                    }
-                }
-                return cur;
-            }
-
-            TypeScript.getAstWalkerFactory().walk(script, pre);
-        }
-
-        private mergeLocationInfo(script: TypeScript.Script, partial: TypeScript.Script, editRange: TextChangeRange) {
-            // Don't merger these fields, as the original script has the right values
-            //script.locationInfo.unitIndex = partial.locationInfo.unitIndex;
-            //script.locationInfo.fileName = partial.locationInfo.fileName;
-
-            var lineMap1 = script.locationInfo.lineMap;
-            var lineMap2 = partial.locationInfo.lineMap;
-
-            // Skip entries < minChar
-            var i1 = 1; // lineMap[0] is always 0.
-            var i2 = 1; // lineMap[0] is always 0.
-            var len1 = lineMap1.length;
-            var len2 = lineMap2.length;
-            while (i1 < len1) {
-                if (lineMap1[i1] <= editRange.span().start()) {
-                    // Nothing to do for this entry, since it's before the range of the change
-                    i1++;
-                } else if (lineMap1[i1] >= editRange.span().end()) {
-                    // Apply delta to this entry, since it's outside the range of the change
-                    lineMap1[i1] += (editRange.newLength() - editRange.span().length());
-                    i1++;
-                }
-                else {
-                    if (i2 < len2) {
-                        // Add a new entry to lineMap1 corresponding to lineMap2 in new range
-                        lineMap1.splice(i1, 0, lineMap2[i2] + editRange.span().start());
-                        i1++;
-                        len1++;
-                        i2++;
-                    }
-                    else { /* i2 >= len 2 */
-                        // Remove this entry, since there is no corresponding entry in the new map
-                        lineMap1.splice(i1, 1);
-                        len1--;
-                    }
-                }
-            }
-            // Merge the remaining entries in lineMap2 while maintaing the constraint that a lineMap is sorted
-            if (i2 < len2) {
-                // i1 >= len1 && i2 < len2 
-                if (lineMap1[len1 - 1] >= (lineMap2[i2] + editRange.span().start())) {
-                    // lineMap2 needs to be merged within lineMap1
-                    i1 = 2;
-                    while (i1 < len1 && i2 < len2) {
-                        if (lineMap1[i1] < (lineMap2[i2] + editRange.span().start())) {
-                            i1++;
-                        }
-                        else {
-                            lineMap1.splice(i1, 0, lineMap2[i2] + editRange.span().start());
-                            i1++;
-                            len1++;
-                            i2++;
-                        }
-                    }
-                }
-
-                // Append all the remaining entries in lineMap2 to the end of lineMap1
-                for (; i2 < len2; i2++) {
-                    lineMap1.push(lineMap2[i2] + editRange.span().start());
-                }
-            }
-        }
-
-        private applyDeltaPosition(ast: TypeScript.AST, start: number, delta: number) {
-            var applyDelta = (ast: TypeScript.AST) => {
-                if (ast.minChar !== -1 && ast.minChar >= start) {
-                    ast.minChar += delta;
-                }
-                if (ast.limChar !== -1 && ast.limChar >= start) {
-                    ast.limChar += delta;
-                }
-            }
-
-            var applyDeltaToComments = (comments: TypeScript.Comment[]) => {
-                if (comments && comments.length > 0) {
-                    for (var i = 0; i < comments.length; i++) {
-                        applyDelta(comments[i]);
-                    }
-                }
-            }
-
-            var pre = function(cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
-                // *Before* applying delta to this, check if we need to go to children
-                if (cur.limChar !== -1 && cur.limChar < start) {
-                    walker.options.goChildren = false; // Done with applying Delta for this sub-tree
-                }
-
-                // Apply delta to this node
-                applyDelta(cur);
-                applyDeltaToComments(cur.preComments);
-                applyDeltaToComments(cur.postComments);
-
-                return cur;
-            }
-
-            TypeScript.getAstWalkerFactory().walk(ast, pre);
-        }
-    }
-}
 ﻿//﻿
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -30844,7 +30391,7 @@ module TypeScript {
 ///<reference path='..\Core\Errors.ts' />
 
 module TypeScript {
-    export class LinePosition {
+    export class LineAndCharacter {
         private _line: number = 0;
         private _character: number = 0;
 
@@ -30980,7 +30527,9 @@ module TypeScript {
         lineStarts(): number[];
         lineCount(): number;
         getLineNumberFromPosition(position: number): number;
-        getLinePosition(position: number): LinePosition;
+        getLineAndCharacterFromPosition(position: number): LineAndCharacter;
+        fillLineAndCharacterFromPosition(position: number, lineAndCharacter: ILineAndCharacter): void;
+        getLineStartPosition(lineNumber: number): number;
         getPosition(line: number, character: number): number;
     }
 
@@ -31033,20 +30582,38 @@ module TypeScript {
             return lineNumber;
         }
 
-        public getLinePosition(position: number): LinePosition {
+        public getLineStartPosition(lineNumber: number): number {
+            return this.lineStarts()[lineNumber];
+        }
+
+        public fillLineAndCharacterFromPosition(position: number, lineAndCharacter: ILineAndCharacter): void {
+            if (position < 0 || position > this.length) {
+                throw Errors.argumentOutOfRange("position");
+            }
+
+            var lineNumber = this.getLineNumberFromPosition(position);
+            lineAndCharacter.line = lineNumber;
+            lineAndCharacter.character = position - this.lineStarts()[lineNumber];
+        }
+
+        public getLineAndCharacterFromPosition(position: number): LineAndCharacter {
             if (position < 0 || position > this.length) {
                 throw Errors.argumentOutOfRange("position");
             }
 
             var lineNumber = this.getLineNumberFromPosition(position);
 
-            return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
+            return new LineAndCharacter(lineNumber, position - this.lineStarts()[lineNumber]);
         }
 
         public static createFromText(text: ISimpleText): LineMap {
             var lineStarts = TextUtilities.parseLineStarts(text);
 
             return new LineMap(lineStarts, text.length());
+        }
+
+        public static createFromScriptSnapshot(scriptSnapshot: IScriptSnapshot): LineMap {
+            return new LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());
         }
 
         public static createFromString(text: string): LineMap {
@@ -31123,7 +30690,7 @@ module TypeScript {
         /// Gets a line number, and position within that line, for the character at the 
         /// specified position
         /// </summary>
-        getLinePosition(position: number): LinePosition;
+        getLinePosition(position: number): LineAndCharacter;
 
         /// <summary>
         /// Returns a string representation of the contents of this IText within the given span.
@@ -49540,14 +49107,14 @@ module TypeScript.TextFactory {
             return lineNumber;
         }
 
-        public getLinePosition(position: number): LinePosition {
+        public getLinePosition(position: number): LineAndCharacter {
             if (position < 0 || position > this.length()) {
                 throw Errors.argumentOutOfRange("position");
             }
 
             var lineNumber = this.getLineNumberFromPosition(position);
 
-            return new LinePosition(lineNumber, position - this.lineStarts()[lineNumber]);
+            return new LineAndCharacter(lineNumber, position - this.lineStarts()[lineNumber]);
         }
     }
 
@@ -64699,8 +64266,8 @@ module TypeScript {
             this.emitParensAndCommentsInPlace(name, false);
         }
 
-        public getLineMap() {
-            return this.locationInfo.lineMap;
+        public getLineMap(): ILineMap {
+            return this.locationInfo.lineMap1;
         }
 
         public isAccessorEmitted(funcDecl: FuncDecl) {
@@ -64801,7 +64368,7 @@ module TypeScript {
     }
 
     export class PullErrorReporter {
-        public lineCol = { line: 0, col: 0 };
+        public lineCol = { line: 0, character: 0 };
         public locationInfoCache: any = {};
         public hasErrors = false;
 
@@ -64818,13 +64385,18 @@ module TypeScript {
             }
         }
 
-        private reportError(error: SemanticError) {
-            var locationInfo = this.locationInfoCache[error.fileName];
+        public reportError(error: SemanticError, lineMap: ILineMap = null) {
+            if (lineMap === null) {
+                var locationInfo = this.locationInfoCache[error.fileName];
+                if (locationInfo && locationInfo.lineMap) {
+                    lineMap = locationInfo.lineMap;
+                }
+            }
 
-            if (locationInfo && locationInfo.lineMap) {
-                getZeroBasedSourceLineColFromMap(this.lineCol, error.start(), locationInfo.lineMap);
+            if (lineMap) {
+                lineMap.fillLineAndCharacterFromPosition(error.start(), this.lineCol);
 
-                this.textWriter.Write(locationInfo.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.col + "): ");
+                this.textWriter.Write(error.fileName + "(" + (this.lineCol.line + 1) + "," + this.lineCol.character + "): ");
             }
             else {
                 this.textWriter.Write(error.fileName + "(0,0): ");
@@ -65590,7 +65162,7 @@ module TypeScript {
             this.popDeclLists();
 
             result.bod = bod;
-            result.locationInfo = new LocationInfo(this.fileName, this.lineMap.lineStarts());
+            result.locationInfo = new LocationInfo(this.fileName, this.lineMap);
             result.topLevelMod = topLevelMod;
             result.isDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
             result.requiresExtendsBlock = this.requiresExtendsBlock;
@@ -68185,7 +67757,6 @@ module TypeScript {
 ///<reference path='pathUtils.ts' />
 ///<reference path='referenceResolution.ts' />
 ///<reference path='precompile.ts' />
-///<reference path='incrementalParser.ts' />
 ///<reference path='declarationEmitter.ts' />
 ///<reference path='Syntax\ISyntaxNodeOrToken.ts' />
 ///<reference path='Syntax\Parser.ts' />
@@ -68219,7 +67790,6 @@ module TypeScript {
     export enum UpdateUnitKind {
         Unknown,
         NoEdits,
-        EditsInsideSingleScope,
     }
 
     export class UpdateUnitResult {
@@ -68238,15 +67808,6 @@ module TypeScript {
             var result = new UpdateUnitResult(UpdateUnitKind.Unknown, script1.locationInfo.fileName, script1, script2);
             result.parseErrors = parseErrors;
 
-            return result;
-        }
-
-        static singleScopeEdits(script1: Script, script2: Script, scope1: AST, scope2: AST, editRange: TextChangeRange, parseErrors: ErrorEntry[]) {
-            var result = new UpdateUnitResult(UpdateUnitKind.EditsInsideSingleScope, script1.locationInfo.fileName, script1, script2);
-            result.scope1 = scope1;
-            result.scope2 = scope2;
-            result.editRange = editRange;
-            result.parseErrors = parseErrors;
             return result;
         }
     }
@@ -68387,10 +67948,6 @@ module TypeScript {
                             this.parser.errorCallback(e.minChar, e.limChar - e.minChar, e.message, e.fileName);
                         }
                     }
-                    return true;
-
-                case UpdateUnitKind.EditsInsideSingleScope:
-                    new IncrementalParser(this.logger).mergeTrees(updateResult);
                     return true;
             }
         }
@@ -70728,25 +70285,22 @@ class BatchCompiler {
     /// Do the actual compilation reading from input files and
     /// writing to output file(s).
     public compile(): bool {
-        var compiler: TypeScript.TypeScriptCompiler;
-
         if (typeof localizedDiagnosticMessages === "undefined") {
             localizedDiagnosticMessages = null;
         }
-        
+
         var logger = this.compilationSettings.gatherDiagnostics ? <TypeScript.ILogger>new DiagnosticsLogger(this.ioHost) : new TypeScript.NullLogger();
-        compiler = new TypeScript.TypeScriptCompiler(
+        var compiler = new TypeScript.TypeScriptCompiler(
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
         compiler.setErrorOutput(this.errorReporter);
 
         compiler.setErrorCallback(
-            (minChar, charLen, message, unitIndex) => {
+            (minChar, charLen, message, fileName: string) => {
                 compiler.errorReporter.hasErrors = true;
-                var fname = this.resolvedEnvironment.code[unitIndex].path;
-                var lineCol = { line: -1, col: -1 };
-                compiler.parser.getZeroBasedSourceLineCol(lineCol, minChar);
+                var lineCol = { line: -1, character: -1 };
+                compiler.parser.getLineMap().fillLineAndCharacterFromPosition(minChar, lineCol);
 
-                var msg = fname + " (" + (lineCol.line + 1) + "," + (lineCol.col + 1) + "): " + message;
+                var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
                 if (this.compilationSettings.errorRecovery) {
                     this.errorReporter.WriteLine(msg);
                 } else {
@@ -70778,6 +70332,16 @@ class BatchCompiler {
                     }
 
                     compiler.addUnit(code.content, code.path, code.referencedFiles);
+
+                    // TODO: remove this code.  This is not how we should be reporting errors.
+                    var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);
+                    var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
+                    for (var i = 0, n = diagnostics.length; i < n; i++) {
+                        var diagnostic = diagnostics[i];
+                        compiler.pullErrorReporter.reportError(
+                            new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
+                            syntaxTree.lineMap());
+                    }
                 }
             }
             catch (err) {
@@ -70798,28 +70362,26 @@ class BatchCompiler {
             resolvePath: this.ioHost.resolvePath
         };
 
-        if (!this.compilationSettings.parseOnly) {
-            try {
-                if (this.compilationSettings.usePull) {
-                    compiler.pullTypeCheck(true, this.compilationSettings.usePullTC);
-                }
-                else {
-                    compiler.typeCheck();
-                }
+        try {
+            if (this.compilationSettings.usePull) {
+                compiler.pullTypeCheck(true, this.compilationSettings.usePullTC);
+            }
+            else {
+                compiler.typeCheck();
+            }
 
-                if (!this.compilationSettings.tcOnly) {
-                    var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                        this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-                    };
-                    compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
-                    compiler.emitDeclarations(this.compilationSettings.usePull);
-                }
-            } catch (err) {
-                compiler.errorReporter.hasErrors = true;
-                // Catch emitter exceptions
-                if (err.message != "EmitError") {
-                    throw err;
-                }
+            if (!this.compilationSettings.tcOnly) {
+                var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                    this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+                };
+                compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
+                compiler.emitDeclarations(this.compilationSettings.usePull);
+            }
+        } catch (err) {
+            compiler.errorReporter.hasErrors = true;
+            // Catch emitter exceptions
+            if (err.message != "EmitError") {
+                throw err;
             }
         }
 
@@ -71030,14 +70592,6 @@ class BatchCompiler {
                 this.compilationSettings.tcOnly = true;
             }
         });
-
-        opts.flag('parseonly', {
-            usage: 'Parse only - do not emit or type check',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.parseOnly = true;
-            }
-        });    
 
         opts.option('target', {
             usage: 'Specify ECMAScript target version: "ES3" (default), or "ES5"',

@@ -197,12 +197,15 @@ class BatchCompiler {
 
                     // TODO: remove this code.  This is not how we should be reporting errors.
                     var syntaxTree: TypeScript.SyntaxTree = compiler.fileNameToSyntaxTree.lookup(code.path);
-                    var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
-                    for (var i = 0, n = diagnostics.length; i < n; i++) {
-                        var diagnostic = diagnostics[i];
-                        compiler.pullErrorReporter.reportError(
-                            new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
-                            syntaxTree.lineMap());
+
+                    if (syntaxTree !== null) {
+                        var diagnostics: TypeScript.IDiagnostic[] = syntaxTree.diagnostics();
+                        for (var i = 0, n = diagnostics.length; i < n; i++) {
+                            var diagnostic = diagnostics[i];
+                            compiler.pullErrorReporter.reportError(
+                                new TypeScript.PullError(diagnostic.start(), diagnostic.length(), code.path, diagnostic.message()),
+                                syntaxTree.lineMap());
+                        }
                     }
                 }
             }
