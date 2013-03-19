@@ -2426,12 +2426,17 @@ module TypeScript {
             this.assertElementAtPosition(node);
 
             var start = this.position;
+
+            var preComments = this.convertNodeLeadingComments(node, start);
+
             var left = node.propertyName.accept(this);
             this.movePast(node.colonToken);
             var right = node.expression.accept(this);
 
             var result = new BinaryExpression(NodeType.Member, left, right);
             this.setSpan(result, start, this.position);
+
+            result.preComments = preComments;
 
             if (right.nodeType === NodeType.FuncDecl) {
                 var funcDecl = <FuncDecl>right;
