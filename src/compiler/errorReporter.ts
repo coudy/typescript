@@ -60,8 +60,8 @@ module TypeScript {
         }
 
         public writePrefixFromSym(symbol: Symbol): void {
-            if (symbol && this.checker.locationInfo.lineMap1) {
-                this.checker.locationInfo.lineMap1.fillLineAndCharacterFromPosition(symbol.location, this.lineCol);
+            if (symbol && this.checker.locationInfo.lineMap) {
+                this.checker.locationInfo.lineMap.fillLineAndCharacterFromPosition(symbol.location, this.lineCol);
                 if (this.lineCol.line >= 0) {
                     this.lineCol.line++;
                 }
@@ -76,8 +76,8 @@ module TypeScript {
         public setError(ast: AST) {
             if (ast) {
                 ast.flags |= ASTFlags.Error;
-                if (this.checker.locationInfo.lineMap1) {
-                    this.checker.locationInfo.lineMap1.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
+                if (this.checker.locationInfo.lineMap) {
+                    this.checker.locationInfo.lineMap.fillLineAndCharacterFromPosition(ast.minChar, this.lineCol);
                     if (this.lineCol.line >= 0) {
                         this.lineCol.line++;
                     }

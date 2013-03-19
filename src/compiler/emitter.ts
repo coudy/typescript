@@ -1316,7 +1316,7 @@ module TypeScript {
         }
 
         public getLineMap(): ILineMap {
-            return this.checker.locationInfo.lineMap1;
+            return this.checker.locationInfo.lineMap;
         }
 
         public recordSourceMappingStart(ast: IASTSpan) {

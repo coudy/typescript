@@ -851,7 +851,7 @@ module Formatting {
         }
 
         public GetLineNumberFromPosition(position: number): number {
-            return this.script.locationInfo.lineMap1.getLineNumberFromPosition(position);
+            return this.script.locationInfo.lineMap.getLineNumberFromPosition(position);
         }
 
         public GetLineFromPosition(position: number): ITextSnapshotLine {
@@ -869,12 +869,12 @@ module Formatting {
         }
 
         private GetLineFromLineNumberWorker(lineNumber: number): ITextSnapshotLine {
-            var lineMap1 = this.script.locationInfo.lineMap1;
+            var lineMap = this.script.locationInfo.lineMap;
             var lineMapIndex = lineNumber; //Note: lineMap is 0-based
-            var lineStarts = lineMap1.lineStarts();
+            var lineStarts = lineMap.lineStarts();
             if (lineMapIndex < 0 || lineMapIndex >= lineStarts.length)
                 throw new Error("invalid line number (" + lineMapIndex + ")");
-            var start = lineMap1.getLineStartPosition(lineMapIndex);
+            var start = lineMap.getLineStartPosition(lineMapIndex);
 
             var end: number;
             var endIncludingLineBreak: number;

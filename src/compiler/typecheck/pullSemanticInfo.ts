@@ -169,6 +169,7 @@ module TypeScript {
         }
 
         public getUnit(compilationUnitPath: string) {
+            // PULLTODO: Replace this with a hash so we don't have a linear walk going on here.
             for (var i = 0; i < this.units.length; i++) {
                 if (this.units[i].getPath() == compilationUnitPath) {
                     return this.units[i];

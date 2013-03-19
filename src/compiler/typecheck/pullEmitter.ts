@@ -296,7 +296,7 @@ module TypeScript {
         }
 
         public getLineMap(): ILineMap {
-            return this.locationInfo.lineMap1;
+            return this.locationInfo.lineMap;
         }
 
         public isAccessorEmitted(funcDecl: FuncDecl) {

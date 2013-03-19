@@ -149,7 +149,7 @@ module TypeScript {
         }
 
         public getLineMap(): ILineMap {
-            return this.scanner.lineMap1;
+            return this.scanner.lineMap;
         }
 
         private createRef(text: string, hasEscapeSequence: bool, minChar: number): Identifier {
@@ -4338,7 +4338,7 @@ module TypeScript {
             this.popDeclLists();
             script.minChar = minChar;
             script.limChar = this.scanner.pos;
-            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap1);
+            script.locationInfo = new LocationInfo(fileName, this.scanner.lineMap);
             script.leftCurlyCount = this.scanner.leftCurlyCount - leftCurlyCount;
             script.rightCurlyCount = this.scanner.rightCurlyCount - rightCurlyCount;
             script.isDeclareFile = this.parsingDeclareFile;
