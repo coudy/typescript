@@ -113,9 +113,7 @@ class HarnessBatch {
                         bugs.forEach(bug => assert.bug(bug));
                     }
 
-                    if (_self.compilationSettings.errorRecovery) {
-                        compiler.parser.setErrorRecovery(this.errorOut);
-                    }
+                    compiler.parser.setErrorRecovery(this.errorOut);
                     compiler.addUnit(code.content, code.path);
                 }
             }

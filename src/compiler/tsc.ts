@@ -156,19 +156,15 @@ class BatchCompiler {
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
         compiler.setErrorOutput(this.errorReporter);
 
-        compiler.setErrorCallback(
-            (minChar, charLen, message, fileName: string) => {
-                compiler.errorReporter.hasErrors = true;
-                var lineCol = { line: -1, character: -1 };
-                compiler.parser.getLineMap().fillLineAndCharacterFromPosition(minChar, lineCol);
+        var errorCallback = (minChar: number, charLen: number, message: string, fileName: string) => {
+            compiler.errorReporter.hasErrors = true;
+            var lineCol = { line: -1, character: -1 };
+            compiler.parser.getLineMap().fillLineAndCharacterFromPosition(minChar, lineCol);
 
-                var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
-                if (this.compilationSettings.errorRecovery) {
-                    this.errorReporter.WriteLine(msg);
-                } else {
-                    throw new SyntaxError(msg);
-                }
-            });
+            var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
+            this.errorReporter.WriteLine(msg);
+        };
+        compiler.setErrorCallback(errorCallback);
 
         if (this.compilationSettings.emitComments) {
             compiler.emitCommentsToOutput();
@@ -189,9 +185,7 @@ class BatchCompiler {
                 }
 
                 if (code.content != null) {
-                    if (this.compilationSettings.errorRecovery) {
-                        compiler.parser.setErrorRecovery(this.errorReporter);
-                    }
+                    compiler.parser.setErrorRecovery(this.errorReporter);
 
                     compiler.addUnit(code.content, code.path, code.referencedFiles);
 
@@ -235,13 +229,11 @@ class BatchCompiler {
                 compiler.typeCheck();
             }
 
-            if (!this.compilationSettings.tcOnly) {
-                var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                    this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-                };
-                compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
-                compiler.emitDeclarations(this.compilationSettings.usePull);
-            }
+            var mapInputToOutput = (inputFile: string, outputFile: string): void => {
+                this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
+            };
+            compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
+            compiler.emitDeclarations(this.compilationSettings.usePull);
         } catch (err) {
             compiler.errorReporter.hasErrors = true;
             // Catch emitter exceptions
@@ -337,14 +329,6 @@ class BatchCompiler {
             experimental: true,
             set: () => { this.compilationSettings.propagateConstants = true; }
         });
-
-        opts.flag('errorrecovery', {
-            usage: 'Enable error recovery',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.errorRecovery = true;
-            }
-        }, 'er');
 
         opts.flag('comments', {
             usage: 'Emit comments to output',
@@ -447,14 +431,6 @@ class BatchCompiler {
             experimental: true,
             set: () => {
                 this.compilationSettings.usePullTC = false;
-            }
-        });
-
-        opts.flag('tconly', {
-            usage: 'Typecheck only - do not emit',
-            experimental: true,
-            set: () => {
-                this.compilationSettings.tcOnly = true;
             }
         });
 

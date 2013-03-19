@@ -87,7 +87,6 @@ module TypeScript {
         public styleSettings = new StyleSettings();
         public propagateConstants = false;
         public minWhitespace = false;
-        public errorRecovery = false;
         public emitComments = false;
         public watch = false;
         public exec = false;
@@ -113,8 +112,6 @@ module TypeScript {
         public useCaseSensitiveFileResolution = false;
         public usePull = false;
         public usePullTC = true;
-
-        public tcOnly = false;
 
         public gatherDiagnostics = false;
 
