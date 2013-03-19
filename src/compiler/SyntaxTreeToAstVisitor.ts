@@ -228,21 +228,18 @@ module TypeScript {
             return result;
         }
 
-        /*
-                    var previousTokenTrailingComments = this.previousTokenTrailingComments;
-            this.previousTokenTrailingComments = null;
-
-            if (previousTokenTrailingComments === null) {
-                return preComments;
+        private mergeComments(comments1: Comment[], comments2: Comment[]): Comment[]{
+            if (comments1 === null) {
+                return comments2;
             }
 
-            if (preComments === null) {
-                return previousTokenTrailingComments;
+            if (comments2 === null) {
+                return comments1;
             }
 
-            return previousTokenTrailingComments.concat(preComments);
+            return comments1.concat(comments2);
 
-*/
+        }
 
         private convertTokenLeadingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
             if (token === null) {
@@ -256,15 +253,7 @@ module TypeScript {
             var previousTokenTrailingComments = this.previousTokenTrailingComments;
             this.previousTokenTrailingComments = null;
 
-            if (previousTokenTrailingComments === null) {
-                return preComments;
-            }
-
-            if (preComments === null) {
-                return previousTokenTrailingComments;
-            }
-
-            return previousTokenTrailingComments.concat(preComments);
+            return this.mergeComments(previousTokenTrailingComments, preComments);
         }
 
         private convertTokenTrailingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
@@ -990,7 +979,18 @@ module TypeScript {
             this.assertElementAtPosition(node);
             var start = this.position;
 
-            this.moveTo2(node, node.variableDeclaration);
+            var preComments: Comment[] = null;
+
+            if (node.exportKeyword) {
+                preComments = this.convertTokenLeadingComments(node.exportKeyword, start);
+                this.movePast(node.exportKeyword);
+            }
+
+            if (node.declareKeyword) {
+                preComments = this.convertTokenLeadingComments(node.declareKeyword, this.position);
+                this.movePast(node.declareKeyword);
+            }
+
             var varList = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
 
@@ -1002,6 +1002,10 @@ module TypeScript {
 
             for (var i = 0, n = varList.members.length; i < n; i++) {
                 var varDecl = <VarDecl>varList.members[i];
+
+                if (i === 0) {
+                    varDecl.preComments = this.mergeComments(preComments, varDecl.preComments);
+                }
 
                 if (node.exportKeyword) {
                     varDecl.varFlags |= VarFlags.Exported;

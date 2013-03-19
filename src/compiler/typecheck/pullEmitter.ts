@@ -104,19 +104,21 @@ module TypeScript {
             var i = 0;
 
             // all dependencies are quoted
-            for (i = 0; i < (<ModuleType>moduleDecl.mod).importedModules.length; i++) {
-                var importStatement = (<ModuleType>moduleDecl.mod).importedModules[i]
+            if (moduleDecl.mod) {
+                for (i = 0; i < moduleDecl.mod.importedModules.length; i++) {
+                    var importStatement = moduleDecl.mod.importedModules[i]
 
-                // if the imported module is only used in a type position, do not add it as a requirement
-                if (importStatement.id.sym &&
-                    !(<TypeSymbol>importStatement.id.sym).onlyReferencedAsTypeRef) {
-                    if (i <= (<ModuleType>moduleDecl.mod).importedModules.length - 1) {
-                        dependencyList += ", ";
-                        importList += ", ";
+                    // if the imported module is only used in a type position, do not add it as a requirement
+                    if (importStatement.id.sym &&
+                        !(<TypeSymbol>importStatement.id.sym).onlyReferencedAsTypeRef) {
+                        if (i <= (<ModuleType>moduleDecl.mod).importedModules.length - 1) {
+                            dependencyList += ", ";
+                            importList += ", ";
+                        }
+
+                        importList += "__" + importStatement.id.actualText + "__";
+                        dependencyList += importStatement.firstAliasedModToString();
                     }
-
-                    importList += "__" + importStatement.id.actualText + "__";
-                    dependencyList += importStatement.firstAliasedModToString();
                 }
             }
 

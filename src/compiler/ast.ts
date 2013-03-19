@@ -1292,7 +1292,7 @@ module TypeScript {
 
     export class ModuleDeclaration extends NamedDeclaration {
         public modFlags = ModuleFlags.ShouldEmitModuleDecl;
-        public mod: ModuleType;
+        public mod: ModuleType = null;
         public prettyName: string;
         public amdDependencies: string[] = [];
         public vars: ASTList;
