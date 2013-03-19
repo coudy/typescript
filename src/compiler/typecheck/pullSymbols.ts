@@ -462,7 +462,6 @@ module TypeScript {
         }
     }
 
-    // PULLTODO: Need a major cleanup of '[]' initializers!
     export class PullSignatureSymbol extends PullSymbol {
         private parameterLinks: PullSymbolLink[] = null;
         private typeParameterLinks: PullSymbolLink[] = null;

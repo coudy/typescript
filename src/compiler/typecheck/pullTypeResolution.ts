@@ -741,7 +741,7 @@ module TypeScript {
                             constructorSignature.setReturnType(classDeclSymbol);
 
                             for (var j = 0; j < parentParameters.length; j++) {
-                                constructorSignature.addParameter(parentParameters[j]);
+                                constructorSignature.addParameter(parentParameters[j], parentParameters[j].getIsOptional());
                             }
 
                             constructorTypeSymbol.addConstructSignature(constructorSignature);
