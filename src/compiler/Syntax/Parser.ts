@@ -2589,7 +2589,12 @@ module TypeScript.Parser1 {
         }
 
         private isConstructSignature(): bool {
-            return this.currentToken().tokenKind === SyntaxKind.NewKeyword;
+            if (this.currentToken().tokenKind !== SyntaxKind.NewKeyword) {
+                return false;
+            }
+
+            var token1 = this.peekToken(1);
+            return token1.tokenKind === SyntaxKind.LessThanToken || token1.tokenKind === SyntaxKind.OpenParenToken;
         }
 
         private isIndexSignature(): bool {

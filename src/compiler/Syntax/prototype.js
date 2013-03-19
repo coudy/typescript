@@ -36807,7 +36807,11 @@ var TypeScript;
                 return tokenKind === 72 /* OpenParenToken */  || tokenKind === 80 /* LessThanToken */ ;
             };
             ParserImpl.prototype.isConstructSignature = function () {
-                return this.currentToken().tokenKind === 31 /* NewKeyword */ ;
+                if (this.currentToken().tokenKind !== 31 /* NewKeyword */ ) {
+                    return false;
+                }
+                var token1 = this.peekToken(1);
+                return token1.tokenKind === 80 /* LessThanToken */  || token1.tokenKind === 72 /* OpenParenToken */ ;
             };
             ParserImpl.prototype.isIndexSignature = function () {
                 return this.currentToken().tokenKind === 74 /* OpenBracketToken */ ;
@@ -61137,7 +61141,8 @@ var Diff;
     Diff.HtmlBaselineReport = HtmlBaselineReport;    
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
-var specificFile = undefined;
+var specificFile = "643728.ts";
+undefined;
 var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
