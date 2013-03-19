@@ -2455,9 +2455,7 @@ module TypeScript {
             if (newSignature.hasGenericParameter()) {
                 newType.setHasGenericSignature();
             }
-        }
-
-        
+        }        
 
         // specialize members
 
@@ -2495,7 +2493,7 @@ module TypeScript {
                 fieldType = new PullTypeVariableSymbol("tyvar" + globalTyvarID);
             }
 
-            newField.setType(fieldType);
+            //newField.setType(fieldType);
 
             replacementType = <PullTypeSymbol>typeReplacementMap[fieldType.getSymbolID().toString()];
 
