@@ -21,7 +21,6 @@ module TypeScript {
         private slidingWindow: SlidingWindow;
 
         private text: ISimpleText;
-        private stringTable: Collections.StringTable;
         private languageVersion: LanguageVersion;
 
         private static isKeywordStartCharacter: bool[] = [];
@@ -63,14 +62,12 @@ module TypeScript {
         }
 
         constructor(text: ISimpleText,
-            languageVersion: LanguageVersion,
-            stringTable: Collections.StringTable,
-            window: number[] = ArrayUtilities.createArray(2048, 0)) {
+                    languageVersion: LanguageVersion,
+                    window: number[] = ArrayUtilities.createArray(2048, 0)) {
             Scanner1.initializeStaticData();
 
             this.slidingWindow = new SlidingWindow(this, window, 0, text.length());
             this.text = text;
-            this.stringTable = stringTable;
             this.languageVersion = languageVersion;
         }
 
@@ -142,7 +139,7 @@ module TypeScript {
         // Scans a subsection of 'text' as trivia.
         public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: bool): ISyntaxTriviaList {
             // Debug.assert(length > 0);
-            var scanner = new Scanner1(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, null, Scanner1.triviaWindow);
+            var scanner = new Scanner1(text.subText(new TextSpan(start, length)), LanguageVersion.EcmaScript5, Scanner1.triviaWindow);
             return scanner.scanTrivia(isTrailing);
         }
 
@@ -1287,7 +1284,7 @@ module TypeScript {
 
             // Debug.assert(offset >= 0);
             if (intern) {
-                return this.stringTable.addCharArray(this.slidingWindow.window, offset, length);
+                return Collections.DefaultStringTable.addCharArray(this.slidingWindow.window, offset, length);
             }
             else {
                 return StringUtilities.fromCharCodeArray(this.slidingWindow.window.slice(offset, offset + length));

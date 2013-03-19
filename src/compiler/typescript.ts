@@ -268,8 +268,6 @@ module TypeScript {
             return this.addSourceUnit(new StringScriptSnapshot(prog), fileName, referencedFiles);
         }
 
-        private stringTable: Collections.StringTable = Collections.createStringTable();
-        
         private typeCollectionTime = 0;
 
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
@@ -297,7 +295,7 @@ module TypeScript {
                     var text = new TypeScript.ScriptSnapshotText(sourceText);
 
                     timer.start();
-                    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
+                    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5);
                     timer.end();
 
                     var newParseTime = timer.time;
@@ -1422,20 +1420,10 @@ module TypeScript {
 
                 var text = new TypeScript.ScriptSnapshotText(sourceText);
 
-                var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5, this.stringTable);
-                var newScript: Script = null;
-                try {
-                    newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
+                var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5);
+                var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
 
-                    // TypeScriptCompiler.compareObjects(script, script2);
-                } catch (e1) {
-                    IO.stdout.WriteLine("Error converting: " + fileName);
-                    IO.stdout.WriteLine("\t" + e1.message);
-                }
-                
                 this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-
-                //var newScript = this.parser.parse(sourceText, fileName, i);
 
                 if (svErrorCallback)
                     this.parser.errorCallback = svErrorCallback;

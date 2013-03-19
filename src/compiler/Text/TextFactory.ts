@@ -371,8 +371,6 @@ module TypeScript.TextFactory {
         }
     }
 
-    var stringTable = Collections.createStringTable();
-
     /// <summary>
     /// An IText that represents a subrange of another IText.
     /// </summary>
@@ -465,7 +463,7 @@ module TypeScript.TextFactory {
                     ? SimpleStringText.charArray
                     : ArrayUtilities.createArray(length, /*defaultValue:*/0);
                 this.copyTo(start, array, 0, length);
-                return stringTable.addCharArray(array, 0, length);
+                return Collections.DefaultStringTable.addCharArray(array, 0, length);
             }
 
             return this.value.substr(start, length);

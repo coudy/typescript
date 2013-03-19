@@ -156,7 +156,5 @@ module TypeScript.Collections {
         }
     }
 
-    export function createStringTable(capacity = DefaultStringTableCapacity): StringTable {
-        return new StringTable(capacity);
-    }
+    export var DefaultStringTable = new StringTable(DefaultStringTableCapacity);
 }

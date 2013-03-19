@@ -436,10 +436,9 @@ module TypeScript.Parser1 {
         private rewindPointPoolCount = 0;
 
         constructor(text: ISimpleText,
-                    languageVersion: LanguageVersion,
-                    stringTable: Collections.StringTable) {
+                    languageVersion: LanguageVersion) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
-            this.scanner = new Scanner1(text, languageVersion, stringTable);
+            this.scanner = new Scanner1(text, languageVersion);
         }
 
         private currentNode(): SyntaxNode {
@@ -643,8 +642,7 @@ module TypeScript.Parser1 {
         constructor(oldSourceUnit: SourceUnitSyntax,
                     textChangeRange: TextChangeRange,
                     newText: ISimpleText,
-                    languageVersion: LanguageVersion,
-                    stringTable: Collections.StringTable) {
+                    languageVersion: LanguageVersion) {
             this._oldSourceUnitCursor = new SyntaxCursor(oldSourceUnit);
 
             // In general supporting multiple individual edits is just not that important.  So we 
@@ -659,7 +657,7 @@ module TypeScript.Parser1 {
             // Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
 
             // Set up a scanner so that we can scan tokens out of the new text.
-            this._normalParserSource = new NormalParserSource(newText, languageVersion, stringTable);
+            this._normalParserSource = new NormalParserSource(newText, languageVersion);
         }
 
         private static extendToAffectedRange(changeRange:TextChangeRange,
@@ -5611,9 +5609,8 @@ module TypeScript.Parser1 {
 
     export function parse(text: ISimpleText,
                           languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                          stringTable: Collections.StringTable = null,
                           options?: ParseOptions = null): SyntaxTree {
-        var source = new NormalParserSource(text, languageVersion, stringTable);
+        var source = new NormalParserSource(text, languageVersion);
         options = options || new ParseOptions();
 
         return new ParserImpl(text.lineMap(), source, options).parseSyntaxTree();
@@ -5623,14 +5620,13 @@ module TypeScript.Parser1 {
                                      textChangeRange: TextChangeRange,
                                      newText: ISimpleText,
                                      languageVersion: LanguageVersion = LanguageVersion.EcmaScript5,
-                                     stringTable: Collections.StringTable = null,
                                      options?: ParseOptions = null): SyntaxTree {
         if (textChangeRange.isUnchanged()) {
             return oldSyntaxTree;
         }
         
         var source = new IncrementalParserSource(
-            oldSyntaxTree.sourceUnit(), textChangeRange, newText, languageVersion, stringTable);
+            oldSyntaxTree.sourceUnit(), textChangeRange, newText, languageVersion);
         options = options || new ParseOptions();
 
         return new ParserImpl(newText.lineMap(), source, options).parseSyntaxTree();
