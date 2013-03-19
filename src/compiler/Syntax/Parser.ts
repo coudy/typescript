@@ -1492,27 +1492,6 @@ module TypeScript.Parser1 {
 
             throw Errors.invalidOperation();
         }
-
-        private static isDirectivePrologueElement(node: SyntaxNode): bool {
-            if (node.kind() === SyntaxKind.ExpressionStatement) {
-                var expressionStatement = <ExpressionStatementSyntax>node;
-                var expression = expressionStatement.expression;
-
-                if (expression.kind() === SyntaxKind.StringLiteral) {
-                    return true;
-                }
-            }
-
-            return false
-        }
-
-        private static isUseStrictDirective(node: SyntaxNode) {
-            var expressionStatement = <ExpressionStatementSyntax>node;
-            var stringLiteral = <ISyntaxToken>expressionStatement.expression;
-
-            var text = stringLiteral.text();
-            return text === '"use strict"' || text === "'use strict'";
-        }
         
         private addSkippedTokenAfterNodeOrToken(nodeOrToken: ISyntaxNodeOrToken, skippedToken: ISyntaxToken): ISyntaxNodeOrToken {
             if (nodeOrToken.isToken()) {
@@ -1642,12 +1621,12 @@ module TypeScript.Parser1 {
                 // Check if all the items are directive prologue elements.
                 for (var i = 0; i < items.length; i++) {
                     var item = items[i];
-                    if (!ParserImpl.isDirectivePrologueElement(item)) {
+                    if (!SyntaxFacts.isDirectivePrologueElement(item)) {
                         return;
                     }
                 }
 
-                parser.setStrictMode(ParserImpl.isUseStrictDirective(items[items.length - 1]));
+                parser.setStrictMode(SyntaxFacts.isUseStrictDirective(items[items.length - 1]));
             }
         }
 
@@ -2062,7 +2041,7 @@ module TypeScript.Parser1 {
             var identifier = this.eatIdentifierToken();
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
 
             return this.factory.getMemberAccessorDeclaration(
                 publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block);
@@ -2075,7 +2054,7 @@ module TypeScript.Parser1 {
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var identifier = this.eatIdentifierToken();
             var parameterList = this.parseParameterList();
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
 
             return this.factory.setMemberAccessorDeclaration(
                 publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block);
@@ -2177,7 +2156,7 @@ module TypeScript.Parser1 {
             var block: BlockSyntax = null;
 
             if (this.isBlock()) {
-                block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+                block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             }
             else {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2249,7 +2228,7 @@ module TypeScript.Parser1 {
             var semicolon: ISyntaxToken = null;
 
             if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
-                block = this.parseBlock(parseBlockEvenWithNoOpenBrace);
+                block = this.parseBlock(parseBlockEvenWithNoOpenBrace, /*checkForStrictMode:*/ false);
             }
             else {
                 semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2395,7 +2374,7 @@ module TypeScript.Parser1 {
 
             // Parse a block if we're on a bock, or if we saw a '=>'
             if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
-                block = this.parseBlock(parseBlockEvenWithNoOpenBrace);
+                block = this.parseBlock(parseBlockEvenWithNoOpenBrace, /*checkForStrictMode:*/ true);
             }
             else {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
@@ -2717,7 +2696,7 @@ module TypeScript.Parser1 {
                 return this.parseIfStatement();
             }
             else if (this.isBlock()) {
-                return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+                return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             }
             else if (this.isReturnStatement()) {
                 return this.parseReturnStatement();
@@ -2822,7 +2801,7 @@ module TypeScript.Parser1 {
 
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= ListParsingState.TryBlock_Statements;
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             this.listParsingState = savedListParsingState;
 
             var catchClause: CatchClauseSyntax = null;
@@ -2854,7 +2833,7 @@ module TypeScript.Parser1 {
 
             var savedListParsingState = this.listParsingState;
             this.listParsingState |= ListParsingState.CatchBlock_Statements;
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             this.listParsingState = savedListParsingState;
 
             return this.factory.catchClause(catchKeyword, openParenToken, identifier, closeParenToken, block);
@@ -2866,7 +2845,7 @@ module TypeScript.Parser1 {
 
         private parseFinallyClause(): FinallyClauseSyntax {
             var finallyKeyword = this.eatKeyword(SyntaxKind.FinallyKeyword);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
 
             return this.factory.finallyClause(finallyKeyword, block);
         }
@@ -4036,7 +4015,7 @@ module TypeScript.Parser1 {
             }
 
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ true);
 
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         }
@@ -4159,7 +4138,7 @@ module TypeScript.Parser1 {
 
         private parseArrowFunctionBody(): ISyntaxNodeOrToken {
             if (this.isBlock()) {
-                return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+                return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             }
             else {
                 return this.parseAssignmentExpression(/*allowIn:*/ true);
@@ -4384,7 +4363,7 @@ module TypeScript.Parser1 {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
 
             return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block);
         }
@@ -4402,7 +4381,7 @@ module TypeScript.Parser1 {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var parameter = this.parseParameter();
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
 
             return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
         }
@@ -4482,15 +4461,16 @@ module TypeScript.Parser1 {
             return thisKeyword;
         }
 
-        private parseBlock(parseBlockEvenWithNoOpenBrace: bool): BlockSyntax {
+        private parseBlock(parseBlockEvenWithNoOpenBrace: bool, checkForStrictMode: bool): BlockSyntax {
             var openBraceToken = this.eatToken(SyntaxKind.OpenBraceToken);
 
             var statements: ISyntaxList = Syntax.emptyList;
 
             if (parseBlockEvenWithNoOpenBrace || openBraceToken.width() > 0) {
                 var savedIsInStrictMode = this.isInStrictMode;
-
-                var result = this.parseSyntaxList(ListParsingState.Block_Statements, ParserImpl.updateStrictModeState);
+                
+                var processItems = checkForStrictMode ? ParserImpl.updateStrictModeState : null;
+                var result = this.parseSyntaxList(ListParsingState.Block_Statements, processItems);
                 statements = result.list;
                 openBraceToken = this.addSkippedTokensAfterToken(openBraceToken, result.skippedTokens);
 

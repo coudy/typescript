@@ -365,6 +365,22 @@ module TypeScript {
             return false;
         }
 
+        private hasUseStrictDirective(list: ISyntaxList): bool {
+            // Check if all the items are directive prologue elements.
+            for (var i = 0; i < list.childCount(); i++) {
+                var item = list.childAt(i);
+                if (!SyntaxFacts.isDirectivePrologueElement(item)) {
+                    return false;
+                }
+
+                if (SyntaxFacts.isUseStrictDirective(item)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private visitSourceUnit(node: SourceUnitSyntax): Script {
             this.assertElementAtPosition(node);
 
@@ -375,6 +391,10 @@ module TypeScript {
             var isParsingDeclareFile = isDSTRFile(this.fileName) || isDTSFile(this.fileName);
 
             var bod = this.visitSyntaxList(node.moduleElements);
+
+            if (this.hasUseStrictDirective(node.moduleElements)) {
+                bod.flags |= ASTFlags.StrictMode;
+            }
 
             var topLevelMod: ModuleDeclaration = null;
             if (moduleGenTarget != ModuleGenTarget.Local && this.hasTopLevelImportOrExport(node)) {
@@ -758,6 +778,12 @@ module TypeScript {
             var bod = this.convertBlock(node.block);
             if (bod) {
                 bod.append(new EndCode());
+            }
+
+            if (node.block) {
+                if (this.hasUseStrictDirective(node.block.statements)) {
+                    bod.flags |= ASTFlags.StrictMode;
+                }
             }
 
             this.movePast(node.semicolonToken);
@@ -2552,6 +2578,12 @@ module TypeScript {
             var bod = this.convertBlock(node.block);
             if (bod) {
                 bod.append(new EndCode());
+            }
+
+            if (node.block) {
+                if (this.hasUseStrictDirective(node.block.statements)) {
+                    bod.flags |= ASTFlags.StrictMode;
+                }
             }
 
             var funcDecl = new FuncDecl(name, bod, false, typeParameters, parameters, this.topVarList(),
