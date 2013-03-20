@@ -304,7 +304,7 @@ module TypeScript {
                 binder.bind(this.typeChecker.globalScope, this.typeChecker.ambientGlobals);
                 binder.bind(this.typeChecker.globalScope, this.typeChecker.globalTypes);
                 binder.bind(this.typeChecker.globalScope, this.typeChecker.ambientGlobalTypes);
-                this.typeFlow = new TypeFlow(this.logger, this.typeChecker.globalScope, this.parser, this.typeChecker);
+                this.typeFlow = new TypeFlow(this.logger, this.typeChecker.globalScope, this.typeChecker);
                 var i = 0;
                 var script: Script = null;
 

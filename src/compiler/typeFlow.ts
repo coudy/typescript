@@ -661,8 +661,7 @@ module TypeScript {
         public nestingLevel = 0;
         public inSuperCall = false;
 
-        constructor (public logger: ILogger, public initScope: SymbolScope, public parser: Parser,
-                   public checker: TypeChecker) {
+        constructor(public logger: ILogger, public initScope: SymbolScope, public checker: TypeChecker) {
             this.checker.typeFlow = this;
             this.scope = this.initScope;
             this.globalScope = this.initScope;
