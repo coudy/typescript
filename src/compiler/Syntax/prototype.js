@@ -61262,8 +61262,9 @@ var Diff;
     Diff.HtmlBaselineReport = HtmlBaselineReport;    
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
-var specificFile = undefined;
-var generate = true;
+var specificFile = "ErrantAccessibilityModifierInModule1.ts";
+undefined;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {

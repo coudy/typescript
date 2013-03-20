@@ -14,7 +14,7 @@
 var timer = new TypeScript.Timer();
 
 var specificFile =
-    // "643728.ts";
+    "ErrantAccessibilityModifierInModule1.ts";
     undefined;
 
 var generate = false;
