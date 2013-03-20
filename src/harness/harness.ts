@@ -332,7 +332,8 @@ module Harness {
         }
 
         public runChild(index: number, done: IDone) {
-            return this.call(<any>((done) => this.children[index].run(done)), done);
+            var that = this;
+            return this.call(<any>((done) => that.children[index].run(done)), done);
         }
 
         static errorHandlerStack: { (e: Error): void; }[] = [];
