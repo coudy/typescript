@@ -52,7 +52,7 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ true, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
@@ -292,7 +292,6 @@ class Program {
 
             timer.start();
             var parser1 = new TypeScript.Parser(); 
-            parser1.errorRecovery = true;
             var unit1 = parser1.parse(text1, filePath, 0);
             timer.end();
         }

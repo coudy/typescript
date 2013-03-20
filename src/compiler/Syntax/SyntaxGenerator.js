@@ -2,9 +2,9 @@ var TypeScript;
 (function (TypeScript) {
     var Debug = (function () {
         function Debug() { }
-        Debug.assert = function assert(expression) {
+        Debug.assert = function assert(expression, message) {
             if (!expression) {
-                throw new Error("Debug Failure. False expression.");
+                throw new Error("Debug Failure. False expression." + (message ? message : ""));
             }
         };
         return Debug;

@@ -4,6 +4,7 @@
 /// <reference path='Scanner.ts' />
 /// <reference path='Strings.ts' />
 /// <reference path='SyntaxFactory.generated.ts' />
+/// <reference path='SyntaxFacts2.ts' />
 /// <reference path='SyntaxTree.ts' />
 /// <reference path='SyntaxTriviaList.ts' />
 /// <reference path='..\Text\TextChangeRange.ts' />
@@ -4363,7 +4364,7 @@ module TypeScript.Parser1 {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ true);
 
             return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block);
         }
@@ -4381,7 +4382,7 @@ module TypeScript.Parser1 {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var parameter = this.parseParameter();
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ true);
 
             return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
         }
