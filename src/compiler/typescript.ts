@@ -80,20 +80,12 @@ module TypeScript {
     export class UpdateUnitResult {
         constructor (public kind: UpdateUnitKind, public fileName: string, public script1: Script, public script2: Script) { }
 
-        public scope1: AST = null;
-        public scope2: AST = null;
-        public editRange: TextChangeRange = null;
-        public parseErrors: ErrorEntry[] = [];
-
         static noEdits(fileName: string) {
             return new UpdateUnitResult(UpdateUnitKind.NoEdits, fileName, null, null);
         }
 
-        static unknownEdits(script1: Script, script2: Script, parseErrors: ErrorEntry[]) {
-            var result = new UpdateUnitResult(UpdateUnitKind.Unknown, script1.locationInfo.fileName, script1, script2);
-            result.parseErrors = parseErrors;
-
-            return result;
+        static unknownEdits(script1: Script, script2: Script) {
+            return new UpdateUnitResult(UpdateUnitKind.Unknown, script1.locationInfo.fileName, script1, script2);
         }
     }
 
@@ -227,40 +219,17 @@ module TypeScript {
                 case UpdateUnitKind.Unknown:
                     this.fileNameToScript.addOrUpdate(updateResult.fileName, updateResult.script2);
                     this.fileNameToLocationInfo.addOrUpdate(updateResult.fileName, updateResult.script2.locationInfo);
-                    for (var i = 0, len = updateResult.parseErrors.length; i < len; i++) {
-                        var e = updateResult.parseErrors[i];
-                        if (this.parser.errorCallback) {
-                            this.parser.errorCallback(e.minChar, e.limChar - e.minChar, e.message, e.fileName);
-                        }
-                    }
                     return true;
             }
         }
 
         public partialUpdateUnit(sourceText: IScriptSnapshot, fileName: string): UpdateUnitResult {
             return this.timeFunction("partialUpdateUnit(" + fileName + ")", () => {
-                this.parser.setErrorRecovery(null);
-
-                var updateResult: UpdateUnitResult;
-
-                // Capture parsing errors so that they are part of "updateResult"
-                var parseErrors: ErrorEntry[] = [];
-                var errorCapture = (minChar: number, charLen: number, message: string, fileName: string): void => {
-                    parseErrors.push(new ErrorEntry(fileName, minChar, minChar + charLen, message));
-                };
-                var svErrorCallback = this.parser.errorCallback;
-                if (svErrorCallback)
-                    this.parser.errorCallback = errorCapture;
-
                 var oldScript = this.fileNameToScript.lookup(fileName);
-                var newScript = this.parser.parse(sourceText, fileName);
+                var newScript = SyntaxTreeToAstVisitor.visit(
+                    Parser1.parse(new ScriptSnapshotText(sourceText)), fileName);
 
-                if (svErrorCallback)
-                    this.parser.errorCallback = svErrorCallback;
-
-                updateResult = UpdateUnitResult.unknownEdits(oldScript, newScript, parseErrors);
-
-                return updateResult;
+                return UpdateUnitResult.unknownEdits(oldScript, newScript);
             });
         }
 
