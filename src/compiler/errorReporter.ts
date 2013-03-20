@@ -128,13 +128,6 @@ module TypeScript {
             this.reportError(ast, "Duplicate identifier '" + name + "'");
         }
 
-        public showRef(ast: AST, text: string, symbol: Symbol) {
-            var defLineCol = { line: -1, character: -1 };
-            // TODO: multiple def locations
-            this.parser.getLineMap().fillLineAndCharacterFromPosition(symbol.location, defLineCol);
-            this.reportError(ast, "symbol " + text + " defined at (" + (defLineCol.line + 1) + "," + defLineCol.character + ")");
-        }
-
         public unresolvedSymbol(ast: AST, name: string) {
             this.reportError(ast, "The name '" + name + "' does not exist in the current scope");
         }
