@@ -46,8 +46,8 @@ module TypeScript {
         visitFunctionSignature(node: FunctionSignatureSyntax): any;
         visitIndexSignature(node: IndexSignatureSyntax): any;
         visitPropertySignature(node: PropertySignatureSyntax): any;
-        visitParameterList(node: ParameterListSyntax): any;
         visitCallSignature(node: CallSignatureSyntax): any;
+        visitParameterList(node: ParameterListSyntax): any;
         visitTypeParameterList(node: TypeParameterListSyntax): any;
         visitTypeParameter(node: TypeParameterSyntax): any;
         visitConstraint(node: ConstraintSyntax): any;
@@ -272,11 +272,11 @@ module TypeScript {
             return this.defaultVisit(node);
         }
 
-        private visitParameterList(node: ParameterListSyntax): any {
+        private visitCallSignature(node: CallSignatureSyntax): any {
             return this.defaultVisit(node);
         }
 
-        private visitCallSignature(node: CallSignatureSyntax): any {
+        private visitParameterList(node: ParameterListSyntax): any {
             return this.defaultVisit(node);
         }
 

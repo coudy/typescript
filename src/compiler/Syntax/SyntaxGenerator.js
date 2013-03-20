@@ -2032,7 +2032,7 @@ var definitions = [
             {
                 name: 'typeMembers',
                 isSeparatedList: true,
-                elementType: 'TypeMemberSyntax'
+                elementType: 'ITypeMemberSyntax'
             }, 
             {
                 name: 'closeBraceToken',
@@ -2373,18 +2373,11 @@ var definitions = [
         ]
     }, 
     {
-        name: 'TypeMemberSyntax',
+        name: 'ConstructSignatureSyntax',
         baseType: 'SyntaxNode',
         interfaces: [
             'ITypeMemberSyntax'
         ],
-        isAbstract: true,
-        children: [],
-        isTypeScriptSpecific: true
-    }, 
-    {
-        name: 'ConstructSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
         children: [
             {
                 name: 'newKeyword',
@@ -2399,7 +2392,10 @@ var definitions = [
     }, 
     {
         name: 'FunctionSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeMemberSyntax'
+        ],
         children: [
             {
                 name: 'identifier',
@@ -2422,7 +2418,10 @@ var definitions = [
     }, 
     {
         name: 'IndexSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeMemberSyntax'
+        ],
         children: [
             {
                 name: 'openBracketToken',
@@ -2446,7 +2445,10 @@ var definitions = [
     }, 
     {
         name: 'PropertySignatureSyntax',
-        baseType: 'TypeMemberSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeMemberSyntax'
+        ],
         children: [
             {
                 name: 'identifier',
@@ -2469,27 +2471,11 @@ var definitions = [
         isTypeScriptSpecific: true
     }, 
     {
-        name: 'ParameterListSyntax',
-        baseType: 'SyntaxNode',
-        children: [
-            {
-                name: 'openParenToken',
-                isToken: true
-            }, 
-            {
-                name: 'parameters',
-                isSeparatedList: true,
-                elementType: 'ParameterSyntax'
-            }, 
-            {
-                name: 'closeParenToken',
-                isToken: true
-            }
-        ]
-    }, 
-    {
         name: 'CallSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: [
+            'ITypeMemberSyntax'
+        ],
         children: [
             {
                 name: 'typeParameterList',
@@ -2506,6 +2492,25 @@ var definitions = [
                 type: 'TypeAnnotationSyntax',
                 isOptional: true,
                 isTypeScriptSpecific: true
+            }
+        ]
+    }, 
+    {
+        name: 'ParameterListSyntax',
+        baseType: 'SyntaxNode',
+        children: [
+            {
+                name: 'openParenToken',
+                isToken: true
+            }, 
+            {
+                name: 'parameters',
+                isSeparatedList: true,
+                elementType: 'ParameterSyntax'
+            }, 
+            {
+                name: 'closeParenToken',
+                isToken: true
             }
         ]
     }, 

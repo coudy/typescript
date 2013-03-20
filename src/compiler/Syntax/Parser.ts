@@ -2498,9 +2498,9 @@ module TypeScript.Parser1 {
                    this.isPropertySignature();
         }
 
-        private parseTypeMember(): TypeMemberSyntax {
+        private parseTypeMember(): ITypeMemberSyntax {
             if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
-                return <TypeMemberSyntax>this.eatNode();
+                return <ITypeMemberSyntax>this.eatNode();
             }
 
             if (this.isCallSignature(/*tokenIndex:*/ 0)) {

@@ -330,16 +330,16 @@ module TypeScript {
             this.visitOptionalNode(node.typeAnnotation);
         }
 
-        public visitParameterList(node: ParameterListSyntax): void {
-            this.visitToken(node.openParenToken);
-            this.visitSeparatedList(node.parameters);
-            this.visitToken(node.closeParenToken);
-        }
-
         public visitCallSignature(node: CallSignatureSyntax): void {
             this.visitOptionalNode(node.typeParameterList);
             this.visitNode(node.parameterList);
             this.visitOptionalNode(node.typeAnnotation);
+        }
+
+        public visitParameterList(node: ParameterListSyntax): void {
+            this.visitToken(node.openParenToken);
+            this.visitSeparatedList(node.parameters);
+            this.visitToken(node.closeParenToken);
         }
 
         public visitTypeParameterList(node: TypeParameterListSyntax): void {

@@ -381,18 +381,18 @@ module TypeScript {
                 node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
         }
 
-        public visitParameterList(node: ParameterListSyntax): any {
-            return node.update(
-                this.visitToken(node.openParenToken),
-                this.visitSeparatedList(node.parameters),
-                this.visitToken(node.closeParenToken));
-        }
-
         public visitCallSignature(node: CallSignatureSyntax): any {
             return node.update(
                 node.typeParameterList === null ? null : <TypeParameterListSyntax>this.visitNode(node.typeParameterList),
                 <ParameterListSyntax>this.visitNode(node.parameterList),
                 node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation));
+        }
+
+        public visitParameterList(node: ParameterListSyntax): any {
+            return node.update(
+                this.visitToken(node.openParenToken),
+                this.visitSeparatedList(node.parameters),
+                this.visitToken(node.closeParenToken));
         }
 
         public visitTypeParameterList(node: TypeParameterListSyntax): any {

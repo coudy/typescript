@@ -342,7 +342,7 @@ var definitions:ITypeDefinition[] = [
         interfaces: ['ITypeSyntax'],
         children: [
             <any>{ name: 'openBraceToken', isToken: true },
-            <any>{ name: 'typeMembers', isSeparatedList: true, elementType: 'TypeMemberSyntax' },
+            <any>{ name: 'typeMembers', isSeparatedList: true, elementType: 'ITypeMemberSyntax' },
             <any>{ name: 'closeBraceToken', isToken: true }
         ],
         isTypeScriptSpecific: true
@@ -482,16 +482,9 @@ var definitions:ITypeDefinition[] = [
         ]
     },
     <any>{
-        name: 'TypeMemberSyntax',
+        name: 'ConstructSignatureSyntax',
         baseType: 'SyntaxNode',
         interfaces: ['ITypeMemberSyntax'],
-        isAbstract: true,
-        children: [],
-        isTypeScriptSpecific: true
-    },
-    <any>{
-        name: 'ConstructSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
         children: [
             <any>{ name: 'newKeyword', isToken: true },
             <any>{ name: 'callSignature', type: 'CallSignatureSyntax' }
@@ -500,7 +493,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'FunctionSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ITypeMemberSyntax'],
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true, itTypeScriptSpecific: true },
@@ -509,7 +503,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'IndexSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ITypeMemberSyntax'],
         children: [
             <any>{ name: 'openBracketToken', isToken: true },
             <any>{ name: 'parameter', type: 'ParameterSyntax' },
@@ -520,7 +515,8 @@ var definitions:ITypeDefinition[] = [
     },
     <any>{
         name: 'PropertySignatureSyntax',
-        baseType: 'TypeMemberSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ITypeMemberSyntax'],
         children: [
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
             <any>{ name: 'questionToken', isToken: true, isOptional: true },
@@ -529,21 +525,22 @@ var definitions:ITypeDefinition[] = [
         isTypeScriptSpecific: true
     },
     <any>{
+        name: 'CallSignatureSyntax',
+        baseType: 'SyntaxNode',
+        interfaces: ['ITypeMemberSyntax'],
+        children: [
+            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true, isTypeScriptSpecific: true },
+            <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true }
+        ]
+    },
+    <any>{
         name: 'ParameterListSyntax',
         baseType: 'SyntaxNode',
         children: [
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'parameters', isSeparatedList: true, elementType: 'ParameterSyntax' },
             <any>{ name: 'closeParenToken', isToken: true }
-        ]
-    },
-    <any>{
-        name: 'CallSignatureSyntax',
-        baseType: 'TypeMemberSyntax',
-        children: [
-            <any>{ name: 'typeParameterList', type: 'TypeParameterListSyntax', isOptional: true, isTypeScriptSpecific: true },
-            <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
-            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecific: true }
         ]
     },
     <any>{

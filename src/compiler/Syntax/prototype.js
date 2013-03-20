@@ -20235,11 +20235,11 @@ var TypeScript;
         SyntaxRewriter.prototype.visitPropertySignature = function (node) {
             return node.update(this.visitToken(node.identifier), node.questionToken === null ? null : this.visitToken(node.questionToken), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation));
         };
-        SyntaxRewriter.prototype.visitParameterList = function (node) {
-            return node.update(this.visitToken(node.openParenToken), this.visitSeparatedList(node.parameters), this.visitToken(node.closeParenToken));
-        };
         SyntaxRewriter.prototype.visitCallSignature = function (node) {
             return node.update(node.typeParameterList === null ? null : this.visitNode(node.typeParameterList), this.visitNode(node.parameterList), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation));
+        };
+        SyntaxRewriter.prototype.visitParameterList = function (node) {
+            return node.update(this.visitToken(node.openParenToken), this.visitSeparatedList(node.parameters), this.visitToken(node.closeParenToken));
         };
         SyntaxRewriter.prototype.visitTypeParameterList = function (node) {
             return node.update(this.visitToken(node.lessThanToken), this.visitSeparatedList(node.typeParameters), this.visitToken(node.greaterThanToken));
@@ -28092,11 +28092,11 @@ var TypeScript;
             NormalModeFactory.prototype.propertySignature = function (identifier, questionToken, typeAnnotation) {
                 return new TypeScript.PropertySignatureSyntax(identifier, questionToken, typeAnnotation, false);
             };
-            NormalModeFactory.prototype.parameterList = function (openParenToken, parameters, closeParenToken) {
-                return new TypeScript.ParameterListSyntax(openParenToken, parameters, closeParenToken, false);
-            };
             NormalModeFactory.prototype.callSignature = function (typeParameterList, parameterList, typeAnnotation) {
                 return new TypeScript.CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, false);
+            };
+            NormalModeFactory.prototype.parameterList = function (openParenToken, parameters, closeParenToken) {
+                return new TypeScript.ParameterListSyntax(openParenToken, parameters, closeParenToken, false);
             };
             NormalModeFactory.prototype.typeParameterList = function (lessThanToken, typeParameters, greaterThanToken) {
                 return new TypeScript.TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, false);
@@ -28354,11 +28354,11 @@ var TypeScript;
             StrictModeFactory.prototype.propertySignature = function (identifier, questionToken, typeAnnotation) {
                 return new TypeScript.PropertySignatureSyntax(identifier, questionToken, typeAnnotation, true);
             };
-            StrictModeFactory.prototype.parameterList = function (openParenToken, parameters, closeParenToken) {
-                return new TypeScript.ParameterListSyntax(openParenToken, parameters, closeParenToken, true);
-            };
             StrictModeFactory.prototype.callSignature = function (typeParameterList, parameterList, typeAnnotation) {
                 return new TypeScript.CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, true);
+            };
+            StrictModeFactory.prototype.parameterList = function (openParenToken, parameters, closeParenToken) {
+                return new TypeScript.ParameterListSyntax(openParenToken, parameters, closeParenToken, true);
             };
             StrictModeFactory.prototype.typeParameterList = function (lessThanToken, typeParameters, greaterThanToken) {
                 return new TypeScript.TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, true);
@@ -31494,26 +31494,6 @@ var TypeScript;
         return ConditionalExpressionSyntax;
     })(TypeScript.SyntaxNode);
     TypeScript.ConditionalExpressionSyntax = ConditionalExpressionSyntax;    
-    var TypeMemberSyntax = (function (_super) {
-        __extends(TypeMemberSyntax, _super);
-        function TypeMemberSyntax(parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
-        }
-        TypeMemberSyntax.prototype.isTypeMember = function () {
-            return true;
-        };
-        TypeMemberSyntax.prototype.withLeadingTrivia = function (trivia) {
-            return _super.prototype.withLeadingTrivia.call(this, trivia);
-        };
-        TypeMemberSyntax.prototype.withTrailingTrivia = function (trivia) {
-            return _super.prototype.withTrailingTrivia.call(this, trivia);
-        };
-        TypeMemberSyntax.prototype.isTypeScriptSpecific = function () {
-            return true;
-        };
-        return TypeMemberSyntax;
-    })(TypeScript.SyntaxNode);
-    TypeScript.TypeMemberSyntax = TypeMemberSyntax;    
     var ConstructSignatureSyntax = (function (_super) {
         __extends(ConstructSignatureSyntax, _super);
         function ConstructSignatureSyntax(newKeyword, callSignature, parsedInStrictMode) {
@@ -31540,6 +31520,9 @@ var TypeScript;
                     throw TypeScript.Errors.invalidOperation();
             }
         };
+        ConstructSignatureSyntax.prototype.isTypeMember = function () {
+            return true;
+        };
         ConstructSignatureSyntax.prototype.update = function (newKeyword, callSignature) {
             if (this.newKeyword === newKeyword && this.callSignature === callSignature) {
                 return this;
@@ -31565,7 +31548,7 @@ var TypeScript;
             return true;
         };
         return ConstructSignatureSyntax;
-    })(TypeMemberSyntax);
+    })(TypeScript.SyntaxNode);
     TypeScript.ConstructSignatureSyntax = ConstructSignatureSyntax;    
     var FunctionSignatureSyntax = (function (_super) {
         __extends(FunctionSignatureSyntax, _super);
@@ -31595,6 +31578,9 @@ var TypeScript;
                 default:
                     throw TypeScript.Errors.invalidOperation();
             }
+        };
+        FunctionSignatureSyntax.prototype.isTypeMember = function () {
+            return true;
         };
         FunctionSignatureSyntax.prototype.update = function (identifier, questionToken, callSignature) {
             if (this.identifier === identifier && this.questionToken === questionToken && this.callSignature === callSignature) {
@@ -31630,7 +31616,7 @@ var TypeScript;
             return false;
         };
         return FunctionSignatureSyntax;
-    })(TypeMemberSyntax);
+    })(TypeScript.SyntaxNode);
     TypeScript.FunctionSignatureSyntax = FunctionSignatureSyntax;    
     var IndexSignatureSyntax = (function (_super) {
         __extends(IndexSignatureSyntax, _super);
@@ -31663,6 +31649,9 @@ var TypeScript;
                 default:
                     throw TypeScript.Errors.invalidOperation();
             }
+        };
+        IndexSignatureSyntax.prototype.isTypeMember = function () {
+            return true;
         };
         IndexSignatureSyntax.prototype.update = function (openBracketToken, parameter, closeBracketToken, typeAnnotation) {
             if (this.openBracketToken === openBracketToken && this.parameter === parameter && this.closeBracketToken === closeBracketToken && this.typeAnnotation === typeAnnotation) {
@@ -31698,7 +31687,7 @@ var TypeScript;
             return true;
         };
         return IndexSignatureSyntax;
-    })(TypeMemberSyntax);
+    })(TypeScript.SyntaxNode);
     TypeScript.IndexSignatureSyntax = IndexSignatureSyntax;    
     var PropertySignatureSyntax = (function (_super) {
         __extends(PropertySignatureSyntax, _super);
@@ -31728,6 +31717,9 @@ var TypeScript;
                 default:
                     throw TypeScript.Errors.invalidOperation();
             }
+        };
+        PropertySignatureSyntax.prototype.isTypeMember = function () {
+            return true;
         };
         PropertySignatureSyntax.prototype.update = function (identifier, questionToken, typeAnnotation) {
             if (this.identifier === identifier && this.questionToken === questionToken && this.typeAnnotation === typeAnnotation) {
@@ -31760,8 +31752,82 @@ var TypeScript;
             return true;
         };
         return PropertySignatureSyntax;
-    })(TypeMemberSyntax);
+    })(TypeScript.SyntaxNode);
     TypeScript.PropertySignatureSyntax = PropertySignatureSyntax;    
+    var CallSignatureSyntax = (function (_super) {
+        __extends(CallSignatureSyntax, _super);
+        function CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, parsedInStrictMode) {
+                _super.call(this, parsedInStrictMode);
+            this.typeParameterList = typeParameterList;
+            this.parameterList = parameterList;
+            this.typeAnnotation = typeAnnotation;
+        }
+        CallSignatureSyntax.prototype.accept = function (visitor) {
+            return visitor.visitCallSignature(this);
+        };
+        CallSignatureSyntax.prototype.kind = function () {
+            return 140 /* CallSignature */ ;
+        };
+        CallSignatureSyntax.prototype.childCount = function () {
+            return 3;
+        };
+        CallSignatureSyntax.prototype.childAt = function (slot) {
+            switch(slot) {
+                case 0:
+                    return this.typeParameterList;
+                case 1:
+                    return this.parameterList;
+                case 2:
+                    return this.typeAnnotation;
+                default:
+                    throw TypeScript.Errors.invalidOperation();
+            }
+        };
+        CallSignatureSyntax.prototype.isTypeMember = function () {
+            return true;
+        };
+        CallSignatureSyntax.prototype.update = function (typeParameterList, parameterList, typeAnnotation) {
+            if (this.typeParameterList === typeParameterList && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation) {
+                return this;
+            }
+            return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, this.parsedInStrictMode());
+        };
+        CallSignatureSyntax.create = function create(parameterList) {
+            return new CallSignatureSyntax(null, parameterList, null, false);
+        };
+        CallSignatureSyntax.create1 = function create1() {
+            return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, false);
+        };
+        CallSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
+            return _super.prototype.withLeadingTrivia.call(this, trivia);
+        };
+        CallSignatureSyntax.prototype.withTrailingTrivia = function (trivia) {
+            return _super.prototype.withTrailingTrivia.call(this, trivia);
+        };
+        CallSignatureSyntax.prototype.withTypeParameterList = function (typeParameterList) {
+            return this.update(typeParameterList, this.parameterList, this.typeAnnotation);
+        };
+        CallSignatureSyntax.prototype.withParameterList = function (parameterList) {
+            return this.update(this.typeParameterList, parameterList, this.typeAnnotation);
+        };
+        CallSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+            return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
+        };
+        CallSignatureSyntax.prototype.isTypeScriptSpecific = function () {
+            if (this.typeParameterList !== null) {
+                return true;
+            }
+            if (this.parameterList.isTypeScriptSpecific()) {
+                return true;
+            }
+            if (this.typeAnnotation !== null) {
+                return true;
+            }
+            return false;
+        };
+        return CallSignatureSyntax;
+    })(TypeScript.SyntaxNode);
+    TypeScript.CallSignatureSyntax = CallSignatureSyntax;    
     var ParameterListSyntax = (function (_super) {
         __extends(ParameterListSyntax, _super);
         function ParameterListSyntax(openParenToken, parameters, closeParenToken, parsedInStrictMode) {
@@ -31832,77 +31898,6 @@ var TypeScript;
         return ParameterListSyntax;
     })(TypeScript.SyntaxNode);
     TypeScript.ParameterListSyntax = ParameterListSyntax;    
-    var CallSignatureSyntax = (function (_super) {
-        __extends(CallSignatureSyntax, _super);
-        function CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
-            this.typeParameterList = typeParameterList;
-            this.parameterList = parameterList;
-            this.typeAnnotation = typeAnnotation;
-        }
-        CallSignatureSyntax.prototype.accept = function (visitor) {
-            return visitor.visitCallSignature(this);
-        };
-        CallSignatureSyntax.prototype.kind = function () {
-            return 140 /* CallSignature */ ;
-        };
-        CallSignatureSyntax.prototype.childCount = function () {
-            return 3;
-        };
-        CallSignatureSyntax.prototype.childAt = function (slot) {
-            switch(slot) {
-                case 0:
-                    return this.typeParameterList;
-                case 1:
-                    return this.parameterList;
-                case 2:
-                    return this.typeAnnotation;
-                default:
-                    throw TypeScript.Errors.invalidOperation();
-            }
-        };
-        CallSignatureSyntax.prototype.update = function (typeParameterList, parameterList, typeAnnotation) {
-            if (this.typeParameterList === typeParameterList && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation) {
-                return this;
-            }
-            return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, this.parsedInStrictMode());
-        };
-        CallSignatureSyntax.create = function create(parameterList) {
-            return new CallSignatureSyntax(null, parameterList, null, false);
-        };
-        CallSignatureSyntax.create1 = function create1() {
-            return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, false);
-        };
-        CallSignatureSyntax.prototype.withLeadingTrivia = function (trivia) {
-            return _super.prototype.withLeadingTrivia.call(this, trivia);
-        };
-        CallSignatureSyntax.prototype.withTrailingTrivia = function (trivia) {
-            return _super.prototype.withTrailingTrivia.call(this, trivia);
-        };
-        CallSignatureSyntax.prototype.withTypeParameterList = function (typeParameterList) {
-            return this.update(typeParameterList, this.parameterList, this.typeAnnotation);
-        };
-        CallSignatureSyntax.prototype.withParameterList = function (parameterList) {
-            return this.update(this.typeParameterList, parameterList, this.typeAnnotation);
-        };
-        CallSignatureSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
-            return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
-        };
-        CallSignatureSyntax.prototype.isTypeScriptSpecific = function () {
-            if (this.typeParameterList !== null) {
-                return true;
-            }
-            if (this.parameterList.isTypeScriptSpecific()) {
-                return true;
-            }
-            if (this.typeAnnotation !== null) {
-                return true;
-            }
-            return false;
-        };
-        return CallSignatureSyntax;
-    })(TypeMemberSyntax);
-    TypeScript.CallSignatureSyntax = CallSignatureSyntax;    
     var TypeParameterListSyntax = (function (_super) {
         __extends(TypeParameterListSyntax, _super);
         function TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, parsedInStrictMode) {
@@ -35180,10 +35175,10 @@ var TypeScript;
         SyntaxVisitor.prototype.visitPropertySignature = function (node) {
             return this.defaultVisit(node);
         };
-        SyntaxVisitor.prototype.visitParameterList = function (node) {
+        SyntaxVisitor.prototype.visitCallSignature = function (node) {
             return this.defaultVisit(node);
         };
-        SyntaxVisitor.prototype.visitCallSignature = function (node) {
+        SyntaxVisitor.prototype.visitParameterList = function (node) {
             return this.defaultVisit(node);
         };
         SyntaxVisitor.prototype.visitTypeParameterList = function (node) {
@@ -40977,11 +40972,11 @@ var TypeScript;
             this.elementType = type;
         };
         PullArrayTypeSymbol.prototype.getScopedNameEx = function (scopeSymbol, getPrettyTypeName) {
-            var elementMemberName = this.elementType.getScopedNameEx(scopeSymbol, getPrettyTypeName);
+            var elementMemberName = this.elementType ? this.elementType.getScopedNameEx(scopeSymbol, getPrettyTypeName) : TypeScript.MemberName.create("any");
             return TypeScript.MemberName.create(elementMemberName, "", "[]");
         };
         PullArrayTypeSymbol.prototype.getMemberTypeNameEx = function (topLevel, scopeSymbol, getPrettyTypeName) {
-            var elementMemberName = this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName);
+            var elementMemberName = this.elementType ? this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName) : TypeScript.MemberName.create("any");
             return TypeScript.MemberName.create(elementMemberName, "", "[]");
         };
         return PullArrayTypeSymbol;
@@ -41202,13 +41197,13 @@ var TypeScript;
                 newSignature.setReturnType(signature.getReturnType());
             }
             signature.setIsBeingSpecialized();
+            newSignature.addDeclaration(decl);
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
             signature.setIsSpecialized();
             context.popTypeSpecializationCache();
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
-            newSignature.addDeclaration(decl);
             newType.addCallSignature(newSignature);
             if (newSignature.hasGenericParameter()) {
                 newType.setHasGenericSignature();
@@ -41238,13 +41233,13 @@ var TypeScript;
                 newSignature.setReturnType(signature.getReturnType());
             }
             signature.setIsBeingSpecialized();
+            newSignature.addDeclaration(decl);
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
             signature.setIsSpecialized();
             context.popTypeSpecializationCache();
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
-            newSignature.addDeclaration(decl);
             newType.addConstructSignature(newSignature);
             if (newSignature.hasGenericParameter()) {
                 newType.setHasGenericSignature();
@@ -41274,13 +41269,13 @@ var TypeScript;
                 newSignature.setReturnType(signature.getReturnType());
             }
             signature.setIsBeingSpecialized();
+            newSignature.addDeclaration(decl);
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
             signature.setIsSpecialized();
             context.popTypeSpecializationCache();
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
-            newSignature.addDeclaration(decl);
             newType.addIndexSignature(newSignature);
             if (newSignature.hasGenericParameter()) {
                 newType.setHasGenericSignature();
@@ -46174,15 +46169,15 @@ var TypeScript;
             this.visitOptionalToken(node.questionToken);
             this.visitOptionalNode(node.typeAnnotation);
         };
-        SyntaxWalker.prototype.visitParameterList = function (node) {
-            this.visitToken(node.openParenToken);
-            this.visitSeparatedList(node.parameters);
-            this.visitToken(node.closeParenToken);
-        };
         SyntaxWalker.prototype.visitCallSignature = function (node) {
             this.visitOptionalNode(node.typeParameterList);
             this.visitNode(node.parameterList);
             this.visitOptionalNode(node.typeAnnotation);
+        };
+        SyntaxWalker.prototype.visitParameterList = function (node) {
+            this.visitToken(node.openParenToken);
+            this.visitSeparatedList(node.parameters);
+            this.visitToken(node.closeParenToken);
         };
         SyntaxWalker.prototype.visitTypeParameterList = function (node) {
             this.visitToken(node.lessThanToken);
@@ -48101,6 +48096,7 @@ var TypeScript;
             }
             functionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionDeclaration);
+            functionTypeSymbol.addDeclaration(functionDeclaration);
             this.semanticInfo.setSymbolForAST(funcDeclAST.name, functionSymbol);
             this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
             if (parent && !parentHadSymbol) {
@@ -48287,6 +48283,7 @@ var TypeScript;
             }
             methodDeclaration.setSymbol(methodSymbol);
             methodSymbol.addDeclaration(methodDeclaration);
+            methodTypeSymbol.addDeclaration(methodDeclaration);
             this.semanticInfo.setSymbolForAST(methodAST.name, methodSymbol);
             this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
             if (!parentHadSymbol) {
@@ -51009,6 +51006,7 @@ var TypeScript;
             genericType.flags |= 4096 /* TypeReference */ ;
             var result = new TypeScript.TypeReference(genericType, 0);
             this.setSpan(result, start, this.position);
+            this.setSpan(genericType, start, this.position);
             return result;
         };
         SyntaxTreeToAstVisitor.prototype.visitTypeAnnotation = function (node) {

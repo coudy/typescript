@@ -2261,7 +2261,7 @@ module TypeScript {
         return this.update(this.openBraceToken, typeMembers, this.closeBraceToken);
     }
 
-    public withTypeMember(typeMember: TypeMemberSyntax): ObjectTypeSyntax {
+    public withTypeMember(typeMember: ITypeMemberSyntax): ObjectTypeSyntax {
         return this.withTypeMembers(Syntax.separatedList([typeMember]));
     }
 
@@ -3260,29 +3260,7 @@ module TypeScript {
     }
     }
 
-    export class TypeMemberSyntax extends SyntaxNode implements ITypeMemberSyntax {
-    constructor(parsedInStrictMode: bool) {
-        super(parsedInStrictMode); 
-    }
-
-    private isTypeMember(): bool {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): TypeMemberSyntax {
-        return <TypeMemberSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): TypeMemberSyntax {
-        return <TypeMemberSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public isTypeScriptSpecific(): bool {
-        return true;
-    }
-    }
-
-    export class ConstructSignatureSyntax extends TypeMemberSyntax {
+    export class ConstructSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
     constructor(public newKeyword: ISyntaxToken,
                 public callSignature: CallSignatureSyntax,
@@ -3309,6 +3287,10 @@ module TypeScript {
             case 1: return this.callSignature;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    private isTypeMember(): bool {
+        return true;
     }
 
     public update(newKeyword: ISyntaxToken,
@@ -3345,7 +3327,7 @@ module TypeScript {
     }
     }
 
-    export class FunctionSignatureSyntax extends TypeMemberSyntax {
+    export class FunctionSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public questionToken: ISyntaxToken,
@@ -3374,6 +3356,10 @@ module TypeScript {
             case 2: return this.callSignature;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    private isTypeMember(): bool {
+        return true;
     }
 
     public update(identifier: ISyntaxToken,
@@ -3421,7 +3407,7 @@ module TypeScript {
     }
     }
 
-    export class IndexSignatureSyntax extends TypeMemberSyntax {
+    export class IndexSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
     constructor(public openBracketToken: ISyntaxToken,
                 public parameter: ParameterSyntax,
@@ -3452,6 +3438,10 @@ module TypeScript {
             case 3: return this.typeAnnotation;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    private isTypeMember(): bool {
+        return true;
     }
 
     public update(openBracketToken: ISyntaxToken,
@@ -3504,7 +3494,7 @@ module TypeScript {
     }
     }
 
-    export class PropertySignatureSyntax extends TypeMemberSyntax {
+    export class PropertySignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public questionToken: ISyntaxToken,
@@ -3533,6 +3523,10 @@ module TypeScript {
             case 2: return this.typeAnnotation;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    private isTypeMember(): bool {
+        return true;
     }
 
     public update(identifier: ISyntaxToken,
@@ -3575,6 +3569,87 @@ module TypeScript {
 
     public isTypeScriptSpecific(): bool {
         return true;
+    }
+    }
+
+    export class CallSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
+
+    constructor(public typeParameterList: TypeParameterListSyntax,
+                public parameterList: ParameterListSyntax,
+                public typeAnnotation: TypeAnnotationSyntax,
+                parsedInStrictMode: bool) {
+        super(parsedInStrictMode); 
+
+    }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitCallSignature(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.CallSignature;
+    }
+
+    public childCount(): number {
+        return 3;
+    }
+
+    public childAt(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this.typeParameterList;
+            case 1: return this.parameterList;
+            case 2: return this.typeAnnotation;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
+    private isTypeMember(): bool {
+        return true;
+    }
+
+    public update(typeParameterList: TypeParameterListSyntax,
+                  parameterList: ParameterListSyntax,
+                  typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
+        if (this.typeParameterList === typeParameterList && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation) {
+            return this;
+        }
+
+        return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(parameterList: ParameterListSyntax): CallSignatureSyntax {
+        return new CallSignatureSyntax(null, parameterList, null, /*parsedInStrictMode:*/ false);
+    }
+
+    public static create1(): CallSignatureSyntax {
+        return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
+        return <CallSignatureSyntax>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
+        return <CallSignatureSyntax>super.withTrailingTrivia(trivia);
+    }
+
+    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): CallSignatureSyntax {
+        return this.update(typeParameterList, this.parameterList, this.typeAnnotation);
+    }
+
+    public withParameterList(parameterList: ParameterListSyntax): CallSignatureSyntax {
+        return this.update(this.typeParameterList, parameterList, this.typeAnnotation);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
+        return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
+    }
+
+    public isTypeScriptSpecific(): bool {
+        if (this.typeParameterList !== null) { return true; }
+        if (this.parameterList.isTypeScriptSpecific()) { return true; }
+        if (this.typeAnnotation !== null) { return true; }
+        return false;
     }
     }
 
@@ -3654,83 +3729,6 @@ module TypeScript {
 
     public isTypeScriptSpecific(): bool {
         if (this.parameters.isTypeScriptSpecific()) { return true; }
-        return false;
-    }
-    }
-
-    export class CallSignatureSyntax extends TypeMemberSyntax {
-
-    constructor(public typeParameterList: TypeParameterListSyntax,
-                public parameterList: ParameterListSyntax,
-                public typeAnnotation: TypeAnnotationSyntax,
-                parsedInStrictMode: bool) {
-        super(parsedInStrictMode); 
-
-    }
-
-    public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitCallSignature(this);
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.CallSignature;
-    }
-
-    public childCount(): number {
-        return 3;
-    }
-
-    public childAt(slot: number): ISyntaxElement {
-        switch (slot) {
-            case 0: return this.typeParameterList;
-            case 1: return this.parameterList;
-            case 2: return this.typeAnnotation;
-            default: throw Errors.invalidOperation();
-        }
-    }
-
-    public update(typeParameterList: TypeParameterListSyntax,
-                  parameterList: ParameterListSyntax,
-                  typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-        if (this.typeParameterList === typeParameterList && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation) {
-            return this;
-        }
-
-        return new CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, /*parsedInStrictMode:*/ this.parsedInStrictMode());
-    }
-
-    public static create(parameterList: ParameterListSyntax): CallSignatureSyntax {
-        return new CallSignatureSyntax(null, parameterList, null, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(): CallSignatureSyntax {
-        return new CallSignatureSyntax(null, ParameterListSyntax.create1(), null, /*parsedInStrictMode:*/ false);
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
-        return <CallSignatureSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): CallSignatureSyntax {
-        return <CallSignatureSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public withTypeParameterList(typeParameterList: TypeParameterListSyntax): CallSignatureSyntax {
-        return this.update(typeParameterList, this.parameterList, this.typeAnnotation);
-    }
-
-    public withParameterList(parameterList: ParameterListSyntax): CallSignatureSyntax {
-        return this.update(this.typeParameterList, parameterList, this.typeAnnotation);
-    }
-
-    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax {
-        return this.update(this.typeParameterList, this.parameterList, typeAnnotation);
-    }
-
-    public isTypeScriptSpecific(): bool {
-        if (this.typeParameterList !== null) { return true; }
-        if (this.parameterList.isTypeScriptSpecific()) { return true; }
-        if (this.typeAnnotation !== null) { return true; }
         return false;
     }
     }
