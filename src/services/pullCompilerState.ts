@@ -82,9 +82,6 @@ module Services {
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings());
             this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
 
-            //TODO: "bind" doesn't work here in the context of running unit tests
-            this.compiler.parser.errorRecovery = true;
-
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {

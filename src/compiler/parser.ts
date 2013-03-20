@@ -60,7 +60,7 @@ module TypeScript {
         public style_requireSemi = false;
         public style_funcInLoop = true;
         private incremental = false;
-        public errorRecovery = false;
+        private errorRecovery = true;
         public outfile: ITextWriter = undefined;
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
         private ambientModule = false;
@@ -145,7 +145,6 @@ module TypeScript {
 
         public setErrorRecovery(outfile: ITextWriter) {
             this.outfile = outfile;
-            this.errorRecovery = true;
         }
 
         public getLineMap(): ILineMap {

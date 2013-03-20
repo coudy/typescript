@@ -277,7 +277,6 @@ module Services {
             //TODO: "bind" doesn't work here in the context of running unit tests
             //compiler.setErrorCallback(errorCollector.reportError.bind(errorCollector));
             this.compiler.setErrorCallback((a, b, c, d) => { this.errorCollector.reportError(a, b, c, d); });
-            this.compiler.parser.errorRecovery = true;
 
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();

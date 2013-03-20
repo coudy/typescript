@@ -763,7 +763,6 @@ module Harness {
 
         export function makeDefaultCompilerForTest(c?: TypeScript.TypeScriptCompiler) {
             var compiler = c || new TypeScript.TypeScriptCompiler(stderr);
-            compiler.parser.errorRecovery = true;
             compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;

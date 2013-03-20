@@ -92,7 +92,7 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            if (ast && this.parser.errorRecovery && this.parser.errorCallback) {
+            if (ast && this.parser.errorCallback) {
                 var len = (ast.limChar - ast.minChar);
                 this.parser.errorCallback(ast.minChar, len, message, this.checker.locationInfo.fileName, this.checker.locationInfo.lineMap);
             }
@@ -109,7 +109,7 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            if (this.parser.errorRecovery && this.parser.errorCallback) {
+            if (this.parser.errorCallback) {
                 this.parser.errorCallback(symbol.location, symbol.length, message, this.checker.locationInfo.fileName, this.checker.locationInfo.lineMap);
             }
             else {

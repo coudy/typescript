@@ -94,7 +94,6 @@ class HarnessBatch {
         this.errout.reset();
 
         compiler = new TypeScript.TypeScriptCompiler(this.errout, new TypeScript.NullLogger(), this.compilationSettings);
-        compiler.parser.errorRecovery = true;
 
         if (this.compilationSettings.emitComments) {
             compiler.emitCommentsToOutput();
