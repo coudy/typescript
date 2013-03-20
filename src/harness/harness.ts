@@ -1595,7 +1595,7 @@ module Harness {
             var initialEditRangeIndex = this.editRanges.length - (this.version - version);
 
             var entries = this.editRanges.slice(initialEditRangeIndex);
-            return TypeScript.TextChangeRange.collapse(entries.map(e => e.textChangeRange));
+            return TypeScript.TextChangeRange.collapseChangesAcrossMultipleVersions(entries.map(e => e.textChangeRange));
         }
     }
 
