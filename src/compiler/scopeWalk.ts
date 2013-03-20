@@ -34,7 +34,6 @@ module TypeScript {
     }
 
     export class EnclosingScopeContext {
-
         public scopeGetter: () => SymbolScope = null;
         public objectLiteralScopeGetter: () => SymbolScope = null;
         public scopeStartAST: AST = null;
@@ -79,10 +78,9 @@ module TypeScript {
 
         public getScriptFragment(): Script {
             if (this.scriptFragment == null) {
-                var ast = this.getScriptFragmentStartAST();
-                var minChar = ast.minChar;
-                var limChar = (this.isMemberCompletion ? this.pos : this.pos + 1);
-                this.scriptFragment = TypeScript.quickParse(this.logger, ast, this.text, minChar, limChar, this.script.locationInfo.fileName, null/*errorCapture*/).Script;
+                this.scriptFragment = SyntaxTreeToAstVisitor.visit(
+                    Parser1.parse(TextFactory.createSimpleText("")),
+                    this.script.locationInfo.fileName);
             }
             return this.scriptFragment;
         }

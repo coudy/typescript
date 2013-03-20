@@ -4349,29 +4349,4 @@ module TypeScript {
             return script;
         }
     }
-
-    export function quickParse(
-        logger: TypeScript.ILogger,
-        scopeStartAST: AST,
-        sourceText: IScriptSnapshot,
-        minChar: number,
-        limChar: number,
-        fileName: string,
-        errorCapture: (minChar: number, charLen: number, message: string, fileName: string) => void ): QuickParseResult {
-
-        var fragment = sourceText.getText(minChar, limChar);
-        logger.log("Quick parse range (" + minChar + "," + limChar + "): \"" + TypeScript.stringToLiteral(fragment, 100) + "\"");
-
-        var quickParser = new Parser();
-        quickParser.setErrorRecovery(null);
-        quickParser.errorCallback = errorCapture;
-
-        // REVIEW: use enclosing scope to determine this
-        // REVIEW: Why even use class here?
-        var quickClassDecl = new ClassDeclaration(null, null, null, null, null);
-        quickParser.currentClassDecl = quickClassDecl;
-
-        var result = quickParser.quickParse(new StringScriptSnapshot(fragment), fileName);
-        return result;
-    }
 }
