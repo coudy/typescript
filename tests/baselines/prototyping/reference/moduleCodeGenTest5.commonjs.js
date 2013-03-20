@@ -25,8 +25,8 @@ var C2 = (function () {
 (function (E1) {
     E1._map = [];
     E1.A = 0;
-})(exports.E1 || (exports.E1 = {}));
-var E1 = exports.E1;
+})(0.E1 || (0.E1 = {}));
+var E1 = 0.E1;
 var u = E1.A;
 var E2;
 (function (E2) {

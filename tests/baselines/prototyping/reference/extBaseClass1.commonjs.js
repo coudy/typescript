@@ -19,7 +19,7 @@ var M;
 
         }
         return C;
-    })(M.B);
+    })(B);
     M.C = C;    
 })(M || (M = {}));
 var M;

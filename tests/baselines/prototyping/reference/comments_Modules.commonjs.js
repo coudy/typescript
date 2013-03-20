@@ -5,7 +5,7 @@ var m1;
     m1.b;
     /** foo's comment*/
     function foo() {
-        return b;
+        return m1.b;
     }
     /** m2 comments*/
     (function (m2) {
