@@ -213,12 +213,12 @@ module TypeScript {
         }
 
         public static testStrictMode1() {
-            // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
+            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
             // we'll have to reparse the nodes (and generate an error for 'static();'
             //
             // Note: in this test we don't actually add 'use strict'.  This is so we can compare 
             // reuse with/without a strict mode change.
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
 
             var oldText = TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'strict';\r\n");
@@ -227,9 +227,9 @@ module TypeScript {
         }
 
         public static testStrictMode2() {
-            // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
-            // we'll have to reparse the nodes (and generate an error for 'static();'
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
+            // we'll have to reparse the nodes (and generate an error for 'yield();'
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
 
             var oldText = TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'use strict';\r\n");
@@ -239,12 +239,12 @@ module TypeScript {
         }
 
         public static testStrictMode3() {
-            // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
+            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
             // we'll have to reparse the nodes (and generate an error for 'static();'
             //
             // Note: in this test we don't actually remove 'use strict'.  This is so we can compare 
             // reuse with/without a strict mode change.
-            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
 
             var index = source.indexOf('f');
 
@@ -255,9 +255,9 @@ module TypeScript {
         }
 
         public static testStrictMode4() {
-            // In non-strict mode 'static' means nothing and can be reused.  In strict mode though
+            // In non-strict mode 'yield' means nothing and can be reused.  In strict mode though
             // we'll have to reparse the nodes (and generate an error for 'static();'
-            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
 
             var index = source.indexOf('f');
 

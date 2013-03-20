@@ -60598,26 +60598,26 @@ var TypeScript;
             IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 54);
         };
         IncrementalParserTests.testStrictMode1 = function testStrictMode1() {
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'strict';\r\n");
             IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 25);
         };
         IncrementalParserTests.testStrictMode2 = function testStrictMode2() {
-            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            var source = "foo1();\r\nfoo1();\r\nfoo1();\r\yield();";
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, 0, "'use strict';\r\n");
             IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 14);
         };
         IncrementalParserTests.testStrictMode3 = function testStrictMode3() {
-            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            var source = "'strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
             var index = source.indexOf('f');
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
             IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 24);
         };
         IncrementalParserTests.testStrictMode4 = function testStrictMode4() {
-            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nstatic();";
+            var source = "'use strict';\r\nfoo1();\r\nfoo1();\r\nfoo1();\r\nyield();";
             var index = source.indexOf('f');
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withDelete(oldText, 0, index);
@@ -61278,7 +61278,7 @@ var Diff;
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = true;
+var generate = false;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {
@@ -61288,14 +61288,14 @@ var Program = (function () {
         Environment.standardOut.WriteLine("");
         if (true) {
         }
-        Environment.standardOut.WriteLine("Testing parser.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
-            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
-        });
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
         }
+        Environment.standardOut.WriteLine("Testing parser.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5", function (filePath) {
+            return _this.runParser(filePath, 1 /* EcmaScript5 */ , useTypeScript, verify, generate);
+        });
         Environment.standardOut.WriteLine("Testing emitter 1.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5", function (filePath) {
             return _this.runEmitter(filePath, 1 /* EcmaScript5 */ , verify, generate, false);
