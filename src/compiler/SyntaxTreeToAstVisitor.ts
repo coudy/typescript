@@ -760,17 +760,16 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo3(node, node.functionSignature, node.functionSignature.identifier);
-            var name = this.identifierFromToken(node.functionSignature.identifier, !!node.functionSignature.questionToken);
+            this.moveTo2(node, node.identifier);
+            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
 
-            this.movePast(node.functionSignature.identifier);
-            this.movePast(node.functionSignature.questionToken);
+            this.movePast(node.identifier);
 
-            var typeParameters = node.functionSignature.callSignature.typeParameterList === null ? null : node.functionSignature.callSignature.typeParameterList.accept(this);
-            var parameters = node.functionSignature.callSignature.parameterList.accept(this);
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
 
-            var returnType = node.functionSignature.callSignature.typeAnnotation
-                ? node.functionSignature.callSignature.typeAnnotation.accept(this)
+            var returnType = node.callSignature.typeAnnotation
+                ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
             this.pushDeclLists();
@@ -799,7 +798,7 @@ module TypeScript {
 
             funcDecl.preComments = preComments;
             funcDecl.postComments = postComments;
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
 
             if (node.exportKeyword) {

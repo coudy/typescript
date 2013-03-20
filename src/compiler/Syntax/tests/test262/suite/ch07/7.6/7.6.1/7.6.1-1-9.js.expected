@@ -81,32 +81,28 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 10,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 8,
-                        "text": "testcase",
-                        "valueText": "testcase"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 8,
+                    "text": "testcase",
+                    "valueText": "testcase"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 2,
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 2,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 2,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "text": ")"
-                            }
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
                         }
                     }
                 },

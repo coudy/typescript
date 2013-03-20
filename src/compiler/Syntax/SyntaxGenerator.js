@@ -1669,8 +1669,15 @@ var definitions = [
                 isToken: true
             }, 
             {
-                name: 'functionSignature',
-                type: 'FunctionSignatureSyntax'
+                name: 'identifier',
+                isToken: true,
+                tokenKinds: [
+                    'IdentifierName'
+                ]
+            }, 
+            {
+                name: 'callSignature',
+                type: 'CallSignatureSyntax'
             }, 
             {
                 name: 'block',

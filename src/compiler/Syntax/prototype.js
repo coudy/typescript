@@ -20137,7 +20137,7 @@ var TypeScript;
             return node.update(node.exportKeyword === null ? null : this.visitToken(node.exportKeyword), node.declareKeyword === null ? null : this.visitToken(node.declareKeyword), this.visitToken(node.moduleKeyword), node.moduleName === null ? null : this.visitNodeOrToken(node.moduleName), node.stringLiteral === null ? null : this.visitToken(node.stringLiteral), this.visitToken(node.openBraceToken), this.visitList(node.moduleElements), this.visitToken(node.closeBraceToken));
         };
         SyntaxRewriter.prototype.visitFunctionDeclaration = function (node) {
-            return node.update(node.exportKeyword === null ? null : this.visitToken(node.exportKeyword), node.declareKeyword === null ? null : this.visitToken(node.declareKeyword), this.visitToken(node.functionKeyword), this.visitNode(node.functionSignature), node.block === null ? null : this.visitNode(node.block), node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
+            return node.update(node.exportKeyword === null ? null : this.visitToken(node.exportKeyword), node.declareKeyword === null ? null : this.visitToken(node.declareKeyword), this.visitToken(node.functionKeyword), this.visitToken(node.identifier), this.visitNode(node.callSignature), node.block === null ? null : this.visitNode(node.block), node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
         };
         SyntaxRewriter.prototype.visitVariableStatement = function (node) {
             return node.update(node.exportKeyword === null ? null : this.visitToken(node.exportKeyword), node.declareKeyword === null ? null : this.visitToken(node.declareKeyword), this.visitNode(node.variableDeclaration), this.visitToken(node.semicolonToken));
@@ -27993,8 +27993,8 @@ var TypeScript;
             NormalModeFactory.prototype.moduleDeclaration = function (exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken) {
                 return new TypeScript.ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, false);
             };
-            NormalModeFactory.prototype.functionDeclaration = function (exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken) {
-                return new TypeScript.FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, false);
+            NormalModeFactory.prototype.functionDeclaration = function (exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken) {
+                return new TypeScript.FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken, false);
             };
             NormalModeFactory.prototype.variableStatement = function (exportKeyword, declareKeyword, variableDeclaration, semicolonToken) {
                 return new TypeScript.VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken, false);
@@ -28255,8 +28255,8 @@ var TypeScript;
             StrictModeFactory.prototype.moduleDeclaration = function (exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken) {
                 return new TypeScript.ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, true);
             };
-            StrictModeFactory.prototype.functionDeclaration = function (exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken) {
-                return new TypeScript.FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, true);
+            StrictModeFactory.prototype.functionDeclaration = function (exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken) {
+                return new TypeScript.FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken, true);
             };
             StrictModeFactory.prototype.variableStatement = function (exportKeyword, declareKeyword, variableDeclaration, semicolonToken) {
                 return new TypeScript.VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken, true);
@@ -29458,12 +29458,13 @@ var TypeScript;
     TypeScript.ModuleDeclarationSyntax = ModuleDeclarationSyntax;    
     var FunctionDeclarationSyntax = (function (_super) {
         __extends(FunctionDeclarationSyntax, _super);
-        function FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, parsedInStrictMode) {
+        function FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken, parsedInStrictMode) {
                 _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.declareKeyword = declareKeyword;
             this.functionKeyword = functionKeyword;
-            this.functionSignature = functionSignature;
+            this.identifier = identifier;
+            this.callSignature = callSignature;
             this.block = block;
             this.semicolonToken = semicolonToken;
         }
@@ -29474,7 +29475,7 @@ var TypeScript;
             return 128 /* FunctionDeclaration */ ;
         };
         FunctionDeclarationSyntax.prototype.childCount = function () {
-            return 6;
+            return 7;
         };
         FunctionDeclarationSyntax.prototype.childAt = function (slot) {
             switch(slot) {
@@ -29485,10 +29486,12 @@ var TypeScript;
                 case 2:
                     return this.functionKeyword;
                 case 3:
-                    return this.functionSignature;
+                    return this.identifier;
                 case 4:
-                    return this.block;
+                    return this.callSignature;
                 case 5:
+                    return this.block;
+                case 6:
                     return this.semicolonToken;
                 default:
                     throw TypeScript.Errors.invalidOperation();
@@ -29500,17 +29503,17 @@ var TypeScript;
         FunctionDeclarationSyntax.prototype.isModuleElement = function () {
             return true;
         };
-        FunctionDeclarationSyntax.prototype.update = function (exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken) {
-            if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.functionKeyword === functionKeyword && this.functionSignature === functionSignature && this.block === block && this.semicolonToken === semicolonToken) {
+        FunctionDeclarationSyntax.prototype.update = function (exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken) {
+            if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.functionKeyword === functionKeyword && this.identifier === identifier && this.callSignature === callSignature && this.block === block && this.semicolonToken === semicolonToken) {
                 return this;
             }
-            return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, this.parsedInStrictMode());
+            return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken, this.parsedInStrictMode());
         };
-        FunctionDeclarationSyntax.create = function create(functionKeyword, functionSignature) {
-            return new FunctionDeclarationSyntax(null, null, functionKeyword, functionSignature, null, null, false);
+        FunctionDeclarationSyntax.create = function create(functionKeyword, identifier, callSignature) {
+            return new FunctionDeclarationSyntax(null, null, functionKeyword, identifier, callSignature, null, null, false);
         };
-        FunctionDeclarationSyntax.create1 = function create1(functionSignature) {
-            return new FunctionDeclarationSyntax(null, null, TypeScript.Syntax.token(27 /* FunctionKeyword */ ), functionSignature, null, null, false);
+        FunctionDeclarationSyntax.create1 = function create1(identifier) {
+            return new FunctionDeclarationSyntax(null, null, TypeScript.Syntax.token(27 /* FunctionKeyword */ ), identifier, CallSignatureSyntax.create1(), null, null, false);
         };
         FunctionDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -29519,22 +29522,25 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
         FunctionDeclarationSyntax.prototype.withExportKeyword = function (exportKeyword) {
-            return this.update(exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, this.semicolonToken);
+            return this.update(exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, this.callSignature, this.block, this.semicolonToken);
         };
         FunctionDeclarationSyntax.prototype.withDeclareKeyword = function (declareKeyword) {
-            return this.update(this.exportKeyword, declareKeyword, this.functionKeyword, this.functionSignature, this.block, this.semicolonToken);
+            return this.update(this.exportKeyword, declareKeyword, this.functionKeyword, this.identifier, this.callSignature, this.block, this.semicolonToken);
         };
         FunctionDeclarationSyntax.prototype.withFunctionKeyword = function (functionKeyword) {
-            return this.update(this.exportKeyword, this.declareKeyword, functionKeyword, this.functionSignature, this.block, this.semicolonToken);
+            return this.update(this.exportKeyword, this.declareKeyword, functionKeyword, this.identifier, this.callSignature, this.block, this.semicolonToken);
         };
-        FunctionDeclarationSyntax.prototype.withFunctionSignature = function (functionSignature) {
-            return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, functionSignature, this.block, this.semicolonToken);
+        FunctionDeclarationSyntax.prototype.withIdentifier = function (identifier) {
+            return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, identifier, this.callSignature, this.block, this.semicolonToken);
+        };
+        FunctionDeclarationSyntax.prototype.withCallSignature = function (callSignature) {
+            return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, callSignature, this.block, this.semicolonToken);
         };
         FunctionDeclarationSyntax.prototype.withBlock = function (block) {
-            return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, block, this.semicolonToken);
+            return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, this.callSignature, block, this.semicolonToken);
         };
         FunctionDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
-            return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, semicolonToken);
+            return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, this.callSignature, this.block, semicolonToken);
         };
         FunctionDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
             if (this.exportKeyword !== null) {
@@ -29543,7 +29549,7 @@ var TypeScript;
             if (this.declareKeyword !== null) {
                 return true;
             }
-            if (this.functionSignature.isTypeScriptSpecific()) {
+            if (this.callSignature.isTypeScriptSpecific()) {
                 return true;
             }
             if (this.block !== null && this.block.isTypeScriptSpecific()) {
@@ -36609,7 +36615,7 @@ var TypeScript;
                     }
                 }
                 var functionSignature = this.parseFunctionSignature(false);
-                var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken(functionSignature);
+                var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken1(functionSignature);
                 var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
                 functionSignature = newFunctionSignature;
                 var block = null;
@@ -36673,7 +36679,7 @@ var TypeScript;
                 }
                 return token0KeywordKind === 64 /* DeclareKeyword */  && this.peekToken(1).tokenKind === 27 /* FunctionKeyword */ ;
             };
-            ParserImpl.prototype.tryAddUnexpectedEqualsGreaterThanToken = function (functionSignature) {
+            ParserImpl.prototype.tryAddUnexpectedEqualsGreaterThanToken1 = function (functionSignature) {
                 var token0 = this.currentToken();
                 var hasEqualsGreaterThanToken = token0.tokenKind === 85 /* EqualsGreaterThanToken */ ;
                 if (hasEqualsGreaterThanToken) {
@@ -36684,14 +36690,26 @@ var TypeScript;
                 }
                 return functionSignature;
             };
+            ParserImpl.prototype.tryAddUnexpectedEqualsGreaterThanToken2 = function (callSignature) {
+                var token0 = this.currentToken();
+                var hasEqualsGreaterThanToken = token0.tokenKind === 85 /* EqualsGreaterThanToken */ ;
+                if (hasEqualsGreaterThanToken) {
+                    var diagnostic = new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), token0.width(), 12 /* Unexpected_token_ */ , []);
+                    this.addDiagnostic(diagnostic);
+                    var token = this.eatAnyToken();
+                    return this.addSkippedTokenAfterNode(callSignature, token0);
+                }
+                return callSignature;
+            };
             ParserImpl.prototype.parseFunctionDeclaration = function () {
                 var exportKeyword = this.tryEatKeyword(47 /* ExportKeyword */ );
                 var declareKeyword = this.tryEatKeyword(64 /* DeclareKeyword */ );
                 var functionKeyword = this.eatKeyword(27 /* FunctionKeyword */ );
-                var functionSignature = this.parseFunctionSignature(false);
-                var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken(functionSignature);
-                var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
-                functionSignature = newFunctionSignature;
+                var identifier = this.eatIdentifierToken();
+                var callSignature = this.parseCallSignature(false);
+                var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken2(callSignature);
+                var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
+                callSignature = newCallSignature;
                 var semicolonToken = null;
                 var block = null;
                 if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
@@ -36699,7 +36717,7 @@ var TypeScript;
                 } else {
                     semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
                 }
-                return this.factory.functionDeclaration(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
+                return this.factory.functionDeclaration(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken);
             };
             ParserImpl.prototype.isModuleDeclaration = function () {
                 var index = 0;
@@ -46005,7 +46023,8 @@ var TypeScript;
             this.visitOptionalToken(node.exportKeyword);
             this.visitOptionalToken(node.declareKeyword);
             this.visitToken(node.functionKeyword);
-            this.visitNode(node.functionSignature);
+            this.visitToken(node.identifier);
+            this.visitNode(node.callSignature);
             this.visitOptionalNode(node.block);
             this.visitOptionalToken(node.semicolonToken);
         };
@@ -50506,13 +50525,12 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo3(node, node.functionSignature, node.functionSignature.identifier);
-            var name = this.identifierFromToken(node.functionSignature.identifier, !!node.functionSignature.questionToken);
-            this.movePast(node.functionSignature.identifier);
-            this.movePast(node.functionSignature.questionToken);
-            var typeParameters = node.functionSignature.callSignature.typeParameterList === null ? null : node.functionSignature.callSignature.typeParameterList.accept(this);
-            var parameters = node.functionSignature.callSignature.parameterList.accept(this);
-            var returnType = node.functionSignature.callSignature.typeAnnotation ? node.functionSignature.callSignature.typeAnnotation.accept(this) : null;
+            this.moveTo2(node, node.identifier);
+            var name = this.identifierFromToken(node.identifier, false);
+            this.movePast(node.identifier);
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
+            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
             this.pushDeclLists();
             var bod = this.convertBlock(node.block);
             if (bod) {
@@ -50531,7 +50549,7 @@ var TypeScript;
             scopeList.append(funcDecl);
             funcDecl.preComments = preComments;
             funcDecl.postComments = postComments;
-            funcDecl.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
+            funcDecl.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             funcDecl.returnTypeAnnotation = returnType;
             if (node.exportKeyword) {
                 funcDecl.fncFlags |= 1 /* Exported */ ;
@@ -57071,7 +57089,7 @@ var TypeScript;
                 } else if (moduleElement.kind() === 128 /* FunctionDeclaration */ ) {
                     var functionDeclaration = moduleElement;
                     if (functionDeclaration.exportKeyword !== null) {
-                        elements.push(this.exportModuleElement(parentModule, moduleElement, functionDeclaration.functionSignature.identifier));
+                        elements.push(this.exportModuleElement(parentModule, moduleElement, functionDeclaration.identifier));
                     }
                 } else if (moduleElement.kind() === 130 /* ClassDeclaration */ ) {
                     var classDeclaration = moduleElement;
@@ -57168,7 +57186,10 @@ var TypeScript;
                 return this.changeIndentation(block, false, TypeScript.Indentation.columnForStartOfFirstTokenInLineContainingToken(arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
             };
             EmitterImpl.functionSignatureDefaultParameters = function functionSignatureDefaultParameters(signature) {
-                return EmitterImpl.parameterListDefaultParameters(signature.callSignature.parameterList);
+                return EmitterImpl.callSignatureDefaultParameters(signature.callSignature);
+            };
+            EmitterImpl.callSignatureDefaultParameters = function callSignatureDefaultParameters(callSignature) {
+                return EmitterImpl.parameterListDefaultParameters(callSignature.parameterList);
             };
             EmitterImpl.parameterListDefaultParameters = function parameterListDefaultParameters(parameterList) {
                 return TypeScript.ArrayUtilities.where(parameterList.parameters.toNonSeparatorArray(), function (p) {
@@ -57194,7 +57215,7 @@ var TypeScript;
                     return null;
                 }
                 var rewritten = _super.prototype.visitFunctionDeclaration.call(this, node);
-                var parametersWithDefaults = EmitterImpl.functionSignatureDefaultParameters(node.functionSignature);
+                var parametersWithDefaults = EmitterImpl.callSignatureDefaultParameters(node.callSignature);
                 if (parametersWithDefaults.length !== 0) {
                     var defaultValueAssignmentStatements = TypeScript.ArrayUtilities.select(parametersWithDefaults, function (p) {
                         return _this.generateDefaultValueAssignmentStatement(p);
@@ -57252,7 +57273,7 @@ var TypeScript;
                 }
                 statements.push.apply(statements, this.generatePropertyAssignments(classDeclaration, false));
                 var indentationTrivia = this.indentationTrivia(classIndentationColumn);
-                var functionDeclaration = TypeScript.FunctionDeclarationSyntax.create(TypeScript.Syntax.token(27 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), TypeScript.FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier)).withTrailingTrivia(this.space)).withBlock(this.factory.block(TypeScript.Syntax.token(70 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), TypeScript.Syntax.list(statements), TypeScript.Syntax.token(71 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia))).withTrailingTrivia(this.newLine);
+                var functionDeclaration = TypeScript.FunctionDeclarationSyntax.create(TypeScript.Syntax.token(27 /* FunctionKeyword */ ).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space), this.withNoTrivia(classDeclaration.identifier), TypeScript.CallSignatureSyntax.create1().withTrailingTrivia(this.space)).withBlock(this.factory.block(TypeScript.Syntax.token(70 /* OpenBraceToken */ ).withTrailingTrivia(this.newLine), TypeScript.Syntax.list(statements), TypeScript.Syntax.token(71 /* CloseBraceToken */ ).withLeadingTrivia(indentationTrivia))).withTrailingTrivia(this.newLine);
                 return this.changeIndentation(functionDeclaration, true, this.options.indentSpaces);
             };
             EmitterImpl.prototype.convertConstructorDeclaration = function (classDeclaration, constructorDeclaration) {
@@ -57266,7 +57287,6 @@ var TypeScript;
                 var newParameterListIndentation = constructorIndentationColumn + TypeScript.SyntaxFacts.getText(27 /* FunctionKeyword */ ).length + 1 + identifier.width();
                 var parameterList = constructorDeclaration.parameterList.accept(this);
                 parameterList = this.changeIndentation(parameterList, false, newParameterListIndentation - originalParameterListindentation);
-                var functionSignature = TypeScript.FunctionSignatureSyntax.create(identifier, parameterList);
                 var block = constructorDeclaration.block;
                 var allStatements = block.statements.toArray();
                 var normalStatements = TypeScript.ArrayUtilities.select(TypeScript.ArrayUtilities.where(allStatements, function (s) {
@@ -57301,7 +57321,7 @@ var TypeScript;
                 for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
                     normalStatements.unshift(this.changeIndentation(defaultValueAssignments[i], true, this.options.indentSpaces + constructorIndentationColumn));
                 }
-                return TypeScript.FunctionDeclarationSyntax.create(TypeScript.Syntax.token(27 /* FunctionKeyword */ ).withTrailingTrivia(this.space), functionSignature).withBlock(block.withStatements(TypeScript.Syntax.list(normalStatements))).withLeadingTrivia(constructorDeclaration.leadingTrivia());
+                return TypeScript.FunctionDeclarationSyntax.create(TypeScript.Syntax.token(27 /* FunctionKeyword */ ).withTrailingTrivia(this.space), identifier, TypeScript.CallSignatureSyntax.create(parameterList)).withBlock(block.withStatements(TypeScript.Syntax.list(normalStatements))).withLeadingTrivia(constructorDeclaration.leadingTrivia());
             };
             EmitterImpl.prototype.convertMemberFunctionDeclaration = function (classDeclaration, functionDeclaration) {
                 var _this = this;
@@ -57889,7 +57909,8 @@ var TypeScript;
                 this.ensureSpace();
                 this.appendToken(node.functionKeyword);
                 this.ensureSpace();
-                this.appendNode(node.functionSignature);
+                this.appendToken(node.identifier);
+                this.appendNode(node.callSignature);
                 this.appendBlockOrSemicolon(node.block, node.semicolonToken);
             };
             PrettyPrinterImpl.prototype.visitVariableStatement = function (node) {
@@ -61242,7 +61263,7 @@ var Diff;
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
 var specificFile = undefined;
-var generate = false;
+var generate = true;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {

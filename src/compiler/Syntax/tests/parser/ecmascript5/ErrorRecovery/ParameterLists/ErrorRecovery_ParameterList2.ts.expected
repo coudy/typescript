@@ -36,59 +36,54 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 5,
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 1,
+                    "text": "f",
+                    "valueText": "f"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 4,
                     "hasZeroWidthToken": true,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 1,
-                        "text": "f",
-                        "valueText": "f"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 4,
                         "hasZeroWidthToken": true,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 4,
-                            "hasZeroWidthToken": true,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 1,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "a",
-                                        "valueText": "a"
-                                    }
-                                },
-                                {
-                                    "kind": "CommaToken",
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 1,
+                                "identifier": {
+                                    "kind": "IdentifierName",
                                     "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ",",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
+                                    "text": "a",
+                                    "valueText": "a"
                                 }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 0,
-                                "text": ""
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
                             }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 0,
+                            "text": ""
                         }
                     }
                 },

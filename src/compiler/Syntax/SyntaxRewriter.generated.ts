@@ -149,7 +149,8 @@ module TypeScript {
                 node.exportKeyword === null ? null : this.visitToken(node.exportKeyword),
                 node.declareKeyword === null ? null : this.visitToken(node.declareKeyword),
                 this.visitToken(node.functionKeyword),
-                <FunctionSignatureSyntax>this.visitNode(node.functionSignature),
+                this.visitToken(node.identifier),
+                <CallSignatureSyntax>this.visitNode(node.callSignature),
                 node.block === null ? null : <BlockSyntax>this.visitNode(node.block),
                 node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
         }

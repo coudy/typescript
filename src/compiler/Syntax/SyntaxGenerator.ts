@@ -174,7 +174,8 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'exportKeyword', isToken: true, isOptional: true, isTypeScriptSpecific: true },
             <any>{ name: 'declareKeyword', isToken: true, isOptional: true, isTypeScriptSpecific: true },
             <any>{ name: 'functionKeyword', isToken: true },
-            <any>{ name: 'functionSignature', type: 'FunctionSignatureSyntax' },
+            <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax', isOptional: true },
             <any>{ name: 'semicolonToken', isToken: true, isOptional: true }
         ]

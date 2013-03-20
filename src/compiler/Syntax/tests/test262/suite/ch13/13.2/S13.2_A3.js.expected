@@ -56,32 +56,28 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 8,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 6,
-                        "text": "__func",
-                        "valueText": "__func"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 6,
+                    "text": "__func",
+                    "valueText": "__func"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 2,
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 2,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 2,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "text": ")"
-                            }
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
                         }
                     }
                 },
@@ -392,73 +388,69 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 13,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 6,
-                        "text": "__gunc",
-                        "valueText": "__gunc"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 6,
+                    "text": "__gunc",
+                    "valueText": "__gunc"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 7,
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 7,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 7,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 1,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "a",
-                                        "valueText": "a"
-                                    }
-                                },
-                                {
-                                    "kind": "CommaToken",
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 1,
+                                "identifier": {
+                                    "kind": "IdentifierName",
                                     "width": 1,
-                                    "text": ","
-                                },
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 1,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "b",
-                                        "valueText": "b"
-                                    }
-                                },
-                                {
-                                    "kind": "CommaToken",
-                                    "width": 1,
-                                    "text": ","
-                                },
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 1,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 1,
-                                        "text": "c",
-                                        "valueText": "c"
-                                    }
+                                    "text": "a",
+                                    "valueText": "a"
                                 }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
+                            },
+                            {
+                                "kind": "CommaToken",
                                 "width": 1,
-                                "text": ")"
+                                "text": ","
+                            },
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 1,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 1,
+                                    "text": "b",
+                                    "valueText": "b"
+                                }
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "text": ","
+                            },
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 1,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 1,
+                                    "text": "c",
+                                    "valueText": "c"
+                                }
                             }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
                         }
                     }
                 },

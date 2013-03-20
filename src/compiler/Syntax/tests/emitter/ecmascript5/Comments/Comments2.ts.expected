@@ -18,49 +18,44 @@
                     "width": 8,
                     "text": "function"
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 0,
+                    "text": ""
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
                     "fullWidth": 17,
-                    "hasZeroWidthToken": true,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 0,
-                        "text": ""
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 17,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 17,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "fullWidth": 15,
-                                "text": "(",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingComment": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "MultiLineCommentTrivia",
-                                        "text": "/** nothing */"
-                                    }
-                                ]
-                            },
-                            "parameters": [],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ")",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            }
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "fullWidth": 15,
+                            "text": "(",
+                            "hasTrailingTrivia": true,
+                            "hasTrailingComment": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "MultiLineCommentTrivia",
+                                    "text": "/** nothing */"
+                                }
+                            ]
+                        },
+                        "parameters": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     }
                 },

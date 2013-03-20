@@ -56,112 +56,39 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 80,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 14,
-                        "text": "checkCollation",
-                        "valueText": "checkCollation"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 14,
+                    "text": "checkCollation",
+                    "valueText": "checkCollation"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 66,
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 66,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 66,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 16,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 16,
-                                        "text": "extensionCoValue",
-                                        "valueText": "extensionCoValue"
-                                    }
-                                },
-                                {
-                                    "kind": "CommaToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ",",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 10,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 10,
-                                        "text": "usageValue",
-                                        "valueText": "usageValue"
-                                    }
-                                },
-                                {
-                                    "kind": "CommaToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ",",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 18,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 18,
-                                        "text": "expectedCollations",
-                                        "valueText": "expectedCollations"
-                                    }
-                                },
-                                {
-                                    "kind": "CommaToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ",",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 13,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 13,
-                                        "text": "expectedUsage",
-                                        "valueText": "expectedUsage"
-                                    }
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 16,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 16,
+                                    "text": "extensionCoValue",
+                                    "valueText": "extensionCoValue"
                                 }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
+                            },
+                            {
+                                "kind": "CommaToken",
                                 "width": 1,
                                 "fullWidth": 2,
-                                "text": ")",
+                                "text": ",",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -169,7 +96,76 @@
                                         "text": " "
                                     }
                                 ]
+                            },
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 10,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 10,
+                                    "text": "usageValue",
+                                    "valueText": "usageValue"
+                                }
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 18,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 18,
+                                    "text": "expectedCollations",
+                                    "valueText": "expectedCollations"
+                                }
+                            },
+                            {
+                                "kind": "CommaToken",
+                                "width": 1,
+                                "fullWidth": 2,
+                                "text": ",",
+                                "hasTrailingTrivia": true,
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 13,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 13,
+                                    "text": "expectedUsage",
+                                    "valueText": "expectedUsage"
+                                }
                             }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     }
                 },

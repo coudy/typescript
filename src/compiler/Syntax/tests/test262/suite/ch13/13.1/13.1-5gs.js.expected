@@ -136,71 +136,42 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 26,
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 11,
+                    "text": "_13_1_5_fun",
+                    "valueText": "_13_1_5_fun"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 15,
                     "parsedInStrictMode": true,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 11,
-                        "text": "_13_1_5_fun",
-                        "valueText": "_13_1_5_fun"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 15,
                         "parsedInStrictMode": true,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 15,
-                            "parsedInStrictMode": true,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 5,
-                                    "parsedInStrictMode": true,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 5,
-                                        "text": "param",
-                                        "valueText": "param"
-                                    }
-                                },
-                                {
-                                    "kind": "CommaToken",
-                                    "width": 1,
-                                    "fullWidth": 2,
-                                    "text": ",",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 5,
-                                    "parsedInStrictMode": true,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 5,
-                                        "text": "param",
-                                        "valueText": "param"
-                                    }
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 5,
+                                "parsedInStrictMode": true,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 5,
+                                    "text": "param",
+                                    "valueText": "param"
                                 }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
+                            },
+                            {
+                                "kind": "CommaToken",
                                 "width": 1,
                                 "fullWidth": 2,
-                                "text": ")",
+                                "text": ",",
                                 "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
@@ -208,7 +179,31 @@
                                         "text": " "
                                     }
                                 ]
+                            },
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 5,
+                                "parsedInStrictMode": true,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 5,
+                                    "text": "param",
+                                    "valueText": "param"
+                                }
                             }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     }
                 },

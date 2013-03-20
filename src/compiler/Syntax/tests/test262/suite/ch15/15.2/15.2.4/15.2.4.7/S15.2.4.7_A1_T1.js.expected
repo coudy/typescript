@@ -383,43 +383,39 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 17,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 11,
-                        "text": "AVISFACTORY",
-                        "valueText": "AVISFACTORY"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 11,
+                    "text": "AVISFACTORY",
+                    "valueText": "AVISFACTORY"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 6,
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 6,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 6,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 4,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 4,
-                                        "text": "name",
-                                        "valueText": "name"
-                                    }
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 4,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 4,
+                                    "text": "name",
+                                    "valueText": "name"
                                 }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "text": ")"
                             }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
                         }
                     }
                 },

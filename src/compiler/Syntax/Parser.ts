@@ -2221,7 +2221,7 @@ module TypeScript.Parser1 {
 
             // If we got an errant => then we want to parse what's coming up without requiring an
             // open brace.
-            var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken(functionSignature);
+            var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken1(functionSignature);
             var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
             functionSignature = newFunctionSignature;
 
@@ -2335,7 +2335,7 @@ module TypeScript.Parser1 {
                    this.peekToken(1).tokenKind === SyntaxKind.FunctionKeyword;
         }
 
-        private tryAddUnexpectedEqualsGreaterThanToken(functionSignature: FunctionSignatureSyntax): FunctionSignatureSyntax {
+        private tryAddUnexpectedEqualsGreaterThanToken1(functionSignature: FunctionSignatureSyntax): FunctionSignatureSyntax {
             var token0 = this.currentToken();
 
             var hasEqualsGreaterThanToken = token0.tokenKind === SyntaxKind.EqualsGreaterThanToken;
@@ -2355,6 +2355,26 @@ module TypeScript.Parser1 {
             return functionSignature;
         }
 
+        private tryAddUnexpectedEqualsGreaterThanToken2(callSignature: CallSignatureSyntax): CallSignatureSyntax {
+            var token0 = this.currentToken();
+
+            var hasEqualsGreaterThanToken = token0.tokenKind === SyntaxKind.EqualsGreaterThanToken;
+            if (hasEqualsGreaterThanToken) {
+                // Previously the language allowed "function f() => expr;" as a shorthand for 
+                // "function f() { return expr; }.
+                // 
+                // Detect if the user is typing this and attempt recovery.
+                var diagnostic = new SyntaxDiagnostic(
+                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_, []);
+                this.addDiagnostic(diagnostic);
+
+                var token = this.eatAnyToken();
+                return <CallSignatureSyntax>this.addSkippedTokenAfterNode(callSignature, token0);
+            }
+
+            return callSignature;
+        }
+
         private parseFunctionDeclaration(): FunctionDeclarationSyntax {
             // Debug.assert(this.isFunctionDeclaration());
 
@@ -2362,13 +2382,14 @@ module TypeScript.Parser1 {
             var declareKeyword = this.tryEatKeyword(SyntaxKind.DeclareKeyword);
 
             var functionKeyword = this.eatKeyword(SyntaxKind.FunctionKeyword);
-            var functionSignature = this.parseFunctionSignature(/*allowQuestionToken:*/ false);
+            var identifier = this.eatIdentifierToken();
+            var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
             // If we got an errant => then we want to parse what's coming up without requiring an
             // open brace.
-            var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken(functionSignature);
-            var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
-            functionSignature = newFunctionSignature;
+            var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken2(callSignature);
+            var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
+            callSignature = newCallSignature;
 
             var semicolonToken: ISyntaxToken = null;
             var block: BlockSyntax = null;
@@ -2381,7 +2402,7 @@ module TypeScript.Parser1 {
                 semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
             }
 
-            return this.factory.functionDeclaration(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken);
+            return this.factory.functionDeclaration(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken);
         }
 
         private isModuleDeclaration(): bool {

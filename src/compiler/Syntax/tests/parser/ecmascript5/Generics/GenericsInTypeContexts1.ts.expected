@@ -786,100 +786,96 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 12,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 2,
-                        "text": "f1",
-                        "valueText": "f1"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 2,
+                    "text": "f1",
+                    "valueText": "f1"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 10,
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 10,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 10,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 7,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 7,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 1,
+                                    "text": "a",
+                                    "valueText": "a"
+                                },
+                                "typeAnnotation": {
+                                    "kind": "TypeAnnotation",
+                                    "fullWidth": 6,
+                                    "colonToken": {
+                                        "kind": "ColonToken",
                                         "width": 1,
-                                        "text": "a",
-                                        "valueText": "a"
+                                        "fullWidth": 2,
+                                        "text": ":",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
                                     },
-                                    "typeAnnotation": {
-                                        "kind": "TypeAnnotation",
-                                        "fullWidth": 6,
-                                        "colonToken": {
-                                            "kind": "ColonToken",
+                                    "type": {
+                                        "kind": "GenericType",
+                                        "fullWidth": 4,
+                                        "name": {
+                                            "kind": "IdentifierName",
                                             "width": 1,
-                                            "fullWidth": 2,
-                                            "text": ":",
-                                            "hasTrailingTrivia": true,
-                                            "trailingTrivia": [
-                                                {
-                                                    "kind": "WhitespaceTrivia",
-                                                    "text": " "
-                                                }
-                                            ]
+                                            "text": "E",
+                                            "valueText": "E"
                                         },
-                                        "type": {
-                                            "kind": "GenericType",
-                                            "fullWidth": 4,
-                                            "name": {
-                                                "kind": "IdentifierName",
+                                        "typeArgumentList": {
+                                            "kind": "TypeArgumentList",
+                                            "fullWidth": 3,
+                                            "lessThanToken": {
+                                                "kind": "LessThanToken",
                                                 "width": 1,
-                                                "text": "E",
-                                                "valueText": "E"
+                                                "text": "<"
                                             },
-                                            "typeArgumentList": {
-                                                "kind": "TypeArgumentList",
-                                                "fullWidth": 3,
-                                                "lessThanToken": {
-                                                    "kind": "LessThanToken",
+                                            "typeArguments": [
+                                                {
+                                                    "kind": "IdentifierName",
                                                     "width": 1,
-                                                    "text": "<"
-                                                },
-                                                "typeArguments": [
-                                                    {
-                                                        "kind": "IdentifierName",
-                                                        "width": 1,
-                                                        "text": "T",
-                                                        "valueText": "T"
-                                                    }
-                                                ],
-                                                "greaterThanToken": {
-                                                    "kind": "GreaterThanToken",
-                                                    "width": 1,
-                                                    "text": ">"
+                                                    "text": "T",
+                                                    "valueText": "T"
                                                 }
+                                            ],
+                                            "greaterThanToken": {
+                                                "kind": "GreaterThanToken",
+                                                "width": 1,
+                                                "text": ">"
                                             }
                                         }
                                     }
                                 }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ")",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
                             }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ")",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
                         }
                     }
                 },
@@ -941,87 +937,83 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 11,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 2,
-                        "text": "f2",
-                        "valueText": "f2"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
-                        "fullWidth": 9,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 2,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "text": ")"
-                            }
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 2,
+                    "text": "f2",
+                    "valueText": "f2"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 9,
+                    "parameterList": {
+                        "kind": "ParameterList",
+                        "fullWidth": 2,
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
                         },
-                        "typeAnnotation": {
-                            "kind": "TypeAnnotation",
-                            "fullWidth": 7,
-                            "colonToken": {
-                                "kind": "ColonToken",
+                        "parameters": [],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
+                        }
+                    },
+                    "typeAnnotation": {
+                        "kind": "TypeAnnotation",
+                        "fullWidth": 7,
+                        "colonToken": {
+                            "kind": "ColonToken",
+                            "width": 1,
+                            "fullWidth": 2,
+                            "text": ":",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "type": {
+                            "kind": "GenericType",
+                            "fullWidth": 5,
+                            "name": {
+                                "kind": "IdentifierName",
                                 "width": 1,
-                                "fullWidth": 2,
-                                "text": ":",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
+                                "text": "F",
+                                "valueText": "F"
                             },
-                            "type": {
-                                "kind": "GenericType",
-                                "fullWidth": 5,
-                                "name": {
-                                    "kind": "IdentifierName",
+                            "typeArgumentList": {
+                                "kind": "TypeArgumentList",
+                                "fullWidth": 4,
+                                "lessThanToken": {
+                                    "kind": "LessThanToken",
                                     "width": 1,
-                                    "text": "F",
-                                    "valueText": "F"
+                                    "text": "<"
                                 },
-                                "typeArgumentList": {
-                                    "kind": "TypeArgumentList",
-                                    "fullWidth": 4,
-                                    "lessThanToken": {
-                                        "kind": "LessThanToken",
+                                "typeArguments": [
+                                    {
+                                        "kind": "IdentifierName",
                                         "width": 1,
-                                        "text": "<"
-                                    },
-                                    "typeArguments": [
-                                        {
-                                            "kind": "IdentifierName",
-                                            "width": 1,
-                                            "text": "T",
-                                            "valueText": "T"
-                                        }
-                                    ],
-                                    "greaterThanToken": {
-                                        "kind": "GreaterThanToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ">",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
+                                        "text": "T",
+                                        "valueText": "T"
                                     }
+                                ],
+                                "greaterThanToken": {
+                                    "kind": "GreaterThanToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ">",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 }
                             }
                         }

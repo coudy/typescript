@@ -133,7 +133,8 @@ module TypeScript {
             this.visitOptionalToken(node.exportKeyword);
             this.visitOptionalToken(node.declareKeyword);
             this.visitToken(node.functionKeyword);
-            this.visitNode(node.functionSignature);
+            this.visitToken(node.identifier);
+            this.visitNode(node.callSignature);
             this.visitOptionalNode(node.block);
             this.visitOptionalToken(node.semicolonToken);
         }

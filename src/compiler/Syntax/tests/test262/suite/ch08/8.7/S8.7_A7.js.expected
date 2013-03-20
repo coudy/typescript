@@ -512,43 +512,39 @@
                         }
                     ]
                 },
-                "functionSignature": {
-                    "kind": "FunctionSignature",
-                    "fullWidth": 19,
-                    "identifier": {
-                        "kind": "IdentifierName",
-                        "width": 11,
-                        "text": "populateAge",
-                        "valueText": "populateAge"
-                    },
-                    "callSignature": {
-                        "kind": "CallSignature",
+                "identifier": {
+                    "kind": "IdentifierName",
+                    "width": 11,
+                    "text": "populateAge",
+                    "valueText": "populateAge"
+                },
+                "callSignature": {
+                    "kind": "CallSignature",
+                    "fullWidth": 8,
+                    "parameterList": {
+                        "kind": "ParameterList",
                         "fullWidth": 8,
-                        "parameterList": {
-                            "kind": "ParameterList",
-                            "fullWidth": 8,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 6,
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 6,
-                                        "text": "person",
-                                        "valueText": "person"
-                                    }
+                        "openParenToken": {
+                            "kind": "OpenParenToken",
+                            "width": 1,
+                            "text": "("
+                        },
+                        "parameters": [
+                            {
+                                "kind": "Parameter",
+                                "fullWidth": 6,
+                                "identifier": {
+                                    "kind": "IdentifierName",
+                                    "width": 6,
+                                    "text": "person",
+                                    "valueText": "person"
                                 }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "text": ")"
                             }
+                        ],
+                        "closeParenToken": {
+                            "kind": "CloseParenToken",
+                            "width": 1,
+                            "text": ")"
                         }
                     }
                 },

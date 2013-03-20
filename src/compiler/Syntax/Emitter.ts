@@ -181,7 +181,7 @@ module TypeScript.Emitter1 {
                 var functionDeclaration = <FunctionDeclarationSyntax>moduleElement;
                 if (functionDeclaration.exportKeyword !== null) {
                     elements.push(this.exportModuleElement(
-                        parentModule, moduleElement, functionDeclaration.functionSignature.identifier));
+                        parentModule, moduleElement, functionDeclaration.identifier));
                 }
             }
             else if (moduleElement.kind() === SyntaxKind.ClassDeclaration) {
@@ -423,7 +423,11 @@ module TypeScript.Emitter1 {
         }
 
         private static functionSignatureDefaultParameters(signature: FunctionSignatureSyntax): ParameterSyntax[] {
-            return EmitterImpl.parameterListDefaultParameters(signature.callSignature.parameterList);
+            return EmitterImpl.callSignatureDefaultParameters(signature.callSignature);
+        }
+
+        private static callSignatureDefaultParameters(callSignature: CallSignatureSyntax): ParameterSyntax[] {
+            return EmitterImpl.parameterListDefaultParameters(callSignature.parameterList);
         }
 
         private static parameterListDefaultParameters(parameterList: ParameterListSyntax): ParameterSyntax[] {
@@ -483,7 +487,7 @@ module TypeScript.Emitter1 {
             }
 
             var rewritten = <FunctionDeclarationSyntax>super.visitFunctionDeclaration(node);
-            var parametersWithDefaults = EmitterImpl.functionSignatureDefaultParameters(node.functionSignature);
+            var parametersWithDefaults = EmitterImpl.callSignatureDefaultParameters(node.callSignature);
 
             if (parametersWithDefaults.length !== 0) {
                 var defaultValueAssignmentStatements = ArrayUtilities.select(
@@ -588,7 +592,8 @@ module TypeScript.Emitter1 {
 
             var functionDeclaration = FunctionDeclarationSyntax.create(
                 Syntax.token(SyntaxKind.FunctionKeyword).withLeadingTrivia(indentationTrivia).withTrailingTrivia(this.space),
-                FunctionSignatureSyntax.create1(this.withNoTrivia(classDeclaration.identifier)).withTrailingTrivia(this.space))
+                this.withNoTrivia(classDeclaration.identifier),
+                CallSignatureSyntax.create1().withTrailingTrivia(this.space))
                     .withBlock(this.factory.block(
                         Syntax.token(SyntaxKind.OpenBraceToken).withTrailingTrivia(this.newLine),
                         Syntax.list(statements),
@@ -616,8 +621,6 @@ module TypeScript.Emitter1 {
             var parameterList = constructorDeclaration.parameterList.accept(this);
             parameterList = this.changeIndentation(
                 parameterList, /*changeFirstToken:*/ false, newParameterListIndentation - originalParameterListindentation);
-
-            var functionSignature = FunctionSignatureSyntax.create(identifier, parameterList);
 
             var block = constructorDeclaration.block;
             var allStatements = block.statements.toArray();
@@ -663,7 +666,8 @@ module TypeScript.Emitter1 {
             // function C(...) { ... }
             return FunctionDeclarationSyntax.create(
                 Syntax.token(SyntaxKind.FunctionKeyword).withTrailingTrivia(this.space),
-                functionSignature)
+                identifier,
+                CallSignatureSyntax.create(parameterList))
                     .withBlock(block.withStatements(Syntax.list(normalStatements))).withLeadingTrivia(constructorDeclaration.leadingTrivia());
         }
 

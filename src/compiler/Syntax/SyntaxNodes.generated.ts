@@ -893,7 +893,8 @@ module TypeScript {
     constructor(public exportKeyword: ISyntaxToken,
                 public declareKeyword: ISyntaxToken,
                 public functionKeyword: ISyntaxToken,
-                public functionSignature: FunctionSignatureSyntax,
+                public identifier: ISyntaxToken,
+                public callSignature: CallSignatureSyntax,
                 public block: BlockSyntax,
                 public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
@@ -910,7 +911,7 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 6;
+        return 7;
     }
 
     public childAt(slot: number): ISyntaxElement {
@@ -918,9 +919,10 @@ module TypeScript {
             case 0: return this.exportKeyword;
             case 1: return this.declareKeyword;
             case 2: return this.functionKeyword;
-            case 3: return this.functionSignature;
-            case 4: return this.block;
-            case 5: return this.semicolonToken;
+            case 3: return this.identifier;
+            case 4: return this.callSignature;
+            case 5: return this.block;
+            case 6: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -936,23 +938,25 @@ module TypeScript {
     public update(exportKeyword: ISyntaxToken,
                   declareKeyword: ISyntaxToken,
                   functionKeyword: ISyntaxToken,
-                  functionSignature: FunctionSignatureSyntax,
+                  identifier: ISyntaxToken,
+                  callSignature: CallSignatureSyntax,
                   block: BlockSyntax,
                   semicolonToken: ISyntaxToken): FunctionDeclarationSyntax {
-        if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.functionKeyword === functionKeyword && this.functionSignature === functionSignature && this.block === block && this.semicolonToken === semicolonToken) {
+        if (this.exportKeyword === exportKeyword && this.declareKeyword === declareKeyword && this.functionKeyword === functionKeyword && this.identifier === identifier && this.callSignature === callSignature && this.block === block && this.semicolonToken === semicolonToken) {
             return this;
         }
 
-        return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(functionKeyword: ISyntaxToken,
-                         functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
-        return new FunctionDeclarationSyntax(null, null, functionKeyword, functionSignature, null, null, /*parsedInStrictMode:*/ false);
+                         identifier: ISyntaxToken,
+                         callSignature: CallSignatureSyntax): FunctionDeclarationSyntax {
+        return new FunctionDeclarationSyntax(null, null, functionKeyword, identifier, callSignature, null, null, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
-        return new FunctionDeclarationSyntax(null, null, Syntax.token(SyntaxKind.FunctionKeyword), functionSignature, null, null, /*parsedInStrictMode:*/ false);
+    public static create1(identifier: ISyntaxToken): FunctionDeclarationSyntax {
+        return new FunctionDeclarationSyntax(null, null, Syntax.token(SyntaxKind.FunctionKeyword), identifier, CallSignatureSyntax.create1(), null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionDeclarationSyntax {
@@ -964,33 +968,37 @@ module TypeScript {
     }
 
     public withExportKeyword(exportKeyword: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, this.semicolonToken);
+        return this.update(exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, this.callSignature, this.block, this.semicolonToken);
     }
 
     public withDeclareKeyword(declareKeyword: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(this.exportKeyword, declareKeyword, this.functionKeyword, this.functionSignature, this.block, this.semicolonToken);
+        return this.update(this.exportKeyword, declareKeyword, this.functionKeyword, this.identifier, this.callSignature, this.block, this.semicolonToken);
     }
 
     public withFunctionKeyword(functionKeyword: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(this.exportKeyword, this.declareKeyword, functionKeyword, this.functionSignature, this.block, this.semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, functionKeyword, this.identifier, this.callSignature, this.block, this.semicolonToken);
     }
 
-    public withFunctionSignature(functionSignature: FunctionSignatureSyntax): FunctionDeclarationSyntax {
-        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, functionSignature, this.block, this.semicolonToken);
+    public withIdentifier(identifier: ISyntaxToken): FunctionDeclarationSyntax {
+        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, identifier, this.callSignature, this.block, this.semicolonToken);
+    }
+
+    public withCallSignature(callSignature: CallSignatureSyntax): FunctionDeclarationSyntax {
+        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, callSignature, this.block, this.semicolonToken);
     }
 
     public withBlock(block: BlockSyntax): FunctionDeclarationSyntax {
-        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, block, this.semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, this.callSignature, block, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): FunctionDeclarationSyntax {
-        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.functionSignature, this.block, semicolonToken);
+        return this.update(this.exportKeyword, this.declareKeyword, this.functionKeyword, this.identifier, this.callSignature, this.block, semicolonToken);
     }
 
     public isTypeScriptSpecific(): bool {
         if (this.exportKeyword !== null) { return true; }
         if (this.declareKeyword !== null) { return true; }
-        if (this.functionSignature.isTypeScriptSpecific()) { return true; }
+        if (this.callSignature.isTypeScriptSpecific()) { return true; }
         if (this.block !== null && this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }
