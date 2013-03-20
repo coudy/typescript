@@ -1157,10 +1157,12 @@ module TypeScript {
 
             declSymbol.startResolving();
 
+            var wrapperDecl = this.getEnclosingDecl(decl);
+            wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
+
             // Does this have a type expression? If so, that's the type
             if (varDecl.typeExpr) {
-
-                var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, enclosingDecl ? enclosingDecl : this.getEnclosingDecl(decl), context);
+                var typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context);
 
                 if (!typeExprSymbol) {
                     context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type expression for variable '" + varDecl.id.actualText + "'", decl);
@@ -1206,7 +1208,7 @@ module TypeScript {
                 // Does it have an initializer? If so, typecheck and use that
             else if (varDecl.init) {
 
-                var initExprSymbol = this.resolveStatementOrExpression(varDecl.init, false, enclosingDecl ? enclosingDecl : this.getEnclosingDecl(decl), context);
+                var initExprSymbol = this.resolveStatementOrExpression(varDecl.init, false, wrapperDecl, context);
 
                 if (!initExprSymbol) {
                     context.postError(varDecl.minChar, varDecl.getLength(), this.unitPath, "Could not resolve type of initializer expression for variable '" + varDecl.id.actualText + "'", decl);
@@ -1967,6 +1969,11 @@ module TypeScript {
                         nameSymbol = associatedType.findMember(rhsName);
                     }
                 }
+
+                // could be an object member
+                if (!nameSymbol && !lhsType.isPrimitive() && this.cachedObjectInterfaceType) {
+                    nameSymbol = this.cachedObjectInterfaceType.findMember(rhsName);
+                }                
 
                 if (!nameSymbol) {
                     context.postError(dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), this.unitPath, "Could not find dotted symbol name '" + rhsName + "'", enclosingDecl);

@@ -35,10 +35,10 @@ module Formatting {
 
         public Initialize(rules: List_Rule) {
             this.mapRowLength = AuthorTokenKind.Length;
-            this.map = new Array(this.mapRowLength * this.mapRowLength);
+            this.map = <any> new Array(this.mapRowLength * this.mapRowLength);//new Array<RulesBucket>(this.mapRowLength * this.mapRowLength);
 
             // This array is used only during construction of the rulesbucket in the map
-            var rulesBucketConstructionStateList: RulesBucketConstructionState[] = new Array(this.map.length);
+            var rulesBucketConstructionStateList: RulesBucketConstructionState[] = <any>new Array(this.map.length);//new Array<RulesBucketConstructionState>(this.map.length);
 
             this.FillRules(rules, rulesBucketConstructionStateList);
             return this.map;
@@ -93,7 +93,7 @@ module Formatting {
     var MaskBitSize = 5;
     var Mask = 0x1f;
 
-    export enum Position {
+    export enum RulesPosition {
         IgnoreRulesSpecific = 0,
         IgnoreRulesAny = MaskBitSize * 1,
         ContextRulesSpecific = MaskBitSize * 2,
@@ -124,7 +124,7 @@ module Formatting {
             this.rulesInsertionIndexBitmap = 0;
         }
 
-        public GetInsertionIndex(maskPosition: Position): number {
+        public GetInsertionIndex(maskPosition: RulesPosition): number {
             var index = 0;
 
             var pos = 0;
@@ -139,7 +139,7 @@ module Formatting {
             return index;
         }
 
-        public IncreaseInsertionIndex(maskPosition: Position): void
+        public IncreaseInsertionIndex(maskPosition: RulesPosition): void
         {
             var value = (this.rulesInsertionIndexBitmap >> maskPosition) & Mask;
             value++;
@@ -164,22 +164,22 @@ module Formatting {
         }
 
         public AddRule(rule: Rule, specificTokens: bool, constructionState: RulesBucketConstructionState[], rulesBucketIndex: number): void {
-            var position: Position;
+            var position: RulesPosition;
 
             if (rule.Operation.Action == RuleAction.Ignore) {
                 position = specificTokens ?
-                    Position.IgnoreRulesSpecific :
-                    Position.IgnoreRulesAny;
+                    RulesPosition.IgnoreRulesSpecific :
+                    RulesPosition.IgnoreRulesAny;
             }
             else if (!rule.Operation.Context.IsAny()) {
                 position = specificTokens ?
-                    Position.ContextRulesSpecific :
-                    Position.ContextRulesAny;
+                    RulesPosition.ContextRulesSpecific :
+                    RulesPosition.ContextRulesAny;
             }
             else {
                 position = specificTokens ?
-                    Position.NoContextRulesSpecific :
-                    Position.NoContextRulesAny;
+                    RulesPosition.NoContextRulesSpecific :
+                    RulesPosition.NoContextRulesAny;
             }
 
             var state = constructionState[rulesBucketIndex];

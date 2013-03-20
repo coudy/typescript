@@ -26,9 +26,6 @@
 ///<reference path='..\..\tests\runners\projects\runner.ts' />
 ///<reference path='..\..\tests\runners\unittest\unittestrunner.ts' />
 
-declare var IO: IIO;
-declare var Exec: IExec;
-declare var process: any;
 declare var _inheritsFrom; // reference base inheritsFrom in child contexts.
 
 class ConsoleLogger extends Harness.Logger {

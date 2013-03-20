@@ -20,7 +20,7 @@ var arrayVar = [
     'b'
 ];
 exports.exportedArrayVar;
-exports.exportedArrayVar.push({
+0.ts.exportedArrayVar.push({
     x: 30,
     y: 'hello world'
 });
@@ -42,42 +42,21 @@ var m1;
     }
     m1.foo = foo;
 })(m1 || (m1 = {}));
+declare;
+(function (m2) {
+    m2.a;
+})(0.m2 || (0.m2 = {}));
+var m2 = 0.m2;
 (function (m3) {
     function foo() {
         return m1.foo();
     }
     m3.foo = foo;
-})(exports.m3 || (exports.m3 = {}));
-var m3 = exports.m3;
+})(0.m3 || (0.m3 = {}));
+var m3 = 0.m3;
 exports.eVar1;
 exports.eVar2 = 10;
 var eVar2;
 exports.eVar3 = 10;
 exports.eVar4;
 exports.eVar5;
-////[0.d.ts]
-export var exportedSimpleVar;
-export var exportedVarWithInitialValue: number;
-export var exportedWithComplicatedValue: {
-    x: number;
-    y: number;
-    desc: string;
-};
-export var exportedDeclaredVar: number;
-export var exportedArrayVar: {
-    x: number;
-    y: string;
-}[];
-export function exportedFunction(): {
-    x: string;
-    y: string;
-    n: number;
-};
-export module m2 {
-    var a: number;
-}
-export module m3 {
-    function foo(): string;
-}
-export var eVar1, eVar2: number;
-export var eVar3: number, eVar4, eVar5;

@@ -18,8 +18,6 @@ interface IExec {
     exec: (fileName: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) => void;
 }
 
-declare var require;
-
 class ExecResult {
     public stdout = "";
     public stderr = "";

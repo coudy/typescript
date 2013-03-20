@@ -17,7 +17,7 @@ var O;
 
         }
         return B;
-    })(O.A);
+    })(A);
     O.B = B;    
     var C = (function (_super) {
         __extends(C, _super);
@@ -26,7 +26,7 @@ var O;
 
         }
         return C;
-    })(O.B);
+    })(B);
     O.C = C;    
 })(O || (O = {}));
 var e = x.g(new O.A());
