@@ -5,14 +5,14 @@ var __extends = this.__extends || function (d, b) {
 };
 var A = (function () {
     function A() {
-        this.p1 = 0;
+        var p1 = 0;
         this.p2 = 0;
     }
     return A;
 })();
 var B = (function () {
     function B() {
-        this.p1 = 0;
+        var p1 = 0;
         this.p2 = 0;
     }
     return B;
@@ -36,7 +36,7 @@ var E = (function (_super) {
     function E() {
         _super.apply(this, arguments);
 
-        this.p1 = 0;
+        var p1 = 0;
     }
     return E;
 })(D);
@@ -50,7 +50,7 @@ var G = (function (_super) {
     __extends(G, _super);
     function G() {
         _super.call(this);
-        this.p1 = 0;
+        var p1 = 0;
     }
     return G;
 })(D);
@@ -103,15 +103,15 @@ var M = (function (_super) {
 })(G);
 var N = (function () {
     function N() {
-        this.p1 = 0;
-        this.p2 = this.p1;
+        var p1 = 0;
+        var p2 = this.p1;
         this.p2 = 0;
     }
     return N;
 })();
 var O = (function () {
     function O() {
-        this.p1 = 0;
+        var p1 = 0;
     }
     return O;
 })();

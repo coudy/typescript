@@ -1978,12 +1978,12 @@ module TypeScript {
         }
 
         public getScopedNameEx(scopeSymbol?: PullSymbol, getPrettyTypeName?: bool) {
-            var elementMemberName = this.elementType.getScopedNameEx(scopeSymbol, getPrettyTypeName);
+            var elementMemberName = this.elementType ? this.elementType.getScopedNameEx(scopeSymbol, getPrettyTypeName) : MemberName.create("any");
             return MemberName.create(elementMemberName, "", "[]");
         }
 
         public getMemberTypeNameEx(topLevel: bool, scopeSymbol?: PullSymbol, getPrettyTypeName?: bool): MemberName {
-            var elementMemberName = this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName);
+            var elementMemberName = this.elementType ? this.elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName) : MemberName.create("any");
             return MemberName.create(elementMemberName, "", "[]");
         }
     }
@@ -2306,6 +2306,7 @@ module TypeScript {
             }
 
             signature.setIsBeingSpecialized();
+            newSignature.addDeclaration(decl);
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
             signature.setIsSpecialized();
 
@@ -2313,9 +2314,7 @@ module TypeScript {
 
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
-            }
-
-            newSignature.addDeclaration(decl);
+            }            
 
             newType.addCallSignature(newSignature);
 
@@ -2362,6 +2361,7 @@ module TypeScript {
             }            
 
             signature.setIsBeingSpecialized();
+            newSignature.addDeclaration(decl);
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
             signature.setIsSpecialized();
 
@@ -2370,8 +2370,6 @@ module TypeScript {
             if (!newSignature) {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
-
-            newSignature.addDeclaration(decl);
 
             newType.addConstructSignature(newSignature);
 
@@ -2418,6 +2416,7 @@ module TypeScript {
             }            
 
             signature.setIsBeingSpecialized();
+            newSignature.addDeclaration(decl);
             newSignature = specializeSignature(newSignature, true, typeReplacementMap, [], resolver, newTypeDecl, context);
             signature.setIsSpecialized();
 
@@ -2427,8 +2426,6 @@ module TypeScript {
                 return resolver.semanticInfoChain.anyTypeSymbol;
             }
             
-            newSignature.addDeclaration(decl);
-
             newType.addIndexSignature(newSignature);
 
             if (newSignature.hasGenericParameter()) {
