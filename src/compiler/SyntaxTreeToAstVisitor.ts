@@ -2657,6 +2657,7 @@ module TypeScript {
             this.movePast(node.openParenToken);
             var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
+            var catchType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             this.movePast(node.closeParenToken);
             var block = node.block.accept(this);
 

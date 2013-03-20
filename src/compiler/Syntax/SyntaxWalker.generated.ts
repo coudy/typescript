@@ -587,6 +587,7 @@ module TypeScript {
             this.visitToken(node.catchKeyword);
             this.visitToken(node.openParenToken);
             this.visitToken(node.identifier);
+            this.visitOptionalNode(node.typeAnnotation);
             this.visitToken(node.closeParenToken);
             this.visitNode(node.block);
         }

@@ -757,8 +757,8 @@ var TypeScript;
         SyntaxKind.ConstructSignature = 141;
         SyntaxKind._map[142] = "IndexSignature";
         SyntaxKind.IndexSignature = 142;
-        SyntaxKind._map[143] = "FunctionSignature";
-        SyntaxKind.FunctionSignature = 143;
+        SyntaxKind._map[143] = "MethodSignature";
+        SyntaxKind.MethodSignature = 143;
         SyntaxKind._map[144] = "Block";
         SyntaxKind.Block = 144;
         SyntaxKind._map[145] = "IfStatement";
@@ -3516,6 +3516,12 @@ var definitions = [
                 tokenKinds: [
                     'IdentifierName'
                 ]
+            }, 
+            {
+                name: 'typeAnnotation',
+                type: 'TypeAnnotationSyntax',
+                isOptional: true,
+                isTypeScriptSpecified: true
             }, 
             {
                 name: 'closeParenToken',

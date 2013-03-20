@@ -674,6 +674,7 @@ module TypeScript {
                 this.visitToken(node.catchKeyword),
                 this.visitToken(node.openParenToken),
                 this.visitToken(node.identifier),
+                node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation),
                 this.visitToken(node.closeParenToken),
                 <BlockSyntax>this.visitNode(node.block));
         }

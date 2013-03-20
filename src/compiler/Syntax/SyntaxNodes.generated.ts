@@ -6846,6 +6846,7 @@ module TypeScript {
     constructor(public catchKeyword: ISyntaxToken,
                 public openParenToken: ISyntaxToken,
                 public identifier: ISyntaxToken,
+                public typeAnnotation: TypeAnnotationSyntax,
                 public closeParenToken: ISyntaxToken,
                 public block: BlockSyntax,
                 parsedInStrictMode: bool) {
@@ -6862,7 +6863,7 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 5;
+        return 6;
     }
 
     public childAt(slot: number): ISyntaxElement {
@@ -6870,8 +6871,9 @@ module TypeScript {
             case 0: return this.catchKeyword;
             case 1: return this.openParenToken;
             case 2: return this.identifier;
-            case 3: return this.closeParenToken;
-            case 4: return this.block;
+            case 3: return this.typeAnnotation;
+            case 4: return this.closeParenToken;
+            case 5: return this.block;
             default: throw Errors.invalidOperation();
         }
     }
@@ -6879,17 +6881,26 @@ module TypeScript {
     public update(catchKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   identifier: ISyntaxToken,
+                  typeAnnotation: TypeAnnotationSyntax,
                   closeParenToken: ISyntaxToken,
                   block: BlockSyntax): CatchClauseSyntax {
-        if (this.catchKeyword === catchKeyword && this.openParenToken === openParenToken && this.identifier === identifier && this.closeParenToken === closeParenToken && this.block === block) {
+        if (this.catchKeyword === catchKeyword && this.openParenToken === openParenToken && this.identifier === identifier && this.typeAnnotation === typeAnnotation && this.closeParenToken === closeParenToken && this.block === block) {
             return this;
         }
 
-        return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(catchKeyword: ISyntaxToken,
+                         openParenToken: ISyntaxToken,
+                         identifier: ISyntaxToken,
+                         closeParenToken: ISyntaxToken,
+                         block: BlockSyntax): CatchClauseSyntax {
+        return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, null, closeParenToken, block, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(identifier: ISyntaxToken): CatchClauseSyntax {
-        return new CatchClauseSyntax(Syntax.token(SyntaxKind.CatchKeyword), Syntax.token(SyntaxKind.OpenParenToken), identifier, Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+        return new CatchClauseSyntax(Syntax.token(SyntaxKind.CatchKeyword), Syntax.token(SyntaxKind.OpenParenToken), identifier, null, Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): CatchClauseSyntax {
@@ -6901,26 +6912,31 @@ module TypeScript {
     }
 
     public withCatchKeyword(catchKeyword: ISyntaxToken): CatchClauseSyntax {
-        return this.update(catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, this.block);
+        return this.update(catchKeyword, this.openParenToken, this.identifier, this.typeAnnotation, this.closeParenToken, this.block);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): CatchClauseSyntax {
-        return this.update(this.catchKeyword, openParenToken, this.identifier, this.closeParenToken, this.block);
+        return this.update(this.catchKeyword, openParenToken, this.identifier, this.typeAnnotation, this.closeParenToken, this.block);
     }
 
     public withIdentifier(identifier: ISyntaxToken): CatchClauseSyntax {
-        return this.update(this.catchKeyword, this.openParenToken, identifier, this.closeParenToken, this.block);
+        return this.update(this.catchKeyword, this.openParenToken, identifier, this.typeAnnotation, this.closeParenToken, this.block);
+    }
+
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): CatchClauseSyntax {
+        return this.update(this.catchKeyword, this.openParenToken, this.identifier, typeAnnotation, this.closeParenToken, this.block);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): CatchClauseSyntax {
-        return this.update(this.catchKeyword, this.openParenToken, this.identifier, closeParenToken, this.block);
+        return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.typeAnnotation, closeParenToken, this.block);
     }
 
     public withBlock(block: BlockSyntax): CatchClauseSyntax {
-        return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, block);
+        return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.typeAnnotation, this.closeParenToken, block);
     }
 
     public isTypeScriptSpecific(): bool {
+        if (this.typeAnnotation !== null && this.typeAnnotation.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }

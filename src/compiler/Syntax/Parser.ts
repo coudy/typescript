@@ -2860,6 +2860,7 @@ module TypeScript.Parser1 {
             var catchKeyword = this.eatKeyword(SyntaxKind.CatchKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var identifier = this.eatIdentifierToken();
+            var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
             var savedListParsingState = this.listParsingState;
@@ -2867,7 +2868,7 @@ module TypeScript.Parser1 {
             var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             this.listParsingState = savedListParsingState;
 
-            return this.factory.catchClause(catchKeyword, openParenToken, identifier, closeParenToken, block);
+            return this.factory.catchClause(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block);
         }
 
         private isFinallyClause(): bool {

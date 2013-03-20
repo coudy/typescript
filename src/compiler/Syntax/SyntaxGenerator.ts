@@ -955,6 +955,7 @@ var definitions:ITypeDefinition[] = [
             <any>{ name: 'catchKeyword', isToken: true },
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'identifier', isToken: true, tokenKinds: ['IdentifierName'] },
+            <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true, isTypeScriptSpecified: true },
             <any>{ name: 'closeParenToken', isToken: true },
             <any>{ name: 'block', type: 'BlockSyntax' }]
     },

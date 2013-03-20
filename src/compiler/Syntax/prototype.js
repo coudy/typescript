@@ -20341,7 +20341,7 @@ var TypeScript;
             return node.update(this.visitToken(node.tryKeyword), this.visitNode(node.block), node.catchClause === null ? null : this.visitNode(node.catchClause), node.finallyClause === null ? null : this.visitNode(node.finallyClause));
         };
         SyntaxRewriter.prototype.visitCatchClause = function (node) {
-            return node.update(this.visitToken(node.catchKeyword), this.visitToken(node.openParenToken), this.visitToken(node.identifier), this.visitToken(node.closeParenToken), this.visitNode(node.block));
+            return node.update(this.visitToken(node.catchKeyword), this.visitToken(node.openParenToken), this.visitToken(node.identifier), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation), this.visitToken(node.closeParenToken), this.visitNode(node.block));
         };
         SyntaxRewriter.prototype.visitFinallyClause = function (node) {
             return node.update(this.visitToken(node.finallyKeyword), this.visitNode(node.block));
@@ -28197,8 +28197,8 @@ var TypeScript;
             NormalModeFactory.prototype.tryStatement = function (tryKeyword, block, catchClause, finallyClause) {
                 return new TypeScript.TryStatementSyntax(tryKeyword, block, catchClause, finallyClause, false);
             };
-            NormalModeFactory.prototype.catchClause = function (catchKeyword, openParenToken, identifier, closeParenToken, block) {
-                return new TypeScript.CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, false);
+            NormalModeFactory.prototype.catchClause = function (catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block) {
+                return new TypeScript.CatchClauseSyntax(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block, false);
             };
             NormalModeFactory.prototype.finallyClause = function (finallyKeyword, block) {
                 return new TypeScript.FinallyClauseSyntax(finallyKeyword, block, false);
@@ -28459,8 +28459,8 @@ var TypeScript;
             StrictModeFactory.prototype.tryStatement = function (tryKeyword, block, catchClause, finallyClause) {
                 return new TypeScript.TryStatementSyntax(tryKeyword, block, catchClause, finallyClause, true);
             };
-            StrictModeFactory.prototype.catchClause = function (catchKeyword, openParenToken, identifier, closeParenToken, block) {
-                return new TypeScript.CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, true);
+            StrictModeFactory.prototype.catchClause = function (catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block) {
+                return new TypeScript.CatchClauseSyntax(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block, true);
             };
             StrictModeFactory.prototype.finallyClause = function (finallyKeyword, block) {
                 return new TypeScript.FinallyClauseSyntax(finallyKeyword, block, true);
@@ -34520,11 +34520,12 @@ var TypeScript;
     TypeScript.TryStatementSyntax = TryStatementSyntax;    
     var CatchClauseSyntax = (function (_super) {
         __extends(CatchClauseSyntax, _super);
-        function CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, parsedInStrictMode) {
+        function CatchClauseSyntax(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block, parsedInStrictMode) {
                 _super.call(this, parsedInStrictMode);
             this.catchKeyword = catchKeyword;
             this.openParenToken = openParenToken;
             this.identifier = identifier;
+            this.typeAnnotation = typeAnnotation;
             this.closeParenToken = closeParenToken;
             this.block = block;
         }
@@ -34535,7 +34536,7 @@ var TypeScript;
             return 235 /* CatchClause */ ;
         };
         CatchClauseSyntax.prototype.childCount = function () {
-            return 5;
+            return 6;
         };
         CatchClauseSyntax.prototype.childAt = function (slot) {
             switch(slot) {
@@ -34546,21 +34547,26 @@ var TypeScript;
                 case 2:
                     return this.identifier;
                 case 3:
-                    return this.closeParenToken;
+                    return this.typeAnnotation;
                 case 4:
+                    return this.closeParenToken;
+                case 5:
                     return this.block;
                 default:
                     throw TypeScript.Errors.invalidOperation();
             }
         };
-        CatchClauseSyntax.prototype.update = function (catchKeyword, openParenToken, identifier, closeParenToken, block) {
-            if (this.catchKeyword === catchKeyword && this.openParenToken === openParenToken && this.identifier === identifier && this.closeParenToken === closeParenToken && this.block === block) {
+        CatchClauseSyntax.prototype.update = function (catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block) {
+            if (this.catchKeyword === catchKeyword && this.openParenToken === openParenToken && this.identifier === identifier && this.typeAnnotation === typeAnnotation && this.closeParenToken === closeParenToken && this.block === block) {
                 return this;
             }
-            return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, closeParenToken, block, this.parsedInStrictMode());
+            return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block, this.parsedInStrictMode());
+        };
+        CatchClauseSyntax.create = function create(catchKeyword, openParenToken, identifier, closeParenToken, block) {
+            return new CatchClauseSyntax(catchKeyword, openParenToken, identifier, null, closeParenToken, block, false);
         };
         CatchClauseSyntax.create1 = function create1(identifier) {
-            return new CatchClauseSyntax(TypeScript.Syntax.token(17 /* CatchKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), identifier, TypeScript.Syntax.token(73 /* CloseParenToken */ ), BlockSyntax.create1(), false);
+            return new CatchClauseSyntax(TypeScript.Syntax.token(17 /* CatchKeyword */ ), TypeScript.Syntax.token(72 /* OpenParenToken */ ), identifier, null, TypeScript.Syntax.token(73 /* CloseParenToken */ ), BlockSyntax.create1(), false);
         };
         CatchClauseSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -34569,21 +34575,27 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
         CatchClauseSyntax.prototype.withCatchKeyword = function (catchKeyword) {
-            return this.update(catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, this.block);
+            return this.update(catchKeyword, this.openParenToken, this.identifier, this.typeAnnotation, this.closeParenToken, this.block);
         };
         CatchClauseSyntax.prototype.withOpenParenToken = function (openParenToken) {
-            return this.update(this.catchKeyword, openParenToken, this.identifier, this.closeParenToken, this.block);
+            return this.update(this.catchKeyword, openParenToken, this.identifier, this.typeAnnotation, this.closeParenToken, this.block);
         };
         CatchClauseSyntax.prototype.withIdentifier = function (identifier) {
-            return this.update(this.catchKeyword, this.openParenToken, identifier, this.closeParenToken, this.block);
+            return this.update(this.catchKeyword, this.openParenToken, identifier, this.typeAnnotation, this.closeParenToken, this.block);
+        };
+        CatchClauseSyntax.prototype.withTypeAnnotation = function (typeAnnotation) {
+            return this.update(this.catchKeyword, this.openParenToken, this.identifier, typeAnnotation, this.closeParenToken, this.block);
         };
         CatchClauseSyntax.prototype.withCloseParenToken = function (closeParenToken) {
-            return this.update(this.catchKeyword, this.openParenToken, this.identifier, closeParenToken, this.block);
+            return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.typeAnnotation, closeParenToken, this.block);
         };
         CatchClauseSyntax.prototype.withBlock = function (block) {
-            return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.closeParenToken, block);
+            return this.update(this.catchKeyword, this.openParenToken, this.identifier, this.typeAnnotation, this.closeParenToken, block);
         };
         CatchClauseSyntax.prototype.isTypeScriptSpecific = function () {
+            if (this.typeAnnotation !== null && this.typeAnnotation.isTypeScriptSpecific()) {
+                return true;
+            }
             if (this.block.isTypeScriptSpecific()) {
                 return true;
             }
@@ -37004,12 +37016,13 @@ var TypeScript;
                 var catchKeyword = this.eatKeyword(17 /* CatchKeyword */ );
                 var openParenToken = this.eatToken(72 /* OpenParenToken */ );
                 var identifier = this.eatIdentifierToken();
+                var typeAnnotation = this.parseOptionalTypeAnnotation(false);
                 var closeParenToken = this.eatToken(73 /* CloseParenToken */ );
                 var savedListParsingState = this.listParsingState;
                 this.listParsingState |= 128 /* CatchBlock_Statements */ ;
                 var block = this.parseBlock(false, false);
                 this.listParsingState = savedListParsingState;
-                return this.factory.catchClause(catchKeyword, openParenToken, identifier, closeParenToken, block);
+                return this.factory.catchClause(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block);
             };
             ParserImpl.prototype.isFinallyClause = function () {
                 return this.currentToken().tokenKind === 25 /* FinallyKeyword */ ;
@@ -46423,6 +46436,7 @@ var TypeScript;
             this.visitToken(node.catchKeyword);
             this.visitToken(node.openParenToken);
             this.visitToken(node.identifier);
+            this.visitOptionalNode(node.typeAnnotation);
             this.visitToken(node.closeParenToken);
             this.visitNode(node.block);
         };
@@ -51889,6 +51903,7 @@ var TypeScript;
             this.movePast(node.openParenToken);
             var identifier = this.identifierFromToken(node.identifier, false);
             this.movePast(node.identifier);
+            var catchType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             this.movePast(node.closeParenToken);
             var block = node.block.accept(this);
             var varDecl = new TypeScript.VarDecl(identifier, 0);
