@@ -1446,6 +1446,7 @@ module TypeScript {
 
             functionDeclaration.setSymbol(functionSymbol);
             functionSymbol.addDeclaration(functionDeclaration);
+            functionTypeSymbol.addDeclaration(functionDeclaration);
 
             this.semanticInfo.setSymbolForAST(funcDeclAST.name, functionSymbol);
             this.semanticInfo.setSymbolForAST(funcDeclAST, functionSymbol);
@@ -1733,6 +1734,7 @@ module TypeScript {
 
             methodDeclaration.setSymbol(methodSymbol);
             methodSymbol.addDeclaration(methodDeclaration);
+            methodTypeSymbol.addDeclaration(methodDeclaration);
             this.semanticInfo.setSymbolForAST(methodAST.name, methodSymbol);
             this.semanticInfo.setSymbolForAST(methodAST, methodSymbol);
 

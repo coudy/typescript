@@ -1467,6 +1467,7 @@ module TypeScript {
 
             var result = new TypeReference(genericType, 0);
             this.setSpan(result, start, this.position);
+            this.setSpan(genericType, start, this.position);
 
             return result;
         }
