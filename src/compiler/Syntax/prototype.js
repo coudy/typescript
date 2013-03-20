@@ -20263,7 +20263,7 @@ var TypeScript;
             return node.update(this.visitToken(node.constructorKeyword), this.visitNode(node.parameterList), node.block === null ? null : this.visitNode(node.block), node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
         };
         SyntaxRewriter.prototype.visitMemberFunctionDeclaration = function (node) {
-            return node.update(node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword), node.staticKeyword === null ? null : this.visitToken(node.staticKeyword), this.visitNode(node.functionSignature), node.block === null ? null : this.visitNode(node.block), node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
+            return node.update(node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword), node.staticKeyword === null ? null : this.visitToken(node.staticKeyword), this.visitToken(node.propertyName), this.visitNode(node.callSignature), node.block === null ? null : this.visitNode(node.block), node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
         };
         SyntaxRewriter.prototype.visitGetMemberAccessorDeclaration = function (node) {
             return node.update(node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword), node.staticKeyword === null ? null : this.visitToken(node.staticKeyword), this.visitToken(node.getKeyword), this.visitToken(node.identifier), this.visitNode(node.parameterList), node.typeAnnotation === null ? null : this.visitNode(node.typeAnnotation), this.visitNode(node.block));
@@ -28119,8 +28119,8 @@ var TypeScript;
             NormalModeFactory.prototype.constructorDeclaration = function (constructorKeyword, parameterList, block, semicolonToken) {
                 return new TypeScript.ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, false);
             };
-            NormalModeFactory.prototype.memberFunctionDeclaration = function (publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
-                return new TypeScript.MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, false);
+            NormalModeFactory.prototype.memberFunctionDeclaration = function (publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken) {
+                return new TypeScript.MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, false);
             };
             NormalModeFactory.prototype.getMemberAccessorDeclaration = function (publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block) {
                 return new TypeScript.GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, false);
@@ -28381,8 +28381,8 @@ var TypeScript;
             StrictModeFactory.prototype.constructorDeclaration = function (constructorKeyword, parameterList, block, semicolonToken) {
                 return new TypeScript.ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, true);
             };
-            StrictModeFactory.prototype.memberFunctionDeclaration = function (publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
-                return new TypeScript.MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, true);
+            StrictModeFactory.prototype.memberFunctionDeclaration = function (publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken) {
+                return new TypeScript.MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, true);
             };
             StrictModeFactory.prototype.getMemberAccessorDeclaration = function (publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block) {
                 return new TypeScript.GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, true);
@@ -32366,11 +32366,12 @@ var TypeScript;
     TypeScript.ConstructorDeclarationSyntax = ConstructorDeclarationSyntax;    
     var MemberFunctionDeclarationSyntax = (function (_super) {
         __extends(MemberFunctionDeclarationSyntax, _super);
-        function MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, parsedInStrictMode) {
+        function MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, parsedInStrictMode) {
                 _super.call(this, parsedInStrictMode);
             this.publicOrPrivateKeyword = publicOrPrivateKeyword;
             this.staticKeyword = staticKeyword;
-            this.functionSignature = functionSignature;
+            this.propertyName = propertyName;
+            this.callSignature = callSignature;
             this.block = block;
             this.semicolonToken = semicolonToken;
         }
@@ -32381,7 +32382,7 @@ var TypeScript;
             return 134 /* MemberFunctionDeclaration */ ;
         };
         MemberFunctionDeclarationSyntax.prototype.childCount = function () {
-            return 5;
+            return 6;
         };
         MemberFunctionDeclarationSyntax.prototype.childAt = function (slot) {
             switch(slot) {
@@ -32390,10 +32391,12 @@ var TypeScript;
                 case 1:
                     return this.staticKeyword;
                 case 2:
-                    return this.functionSignature;
+                    return this.propertyName;
                 case 3:
-                    return this.block;
+                    return this.callSignature;
                 case 4:
+                    return this.block;
+                case 5:
                     return this.semicolonToken;
                 default:
                     throw TypeScript.Errors.invalidOperation();
@@ -32405,17 +32408,17 @@ var TypeScript;
         MemberFunctionDeclarationSyntax.prototype.isClassElement = function () {
             return true;
         };
-        MemberFunctionDeclarationSyntax.prototype.update = function (publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken) {
-            if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.functionSignature === functionSignature && this.block === block && this.semicolonToken === semicolonToken) {
+        MemberFunctionDeclarationSyntax.prototype.update = function (publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken) {
+            if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.propertyName === propertyName && this.callSignature === callSignature && this.block === block && this.semicolonToken === semicolonToken) {
                 return this;
             }
-            return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, this.parsedInStrictMode());
+            return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, this.parsedInStrictMode());
         };
-        MemberFunctionDeclarationSyntax.create = function create(functionSignature) {
-            return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, false);
+        MemberFunctionDeclarationSyntax.create = function create(propertyName, callSignature) {
+            return new MemberFunctionDeclarationSyntax(null, null, propertyName, callSignature, null, null, false);
         };
-        MemberFunctionDeclarationSyntax.create1 = function create1(functionSignature) {
-            return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, false);
+        MemberFunctionDeclarationSyntax.create1 = function create1(propertyName) {
+            return new MemberFunctionDeclarationSyntax(null, null, propertyName, CallSignatureSyntax.create1(), null, null, false);
         };
         MemberFunctionDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
             return _super.prototype.withLeadingTrivia.call(this, trivia);
@@ -32424,19 +32427,22 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
         MemberFunctionDeclarationSyntax.prototype.withPublicOrPrivateKeyword = function (publicOrPrivateKeyword) {
-            return this.update(publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, this.semicolonToken);
+            return this.update(publicOrPrivateKeyword, this.staticKeyword, this.propertyName, this.callSignature, this.block, this.semicolonToken);
         };
         MemberFunctionDeclarationSyntax.prototype.withStaticKeyword = function (staticKeyword) {
-            return this.update(this.publicOrPrivateKeyword, staticKeyword, this.functionSignature, this.block, this.semicolonToken);
+            return this.update(this.publicOrPrivateKeyword, staticKeyword, this.propertyName, this.callSignature, this.block, this.semicolonToken);
         };
-        MemberFunctionDeclarationSyntax.prototype.withFunctionSignature = function (functionSignature) {
-            return this.update(this.publicOrPrivateKeyword, this.staticKeyword, functionSignature, this.block, this.semicolonToken);
+        MemberFunctionDeclarationSyntax.prototype.withPropertyName = function (propertyName) {
+            return this.update(this.publicOrPrivateKeyword, this.staticKeyword, propertyName, this.callSignature, this.block, this.semicolonToken);
+        };
+        MemberFunctionDeclarationSyntax.prototype.withCallSignature = function (callSignature) {
+            return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.propertyName, callSignature, this.block, this.semicolonToken);
         };
         MemberFunctionDeclarationSyntax.prototype.withBlock = function (block) {
-            return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, block, this.semicolonToken);
+            return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.propertyName, this.callSignature, block, this.semicolonToken);
         };
         MemberFunctionDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
-            return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, semicolonToken);
+            return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.propertyName, this.callSignature, this.block, semicolonToken);
         };
         MemberFunctionDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
             return true;
@@ -36569,11 +36575,11 @@ var TypeScript;
                 }
                 return false;
             };
-            ParserImpl.prototype.isClassElement = function () {
+            ParserImpl.prototype.isClassElement = function (inErrorRecovery) {
                 if (this.currentNode() !== null && this.currentNode().isClassElement()) {
                     return true;
                 }
-                return this.isConstructorDeclaration() || this.isMemberFunctionDeclaration() || this.isMemberAccessorDeclaration() || this.isMemberVariableDeclaration();
+                return this.isConstructorDeclaration() || this.isMemberFunctionDeclaration(inErrorRecovery) || this.isMemberAccessorDeclaration() || this.isMemberVariableDeclaration();
             };
             ParserImpl.prototype.parseConstructorDeclaration = function () {
                 var constructorKeyword = this.eatKeyword(63 /* ConstructorKeyword */ );
@@ -36587,37 +36593,56 @@ var TypeScript;
                 }
                 return this.factory.constructorDeclaration(constructorKeyword, parameterList, block, semicolonToken);
             };
-            ParserImpl.prototype.isMemberFunctionDeclaration = function () {
+            ParserImpl.prototype.isMemberFunctionDeclaration = function (inErrorRecovery) {
                 var index = 0;
-                if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
+                if (ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
                     index++;
-                }
-                if (this.peekToken(index).tokenKind === 58 /* StaticKeyword */ ) {
-                    index++;
-                    if (this.isFunctionSignature(index, false)) {
+                    if (this.isCallSignature(index)) {
                         return true;
                     }
-                    if (ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
-                        index++;
+                }
+                var sawStatic = false;
+                if (this.peekToken(index).tokenKind === 58 /* StaticKeyword */ ) {
+                    index++;
+                    sawStatic = true;
+                    if (this.isCallSignature(index)) {
+                        return true;
                     }
                 }
-                return this.isFunctionSignature(index, false);
+                if (sawStatic && ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
+                    index++;
+                    if (this.isCallSignature(index)) {
+                        return true;
+                    }
+                }
+                if (this.isPropertyName(this.peekToken(index), inErrorRecovery)) {
+                    return this.isCallSignature(index + 1);
+                }
+                return false;
             };
             ParserImpl.prototype.parseMemberFunctionDeclaration = function () {
                 var publicOrPrivateKeyword = null;
                 if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                    publicOrPrivateKeyword = this.eatAnyToken();
+                    if (!this.isCallSignature(1)) {
+                        publicOrPrivateKeyword = this.eatAnyToken();
+                    }
                 }
-                var staticKeyword = this.tryEatKeyword(58 /* StaticKeyword */ );
+                var staticKeyword = null;
+                if (this.currentToken().tokenKind === 58 /* StaticKeyword */ ) {
+                    if (!this.isCallSignature(1)) {
+                        staticKeyword = this.eatKeyword(58 /* StaticKeyword */ );
+                    }
+                }
                 if (staticKeyword !== null && ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                    if (!this.isFunctionSignature(0, false)) {
+                    if (!this.isCallSignature(1)) {
                         staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
                     }
                 }
-                var functionSignature = this.parseFunctionSignature(false);
-                var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken1(functionSignature);
-                var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
-                functionSignature = newFunctionSignature;
+                var propertyName = this.eatPropertyName();
+                var callSignature = this.parseCallSignature(false);
+                var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken(callSignature);
+                var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
+                callSignature = newCallSignature;
                 var block = null;
                 var semicolon = null;
                 if (parseBlockEvenWithNoOpenBrace || this.isBlock()) {
@@ -36625,7 +36650,7 @@ var TypeScript;
                 } else {
                     semicolon = this.eatExplicitOrAutomaticSemicolon(false);
                 }
-                return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
+                return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolon);
             };
             ParserImpl.prototype.handlePublicOrPrivateKeywordAfterStaticKeyword = function (staticKeyword) {
                 TypeScript.Debug.assert(staticKeyword.tokenKind === 58 /* StaticKeyword */ );
@@ -36653,13 +36678,13 @@ var TypeScript;
                 var semicolon = this.eatExplicitOrAutomaticSemicolon(false);
                 return this.factory.memberVariableDeclaration(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
             };
-            ParserImpl.prototype.parseClassElement = function () {
+            ParserImpl.prototype.parseClassElement = function (inErrorRecovery) {
                 if (this.currentNode() !== null && this.currentNode().isClassElement()) {
                     return this.eatNode();
                 }
                 if (this.isConstructorDeclaration()) {
                     return this.parseConstructorDeclaration();
-                } else if (this.isMemberFunctionDeclaration()) {
+                } else if (this.isMemberFunctionDeclaration(inErrorRecovery)) {
                     return this.parseMemberFunctionDeclaration();
                 } else if (this.isMemberAccessorDeclaration()) {
                     return this.parseMemberAccessorDeclaration();
@@ -36679,18 +36704,7 @@ var TypeScript;
                 }
                 return token0KeywordKind === 64 /* DeclareKeyword */  && this.peekToken(1).tokenKind === 27 /* FunctionKeyword */ ;
             };
-            ParserImpl.prototype.tryAddUnexpectedEqualsGreaterThanToken1 = function (functionSignature) {
-                var token0 = this.currentToken();
-                var hasEqualsGreaterThanToken = token0.tokenKind === 85 /* EqualsGreaterThanToken */ ;
-                if (hasEqualsGreaterThanToken) {
-                    var diagnostic = new TypeScript.SyntaxDiagnostic(this.currentTokenStart(), token0.width(), 12 /* Unexpected_token_ */ , []);
-                    this.addDiagnostic(diagnostic);
-                    var token = this.eatAnyToken();
-                    return this.addSkippedTokenAfterNode(functionSignature, token0);
-                }
-                return functionSignature;
-            };
-            ParserImpl.prototype.tryAddUnexpectedEqualsGreaterThanToken2 = function (callSignature) {
+            ParserImpl.prototype.tryAddUnexpectedEqualsGreaterThanToken = function (callSignature) {
                 var token0 = this.currentToken();
                 var hasEqualsGreaterThanToken = token0.tokenKind === 85 /* EqualsGreaterThanToken */ ;
                 if (hasEqualsGreaterThanToken) {
@@ -36707,7 +36721,7 @@ var TypeScript;
                 var functionKeyword = this.eatKeyword(27 /* FunctionKeyword */ );
                 var identifier = this.eatIdentifierToken();
                 var callSignature = this.parseCallSignature(false);
-                var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken2(callSignature);
+                var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken(callSignature);
                 var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
                 callSignature = newCallSignature;
                 var semicolonToken = null;
@@ -36886,7 +36900,7 @@ var TypeScript;
                     case 57 /* PublicKeyword */ :
                     case 55 /* PrivateKeyword */ :
                     case 58 /* StaticKeyword */ :
-                        if (this.isClassElement()) {
+                        if (this.isClassElement(inErrorRecovery)) {
                             return false;
                         }
                 }
@@ -38559,7 +38573,7 @@ var TypeScript;
                     case 1 /* SourceUnit_ModuleElements */ :
                         return this.isModuleElement(inErrorRecovery);
                     case 2 /* ClassDeclaration_ClassElements */ :
-                        return this.isClassElement();
+                        return this.isClassElement(inErrorRecovery);
                     case 4 /* ModuleDeclaration_ModuleElements */ :
                         return this.isModuleElement(inErrorRecovery);
                     case 8 /* SwitchStatement_SwitchClauses */ :
@@ -38601,7 +38615,7 @@ var TypeScript;
                     case 1 /* SourceUnit_ModuleElements */ :
                         return this.parseModuleElement();
                     case 2 /* ClassDeclaration_ClassElements */ :
-                        return this.parseClassElement();
+                        return this.parseClassElement(false);
                     case 4 /* ModuleDeclaration_ModuleElements */ :
                         return this.parseModuleElement();
                     case 8 /* SwitchStatement_SwitchClauses */ :
@@ -46236,7 +46250,8 @@ var TypeScript;
         SyntaxWalker.prototype.visitMemberFunctionDeclaration = function (node) {
             this.visitOptionalToken(node.publicOrPrivateKeyword);
             this.visitOptionalToken(node.staticKeyword);
-            this.visitNode(node.functionSignature);
+            this.visitToken(node.propertyName);
+            this.visitNode(node.callSignature);
             this.visitOptionalNode(node.block);
             this.visitOptionalToken(node.semicolonToken);
         };
@@ -50367,7 +50382,7 @@ var TypeScript;
                     knownMemberNames[this.valueText(variableDeclaration.variableDeclarator.identifier)] = true;
                 } else if (classElement.kind() === 134 /* MemberFunctionDeclaration */ ) {
                     var functionDeclaration = classElement;
-                    knownMemberNames[this.valueText(functionDeclaration.functionSignature.identifier)] = true;
+                    knownMemberNames[this.valueText(functionDeclaration.propertyName)] = true;
                 }
             }
             result.knownMemberNames = knownMemberNames;
@@ -51421,13 +51436,12 @@ var TypeScript;
             var start = this.position;
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
-            this.moveTo3(node, node.functionSignature, node.functionSignature.identifier);
-            var name = this.identifierFromToken(node.functionSignature.identifier, !!node.functionSignature.questionToken);
-            this.movePast(node.functionSignature.identifier);
-            this.movePast(node.functionSignature.questionToken);
-            var typeParameters = node.functionSignature.callSignature.typeParameterList === null ? null : node.functionSignature.callSignature.typeParameterList.accept(this);
-            var parameters = node.functionSignature.callSignature.parameterList.accept(this);
-            var returnType = node.functionSignature.callSignature.typeAnnotation ? node.functionSignature.callSignature.typeAnnotation.accept(this) : null;
+            this.moveTo2(node, node.propertyName);
+            var name = this.identifierFromToken(node.propertyName, false);
+            this.movePast(node.propertyName);
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
+            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
             this.pushDeclLists();
             var statements = this.convertBlock(node.block);
             if (statements) {
@@ -51441,7 +51455,7 @@ var TypeScript;
             scopeList.append(result);
             result.preComments = preComments;
             result.postComments = postComments;
-            result.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
             if (node.semicolonToken) {
                 result.fncFlags |= 512 /* Signature */ ;
@@ -57329,14 +57343,14 @@ var TypeScript;
                     return null;
                 }
                 var classIdentifier = this.withNoTrivia(classDeclaration.identifier);
-                var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature.identifier);
+                var functionIdentifier = this.withNoTrivia(functionDeclaration.propertyName);
                 var receiver = classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia());
                 receiver = functionDeclaration.staticKeyword !== null ? receiver : TypeScript.MemberAccessExpressionSyntax.create1(receiver, TypeScript.Syntax.identifierName("prototype"));
                 receiver = TypeScript.MemberAccessExpressionSyntax.create1(receiver, functionIdentifier.withTrailingTrivia(TypeScript.Syntax.spaceTriviaList));
                 var block = functionDeclaration.block.accept(this);
                 var blockTrailingTrivia = block.trailingTrivia();
                 block = block.withTrailingTrivia(TypeScript.Syntax.emptyTriviaList);
-                var defaultValueAssignments = TypeScript.ArrayUtilities.select(EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature), function (p) {
+                var defaultValueAssignments = TypeScript.ArrayUtilities.select(EmitterImpl.callSignatureDefaultParameters(functionDeclaration.callSignature), function (p) {
                     return _this.generateDefaultValueAssignmentStatement(p);
                 });
                 var functionColumn = this.columnForStartOfToken(functionDeclaration.firstToken());
@@ -57344,7 +57358,7 @@ var TypeScript;
                 for(var i = defaultValueAssignments.length - 1; i >= 0; i--) {
                     blockStatements.unshift(this.changeIndentation(defaultValueAssignments[i], true, functionColumn + this.options.indentSpaces));
                 }
-                var callSignatureParameterList = functionDeclaration.functionSignature.callSignature.parameterList.accept(this);
+                var callSignatureParameterList = functionDeclaration.callSignature.parameterList.accept(this);
                 if (!callSignatureParameterList.hasTrailingTrivia()) {
                     callSignatureParameterList = callSignatureParameterList.withTrailingTrivia(TypeScript.Syntax.spaceTriviaList);
                 }
@@ -58178,7 +58192,8 @@ var TypeScript;
                 this.ensureSpace();
                 this.appendToken(node.staticKeyword);
                 this.ensureSpace();
-                node.functionSignature.accept(this);
+                this.appendToken(node.propertyName);
+                node.callSignature.accept(this);
                 this.appendBlockOrSemicolon(node.block, node.semicolonToken);
             };
             PrettyPrinterImpl.prototype.visitGetMemberAccessorDeclaration = function (node) {
@@ -60502,7 +60517,7 @@ var TypeScript;
             var semicolonIndex = source.indexOf(";");
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
         };
         IncrementalParserTests.testIncremental2 = function testIncremental2() {
             var source = "class C {\r\n";
@@ -60515,14 +60530,14 @@ var TypeScript;
             var index = source.indexOf("+ 1");
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
         };
         IncrementalParserTests.testIncrementalRegex1 = function testIncrementalRegex1() {
             var source = "class C { public foo1() { /; } public foo2() { return 1;} public foo3() { } }";
             var semicolonIndex = source.indexOf(";}");
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
         };
         IncrementalParserTests.testIncrementalComment1 = function testIncrementalComment1() {
             var source = "class C { public foo1() { /; } public foo2() { return 1; } public foo3() { } }";
@@ -60548,7 +60563,7 @@ var TypeScript;
             var index = source.indexOf(";");
             var oldText = TypeScript.TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
         };
         IncrementalParserTests.testParameter1 = function testParameter1() {
             var source = "class C {\r\n";
@@ -61262,9 +61277,8 @@ var Diff;
     Diff.HtmlBaselineReport = HtmlBaselineReport;    
 })(Diff || (Diff = {}));
 var timer = new TypeScript.Timer();
-var specificFile = "ErrantAccessibilityModifierInModule1.ts";
-undefined;
-var generate = false;
+var specificFile = undefined;
+var generate = true;
 var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 var Program = (function () {

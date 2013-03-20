@@ -515,7 +515,7 @@ module TypeScript {
                 }
                 else if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
                     var functionDeclaration = <MemberFunctionDeclarationSyntax>classElement;
-                    knownMemberNames[this.valueText(functionDeclaration.functionSignature.identifier)] = true;
+                    knownMemberNames[this.valueText(functionDeclaration.propertyName)] = true;
                 }
             }
 
@@ -2001,16 +2001,15 @@ module TypeScript {
             var preComments = this.convertNodeLeadingComments(node, start);
             var postComments = this.convertNodeTrailingComments(node, start);
 
-            this.moveTo3(node, node.functionSignature, node.functionSignature.identifier);
-            var name = this.identifierFromToken(node.functionSignature.identifier, !!node.functionSignature.questionToken);
+            this.moveTo2(node, node.propertyName);
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
 
-            this.movePast(node.functionSignature.identifier);
-            this.movePast(node.functionSignature.questionToken);
+            this.movePast(node.propertyName);
 
-            var typeParameters = node.functionSignature.callSignature.typeParameterList === null ? null : node.functionSignature.callSignature.typeParameterList.accept(this);
-            var parameters = node.functionSignature.callSignature.parameterList.accept(this);
-            var returnType = node.functionSignature.callSignature.typeAnnotation
-                ? node.functionSignature.callSignature.typeAnnotation.accept(this)
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
+            var returnType = node.callSignature.typeAnnotation
+                ? node.callSignature.typeAnnotation.accept(this)
                 : null;
 
             this.pushDeclLists();
@@ -2032,7 +2031,7 @@ module TypeScript {
 
             result.preComments = preComments;
             result.postComments = postComments;
-            result.variableArgList = this.hasDotDotDotParameter(node.functionSignature.callSignature.parameterList.parameters);
+            result.variableArgList = this.hasDotDotDotParameter(node.callSignature.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
 
             if (node.semicolonToken) {

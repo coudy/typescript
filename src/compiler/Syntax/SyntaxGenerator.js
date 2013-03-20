@@ -2690,8 +2690,17 @@ var definitions = [
                 isOptional: true
             }, 
             {
-                name: 'functionSignature',
-                type: 'FunctionSignatureSyntax'
+                name: 'propertyName',
+                isToken: true,
+                tokenKinds: [
+                    'IdentifierName', 
+                    'StringLiteral', 
+                    'NumericLiteral'
+                ]
+            }, 
+            {
+                name: 'callSignature',
+                type: 'CallSignatureSyntax'
             }, 
             {
                 name: 'block',

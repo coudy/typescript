@@ -144,81 +144,77 @@
                                 }
                             ]
                         },
-                        "functionSignature": {
-                            "kind": "FunctionSignature",
-                            "fullWidth": 19,
-                            "identifier": {
-                                "kind": "IdentifierName",
-                                "width": 6,
-                                "fullWidth": 7,
-                                "text": "banana",
-                                "valueText": "banana",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
-                                    }
-                                ]
-                            },
-                            "callSignature": {
-                                "kind": "CallSignature",
+                        "propertyName": {
+                            "kind": "IdentifierName",
+                            "width": 6,
+                            "fullWidth": 7,
+                            "text": "banana",
+                            "valueText": "banana",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "callSignature": {
+                            "kind": "CallSignature",
+                            "fullWidth": 12,
+                            "parameterList": {
+                                "kind": "ParameterList",
                                 "fullWidth": 12,
-                                "parameterList": {
-                                    "kind": "ParameterList",
-                                    "fullWidth": 12,
-                                    "openParenToken": {
-                                        "kind": "OpenParenToken",
-                                        "width": 1,
-                                        "text": "("
-                                    },
-                                    "parameters": [
-                                        {
-                                            "kind": "Parameter",
-                                            "fullWidth": 9,
-                                            "identifier": {
-                                                "kind": "IdentifierName",
+                                "openParenToken": {
+                                    "kind": "OpenParenToken",
+                                    "width": 1,
+                                    "text": "("
+                                },
+                                "parameters": [
+                                    {
+                                        "kind": "Parameter",
+                                        "fullWidth": 9,
+                                        "identifier": {
+                                            "kind": "IdentifierName",
+                                            "width": 1,
+                                            "text": "x",
+                                            "valueText": "x"
+                                        },
+                                        "typeAnnotation": {
+                                            "kind": "TypeAnnotation",
+                                            "fullWidth": 8,
+                                            "colonToken": {
+                                                "kind": "ColonToken",
                                                 "width": 1,
-                                                "text": "x",
-                                                "valueText": "x"
+                                                "fullWidth": 2,
+                                                "text": ":",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
                                             },
-                                            "typeAnnotation": {
-                                                "kind": "TypeAnnotation",
-                                                "fullWidth": 8,
-                                                "colonToken": {
-                                                    "kind": "ColonToken",
-                                                    "width": 1,
-                                                    "fullWidth": 2,
-                                                    "text": ":",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                },
-                                                "type": {
-                                                    "kind": "PublicKeyword",
-                                                    "width": 6,
-                                                    "text": "public"
-                                                }
+                                            "type": {
+                                                "kind": "PublicKeyword",
+                                                "width": 6,
+                                                "text": "public"
                                             }
                                         }
-                                    ],
-                                    "closeParenToken": {
-                                        "kind": "CloseParenToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ")",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
                                     }
+                                ],
+                                "closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ")",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 }
                             }
                         },

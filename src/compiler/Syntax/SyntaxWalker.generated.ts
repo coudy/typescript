@@ -388,7 +388,8 @@ module TypeScript {
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {
             this.visitOptionalToken(node.publicOrPrivateKeyword);
             this.visitOptionalToken(node.staticKeyword);
-            this.visitNode(node.functionSignature);
+            this.visitToken(node.propertyName);
+            this.visitNode(node.callSignature);
             this.visitOptionalNode(node.block);
             this.visitOptionalToken(node.semicolonToken);
         }

@@ -678,7 +678,7 @@ module TypeScript.Emitter1 {
             }
 
             var classIdentifier = this.withNoTrivia(classDeclaration.identifier);
-            var functionIdentifier = this.withNoTrivia(functionDeclaration.functionSignature.identifier);
+            var functionIdentifier = this.withNoTrivia(functionDeclaration.propertyName);
 
             var receiver: IExpressionSyntax = classIdentifier.withLeadingTrivia(functionDeclaration.leadingTrivia());
 
@@ -695,7 +695,7 @@ module TypeScript.Emitter1 {
             block = block.withTrailingTrivia(Syntax.emptyTriviaList);
 
             var defaultValueAssignments = <IStatementSyntax[]>ArrayUtilities.select(
-                EmitterImpl.functionSignatureDefaultParameters(functionDeclaration.functionSignature),
+                EmitterImpl.callSignatureDefaultParameters(functionDeclaration.callSignature),
                 p => this.generateDefaultValueAssignmentStatement(p));
 
             var functionColumn = this.columnForStartOfToken(functionDeclaration.firstToken());
@@ -706,7 +706,7 @@ module TypeScript.Emitter1 {
                     defaultValueAssignments[i], /*changeFirstToken:*/ true, functionColumn + this.options.indentSpaces));
             }
 
-            var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.functionSignature.callSignature.parameterList.accept(this);
+            var callSignatureParameterList = <ParameterListSyntax>functionDeclaration.callSignature.parameterList.accept(this);
             if (!callSignatureParameterList.hasTrailingTrivia()) {
                 callSignatureParameterList = <ParameterListSyntax>callSignatureParameterList.withTrailingTrivia(Syntax.spaceTriviaList);
             }

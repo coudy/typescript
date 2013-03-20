@@ -2134,7 +2134,7 @@ module TypeScript.Parser1 {
             return false;
         }
 
-        private isClassElement(): bool {
+        private isClassElement(inErrorRecovery: bool): bool {
             if (this.currentNode() !== null && this.currentNode().isClassElement()) {
                 return true;
             }
@@ -2142,7 +2142,7 @@ module TypeScript.Parser1 {
             // Note: the order of these calls is important.  Specifically, isMemberVariableDeclaration
             // checks for a subset of the conditions of the previous two calls.
             return this.isConstructorDeclaration() ||
-                   this.isMemberFunctionDeclaration() ||
+                   this.isMemberFunctionDeclaration(inErrorRecovery) ||
                    this.isMemberAccessorDeclaration() ||
                    this.isMemberVariableDeclaration();
         }
@@ -2166,29 +2166,48 @@ module TypeScript.Parser1 {
             return this.factory.constructorDeclaration(constructorKeyword, parameterList, block, semicolonToken);
         }
 
-        private isMemberFunctionDeclaration(): bool {
+        private isMemberFunctionDeclaration(inErrorRecovery: bool): bool {
             var index = 0;
 
-            if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                index++;
-            }
-
-            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
+            if (ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
                 index++;
 
-                if (this.isFunctionSignature(index, /*allowQuestionToken:*/ false)) {
+                // 'public'/'private' may be a modifier or may be the name of the member function.
+                // Check for the latter case.
+                if (this.isCallSignature(index)) {
                     return true;
                 }
+            }
 
-                // Error Recovery:
-                // We may have 'static public foo()' or 'static private foo()'. check for that 
-                // common case so we can give a good error message.
-                if (ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
-                    index++;
+            var sawStatic = false;
+            if (this.peekToken(index).tokenKind === SyntaxKind.StaticKeyword) {
+                index++;
+                sawStatic = true;
+
+                // 'static' may be a modifier or may be the name of the member function.
+                // Check for the latter case.
+                if (this.isCallSignature(index)) {
+                    return true;
                 }
             }
 
-            return this.isFunctionSignature(index, /*allowQuestionToken:*/ false);
+            // Error Recovery:
+            // We may have 'static public foo()' or 'static private foo()'. check for that 
+            // common case so we can give a good error message.
+            if (sawStatic && ParserImpl.isPublicOrPrivateKeyword(this.peekToken(index))) {
+                index++;
+
+                // We may also have "static public()" or "static private()". check for that.
+                if (this.isCallSignature(index)) {
+                    return true;
+                }
+            }
+
+            if (this.isPropertyName(this.peekToken(index), inErrorRecovery)) {
+                return this.isCallSignature(index + 1);
+            }
+        
+            return false;
         }
 
         private parseMemberFunctionDeclaration(): MemberFunctionDeclarationSyntax {
@@ -2196,10 +2215,19 @@ module TypeScript.Parser1 {
             
             var publicOrPrivateKeyword: ISyntaxToken = null;
             if (ParserImpl.isPublicOrPrivateKeyword(this.currentToken())) {
-                publicOrPrivateKeyword = this.eatAnyToken();
+                // 'public'/'private' may be a modifier, or may be the name of the member function.
+                if (!this.isCallSignature(1)) {
+                    publicOrPrivateKeyword = this.eatAnyToken();
+                }
             }
 
-            var staticKeyword = this.tryEatKeyword(SyntaxKind.StaticKeyword);
+            var staticKeyword: ISyntaxToken = null;
+            if (this.currentToken().tokenKind === SyntaxKind.StaticKeyword) {
+                // 'static' may be a modifier, or may be the name of the member function.
+                if (!this.isCallSignature(1)) {
+                    staticKeyword = this.eatKeyword(SyntaxKind.StaticKeyword);
+                }
+            }
 
             // If we see 'static' followed by 'public' then this is actually syntactically invalid.
             // However, it's a common enough type of error that we want to see it and give a useful
@@ -2212,18 +2240,19 @@ module TypeScript.Parser1 {
                 // it normally.  Otherwise, treat this as an error, attach the 'public/private' token
                 // as skipped text on the 'static' keyword, and continue on.
 
-                if (!this.isFunctionSignature(0, /*allowQuestionToken:*/ false)) {
+                if (!this.isCallSignature(1)) {
                     staticKeyword = this.handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword);
                 }
             }
 
-            var functionSignature = this.parseFunctionSignature(/*allowQuestionToken:*/ false);
+            var propertyName = this.eatPropertyName();
+            var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
             // If we got an errant => then we want to parse what's coming up without requiring an
             // open brace.
-            var newFunctionSignature = this.tryAddUnexpectedEqualsGreaterThanToken1(functionSignature);
-            var parseBlockEvenWithNoOpenBrace = functionSignature !== newFunctionSignature;
-            functionSignature = newFunctionSignature;
+            var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken(callSignature);
+            var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
+            callSignature = newCallSignature;
 
             var block: BlockSyntax = null;
             var semicolon: ISyntaxToken = null;
@@ -2235,7 +2264,7 @@ module TypeScript.Parser1 {
                 semicolon = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewline:*/ false);
             }
 
-            return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolon);
+            return this.factory.memberFunctionDeclaration(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolon);
         }
 
         private handlePublicOrPrivateKeywordAfterStaticKeyword(staticKeyword: ISyntaxToken): ISyntaxToken {
@@ -2296,7 +2325,7 @@ module TypeScript.Parser1 {
             return this.factory.memberVariableDeclaration(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolon);
         }
 
-        private parseClassElement(): IClassElementSyntax {
+        private parseClassElement(inErrorRecovery: bool): IClassElementSyntax {
             // Debug.assert(this.isClassElement());
 
             if (this.currentNode() !== null && this.currentNode().isClassElement()) {
@@ -2306,7 +2335,7 @@ module TypeScript.Parser1 {
             if (this.isConstructorDeclaration()) {
                 return this.parseConstructorDeclaration();
             }
-            else if (this.isMemberFunctionDeclaration()) {
+            else if (this.isMemberFunctionDeclaration(inErrorRecovery)) {
                 return this.parseMemberFunctionDeclaration();
             }
             else if (this.isMemberAccessorDeclaration()) {
@@ -2335,27 +2364,7 @@ module TypeScript.Parser1 {
                    this.peekToken(1).tokenKind === SyntaxKind.FunctionKeyword;
         }
 
-        private tryAddUnexpectedEqualsGreaterThanToken1(functionSignature: FunctionSignatureSyntax): FunctionSignatureSyntax {
-            var token0 = this.currentToken();
-
-            var hasEqualsGreaterThanToken = token0.tokenKind === SyntaxKind.EqualsGreaterThanToken;
-            if (hasEqualsGreaterThanToken) {
-                // Previously the language allowed "function f() => expr;" as a shorthand for 
-                // "function f() { return expr; }.
-                // 
-                // Detect if the user is typing this and attempt recovery.
-                var diagnostic = new SyntaxDiagnostic(
-                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_, []);
-                this.addDiagnostic(diagnostic);
-
-                var token = this.eatAnyToken();
-                return <FunctionSignatureSyntax>this.addSkippedTokenAfterNode(functionSignature, token0);
-            }
-
-            return functionSignature;
-        }
-
-        private tryAddUnexpectedEqualsGreaterThanToken2(callSignature: CallSignatureSyntax): CallSignatureSyntax {
+        private tryAddUnexpectedEqualsGreaterThanToken(callSignature: CallSignatureSyntax): CallSignatureSyntax {
             var token0 = this.currentToken();
 
             var hasEqualsGreaterThanToken = token0.tokenKind === SyntaxKind.EqualsGreaterThanToken;
@@ -2387,7 +2396,7 @@ module TypeScript.Parser1 {
 
             // If we got an errant => then we want to parse what's coming up without requiring an
             // open brace.
-            var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken2(callSignature);
+            var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken(callSignature);
             var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
             callSignature = newCallSignature;
 
@@ -2675,7 +2684,7 @@ module TypeScript.Parser1 {
                     //
                     // It should not be possible for any class element that starts with public, private
                     // or static to be parsed as a statement.  So this is safe to do.
-                    if (this.isClassElement()) {
+                    if (this.isClassElement(inErrorRecovery)) {
                         return false;
                     }
             }
@@ -5441,7 +5450,7 @@ module TypeScript.Parser1 {
                     return this.isModuleElement(inErrorRecovery);
 
                 case ListParsingState.ClassDeclaration_ClassElements:
-                    return this.isClassElement();
+                    return this.isClassElement(inErrorRecovery);
 
                 case ListParsingState.ModuleDeclaration_ModuleElements:
                     return this.isModuleElement(inErrorRecovery);
@@ -5505,7 +5514,7 @@ module TypeScript.Parser1 {
                     return this.parseModuleElement();
 
                 case ListParsingState.ClassDeclaration_ClassElements:
-                    return this.parseClassElement();
+                    return this.parseClassElement(/*inErrorRecovery:*/ false);
 
                 case ListParsingState.ModuleDeclaration_ModuleElements:
                     return this.parseModuleElement();

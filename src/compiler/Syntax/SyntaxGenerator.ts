@@ -621,7 +621,8 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'publicOrPrivateKeyword', isToken: true, isOptional: true, tokenKinds: ['PublicKeyword', 'PrivateKeyword'] },
             <any>{ name: 'staticKeyword', isToken: true, isOptional: true },
-            <any>{ name: 'functionSignature', type: 'FunctionSignatureSyntax' },
+            <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName', 'StringLiteral', 'NumericLiteral'] },
+            <any>{ name: 'callSignature', type: 'CallSignatureSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax', isOptional: true },
             <any>{ name: 'semicolonToken', isToken: true, isOptional: true }
         ],

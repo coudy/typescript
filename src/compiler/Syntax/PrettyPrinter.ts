@@ -647,7 +647,8 @@ module TypeScript.PrettyPrinter {
             this.ensureSpace();
             this.appendToken(node.staticKeyword);
             this.ensureSpace();
-            node.functionSignature.accept(this);
+            this.appendToken(node.propertyName);
+            node.callSignature.accept(this);
             this.appendBlockOrSemicolon(node.block, node.semicolonToken);
         }
 

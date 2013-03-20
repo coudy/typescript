@@ -66,65 +66,61 @@
                                 }
                             ]
                         },
-                        "functionSignature": {
-                            "kind": "FunctionSignature",
-                            "fullWidth": 12,
-                            "identifier": {
-                                "kind": "IdentifierName",
-                                "width": 6,
-                                "text": "public"
-                            },
-                            "callSignature": {
-                                "kind": "CallSignature",
-                                "fullWidth": 6,
-                                "typeParameterList": {
-                                    "kind": "TypeParameterList",
-                                    "fullWidth": 3,
-                                    "lessThanToken": {
-                                        "kind": "LessThanToken",
-                                        "width": 1,
-                                        "text": "<"
-                                    },
-                                    "typeParameters": [
-                                        {
-                                            "kind": "TypeParameter",
-                                            "fullWidth": 1,
-                                            "identifier": {
-                                                "kind": "IdentifierName",
-                                                "width": 1,
-                                                "text": "T",
-                                                "valueText": "T"
-                                            }
-                                        }
-                                    ],
-                                    "greaterThanToken": {
-                                        "kind": "GreaterThanToken",
-                                        "width": 1,
-                                        "text": ">"
-                                    }
+                        "propertyName": {
+                            "kind": "IdentifierName",
+                            "width": 6,
+                            "text": "public"
+                        },
+                        "callSignature": {
+                            "kind": "CallSignature",
+                            "fullWidth": 6,
+                            "typeParameterList": {
+                                "kind": "TypeParameterList",
+                                "fullWidth": 3,
+                                "lessThanToken": {
+                                    "kind": "LessThanToken",
+                                    "width": 1,
+                                    "text": "<"
                                 },
-                                "parameterList": {
-                                    "kind": "ParameterList",
-                                    "fullWidth": 3,
-                                    "openParenToken": {
-                                        "kind": "OpenParenToken",
-                                        "width": 1,
-                                        "text": "("
-                                    },
-                                    "parameters": [],
-                                    "closeParenToken": {
-                                        "kind": "CloseParenToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ")",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
+                                "typeParameters": [
+                                    {
+                                        "kind": "TypeParameter",
+                                        "fullWidth": 1,
+                                        "identifier": {
+                                            "kind": "IdentifierName",
+                                            "width": 1,
+                                            "text": "T",
+                                            "valueText": "T"
+                                        }
                                     }
+                                ],
+                                "greaterThanToken": {
+                                    "kind": "GreaterThanToken",
+                                    "width": 1,
+                                    "text": ">"
+                                }
+                            },
+                            "parameterList": {
+                                "kind": "ParameterList",
+                                "fullWidth": 3,
+                                "openParenToken": {
+                                    "kind": "OpenParenToken",
+                                    "width": 1,
+                                    "text": "("
+                                },
+                                "parameters": [],
+                                "closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ")",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
                                 }
                             }
                         },

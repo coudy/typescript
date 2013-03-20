@@ -4287,7 +4287,8 @@ module TypeScript {
 
     constructor(public publicOrPrivateKeyword: ISyntaxToken,
                 public staticKeyword: ISyntaxToken,
-                public functionSignature: FunctionSignatureSyntax,
+                public propertyName: ISyntaxToken,
+                public callSignature: CallSignatureSyntax,
                 public block: BlockSyntax,
                 public semicolonToken: ISyntaxToken,
                 parsedInStrictMode: bool) {
@@ -4304,16 +4305,17 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 5;
+        return 6;
     }
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.publicOrPrivateKeyword;
             case 1: return this.staticKeyword;
-            case 2: return this.functionSignature;
-            case 3: return this.block;
-            case 4: return this.semicolonToken;
+            case 2: return this.propertyName;
+            case 3: return this.callSignature;
+            case 4: return this.block;
+            case 5: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -4328,22 +4330,24 @@ module TypeScript {
 
     public update(publicOrPrivateKeyword: ISyntaxToken,
                   staticKeyword: ISyntaxToken,
-                  functionSignature: FunctionSignatureSyntax,
+                  propertyName: ISyntaxToken,
+                  callSignature: CallSignatureSyntax,
                   block: BlockSyntax,
                   semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.functionSignature === functionSignature && this.block === block && this.semicolonToken === semicolonToken) {
+        if (this.publicOrPrivateKeyword === publicOrPrivateKeyword && this.staticKeyword === staticKeyword && this.propertyName === propertyName && this.callSignature === callSignature && this.block === block && this.semicolonToken === semicolonToken) {
             return this;
         }
 
-        return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, functionSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
-        return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, /*parsedInStrictMode:*/ false);
+    public static create(propertyName: ISyntaxToken,
+                         callSignature: CallSignatureSyntax): MemberFunctionDeclarationSyntax {
+        return new MemberFunctionDeclarationSyntax(null, null, propertyName, callSignature, null, null, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
-        return new MemberFunctionDeclarationSyntax(null, null, functionSignature, null, null, /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): MemberFunctionDeclarationSyntax {
+        return new MemberFunctionDeclarationSyntax(null, null, propertyName, CallSignatureSyntax.create1(), null, null, /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberFunctionDeclarationSyntax {
@@ -4355,23 +4359,27 @@ module TypeScript {
     }
 
     public withPublicOrPrivateKeyword(publicOrPrivateKeyword: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, this.semicolonToken);
+        return this.update(publicOrPrivateKeyword, this.staticKeyword, this.propertyName, this.callSignature, this.block, this.semicolonToken);
     }
 
     public withStaticKeyword(staticKeyword: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.functionSignature, this.block, this.semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, staticKeyword, this.propertyName, this.callSignature, this.block, this.semicolonToken);
     }
 
-    public withFunctionSignature(functionSignature: FunctionSignatureSyntax): MemberFunctionDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, functionSignature, this.block, this.semicolonToken);
+    public withPropertyName(propertyName: ISyntaxToken): MemberFunctionDeclarationSyntax {
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, propertyName, this.callSignature, this.block, this.semicolonToken);
+    }
+
+    public withCallSignature(callSignature: CallSignatureSyntax): MemberFunctionDeclarationSyntax {
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.propertyName, callSignature, this.block, this.semicolonToken);
     }
 
     public withBlock(block: BlockSyntax): MemberFunctionDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, block, this.semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.propertyName, this.callSignature, block, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): MemberFunctionDeclarationSyntax {
-        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.functionSignature, this.block, semicolonToken);
+        return this.update(this.publicOrPrivateKeyword, this.staticKeyword, this.propertyName, this.callSignature, this.block, semicolonToken);
     }
 
     public isTypeScriptSpecific(): bool {

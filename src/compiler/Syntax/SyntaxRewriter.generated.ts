@@ -449,7 +449,8 @@ module TypeScript {
             return node.update(
                 node.publicOrPrivateKeyword === null ? null : this.visitToken(node.publicOrPrivateKeyword),
                 node.staticKeyword === null ? null : this.visitToken(node.staticKeyword),
-                <FunctionSignatureSyntax>this.visitNode(node.functionSignature),
+                this.visitToken(node.propertyName),
+                <CallSignatureSyntax>this.visitNode(node.callSignature),
                 node.block === null ? null : <BlockSyntax>this.visitNode(node.block),
                 node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
         }

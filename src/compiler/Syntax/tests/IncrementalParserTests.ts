@@ -90,7 +90,7 @@ module TypeScript {
             var oldText = TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, " + 1");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
         }
 
         public static testIncremental2() {
@@ -107,7 +107,7 @@ module TypeScript {
             var oldText = TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withDelete(oldText, index, 3);
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 33);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 31);
         }
 
         public static testIncrementalRegex1() {
@@ -118,7 +118,7 @@ module TypeScript {
             var oldText = TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, semicolonIndex, "/");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 21);
         }
 
         public static testIncrementalComment1() {
@@ -157,7 +157,7 @@ module TypeScript {
             var oldText = TextFactory.createText(source);
             var newTextAndChange = IncrementalParserTests.withInsert(oldText, index, "*");
 
-            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 23);
+            IncrementalParserTests.compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 22);
         }
 
         public static testParameter1() {
