@@ -139,10 +139,11 @@ module TypeScript {
 
         private recordNonInterfaceParentModule() {
             var parent = this.getParent();
-
-            var ast = this.semanticInfo.getASTForSymbol(parent);
-            if (ast && ast.nodeType == NodeType.ModuleDeclaration) {
-                (<ModuleDeclaration>ast).recordNonInterface();
+            if (parent) {
+                var ast = this.semanticInfo.getASTForSymbol(parent);
+                if (ast && ast.nodeType == NodeType.ModuleDeclaration) {
+                    (<ModuleDeclaration>ast).recordNonInterface();
+                }
             }
         }
 
@@ -237,8 +238,6 @@ module TypeScript {
                             moduleInstanceSymbol.setContainer(parentInstanceSymbol);
                         }
                     }
-
-                    this.recordNonInterfaceParentModule();
                 }
             }
             else if (this.reBindingAfterChange) {
@@ -279,6 +278,7 @@ module TypeScript {
 
                 moduleContainerTypeSymbol.invalidate();
             }
+            this.recordNonInterfaceParentModule();
 
             this.pushParent(moduleContainerTypeSymbol, moduleContainerDecl);
 
@@ -342,7 +342,6 @@ module TypeScript {
                     else {
                         enumSymbol.setContainer(parent);
                     }
-                    this.recordNonInterfaceParentModule();
                 }
             }
             else if (this.reBindingAfterChange) {
@@ -358,6 +357,7 @@ module TypeScript {
 
                 enumSymbol.invalidate();
             }
+            this.recordNonInterfaceParentModule();
 
             this.pushParent(enumSymbol, enumDeclaration);
 
@@ -489,8 +489,8 @@ module TypeScript {
                 else {
                     classSymbol.setContainer(parent);
                 }
-                this.recordNonInterfaceParentModule();
             }
+            this.recordNonInterfaceParentModule();
 
             // PULLTODO: For now, remove stale signatures from the function type, but we want to be smarter about this when
             // incremental parsing comes online
@@ -1071,8 +1071,8 @@ module TypeScript {
                 else {
                     variableSymbol.setContainer(parent);
                 }
-                this.recordNonInterfaceParentModule();
             }
+            this.recordNonInterfaceParentModule();
 
             variableSymbol.setIsBound(this.bindingPhase);
         }
@@ -1284,8 +1284,8 @@ module TypeScript {
                 else {
                     importSymbol.setContainer(parent);
                 }
-                this.recordNonInterfaceParentModule();
             }
+            this.recordNonInterfaceParentModule();
 
             importSymbol.setIsBound(this.bindingPhase);
         }
@@ -1459,8 +1459,8 @@ module TypeScript {
                 else {
                     functionSymbol.setContainer(parent);
                 }
-                this.recordNonInterfaceParentModule();
             }
+            this.recordNonInterfaceParentModule();
 
             if (!isSignature) {
                 this.pushParent(functionTypeSymbol, functionDeclaration);
