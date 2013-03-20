@@ -851,7 +851,6 @@ htmlLeader += '\r\n' + ("h2 { padding-bottom: 0px; }");
 htmlLeader += '\r\n' + ("h4 { font-weight: normal; }");
 htmlLeader += '\r\n' + ("</style>");
 
-declare var require, process;
 function read(path) {
     var _fs = require('fs');
     return _fs.readFileSync(path).toString()

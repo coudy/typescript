@@ -2,8 +2,6 @@
 ///<reference path='..\Enumerator.ts' />
 ///<reference path='..\process.ts' />
 
-declare var require: any;
-
 var Environment = (function () {
 
     // Create an IO object for use inside WindowsScriptHost hosts
