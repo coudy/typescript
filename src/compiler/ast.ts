@@ -149,12 +149,7 @@ module TypeScript {
             context.startLine();
             var lineCol = { line: -1, character: -1 };
             var limLineCol = { line: -1, character: -1 };
-            if (context.parser !== null) {
-                context.parser.getLineMap().fillLineAndCharacterFromPosition(this.minChar, lineCol);
-                context.parser.getLineMap().fillLineAndCharacterFromPosition(this.limChar, limLineCol);
-                context.write("(" + lineCol.line + "," + lineCol.character + ")--" +
-                              "(" + limLineCol.line + "," + limLineCol.character + "): ");
-            }
+
             var lab = this.printLabel();
             if (hasFlag(this.flags, ASTFlags.Error)) {
                 lab += " (Error)";

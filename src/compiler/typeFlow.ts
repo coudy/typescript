@@ -391,7 +391,7 @@ module TypeScript {
         }
 
         private printAST(ast: AST, outfile: ITextWriter) {
-            var printContext = new PrintContext(outfile, null);
+            var printContext = new PrintContext(outfile);
 
             printContext.increaseIndent();
             //ast.walk(prePrintAST, postPrintAST, null, printContext);
