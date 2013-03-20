@@ -1720,12 +1720,8 @@ module Harness {
 
         /** Parse file given its source text */
         public parseSourceText(fileName: string, sourceText: TypeScript.IScriptSnapshot): TypeScript.Script {
-            var parser = new TypeScript.Parser();
-            parser.setErrorRecovery(null);
-            parser.errorCallback = (a, b, c, d) => { };
-
-            var script = parser.parse(sourceText, fileName, 0);
-            return script;
+            return TypeScript.SyntaxTreeToAstVisitor.visit(
+                TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText)), fileName);
         }
 
         /** Parse a file on disk given its fileName */

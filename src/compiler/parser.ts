@@ -62,7 +62,7 @@ module TypeScript {
         private incremental = false;
         public errorRecovery = false;
         public outfile: ITextWriter = undefined;
-        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string) => void = null;
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
         private ambientModule = false;
         private ambientClass = false;
         private topLevel = true;
@@ -165,7 +165,7 @@ module TypeScript {
         public reportParseError(message: string, startPos = this.scanner.startPos, pos = this.scanner.pos) {
             var len = Math.max(1, pos - startPos);
             if (this.errorCallback) {
-                this.errorCallback(startPos, len, message, this.fileName);
+                this.errorCallback(startPos, len, message, this.fileName, this.scanner.lineMap);
             }
             else if (this.errorRecovery) {
                 var lineCol = { line: -1, character: -1 };

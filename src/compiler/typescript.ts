@@ -194,7 +194,7 @@ module TypeScript {
             this.emitSettings = new EmitOptions(this.settings);
         }
 
-        public setErrorCallback(fn: (minChar: number, charLen: number, message: string, fileName: string) =>void ) {
+        public setErrorCallback(fn: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) =>void ) {
             this.parser.errorCallback = fn;
         }
 
@@ -1378,7 +1378,7 @@ module TypeScript {
 
                 // Capture parsing errors for now
                 var parseErrors: ErrorEntry[] = [];
-                var errorCapture = (minChar: number, charLen: number, message: string, fileName: string): void => {
+                var errorCapture = (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap): void => {
                     parseErrors.push(new ErrorEntry(fileName, minChar, minChar + charLen, message));
                 };
                 var svErrorCallback = this.parser.errorCallback;

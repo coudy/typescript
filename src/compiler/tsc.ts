@@ -156,10 +156,10 @@ class BatchCompiler {
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
         compiler.setErrorOutput(this.errorReporter);
 
-        var errorCallback = (minChar: number, charLen: number, message: string, fileName: string) => {
+        var errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) => {
             compiler.errorReporter.hasErrors = true;
             var lineCol = { line: -1, character: -1 };
-            compiler.parser.getLineMap().fillLineAndCharacterFromPosition(minChar, lineCol);
+            lineMap.fillLineAndCharacterFromPosition(minChar, lineCol);
 
             var msg = fileName + " (" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): " + message;
             this.errorReporter.WriteLine(msg);

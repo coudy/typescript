@@ -524,12 +524,8 @@ module Services {
         // We will change this when we have incremental parsing.
         public getScriptSyntaxAST(fileName: string): ScriptSyntaxAST {
             var sourceText = this.hostCache.getScriptSnapshot(fileName);
-
-            var parser = new TypeScript.Parser();
-            parser.setErrorRecovery(null);
-            parser.errorCallback = (a, b, c, d) => { };
-
-            var script = parser.parse(sourceText, fileName, 0);
+            var script = TypeScript.SyntaxTreeToAstVisitor.visit(
+                TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText)), fileName);
 
             return new ScriptSyntaxAST(this.logger, script, sourceText);
         }
