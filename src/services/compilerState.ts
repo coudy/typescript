@@ -120,7 +120,7 @@ module Services {
             }
         }
 
-        public reportError(pos: number, len: number, message: string, fileName: string) {
+        public reportError(pos: number, len: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) {
             //logger.log("Compiler reported error in unit index " + unitIndex + " at span(" + pos + ", " + (pos + len) + "): " + message + " (parseMode=" + parseMode + ")");
 
             var entry = new TypeScript.ErrorEntry(fileName, pos, pos + len, message);
@@ -273,10 +273,8 @@ module Services {
             this.compiler = new TypeScript.TypeScriptCompiler(outerr, this.logger, this.compilationSettings);
             this.fileNameToCompilerScriptVersion = new TypeScript.StringHashTable();
             this.errorCollector = new CompilerErrorCollector(this.logger);
-
-            //TODO: "bind" doesn't work here in the context of running unit tests
-            //compiler.setErrorCallback(errorCollector.reportError.bind(errorCollector));
-            this.compiler.setErrorCallback((a, b, c, d) => { this.errorCollector.reportError(a, b, c, d); });
+            
+            this.compiler.setErrorCallback((a, b, c, d, e) => { this.errorCollector.reportError(a, b, c, d, e); });
 
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();
