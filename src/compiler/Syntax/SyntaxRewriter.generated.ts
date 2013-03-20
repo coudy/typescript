@@ -360,7 +360,7 @@ module TypeScript {
                 <CallSignatureSyntax>this.visitNode(node.callSignature));
         }
 
-        public visitFunctionSignature(node: FunctionSignatureSyntax): any {
+        public visitMethodSignature(node: MethodSignatureSyntax): any {
             return node.update(
                 this.visitToken(node.identifier),
                 node.questionToken === null ? null : this.visitToken(node.questionToken),

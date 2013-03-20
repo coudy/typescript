@@ -3335,7 +3335,7 @@ module TypeScript {
     }
     }
 
-    export class FunctionSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
+    export class MethodSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
     constructor(public identifier: ISyntaxToken,
                 public questionToken: ISyntaxToken,
@@ -3346,11 +3346,11 @@ module TypeScript {
     }
 
     public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitFunctionSignature(this);
+        return visitor.visitMethodSignature(this);
     }
 
     public kind(): SyntaxKind {
-        return SyntaxKind.FunctionSignature;
+        return SyntaxKind.MethodSignature;
     }
 
     public childCount(): number {
@@ -3372,40 +3372,40 @@ module TypeScript {
 
     public update(identifier: ISyntaxToken,
                   questionToken: ISyntaxToken,
-                  callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
+                  callSignature: CallSignatureSyntax): MethodSignatureSyntax {
         if (this.identifier === identifier && this.questionToken === questionToken && this.callSignature === callSignature) {
             return this;
         }
 
-        return new FunctionSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new MethodSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(identifier: ISyntaxToken,
-                         callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
-        return new FunctionSignatureSyntax(identifier, null, callSignature, /*parsedInStrictMode:*/ false);
+                         callSignature: CallSignatureSyntax): MethodSignatureSyntax {
+        return new MethodSignatureSyntax(identifier, null, callSignature, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(identifier: ISyntaxToken): FunctionSignatureSyntax {
-        return new FunctionSignatureSyntax(identifier, null, CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
+    public static create1(identifier: ISyntaxToken): MethodSignatureSyntax {
+        return new MethodSignatureSyntax(identifier, null, CallSignatureSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): FunctionSignatureSyntax {
-        return <FunctionSignatureSyntax>super.withLeadingTrivia(trivia);
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): MethodSignatureSyntax {
+        return <MethodSignatureSyntax>super.withLeadingTrivia(trivia);
     }
 
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): FunctionSignatureSyntax {
-        return <FunctionSignatureSyntax>super.withTrailingTrivia(trivia);
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): MethodSignatureSyntax {
+        return <MethodSignatureSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withIdentifier(identifier: ISyntaxToken): FunctionSignatureSyntax {
+    public withIdentifier(identifier: ISyntaxToken): MethodSignatureSyntax {
         return this.update(identifier, this.questionToken, this.callSignature);
     }
 
-    public withQuestionToken(questionToken: ISyntaxToken): FunctionSignatureSyntax {
+    public withQuestionToken(questionToken: ISyntaxToken): MethodSignatureSyntax {
         return this.update(this.identifier, questionToken, this.callSignature);
     }
 
-    public withCallSignature(callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
+    public withCallSignature(callSignature: CallSignatureSyntax): MethodSignatureSyntax {
         return this.update(this.identifier, this.questionToken, callSignature);
     }
 

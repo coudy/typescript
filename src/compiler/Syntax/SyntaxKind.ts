@@ -179,7 +179,7 @@ module TypeScript {
         CallSignature,
         ConstructSignature,
         IndexSignature,
-        FunctionSignature,
+        MethodSignature,
 
         // Statements
         Block,

@@ -42,7 +42,7 @@ module TypeScript.Syntax {
         binaryExpression(kind: SyntaxKind, left: IExpressionSyntax, operatorToken: ISyntaxToken, right: IExpressionSyntax): BinaryExpressionSyntax;
         conditionalExpression(condition: IExpressionSyntax, questionToken: ISyntaxToken, whenTrue: IExpressionSyntax, colonToken: ISyntaxToken, whenFalse: IExpressionSyntax): ConditionalExpressionSyntax;
         constructSignature(newKeyword: ISyntaxToken, callSignature: CallSignatureSyntax): ConstructSignatureSyntax;
-        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax): FunctionSignatureSyntax;
+        methodSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax): MethodSignatureSyntax;
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax;
         propertySignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): PropertySignatureSyntax;
         callSignature(typeParameterList: TypeParameterListSyntax, parameterList: ParameterListSyntax, typeAnnotation: TypeAnnotationSyntax): CallSignatureSyntax;
@@ -211,8 +211,8 @@ module TypeScript.Syntax {
         constructSignature(newKeyword: ISyntaxToken, callSignature: CallSignatureSyntax): ConstructSignatureSyntax {
             return new ConstructSignatureSyntax(newKeyword, callSignature, /*parsedInStrictMode:*/ false);
         }
-        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
-            return new FunctionSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ false);
+        methodSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax): MethodSignatureSyntax {
+            return new MethodSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ false);
         }
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ false);
@@ -472,8 +472,8 @@ module TypeScript.Syntax {
         constructSignature(newKeyword: ISyntaxToken, callSignature: CallSignatureSyntax): ConstructSignatureSyntax {
             return new ConstructSignatureSyntax(newKeyword, callSignature, /*parsedInStrictMode:*/ true);
         }
-        functionSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax): FunctionSignatureSyntax {
-            return new FunctionSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ true);
+        methodSignature(identifier: ISyntaxToken, questionToken: ISyntaxToken, callSignature: CallSignatureSyntax): MethodSignatureSyntax {
+            return new MethodSignatureSyntax(identifier, questionToken, callSignature, /*parsedInStrictMode:*/ true);
         }
         indexSignature(openBracketToken: ISyntaxToken, parameter: ParameterSyntax, closeBracketToken: ISyntaxToken, typeAnnotation: TypeAnnotationSyntax): IndexSignatureSyntax {
             return new IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, /*parsedInStrictMode:*/ true);

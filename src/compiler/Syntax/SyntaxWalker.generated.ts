@@ -312,7 +312,7 @@ module TypeScript {
             this.visitNode(node.callSignature);
         }
 
-        public visitFunctionSignature(node: FunctionSignatureSyntax): void {
+        public visitMethodSignature(node: MethodSignatureSyntax): void {
             this.visitToken(node.identifier);
             this.visitOptionalToken(node.questionToken);
             this.visitNode(node.callSignature);

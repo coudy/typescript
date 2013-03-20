@@ -1721,7 +1721,7 @@ module TypeScript {
             return result;
         }
 
-        private visitFunctionSignature(node: FunctionSignatureSyntax): FuncDecl {
+        private visitMethodSignature(node: MethodSignatureSyntax): FuncDecl {
             this.assertElementAtPosition(node);
 
             var start = this.position;

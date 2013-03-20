@@ -422,7 +422,7 @@ module TypeScript.Emitter1 {
                     arrowFunction.firstToken(), this.syntaxInformationMap, this.options));
         }
 
-        private static functionSignatureDefaultParameters(signature: FunctionSignatureSyntax): ParameterSyntax[] {
+        private static methodSignatureDefaultParameters(signature: MethodSignatureSyntax): ParameterSyntax[] {
             return EmitterImpl.callSignatureDefaultParameters(signature.callSignature);
         }
 

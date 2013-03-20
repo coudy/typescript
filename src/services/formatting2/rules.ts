@@ -599,7 +599,7 @@ module TypeScript.Formatting2 {
                 case SyntaxKind.MemberFunctionDeclaration:
                 case SyntaxKind.GetMemberAccessorDeclaration:
                 case SyntaxKind.SetMemberAccessorDeclaration:
-                case SyntaxKind.FunctionSignature:
+                case SyntaxKind.MethodSignature:
                 case SyntaxKind.CallSignature:
                 case SyntaxKind.FunctionExpression:
                     return true;

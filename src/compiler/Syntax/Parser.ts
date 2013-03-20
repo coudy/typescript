@@ -2524,7 +2524,7 @@ module TypeScript.Parser1 {
             return this.isCallSignature(/*tokenIndex:*/ 0) ||
                    this.isConstructSignature() ||
                    this.isIndexSignature() ||
-                   this.isFunctionSignature(/*tokenIndex:*/ 0, /*allowQuestionToken:*/ true) ||
+                   this.isMethodSignature() ||
                    this.isPropertySignature();
         }
 
@@ -2542,10 +2542,10 @@ module TypeScript.Parser1 {
             else if (this.isIndexSignature()) {
                 return this.parseIndexSignature();
             }
-            else if (this.isFunctionSignature(/*tokenIndex:*/ 0, /*allowQuestionToken:*/ true)) {
+            else if (this.isMethodSignature()) {
                 // Note: it is important that isFunctionSignature is called before isPropertySignature.
                 // isPropertySignature checks for a subset of isFunctionSignature.
-                return this.parseFunctionSignature(/*allowQuestionToken:*/ true);
+                return this.parseMethodSignature();
             }
             else if (this.isPropertySignature()) {
                 return this.parsePropertySignature();
@@ -2575,12 +2575,12 @@ module TypeScript.Parser1 {
             return this.factory.indexSignature(openBracketToken, parameter, closeBracketToken, typeAnnotation);
         }
 
-        private parseFunctionSignature(allowQuestionToken: bool): FunctionSignatureSyntax {
+        private parseMethodSignature(): MethodSignatureSyntax {
             var identifier = this.eatIdentifierNameToken();
-            var questionToken = allowQuestionToken ? this.tryEatToken(SyntaxKind.QuestionToken) : null;
+            var questionToken = this.tryEatToken(SyntaxKind.QuestionToken);
             var callSignature = this.parseCallSignature(/*requireCompleteTypeParameterList:*/ false);
 
-            return this.factory.functionSignature(identifier, questionToken, callSignature);
+            return this.factory.methodSignature(identifier, questionToken, callSignature);
         }
 
         private parsePropertySignature(): PropertySignatureSyntax {
@@ -2611,16 +2611,16 @@ module TypeScript.Parser1 {
             return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
         }
 
-        private isFunctionSignature(tokenIndex: number, allowQuestionToken: bool): bool {
-            if (ParserImpl.isIdentifierNameOrAnyKeyword(this.peekToken(tokenIndex))) {
+        private isMethodSignature(): bool {
+            if (ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken())) {
                 // id(
-                if (this.isCallSignature(tokenIndex + 1)) {
+                if (this.isCallSignature(1)) {
                     return true;
                 }
 
                 // id?(
-                if (allowQuestionToken && this.peekToken(tokenIndex + 1).tokenKind === SyntaxKind.QuestionToken &&
-                    this.isCallSignature(tokenIndex + 2)) {
+                if (this.peekToken(1).tokenKind === SyntaxKind.QuestionToken &&
+                    this.isCallSignature(2)) {
                     return true;
                 }
             }

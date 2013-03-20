@@ -43,7 +43,7 @@ module TypeScript {
         visitBinaryExpression(node: BinaryExpressionSyntax): any;
         visitConditionalExpression(node: ConditionalExpressionSyntax): any;
         visitConstructSignature(node: ConstructSignatureSyntax): any;
-        visitFunctionSignature(node: FunctionSignatureSyntax): any;
+        visitMethodSignature(node: MethodSignatureSyntax): any;
         visitIndexSignature(node: IndexSignatureSyntax): any;
         visitPropertySignature(node: PropertySignatureSyntax): any;
         visitCallSignature(node: CallSignatureSyntax): any;
@@ -260,7 +260,7 @@ module TypeScript {
             return this.defaultVisit(node);
         }
 
-        private visitFunctionSignature(node: FunctionSignatureSyntax): any {
+        private visitMethodSignature(node: MethodSignatureSyntax): any {
             return this.defaultVisit(node);
         }
 

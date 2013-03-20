@@ -493,7 +493,7 @@ var definitions:ITypeDefinition[] = [
         isTypeScriptSpecific: true
     },
     <any>{
-        name: 'FunctionSignatureSyntax',
+        name: 'MethodSignatureSyntax',
         baseType: 'SyntaxNode',
         interfaces: ['ITypeMemberSyntax'],
         children: [

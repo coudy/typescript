@@ -2398,7 +2398,7 @@ var definitions = [
         isTypeScriptSpecific: true
     }, 
     {
-        name: 'FunctionSignatureSyntax',
+        name: 'MethodSignatureSyntax',
         baseType: 'SyntaxNode',
         interfaces: [
             'ITypeMemberSyntax'
