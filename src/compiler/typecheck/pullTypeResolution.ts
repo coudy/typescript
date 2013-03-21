@@ -1353,7 +1353,7 @@ module TypeScript {
 
                     var returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, true, context, new TypeComparisonInfo());
 
-                    signature.setReturnType(returnType ? returnType : this.semanticInfoChain.anyTypeSymbol);
+                    signature.setReturnType(returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol);
 
                     // link return expressions to signature type to denote inference
                     for (i = 0; i < returnExpressionSymbols.length; i++) {
