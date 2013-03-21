@@ -83,15 +83,6 @@ module TypeScript {
             this.statementInfoStack = [];
         }
 
-        private inLoop() {
-            for (var j = this.statementInfoStack.length - 1; j >= 0; j--) {
-                if (this.statementInfoStack[j].stmt.isLoop()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private pushStmt(stmt: Statement, labels: ASTList) {
             // allocate here to avoid always storing this information in statements
             var info = { stmt: stmt, labels: labels };
@@ -100,47 +91,6 @@ module TypeScript {
 
         private popStmt(): IStatementInfo {
             return this.statementInfoStack.pop();
-        }
-
-        private resolveJumpTarget(jump: Jump): void {
-            var resolvedTarget = AST.getResolvedIdentifierName(jump.target);
-            var len = this.statementInfoStack.length;
-            for (var i = len - 1; i >= 0; i--) {
-                var info = this.statementInfoStack[i];
-                if (jump.target) {
-                    if (info.labels && (info.labels.members.length > 0)) {
-                        for (var j = 0, labLen = info.labels.members.length; j < labLen; j++) {
-                            var label = <Label>info.labels.members[j];
-                            if (label.id.text === resolvedTarget) {
-                                jump.setResolvedTarget(this, info.stmt);
-                                return;
-                            }
-                        }
-                    }
-                }
-                else {
-                    if (info.stmt.isLoop()) {
-                        jump.setResolvedTarget(this, info.stmt);
-                        return;
-                    }
-                    else if ((info.stmt.nodeType === NodeType.Switch) && (jump.nodeType === NodeType.Break)) {
-                        jump.setResolvedTarget(this, info.stmt);
-                        return;
-                    }
-                }
-            }
-            // no luck
-            if (jump.target) {
-                this.reportParseError("could not find enclosing statement with label " + jump.target);
-            }
-            else {
-                if (jump.nodeType === NodeType.Break) {
-                    this.reportParseError("break statement requires enclosing loop or switch");
-                }
-                else {
-                    this.reportParseError("continue statement requires enclosing loop");
-                }
-            }
         }
 
         public setErrorRecovery(outfile: ITextWriter) {
@@ -1322,10 +1272,7 @@ module TypeScript {
             var preComments = this.parseComments();
             var isLambda = !!lambdaArgContext;
             this.nestingLevel = 0;
-            if ((!this.style_funcInLoop) && this.inLoop()) {
-                this.reportParseStyleError("function declaration in loop");
-            }
-            
+
             if (!isMethod && !isStatic && !indexer && !lambdaArgContext && !methodName) {
                 // past function keyword
                 this.currentToken = this.scanner.scan();
@@ -3993,7 +3940,6 @@ module TypeScript {
                             jump.target = this.currentToken.getText();
                             this.currentToken = this.scanner.scan();
                         }
-                        this.resolveJumpTarget(jump);
                         ast = jump;
                         needTerminator = true;
                         break;

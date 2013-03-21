@@ -1500,27 +1500,6 @@ module TypeScript {
             super(nodeType);
         }
 
-        public setResolvedTarget(parser: Parser, stmt: Statement): bool {
-            if (stmt.isLoop()) {
-                this.resolvedTarget = stmt;
-                return true;
-            }
-            if (this.nodeType === NodeType.Continue) {
-                parser.reportParseError("continue statement applies only to loops");
-                return false;
-            }
-            else {
-                if ((stmt.nodeType === NodeType.Switch) || this.hasExplicitTarget()) {
-                    this.resolvedTarget = stmt;
-                    return true;
-                }
-                else {
-                    parser.reportParseError("break statement with no label can apply only to a loop or switch statement");
-                    return false;
-                }
-            }
-        }
-
         public addToControlFlow(context: ControlFlowContext): void {
             super.addToControlFlow(context);
             context.unconditionalBranch(this.resolvedTarget, (this.nodeType === NodeType.Continue));
