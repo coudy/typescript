@@ -62,6 +62,8 @@ module Services {
     }
 
     export class TypeScriptServicesFactory {
+        private _shims = [];
+
         public createLanguageService(host: Services.ILanguageServiceHost): Services.ILanguageService {
             try {
                 return new Services.LanguageService(host);
@@ -94,7 +96,9 @@ module Services {
                 else {
                     languageService = this.createLanguageService(hostAdapter);
                 }
-                return new LanguageServiceShim(host, languageService, pullLanguageService);
+                var shim = new LanguageServiceShim(host, languageService, pullLanguageService);
+                this._shims.push(shim);
+                return shim;
             }
             catch (err) {
                 Services.logInternalError(host, err);
@@ -114,7 +118,9 @@ module Services {
 
         public createClassifierShim(host: Services.IClassifierHost): ClassifierShim {
             try {
-                return new ClassifierShim(host);
+                var shim = new ClassifierShim(host);
+                this._shims.push(shim);
+                return shim;
             }
             catch (err) {
                 Services.logInternalError(host, err);
@@ -134,13 +140,18 @@ module Services {
 
         public createCoreServicesShim(host: Services.ICoreServicesHost): CoreServicesShim {
             try {
-
-                return new CoreServicesShim(host);
+                var shim = new CoreServicesShim(host);
+                this._shims.push(shim);
+                return shim;
             }
             catch (err) {
                 Services.logInternalError(host.logger, err);
                 throw err;
             }
+        }
+
+        public close(): void {
+            this._shims = [];
         }
     }
 }
