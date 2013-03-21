@@ -312,5 +312,69 @@ module Services {
                     TypeScript.Parser1.incrementalParse(this.getSyntaxTree(fileName), editRange, newText));
             }
         }
+
+        private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {
+            var ast = TypeScript.PullHelpers.getASTForDecl(decl, this.compiler.semanticInfoChain);
+            if (ast && (ast.nodeType != TypeScript.NodeType.ModuleDeclaration || decl.getKind() != TypeScript.PullElementKind.Variable)) {
+                return ast.getDocComments();
+            }
+
+            return [];
+        }
+
+        private getDocCommentArray(symbol: TypeScript.PullSymbol) {
+            var docComments: TypeScript.Comment[] = [];
+            if (!symbol) {
+                return docComments;
+            }
+            var decls = symbol.getDeclarations();
+            for (var i = 0; i < decls.length; i++) {
+                docComments = docComments.concat(this.getDocCommentsOfDecl(decls[i]));
+            }
+            return docComments;
+        }
+
+        public getDocComments(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool) {
+            if (!symbol) {
+                return "";
+            }
+            var decls = symbol.getDeclarations();
+            if (useConstructorAsClass && decls.length && decls[0].getKind() == TypeScript.PullElementKind.ConstructorMethod) {
+                var classDecl = decls[0].getParentDecl();
+                return TypeScript.Comment.getDocCommentText(this.getDocCommentsOfDecl(classDecl));
+            }
+
+            if (!useConstructorAsClass && symbol.getKind() == TypeScript.PullElementKind.ConstructSignature &&
+                decls.length && decls[0].getKind() == TypeScript.PullElementKind.Class) {
+                // Class without constructor with implicit constructor signature
+                return "";
+            }
+
+            if (symbol.docComments === null) {
+                var docComments: string = "";
+                if (symbol.getKind() == TypeScript.PullElementKind.Parameter) {
+                    var parameterComments: string[] = [];
+                    var funcContainerList = symbol.findIncomingLinks(link => link.kind == TypeScript.SymbolLinkKind.Parameter);
+                    for (var i = 0; i < funcContainerList.length; i++) {
+                        var funcContainer = funcContainerList[i].start;
+                        var funcDocComments = this.getDocCommentArray(funcContainer);
+                        var paramComment = TypeScript.Comment.getParameterDocCommentText(symbol.getName(), funcDocComments);
+                        if (paramComment != "") {
+                            parameterComments.push(paramComment);
+                        }
+                    }
+                    var paramSelfComment = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
+                    if (paramSelfComment != "") {
+                        parameterComments.push(paramSelfComment);
+                    }
+                    docComments = parameterComments.join("\n");
+                } else {
+                    docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
+                }
+                symbol.docComments = docComments;
+            }
+
+            return symbol.docComments;
+        }
     }
 }

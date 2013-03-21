@@ -967,8 +967,7 @@ module TypeScript {
             getAstWalkerFactory().walk(script, pre);
 
             if (resultASTs.length) {
-
-                this.pullTypeChecker.setUnit(script.locationInfo.fileName);
+                this.pullTypeChecker.setUnit(scriptName);
 
                 foundAST = resultASTs[resultASTs.length - 1];
 
@@ -1026,7 +1025,8 @@ module TypeScript {
                     // if the found AST is a named, we want to check for previous dotted expressions,
                     // since those will give us the right typing
                     var callExpression: CallExpression = null;
-                    if (foundAST.nodeType === NodeType.Name && resultASTs.length > 1) {
+                    if ((foundAST.nodeType == NodeType.Super || foundAST.nodeType == NodeType.This || foundAST.nodeType == NodeType.Name) &&
+                        resultASTs.length > 1) {
                         for (i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType === NodeType.Dot &&
                                 (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
@@ -1104,37 +1104,45 @@ module TypeScript {
 
                     symbol = this.pullTypeChecker.resolver.resolveAST(foundAST, isTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
+                        var isPropertyOrVar = symbol.getKind() == PullElementKind.Property || symbol.getKind() == PullElementKind.Variable;
                         var typeSymbol = symbol.getType();
-                        callSignatures = callExpression.nodeType === NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
-                        var callResolutionResults: PullAdditionalCallResolutionData = {
-                            targetSymbol: null,
-                            resolvedSignatures: null,
-                            candidateSignature: null
-                        };
-
-                        if (callExpression.nodeType === NodeType.Call) {
-                            this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
-                        } else {
-                            this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                        if (isPropertyOrVar) {
+                            isPropertyOrVar = (typeSymbol.getKind() != PullElementKind.Interface && typeSymbol.getKind() != PullElementKind.ObjectType) || typeSymbol.getName() == "";
                         }
 
-                        if (callResolutionResults.candidateSignature) {
-                            candidateSignature = callResolutionResults.candidateSignature;
+                        if (!isPropertyOrVar) {
+                            callSignatures = callExpression.nodeType === NodeType.Call ? typeSymbol.getCallSignatures() : typeSymbol.getConstructSignatures();
+                            var callResolutionResults: PullAdditionalCallResolutionData = {
+                                targetSymbol: null,
+                                resolvedSignatures: null,
+                                candidateSignature: null
+                            };
+
+                            if (callExpression.nodeType === NodeType.Call) {
+                                this.pullTypeChecker.resolver.resolveCallExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                            } else {
+                                this.pullTypeChecker.resolver.resolveNewExpression(callExpression, isTypedAssignment, enclosingDecl, resolutionContext, callResolutionResults);
+                            }
+
+                            if (callResolutionResults.candidateSignature) {
+                                candidateSignature = callResolutionResults.candidateSignature;
+                            }
+                            if (callResolutionResults.targetSymbol && callResolutionResults.targetSymbol.getName() != "") {
+                                symbol = callResolutionResults.targetSymbol;
+                            }
+                            foundAST = callExpression;
                         }
-                        if (callResolutionResults.targetSymbol && callResolutionResults.targetSymbol.getName() != "") {
-                            symbol = callResolutionResults.targetSymbol;
-                        }
-                        foundAST = callExpression;
                     }
                 }
 
                 if (funcDecl) {
                     if (symbol && symbol.getKind() != PullElementKind.Property) {
-                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.pullTypeChecker.resolver.semanticInfoChain, this.pullTypeChecker.resolver.getUnitPath());
+                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain, scriptName);
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
                     }
-                } else if (symbol && symbol.getKind() === PullElementKind.Method) {
+                } else if (!callSignatures && symbol &&
+                    (symbol.getKind() === PullElementKind.Method || symbol.getKind() == PullElementKind.Function)) {
                     var typeSym = symbol.getType()
                     if (typeSym) {
                         callSignatures = typeSym.getCallSignatures();

@@ -106,8 +106,6 @@ module FourSlash {
         // Whether or not we should format on keystrokes
         public enableFormatting = true;
 
-        private verifyDocComments = true;
-
         constructor(public testData: FourSlashData) {
             // Initialize the language service with all the scripts
             this.langSvc = new Harness.TypeScriptLS();
@@ -121,10 +119,6 @@ module FourSlash {
 
             // Open the first file by default
             this.openFile(0);
-        }
-
-        public setVerifyDocComments(val: bool) {
-            this.verifyDocComments = val;
         }
 
         // Entry points from fourslash.ts
@@ -338,7 +332,7 @@ module FourSlash {
                 if (expectedTypeName !== undefined) {
                     assert.notEqual(actualQuickInfoMemberName, expectedTypeName);
                 }
-                if (this.verifyDocComments && docComment !== undefined) {
+                if (docComment != undefined) {
                     assert.notEqual(actualQuickInfoDocComment, docComment);
                 }
                 if (symbolName !== undefined) {
@@ -351,7 +345,7 @@ module FourSlash {
                 if (expectedTypeName !== undefined) {
                     assert.equal(actualQuickInfoMemberName, expectedTypeName);
                 }
-                if (this.verifyDocComments && docComment !== undefined) {
+                if (docComment != undefined) {
                     assert.equal(actualQuickInfoDocComment, docComment);
                 }
                 if (symbolName !== undefined) {
@@ -372,9 +366,7 @@ module FourSlash {
         }
 
         public verifyCurrentParameterHelpDocComment(docComment: string) {
-            if (this.verifyDocComments) {
-                assert.equal(this.getActiveParameter().docComment, docComment);
-            }
+            assert.equal(this.getActiveParameter().docComment, docComment);
         }
 
         public verifyCurrentParameterHelpType(typeName: string) {
@@ -391,10 +383,8 @@ module FourSlash {
         }
 
         public verifyCurrentSignatureHelpDocComment(docComment: string) {
-            if (this.verifyDocComments) {
-                var actualDocComment = this.getActiveSignatureHelp().docComment;
-                assert.equal(actualDocComment, docComment);
-            }
+            var actualDocComment = this.getActiveSignatureHelp().docComment;
+            assert.equal(actualDocComment, docComment);
         }
 
         public verifyCurrentSignatureHelpCount(expected: number) {
@@ -858,8 +848,8 @@ module FourSlash {
 
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                if (item.name === name) {
-                    if (this.verifyDocComments && docComment !== undefined) {
+                if (item.name == name) {
+                    if (docComment != undefined) {
                         assert.equal(item.docComment, docComment);
                     }
                     if (type !== undefined) {
@@ -884,7 +874,7 @@ module FourSlash {
                 if (type !== undefined) {
                     returnString += ",type: " + item.type;
                 }
-                if (this.verifyDocComments && docComment !== undefined) {
+                if (docComment != undefined) {
                     returnString += ",docComment: " + item.docComment;
                 }
                 if (fullSymbolName !== undefined) {

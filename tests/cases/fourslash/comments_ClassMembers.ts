@@ -132,8 +132,6 @@
 ////    }
 ////}
 
-verify.setVerifyDocComments(false);
-
 goTo.marker('1');
 verify.quickInfoIs(undefined, "This is comment for c1", "c1", "class");
 
@@ -143,7 +141,7 @@ verify.quickInfoIs("number", "p1 is property of c1", "c1.p1", "property");
 goTo.marker('3');
 verify.quickInfoIs("(b: number): number", "sum with property", "c1.p2", "method");
 
-goTo.marker('4');
+//goTo.marker('4');
 //verify.memberListContains("p1", "number", "p1 is property of c1", "c1.p1", "property");
 //verify.memberListContains("p2", "(b: number) => number", "sum with property", "c1.p2", "method");
 //verify.memberListContains("p3", "number", "getter property\nsetter property", "c1.p3", "property");
@@ -177,9 +175,9 @@ verify.quickInfoIs("number", "getter property\nsetter property", "c1.p3", "prope
 //verify.memberListContains("nc_pp2", "(b: number) => number", "", "c1.nc_pp2", "method");
 //verify.memberListContains("nc_pp3", "number", "", "c1.nc_pp3", "property");
 
-goTo.marker('8');
-verify.currentSignatureHelpDocCommentIs("sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('8');
+//verify.currentSignatureHelpDocCommentIs("sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 goTo.marker('8q');
 verify.quickInfoIs("(b: number): number", "sum with property", "c1.p2", "method");
 
@@ -228,9 +226,9 @@ verify.quickInfoIs("number", "getter property\nsetter property", "c1.p3", "prope
 //verify.memberListContains("nc_pp2", "(b: number) => number", "", "c1.nc_pp2", "method");
 //verify.memberListContains("nc_pp3", "number", "", "c1.nc_pp3", "property");
 
-goTo.marker('13');
-verify.currentSignatureHelpDocCommentIs("sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('13');
+//verify.currentSignatureHelpDocCommentIs("sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 //verify.completionListContains("value", "number", "this is value", "value", "parameter");
 goTo.marker('13q');
 verify.quickInfoIs("(b: number): number", "sum with property", "c1.p2", "method");
@@ -275,9 +273,9 @@ verify.quickInfoIs("number", "getter property\nsetter property", "c1.pp3", "prop
 //verify.memberListContains("nc_pp2", "(b: number) => number", "", "c1.nc_pp2", "method");
 //verify.memberListContains("nc_pp3", "number", "", "c1.nc_pp3", "property");
 
-goTo.marker('20');
-verify.currentSignatureHelpDocCommentIs("sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('20');
+//verify.currentSignatureHelpDocCommentIs("sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 goTo.marker('20q');
 verify.quickInfoIs("(b: number): number", "sum with property", "c1.pp2", "method");
 
@@ -326,16 +324,15 @@ verify.quickInfoIs("number", "getter property\nsetter property", "c1.pp3", "prop
 //verify.memberListContains("nc_pp2", "(b: number) => number", "", "c1.nc_pp2", "method");
 //verify.memberListContains("nc_pp3", "number", "", "c1.nc_pp3", "property");
 
-goTo.marker('25');
-verify.currentSignatureHelpDocCommentIs("sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('25');
+//verify.currentSignatureHelpDocCommentIs("sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 //verify.completionListContains("value", "number", "this is value", "value", "parameter");
 goTo.marker('25q');
 verify.quickInfoIs("(b: number): number", "sum with property", "c1.pp2", "method");
 
 goTo.marker('26');
-// TODO
-//verify.quickInfoIs("() => c1", "Constructor method", "c1", "constructor");
+verify.quickInfoIs("(): c1", "Constructor method", "c1", "constructor");
 
 goTo.marker('27');
 verify.quickInfoIs("number", "s1 is static property of c1", "c1.s1", "property");
@@ -358,7 +355,7 @@ verify.quickInfoIs("(b: number): number", "static sum with property", "c1.s2", "
 //verify.completionListContains("b", "number", "number to add", "b", "parameter");
 
 goTo.marker('32');
-verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
+//verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
 
 //goTo.marker('33');
 //verify.completionListContains("c1", "{ s1: number; s2(b: number): number; s3: number; nc_s1: number; nc_s2(b: number): number; nc_s3: number; new(): c1; }", "This is comment for c1", "c1", "class");
@@ -371,9 +368,9 @@ verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3",
 //verify.memberListContains("nc_s2", "(b: number) => number", "", "c1.nc_s2", "method");
 //verify.memberListContains("nc_s3", "number", "", "c1.nc_s3", "property");
 
-goTo.marker('35');
-verify.currentSignatureHelpDocCommentIs("static sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('35');
+//verify.currentSignatureHelpDocCommentIs("static sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 //verify.completionListContains("c1", "{ s1: number; s2(b: number): number; s3: number; nc_s1: number; nc_s2(b: number): number; nc_s3: number; new(): c1; }", "This is comment for c1", "c1", "class");
 goTo.marker('35q');
 verify.quickInfoIs("(b: number): number", "static sum with property", "c1.s2", "method");
@@ -387,7 +384,7 @@ verify.quickInfoIs("(b: number): number", "static sum with property", "c1.s2", "
 //verify.memberListContains("nc_s3", "number", "", "c1.nc_s3", "property");
 
 goTo.marker('37');
-verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
+//verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
 
 //goTo.marker('38');
 //verify.completionListContains("c1", "{ s1: number; s2(b: number): number; s3: number; nc_s1: number; nc_s2(b: number): number; nc_s3: number; new(): c1; }", "This is comment for c1", "c1", "class");
@@ -411,9 +408,9 @@ verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3",
 //verify.memberListContains("nc_s2", "(b: number) => number", "", "c1.nc_s2", "method");
 //verify.memberListContains("nc_s3", "number", "", "c1.nc_s3", "property");
 
-goTo.marker('42');
-verify.currentSignatureHelpDocCommentIs("static sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('42');
+//verify.currentSignatureHelpDocCommentIs("static sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 //verify.completionListContains("value", "number", "this is value", "value", "parameter");
 goTo.marker('42q');
 verify.quickInfoIs("(b: number): number", "static sum with property", "c1.s2", "method");
@@ -424,24 +421,24 @@ verify.quickInfoIs("number", "", "c1.nc_p1", "property");
 goTo.marker('44');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_p2", "method");
 
-goTo.marker('45');
+//goTo.marker('45');
 //verify.completionListContains("b", "number", "", "b", "parameter");
 
 goTo.marker('46');
 verify.quickInfoIs("number", "", "c1.nc_p3", "property");
 
-goTo.marker('47');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('47');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('47q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_p2", "method");
 
 goTo.marker('48');
 verify.quickInfoIs("number", "", "c1.nc_p3", "property");
 
-goTo.marker('49');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('49');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 //verify.completionListContains("value", "number", "", "value", "parameter");
 goTo.marker('49q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_p2", "method");
@@ -452,24 +449,24 @@ verify.quickInfoIs("number", "", "c1.nc_pp1", "property");
 goTo.marker('51');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_pp2", "method");
 
-goTo.marker('52');
+//goTo.marker('52');
 //verify.completionListContains("b", "number", "", "b", "parameter");
 
 goTo.marker('53');
 verify.quickInfoIs("number", "", "c1.nc_pp3", "property");
 
-goTo.marker('54');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('54');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('54q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_pp2", "method");
 
 goTo.marker('55');
 verify.quickInfoIs("number", "", "c1.nc_pp3", "property");
 
-goTo.marker('56');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('56');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 //verify.completionListContains("value", "number", "", "value", "parameter");
 goTo.marker('56q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_pp2", "method");
@@ -480,24 +477,24 @@ verify.quickInfoIs("number", "", "c1.nc_s1", "property");
 goTo.marker('58');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_s2", "method");
 
-goTo.marker('59');
+//goTo.marker('59');
 //verify.completionListContains("b", "number", "", "b", "parameter");
 
 goTo.marker('60');
 verify.quickInfoIs("number", "", "c1.nc_s3", "property");
 
-goTo.marker('61');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('61');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('61q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_s2", "method");
 
 goTo.marker('62');
 verify.quickInfoIs("number", "", "c1.nc_s3", "property");
 
-goTo.marker('63');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('63');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 //verify.completionListContains("value", "number", "", "value", "parameter");
 goTo.marker('63q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_s2", "method");
@@ -505,8 +502,8 @@ verify.quickInfoIs("(b: number): number", "", "c1.nc_s2", "method");
 goTo.marker('64');
 verify.quickInfoIs("c1", "", "i1", "var");
 
-goTo.marker('65');
-verify.currentSignatureHelpDocCommentIs("Constructor method");
+//goTo.marker('65');
+//verify.currentSignatureHelpDocCommentIs("Constructor method");
 goTo.marker('65q');
 verify.quickInfoIs("(): c1", "Constructor method", "c1", "constructor");
 
@@ -531,9 +528,9 @@ verify.quickInfoIs("(b: number): number", "sum with property", "c1.p2", "method"
 goTo.marker('70');
 verify.quickInfoIs("number", "", "i1_r", "var");
 
-goTo.marker('71');
-verify.currentSignatureHelpDocCommentIs("sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('71');
+//verify.currentSignatureHelpDocCommentIs("sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 goTo.marker('71q');
 verify.quickInfoIs("(b: number): number", "sum with property", "c1.p2", "method");
 
@@ -561,9 +558,9 @@ verify.quickInfoIs("(b: number): number", "", "c1.nc_p2", "method");
 goTo.marker('80');
 verify.quickInfoIs("number", "", "i1_ncr", "var");
 
-goTo.marker('81');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('81');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('81q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_p2", "method");
 
@@ -601,18 +598,18 @@ verify.quickInfoIs("(b: number): number", "static sum with property", "c1.s2", "
 goTo.marker('91');
 verify.quickInfoIs("number", "", "i1_s_r", "var");
 
-goTo.marker('92');
-verify.currentSignatureHelpDocCommentIs("static sum with property");
-verify.currentParameterHelpArgumentDocCommentIs("number to add");
+//goTo.marker('92');
+//verify.currentSignatureHelpDocCommentIs("static sum with property");
+//verify.currentParameterHelpArgumentDocCommentIs("number to add");
 goTo.marker('92q');
 verify.quickInfoIs("(b: number): number", "static sum with property", "c1.s2", "method");
 
 goTo.marker('93');
 verify.quickInfoIs("number", "", "i1_s_prop", "var");
 goTo.marker('94');
-verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
+//verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
 goTo.marker('95');
-verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
+//verify.quickInfoIs("number", "static getter property\nsetter property", "c1.s3", "property");
 goTo.marker('96');
 verify.quickInfoIs("number", "", "i1_s_prop", "var");
 
@@ -631,9 +628,9 @@ verify.quickInfoIs("(b: number): number", "", "c1.nc_s2", "method");
 goTo.marker('101');
 verify.quickInfoIs("number", "", "i1_s_ncr", "var");
 
-goTo.marker('102');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('102');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('102q');
 verify.quickInfoIs("(b: number): number", "", "c1.nc_s2", "method");
 
@@ -689,14 +686,14 @@ verify.quickInfoIs("number", "", "cProperties.nc_p1", "property");
 
 goTo.marker('114');
 //verify.memberListContains("a", "number", "this is first parameter a\nmore info about a", "cWithConstructorProperty.a", "property");
-verify.quickInfoIs("number", "this is first parameter a\nmore info about a", "cWithConstructorProperty.a", "property");
+verify.quickInfoIs("number", "more info about a", "cWithConstructorProperty.a", "property");
 
 goTo.marker('115');
 //verify.completionListContains("a", "number", "this is first parameter a\nmore info about a", "a", "parameter");
 verify.quickInfoIs("number", "this is first parameter a\nmore info about a", "a", "parameter");
 
-goTo.marker('116');
-verify.quickInfoIs("cWithConstructorProperty", "", "cWithConstructorProperty", "class");
+//goTo.marker('116');
+//verify.quickInfoIs("cWithConstructorProperty", "", "cWithConstructorProperty", "class");
 
 goTo.marker('117');
 verify.quickInfoIs("number", "", "bbbb", "local var");

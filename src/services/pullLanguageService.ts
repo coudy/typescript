@@ -229,7 +229,7 @@ module Services {
             var result = new FormalSignatureInfo();
             result.isNew = isNew;
             result.name = symbol.getName();
-            result.docComment = symbol.getDocComments(); 
+            result.docComment = this.pullCompilerState.getDocComments(symbol); 
             result.openParen = "(";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "[" : "(");
             result.closeParen = ")";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "]" : ")");
 
@@ -239,7 +239,7 @@ module Services {
                 .filter(signature => !(hasOverloads && signature.isDefinition() && !this.pullCompilerState.compilationSettings().canCallDefinitionSignature))
                 .forEach(signature => {
                     var signatureGroupInfo = new FormalSignatureItemInfo();
-                    signatureGroupInfo.docComment = signature.getDocComments();
+                    signatureGroupInfo.docComment = this.pullCompilerState.getDocComments(signature);
                     signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getName(); //signature.returnType.type.getScopedTypeName(enclosingScopeContext.getScope()));
                     var parameters = signature.getParameters();
                     parameters.forEach((p, i) => {
@@ -247,7 +247,7 @@ module Services {
                         signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
                         signatureParameterInfo.isOptional = p.getIsOptional();
                         signatureParameterInfo.name = p.getName();
-                        signatureParameterInfo.docComment = p.getDocComments();
+                        signatureParameterInfo.docComment = this.pullCompilerState.getDocComments(p);
                         signatureParameterInfo.type = p.getType() ? p.getType().getScopedName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
                     });
@@ -752,9 +752,20 @@ module Services {
             if (!typeInfoAtPosition.symbol) {
                 return null;
             }
-            
-            // PULLTODO: use typeInfo for now, since I want to see more info for debugging;
-            //  we'll want to switch to typeName later, though
+
+            if (typeInfoAtPosition.callSignatures &&
+                (!typeInfoAtPosition.candidateSignature || typeInfoAtPosition.candidateSignature.isDefinition())) {
+                var len = typeInfoAtPosition.callSignatures.length;
+                for (var i = 0; i < len; i++) {
+                    if (len > 1 && typeInfoAtPosition.callSignatures[i].isDefinition()) {
+                        continue;
+                    }
+
+                    typeInfoAtPosition.candidateSignature = typeInfoAtPosition.callSignatures[i];
+                    break;
+                }
+            }
+
             var memberName = typeInfoAtPosition.callSignatures ?
                 TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(typeInfoAtPosition.candidateSignature,
                     typeInfoAtPosition.callSignatures, typeInfoAtPosition.enclosingScopeSymbol) :
@@ -763,7 +774,9 @@ module Services {
             var limChar = -1;
             var kind = this.mapPullElementKind(typeInfoAtPosition.symbol, !typeInfoAtPosition.callSignatures,
                 !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.ast && typeInfoAtPosition.ast.nodeType == TypeScript.NodeType.New);
-            var docComment = typeInfoAtPosition.symbol.getDocComments();
+
+            var symbolForDocComment = typeInfoAtPosition.candidateSignature ? typeInfoAtPosition.candidateSignature : typeInfoAtPosition.symbol;
+            var docComment = this.pullCompilerState.getDocComments(symbolForDocComment, !typeInfoAtPosition.callSignatures);
             var symbolName = this.getFullNameOfSymbol(typeInfoAtPosition.symbol, typeInfoAtPosition.enclosingScopeSymbol);
 
             if (typeInfoAtPosition.ast) {
@@ -830,7 +843,7 @@ module Services {
                 entry.type = symbol.getType() ? symbol.getType().toString() : "unkown type";
                 entry.kind = this.mapPullElementKind(symbol);
                 entry.fullSymbolName = entry.name;//this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
-                entry.docComment = symbol.getDocComments();
+                entry.docComment = this.pullCompilerState.getDocComments(symbol);
                 entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
                 result.push(entry);
             });
@@ -905,6 +918,17 @@ module Services {
             return false;
         }
 
+        private isModule(symbol: TypeScript.PullSymbol) {
+            var decls = symbol.getDeclarations();
+            for (var i = 0; i < decls.length; i++) {
+                if (decls[i].getKind() == TypeScript.PullElementKind.Container) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private mapPullElementKind(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool, varIsFunction?: bool, functionIsConstructor?: bool): string {
             if (functionIsConstructor) {
                 return ScriptElementKind.constructorImplementationElement;
@@ -954,6 +978,9 @@ module Services {
                     case TypeScript.PullElementKind.Enum:
                         return ScriptElementKind.enumElement;
                     case TypeScript.PullElementKind.Variable:
+                        if (this.isModule(symbol)) {
+                            return ScriptElementKind.moduleElement;
+                        }
                         return this.isLocal(symbol) ? ScriptElementKind.localVariableElement : ScriptElementKind.variableElement;
                     case TypeScript.PullElementKind.Parameter:
                         return ScriptElementKind.parameterElement;

@@ -50,6 +50,8 @@ module TypeScript {
         public addUpdateVersion = -1;
         public removeUpdateVersion = -1;
 
+        public docComments: string = null;
+
         // public surface area
         public getSymbolID() { return this.pullSymbolID; }
 
@@ -298,15 +300,13 @@ module TypeScript {
 
             //this.cachedContainerLink = null;
 
+            this.docComments = null;
+
             this.hasBeenResolved = false;
             this.isBound = false;
 
             // reset the errors for its decl
             this.declarations.update((pullDecl: PullDecl) => pullDecl.resetErrors(), null);
-        }
-
-        public getDocComments(): string {
-            return "";
         }
 
         public hasFlag(flag: PullElementFlags): bool {
@@ -324,14 +324,14 @@ module TypeScript {
             var path: PullSymbol[] = [];
             var node = this;
             while (node) {
-                path[path.length] = node;
-                node = node.getContainer();
-                if (node && node.isType()) {
+                if (node.isType()) {
                     var associatedContainerSymbol = (<PullTypeSymbol>node).getAssociatedContainerType();
                     if (associatedContainerSymbol) {
                         node = associatedContainerSymbol;
                     }
                 }
+                path[path.length] = node;
+                node = node.getContainer();
             }
             return path;
         }

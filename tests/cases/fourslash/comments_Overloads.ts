@@ -225,12 +225,10 @@
 ////}
 ////foo(null);
 
-verify.setVerifyDocComments(false);
-
 goTo.marker('1');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 1", "f1", "function");
 goTo.marker('2');
-verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 1", "f1", "function");
+verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "f1", "function");
 goTo.marker('3');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 1", "f1", "function");
 goTo.marker('4q');
@@ -238,17 +236,17 @@ verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "f1", "function"
 goTo.marker('o4q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 1", "f1", "function");
 
-goTo.marker('4');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
-goTo.marker('o4');
-verify.currentSignatureHelpDocCommentIs("this is signature 1");
-verify.currentParameterHelpArgumentDocCommentIs("param a");
+//goTo.marker('4');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('o4');
+//verify.currentSignatureHelpDocCommentIs("this is signature 1");
+//verify.currentParameterHelpArgumentDocCommentIs("param a");
 
 goTo.marker('5');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "f2", "function");
 goTo.marker('6');
-verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "f2", "function");
+verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 2", "f2", "function");
 goTo.marker('7');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "f2", "function");
 goTo.marker('8q');
@@ -256,13 +254,13 @@ verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 2
 goTo.marker('o8q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "f2", "function");
 
-goTo.marker('8');
-verify.currentSignatureHelpDocCommentIs("this is signature 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('8');
+//verify.currentSignatureHelpDocCommentIs("this is signature 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 
-goTo.marker('o8');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("param a");
+//goTo.marker('o8');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("param a");
 
 goTo.marker('9');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "f3", "function");
@@ -275,18 +273,18 @@ verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "f3", "function"
 goTo.marker('o12q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "f3", "function");
 
-goTo.marker('12');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('12');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 
-goTo.marker('o12');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('o12');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 
 goTo.marker('13');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 4 - with number parameter", "f4", "function");
 goTo.marker('14');
-verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 4 - with number parameter", "f4", "function");
+verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 4 - with string parameter", "f4", "function");
 goTo.marker('15');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 4 - with number parameter", "f4", "function");
 goTo.marker('16q');
@@ -294,21 +292,21 @@ verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 4
 goTo.marker('o16q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 4 - with number parameter", "f4", "function");
 
-goTo.marker('16');
-verify.currentSignatureHelpDocCommentIs("this is signature 4 - with string parameter");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('16');
+//verify.currentSignatureHelpDocCommentIs("this is signature 4 - with string parameter");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 
-goTo.marker('o16');
-verify.currentSignatureHelpDocCommentIs("this is signature 4 - with number parameter");
-verify.currentParameterHelpArgumentDocCommentIs("param a");
+//goTo.marker('o16');
+//verify.currentSignatureHelpDocCommentIs("this is signature 4 - with number parameter");
+//verify.currentParameterHelpArgumentDocCommentIs("param a");
 
-goTo.marker('17');
+//goTo.marker('17');
 //verify.completionListContains('f1', '(a: number): number (+ 1 overload(s))', 'this is signature 1', "f1", "function");
 //verify.completionListContains('f2', '(a: number): number (+ 1 overload(s))', '', "f2", "function");
 //verify.completionListContains('f3', '(a: number): number (+ 1 overload(s))', '', "f3", "function");
 //verify.completionListContains('f4', '(a: number): number (+ 1 overload(s))', 'this is signature 4 - with number parameter', "f4", "function");
 
-goTo.marker('18');
+//goTo.marker('18');
 //verify.completionListContains('i1', 'i1', '', "i1", "interface");
 //verify.completionListContains('i1_i', 'i1', '', "i1_i", "var");
 //verify.completionListContains('i2', 'i2', '', "i2", "interface");
@@ -318,27 +316,27 @@ goTo.marker('18');
 //verify.completionListContains('i4', 'i4', '', "i4", "interface");
 //verify.completionListContains('i4_i', 'i4', '', "i4_i", "var");
 
-goTo.marker('19');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('19');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('19q');
 verify.quickInfoIs("(b: number): any (+ 1 overload(s))", "", "i1", "constructor");
 
-goTo.marker('20');
-verify.currentSignatureHelpDocCommentIs("new 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('20');
+//verify.currentSignatureHelpDocCommentIs("new 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('20q');
 verify.quickInfoIs("(a: string): any (+ 1 overload(s))", "new 1", "i1", "constructor");
 
-goTo.marker('21');
-verify.currentSignatureHelpDocCommentIs("this signature 1");
-verify.currentParameterHelpArgumentDocCommentIs("param a");
+//goTo.marker('21');
+//verify.currentSignatureHelpDocCommentIs("this signature 1");
+//verify.currentParameterHelpArgumentDocCommentIs("param a");
 goTo.marker('21q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this signature 1", "i1", "function");
 
-goTo.marker('22');
-verify.currentSignatureHelpDocCommentIs("this is signature 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('22');
+//verify.currentSignatureHelpDocCommentIs("this is signature 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('22q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 2", "i1", "function");
 
@@ -348,123 +346,123 @@ verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 2
 //verify.memberListContains('foo3', '(a: number): number (+ 1 overload(s))', '', "i1.foo3", "method");
 //verify.memberListContains('foo4', '(a: number): number (+ 1 overload(s))', 'foo4 1', "i1.foo4", "method");
 
-goTo.marker('24');
-verify.currentSignatureHelpDocCommentIs("foo 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('24');
+//verify.currentSignatureHelpDocCommentIs("foo 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('24q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "foo 1", "i1.foo", "method");
 
-goTo.marker('25');
-verify.currentSignatureHelpDocCommentIs("foo 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('25');
+//verify.currentSignatureHelpDocCommentIs("foo 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('25q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "foo 2", "i1.foo", "method");
 
-goTo.marker('26');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('26');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('26q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "i1.foo2", "method");
 
-goTo.marker('27');
-verify.currentSignatureHelpDocCommentIs("foo2 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('27');
+//verify.currentSignatureHelpDocCommentIs("foo2 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('27q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "foo2 2", "i1.foo2", "method");
 
-goTo.marker('28');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('28');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('28q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "i1.foo3", "method");
 
-goTo.marker('29');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('29');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('29q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "i1.foo3", "method");
 
-goTo.marker('30');
-verify.currentSignatureHelpDocCommentIs("foo4 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('30');
+//verify.currentSignatureHelpDocCommentIs("foo4 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('30q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "foo4 1", "i1.foo4", "method");
 
-goTo.marker('31');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('31');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('31q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "i1.foo4", "method");
 
-goTo.marker('32');
-verify.currentSignatureHelpDocCommentIs("new 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('32');
+//verify.currentSignatureHelpDocCommentIs("new 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('32q');
 verify.quickInfoIs("(b: number): any (+ 1 overload(s))", "new 2", "i2", "constructor");
 
-goTo.marker('33');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('33');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('33q');
 verify.quickInfoIs("(a: string): any (+ 1 overload(s))", "", "i2", "constructor");
 
-goTo.marker('34');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('34');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('34q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "i2", "function");
 
-goTo.marker('35');
-verify.currentSignatureHelpDocCommentIs("this is signature 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('35');
+//verify.currentSignatureHelpDocCommentIs("this is signature 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('35q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "this is signature 2", "i2", "function");
 
-goTo.marker('36');
-verify.currentSignatureHelpDocCommentIs("new 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('36');
+//verify.currentSignatureHelpDocCommentIs("new 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('36q');
 verify.quickInfoIs("(b: number): any (+ 1 overload(s))", "new 2", "i3", "constructor");
 
-goTo.marker('37');
-verify.currentSignatureHelpDocCommentIs("new 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('37');
+//verify.currentSignatureHelpDocCommentIs("new 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('37q');
 verify.quickInfoIs("(a: string): any (+ 1 overload(s))", "new 1", "i3", "constructor");
 
-goTo.marker('38');
-verify.currentSignatureHelpDocCommentIs("this is signature 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('38');
+//verify.currentSignatureHelpDocCommentIs("this is signature 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('38q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 1", "i3", "function");
 
-goTo.marker('39');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('39');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('39q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "i3", "function");
 
-goTo.marker('40');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('40');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('40q');
 verify.quickInfoIs("(b: number): any (+ 1 overload(s))", "", "i4", "constructor");
 
-goTo.marker('41');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('41');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('41q');
 verify.quickInfoIs("(a: string): any (+ 1 overload(s))", "", "i4", "constructor");
 
-goTo.marker('42');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('42');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('42q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "i4", "function");
 
-goTo.marker('43');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('43');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('43q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "i4", "function");
 
@@ -475,123 +473,123 @@ verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "i4", "function"
 //verify.memberListContains('prop4', '(a: number): number (+ 1 overload(s))', 'prop4 1', "c.prop4", "method");
 //verify.memberListContains('prop5', '(a: number): number (+ 1 overload(s))', 'prop5 1', "c.prop5", "method");
 
-goTo.marker('45');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('45');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('45q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "c.prop1", "method");
 
-goTo.marker('46');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('46');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('46q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "c.prop1", "method");
 
-goTo.marker('47');
-verify.currentSignatureHelpDocCommentIs("prop2 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('47');
+//verify.currentSignatureHelpDocCommentIs("prop2 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('47q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "prop2 1", "c.prop2", "method");
 
-goTo.marker('48');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('48');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('48q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "c.prop2", "method");
 
-goTo.marker('49');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('49');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('49q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "", "c.prop3", "method");
 
-goTo.marker('50');
-verify.currentSignatureHelpDocCommentIs("prop3 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('50');
+//verify.currentSignatureHelpDocCommentIs("prop3 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('50q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "prop3 2", "c.prop3", "method");
 
-goTo.marker('51');
-verify.currentSignatureHelpDocCommentIs("prop4 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('51');
+//verify.currentSignatureHelpDocCommentIs("prop4 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('51q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "prop4 1", "c.prop4", "method");
 
-goTo.marker('52');
-verify.currentSignatureHelpDocCommentIs("prop4 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('52');
+//verify.currentSignatureHelpDocCommentIs("prop4 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('52q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "prop4 2", "c.prop4", "method");
 
-goTo.marker('53');
-verify.currentSignatureHelpDocCommentIs("prop5 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('53');
+//verify.currentSignatureHelpDocCommentIs("prop5 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('53q');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "prop5 1", "c.prop5", "method");
 
-goTo.marker('54');
-verify.currentSignatureHelpDocCommentIs("prop5 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('54');
+//verify.currentSignatureHelpDocCommentIs("prop5 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('54q');
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "prop5 2", "c.prop5", "method");
 
-goTo.marker('55');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('55');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('55q');
 verify.quickInfoIs("(a: number): c1 (+ 1 overload(s))", "", "c1", "constructor");
 
-goTo.marker('56');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('56');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('56q');
 verify.quickInfoIs("(b: string): c1 (+ 1 overload(s))", "", "c1", "constructor");
 
-goTo.marker('57');
-verify.currentSignatureHelpDocCommentIs("c2 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('57');
+//verify.currentSignatureHelpDocCommentIs("c2 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('57q');
 verify.quickInfoIs("(a: number): c2 (+ 1 overload(s))", "c2 1", "c2", "constructor");
 
-goTo.marker('58');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('58');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('58q');
 verify.quickInfoIs("(b: string): c2 (+ 1 overload(s))", "", "c2", "constructor");
 
-goTo.marker('59');
-verify.currentSignatureHelpDocCommentIs("");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('59');
+//verify.currentSignatureHelpDocCommentIs("");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('59q');
 verify.quickInfoIs("(a: number): c3 (+ 1 overload(s))", "", "c3", "constructor");
 
-goTo.marker('60');
-verify.currentSignatureHelpDocCommentIs("c3 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('60');
+//verify.currentSignatureHelpDocCommentIs("c3 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('60q');
 verify.quickInfoIs("(b: string): c3 (+ 1 overload(s))", "c3 2", "c3", "constructor");
 
-goTo.marker('61');
-verify.currentSignatureHelpDocCommentIs("c4 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('61');
+//verify.currentSignatureHelpDocCommentIs("c4 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('61q');
 verify.quickInfoIs("(a: number): c4 (+ 1 overload(s))", "c4 1", "c4", "constructor");
 
-goTo.marker('62');
-verify.currentSignatureHelpDocCommentIs("c4 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('62');
+//verify.currentSignatureHelpDocCommentIs("c4 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('62q');
 verify.quickInfoIs("(b: string): c4 (+ 1 overload(s))", "c4 2", "c4", "constructor");
 
-goTo.marker('63');
-verify.currentSignatureHelpDocCommentIs("c5 1");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('63');
+//verify.currentSignatureHelpDocCommentIs("c5 1");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('63q');
 verify.quickInfoIs("(a: number): c5 (+ 1 overload(s))", "c5 1", "c5", "constructor");
 
-goTo.marker('64');
-verify.currentSignatureHelpDocCommentIs("c5 2");
-verify.currentParameterHelpArgumentDocCommentIs("");
+//goTo.marker('64');
+//verify.currentSignatureHelpDocCommentIs("c5 2");
+//verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('64q');
 verify.quickInfoIs("(b: string): c5 (+ 1 overload(s))", "c5 2", "c5", "constructor");
 
