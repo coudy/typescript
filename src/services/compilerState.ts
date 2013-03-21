@@ -291,10 +291,6 @@ module Services {
             return this.compiler.pullGetErrorsForFile(fileName);
         }
 
-        public cleanASTTypesForReTypeCheck(ast: TypeScript.AST): void {
-            this.compiler.cleanASTTypesForReTypeCheck(ast);
-        }
-
         public getScriptTextChangeRange(fileName: string): TypeScript.TextChangeRange {
             var lastKnownVersion: number = this.fileNameToCompilerScriptVersion.lookup(fileName);
             return this.getScriptTextChangeRangeSinceVersion(fileName, lastKnownVersion);

@@ -219,12 +219,7 @@ class BatchCompiler {
         };
 
         try {
-            if (this.compilationSettings.usePull) {
-                compiler.pullTypeCheck(true, this.compilationSettings.usePullTC);
-            }
-            else {
-                compiler.typeCheck();
-            }
+            compiler.pullTypeCheck(true, this.compilationSettings.usePullTC);
 
             var mapInputToOutput = (inputFile: string, outputFile: string): void => {
                 this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);

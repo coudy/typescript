@@ -129,7 +129,8 @@ class HarnessBatch {
             consumeUnit(this.resolvedEnvironment.code[iCode]);
         }
 
-        compiler.typeCheck();
+        // TODO: call pullTypeCheck here?
+        // compiler.typeCheck();
         compiler.emit({
             createFile: createEmitFile,
             directoryExists: IO.directoryExists,
