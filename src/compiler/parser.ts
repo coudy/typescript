@@ -25,11 +25,6 @@ module TypeScript {
         AllTypes = Primitive | Named | ArraySuffix,
     }
 
-    export interface IStatementInfo {
-        stmt: Statement;
-        labels: ASTList;
-    }
-
     export interface ILambdaArgumentContext {
         preProcessedLambdaArgs: AST;
     }
@@ -68,7 +63,6 @@ module TypeScript {
         private topLevel = true;
         private allowImportDeclaration = true;
         private prevIDTok: Token = null;
-        private statementInfoStack: IStatementInfo[] = [];
         private hasTopLevelImportOrExport = false; // for imports, only true if it's a dynamic module
         private strictMode = false;
         private nestingLevel = 0;
@@ -78,20 +72,6 @@ module TypeScript {
         private parsingDeclareFile = false;
         private amdDependencies: string[] = [];
         public requiresExtendsBlock = false;
-
-        private resetStmtStack() {
-            this.statementInfoStack = [];
-        }
-
-        private pushStmt(stmt: Statement, labels: ASTList) {
-            // allocate here to avoid always storing this information in statements
-            var info = { stmt: stmt, labels: labels };
-            this.statementInfoStack.push(info);
-        }
-
-        private popStmt(): IStatementInfo {
-            return this.statementInfoStack.pop();
-        }
 
         public setErrorRecovery(outfile: ITextWriter) {
             this.outfile = outfile;
@@ -900,9 +880,6 @@ module TypeScript {
             parentModifiers: Modifiers) {
 
             this.pushDeclLists();
-            // start new statement stack
-            var svStmtStack = this.statementInfoStack;
-            this.resetStmtStack();
 
             var bod: ASTList = null;
             var wasShorthand = false;
@@ -995,7 +972,6 @@ module TypeScript {
                 funcDecl.fncFlags |= FncFlags.Signature;
             }
 
-            this.statementInfoStack = svStmtStack;
             return funcDecl;
         }
 
@@ -3284,9 +3260,7 @@ module TypeScript {
         private parseTryCatchFinally(errorRecoverySet: ErrorRecoverySet, parentModifiers: Modifiers, labelList: ASTList): AST {
             var tryPart: AST = new Try(null);
             var tryMinChar = this.scanner.startPos;
-            this.pushStmt(<Statement>tryPart, labelList);
             this.parseTry(<Try>tryPart, errorRecoverySet | ErrorRecoverySet.Catch, parentModifiers);
-            this.popStmt();
             var tc: TryCatch = null;
             var tf: TryFinally = null;
 
@@ -3678,9 +3652,7 @@ module TypeScript {
                                 forInStmt.statement.minChar = minChar;
                                 forInStmt.statement.limChar = this.scanner.pos;
                                 this.checkCurrentToken(TokenID.CloseParen, ErrorRecoverySet.StmtStart | errorRecoverySet);
-                                this.pushStmt(forInStmt, labelList);
                                 forInStmt.body = this.parseStatement(errorRecoverySet, allowedElements, parentModifiers);
-                                this.popStmt();
                                 forInStmt.minChar = minChar;
                                 ast = forInStmt;
                             }
@@ -3715,9 +3687,7 @@ module TypeScript {
                             }
 
                             this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet | ErrorRecoverySet.LCurly);
-                            this.pushStmt(forStmt, labelList);
                             forStmt.body = this.parseStatement(errorRecoverySet, allowedElements, parentModifiers);
-                            this.popStmt();
                             forStmt.limChar = forStmt.body.limChar;
                             ast = forStmt;
                         }
@@ -3770,7 +3740,6 @@ module TypeScript {
                         switchStmt.defaultCase = null;
                         switchStmt.caseList = new ASTList();
                         var caseStmt: CaseStatement = null;
-                        this.pushStmt(switchStmt, labelList);
                         for (; ;) {
                             if ((this.currentToken.tokenId === TokenID.Case) ||
                                 (this.currentToken.tokenId === TokenID.Default)) {
@@ -3805,7 +3774,6 @@ module TypeScript {
                         switchStmt.caseList.limChar = this.scanner.pos;
                         switchStmt.limChar = switchStmt.caseList.limChar;
                         this.checkCurrentToken(TokenID.CloseBrace, errorRecoverySet);
-                        this.popStmt();
                         ast = switchStmt;
                         break;
                     }
@@ -3824,10 +3792,8 @@ module TypeScript {
                         whileStmt.minChar = minChar;
                         this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet |
                                   ErrorRecoverySet.StmtStart);
-                        this.pushStmt(whileStmt, labelList);
                         whileStmt.body = this.parseStatement(errorRecoverySet, allowedElements, parentModifiers);
                         whileStmt.limChar = whileStmt.body.limChar;
-                        this.popStmt();
                         ast = whileStmt;
                         break;
                     }
@@ -3840,10 +3806,8 @@ module TypeScript {
                         this.currentToken = this.scanner.scan();
                         var doStmt = new DoWhileStatement();
                         doStmt.minChar = minChar;
-                        this.pushStmt(doStmt, labelList);
                         doStmt.body = this.parseStatement(errorRecoverySet | ErrorRecoverySet.While,
                                                    allowedElements, parentModifiers);
-                        this.popStmt();
                         doStmt.whileAST = new Identifier("while");
                         doStmt.whileAST.minChar = this.scanner.startPos;
                         this.checkCurrentToken(TokenID.While, errorRecoverySet | ErrorRecoverySet.LParen);
@@ -3875,7 +3839,6 @@ module TypeScript {
                         ifStmt.statement.minChar = minChar;
                         ifStmt.statement.limChar = this.scanner.pos;
                         this.checkCurrentToken(TokenID.CloseParen, errorRecoverySet | ErrorRecoverySet.StmtStart);
-                        this.pushStmt(ifStmt, labelList);
                         ifStmt.thenBod = this.parseStatement(ErrorRecoverySet.Else | errorRecoverySet,
                                                       allowedElements, parentModifiers);
                         ifStmt.limChar = ifStmt.thenBod.limChar;
@@ -3884,7 +3847,6 @@ module TypeScript {
                             ifStmt.elseBod = this.parseStatement(errorRecoverySet, allowedElements, parentModifiers);
                             ifStmt.limChar = ifStmt.elseBod.limChar;
                         }
-                        this.popStmt();
                         ast = ifStmt;
                         break;
                     }
@@ -3905,11 +3867,9 @@ module TypeScript {
                         minChar = this.scanner.startPos;
                         this.currentToken = this.scanner.scan();
                         var block = new Block(new ASTList(), true);
-                        this.pushStmt(block, labelList);
                         this.parseStatementList(
                             errorRecoverySet | ErrorRecoverySet.RCurly, block.statements,
                             /*sourceElements:*/ false, /*noLeadingCase:*/ false, AllowedElements.None, modifiers);
-                        this.popStmt();
                         block.statements.minChar = minChar;
                         block.statements.limChar = this.scanner.pos;
                         block.minChar = block.statements.minChar;
@@ -4204,7 +4164,6 @@ module TypeScript {
             this.topLevel = true;
             this.allowImportDeclaration = true;
             this.prevIDTok = null;
-            this.statementInfoStack = [];
             this.hasTopLevelImportOrExport = false;
             this.strictMode = false;
             this.nestingLevel = 0;
