@@ -39,7 +39,6 @@
 ///<reference path='rules.ts' />
 ///<reference path='rulesMap.ts' />
 ///<reference path='rulesProvider.ts' />
-///<reference path='smartIndentManager.ts' />
 ///<reference path='smartIndentTask.ts' />
 ///<reference path='statementFinderTask.ts' />
 ///<reference path='textEditInfo.ts' />

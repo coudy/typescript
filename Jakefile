@@ -108,7 +108,6 @@ var servicesSources = [
 	"formatting/rules.ts",
 	"formatting/rulesMap.ts",
 	"formatting/rulesProvider.ts",
-	"formatting/smartIndentManager.ts",
 	"formatting/smartIndentTask.ts",
 	"formatting/statementFinderTask.ts",
 	"formatting/textEditInfo.ts",

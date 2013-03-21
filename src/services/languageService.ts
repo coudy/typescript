@@ -1093,21 +1093,14 @@ module Services {
         // the desired smart indent text (assuming the line is empty).
         // Return "null" in case the smart indent cannot be determined.
         public getSmartIndentAtLineNumber(fileName: string, position: number, options: EditorOptions): number {
-            this.minimalRefresh();
-            
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-
-            // find line and col
-            var lineNumber = position < 0 ? -1 : syntaxAST.getScript().locationInfo.lineMap.getLineNumberFromPosition(position);
-
-            var manager = new Formatting.SmartIndentManager(syntaxAST, options);
-            return manager.getSmartIndentAtLineNumber(lineNumber);
+            // TODO: remove this when we switch to pull by default.
+            return 0;
         }
 
         // Given a script name and position in the script, return a pair of text range if the 
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
-        public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[]{
+        public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[] {
             // TODO: remove this when we switch to pull by default.
             return [];
         }
