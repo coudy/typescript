@@ -29,10 +29,6 @@ module TypeScript {
         preProcessedLambdaArgs: AST;
     }
 
-    export class QuickParseResult {
-        constructor(public Script: Script, public endLexState: LexState) { }
-    }
-
     export class Parser {
         private fileName = "";
 
@@ -4133,19 +4129,6 @@ module TypeScript {
                         }
                     }
                 }
-            }
-        }
-
-        public quickParse(sourceText: IScriptSnapshot, fileName: string): QuickParseResult {
-            //TODO: REVIEW: We set this to avoid adding a "module" decl in the resulting script (see parse() method)
-            var svGenTarget = TypeScript.moduleGenTarget;
-            try {
-                TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Local;
-                var script = this.parse(sourceText, fileName, AllowedElements.QuickParse);
-                return new QuickParseResult(script, this.scanner.lexState);
-            }
-            finally {
-                TypeScript.moduleGenTarget = svGenTarget;
             }
         }
 
