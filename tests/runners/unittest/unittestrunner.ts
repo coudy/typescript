@@ -71,7 +71,7 @@ class UnitTestRunner extends RunnerBase {
                     Exec: Exec,
                     Services: Services,
                     DumpAST: DumpAST,
-                    Formatting: Formatting,
+                    // Formatting: Formatting,
                     Diff: Diff,
                     FourSlash: FourSlash
                 },
