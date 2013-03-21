@@ -60,8 +60,8 @@ module Services {
         return true;
     }
 
-    export class TypeScriptServicesFactory {
-        private _shims = [];
+    export class TypeScriptServicesFactory implements IShimFactory {
+        private _shims: IShim[] = [];
 
         public createLanguageService(host: Services.ILanguageServiceHost): Services.ILanguageService {
             try {
@@ -95,9 +95,7 @@ module Services {
                 else {
                     languageService = this.createLanguageService(hostAdapter);
                 }
-                var shim = new LanguageServiceShim(host, languageService, pullLanguageService);
-                this._shims.push(shim);
-                return shim;
+                return new LanguageServiceShim(this, host, languageService, pullLanguageService);
             }
             catch (err) {
                 Services.logInternalError(host, err);
@@ -117,9 +115,7 @@ module Services {
 
         public createClassifierShim(host: Services.IClassifierHost): ClassifierShim {
             try {
-                var shim = new ClassifierShim(host);
-                this._shims.push(shim);
-                return shim;
+                return new ClassifierShim(this, host);
             }
             catch (err) {
                 Services.logInternalError(host, err);
@@ -139,9 +135,7 @@ module Services {
 
         public createCoreServicesShim(host: Services.ICoreServicesHost): CoreServicesShim {
             try {
-                var shim = new CoreServicesShim(host);
-                this._shims.push(shim);
-                return shim;
+                return new CoreServicesShim(this, host);
             }
             catch (err) {
                 Services.logInternalError(host.logger, err);
@@ -150,7 +144,23 @@ module Services {
         }
 
         public close(): void {
+            // Forget all the registered shims
             this._shims = [];
+        }
+
+        public registerShim(shim: IShim): void {
+            this._shims.push(shim);
+        }
+
+        public unregisterShim(shim: IShim): void {
+            for(var i =0, n = this._shims.length; i<n; i++) {
+                if (this._shims[i] === shim) {
+                    delete this._shims[i];
+                    return;
+                }
+            }
+
+            throw TypeScript.Errors.invalidOperation();
         }
     }
 }

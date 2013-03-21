@@ -53,14 +53,32 @@ module Services {
     //
     // Public interface of of a language service instance shim.
     //
-    export interface ILanguageServiceShim {
+    export interface IShimFactory {
+        registerShim(shim: IShim): void;
+        unregisterShim(shim: IShim): void;
+    }
+
+    export interface IShim {
+        dispose(dummy: any): void;
+    }
+
+    export class ShimBase implements IShim {
+        constructor(private factory: IShimFactory) {
+            factory.registerShim(this);
+        }
+        public dispose(dummy: any): void {
+            this.factory.unregisterShim(this);
+        }
+    }
+
+    export interface ILanguageServiceShim extends IShim {
         languageService: Services.ILanguageService;
         pullLanguageService: Services.IPullLanguageService;
 
         dispose(dummy: any): void;
 
         refresh(throwOnError: bool): void;
-
+        
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
@@ -250,12 +268,14 @@ module Services {
         return JSON.stringify({ error: err });
     }
 
-    export class LanguageServiceShim implements ILanguageServiceShim {
+    export class LanguageServiceShim extends ShimBase implements ILanguageServiceShim {
         private logger: TypeScript.ILogger;
 
-        constructor(private host: ILanguageServiceShimHost,
+        constructor(factory: IShimFactory,
+	private host: ILanguageServiceShimHost,
                     public languageService: Services.ILanguageService,
-                    public pullLanguageService: Services.IPullLanguageService) {
+	public pullLanguageService: Services.IPullLanguageService) {
+            super(factory);
             this.logger = this.host;
         }
 
@@ -275,6 +295,8 @@ module Services {
             this.languageService = null;
             this.pullLanguageService = null;
             this.logger = null;
+
+            super.dispose(dummy);
         }
 
         // REFRESH
@@ -588,10 +610,11 @@ module Services {
         }
     }
 
-    export class ClassifierShim {
+    export class ClassifierShim extends ShimBase {
         public classifier: Services.Classifier;
 
-        constructor (public host: Services.IClassifierHost) {
+        constructor(factory: IShimFactory, public host: Services.IClassifierHost) {
+            super(factory);
             this.classifier = new Services.Classifier(this.host);
         }
 
@@ -609,11 +632,12 @@ module Services {
         }
     }
 
-    export class CoreServicesShim {
+    export class CoreServicesShim extends ShimBase {
         public logger: TypeScript.ILogger;
         public services: Services.CoreServices;
 
-        constructor (public host: Services.ICoreServicesHost) {
+        constructor(factory: IShimFactory, public host: Services.ICoreServicesHost) {
+            super(factory);
             this.logger = this.host.logger;
             this.services = new Services.CoreServices(this.host);
         }
