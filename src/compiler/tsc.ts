@@ -225,7 +225,7 @@ class BatchCompiler {
                 this.compilationEnvironment.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
             };
             compiler.emit(emitterIOHost, this.compilationSettings.usePull, mapInputToOutput);
-            compiler.emitDeclarations(this.compilationSettings.usePull);
+            compiler.emitDeclarations();
         } catch (err) {
             compiler.errorReporter.hasErrors = true;
             // Catch emitter exceptions

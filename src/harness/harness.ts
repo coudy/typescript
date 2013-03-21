@@ -1256,7 +1256,7 @@ module Harness {
 
             var errorLines = stderr.lines;
             emit(stdout, true);
-            compiler.emitDeclarations(true);
+            compiler.emitDeclarations();
 
             if (context) {
                 context.postCompile();

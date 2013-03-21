@@ -368,7 +368,7 @@ module TypeScript {
             return true;
         }
 
-        public emitDeclarationsUnit(script: Script, usePullEmitter?: bool, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
+        public emitDeclarationsUnit(script: Script, reuseEmitter?: bool, declarationEmitter?: DeclarationEmitter) {
             if (!this.canEmitDeclarations(script)) {
                 return null;
             }
@@ -376,11 +376,8 @@ module TypeScript {
             if (!declarationEmitter) {
                 var declareFileName = this.emitSettings.mapOutputFileName(script.locationInfo.fileName, TypeScriptCompiler.mapToDTSFileName);
                 var declareFile = this.createFile(declareFileName, this.useUTF8ForFile(script));
-                if (usePullEmitter) {
-                    declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitSettings, this.errorReporter);
-                } else {
-                    declarationEmitter = new DeclarationEmitter(this.typeChecker, this.emitSettings, this.errorReporter);
-                }
+
+                declarationEmitter = new PullDeclarationEmitter(this.semanticInfoChain, this.emitSettings, this.errorReporter);
                 declarationEmitter.setDeclarationFile(declareFile);
             }
 
@@ -394,7 +391,7 @@ module TypeScript {
             }
         }
 
-        public emitDeclarations(usePullEmitter?: bool) {
+        public emitDeclarations() {
             if (!this.canEmitDeclarations()) {
                 return;
             }
@@ -415,10 +412,10 @@ module TypeScript {
                 var script = <Script>this.fileNameToScript.lookup(fileNames[i]); 
                 if (this.emitSettings.outputMany || declarationEmitter === null) {
                     // Create or reuse file
-                    declarationEmitter = this.emitDeclarationsUnit(script, usePullEmitter, !this.emitSettings.outputMany);
+                    declarationEmitter = this.emitDeclarationsUnit(script, !this.emitSettings.outputMany);
                 } else {
                     // Emit in existing emitter
-                    this.emitDeclarationsUnit(script, usePullEmitter, true, declarationEmitter);
+                    this.emitDeclarationsUnit(script, true, declarationEmitter);
                 }
             }
 
