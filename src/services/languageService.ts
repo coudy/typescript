@@ -37,6 +37,9 @@ module Services {
         // language service.
         refresh(): void;
 
+        getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
+        getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
+
         getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo;
         getTypeAtPosition(fileName: string, pos: number): TypeInfo;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo;

@@ -63,9 +63,9 @@ module Services {
     export class TypeScriptServicesFactory implements IShimFactory {
         private _shims: IShim[] = [];
 
-        public createPullLanguageService(host: Services.ILanguageServiceHost): Services.IPullLanguageService {
+        public createPullLanguageService(host: Services.ILanguageServiceHost): Services.ILanguageService {
             try {
-                return new Services.PullLanguageService(host);
+                return new Services.LanguageService(host);
             }
             catch (err) {
                 Services.logInternalError(host, err);

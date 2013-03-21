@@ -71,7 +71,7 @@ module Services {
     }
 
     export interface ILanguageServiceShim extends IShim {
-        languageService: Services.IPullLanguageService;
+        languageService: Services.ILanguageService;
 
         dispose(dummy: any): void;
 
@@ -261,7 +261,7 @@ module Services {
 
         constructor(factory: IShimFactory,
                     private host: ILanguageServiceShimHost,
-                    public languageService: Services.IPullLanguageService) {
+                    public languageService: Services.ILanguageService) {
             super(factory);
             this.logger = this.host;
         }

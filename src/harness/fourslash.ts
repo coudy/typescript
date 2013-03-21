@@ -92,8 +92,8 @@ module FourSlash {
 
     export class TestState {
         // Language service instance
-        public languageServiceShimHost: Harness.TypeScriptLS;
-        private languageService: Services.IPullLanguageService;
+        public languageServiceShimHost: Harness.TypeScriptLS = null;
+        private languageService: Services.ILanguageService = null;
 
         // The current caret position in the active file
         public currentCaretPosition = 0;

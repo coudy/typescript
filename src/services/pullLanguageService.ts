@@ -5,14 +5,7 @@
 ///<reference path='..\Compiler\Core\IDiagnostic.ts' />
 
 module Services {
-    /// IPullLanguageService represent language service features that use Fidelity Syntax Tree directelly without having to
-    /// rely on the old AST format.
-    export interface IPullLanguageService extends ILanguageService {
-        getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
-        getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[];
-    }
-
-    export class PullLanguageService implements IPullLanguageService {
+    export class LanguageService implements ILanguageService {
         private logger: TypeScript.ILogger;
         private pullCompilerState: PullCompilerState;
         private singleFileSyntaxTreeState: ScriptSyntaxASTState;
