@@ -52321,38 +52321,13 @@ var TypeScript;
             if (typeof referencedFiles === "undefined") { referencedFiles = []; }
             var _this = this;
             return this.timeFunction("addSourceUnit(" + fileName + ")", function () {
-                var timer = new TypeScript.Timer();
-                var reParsedScript = null;
-                if (!_this.settings.usePull) {
-                    timer.start();
-                    var script = _this.parser.parse(sourceText, fileName, TypeScript.AllowedElements.Global);
-                    timer.end();
-                    reParsedScript = script;
-                    var oldParseTime = timer.time;
-                    script.referencedFiles = referencedFiles;
-                    _this.persistentTypeState.setCollectionMode(1 /* Transient */ );
-                } else {
-                    var text = new TypeScript.ScriptSnapshotText(sourceText);
-                    timer.start();
-                    var syntaxTree = TypeScript.Parser1.parse(text, 1 /* EcmaScript5 */ );
-                    timer.end();
-                    var newParseTime = timer.time;
-                    timer.start();
-                    var script2 = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
-                    timer.end();
-                    var translateTime = timer.time;
-                    script2.referencedFiles = referencedFiles;
-                    reParsedScript = script2;
-                    _this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-                }
-                _this.fileNameToLocationInfo.addOrUpdate(fileName, reParsedScript.locationInfo);
-                if (!_this.settings.usePull) {
-                    var typeCollectionStart = new Date().getTime();
-                    _this.typeChecker.collectTypes(reParsedScript);
-                    _this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
-                }
-                _this.fileNameToScript.addOrUpdate(fileName, reParsedScript);
-                return reParsedScript;
+                var syntaxTree = TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), 1 /* EcmaScript5 */ );
+                var script = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
+                script.referencedFiles = referencedFiles;
+                _this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
+                _this.fileNameToLocationInfo.addOrUpdate(fileName, script.locationInfo);
+                _this.fileNameToScript.addOrUpdate(fileName, script);
+                return script;
             });
         };
         TypeScriptCompiler.prototype.typeCheck = function () {
@@ -53158,24 +53133,11 @@ var TypeScript;
         TypeScriptCompiler.prototype.pullUpdateUnit = function (sourceText, fileName) {
             var _this = this;
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", function () {
-                _this.parser.setErrorRecovery(null);
                 var updateResult;
-                var parseErrors = [];
-                var errorCapture = function (minChar, charLen, message, fileName, lineMap) {
-                    parseErrors.push(new ErrorEntry(fileName, minChar, minChar + charLen, message));
-                };
-                var svErrorCallback = _this.parser.errorCallback;
-                if (svErrorCallback) {
-                    _this.parser.errorCallback = errorCapture;
-                }
                 var oldScript = _this.fileNameToScript.lookup(fileName);
-                var text = new TypeScript.ScriptSnapshotText(sourceText);
-                var syntaxTree = TypeScript.Parser1.parse(text, 1 /* EcmaScript5 */ );
+                var syntaxTree = TypeScript.Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), 1 /* EcmaScript5 */ );
                 var newScript = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
                 _this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-                if (svErrorCallback) {
-                    _this.parser.errorCallback = svErrorCallback;
-                }
                 _this.fileNameToScript.addOrUpdate(fileName, newScript);
                 _this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
                 return _this.pullUpdateScript(oldScript, newScript);
@@ -53287,7 +53249,6 @@ var TypeScript;
             this.anonId = new TypeScript.Identifier("_anonymous");
             this.style_requireSemi = false;
             this.style_funcInLoop = true;
-            this.incremental = false;
             this.errorRecovery = true;
             this.outfile = undefined;
             this.errorCallback = null;

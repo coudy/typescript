@@ -149,8 +149,6 @@ module TypeScript {
             this.errorReporter.parser = this.parser;
             this.initTypeChecker(this.errorOutput);
 
-            this.parser.style_requireSemi = this.settings.styleSettings.requireSemi;
-            this.parser.style_funcInLoop = this.settings.styleSettings.funcInLoop;
             this.emitSettings = new EmitOptions(this.settings);
 
             if (this.diagnosticMessages) {
