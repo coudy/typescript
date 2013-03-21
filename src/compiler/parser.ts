@@ -39,8 +39,6 @@ module TypeScript {
         private scanner: IScanner = new Scanner();
         private currentToken: Token = null;
 
-        private needTerminator = false;
-
         // TODO: consolidate these
         private inFunction = false;
         private inInterfaceDecl = false;
@@ -4138,7 +4136,6 @@ module TypeScript {
             this.fileName = fileName;
 
             this.currentToken = null;
-            this.needTerminator = false;
             this.inFunction = false;
             this.inInterfaceDecl = false;
             this.inFncDecl = false;
