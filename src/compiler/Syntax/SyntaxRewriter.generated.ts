@@ -1,4 +1,4 @@
-﻿///<reference path='ISyntaxNodeOrToken.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxRewriter implements ISyntaxVisitor {

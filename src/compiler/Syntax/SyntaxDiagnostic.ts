@@ -1,6 +1,4 @@
-///<reference path='Diagnostic.ts' />
-///<reference path='..\Core\Errors.ts' />
-///<reference path='..\Core\IDiagnostic.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxDiagnostic extends Diagnostic1 implements IDiagnostic {

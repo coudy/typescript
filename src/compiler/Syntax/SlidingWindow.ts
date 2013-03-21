@@ -1,4 +1,4 @@
-///<reference path='..\Core\ArrayUtilities.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export interface ISlidingWindowSource {

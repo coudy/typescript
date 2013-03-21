@@ -1,10 +1,4 @@
-﻿///<reference path='SyntaxNode.ts' />
-///<reference path='ISyntaxList.ts' />
-///<reference path='ISeparatedSyntaxList.ts' />
-///<reference path='SeparatedSyntaxList.ts' />
-///<reference path='SyntaxList.ts' />
-///<reference path='SyntaxToken.ts' />
-///<reference path='Syntax.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript {
     export class SourceUnitSyntax extends SyntaxNode {

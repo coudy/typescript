@@ -1,6 +1,4 @@
-///<reference path='SyntaxRewriter.generated.ts' />
-///<reference path='FormattingOptions.ts' />
-///<reference path='Indentation.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxIndenter extends SyntaxRewriter {

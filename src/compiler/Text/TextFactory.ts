@@ -1,8 +1,4 @@
-///<reference path='..\Core\ArrayUtilities.ts' />
-///<reference path='CharacterCodes.ts' />
-///<reference path='IText.ts' />
-///<reference path='..\Core\StringUtilities.ts' />
-///<reference path='..\Core\StringTable.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.TextFactory {
     /// <summary>

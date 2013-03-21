@@ -1,5 +1,4 @@
-///<reference path='ISyntaxElement.ts' />
-///<reference path='SyntaxNode.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export interface ISyntaxList extends ISyntaxElement {

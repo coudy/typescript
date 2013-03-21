@@ -1,4 +1,4 @@
-///<reference path='ISyntaxToken.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class PositionedElement {

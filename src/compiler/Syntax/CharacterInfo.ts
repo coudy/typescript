@@ -1,5 +1,4 @@
-///<reference path='..\Text\CharacterCodes.ts' />
-///<reference path='..\Core\Debug.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class CharacterInfo {

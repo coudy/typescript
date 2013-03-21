@@ -1,20 +1,4 @@
-﻿///<reference path='SlidingWindow.ts' />
-
-///<reference path='..\Text\CharacterCodes.ts' />
-///<reference path='CharacterInfo.ts' />
-///<reference path='Constants.ts' />
-///<reference path='LanguageVersion.ts' />
-///<reference path='ISyntaxToken.ts' />
-///<reference path='..\Text\IText.ts' />
-///<reference path='ScannerUtilities.generated.ts' />
-///<reference path='..\Core\StringTable.ts' />
-///<reference path='SyntaxDiagnostic.ts' />
-///<reference path='SyntaxFacts.ts' />
-///<reference path='SyntaxKind.ts' />
-///<reference path='SyntaxToken.ts' />
-///<reference path='SyntaxToken.generated.ts' />
-///<reference path='SyntaxTriviaList.ts' />
-///<reference path='Unicode.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript {
     export class Scanner1 implements ISlidingWindowSource {

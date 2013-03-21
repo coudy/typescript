@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export class ParseOptions {
         private _allowAutomaticSemicolonInsertion: bool;

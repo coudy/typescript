@@ -1,7 +1,4 @@
-///<reference path='..\Core\ArrayUtilities.ts' />
-///<reference path='..\Core\Errors.ts' />
-///<reference path='LinePosition.ts' />
-///<reference path='TextUtilities.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export interface ILineMap {

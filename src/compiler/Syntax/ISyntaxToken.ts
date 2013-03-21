@@ -1,6 +1,4 @@
-///<reference path='ISyntaxElement.ts' />
-///<reference path='ISyntaxTriviaList.ts' />
-///<reference path='SyntaxVisitor.generated.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export interface ISyntaxToken extends ISyntaxNodeOrToken, INameSyntax {

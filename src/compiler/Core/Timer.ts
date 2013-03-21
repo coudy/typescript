@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 var global = <any>Function("return this").call(null);
 
 module TypeScript {

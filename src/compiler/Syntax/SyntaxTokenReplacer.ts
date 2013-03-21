@@ -1,4 +1,4 @@
-///<reference path='SyntaxRewriter.generated.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxTokenReplacer extends SyntaxRewriter {

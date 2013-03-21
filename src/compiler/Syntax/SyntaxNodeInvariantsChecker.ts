@@ -1,7 +1,4 @@
-///<reference path='SyntaxWalker.generated.ts' />
-
-///<reference path='..\Core\HashTable.ts' />
-///<reference path='SyntaxToken.ts' />
+///<reference path='References.ts' />
 
 // A debug class that we use to make sure a syntax node is valid.  Currently, this simply verifies
 // that the same token does not appear in the tree multiple times.  This is important for 

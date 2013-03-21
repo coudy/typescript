@@ -1,5 +1,4 @@
-﻿///<reference path='..\Text\CharacterCodes.ts' />
-///<reference path='SyntaxKind.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript {
     export class ScannerUtilities {

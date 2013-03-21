@@ -1,6 +1,4 @@
-///<reference path='ArrayUtilities.ts' />
-///<reference path='Hash.ts' />
-///<reference path='StringUtilities.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Collections {
     export var DefaultStringTableCapacity = 256;
@@ -27,7 +25,8 @@ module TypeScript.Collections {
     // string and the bucket for the table.  However, that is only incurred the first time each unique 
     // string is added.
     export class StringTable {
-        private entries: StringTableEntry[] = [];
+        // TODO: uncomment this once typecheck bug is fixed.
+        private entries /*: StringTableEntry[]*/ = [];
         private count: number = 0;
 
         constructor(capacity) {

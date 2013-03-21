@@ -33,7 +33,6 @@ var compilerSources = [
 	"astWalkerCallback.ts",
 	"astPath.ts",
 	"scanner.ts",
-	"parser.ts",
 	"symbolScope.ts",
 	"types.ts",
 	"signatures.ts",

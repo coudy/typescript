@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export class StringUtilities {
         public static fromCharCodeArray(array: number[]): string {

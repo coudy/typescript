@@ -1,5 +1,4 @@
-///<reference path='..\Core\Constants.ts' />
-///<reference path='TextSpan.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class TextChangeRange {

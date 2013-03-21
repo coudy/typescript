@@ -1,5 +1,4 @@
-///<reference path='..\Core\ArrayUtilities.ts' />
-///<reference path='DiagnosticCode.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class Diagnostic1 {

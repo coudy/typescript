@@ -1,4 +1,4 @@
-///<reference path='..\Core\Errors.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class LineAndCharacter {

@@ -16,11 +16,6 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    export interface ILineAndCharacter {
-        line: number;
-        character: number;
-    }
-
     export class ErrorReporter {
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
         public checker: TypeChecker = null;

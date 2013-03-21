@@ -1,11 +1,4 @@
-///<reference path='SyntaxRewriter.generated.ts' />
-
-///<reference path='FormattingOptions.ts' />
-///<reference path='SyntaxDedenter.ts' />
-///<reference path='SyntaxIndenter.ts' />
-///<reference path='SyntaxInformationMap.ts' />
-///<reference path='SyntaxNodeInvariantsChecker.ts' />
-///<reference path='Syntax.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Emitter1 {
     function callSignature(parameter: ParameterSyntax): CallSignatureSyntax {

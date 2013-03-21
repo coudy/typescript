@@ -1,5 +1,4 @@
-///<reference path='ISyntaxElement.ts' />
-///<reference path='ISyntaxTrivia.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export interface ISyntaxTriviaList {

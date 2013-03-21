@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export class IntegerUtilities {
         public static integerDivide(numerator: number, denominator: number): number {

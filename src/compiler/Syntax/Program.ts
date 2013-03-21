@@ -1,15 +1,14 @@
 /// <reference path='..\..\Services\es5compat.ts' />
-///<reference path='..\parser.ts' />
+
+///<reference path='References.ts' />
 ///<reference path='Emitter.ts' />
-///<reference path='Parser.ts' />
 ///<reference path='PrettyPrinter.ts' />
-///<reference path='..\Core\Environment.ts' />
-///<reference path='..\Text\TextFactory.ts' />
 ///<reference path='Test262.ts' />
-///<reference path='..\Core\Timer.ts' />
 ///<reference path='Top1000.ts' />
 ///<reference path='tests\IncrementalParserTests.ts' />
+///<reference path='..\Core\Environment.ts' />
 ///<reference path='..\..\Harness\Diff.ts' />
+///<reference path='..\SyntaxTreeToAstVisitor.ts' />
 
 var timer = new TypeScript.Timer();
 
@@ -22,12 +21,12 @@ var htmlReport = new Diff.HtmlBaselineReport("fidelity-report.html");
 htmlReport.reset();
 
 class Program {
-    runAllTests(useTypeScript: bool, verify: bool): void {
+    runAllTests(verify: bool): void {
         Environment.standardOut.WriteLine("");
 
         // Environment.standardOut.WriteLine("Testing against fuzz.");
         // this.runTests("C:\\temp\\fuzz",
-        //    filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate), 2000);
+        //    filePath => this.runParser(filePath, LanguageVersion.EcmaScript5, /*verify:*/ false, /*generateBaselines:*/ generate), 2000);
 
         if (true) {
             // return;
@@ -44,15 +43,15 @@ class Program {
 
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing against 262.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\test262",
-            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false, /*generateBaselines:*/ generate));
+            filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false, /*generateBaselines:*/ generate));
 
         Environment.standardOut.WriteLine("Testing pretty printer.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\prettyPrinter\\ecmascript5",
@@ -275,8 +274,7 @@ class Program {
 
     runParser(filePath: string,
         languageVersion: TypeScript.LanguageVersion,
-              useTypeScript: bool,
-              verify: bool,
+        verify: bool,
               generateBaseline?: bool = false): void {
         if (!TypeScript.StringUtilities.endsWith(filePath, ".ts") && !TypeScript.StringUtilities.endsWith(filePath, ".js")) {
             return;
@@ -291,28 +289,18 @@ class Program {
 
         totalSize += contents.length;
 
-        if (useTypeScript) {
-            var text1 = new TypeScript.StringScriptSnapshot(contents);
+        var text = TypeScript.TextFactory.createText(contents);
 
-            timer.start();
-            var parser1 = new TypeScript.Parser(); 
-            var unit1 = parser1.parse(text1, filePath, 0);
-            timer.end();
-        }
-        else {
-            var text = TypeScript.TextFactory.createText(contents);
+        timer.start();
+        var tree = TypeScript.Parser1.parse(text, languageVersion);
+        timer.end();
 
-            timer.start();
-            var tree = TypeScript.Parser1.parse(text, languageVersion);
-            timer.end();
+        TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
 
-            TypeScript.Debug.assert(tree.sourceUnit().fullWidth() === contents.length);
-            
-            TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
-            TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
+        TypeScript.SyntaxTreeToAstVisitor.checkPositions = true;
+        TypeScript.SyntaxTreeToAstVisitor.visit(tree, "");
 
-            this.checkResult(filePath, tree, verify, generateBaseline, false);
-        }
+        this.checkResult(filePath, tree, verify, generateBaseline, false);
 
         totalTime += timer.time;
     }
@@ -468,7 +456,7 @@ class Program {
         this.checkResult(filePath, result, verify, generateBaseline, false);
     }
 
-    parseArguments(useTypeScript: bool): void {
+    parseArguments(): void {
         if (true) {
             return;
         }
@@ -480,7 +468,7 @@ class Program {
                 continue;
             }
 
-            this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, /*verify:*/ false);
+            this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, /*verify:*/ false);
         }
     }
 
@@ -625,18 +613,8 @@ var program = new Program();
 if (true) {
     totalTime = 0;
     totalSize = 0;
-    program.runAllTests(false, true);
-    program.parseArguments(false);
-    Environment.standardOut.WriteLine("Total time: " + totalTime);
-    Environment.standardOut.WriteLine("Total size: " + totalSize);
-}
-
-// Existing parser.
-if (false) {
-    totalTime = 0;
-    totalSize = 0;
-    program.runAllTests(true, true);
-    program.parseArguments(true);
+    program.runAllTests(true);
+    program.parseArguments();
     Environment.standardOut.WriteLine("Total time: " + totalTime);
     Environment.standardOut.WriteLine("Total size: " + totalSize);
 }

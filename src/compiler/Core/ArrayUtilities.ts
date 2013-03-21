@@ -1,5 +1,4 @@
-///<reference path='Debug.ts' />
-///<reference path='Errors.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class ArrayUtilities {

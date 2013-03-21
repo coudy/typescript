@@ -1,7 +1,4 @@
-///<reference path='SyntaxWalker.generated.ts' />
-
-///<reference path='..\Core\HashTable.ts' />
-///<reference path='SyntaxToken.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export interface ITokenInformation {

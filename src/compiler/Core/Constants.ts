@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export enum Constants {
         // 2^30-1

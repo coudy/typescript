@@ -1,7 +1,8 @@
-///<reference path='ISyntaxList.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Syntax {
-    class EmptySyntaxList implements ISyntaxList {
+    // TODO: stop exporting this once typecheck bug is fixed.
+    export class EmptySyntaxList implements ISyntaxList {
         public kind(): SyntaxKind { return SyntaxKind.List; }
 
         public isNode(): bool { return false; }

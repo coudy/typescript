@@ -1,4 +1,4 @@
-///<reference path='Errors.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class Hash {

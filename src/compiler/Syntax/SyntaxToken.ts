@@ -1,6 +1,4 @@
-///<reference path='ISyntaxToken.ts' />
-///<reference path='..\Core\Hash.ts' />
-///<reference path='Scanner.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     export function realizeToken(token: ISyntaxToken): ISyntaxToken {

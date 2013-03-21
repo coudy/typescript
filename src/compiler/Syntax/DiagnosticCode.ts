@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export enum DiagnosticCode {
         Unrecognized_escape_sequence,

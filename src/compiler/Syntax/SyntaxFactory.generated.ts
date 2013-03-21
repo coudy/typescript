@@ -1,4 +1,4 @@
-﻿///<reference path='ISyntaxList.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     export interface IFactory {
@@ -90,7 +90,8 @@ module TypeScript.Syntax {
         debuggerStatement(debuggerKeyword: ISyntaxToken, semicolonToken: ISyntaxToken): DebuggerStatementSyntax;
     }
 
-    class NormalModeFactory implements IFactory {
+    // TODO: stop exporting this when compiler bug is fixed.
+    export class NormalModeFactory implements IFactory {
         sourceUnit(moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken): SourceUnitSyntax {
             return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ false);
         }
@@ -351,7 +352,8 @@ module TypeScript.Syntax {
         }
     }
 
-    class StrictModeFactory implements IFactory {
+    // TODO: stop exporting this when compiler bug is fixed.
+    export class StrictModeFactory implements IFactory {
         sourceUnit(moduleElements: ISyntaxList, endOfFileToken: ISyntaxToken): SourceUnitSyntax {
             return new SourceUnitSyntax(moduleElements, endOfFileToken, /*parsedInStrictMode:*/ true);
         }

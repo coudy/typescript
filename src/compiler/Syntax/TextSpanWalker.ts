@@ -1,4 +1,4 @@
-///<reference path='SyntaxWalker.generated.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     class TextSpanWalker extends SyntaxWalker {

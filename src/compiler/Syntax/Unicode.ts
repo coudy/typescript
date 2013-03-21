@@ -1,5 +1,4 @@
-///<reference path='..\Core\Errors.ts' />
-///<reference path='LanguageVersion.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class Unicode {

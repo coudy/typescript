@@ -1,7 +1,4 @@
-///<reference path='..\Text\CharacterCodes.ts' />
-///<reference path='..\Core\Debug.ts' />
-///<reference path='ISyntaxTrivia.ts' />
-///<reference path='..\Core\StringUtilities.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     class SyntaxTrivia implements ISyntaxTrivia {

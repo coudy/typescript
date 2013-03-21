@@ -26,7 +26,6 @@
 ///<reference path='sourceMapping.ts' />
 ///<reference path='emitter.ts' />
 ///<reference path='errorReporter.ts' />
-///<reference path='parser.ts' />
 ///<reference path='printContext.ts' />
 ///<reference path='scanner.ts' />
 ///<reference path='scopeAssignment.ts' />

@@ -1,13 +1,4 @@
-/// <reference path='SlidingWindow.ts' />
-
-/// <reference path='ParseOptions.ts' />
-/// <reference path='Scanner.ts' />
-/// <reference path='Strings.ts' />
-/// <reference path='SyntaxFactory.generated.ts' />
-/// <reference path='SyntaxFacts2.ts' />
-/// <reference path='SyntaxTree.ts' />
-/// <reference path='SyntaxTriviaList.ts' />
-/// <reference path='..\Text\TextChangeRange.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Parser1 {
     // Information the parser needs to effectively rewind.

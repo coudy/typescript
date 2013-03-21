@@ -1,6 +1,4 @@
-///<reference path='ITextLine.ts' />
-///<reference path='LineMap.ts' />
-///<reference path='LinePosition.ts' />
+///<reference path='References.ts' />
 
 /// <summary>
 /// Represents an immutable snapshot of text.

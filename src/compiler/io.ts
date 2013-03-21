@@ -15,6 +15,7 @@
 
 ///<reference path='Enumerator.ts' />
 ///<reference path='process.ts' />
+///<reference path='Core\References.ts' />
 
 interface IResolvedFile {
     content: string;
@@ -102,7 +103,6 @@ module IOUtils {
 
 // Declare dependencies needed for all supported hosts
 declare function setTimeout(callback: () =>void , ms?: number);
-declare var require: any;
 
 var IO = (function() {
 

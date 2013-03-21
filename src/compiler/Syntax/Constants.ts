@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export enum SyntaxConstants {
         // Masks that we use to place information about trivia into a single int. The first two flags 

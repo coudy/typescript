@@ -1,7 +1,4 @@
-///<reference path='..\Core\ArrayUtilities.ts' />
-///<reference path='..\Core\Errors.ts' />
-///<reference path='ISyntaxTriviaList.ts' />
-///<reference path='SyntaxTrivia.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     export var emptyTriviaList: ISyntaxTriviaList = {

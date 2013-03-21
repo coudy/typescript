@@ -1,4 +1,4 @@
-﻿///<reference path='SyntaxNodes.generated.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript {
     export interface ISyntaxVisitor {

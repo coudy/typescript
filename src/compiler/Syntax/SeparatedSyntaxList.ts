@@ -1,8 +1,4 @@
-///<reference path='..\Core\IntegerUtilities.ts' />
-///<reference path='ISeparatedSyntaxList.ts' />
-///<reference path='PositionedElement.ts' />
-///<reference path='SyntaxFacts.ts' />
-///<reference path='SyntaxFacts.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     export var emptySeparatedList: ISeparatedSyntaxList = {

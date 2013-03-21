@@ -1,6 +1,4 @@
-﻿///<reference path='ISyntaxToken.ts' />
-///<reference path='..\Text\IText.ts' />
-///<reference path='SyntaxToken.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     export class VariableWidthTokenWithNoTrivia implements ISyntaxToken {

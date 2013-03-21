@@ -1,5 +1,4 @@
-///<reference path='ArrayUtilities.ts' />
-///<reference path='Hash.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Collections {
     export var DefaultHashTableCapacity = 256;

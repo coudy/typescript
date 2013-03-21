@@ -1,6 +1,4 @@
-///<reference path='..\Core\Contract.ts' />
-///<reference path='..\Core\Errors.ts' />
-///<reference path='..\Core\MathPrototype.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class TextSpan {

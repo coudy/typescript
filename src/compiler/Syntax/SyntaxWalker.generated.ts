@@ -1,4 +1,4 @@
-﻿///<reference path='SyntaxVisitor.generated.ts' />
+﻿///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxWalker implements ISyntaxVisitor {

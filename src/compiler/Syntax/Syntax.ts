@@ -1,4 +1,4 @@
-/// <reference path='SyntaxFactory.generated.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Syntax {
     export function emptySourceUnit() {

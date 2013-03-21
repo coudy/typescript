@@ -1,6 +1,4 @@
-///<reference path='SyntaxNodes.generated.ts' />
-///<reference path='SyntaxDiagnostic.ts' />
-///<reference path='..\Text\LineMap.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxTree {

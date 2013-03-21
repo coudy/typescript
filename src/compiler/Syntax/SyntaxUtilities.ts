@@ -1,4 +1,4 @@
-///<reference path='PositionedElement.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxUtilities {

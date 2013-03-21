@@ -1,5 +1,4 @@
-///<reference path='..\Core\Debug.ts' />
-///<reference path='SyntaxKind.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.SyntaxFacts {
     export function isDirectivePrologueElement(node: ISyntaxNodeOrToken): bool {

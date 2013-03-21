@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export enum CharacterCodes {
         nullCharacter = 0,

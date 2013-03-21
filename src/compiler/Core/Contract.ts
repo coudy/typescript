@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export class Contract {
         public static requires(expression: bool): void {

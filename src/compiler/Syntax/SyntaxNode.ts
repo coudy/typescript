@@ -1,9 +1,4 @@
-///<reference path='SyntaxRewriter.generated.ts' />
-///<reference path='..\Core\Errors.ts' />
-///<reference path='ISyntaxElement.ts' />
-///<reference path='ISyntaxToken.ts' />
-///<reference path='SyntaxVisitor.generated.ts' />
-///<reference path='SyntaxTokenReplacer.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class SyntaxNode implements ISyntaxNodeOrToken {

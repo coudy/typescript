@@ -1,4 +1,4 @@
-///<reference path='PositionTrackingWalker.ts' />
+///<reference path='References.ts' />
 
 module TypeScript {
     export class DepthLimitedWalker extends PositionTrackingWalker {

@@ -1,5 +1,4 @@
-///<reference path='IText.ts' />
-///<reference path='CharacterCodes.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.TextUtilities {
     export function parseLineStarts(text: ISimpleText): number[]{

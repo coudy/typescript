@@ -1,6 +1,4 @@
-///<reference path='ISyntaxToken.ts' />
-///<reference path='FormattingOptions.ts' />
-///<reference path='SyntaxInformationMap.ts' />
+///<reference path='References.ts' />
 
 module TypeScript.Indentation {
     export function columnForEndOfToken(token: ISyntaxToken,

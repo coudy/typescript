@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export class Errors {
         public static argument(argument: string, message?: string): Error {

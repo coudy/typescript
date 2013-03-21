@@ -1,3 +1,5 @@
+///<reference path='References.ts' />
+
 module TypeScript {
     export class MathPrototype {
         public static max(a: number, b: number): number {
