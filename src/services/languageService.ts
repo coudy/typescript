@@ -22,7 +22,6 @@ module Services {
     //
     export interface ILanguageServiceHost extends TypeScript.ILogger {
         getCompilationSettings(): TypeScript.CompilationSettings;
-        getHostSettings(): TypeScript.IHostSettings;
 
         getScriptFileNames(): string[];
         getScriptVersion(fileName: string): number;

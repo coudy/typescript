@@ -41,7 +41,6 @@ module Services {
     //
     export interface ILanguageServiceShimHost extends TypeScript.ILogger {
         getCompilationSettings(): string;
-        getHostSettings(): string;
 
         // Returns a JSON encoded value of the type:
         // string[]
@@ -212,16 +211,6 @@ module Services {
         public getScriptVersion(fileName: string): number {
             return this.shimHost.getScriptVersion(fileName);
         }
-
-        public getHostSettings(): TypeScript.IHostSettings {
-            var settingsJson = this.shimHost.getHostSettings();
-            if (settingsJson == null) {
-                return null;
-            }
-
-            var settings: TypeScript.IHostSettings = JSON.parse(<any>settingsJson);
-            return settings;
-        }
     }
 
     export function simpleForwardCall(logger: TypeScript.ILogger, actionDescription: string, action: () =>any): any {
@@ -272,9 +261,9 @@ module Services {
         private logger: TypeScript.ILogger;
 
         constructor(factory: IShimFactory,
-	private host: ILanguageServiceShimHost,
+                    private host: ILanguageServiceShimHost,
                     public languageService: Services.ILanguageService,
-	public pullLanguageService: Services.IPullLanguageService) {
+                    public pullLanguageService: Services.IPullLanguageService) {
             super(factory);
             this.logger = this.host;
         }

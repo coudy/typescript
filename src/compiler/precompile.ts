@@ -121,10 +121,6 @@ module TypeScript {
         }
     }
 
-    export interface IHostSettings {
-        usePullLanguageService: bool;
-    }
-    
     ///
     /// Preprocessing
     ///

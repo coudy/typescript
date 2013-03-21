@@ -1790,10 +1790,6 @@ module Harness {
 
             return result;
         }
-
-        public getHostSettings(): string {
-            return JSON2.stringify({ usePullLanguageService: true });
-        }
     }
 
     // Describe/it definitions
