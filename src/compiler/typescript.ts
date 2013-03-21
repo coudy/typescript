@@ -185,7 +185,6 @@ module TypeScript {
         public setErrorOutput(outerr) {
             this.errorOutput = outerr;
             this.errorReporter.setErrOut(outerr);
-            this.parser.outfile = outerr;
         }
 
         public emitCommentsToOutput() {
