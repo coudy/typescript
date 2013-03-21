@@ -87,8 +87,8 @@ class CommandLineHost implements TypeScript.IResolverHost {
             }
 
         var resolutionDispatcher: TypeScript.IResolutionDispatcher = {
-            postResolutionError: (errorFile, line, col, errorMessage) => {
-                this.errorReporter(errorFile + "(" + line + "," + col + ") " + (errorMessage === "" ? "" : ": " + errorMessage));
+            postResolutionError: (errorFile, fileReference, errorMessage) => {
+                this.errorReporter(errorFile + "(" + (fileReference.line + 1) + "," + (fileReference.character + 1) + ") " + (errorMessage === "" ? "" : ": " + errorMessage));
             },
             postResolution: (path: string, code: TypeScript.IScriptSnapshot) => {
                 var pathId = this.getPathIdentifier(path);

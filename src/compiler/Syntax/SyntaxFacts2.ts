@@ -21,4 +21,9 @@ module TypeScript.SyntaxFacts {
         var text = stringLiteral.text();
         return text === '"use strict"' || text === "'use strict'";
     }
+
+    export function isIdentifierNameOrAnyKeyword(token: ISyntaxToken): bool {
+        var tokenKind = token.tokenKind;
+        return tokenKind === SyntaxKind.IdentifierName || SyntaxFacts.isAnyKeyword(tokenKind);
+    }
 }

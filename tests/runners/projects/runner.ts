@@ -13,7 +13,7 @@ class HarnessHost implements TypeScript.IResolverHost {
         var resolvedPaths: any = {};
 
         var postResolutionError =
-            function (errorFile: string, line: number, col: number, errorMessage: string) {
+            function (errorFile: string, fileReference: TypeScript.IFileReference, errorMessage: string) {
                 TypeScript.CompilerDiagnostics.debugPrint("Could not resolve file '" + errorFile + "'" + (errorMessage == "" ? "" : ": " + errorMessage));
             }
 

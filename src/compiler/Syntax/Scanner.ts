@@ -66,6 +66,10 @@ module TypeScript {
             return this.slidingWindow.currentItem(/*argument:*/ null);
         }
 
+        public absoluteIndex(): number {
+            return this.slidingWindow.absoluteIndex();
+        }
+
         // Set's the scanner to a specific position in the text.
         public setAbsoluteIndex(index: number): void {
             this.slidingWindow.setAbsoluteIndex(index);

@@ -1427,10 +1427,8 @@ module Harness {
                     var isRef = line.match(/reference\spath='(\w*_?\w*\.?d?\.ts)'/);
                     if (isRef) {
                         var ref = {
-                            minChar: 0,
-                            limChar: 0,
-                            startLine:0,
-                            startCol:0,
+                            line:0,
+                            character:0,
                             path: isRef[1],
                             isResident: false
                         };

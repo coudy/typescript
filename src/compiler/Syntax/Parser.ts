@@ -1226,11 +1226,6 @@ module TypeScript.Parser1 {
             return this.createMissingToken(kind, token);
         }
 
-        private static isIdentifierNameOrAnyKeyword(token: ISyntaxToken): bool {
-            var tokenKind = token.tokenKind;
-            return tokenKind === SyntaxKind.IdentifierName || SyntaxFacts.isAnyKeyword(tokenKind);
-        }
-
         // An identifier is basically any word, unless it is a reserved keyword.  so 'foo' is an 
         // identifier and 'return' is not.  Note: a word may or may not be an identifier depending 
         // on the state of the parser.  For example, 'yield' is an identifier *unless* the parser 
@@ -1836,7 +1831,7 @@ module TypeScript.Parser1 {
             while (shouldContinue && this.currentToken().tokenKind === SyntaxKind.DotToken) {
                 var dotToken = this.eatToken(SyntaxKind.DotToken);
 
-                shouldContinue = ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
+                shouldContinue = SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken());
                 var identifier = this.eatIdentifierNameToken();
 
                 current = this.factory.qualifiedName(current, dotToken, identifier);
@@ -1888,7 +1883,7 @@ module TypeScript.Parser1 {
             }
 
             var token0 = this.currentToken();
-            return ParserImpl.isIdentifierNameOrAnyKeyword(token0) ||
+            return SyntaxFacts.isIdentifierNameOrAnyKeyword(token0) ||
                    token0.tokenKind === SyntaxKind.StringLiteral;
         }
 
@@ -1904,7 +1899,7 @@ module TypeScript.Parser1 {
             var identifier: ISyntaxToken = null;
             var stringLiteral: ISyntaxToken = null;
 
-            if (ParserImpl.isIdentifierNameOrAnyKeyword(token0)) {
+            if (SyntaxFacts.isIdentifierNameOrAnyKeyword(token0)) {
                 // TODO(cyrusn): Remove check for variable declarator when we stop supporting old style enums.
                 // Back compat.  For the time being, we allow enum elements of the form "foo = value".
                 // We will eventually remove this and require the "foo: value" form.
@@ -2086,7 +2081,7 @@ module TypeScript.Parser1 {
             }
 
             // We must at least have an identifier name at this point.
-            if (!ParserImpl.isIdentifierNameOrAnyKeyword(this.peekToken(index))) {
+            if (!SyntaxFacts.isIdentifierNameOrAnyKeyword(this.peekToken(index))) {
                 return false;
             }
 
@@ -2603,7 +2598,7 @@ module TypeScript.Parser1 {
         }
 
         private isMethodSignature(): bool {
-            if (ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken())) {
+            if (SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())) {
                 // id(
                 if (this.isCallSignature(1)) {
                     return true;
@@ -2622,7 +2617,7 @@ module TypeScript.Parser1 {
         private isPropertySignature(): bool {
             // Note: identifiers also start function signatures.  So it's important that we call this
             // after we calll isFunctionSignature.
-            return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken());
+            return SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken());
         }
 
         private isExtendsClause(): bool {
@@ -4414,7 +4409,7 @@ module TypeScript.Parser1 {
         }
 
         private eatPropertyName(): ISyntaxToken {
-            return ParserImpl.isIdentifierNameOrAnyKeyword(this.currentToken())
+            return SyntaxFacts.isIdentifierNameOrAnyKeyword(this.currentToken())
                 ? this.eatIdentifierNameToken()
                 : this.eatAnyToken();
         }
@@ -4432,7 +4427,7 @@ module TypeScript.Parser1 {
         private isPropertyName(token: ISyntaxToken, inErrorRecovery: bool): bool {
             // NOTE: we do *not* want to check "this.isIdentifier" here.  Any IdentifierName is 
             // allowed here, even reserved words like keywords.
-            if (ParserImpl.isIdentifierNameOrAnyKeyword(token)) {
+            if (SyntaxFacts.isIdentifierNameOrAnyKeyword(token)) {
                 // Except: if we're in error recovery, then we don't want to consider keywords. 
                 // After all, if we have:
                 //
