@@ -1,1 +1,0 @@
-function f1(): { new(): void; } { return function() { return 1; } };  // this used to not be an error, but is now that we've changed our assignment compatibility rules

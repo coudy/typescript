@@ -1,6 +1,7 @@
 var C = (function () {
     function C() {
         this.Foo = 0;
+        this.string = {};
     }
     Object.defineProperty(C.prototype, "Foo", {
         get: function () {

@@ -1,3 +1,2 @@
 var a\u0031;
-var __missing;
-a;
+var u0031a;

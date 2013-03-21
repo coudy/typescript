@@ -1,17 +1,17 @@
-var ;
-(function () {
-    var Helper = (function () {
-        function Helper() { }
-        return Helper;
-    })();    
-})( || ( = {}));
-var ;
-(function () {
-    var Helper = (function () {
-        function Helper() { }
-        return Helper;
-    })();    
-})( || ( = {}));
+module;
+ {
+}
+var Helper = (function () {
+    function Helper() { }
+    return Helper;
+})();
+module;
+ {
+}
+var Helper = (function () {
+    function Helper() { }
+    return Helper;
+})();
 var Foo;
 (function (Foo) {
     var Helper = (function () {

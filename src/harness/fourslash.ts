@@ -991,7 +991,7 @@ module FourSlash {
         var mockFilename = 'test_input.ts';
 
         var result = '';
-        var tsFn = Harness.usePull ? './tests/cases/prototyping/fourslash/fourslash.ts' : './tests/cases/fourslash/fourslash.ts';
+        var tsFn = './tests/cases/fourslash/fourslash.ts';
 
         // TODO: previously we set these two settings on the compiler:
         //    settings.outputOption = "fourslash.js";
@@ -1011,7 +1011,7 @@ module FourSlash {
             resolvePath: (s: string)=>s
         }
 
-        Harness.Compiler.emit(emitterIOHost, Harness.usePull);
+        Harness.Compiler.emit(emitterIOHost, true);
         if (fsErrors.lines.length > 0) {
             throw new Error('Error compiling ' + fileName + ': ' + fsErrors.lines.join('\r\n'));
         }

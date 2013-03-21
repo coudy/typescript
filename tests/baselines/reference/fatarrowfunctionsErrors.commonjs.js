@@ -5,7 +5,7 @@ foo(function () {
     }
     return 0;
 });
-foo(function () {
+foo((1), function (__missing) {
     return 0;
 });
 foo(function (x) {
@@ -15,12 +15,10 @@ foo(function (x) {
     if (typeof x === "undefined") { x = 0; }
     return x;
 });
-var y = x;
-;
-(function (number) {
+var y = x, number;
+function (__missing) {
     return x * x;
-});
-false ? (function () {
+}false ? (function () {
     return null;
 }) : null;
 var x1 = function () {

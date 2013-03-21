@@ -1,3 +1,3 @@
-var __missing;
-(function (__missing) {
-    })(__missing || (__missing = {}));
+module.module;
+ {
+}

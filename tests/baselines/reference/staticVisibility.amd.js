@@ -9,7 +9,7 @@ var C1 = (function () {
     C1.b = function b() {
         v = 1;
         this.p = 0;
-        C1.s = 1;
+        s = 1;
     };
     return C1;
 })();
@@ -20,10 +20,12 @@ var C2 = (function () {
     Object.defineProperty(C2, "Bar", {
         get: function () {
             return "bar";
-        },
+        }
+,
         set: function (bar) {
             barback = bar;
-        },
+        }
+,
         enumerable: true,
         configurable: true
     });

@@ -49,8 +49,8 @@
     m1.m1_v22_public = new C1_public();
     var m1_v23_private = new C2_private();
     m1.m1_v24_public = new C2_private();
-})(exports.m1 || (exports.m1 = {}));
-var m1 = exports.m1;
+})(0.m1 || (0.m1 = {}));
+var m1 = 0.m1;
 var m2;
 (function (m2) {
     var m2_C1_public = (function () {
@@ -66,12 +66,12 @@ var m2;
     })();    
     var m2_C3_public = (function () {
         function m2_C3_public() {
-            this.m2_C3_v11_private = new m2_C1_public();
-            this.m2_C3_v12_public = new m2_C1_public();
+            this.m2_C3_v11_private = new m2.m2_C1_public();
+            this.m2_C3_v12_public = new m2.m2_C1_public();
             this.m2_C3_v13_private = new m2_C2_private();
             this.m2_C3_v14_public = new m2_C2_private();
-            this.m2_C3_v21_private = new m2_C1_public();
-            this.m2_C3_v22_public = new m2_C1_public();
+            this.m2_C3_v21_private = new m2.m2_C1_public();
+            this.m2_C3_v22_public = new m2.m2_C1_public();
             this.m2_C3_v23_private = new m2_C2_private();
             this.m2_C3_v24_public = new m2_C2_private();
         }
@@ -80,12 +80,12 @@ var m2;
     m2.m2_C3_public = m2_C3_public;    
     var m2_C4_public = (function () {
         function m2_C4_public() {
-            this.m2_C4_v11_private = new m2_C1_public();
-            this.m2_C4_v12_public = new m2_C1_public();
+            this.m2_C4_v11_private = new m2.m2_C1_public();
+            this.m2_C4_v12_public = new m2.m2_C1_public();
             this.m2_C4_v13_private = new m2_C2_private();
             this.m2_C4_v14_public = new m2_C2_private();
-            this.m2_C4_v21_private = new m2_C1_public();
-            this.m2_C4_v22_public = new m2_C1_public();
+            this.m2_C4_v21_private = new m2.m2_C1_public();
+            this.m2_C4_v22_public = new m2.m2_C1_public();
             this.m2_C4_v23_private = new m2_C2_private();
             this.m2_C4_v24_public = new m2_C2_private();
         }
@@ -95,12 +95,12 @@ var m2;
     m2.m2_v2_public;
     var m2_v3_private;
     m2.m2_v4_public;
-    var m2_v11_private = new m2_C1_public();
-    m2.m2_v12_public = new m2_C1_public();
+    var m2_v11_private = new m2.m2_C1_public();
+    m2.m2_v12_public = new m2.m2_C1_public();
     var m2_v13_private = new m2_C2_private();
     m2.m2_v14_public = new m2_C2_private();
-    var m2_v21_private = new m2_C1_public();
-    m2.m2_v22_public = new m2_C1_public();
+    var m2_v21_private = new m2.m2_C1_public();
+    m2.m2_v22_public = new m2.m2_C1_public();
     var m2_v23_private = new m2_C2_private();
     m2.m2_v24_public = new m2_C2_private();
 })(m2 || (m2 = {}));

@@ -120,16 +120,18 @@ function AA() {
         };
         return ClassA;
     })();    
-    var NotExportedModule;
-    (function (NotExportedModule) {
-        var ClassA = (function () {
-            function ClassA() { }
-            return ClassA;
-        })();
-        NotExportedModule.ClassA = ClassA;        
-    })(NotExportedModule || (NotExportedModule = {}));
-})(exports.TopLevelModule1 || (exports.TopLevelModule1 = {}));
-var TopLevelModule1 = exports.TopLevelModule1;
+ {
+    }
+})(0.TopLevelModule1 || (0.TopLevelModule1 = {}));
+var TopLevelModule1 = 0.TopLevelModule1;
+var NotExportedModule;
+(function (NotExportedModule) {
+    var ClassA = (function () {
+        function ClassA() { }
+        return ClassA;
+    })();
+    NotExportedModule.ClassA = ClassA;    
+})(NotExportedModule || (NotExportedModule = {}));
 var TopLevelModule2;
 (function (TopLevelModule2) {
     (function (SubModule3) {
@@ -145,15 +147,7 @@ var TopLevelModule2;
 })(TopLevelModule2 || (TopLevelModule2 = {}));
 //@ sourceMappingURL=0.js.map
 ////[0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["TopLevelModule1","TopLevelModule1.SubModule1","TopLevelModule1.SubModule1.SubSubModule1","TopLevelModule1.SubModule1.SubSubModule1.ClassA","TopLevelModule1.SubModule1.SubSubModule1.ClassA.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassA.AisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.ClassB","TopLevelModule1.SubModule1.SubSubModule1.ClassB.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassB.BisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor.QQ","TopLevelModule1.SubModule1.ClassA","TopLevelModule1.SubModule1.ClassA.constructor","TopLevelModule1.SubModule1.ClassA.constructor.AA","TopLevelModule1.SubModule2","TopLevelModule1.SubModule2.SubSubModule2","TopLevelModule1.SubModule2.SubSubModule2.ClassA","TopLevelModule1.SubModule2.SubSubModule2.ClassA.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassA.AisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassB","TopLevelModule1.SubModule2.SubSubModule2.ClassB.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassB.BisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassC","TopLevelModule1.SubModule2.SubSubModule2.ClassC.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassC.CisIn1_2_2","TopLevelModule1.ClassA","TopLevelModule1.ClassA.constructor","TopLevelModule1.ClassA.AisIn1","TopLevelModule1.NotExportedModule","TopLevelModule1.NotExportedModule.ClassA","TopLevelModule1.NotExportedModule.ClassA.constructor","TopLevelModule2","TopLevelModule2.SubModule3","TopLevelModule2.SubModule3.ClassA","TopLevelModule2.SubModule3.ClassA.constructor","TopLevelModule2.SubModule3.ClassA.AisIn2_3"],"mappings":"AAAA,CAAA,UAAc,eAAe;KACzBA,UAAcA,UAAUA;SACpBC,UAAcA,aAAaA;YACvBC;gBAAAC;AAmBCA,gBAlBGA,8BAAAA;oBAEIE,IAAIA,EAAEA,CAASA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAC/BA,IAAIA,EAAEA,CAAuBA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAC7CA,IAAIA,EAAEA,CAAkCA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBACxDA,IAAIA,EAAEA,CAAkDA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAGxEA,IAAIA,EAAEA,CAASA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAC/BA,IAAIA,EAAEA,CAAkDA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAGxEA,IAAIA,EAAEA,CAAkDA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAGxEA,IAAIA,EAAEA,CAAaA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBACnCA,IAAIA,EAAEA,CAA2BA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;gBACrDA,CAACA;gBACLF;AAACA,YAADA,CAACA,IAAAD;YAnBDA,8BAmBCA,YAAAA;YACDA;gBAAAI;AAsBCA,gBArBGA,8BAAAA;oBAIIE,IAAIA,EAAEA,CAASA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAC/BA,IAAIA,EAAEA,CAAuBA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAC7CA,IAAIA,EAAEA,CAAkCA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBACxDA,IAAIA,EAAEA,CAAkDA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAGxEA,IAAIA,EAAEA,CAASA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAC/BA,IAAIA,EAAEA,CAAkDA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAGxEA,IAAIA,EAAEA,CAAkDA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBACxEA,IAAIA,EAAEA,CAAoCA;oBAACA,EAAEA,CAACA,QAAQA,EAAEA;oBAGxDA,IAAIA,EAAEA,CAAaA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBACnCA,IAAIA,EAAEA,CAA2BA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;gBACrDA,CAACA;gBACLF;AAACA,YAADA,CAACA,IAAAJ;YAtBDA,8BAsBCA,YAAAA;YAEDA;gBACIO,SADEA,iBAAiBA;AAEfC,SAASA,EAAEA;wBAEPC,IAAIA,EAAEA,CAAkDA;wBAACA,EAAEA,CAACA,UAAUA,EAAEA;wBACxEA,IAAIA,EAAEA,CAAkDA;wBAACA,EAAEA,CAACA,UAAUA,EAAEA;wBACxEA,IAAIA,EAAEA,CAAaA;wBAACA,EAAEA,CAACA,UAAUA,EAAEA;wBACnCA,IAAIA,EAAEA,CAAoCA;wBAACA,EAAEA,CAACA,QAAQA,EAAEA;oBAC5DA,CAACA;gBACLD,CAACA;gBACLD;AAACA,YAADA,CAACA,IAAAP,YAAAA;QACLA,CAACA,+DAAAD;QAxDDA;AAwDCA,QAGDA;YACIW,SADEA,MAAMA;AAEJC,SAASA,EAAEA;oBACPC,IAAIA,EAAEA,CAAuBA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAC7CA,IAAIA,EAAEA,CAAkCA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBACxDA,IAAIA,EAAEA,CAAkDA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;oBAGxEA,IAAIA,EAAEA,CAA2BA;oBAACA,EAAEA,CAACA,UAAUA,EAAEA;gBACrDA,CAACA;YACLD,CAACA;YACLD;AAACA,QAADA,CAACA,IAAAX,QAAAA;IACLA,CAACA,mEAAAD;IAxEDA;AAwECA,KAEDA,UAAcA,UAAUA;SACpBe,UAAcA,aAAaA;YAEvBC;gBAAAC;AAA+CA,gBAAzBA,8BAAAA;gBAAsBE,CAACA;gBAACF;AAACA,YAADA,CAACA,IAAAD;YAA/CA,8BAA+CA,YAAAA;YAC/CA;gBAAAI;AAA+CA,gBAAzBA,8BAAAA;gBAAsBE,CAACA;gBAACF;AAACA,YAADA,CAACA,IAAAJ;YAA/CA,8BAA+CA,YAAAA;YAC/CA;gBAAAO;AAA+CA,gBAAzBA,8BAAAA;gBAAsBE,CAACA;gBAACF;AAACA,YAADA,CAACA,IAAAP;YAA/CA,8BAA+CA,YAAAA;QAGnDA,CAACA,+DAAAD;QAPDA;AAOCA,IAGLA,CAACA,mEAAAf;IAXDA;AAWCA,IAEDA;QAAA0B;AAECA,QADGA,0BAAAA;QAAkBE,CAACA;QACvBF;AAACA,IAADA,CAACA,IAAA1B,IAAAA;IAMDA,IAAOA,iBAAiBA;AAEvBA,KAFDA,UAAOA,iBAAiBA;QACpB6B;YAAAC;AAAuBA,YAADA;AAACA,QAADA,CAACA,IAAAD;QAAvBA,kCAAuBA,QAAAA;IAC3BA,CAACA,iDAAA7B;AACLA,CAACA,6DAAA;AAnGD;AAmGC,IAEM,eAAe;AAMrB,CAND,UAAO,eAAe;KAClBgC,UAAcA,UAAUA;QACpBC;YAAAC;AAECA,YADGA,4BAAAA;YAAoBE,CAACA;YACzBF;AAACA,QAADA,CAACA,IAAAD;QAFDA,2BAECA,QAAAA;IACLA,CAACA,mEAAAD;IAJDA;AAICA,CACJA,6CAAA;AAED"}
-////[strings.js]
-//@ sourceMappingURL=strings.js.map
-////[strings.js.map]
-{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
-////[test.js]
-//@ sourceMappingURL=test.js.map
-////[test.js.map]
-{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
+{"version":3,"file":"0.js","sources":["0.ts"],"names":["TopLevelModule1","TopLevelModule1.SubModule1","TopLevelModule1.SubModule1.SubSubModule1","TopLevelModule1.SubModule1.SubSubModule1.ClassA","TopLevelModule1.SubModule1.SubSubModule1.ClassA.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassA.AisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.ClassB","TopLevelModule1.SubModule1.SubSubModule1.ClassB.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassB.BisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor.QQ","TopLevelModule1.SubModule1.ClassA","TopLevelModule1.SubModule1.ClassA.constructor","TopLevelModule1.SubModule1.ClassA.constructor.AA","TopLevelModule1.SubModule2","TopLevelModule1.SubModule2.SubSubModule2","TopLevelModule1.SubModule2.SubSubModule2.ClassA","TopLevelModule1.SubModule2.SubSubModule2.ClassA.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassA.AisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassB","TopLevelModule1.SubModule2.SubSubModule2.ClassB.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassB.BisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassC","TopLevelModule1.SubModule2.SubSubModule2.ClassC.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassC.CisIn1_2_2","TopLevelModule1.ClassA","TopLevelModule1.ClassA.constructor","TopLevelModule1.ClassA.AisIn1","NotExportedModule","NotExportedModule.ClassA","NotExportedModule.ClassA.constructor","TopLevelModule2","TopLevelModule2.SubModule3","TopLevelModule2.SubModule3.ClassA","TopLevelModule2.SubModule3.ClassA.constructor","TopLevelModule2.SubModule3.ClassA.AisIn2_3"],"mappings":"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"}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]
@@ -178,14 +172,6 @@ var TopLevelModule2;
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map]
 {"version":3,"file":"duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js","sources":["duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts"],"names":[],"mappings":""}
-////[module1.js]
-//@ sourceMappingURL=module1.js.map
-////[module1.js.map]
-{"version":3,"file":"module1.js","sources":["module1.ts"],"names":[],"mappings":""}
-////[module2.js]
-//@ sourceMappingURL=module2.js.map
-////[module2.js.map]
-{"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[importInsideModule_file1.js.map]
@@ -194,7 +180,3 @@ var TopLevelModule2;
 //@ sourceMappingURL=importInsideModule_file2.js.map
 ////[importInsideModule_file2.js.map]
 {"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
-////[moduleWithAmbientCallSignatureTest.js]
-//@ sourceMappingURL=moduleWithAmbientCallSignatureTest.js.map
-////[moduleWithAmbientCallSignatureTest.js.map]
-{"version":3,"file":"moduleWithAmbientCallSignatureTest.js","sources":["moduleWithAmbientCallSignatureTest.ts"],"names":[],"mappings":""}

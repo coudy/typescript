@@ -6,7 +6,6 @@ var __extends = this.__extends || function (d, b) {
 var B = (function () {
     function B() {
         this.y;
-        ;
         any;
     }
     return B;
@@ -15,7 +14,6 @@ var C = (function (_super) {
     __extends(C, _super);
     function C() {
         this.x;
-        ;
         any;
     }
     return C;

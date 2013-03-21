@@ -21,8 +21,8 @@ i3_i = {
         return "Hello" + a;
     },
     l: this.f,
-    x: /** own x*/
-    this.f(10),
+    /** own x*/
+    x: this.f(10),
     nc_x: this.l(this.x),
     nc_f: this.f,
     nc_l: this.l
@@ -46,7 +46,7 @@ interface i2 {
     /** this is foo*/
     foo: (b: number) => string;
     /** this is indexer*/
-    [/**string param*/ i: string]: number;
+    [i: string]: number;
     /**new method*/
     new(/** param*/ i: i1);
     nc_x: number;
@@ -63,8 +63,8 @@ var i2_i: i2;
 var i2_i_x: number;
 var i2_i_foo: (b: number) => string;
 var i2_i_foo_r: string;
-var i2_i_i2_si: number;
-var i2_i_i2_ii: number;
+var i2_i_i2_si;
+var i2_i_i2_ii;
 var i2_i_n;
 var i2_i_nc_x: number;
 var i2_i_nc_foo: (b: number) => string;

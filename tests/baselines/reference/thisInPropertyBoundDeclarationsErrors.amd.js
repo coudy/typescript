@@ -1,6 +1,5 @@
 var B = (function () {
-    function B() {        var _this = this;
-
+    function B() {
         this.prop1 = this;
         this.prop2 = function () {
             return _this;

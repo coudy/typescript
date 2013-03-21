@@ -230,6 +230,23 @@ opts.flag('fourslash', {
     }
 });
 
+// for running fourslash tests written against 0.8.3 in the fourslash_old directory
+opts.option('fourslash-all', {
+    experimental: true,
+    set: function (str) {
+        runners.push(new FourslashRunner('all'));
+    }
+});
+
+opts.flag('unittests', {
+    set: function () {
+        runners.push(new UnitTestRunner('compiler'));
+        runners.push(new UnitTestRunner('ls'));
+        runners.push(new UnitTestRunner('services'));
+        runners.push(new UnitTestRunner('samples'));
+    }
+});
+
 opts.flag('ls', {
     set: function () {
         runners.push(new UnitTestRunner('ls'));
@@ -286,53 +303,24 @@ opts.option('compiler-baselines', {
     }
 });
 
-// for running a second copy of compiler baselines in a prototyping subdirectory for destabilizing changes
-opts.option('compiler-prototyping', {
-    experimental: true,
-    set: function (str) {
-        var runner = new CompilerBaselineRunner('prototyping');
-        runner.options = str;
-        runners.push(runner);
-        Harness.usePull = true;        
-    }
-});
-
-// for running a second copy of compiler baselines in a prototyping subdirectory for destabilizing changes
-opts.option('compiler-unittests-prototyping', {
-    experimental: true,
-    set: function (str) {
-        runners.push(new UnitTestRunner('compiler'));
-        Harness.usePull = true;
-    }
-});
-
-// for running a second copy of fourslash tests in a prototyping subdirectory for destabilizing changes
-opts.option('fourslash-prototyping', {
-    experimental: true,
-    set: function (str) {
-        Harness.usePull = true;
-        runners.push(new FourslashRunner('prototyping'));
-    }
-});
-
 opts.parse(IO.arguments)
 
 if (runners.length === 0) {
     if (opts.unnamed.length === 0) {
         // compiler
-        runners.push(new UnitTestRunner('compiler'));
+        //runners.push(new UnitTestRunner('compiler'));
         runners.push(new CompilerBaselineRunner());
-        runners.push(new ProjectRunner());
+        //runners.push(new ProjectRunner());
 
         // language services
-        runners.push(new UnitTestRunner('ls'));
+        //runners.push(new UnitTestRunner('ls'));
         runners.push(new FourslashRunner());
 
         // services
-        runners.push(new UnitTestRunner('services'));
+        //runners.push(new UnitTestRunner('services'));
 
         // samples
-        runners.push(new UnitTestRunner('samples'));
+        //runners.push(new UnitTestRunner('samples'));
     } else {
         var runnerFactory = new RunnerFactory();
         var tests = opts.unnamed[0].split(' ');

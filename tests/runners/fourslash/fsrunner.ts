@@ -6,11 +6,11 @@ class FourslashRunner extends RunnerBase {
     private basePath = 'tests/cases/';
     constructor(testType?: string) {
         super(testType);
-
-        if (testType === 'prototyping') {
-            this.basePath += 'prototyping/';
+        if(testType == 'all') {
+            this.basePath += 'fourslash_old/'
+        } else {
+            this.basePath += 'fourslash/';
         }
-        this.basePath += 'fourslash/';
     }
 
     public runTests() {

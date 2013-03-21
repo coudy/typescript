@@ -5,8 +5,8 @@ var t1 = new 53();
 var t2 = new ''();
 new string();
 (new Date()).toString();
-var t3 = new Array();
-var t4 = new Array();
+var t3 = new string[]();
+var t4 = new string[]();
 var f = new q();
 var t5 = new new Date()();
 new String();
@@ -22,7 +22,7 @@ var S = (function () {
     function S() { }
     Object.defineProperty(S.prototype, "xs", {
         get: function () {
-            return ;
+            return new M.T[]();
         },
         enumerable: true,
         configurable: true

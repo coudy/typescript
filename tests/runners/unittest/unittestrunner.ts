@@ -24,10 +24,6 @@ class UnitTestRunner extends RunnerBase {
             case 'samples':
                 this.tests = this.enumerateFiles('tests/cases/unittests/samples');
                 break;
-            case 'prototyping':
-                Harness.usePull = true;
-                //this.tests = this.enumerateFiles('tests/cases/unittests/compiler');
-                break;
             default:
                 if (this.tests.length === 0) {
                     throw new Error('Unsupported test cases: ' + this.testType);
@@ -37,7 +33,6 @@ class UnitTestRunner extends RunnerBase {
 
         var outfile = new Harness.Compiler.WriterAggregator()
         var outerr = new Harness.Compiler.WriterAggregator();
-        var code;
 
         Harness.Compiler.recreate();
 
@@ -51,9 +46,15 @@ class UnitTestRunner extends RunnerBase {
         }
 
         Harness.Compiler.compile();
-        Harness.Compiler.emitToOutfile(outfile);
-
-        code = outfile.lines.join("\n") + ";";
+        
+        var stdout = new Harness.Compiler.EmitterIOHost();
+        Harness.Compiler.emit(stdout, true);
+        var results = stdout.toArray();
+        var lines = [];
+        results.forEach(v => lines = lines.concat(v.file.lines));
+        var code = lines.join("\n")
+        //Harness.Compiler.emitToOutfile(outfile);
+        //code = outfile.lines.join("\n") + ";";
 
         if (typeof require !== "undefined") {
             var vm = require('vm');

@@ -31,11 +31,9 @@ var i5 = new c5();
 var i5_c = c5;
 /// class with statics and constructor
 var c6 = (function () {
-    /// s1 comment2
     /// constructor comment
     function c6() {
-        /// constructor comment2
-            }
+    }
     return c6;
 })();
 var i6 = new c6();
@@ -52,13 +50,10 @@ var i7_c = c7;
 /** class with statics and constructor
 */
 var c8 = (function () {
-    /** s1 comment2 */
     /** constructor comment
     */
     function c8() {
-        /** constructor comment2
-        */
-            }
+    }
     return c8;
 })();
 var i8 = new c8();
@@ -114,7 +109,6 @@ var i7_c: {
 class c8 {
     /** s1 comment */
     static s1: number;
-    /** s1 comment2 */
     /** constructor comment
     */
     constructor();

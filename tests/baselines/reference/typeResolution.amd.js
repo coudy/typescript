@@ -121,16 +121,18 @@ function AA() {
             };
             return ClassA;
         })();        
-        var NotExportedModule;
-        (function (NotExportedModule) {
-            var ClassA = (function () {
-                function ClassA() { }
-                return ClassA;
-            })();
-            NotExportedModule.ClassA = ClassA;            
-        })(NotExportedModule || (NotExportedModule = {}));
-    })(exports.TopLevelModule1 || (exports.TopLevelModule1 = {}));
-    var TopLevelModule1 = exports.TopLevelModule1;
+ {
+        }
+    })(0.TopLevelModule1 || (0.TopLevelModule1 = {}));
+    var TopLevelModule1 = 0.TopLevelModule1;
+    var NotExportedModule;
+    (function (NotExportedModule) {
+        var ClassA = (function () {
+            function ClassA() { }
+            return ClassA;
+        })();
+        NotExportedModule.ClassA = ClassA;        
+    })(NotExportedModule || (NotExportedModule = {}));
     var TopLevelModule2;
     (function (TopLevelModule2) {
         (function (SubModule3) {
@@ -147,15 +149,7 @@ function AA() {
 })
 //@ sourceMappingURL=0.js.map
 ////[0.js.map]
-{"version":3,"file":"0.js","sources":["0.ts"],"names":["TopLevelModule1","TopLevelModule1.SubModule1","TopLevelModule1.SubModule1.SubSubModule1","TopLevelModule1.SubModule1.SubSubModule1.ClassA","TopLevelModule1.SubModule1.SubSubModule1.ClassA.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassA.AisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.ClassB","TopLevelModule1.SubModule1.SubSubModule1.ClassB.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassB.BisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor.QQ","TopLevelModule1.SubModule1.ClassA","TopLevelModule1.SubModule1.ClassA.constructor","TopLevelModule1.SubModule1.ClassA.constructor.AA","TopLevelModule1.SubModule2","TopLevelModule1.SubModule2.SubSubModule2","TopLevelModule1.SubModule2.SubSubModule2.ClassA","TopLevelModule1.SubModule2.SubSubModule2.ClassA.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassA.AisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassB","TopLevelModule1.SubModule2.SubSubModule2.ClassB.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassB.BisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassC","TopLevelModule1.SubModule2.SubSubModule2.ClassC.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassC.CisIn1_2_2","TopLevelModule1.ClassA","TopLevelModule1.ClassA.constructor","TopLevelModule1.ClassA.AisIn1","TopLevelModule1.NotExportedModule","TopLevelModule1.NotExportedModule.ClassA","TopLevelModule1.NotExportedModule.ClassA.constructor","TopLevelModule2","TopLevelModule2.SubModule3","TopLevelModule2.SubModule3.ClassA","TopLevelModule2.SubModule3.ClassA.constructor","TopLevelModule2.SubModule3.ClassA.AisIn2_3"],"mappings":"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"}
-////[strings.js]
-//@ sourceMappingURL=strings.js.map
-////[strings.js.map]
-{"version":3,"file":"strings.js","sources":["strings.ts"],"names":[],"mappings":""}
-////[test.js]
-//@ sourceMappingURL=test.js.map
-////[test.js.map]
-{"version":3,"file":"test.js","sources":["test.ts"],"names":[],"mappings":""}
+{"version":3,"file":"0.js","sources":["0.ts"],"names":["TopLevelModule1","TopLevelModule1.SubModule1","TopLevelModule1.SubModule1.SubSubModule1","TopLevelModule1.SubModule1.SubSubModule1.ClassA","TopLevelModule1.SubModule1.SubSubModule1.ClassA.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassA.AisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.ClassB","TopLevelModule1.SubModule1.SubSubModule1.ClassB.constructor","TopLevelModule1.SubModule1.SubSubModule1.ClassB.BisIn1_1_1","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor","TopLevelModule1.SubModule1.SubSubModule1.NonExportedClassQ.constructor.QQ","TopLevelModule1.SubModule1.ClassA","TopLevelModule1.SubModule1.ClassA.constructor","TopLevelModule1.SubModule1.ClassA.constructor.AA","TopLevelModule1.SubModule2","TopLevelModule1.SubModule2.SubSubModule2","TopLevelModule1.SubModule2.SubSubModule2.ClassA","TopLevelModule1.SubModule2.SubSubModule2.ClassA.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassA.AisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassB","TopLevelModule1.SubModule2.SubSubModule2.ClassB.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassB.BisIn1_2_2","TopLevelModule1.SubModule2.SubSubModule2.ClassC","TopLevelModule1.SubModule2.SubSubModule2.ClassC.constructor","TopLevelModule1.SubModule2.SubSubModule2.ClassC.CisIn1_2_2","TopLevelModule1.ClassA","TopLevelModule1.ClassA.constructor","TopLevelModule1.ClassA.AisIn1","NotExportedModule","NotExportedModule.ClassA","NotExportedModule.ClassA.constructor","TopLevelModule2","TopLevelModule2.SubModule3","TopLevelModule2.SubModule3.ClassA","TopLevelModule2.SubModule3.ClassA.constructor","TopLevelModule2.SubModule3.ClassA.AisIn2_3"],"mappings":"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"}
 ////[comments_ExternalModules_0.js]
 //@ sourceMappingURL=comments_ExternalModules_0.js.map
 ////[comments_ExternalModules_0.js.map]
@@ -180,14 +174,6 @@ function AA() {
 //@ sourceMappingURL=duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map
 ////[duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js.map]
 {"version":3,"file":"duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.js","sources":["duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts"],"names":[],"mappings":""}
-////[module1.js]
-//@ sourceMappingURL=module1.js.map
-////[module1.js.map]
-{"version":3,"file":"module1.js","sources":["module1.ts"],"names":[],"mappings":""}
-////[module2.js]
-//@ sourceMappingURL=module2.js.map
-////[module2.js.map]
-{"version":3,"file":"module2.js","sources":["module2.ts"],"names":[],"mappings":""}
 ////[importInsideModule_file1.js]
 //@ sourceMappingURL=importInsideModule_file1.js.map
 ////[importInsideModule_file1.js.map]
@@ -196,7 +182,3 @@ function AA() {
 //@ sourceMappingURL=importInsideModule_file2.js.map
 ////[importInsideModule_file2.js.map]
 {"version":3,"file":"importInsideModule_file2.js","sources":["importInsideModule_file2.ts"],"names":[],"mappings":""}
-////[moduleWithAmbientCallSignatureTest.js]
-//@ sourceMappingURL=moduleWithAmbientCallSignatureTest.js.map
-////[moduleWithAmbientCallSignatureTest.js.map]
-{"version":3,"file":"moduleWithAmbientCallSignatureTest.js","sources":["moduleWithAmbientCallSignatureTest.ts"],"names":[],"mappings":""}

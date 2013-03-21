@@ -20,8 +20,8 @@ var Bar = (function (_super) {
     __extends(Bar, _super);
     function Bar() {
         _super.call(this, function (s) {
-    s = 5;
-});
+            s = 5;
+        });
     }
     return Bar;
 })(Foo);

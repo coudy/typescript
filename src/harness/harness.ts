@@ -56,7 +56,6 @@ module Harness {
     // Settings 
     export var userSpecifiedroot = "";
     var global = <any>Function("return this").call(null);
-    export var usePull = false;
 
     export interface ITestMetadata {
         id: string;
@@ -767,10 +766,6 @@ module Harness {
             compiler.settings.codeGenTarget = TypeScript.CodeGenTarget.ES5;
             compiler.settings.controlFlow = true;
             compiler.settings.controlFlowUseDef = true;
-            if (Harness.usePull) {
-                compiler.settings.usePull = true;
-            }
-
             compiler.parseEmitOption(stdout);
             TypeScript.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
             compiler.addUnit(Harness.Compiler.libText, "lib.d.ts");
@@ -783,19 +778,14 @@ module Harness {
         // pullUpdateUnit is sufficient if an existing unit is updated, if a new unit is added we need to do a full typecheck
         var needsFullTypeCheck = true;
         export function compile(code?: string, fileName?: string) {
-            if (usePull) {
-                if (needsFullTypeCheck) {
-                    compiler.pullTypeCheck(true);
-                    needsFullTypeCheck = false;
-                }
-                else {
-                    // requires unit to already exist in the compiler
-                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(""), fileName);
-                    compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), fileName);
-                }
+            if (needsFullTypeCheck) {
+                compiler.pullTypeCheck(true);
+                needsFullTypeCheck = false;
             }
             else {
-                compiler.reTypeCheck();
+                // requires unit to already exist in the compiler
+                compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(""), fileName);
+                compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), fileName);
             }
         }
 
@@ -977,46 +967,26 @@ module Harness {
 
                 var matchingIdentifiers: Type[] = [];
 
-                if (!usePull) {
-                    // This will find the requested identifier in the first script where it's present, a naive search of each member in each script,
-                    // which means this won't play nicely if the same identifier is used in multiple units, but it will enable this to work on multi-file tests.
-                    // m = 1 because the first script will always be lib.d.ts which we don't want to search.
-
-                    var fileNames = compiler.fileNameToScript.getAllKeys();
-                    for (var m = 1; m < fileNames.length; m++) {
-                        var script: TypeScript.Script = compiler.fileNameToScript.lookup(fileNames[m]);
-                        var enclosingScopeContext = TypeScript.findEnclosingScopeAt(new TypeScript.NullLogger(), <TypeScript.Script>script, new TypeScript.StringScriptSnapshot(code), 0, false);
-                        var entries = new TypeScript.ScopeTraversal(compiler).getScopeEntries(enclosingScopeContext);
-
-                        for (var i = 0; i < entries.length; i++) {
-                            if (entries[i].name === targetIdentifier) {
-                                matchingIdentifiers.push(new Type(entries[i].type, code, targetIdentifier));
+                var fileNames = compiler.fileNameToScript.getAllKeys();
+                for (var m = 0; m < fileNames.length; m++) {
+                    var script2 = <TypeScript.Script>compiler.fileNameToScript.lookup(fileNames[m]);
+                    if (script2.locationInfo.fileName !== 'lib.d.ts') {
+                        if (targetPosition > -1) {
+                            var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
+                            var name = this.getTypeInfoName(tyInfo.ast);
+                            var foundValue = new Type(tyInfo.symbol.getTypeName(), code, name);
+                            if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
+                                matchingIdentifiers.push(foundValue);
                             }
                         }
-                    }
-                }
-                else {
-                    fileNames = compiler.fileNameToScript.getAllKeys();
-                    for (m = 0; m < fileNames.length; m++) {
-                        var script2 = <TypeScript.Script>compiler.fileNameToScript.lookup(fileNames[m]);
-                        if (script2.locationInfo.fileName !== 'lib.d.ts') {
-                            if (targetPosition > -1) {
-                                var tyInfo = compiler.pullGetTypeInfoAtPosition(targetPosition, script2);
-                                var name = this.getTypeInfoName(tyInfo.ast);
-                                var foundValue = new Type(tyInfo.symbol.getTypeName(), code, name);
-                                if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
-                                    matchingIdentifiers.push(foundValue);
-                                }
-                            }
-                            else {
-                                for (var pos = 0; pos < code.length; pos++) {
-                                    tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
-                                    name = this.getTypeInfoName(tyInfo.ast);
-                                    if (name === targetIdentifier) {
-                                        foundValue = new Type(tyInfo.symbol.getTypeName(), code, targetIdentifier);
-                                        if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
-                                            matchingIdentifiers.push(foundValue);
-                                        }
+                        else {
+                            for (var pos = 0; pos < code.length; pos++) {
+                                tyInfo = compiler.pullGetTypeInfoAtPosition(pos, script2);
+                                name = this.getTypeInfoName(tyInfo.ast);
+                                if (name === targetIdentifier) {
+                                    foundValue = new Type(tyInfo.symbol.getTypeName(), code, targetIdentifier);
+                                    if (!matchingIdentifiers.some(value => (value.identifier === foundValue.identifier) && (value.code === foundValue.code) && (value.type === foundValue.type))) {
+                                        matchingIdentifiers.push(foundValue);
                                     }
                                 }
                             }
@@ -1133,7 +1103,7 @@ module Harness {
                         fileExists: (path: string) => true,
                         resolvePath: (path: string) => path
                     });
-                compiler.emitDeclarations(Harness.usePull);
+                compiler.emitDeclarations(true);
 
                 var results: string = null;
                 for (var fn in outputs) {
@@ -1217,12 +1187,7 @@ module Harness {
         /** Create a new instance of the compiler with default settings and lib.d.ts, then typecheck */
         export function recreate() {
             compiler = makeDefaultCompilerForTest();
-            if (usePull) {
-                compiler.pullTypeCheck(true);
-            }
-            else {
-                compiler.typeCheck();
-            }
+            compiler.pullTypeCheck(true);
         }
 
         export function reset() {
@@ -1238,13 +1203,7 @@ module Harness {
                 }
             }
 
-            if(Harness.usePull) {
-                compiler.pullErrorReporter.hasErrors = false;
-            }
-            else {
-                compiler.errorReporter.hasErrors = false;
-            }
-            
+            compiler.pullErrorReporter.hasErrors = false;            
         }
 
         // Defines functions to invoke before compiling a piece of code and a post compile action intended to clean up the
@@ -1279,11 +1238,7 @@ module Harness {
         }
 
         export function updateUnit(code: string, unitName: string) {
-            if (Harness.usePull) {
-                compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), unitName);
-            } else {
-                compiler.updateUnit(code, unitName);
-            }
+            compiler.pullUpdateUnit(new TypeScript.StringScriptSnapshot(code), unitName);
         }
 
         export function compileFile(path: string, callback: (res: CompilerResult) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void , context?: CompilationContext, references?: TypeScript.IFileReference[]) {
@@ -1359,19 +1314,17 @@ module Harness {
             scripts.push(addUnit(code, uName, isDeclareFile, references));
             compile(code, uName);
 
-            if (usePull) {
-                compiler.pullErrorReporter.textWriter = stderr;
+            compiler.pullErrorReporter.textWriter = stderr;
 
-                var syntacticDiagnostics = compiler.fileNameToSyntaxTree.lookup(uName).diagnostics();
-                compiler.pullErrorReporter.reportErrors(syntacticDiagnostics.map(d => new TypeScript.PullError(d.start(), d.length(), uName, d.message())));
+            var syntacticDiagnostics = compiler.fileNameToSyntaxTree.lookup(uName).diagnostics();
+            compiler.pullErrorReporter.reportErrors(syntacticDiagnostics.map(d => new TypeScript.PullError(d.start(), d.length(), uName, d.message())));
 
-                var semanticErrors = compiler.pullGetErrorsForFile(uName);
-                compiler.pullErrorReporter.reportErrors(semanticErrors);
-            }
+            var semanticErrors = compiler.pullGetErrorsForFile(uName);
+            compiler.pullErrorReporter.reportErrors(semanticErrors);
 
             var errorLines = stderr.lines;
-            emit(stdout, Harness.usePull);
-            compiler.emitDeclarations(Harness.usePull);
+            emit(stdout, true);
+            compiler.emitDeclarations(true);
 
             if (context) {
                 context.postCompile();
@@ -1841,7 +1794,7 @@ module Harness {
         }
 
         public getHostSettings(): string {
-            return JSON2.stringify({ usePullLanguageService: usePull });
+            return JSON2.stringify({ usePullLanguageService: true });
         }
     }
 
@@ -1921,21 +1874,11 @@ module Harness {
         }
 
         function localPath(fileName: string) {
-            if (global.runners[0].testType === 'prototyping') {
-                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/local/' + fileName;
-            }
-            else {
-                return Harness.userSpecifiedroot + 'tests/baselines/local/' + fileName;
-            }
+            return Harness.userSpecifiedroot + 'tests/baselines/local/' + fileName;
         }
 
         function referencePath(fileName: string) {
-            if (global.runners[0].testType === 'prototyping') {
-                return Harness.userSpecifiedroot + 'tests/baselines/prototyping/reference/' + fileName;
-            }
-            else {
-                return Harness.userSpecifiedroot + 'tests/baselines/reference/' + fileName;
-            }
+            return Harness.userSpecifiedroot + 'tests/baselines/reference/' + fileName;
         }
 
         export function reset() {

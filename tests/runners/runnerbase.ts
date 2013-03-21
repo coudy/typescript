@@ -2,11 +2,7 @@
 /// <reference path="../../src/harness/harness.ts" />
 
 class RunnerBase {
-    constructor(public testType?: string) {
-        if (testType === 'prototyping') {
-            Harness.usePull = true;
-        }
-    }
+    constructor(public testType?: string) { }
 
     // contains the tests to run
     public tests: string[] = [];
