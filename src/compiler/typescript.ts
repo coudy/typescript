@@ -241,58 +241,15 @@ module TypeScript {
 
         public addSourceUnit(sourceText: IScriptSnapshot, fileName: string, referencedFiles?: IFileReference[] = []): Script {
             return this.timeFunction("addSourceUnit(" + fileName + ")", () => {
-                //if (fileName.indexOf("getCompletionsAtPosition5") < 0) {
-                //    return;
-                //}
+                var syntaxTree = Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), LanguageVersion.EcmaScript5);
+                var script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
+                script.referencedFiles = referencedFiles;
 
-                var timer = new Timer();
-                var reParsedScript: Script = null;
-                
-                if (!this.settings.usePull) {
-                    timer.start();
-                    var script: Script = this.parser.parse(sourceText, fileName, AllowedElements.Global);
-                    timer.end();
+                this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
+                this.fileNameToLocationInfo.addOrUpdate(fileName, script.locationInfo);
+                this.fileNameToScript.addOrUpdate(fileName, script);
 
-                    reParsedScript = script;
-
-                    var oldParseTime = timer.time;
-
-                    script.referencedFiles = referencedFiles;
-                    this.persistentTypeState.setCollectionMode(TypeCheckCollectionMode.Transient);
-                }
-                else {
-                    var text = new TypeScript.ScriptSnapshotText(sourceText);
-
-                    timer.start();
-                    var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5);
-                    timer.end();
-
-                    var newParseTime = timer.time;
-
-                    timer.start();
-                    var script2: Script = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
-                    timer.end();
-
-                    var translateTime = timer.time;
-
-                    script2.referencedFiles = referencedFiles;
-
-                    reParsedScript = script2;
-
-                    this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-                }
-
-                this.fileNameToLocationInfo.addOrUpdate(fileName, reParsedScript.locationInfo);
-
-                if (!this.settings.usePull) {
-                    var typeCollectionStart = new Date().getTime();
-                    this.typeChecker.collectTypes(reParsedScript);
-                    this.typeCollectionTime += (new Date().getTime()) - typeCollectionStart;
-                }
-
-                this.fileNameToScript.addOrUpdate(fileName, reParsedScript);
-
-                return reParsedScript;
+                return script;
             });
         }
 
