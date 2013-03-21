@@ -345,7 +345,7 @@ module TypeScript {
 
             var bPath: PullSymbol[];
             if (b) {
-                bPath = this.pathToRoot();
+                bPath = b.pathToRoot();
             } else {
                 return aPath;
             }
