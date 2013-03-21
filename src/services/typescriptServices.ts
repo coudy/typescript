@@ -87,15 +87,7 @@ module Services {
             try {
                 var hostAdapter = new LanguageServiceShimHostAdapter(host);
                 var pullLanguageService = this.createPullLanguageService(hostAdapter);
-                var languageService: Services.ILanguageService = null;
-                var hostSettings = hostAdapter.getHostSettings();
-                if (hostSettings && hostSettings.usePullLanguageService) {
-                    languageService = pullLanguageService;
-                }
-                else {
-                    languageService = this.createLanguageService(hostAdapter);
-                }
-                return new LanguageServiceShim(this, host, languageService, pullLanguageService);
+                return new LanguageServiceShim(this, host, pullLanguageService, pullLanguageService);
             }
             catch (err) {
                 Services.logInternalError(host, err);
