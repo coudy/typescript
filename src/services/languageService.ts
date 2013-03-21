@@ -1108,11 +1108,8 @@ module Services {
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
         public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[]{
-            this.minimalRefresh();
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new BraceMatchingManager(syntaxAST);
-            return this.textRangesToTextSpans(manager.getBraceMatchingAtPosition(position));
+            // TODO: remove this when we switch to pull by default.
+            return [];
         }
 
         private textRangesToTextSpans(items: TextRange[]): TypeScript.TextSpan[]{

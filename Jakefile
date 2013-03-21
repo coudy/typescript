@@ -145,7 +145,6 @@ var servicesSources = [
 	"scriptSyntaxAST.ts",
 	"compilerState.ts",
 	"pullCompilerState.ts",
-	"braceMatchingManager.ts",
 	"symbolSet.ts",
 	"symbolTree.ts",
 	"overridesCollector.ts",

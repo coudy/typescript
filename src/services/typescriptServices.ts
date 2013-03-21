@@ -20,7 +20,6 @@
 ///<reference path='pullCompilerState.ts' />
 ///<reference path='CompilerState.ts' />
 ///<reference path='scriptSyntaxAST.ts' />
-///<reference path='braceMatchingManager.ts' />
 ///<reference path='symbolSet.ts' />
 ///<reference path='symbolTree.ts' />
 ///<reference path='overridesCollector.ts' />
