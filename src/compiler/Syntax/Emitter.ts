@@ -199,7 +199,9 @@ module TypeScript.Emitter1 {
             }
         }
 
-        private visitModuleDeclaration(node: ModuleDeclarationSyntax): IModuleElementSyntax[] {
+        private visitModuleDeclaration(node: ModuleDeclarationSyntax): IModuleElementSyntax[]{
+            var _this = this;
+
             // Recurse downwards and get the rewritten children.
             var moduleElements = this.convertModuleElements(node.moduleElements);
 
@@ -217,7 +219,7 @@ module TypeScript.Emitter1 {
 
             // Break up the dotted name into pieces.
             var names = EmitterImpl.splitModuleName(node.moduleName);
-
+            
             // Then, for all the names left of that name, wrap what we've created in a larger module.
             for (var nameIndex = names.length - 1; nameIndex >= 0; nameIndex--) {
                 moduleElements = this.convertModuleDeclaration(
@@ -230,7 +232,7 @@ module TypeScript.Emitter1 {
                         names[nameIndex - 1], node, names[nameIndex]));
 
                     moduleElements = <IModuleElementSyntax[]>ArrayUtilities.select(moduleElements,
-                        e => this.changeIndentation(e, /*indentFirstToken:*/ true, this.options.indentSpaces));
+                        e => _this.changeIndentation(e, /*indentFirstToken:*/ true, _this.options.indentSpaces));
                 }
             }
 
@@ -609,6 +611,7 @@ module TypeScript.Emitter1 {
                 return null;
             }
 
+            var i: number;
             var identifier = this.withNoTrivia(classDeclaration.identifier);
 
             var constructorIndentationColumn = this.columnForStartOfToken(constructorDeclaration.firstToken());
@@ -630,7 +633,7 @@ module TypeScript.Emitter1 {
 
             var instanceAssignments = this.generatePropertyAssignments(classDeclaration, /*static:*/ false);
 
-            for (var i = instanceAssignments.length - 1; i >= 0; i--) {
+            for (i = instanceAssignments.length - 1; i >= 0; i--) {
                 normalStatements.unshift(<ExpressionStatementSyntax>this.changeIndentation(
                     instanceAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces));
             }
@@ -639,7 +642,7 @@ module TypeScript.Emitter1 {
                 ArrayUtilities.where(constructorDeclaration.parameterList.parameters.toNonSeparatorArray(), p => p.publicOrPrivateKeyword !== null),
                 p => this.generatePropertyAssignmentStatement(p));
 
-            for (var i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
+            for (i = parameterPropertyAssignments.length - 1; i >= 0; i--) {
                 normalStatements.unshift(<IStatementSyntax>this.changeIndentation(
                     parameterPropertyAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn));
             }
@@ -658,7 +661,7 @@ module TypeScript.Emitter1 {
                 EmitterImpl.parameterListDefaultParameters(constructorDeclaration.parameterList),
                 p => this.generateDefaultValueAssignmentStatement(p));
 
-            for (var i = defaultValueAssignments.length - 1; i >= 0; i--) {
+            for (i = defaultValueAssignments.length - 1; i >= 0; i--) {
                 normalStatements.unshift(<IStatementSyntax>this.changeIndentation(
                     defaultValueAssignments[i], /*changeFirstToken:*/ true, this.options.indentSpaces + constructorIndentationColumn));
             }
@@ -673,6 +676,7 @@ module TypeScript.Emitter1 {
 
         private convertMemberFunctionDeclaration(classDeclaration: ClassDeclarationSyntax,
                                                  functionDeclaration: MemberFunctionDeclarationSyntax): ExpressionStatementSyntax {
+            var _this = this;
             if (functionDeclaration.block === null) {
                 return null;
             }
@@ -696,7 +700,7 @@ module TypeScript.Emitter1 {
 
             var defaultValueAssignments = <IStatementSyntax[]>ArrayUtilities.select(
                 EmitterImpl.callSignatureDefaultParameters(functionDeclaration.callSignature),
-                p => this.generateDefaultValueAssignmentStatement(p));
+                p => _this.generateDefaultValueAssignmentStatement(p));
 
             var functionColumn = this.columnForStartOfToken(functionDeclaration.firstToken());
 
@@ -744,11 +748,12 @@ module TypeScript.Emitter1 {
                                                  memberAccessor: MemberAccessorDeclarationSyntax,
                                                  classElements: IClassElementSyntax[]): IStatementSyntax {
             var name = <string>memberAccessor.identifier.value();
+            var i: number;
 
             // Find all the accessors with that name.
             var accessors: MemberAccessorDeclarationSyntax[] = [memberAccessor];
 
-            for (var i = classElements.length - 1; i >= 0; i--) {
+            for (i = classElements.length - 1; i >= 0; i--) {
                 var element = classElements[i];
                 if (element.kind() === SyntaxKind.GetMemberAccessorDeclaration ||
                     element.kind() === SyntaxKind.SetMemberAccessorDeclaration) {
@@ -771,7 +776,7 @@ module TypeScript.Emitter1 {
             ];
 
             var propertyAssignments = [];
-            for (var i = 0; i < accessors.length; i++) {
+            for (i = 0; i < accessors.length; i++) {
                 var converted = this.convertMemberAccessor(accessors[i]);
                 converted = <PropertyAssignmentSyntax>this.changeIndentation(
                     converted, /*changeFirstToken:*/ true, this.options.indentSpaces);
@@ -816,14 +821,14 @@ module TypeScript.Emitter1 {
 
                 var converted: IStatementSyntax = null;
                 if (classElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
-                    var converted = this.convertMemberFunctionDeclaration(classDeclaration, <MemberFunctionDeclarationSyntax>classElement);
+                    converted = this.convertMemberFunctionDeclaration(classDeclaration, <MemberFunctionDeclarationSyntax>classElement);
                 }
                 else if (classElement.kind() === SyntaxKind.MemberVariableDeclaration) {
-                    var converted = this.generatePropertyAssignment(classDeclaration, /*static:*/ true, <MemberVariableDeclarationSyntax>classElement);
+                    converted = this.generatePropertyAssignment(classDeclaration, /*static:*/ true, <MemberVariableDeclarationSyntax>classElement);
                 }
                 else if (classElement.kind() === SyntaxKind.GetMemberAccessorDeclaration ||
                          classElement.kind() === SyntaxKind.SetMemberAccessorDeclaration) {
-                    var converted = this.convertMemberAccessorDeclaration(classDeclaration, <MemberAccessorDeclarationSyntax>classElement, classElements);
+                    converted = this.convertMemberAccessorDeclaration(classDeclaration, <MemberAccessorDeclarationSyntax>classElement, classElements);
                 }
 
                 if (converted !== null) {

@@ -33,6 +33,10 @@ class Program {
             // return;
         }
 
+        Environment.standardOut.WriteLine("Testing emitter 1.");
+        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
+            filePath => this.runEmitter(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
+
         Environment.standardOut.WriteLine("Testing Incremental 2.");
         if (specificFile === undefined) {
             TypeScript.IncrementalParserTests.runAllTests();
@@ -41,10 +45,6 @@ class Program {
         Environment.standardOut.WriteLine("Testing parser.");
         this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\parser\\ecmascript5",
             filePath => this.runParser(filePath, TypeScript.LanguageVersion.EcmaScript5, useTypeScript, verify, /*generateBaselines:*/ generate));
-
-        Environment.standardOut.WriteLine("Testing emitter 1.");
-        this.runTests(Environment.currentDirectory() + "\\src\\compiler\\Syntax\\tests\\emitter\\ecmascript5",
-            filePath => this.runEmitter(filePath, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate, /*justText:*/ false));
 
         Environment.standardOut.WriteLine("Testing against monoco.");
         this.runTests("C:\\temp\\monoco-files",
@@ -179,16 +179,20 @@ class Program {
     }
 
     private checkResult(filePath: string, result: any, verify: bool, generateBaseline: bool, justText: bool): void {
+        var actualResult: string;
+        var expectedFile: string;
+
         if (generateBaseline) {
-            var actualResult = justText ? result : JSON2.stringify(result, null, 4);
-            var expectedFile = filePath + ".expected";
+            actualResult = justText ? result : JSON2.stringify(result, null, 4);
+            expectedFile = filePath + ".expected";
 
             // Environment.standardOut.WriteLine("Generating baseline for: " + filePath);
             Environment.writeFile(expectedFile, actualResult, /*useUTF8:*/ true);
         }
         else if (verify) {
-            var actualResult = justText ? result : JSON2.stringify(result, null, 4);
-            var expectedFile = filePath + ".expected";
+            actualResult = justText ? result : JSON2.stringify(result, null, 4);
+            expectedFile = filePath + ".expected";
+
             var actualFile = filePath + ".actual";
 
             var expectedResult = null;
