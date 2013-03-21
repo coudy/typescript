@@ -85,7 +85,6 @@ var servicesSources = [
 	"formatting/formatting.ts",
 	"formatting/interop.ts",
 	"formatting/formattingContext.ts",
-	"formatting/formattingManager.ts",
 	"formatting/formattingRequestKind.ts",
 	"formatting/formattingTask.ts",
 	"formatting/iformatter.ts",

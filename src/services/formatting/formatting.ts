@@ -16,7 +16,6 @@
 ///<reference path='..\typescriptServices.ts' />
 ///<reference path='interop.ts' />
 ///<reference path='formattingContext.ts' />
-///<reference path='formattingManager.ts' />
 ///<reference path='formattingRequestKind.ts' />
 ///<reference path='formattingTask.ts' />
 ///<reference path='iformatter.ts' />

@@ -1422,80 +1422,23 @@ module Services {
         }
 
         public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
-            this.minimalRefresh();
-
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatSelection(minChar, limChar);
-
-            if (this.logger.information()) {
-                this.logFormatCodeOptions(options);
-                this.logEditResults(syntaxAST, result)
-            }
-
-            return result;
+            // TODO: remove this when we switch to pull by default.
+            return [];
         }
 
         public getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
-            this.minimalRefresh();
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatDocument(minChar, limChar);
-
-            if (this.logger.information()) {
-               this.logEditResults(syntaxAST, result)
-            }
-
-            return result;
+            // TODO: remove this when we switch to pull by default.
+            return [];
         }
 
         public getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
-            this.minimalRefresh();
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            var syntaxAST = this._getScriptSyntaxAST(fileName);
-            var manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-            var result = manager.FormatOnPaste(minChar, limChar);
-
-            if (this.logger.information()) {
-               this.logEditResults(syntaxAST, result)
-            }
-
-            return result;
+            // TODO: remove this when we switch to pull by default.
+            return [];
         }
 
         public getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[] {
-            this.minimalRefresh();
-
-            // Ensure rules are initialized and up to date wrt to formatting options
-            this.formattingRulesProvider.ensureUptodate(options);
-
-            var syntaxAST: Services.ScriptSyntaxAST;
-            var manager: Formatting.FormattingManager;
-
-            if (key === "}") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnClosingCurlyBrace(position);
-            }
-            else if (key === ";") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnSemicolon(position);
-            }
-            else if (key === "\n") {
-                syntaxAST = this._getScriptSyntaxAST(fileName);
-                manager = new Formatting.FormattingManager(syntaxAST, this.formattingRulesProvider, options);
-                return manager.FormatOnEnter(position);
-            }
-            return []; //TextEdit.createInsert(minChar, "/* format was invoked here!*/")];
+            // TODO: remove this when we switch to pull by default.
+            return [];
         }
 
         public getNavigateToItems(searchValue: string): NavigateToItem[] {
