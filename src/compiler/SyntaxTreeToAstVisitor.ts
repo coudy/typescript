@@ -2658,12 +2658,14 @@ module TypeScript {
             this.movePast(node.openParenToken);
             var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
-            var catchType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             this.movePast(node.closeParenToken);
             var block = node.block.accept(this);
 
             var varDecl = new VarDecl(identifier, 0);
             this.setSpan(varDecl, identifier.minChar, identifier.limChar);
+
+            varDecl.typeExpr = typeExpr;
 
             var result = new Catch(varDecl, block);
             this.setSpan(result, start, this.position);
