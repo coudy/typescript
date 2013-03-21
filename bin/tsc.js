@@ -937,7 +937,7 @@ var TypeScript;
     var IncompleteAST = (function (_super) {
         __extends(IncompleteAST, _super);
         function IncompleteAST(min, lim) {
-                _super.call(this, 107 /* Error */ );
+            _super.call(this, 107 /* Error */ );
             this.minChar = min;
             this.limChar = lim;
         }
@@ -947,7 +947,7 @@ var TypeScript;
     var ASTList = (function (_super) {
         __extends(ASTList, _super);
         function ASTList() {
-                _super.call(this, 94 /* List */ );
+            _super.call(this, 94 /* List */ );
             this.enclosingScope = null;
             this.members = [];
         }
@@ -1000,7 +1000,7 @@ var TypeScript;
     var Identifier = (function (_super) {
         __extends(Identifier, _super);
         function Identifier(actualText, hasEscapeSequence) {
-                _super.call(this, 25 /* Name */ );
+            _super.call(this, 25 /* Name */ );
             this.actualText = actualText;
             this.hasEscapeSequence = hasEscapeSequence;
             this.sym = null;
@@ -1046,7 +1046,7 @@ var TypeScript;
     var MissingIdentifier = (function (_super) {
         __extends(MissingIdentifier, _super);
         function MissingIdentifier() {
-                _super.call(this, "__missing");
+            _super.call(this, "__missing");
         }
         MissingIdentifier.prototype.isMissing = function () {
             return true;
@@ -1059,7 +1059,7 @@ var TypeScript;
     var Label = (function (_super) {
         __extends(Label, _super);
         function Label(id) {
-                _super.call(this, 102 /* Label */ );
+            _super.call(this, 102 /* Label */ );
             this.id = id;
         }
         Label.prototype.printLabel = function () {
@@ -1085,7 +1085,7 @@ var TypeScript;
     var Expression = (function (_super) {
         __extends(Expression, _super);
         function Expression(nodeType) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
         }
         Expression.prototype.isExpression = function () {
             return true;
@@ -1099,7 +1099,7 @@ var TypeScript;
     var UnaryExpression = (function (_super) {
         __extends(UnaryExpression, _super);
         function UnaryExpression(nodeType, operand) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.operand = operand;
             this.targetType = null;
             this.castTerm = null;
@@ -1239,7 +1239,7 @@ var TypeScript;
     var CallExpression = (function (_super) {
         __extends(CallExpression, _super);
         function CallExpression(nodeType, target, typeArguments, arguments) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.target = target;
             this.typeArguments = typeArguments;
             this.arguments = arguments;
@@ -1270,7 +1270,7 @@ var TypeScript;
     var BinaryExpression = (function (_super) {
         __extends(BinaryExpression, _super);
         function BinaryExpression(nodeType, operand1, operand2) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.operand1 = operand1;
             this.operand2 = operand2;
         }
@@ -1415,7 +1415,7 @@ var TypeScript;
     var ConditionalExpression = (function (_super) {
         __extends(ConditionalExpression, _super);
         function ConditionalExpression(operand1, operand2, operand3) {
-                _super.call(this, 44 /* ConditionalExpression */ );
+            _super.call(this, 44 /* ConditionalExpression */ );
             this.operand1 = operand1;
             this.operand2 = operand2;
             this.operand3 = operand3;
@@ -1440,7 +1440,7 @@ var TypeScript;
     var NumberLiteral = (function (_super) {
         __extends(NumberLiteral, _super);
         function NumberLiteral(value, text) {
-                _super.call(this, 24 /* NumberLit */ );
+            _super.call(this, 24 /* NumberLit */ );
             this.value = value;
             this.text = text;
         }
@@ -1467,7 +1467,7 @@ var TypeScript;
     var RegexLiteral = (function (_super) {
         __extends(RegexLiteral, _super);
         function RegexLiteral(text) {
-                _super.call(this, 8 /* Regex */ );
+            _super.call(this, 8 /* Regex */ );
             this.text = text;
         }
         RegexLiteral.prototype.typeCheck = function (typeFlow) {
@@ -1487,7 +1487,7 @@ var TypeScript;
     var StringLiteral = (function (_super) {
         __extends(StringLiteral, _super);
         function StringLiteral(text) {
-                _super.call(this, 7 /* QString */ );
+            _super.call(this, 7 /* QString */ );
             this.text = text;
         }
         StringLiteral.prototype.emit = function (emitter, tokenId, startLine) {
@@ -1513,7 +1513,7 @@ var TypeScript;
     var ModuleElement = (function (_super) {
         __extends(ModuleElement, _super);
         function ModuleElement(nodeType) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
         }
         return ModuleElement;
     })(AST);
@@ -1521,7 +1521,7 @@ var TypeScript;
     var ImportDeclaration = (function (_super) {
         __extends(ImportDeclaration, _super);
         function ImportDeclaration(id, alias) {
-                _super.call(this, 99 /* ImportDeclaration */ );
+            _super.call(this, 99 /* ImportDeclaration */ );
             this.id = id;
             this.alias = alias;
             this.varFlags = 0 /* None */ ;
@@ -1580,7 +1580,7 @@ var TypeScript;
     var ExportAssignment = (function (_super) {
         __extends(ExportAssignment, _super);
         function ExportAssignment(id) {
-                _super.call(this, 100 /* ExportAssignment */ );
+            _super.call(this, 100 /* ExportAssignment */ );
             this.id = id;
         }
         return ExportAssignment;
@@ -1589,7 +1589,7 @@ var TypeScript;
     var BoundDecl = (function (_super) {
         __extends(BoundDecl, _super);
         function BoundDecl(id, nodeType, nestingLevel) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.id = id;
             this.nestingLevel = nestingLevel;
             this.init = null;
@@ -1624,7 +1624,7 @@ var TypeScript;
     var VarDecl = (function (_super) {
         __extends(VarDecl, _super);
         function VarDecl(id, nest) {
-                _super.call(this, id, 75 /* VarDecl */ , nest);
+            _super.call(this, id, 75 /* VarDecl */ , nest);
         }
         VarDecl.prototype.isAmbient = function () {
             return TypeScript.hasFlag(this.varFlags, 8 /* Ambient */ );
@@ -1647,7 +1647,7 @@ var TypeScript;
     var ArgDecl = (function (_super) {
         __extends(ArgDecl, _super);
         function ArgDecl(id) {
-                _super.call(this, id, 76 /* ArgDecl */ , 0);
+            _super.call(this, id, 76 /* ArgDecl */ , 0);
             this.isOptional = false;
             this.parameterPropertySym = null;
         }
@@ -1671,7 +1671,7 @@ var TypeScript;
     var FuncDecl = (function (_super) {
         __extends(FuncDecl, _super);
         function FuncDecl(name, bod, isConstructor, typeArguments, arguments, vars, scopes, statics, nodeType) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.name = name;
             this.bod = bod;
             this.isConstructor = isConstructor;
@@ -1848,7 +1848,7 @@ var TypeScript;
     var Script = (function (_super) {
         __extends(Script, _super);
         function Script(vars, scopes) {
-                _super.call(this, new Identifier("script"), null, false, null, null, vars, scopes, null, 95 /* Script */ );
+            _super.call(this, new Identifier("script"), null, false, null, null, vars, scopes, null, 95 /* Script */ );
             this.locationInfo = null;
             this.referencedFiles = [];
             this.requiresGlobal = false;
@@ -1942,7 +1942,7 @@ var TypeScript;
     var NamedDeclaration = (function (_super) {
         __extends(NamedDeclaration, _super);
         function NamedDeclaration(nodeType, name, members) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.name = name;
             this.members = members;
             this.leftCurlyCount = 0;
@@ -1957,7 +1957,7 @@ var TypeScript;
     var ModuleDeclaration = (function (_super) {
         __extends(ModuleDeclaration, _super);
         function ModuleDeclaration(name, members, vars, endingToken) {
-                _super.call(this, 98 /* ModuleDeclaration */ , name, members);
+            _super.call(this, 98 /* ModuleDeclaration */ , name, members);
             this.endingToken = endingToken;
             this.modFlags = 512 /* ShouldEmitModuleDecl */ ;
             this.mod = null;
@@ -1998,7 +1998,7 @@ var TypeScript;
     var TypeDeclaration = (function (_super) {
         __extends(TypeDeclaration, _super);
         function TypeDeclaration(nodeType, name, typeParameters, extendsList, implementsList, members) {
-                _super.call(this, nodeType, name, members);
+            _super.call(this, nodeType, name, members);
             this.typeParameters = typeParameters;
             this.extendsList = extendsList;
             this.implementsList = implementsList;
@@ -2016,7 +2016,7 @@ var TypeScript;
     var ClassDeclaration = (function (_super) {
         __extends(ClassDeclaration, _super);
         function ClassDeclaration(name, typeParameters, members, extendsList, implementsList) {
-                _super.call(this, 96 /* ClassDeclaration */ , name, typeParameters, extendsList, implementsList, members);
+            _super.call(this, 96 /* ClassDeclaration */ , name, typeParameters, extendsList, implementsList, members);
             this.knownMemberNames = {};
             this.constructorDecl = null;
             this.constructorNestingLevel = 0;
@@ -2034,7 +2034,7 @@ var TypeScript;
     var InterfaceDeclaration = (function (_super) {
         __extends(InterfaceDeclaration, _super);
         function InterfaceDeclaration(name, typeParameters, members, extendsList, implementsList) {
-                _super.call(this, 97 /* InterfaceDeclaration */ , name, typeParameters, extendsList, implementsList, members);
+            _super.call(this, 97 /* InterfaceDeclaration */ , name, typeParameters, extendsList, implementsList, members);
         }
         InterfaceDeclaration.prototype.typeCheck = function (typeFlow) {
             return typeFlow.typeCheckInterface(this);
@@ -2047,7 +2047,7 @@ var TypeScript;
     var Statement = (function (_super) {
         __extends(Statement, _super);
         function Statement(nodeType) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.flags |= 64 /* IsStatement */ ;
         }
         Statement.prototype.isLoop = function () {
@@ -2069,7 +2069,7 @@ var TypeScript;
     var LabeledStatement = (function (_super) {
         __extends(LabeledStatement, _super);
         function LabeledStatement(labels, stmt) {
-                _super.call(this, 103 /* LabeledStatement */ );
+            _super.call(this, 103 /* LabeledStatement */ );
             this.labels = labels;
             this.stmt = stmt;
         }
@@ -2103,7 +2103,7 @@ var TypeScript;
     var Block = (function (_super) {
         __extends(Block, _super);
         function Block(statements, isStatementBlock) {
-                _super.call(this, 86 /* Block */ );
+            _super.call(this, 86 /* Block */ );
             this.statements = statements;
             this.isStatementBlock = isStatementBlock;
         }
@@ -2157,7 +2157,7 @@ var TypeScript;
     var Jump = (function (_super) {
         __extends(Jump, _super);
         function Jump(nodeType) {
-                _super.call(this, nodeType);
+            _super.call(this, nodeType);
             this.target = null;
             this.resolvedTarget = null;
         }
@@ -2207,7 +2207,7 @@ var TypeScript;
     var WhileStatement = (function (_super) {
         __extends(WhileStatement, _super);
         function WhileStatement(cond) {
-                _super.call(this, 84 /* While */ );
+            _super.call(this, 84 /* While */ );
             this.cond = cond;
             this.body = null;
         }
@@ -2260,7 +2260,7 @@ var TypeScript;
     var DoWhileStatement = (function (_super) {
         __extends(DoWhileStatement, _super);
         function DoWhileStatement() {
-                _super.call(this, 85 /* DoWhile */ );
+            _super.call(this, 85 /* DoWhile */ );
             this.body = null;
             this.whileAST = null;
             this.cond = null;
@@ -2317,7 +2317,7 @@ var TypeScript;
     var IfStatement = (function (_super) {
         __extends(IfStatement, _super);
         function IfStatement(cond) {
-                _super.call(this, 83 /* If */ );
+            _super.call(this, 83 /* If */ );
             this.cond = cond;
             this.elseBod = null;
             this.statement = new ASTSpan();
@@ -2398,7 +2398,7 @@ var TypeScript;
     var ReturnStatement = (function (_super) {
         __extends(ReturnStatement, _super);
         function ReturnStatement() {
-                _super.call(this, 77 /* Return */ );
+            _super.call(this, 77 /* Return */ );
             this.returnExpression = null;
         }
         ReturnStatement.prototype.emit = function (emitter, tokenId, startLine) {
@@ -2431,7 +2431,7 @@ var TypeScript;
     var EndCode = (function (_super) {
         __extends(EndCode, _super);
         function EndCode() {
-                _super.call(this, 106 /* EndCode */ );
+            _super.call(this, 106 /* EndCode */ );
         }
         return EndCode;
     })(AST);
@@ -2439,7 +2439,7 @@ var TypeScript;
     var ForInStatement = (function (_super) {
         __extends(ForInStatement, _super);
         function ForInStatement(lval, obj) {
-                _super.call(this, 82 /* ForIn */ );
+            _super.call(this, 82 /* ForIn */ );
             this.lval = lval;
             this.obj = obj;
             this.statement = new ASTSpan();
@@ -2551,7 +2551,7 @@ var TypeScript;
     var ForStatement = (function (_super) {
         __extends(ForStatement, _super);
         function ForStatement(init) {
-                _super.call(this, 81 /* For */ );
+            _super.call(this, 81 /* For */ );
             this.init = init;
         }
         ForStatement.prototype.isLoop = function () {
@@ -2642,7 +2642,7 @@ var TypeScript;
     var WithStatement = (function (_super) {
         __extends(WithStatement, _super);
         function WithStatement(expr) {
-                _super.call(this, 101 /* With */ );
+            _super.call(this, 101 /* With */ );
             this.expr = expr;
             this.withSym = null;
         }
@@ -2670,7 +2670,7 @@ var TypeScript;
     var SwitchStatement = (function (_super) {
         __extends(SwitchStatement, _super);
         function SwitchStatement(val) {
-                _super.call(this, 88 /* Switch */ );
+            _super.call(this, 88 /* Switch */ );
             this.val = val;
             this.defaultCase = null;
             this.statement = new ASTSpan();
@@ -2741,7 +2741,7 @@ var TypeScript;
     var CaseStatement = (function (_super) {
         __extends(CaseStatement, _super);
         function CaseStatement() {
-                _super.call(this, 87 /* Case */ );
+            _super.call(this, 87 /* Case */ );
             this.expr = null;
             this.colonSpan = new ASTSpan();
         }
@@ -2799,7 +2799,7 @@ var TypeScript;
     var TypeParameter = (function (_super) {
         __extends(TypeParameter, _super);
         function TypeParameter(name, constraint) {
-                _super.call(this, 26 /* TypeParameter */ );
+            _super.call(this, 26 /* TypeParameter */ );
             this.name = name;
             this.constraint = constraint;
         }
@@ -2809,7 +2809,7 @@ var TypeScript;
     var GenericType = (function (_super) {
         __extends(GenericType, _super);
         function GenericType(name, typeArguments) {
-                _super.call(this, 27 /* GenericType */ );
+            _super.call(this, 27 /* GenericType */ );
             this.name = name;
             this.typeArguments = typeArguments;
         }
@@ -2819,7 +2819,7 @@ var TypeScript;
     var TypeReference = (function (_super) {
         __extends(TypeReference, _super);
         function TypeReference(term, arrayCount) {
-                _super.call(this, 28 /* TypeRef */ );
+            _super.call(this, 28 /* TypeRef */ );
             this.term = term;
             this.arrayCount = arrayCount;
         }
@@ -2848,7 +2848,7 @@ var TypeScript;
     var TryFinally = (function (_super) {
         __extends(TryFinally, _super);
         function TryFinally(tryNode, finallyNode) {
-                _super.call(this, 91 /* TryFinally */ );
+            _super.call(this, 91 /* TryFinally */ );
             this.tryNode = tryNode;
             this.finallyNode = finallyNode;
         }
@@ -2894,7 +2894,7 @@ var TypeScript;
     var TryCatch = (function (_super) {
         __extends(TryCatch, _super);
         function TryCatch(tryNode, catchNode) {
-                _super.call(this, 90 /* TryCatch */ );
+            _super.call(this, 90 /* TryCatch */ );
             this.tryNode = tryNode;
             this.catchNode = catchNode;
         }
@@ -2946,7 +2946,7 @@ var TypeScript;
     var Try = (function (_super) {
         __extends(Try, _super);
         function Try(body) {
-                _super.call(this, 89 /* Try */ );
+            _super.call(this, 89 /* Try */ );
             this.body = body;
         }
         Try.prototype.emit = function (emitter, tokenId, startLine) {
@@ -2974,7 +2974,7 @@ var TypeScript;
     var Catch = (function (_super) {
         __extends(Catch, _super);
         function Catch(param, body) {
-                _super.call(this, 93 /* Catch */ );
+            _super.call(this, 93 /* Catch */ );
             this.param = param;
             this.body = body;
             this.statement = new ASTSpan();
@@ -3041,7 +3041,7 @@ var TypeScript;
     var Finally = (function (_super) {
         __extends(Finally, _super);
         function Finally(body) {
-                _super.call(this, 92 /* Finally */ );
+            _super.call(this, 92 /* Finally */ );
             this.body = body;
         }
         Finally.prototype.emit = function (emitter, tokenId, startLine) {
@@ -3069,7 +3069,7 @@ var TypeScript;
     var Comment = (function (_super) {
         __extends(Comment, _super);
         function Comment(content, isBlockComment, endsLine) {
-                _super.call(this, 108 /* Comment */ );
+            _super.call(this, 108 /* Comment */ );
             this.content = content;
             this.isBlockComment = isBlockComment;
             this.endsLine = endsLine;
@@ -3288,7 +3288,7 @@ var TypeScript;
     var DebuggerStatement = (function (_super) {
         __extends(DebuggerStatement, _super);
         function DebuggerStatement() {
-                _super.call(this, 109 /* Debugger */ );
+            _super.call(this, 109 /* Debugger */ );
         }
         DebuggerStatement.prototype.emit = function (emitter, tokenId, startLine) {
             emitter.emitParensAndCommentsInPlace(this, true);
@@ -4967,13 +4967,20 @@ var TypeScript;
                 this.recordSourceMappingEnd(args);
             }
         };
-        Emitter.prototype.getVarDeclFromIdentifier = function (ident) {
+        Emitter.prototype.getVarDeclFromIdentifier = function (boundDeclInfo) {
+            TypeScript.CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init && boundDeclInfo.boundDecl.init.nodeType == 25 /* Name */ , "The init expression of bound declaration when emitting as constant has to be indentifier");
+            var init = boundDeclInfo.boundDecl.init;
+            var ident = init;
             if (ident.sym !== null && ident.sym.declAST.nodeType === 75 /* VarDecl */ ) {
-                return ident.sym.declAST;
+                return {
+                    boundDecl: ident.sym.declAST,
+                    pullDecl: null
+                };
             }
             return null;
         };
-        Emitter.prototype.getConstantValue = function (init) {
+        Emitter.prototype.getConstantValue = function (boundDeclInfo) {
+            var init = boundDeclInfo.boundDecl.init;
             if (init) {
                 if (init.nodeType === 24 /* NumberLit */ ) {
                     var numLit = init;
@@ -4984,9 +4991,9 @@ var TypeScript;
                         return (binop.operand1).value << (binop.operand2).value;
                     }
                 } else if (init.nodeType === 25 /* Name */ ) {
-                    var varDecl = this.getVarDeclFromIdentifier(init);
-                    if (varDecl) {
-                        return this.getConstantValue(varDecl.init);
+                    var varDeclInfo = this.getVarDeclFromIdentifier(boundDeclInfo);
+                    if (varDeclInfo) {
+                        return this.getConstantValue(varDeclInfo);
                     }
                 }
             }
@@ -4998,7 +5005,10 @@ var TypeScript;
                 if (TypeScript.hasFlag(propertyName.sym.flags, 32768 /* Constant */ )) {
                     if (propertyName.sym.declAST) {
                         var boundDecl = propertyName.sym.declAST;
-                        return boundDecl;
+                        return {
+                            boundDecl: boundDecl,
+                            pullDecl: null
+                        };
                     }
                 }
             }
@@ -5009,9 +5019,9 @@ var TypeScript;
                 return false;
             }
             var propertyName = dotExpr.operand2;
-            var boundDecl = this.getConstantDecl(dotExpr);
-            if (boundDecl) {
-                var value = this.getConstantValue(boundDecl.init);
+            var boundDeclInfo = this.getConstantDecl(dotExpr);
+            if (boundDeclInfo) {
+                var value = this.getConstantValue(boundDeclInfo);
                 if (value !== null) {
                     this.writeToOutput(value.toString());
                     var comment = " /* ";
@@ -5905,7 +5915,7 @@ var TypeScript;
                 }
             }
             ast.emit(this, tokenId, startLine);
-            if ((tokenId === 54 /* Semicolon */ ) && (ast.nodeType < 73 /* GeneralNode */ )) {
+            if ((tokenId === 54 /* Semicolon */ ) && (ast.nodeType < TypeScript.NodeType.GeneralNode)) {
                 this.writeToOutput(";");
             }
         };
@@ -11892,7 +11902,7 @@ var TypeScript;
         autoToken[TypeScript.LexCodeCOL] = TypeScript.staticTokens[75 /* Colon */ ];
         TypeScript.LexKeywordTable = new TypeScript.StringHashTable();
         for(var i in (TypeScript.TokenID)._map) {
-            if ((i) <= 53 /* LimKeyword */ ) {
+            if ((i) <= TypeScript.TokenID.LimKeyword) {
                 TypeScript.LexKeywordTable.add((TypeScript.TokenID)._map[i].toLowerCase(), i);
             }
         }
@@ -12922,7 +12932,7 @@ while(this.pos < this.len) {
     }
     TypeScript.convertTokToID = convertTokToID;
     function convertTokToIDBase(tok, identifierName, strictMode) {
-        if (tok.tokenId <= 53 /* LimKeyword */ ) {
+        if (tok.tokenId <= TypeScript.TokenID.LimKeyword) {
             var tokInfo = TypeScript.lookupToken(tok.tokenId);
             if (tokInfo != undefined) {
                 var resFlags = 1 /* Javascript */  | 2 /* JavascriptFuture */ ;
@@ -13938,7 +13948,7 @@ var TypeScript;
     var InferenceSymbol = (function (_super) {
         __extends(InferenceSymbol, _super);
         function InferenceSymbol(name, location, length, fileName) {
-                _super.call(this, name, location, length, fileName);
+            _super.call(this, name, location, length, fileName);
             this.typeCheckStatus = 0 /* NotStarted */ ;
         }
         InferenceSymbol.prototype.isInferenceSymbol = function () {
@@ -13976,7 +13986,7 @@ var TypeScript;
     var TypeSymbol = (function (_super) {
         __extends(TypeSymbol, _super);
         function TypeSymbol(locName, location, length, fileName, type) {
-                _super.call(this, locName, location, length, fileName);
+            _super.call(this, locName, location, length, fileName);
             this.type = type;
             this.expansions = [];
             this.expansionsDeclAST = [];
@@ -14079,7 +14089,7 @@ var TypeScript;
     var WithSymbol = (function (_super) {
         __extends(WithSymbol, _super);
         function WithSymbol(location, fileName, withType) {
-                _super.call(this, "with", location, 4, fileName, withType);
+            _super.call(this, "with", location, 4, fileName, withType);
         }
         WithSymbol.prototype.isWith = function () {
             return true;
@@ -14090,7 +14100,7 @@ var TypeScript;
     var FieldSymbol = (function (_super) {
         __extends(FieldSymbol, _super);
         function FieldSymbol(name, location, fileName, canWrite, field) {
-                _super.call(this, name, location, name.length, fileName);
+            _super.call(this, name, location, name.length, fileName);
             this.canWrite = canWrite;
             this.field = field;
             this.getter = null;
@@ -14162,7 +14172,7 @@ var TypeScript;
     var ParameterSymbol = (function (_super) {
         __extends(ParameterSymbol, _super);
         function ParameterSymbol(name, location, fileName, parameter) {
-                _super.call(this, name, location, name.length, fileName);
+            _super.call(this, name, location, name.length, fileName);
             this.parameter = parameter;
             this.paramDocComment = null;
             this.funcDecl = null;
@@ -14237,7 +14247,7 @@ var TypeScript;
     var VariableSymbol = (function (_super) {
         __extends(VariableSymbol, _super);
         function VariableSymbol(name, location, fileName, variable) {
-                _super.call(this, name, location, name.length, fileName);
+            _super.call(this, name, location, name.length, fileName);
             this.variable = variable;
         }
         VariableSymbol.prototype.kind = function () {
@@ -14365,7 +14375,7 @@ var TypeScript;
     var SymbolAggregateScope = (function (_super) {
         __extends(SymbolAggregateScope, _super);
         function SymbolAggregateScope(container) {
-                _super.call(this, container);
+            _super.call(this, container);
             this.valueCache = null;
             this.valueImplCache = null;
             this.valueAmbientCache = null;
@@ -14537,7 +14547,7 @@ var TypeScript;
     var SymbolTableScope = (function (_super) {
         __extends(SymbolTableScope, _super);
         function SymbolTableScope(valueMembers, ambientValueMembers, enclosedTypes, ambientEnclosedTypes, container) {
-                _super.call(this, container);
+            _super.call(this, container);
             this.valueMembers = valueMembers;
             this.ambientValueMembers = ambientValueMembers;
             this.enclosedTypes = enclosedTypes;
@@ -14665,7 +14675,7 @@ var TypeScript;
     var SymbolScopeBuilder = (function (_super) {
         __extends(SymbolScopeBuilder, _super);
         function SymbolScopeBuilder(valueMembers, ambientValueMembers, enclosedTypes, ambientEnclosedTypes, parent, container) {
-                _super.call(this, container);
+            _super.call(this, container);
             this.valueMembers = valueMembers;
             this.ambientValueMembers = ambientValueMembers;
             this.enclosedTypes = enclosedTypes;
@@ -14864,7 +14874,7 @@ var TypeScript;
     var FilteredSymbolScope = (function (_super) {
         __extends(FilteredSymbolScope, _super);
         function FilteredSymbolScope(scope, container, filter) {
-                _super.call(this, container);
+            _super.call(this, container);
             this.scope = scope;
             this.filter = filter;
         }
@@ -14884,7 +14894,7 @@ var TypeScript;
     var FilteredSymbolScopeBuilder = (function (_super) {
         __extends(FilteredSymbolScopeBuilder, _super);
         function FilteredSymbolScopeBuilder(valueMembers, parent, container, filter) {
-                _super.call(this, valueMembers, null, null, null, parent, container);
+            _super.call(this, valueMembers, null, null, null, parent, container);
             this.filter = filter;
         }
         FilteredSymbolScopeBuilder.prototype.findLocal = function (name, publicOnly, typespace) {
@@ -15394,7 +15404,7 @@ var TypeScript;
             return TypeScript.tokenTable[this.tokenId].text;
         };
         Token.prototype.classification = function () {
-            if (this.tokenId <= 53 /* LimKeyword */ ) {
+            if (this.tokenId <= TokenID.LimKeyword) {
                 return 1 /* Keyword */ ;
             } else {
                 var tokenInfo = lookupToken(this.tokenId);
@@ -15412,7 +15422,7 @@ var TypeScript;
     var NumberLiteralToken = (function (_super) {
         __extends(NumberLiteralToken, _super);
         function NumberLiteralToken(value, text) {
-                _super.call(this, 109 /* NumberLiteral */ );
+            _super.call(this, 109 /* NumberLiteral */ );
             this.value = value;
             this.text = text;
         }
@@ -15428,7 +15438,7 @@ var TypeScript;
     var StringLiteralToken = (function (_super) {
         __extends(StringLiteralToken, _super);
         function StringLiteralToken(value) {
-                _super.call(this, 107 /* StringLiteral */ );
+            _super.call(this, 107 /* StringLiteral */ );
             this.value = value;
         }
         StringLiteralToken.prototype.getText = function () {
@@ -15443,7 +15453,7 @@ var TypeScript;
     var IdentifierToken = (function (_super) {
         __extends(IdentifierToken, _super);
         function IdentifierToken(value, hasEscapeSequence) {
-                _super.call(this, 106 /* Identifier */ );
+            _super.call(this, 106 /* Identifier */ );
             this.value = value;
             this.hasEscapeSequence = hasEscapeSequence;
         }
@@ -15459,7 +15469,7 @@ var TypeScript;
     var WhitespaceToken = (function (_super) {
         __extends(WhitespaceToken, _super);
         function WhitespaceToken(tokenId, value) {
-                _super.call(this, tokenId);
+            _super.call(this, tokenId);
             this.value = value;
         }
         WhitespaceToken.prototype.getText = function () {
@@ -15474,7 +15484,7 @@ var TypeScript;
     var CommentToken = (function (_super) {
         __extends(CommentToken, _super);
         function CommentToken(value, isBlock, startPos, line, endsLine) {
-                _super.call(this, 111 /* Comment */ );
+            _super.call(this, 111 /* Comment */ );
             this.value = value;
             this.isBlock = isBlock;
             this.startPos = startPos;
@@ -15493,7 +15503,7 @@ var TypeScript;
     var RegularExpressionLiteralToken = (function (_super) {
         __extends(RegularExpressionLiteralToken, _super);
         function RegularExpressionLiteralToken(text) {
-                _super.call(this, 108 /* RegularExpressionLiteral */ );
+            _super.call(this, 108 /* RegularExpressionLiteral */ );
             this.text = text;
         }
         RegularExpressionLiteralToken.prototype.getText = function () {
@@ -15507,7 +15517,7 @@ var TypeScript;
     TypeScript.RegularExpressionLiteralToken = RegularExpressionLiteralToken;    
     TypeScript.staticTokens = [];
     function initializeStaticTokens() {
-        for(var i = 0; i <= 105 /* LimFixed */ ; i++) {
+        for(var i = 0; i <= TokenID.LimFixed; i++) {
             TypeScript.staticTokens[i] = new Token(i);
         }
     }
@@ -17774,7 +17784,7 @@ var TypeScript;
                     }
                     id = cur;
                     useSym(id.sym, context, cur);
-                } else if ((cur.nodeType >= 32 /* Asg */ ) && (cur.nodeType <= 43 /* LastAsg */ )) {
+                } else if ((cur.nodeType >= 32 /* Asg */ ) && (cur.nodeType <= TypeScript.NodeType.LastAsg)) {
                     asg = cur;
                     if (asg.operand1 && (asg.operand1.nodeType === 25 /* Name */ )) {
                         id = asg.operand1;
@@ -20125,7 +20135,7 @@ var TypeScript;
         };
         TypeFlow.prototype.typeCheckCondExpr = function (cond) {
             if (this.checker.styleSettings.assignmentInCond) {
-                if ((cond !== null) && (cond.nodeType >= 32 /* Asg */ ) && (cond.nodeType <= 43 /* LastAsg */ )) {
+                if ((cond !== null) && (cond.nodeType >= 32 /* Asg */ ) && (cond.nodeType <= TypeScript.NodeType.LastAsg)) {
                     this.checker.errorReporter.simpleError(cond, "top-level assignment statement in conditional expression");
                 }
             }
@@ -20828,7 +20838,7 @@ var TypeScript;
     var MemberNameString = (function (_super) {
         __extends(MemberNameString, _super);
         function MemberNameString(text) {
-                _super.call(this);
+            _super.call(this);
             this.text = text;
         }
         MemberNameString.prototype.isString = function () {
@@ -20840,8 +20850,7 @@ var TypeScript;
     var MemberNameArray = (function (_super) {
         __extends(MemberNameArray, _super);
         function MemberNameArray() {
-            _super.apply(this, arguments);
-
+            _super.call(this);
             this.delim = "";
             this.entries = [];
         }
@@ -21189,7 +21198,7 @@ var TypeScript;
     var ModuleType = (function (_super) {
         __extends(ModuleType, _super);
         function ModuleType(enclosedTypes, ambientEnclosedTypes) {
-                _super.call(this);
+            _super.call(this);
             this.enclosedTypes = enclosedTypes;
             this.ambientEnclosedTypes = ambientEnclosedTypes;
             this.importedModules = [];
@@ -23441,7 +23450,7 @@ var TypeScript;
     var SyntaxTokenReplacer = (function (_super) {
         __extends(SyntaxTokenReplacer, _super);
         function SyntaxTokenReplacer(token1, token2) {
-                _super.call(this);
+            _super.call(this);
             this.token1 = token1;
             this.token2 = token2;
         }
@@ -23865,7 +23874,7 @@ var TypeScript;
     var PositionedNodeOrToken = (function (_super) {
         __extends(PositionedNodeOrToken, _super);
         function PositionedNodeOrToken(parent, nodeOrToken, fullStart) {
-                _super.call(this, parent, nodeOrToken, fullStart);
+            _super.call(this, parent, nodeOrToken, fullStart);
         }
         PositionedNodeOrToken.prototype.nodeOrToken = function () {
             return this.element();
@@ -23876,7 +23885,7 @@ var TypeScript;
     var PositionedNode = (function (_super) {
         __extends(PositionedNode, _super);
         function PositionedNode(parent, node, fullStart) {
-                _super.call(this, parent, node, fullStart);
+            _super.call(this, parent, node, fullStart);
         }
         PositionedNode.prototype.node = function () {
             return this.element();
@@ -23887,7 +23896,7 @@ var TypeScript;
     var PositionedToken = (function (_super) {
         __extends(PositionedToken, _super);
         function PositionedToken(parent, token, fullStart) {
-                _super.call(this, parent, token, fullStart);
+            _super.call(this, parent, token, fullStart);
         }
         PositionedToken.prototype.token = function () {
             return this.element();
@@ -23911,7 +23920,7 @@ var TypeScript;
     var PositionedList = (function (_super) {
         __extends(PositionedList, _super);
         function PositionedList(parent, list, fullStart) {
-                _super.call(this, parent, list, fullStart);
+            _super.call(this, parent, list, fullStart);
         }
         PositionedList.prototype.list = function () {
             return this.element();
@@ -23922,7 +23931,7 @@ var TypeScript;
     var PositionedSeparatedList = (function (_super) {
         __extends(PositionedSeparatedList, _super);
         function PositionedSeparatedList(parent, list, fullStart) {
-                _super.call(this, parent, list, fullStart);
+            _super.call(this, parent, list, fullStart);
         }
         PositionedSeparatedList.prototype.list = function () {
             return this.element();
@@ -24074,27 +24083,27 @@ var TypeScript;
         }
         SyntaxFacts.getText = getText;
         function isTokenKind(kind) {
-            return kind >= 9 /* FirstToken */  && kind <= 119 /* LastToken */ ;
+            return kind >= TypeScript.SyntaxKind.FirstToken && kind <= TypeScript.SyntaxKind.LastToken;
         }
         SyntaxFacts.isTokenKind = isTokenKind;
         function isAnyKeyword(kind) {
-            return kind >= 15 /* FirstKeyword */  && kind <= 69 /* LastKeyword */ ;
+            return kind >= TypeScript.SyntaxKind.FirstKeyword && kind <= TypeScript.SyntaxKind.LastKeyword;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
         function isStandardKeyword(kind) {
-            return kind >= 15 /* FirstStandardKeyword */  && kind <= 43 /* LastStandardKeyword */ ;
+            return kind >= TypeScript.SyntaxKind.FirstStandardKeyword && kind <= TypeScript.SyntaxKind.LastStandardKeyword;
         }
         SyntaxFacts.isStandardKeyword = isStandardKeyword;
         function isFutureReservedKeyword(kind) {
-            return kind >= 44 /* FirstFutureReservedKeyword */  && kind <= 50 /* LastFutureReservedKeyword */ ;
+            return kind >= TypeScript.SyntaxKind.FirstFutureReservedKeyword && kind <= TypeScript.SyntaxKind.LastFutureReservedKeyword;
         }
         SyntaxFacts.isFutureReservedKeyword = isFutureReservedKeyword;
         function isFutureReservedStrictKeyword(kind) {
-            return kind >= 51 /* FirstFutureReservedStrictKeyword */  && kind <= 59 /* LastFutureReservedStrictKeyword */ ;
+            return kind >= TypeScript.SyntaxKind.FirstFutureReservedStrictKeyword && kind <= TypeScript.SyntaxKind.LastFutureReservedStrictKeyword;
         }
         SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
         function isAnyPunctuation(kind) {
-            return kind >= 70 /* FirstPunctuation */  && kind <= 119 /* LastPunctuation */ ;
+            return kind >= TypeScript.SyntaxKind.FirstPunctuation && kind <= TypeScript.SyntaxKind.LastPunctuation;
         }
         SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
         function isPrefixUnaryExpressionOperatorToken(tokenKind) {
@@ -26378,7 +26387,7 @@ var TypeScript;
     var SyntaxDiagnostic = (function (_super) {
         __extends(SyntaxDiagnostic, _super);
         function SyntaxDiagnostic(start, length, code, args) {
-                _super.call(this, code, args);
+            _super.call(this, code, args);
             if (length < 0) {
                 throw TypeScript.Errors.argumentOutOfRange("width");
             }
@@ -29832,7 +29841,7 @@ var TypeScript;
                     }
                 }
                 Scanner1.isNumericLiteralStart[46 /* dot */ ] = true;
-                for(var keywordKind = 15 /* FirstKeyword */ ; keywordKind <= 69 /* LastKeyword */ ; keywordKind++) {
+                for(var keywordKind = TypeScript.SyntaxKind.FirstKeyword; keywordKind <= TypeScript.SyntaxKind.LastKeyword; keywordKind++) {
                     var keyword = TypeScript.SyntaxFacts.getText(keywordKind);
                     Scanner1.isKeywordStartCharacter[keyword.charCodeAt(0)] = true;
                 }
@@ -29857,7 +29866,7 @@ var TypeScript;
             var kind = this.scanSyntaxToken(diagnostics, allowRegularExpression);
             var end = this.slidingWindow.absoluteIndex();
             var trailingTriviaInfo = this.scanTriviaInfo(diagnostics, true);
-            if (kind >= 15 /* FirstFixedWidth */ ) {
+            if (kind >= TypeScript.SyntaxKind.FirstFixedWidth) {
                 if (leadingTriviaInfo === 0) {
                     if (trailingTriviaInfo === 0) {
                         return new TypeScript.Syntax.FixedWidthTokenWithNoTrivia(kind);
@@ -31755,7 +31764,7 @@ var TypeScript;
     var SourceUnitSyntax = (function (_super) {
         __extends(SourceUnitSyntax, _super);
         function SourceUnitSyntax(moduleElements, endOfFileToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.moduleElements = moduleElements;
             this.endOfFileToken = endOfFileToken;
         }
@@ -31819,7 +31828,7 @@ var TypeScript;
     var ModuleReferenceSyntax = (function (_super) {
         __extends(ModuleReferenceSyntax, _super);
         function ModuleReferenceSyntax(parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
         }
         ModuleReferenceSyntax.prototype.isModuleReference = function () {
             return true;
@@ -31839,7 +31848,7 @@ var TypeScript;
     var ExternalModuleReferenceSyntax = (function (_super) {
         __extends(ExternalModuleReferenceSyntax, _super);
         function ExternalModuleReferenceSyntax(moduleKeyword, openParenToken, stringLiteral, closeParenToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.moduleKeyword = moduleKeyword;
             this.openParenToken = openParenToken;
             this.stringLiteral = stringLiteral;
@@ -31904,7 +31913,7 @@ var TypeScript;
     var ModuleNameModuleReferenceSyntax = (function (_super) {
         __extends(ModuleNameModuleReferenceSyntax, _super);
         function ModuleNameModuleReferenceSyntax(moduleName, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.moduleName = moduleName;
         }
         ModuleNameModuleReferenceSyntax.prototype.accept = function (visitor) {
@@ -31948,7 +31957,7 @@ var TypeScript;
     var ImportDeclarationSyntax = (function (_super) {
         __extends(ImportDeclarationSyntax, _super);
         function ImportDeclarationSyntax(importKeyword, identifier, equalsToken, moduleReference, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.importKeyword = importKeyword;
             this.identifier = identifier;
             this.equalsToken = equalsToken;
@@ -32022,7 +32031,7 @@ var TypeScript;
     var ExportAssignmentSyntax = (function (_super) {
         __extends(ExportAssignmentSyntax, _super);
         function ExportAssignmentSyntax(exportKeyword, equalsToken, identifier, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.equalsToken = equalsToken;
             this.identifier = identifier;
@@ -32090,7 +32099,7 @@ var TypeScript;
     var ClassDeclarationSyntax = (function (_super) {
         __extends(ClassDeclarationSyntax, _super);
         function ClassDeclarationSyntax(exportKeyword, declareKeyword, classKeyword, identifier, typeParameterList, extendsClause, implementsClause, openBraceToken, classElements, closeBraceToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.declareKeyword = declareKeyword;
             this.classKeyword = classKeyword;
@@ -32202,7 +32211,7 @@ var TypeScript;
     var InterfaceDeclarationSyntax = (function (_super) {
         __extends(InterfaceDeclarationSyntax, _super);
         function InterfaceDeclarationSyntax(exportKeyword, interfaceKeyword, identifier, typeParameterList, extendsClause, body, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.interfaceKeyword = interfaceKeyword;
             this.identifier = identifier;
@@ -32285,7 +32294,7 @@ var TypeScript;
     var ExtendsClauseSyntax = (function (_super) {
         __extends(ExtendsClauseSyntax, _super);
         function ExtendsClauseSyntax(extendsKeyword, typeNames, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.extendsKeyword = extendsKeyword;
             this.typeNames = typeNames;
         }
@@ -32343,7 +32352,7 @@ var TypeScript;
     var ImplementsClauseSyntax = (function (_super) {
         __extends(ImplementsClauseSyntax, _super);
         function ImplementsClauseSyntax(implementsKeyword, typeNames, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.implementsKeyword = implementsKeyword;
             this.typeNames = typeNames;
         }
@@ -32401,7 +32410,7 @@ var TypeScript;
     var ModuleDeclarationSyntax = (function (_super) {
         __extends(ModuleDeclarationSyntax, _super);
         function ModuleDeclarationSyntax(exportKeyword, declareKeyword, moduleKeyword, moduleName, stringLiteral, openBraceToken, moduleElements, closeBraceToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.declareKeyword = declareKeyword;
             this.moduleKeyword = moduleKeyword;
@@ -32501,7 +32510,7 @@ var TypeScript;
     var FunctionDeclarationSyntax = (function (_super) {
         __extends(FunctionDeclarationSyntax, _super);
         function FunctionDeclarationSyntax(exportKeyword, declareKeyword, functionKeyword, identifier, callSignature, block, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.declareKeyword = declareKeyword;
             this.functionKeyword = functionKeyword;
@@ -32605,7 +32614,7 @@ var TypeScript;
     var VariableStatementSyntax = (function (_super) {
         __extends(VariableStatementSyntax, _super);
         function VariableStatementSyntax(exportKeyword, declareKeyword, variableDeclaration, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.declareKeyword = declareKeyword;
             this.variableDeclaration = variableDeclaration;
@@ -32688,7 +32697,7 @@ var TypeScript;
     var VariableDeclarationSyntax = (function (_super) {
         __extends(VariableDeclarationSyntax, _super);
         function VariableDeclarationSyntax(varKeyword, variableDeclarators, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.varKeyword = varKeyword;
             this.variableDeclarators = variableDeclarators;
         }
@@ -32749,7 +32758,7 @@ var TypeScript;
     var VariableDeclaratorSyntax = (function (_super) {
         __extends(VariableDeclaratorSyntax, _super);
         function VariableDeclaratorSyntax(identifier, typeAnnotation, equalsValueClause, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.identifier = identifier;
             this.typeAnnotation = typeAnnotation;
             this.equalsValueClause = equalsValueClause;
@@ -32820,7 +32829,7 @@ var TypeScript;
     var EqualsValueClauseSyntax = (function (_super) {
         __extends(EqualsValueClauseSyntax, _super);
         function EqualsValueClauseSyntax(equalsToken, value, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.equalsToken = equalsToken;
             this.value = value;
         }
@@ -32876,7 +32885,7 @@ var TypeScript;
     var ColonValueClauseSyntax = (function (_super) {
         __extends(ColonValueClauseSyntax, _super);
         function ColonValueClauseSyntax(colonToken, value, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.colonToken = colonToken;
             this.value = value;
         }
@@ -32932,7 +32941,7 @@ var TypeScript;
     var PrefixUnaryExpressionSyntax = (function (_super) {
         __extends(PrefixUnaryExpressionSyntax, _super);
         function PrefixUnaryExpressionSyntax(kind, operatorToken, operand, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.operatorToken = operatorToken;
             this.operand = operand;
             this._kind = kind;
@@ -32995,7 +33004,7 @@ var TypeScript;
     var ArrayLiteralExpressionSyntax = (function (_super) {
         __extends(ArrayLiteralExpressionSyntax, _super);
         function ArrayLiteralExpressionSyntax(openBracketToken, expressions, closeBracketToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openBracketToken = openBracketToken;
             this.expressions = expressions;
             this.closeBracketToken = closeBracketToken;
@@ -33071,7 +33080,7 @@ var TypeScript;
     var OmittedExpressionSyntax = (function (_super) {
         __extends(OmittedExpressionSyntax, _super);
         function OmittedExpressionSyntax(parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
         }
         OmittedExpressionSyntax.prototype.accept = function (visitor) {
             return visitor.visitOmittedExpression(this);
@@ -33106,7 +33115,7 @@ var TypeScript;
     var ParenthesizedExpressionSyntax = (function (_super) {
         __extends(ParenthesizedExpressionSyntax, _super);
         function ParenthesizedExpressionSyntax(openParenToken, expression, closeParenToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openParenToken = openParenToken;
             this.expression = expression;
             this.closeParenToken = closeParenToken;
@@ -33174,7 +33183,7 @@ var TypeScript;
     var ArrowFunctionExpressionSyntax = (function (_super) {
         __extends(ArrowFunctionExpressionSyntax, _super);
         function ArrowFunctionExpressionSyntax(equalsGreaterThanToken, body, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.equalsGreaterThanToken = equalsGreaterThanToken;
             this.body = body;
         }
@@ -33199,7 +33208,7 @@ var TypeScript;
     var SimpleArrowFunctionExpressionSyntax = (function (_super) {
         __extends(SimpleArrowFunctionExpressionSyntax, _super);
         function SimpleArrowFunctionExpressionSyntax(identifier, equalsGreaterThanToken, body, parsedInStrictMode) {
-                _super.call(this, equalsGreaterThanToken, body, parsedInStrictMode);
+            _super.call(this, equalsGreaterThanToken, body, parsedInStrictMode);
             this.identifier = identifier;
         }
         SimpleArrowFunctionExpressionSyntax.prototype.accept = function (visitor) {
@@ -33256,7 +33265,7 @@ var TypeScript;
     var ParenthesizedArrowFunctionExpressionSyntax = (function (_super) {
         __extends(ParenthesizedArrowFunctionExpressionSyntax, _super);
         function ParenthesizedArrowFunctionExpressionSyntax(callSignature, equalsGreaterThanToken, body, parsedInStrictMode) {
-                _super.call(this, equalsGreaterThanToken, body, parsedInStrictMode);
+            _super.call(this, equalsGreaterThanToken, body, parsedInStrictMode);
             this.callSignature = callSignature;
         }
         ParenthesizedArrowFunctionExpressionSyntax.prototype.accept = function (visitor) {
@@ -33313,7 +33322,7 @@ var TypeScript;
     var QualifiedNameSyntax = (function (_super) {
         __extends(QualifiedNameSyntax, _super);
         function QualifiedNameSyntax(left, dotToken, right, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.left = left;
             this.dotToken = dotToken;
             this.right = right;
@@ -33384,7 +33393,7 @@ var TypeScript;
     var TypeArgumentListSyntax = (function (_super) {
         __extends(TypeArgumentListSyntax, _super);
         function TypeArgumentListSyntax(lessThanToken, typeArguments, greaterThanToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.lessThanToken = lessThanToken;
             this.typeArguments = typeArguments;
             this.greaterThanToken = greaterThanToken;
@@ -33451,7 +33460,7 @@ var TypeScript;
     var ConstructorTypeSyntax = (function (_super) {
         __extends(ConstructorTypeSyntax, _super);
         function ConstructorTypeSyntax(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.newKeyword = newKeyword;
             this.typeParameterList = typeParameterList;
             this.parameterList = parameterList;
@@ -33534,7 +33543,7 @@ var TypeScript;
     var FunctionTypeSyntax = (function (_super) {
         __extends(FunctionTypeSyntax, _super);
         function FunctionTypeSyntax(typeParameterList, parameterList, equalsGreaterThanToken, type, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.typeParameterList = typeParameterList;
             this.parameterList = parameterList;
             this.equalsGreaterThanToken = equalsGreaterThanToken;
@@ -33611,7 +33620,7 @@ var TypeScript;
     var ObjectTypeSyntax = (function (_super) {
         __extends(ObjectTypeSyntax, _super);
         function ObjectTypeSyntax(openBraceToken, typeMembers, closeBraceToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openBraceToken = openBraceToken;
             this.typeMembers = typeMembers;
             this.closeBraceToken = closeBraceToken;
@@ -33687,7 +33696,7 @@ var TypeScript;
     var ArrayTypeSyntax = (function (_super) {
         __extends(ArrayTypeSyntax, _super);
         function ArrayTypeSyntax(type, openBracketToken, closeBracketToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.type = type;
             this.openBracketToken = openBracketToken;
             this.closeBracketToken = closeBracketToken;
@@ -33755,7 +33764,7 @@ var TypeScript;
     var GenericTypeSyntax = (function (_super) {
         __extends(GenericTypeSyntax, _super);
         function GenericTypeSyntax(name, typeArgumentList, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.name = name;
             this.typeArgumentList = typeArgumentList;
         }
@@ -33817,7 +33826,7 @@ var TypeScript;
     var TypeAnnotationSyntax = (function (_super) {
         __extends(TypeAnnotationSyntax, _super);
         function TypeAnnotationSyntax(colonToken, type, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.colonToken = colonToken;
             this.type = type;
         }
@@ -33870,7 +33879,7 @@ var TypeScript;
     var BlockSyntax = (function (_super) {
         __extends(BlockSyntax, _super);
         function BlockSyntax(openBraceToken, statements, closeBraceToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openBraceToken = openBraceToken;
             this.statements = statements;
             this.closeBraceToken = closeBraceToken;
@@ -33946,7 +33955,7 @@ var TypeScript;
     var ParameterSyntax = (function (_super) {
         __extends(ParameterSyntax, _super);
         function ParameterSyntax(dotDotDotToken, publicOrPrivateKeyword, identifier, questionToken, typeAnnotation, equalsValueClause, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.dotDotDotToken = dotDotDotToken;
             this.publicOrPrivateKeyword = publicOrPrivateKeyword;
             this.identifier = identifier;
@@ -34041,7 +34050,7 @@ var TypeScript;
     var MemberAccessExpressionSyntax = (function (_super) {
         __extends(MemberAccessExpressionSyntax, _super);
         function MemberAccessExpressionSyntax(expression, dotToken, name, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.expression = expression;
             this.dotToken = dotToken;
             this.name = name;
@@ -34109,7 +34118,7 @@ var TypeScript;
     var PostfixUnaryExpressionSyntax = (function (_super) {
         __extends(PostfixUnaryExpressionSyntax, _super);
         function PostfixUnaryExpressionSyntax(kind, operand, operatorToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.operand = operand;
             this.operatorToken = operatorToken;
             this._kind = kind;
@@ -34172,7 +34181,7 @@ var TypeScript;
     var ElementAccessExpressionSyntax = (function (_super) {
         __extends(ElementAccessExpressionSyntax, _super);
         function ElementAccessExpressionSyntax(expression, openBracketToken, argumentExpression, closeBracketToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.expression = expression;
             this.openBracketToken = openBracketToken;
             this.argumentExpression = argumentExpression;
@@ -34249,7 +34258,7 @@ var TypeScript;
     var InvocationExpressionSyntax = (function (_super) {
         __extends(InvocationExpressionSyntax, _super);
         function InvocationExpressionSyntax(expression, argumentList, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.expression = expression;
             this.argumentList = argumentList;
         }
@@ -34314,7 +34323,7 @@ var TypeScript;
     var ArgumentListSyntax = (function (_super) {
         __extends(ArgumentListSyntax, _super);
         function ArgumentListSyntax(typeArgumentList, openParenToken, arguments, closeParenToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.typeArgumentList = typeArgumentList;
             this.openParenToken = openParenToken;
             this.arguments = arguments;
@@ -34393,7 +34402,7 @@ var TypeScript;
     var BinaryExpressionSyntax = (function (_super) {
         __extends(BinaryExpressionSyntax, _super);
         function BinaryExpressionSyntax(kind, left, operatorToken, right, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.left = left;
             this.operatorToken = operatorToken;
             this.right = right;
@@ -34462,7 +34471,7 @@ var TypeScript;
     var ConditionalExpressionSyntax = (function (_super) {
         __extends(ConditionalExpressionSyntax, _super);
         function ConditionalExpressionSyntax(condition, questionToken, whenTrue, colonToken, whenFalse, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.condition = condition;
             this.questionToken = questionToken;
             this.whenTrue = whenTrue;
@@ -34545,7 +34554,7 @@ var TypeScript;
     var ConstructSignatureSyntax = (function (_super) {
         __extends(ConstructSignatureSyntax, _super);
         function ConstructSignatureSyntax(newKeyword, callSignature, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.newKeyword = newKeyword;
             this.callSignature = callSignature;
         }
@@ -34601,7 +34610,7 @@ var TypeScript;
     var MethodSignatureSyntax = (function (_super) {
         __extends(MethodSignatureSyntax, _super);
         function MethodSignatureSyntax(identifier, questionToken, callSignature, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.identifier = identifier;
             this.questionToken = questionToken;
             this.callSignature = callSignature;
@@ -34669,7 +34678,7 @@ var TypeScript;
     var IndexSignatureSyntax = (function (_super) {
         __extends(IndexSignatureSyntax, _super);
         function IndexSignatureSyntax(openBracketToken, parameter, closeBracketToken, typeAnnotation, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openBracketToken = openBracketToken;
             this.parameter = parameter;
             this.closeBracketToken = closeBracketToken;
@@ -34740,7 +34749,7 @@ var TypeScript;
     var PropertySignatureSyntax = (function (_super) {
         __extends(PropertySignatureSyntax, _super);
         function PropertySignatureSyntax(identifier, questionToken, typeAnnotation, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.identifier = identifier;
             this.questionToken = questionToken;
             this.typeAnnotation = typeAnnotation;
@@ -34805,7 +34814,7 @@ var TypeScript;
     var CallSignatureSyntax = (function (_super) {
         __extends(CallSignatureSyntax, _super);
         function CallSignatureSyntax(typeParameterList, parameterList, typeAnnotation, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.typeParameterList = typeParameterList;
             this.parameterList = parameterList;
             this.typeAnnotation = typeAnnotation;
@@ -34879,7 +34888,7 @@ var TypeScript;
     var ParameterListSyntax = (function (_super) {
         __extends(ParameterListSyntax, _super);
         function ParameterListSyntax(openParenToken, parameters, closeParenToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openParenToken = openParenToken;
             this.parameters = parameters;
             this.closeParenToken = closeParenToken;
@@ -34949,7 +34958,7 @@ var TypeScript;
     var TypeParameterListSyntax = (function (_super) {
         __extends(TypeParameterListSyntax, _super);
         function TypeParameterListSyntax(lessThanToken, typeParameters, greaterThanToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.lessThanToken = lessThanToken;
             this.typeParameters = typeParameters;
             this.greaterThanToken = greaterThanToken;
@@ -35016,7 +35025,7 @@ var TypeScript;
     var TypeParameterSyntax = (function (_super) {
         __extends(TypeParameterSyntax, _super);
         function TypeParameterSyntax(identifier, constraint, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.identifier = identifier;
             this.constraint = constraint;
         }
@@ -35072,7 +35081,7 @@ var TypeScript;
     var ConstraintSyntax = (function (_super) {
         __extends(ConstraintSyntax, _super);
         function ConstraintSyntax(extendsKeyword, type, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.extendsKeyword = extendsKeyword;
             this.type = type;
         }
@@ -35125,7 +35134,7 @@ var TypeScript;
     var ElseClauseSyntax = (function (_super) {
         __extends(ElseClauseSyntax, _super);
         function ElseClauseSyntax(elseKeyword, statement, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.elseKeyword = elseKeyword;
             this.statement = statement;
         }
@@ -35181,7 +35190,7 @@ var TypeScript;
     var IfStatementSyntax = (function (_super) {
         __extends(IfStatementSyntax, _super);
         function IfStatementSyntax(ifKeyword, openParenToken, condition, closeParenToken, statement, elseClause, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.ifKeyword = ifKeyword;
             this.openParenToken = openParenToken;
             this.condition = condition;
@@ -35276,7 +35285,7 @@ var TypeScript;
     var ExpressionStatementSyntax = (function (_super) {
         __extends(ExpressionStatementSyntax, _super);
         function ExpressionStatementSyntax(expression, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.expression = expression;
             this.semicolonToken = semicolonToken;
         }
@@ -35338,7 +35347,7 @@ var TypeScript;
     var ConstructorDeclarationSyntax = (function (_super) {
         __extends(ConstructorDeclarationSyntax, _super);
         function ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.constructorKeyword = constructorKeyword;
             this.parameterList = parameterList;
             this.block = block;
@@ -35409,7 +35418,7 @@ var TypeScript;
     var MemberFunctionDeclarationSyntax = (function (_super) {
         __extends(MemberFunctionDeclarationSyntax, _super);
         function MemberFunctionDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, propertyName, callSignature, block, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.publicOrPrivateKeyword = publicOrPrivateKeyword;
             this.staticKeyword = staticKeyword;
             this.propertyName = propertyName;
@@ -35495,7 +35504,7 @@ var TypeScript;
     var MemberAccessorDeclarationSyntax = (function (_super) {
         __extends(MemberAccessorDeclarationSyntax, _super);
         function MemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.publicOrPrivateKeyword = publicOrPrivateKeyword;
             this.staticKeyword = staticKeyword;
             this.identifier = identifier;
@@ -35523,7 +35532,7 @@ var TypeScript;
     var GetMemberAccessorDeclarationSyntax = (function (_super) {
         __extends(GetMemberAccessorDeclarationSyntax, _super);
         function GetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, getKeyword, identifier, parameterList, typeAnnotation, block, parsedInStrictMode) {
-                _super.call(this, publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode);
+            _super.call(this, publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode);
             this.getKeyword = getKeyword;
             this.typeAnnotation = typeAnnotation;
         }
@@ -35604,7 +35613,7 @@ var TypeScript;
     var SetMemberAccessorDeclarationSyntax = (function (_super) {
         __extends(SetMemberAccessorDeclarationSyntax, _super);
         function SetMemberAccessorDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, setKeyword, identifier, parameterList, block, parsedInStrictMode) {
-                _super.call(this, publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode);
+            _super.call(this, publicOrPrivateKeyword, staticKeyword, identifier, parameterList, block, parsedInStrictMode);
             this.setKeyword = setKeyword;
         }
         SetMemberAccessorDeclarationSyntax.prototype.accept = function (visitor) {
@@ -35679,7 +35688,7 @@ var TypeScript;
     var MemberVariableDeclarationSyntax = (function (_super) {
         __extends(MemberVariableDeclarationSyntax, _super);
         function MemberVariableDeclarationSyntax(publicOrPrivateKeyword, staticKeyword, variableDeclarator, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.publicOrPrivateKeyword = publicOrPrivateKeyword;
             this.staticKeyword = staticKeyword;
             this.variableDeclarator = variableDeclarator;
@@ -35753,7 +35762,7 @@ var TypeScript;
     var ThrowStatementSyntax = (function (_super) {
         __extends(ThrowStatementSyntax, _super);
         function ThrowStatementSyntax(throwKeyword, expression, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.throwKeyword = throwKeyword;
             this.expression = expression;
             this.semicolonToken = semicolonToken;
@@ -35821,7 +35830,7 @@ var TypeScript;
     var ReturnStatementSyntax = (function (_super) {
         __extends(ReturnStatementSyntax, _super);
         function ReturnStatementSyntax(returnKeyword, expression, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.returnKeyword = returnKeyword;
             this.expression = expression;
             this.semicolonToken = semicolonToken;
@@ -35892,7 +35901,7 @@ var TypeScript;
     var ObjectCreationExpressionSyntax = (function (_super) {
         __extends(ObjectCreationExpressionSyntax, _super);
         function ObjectCreationExpressionSyntax(newKeyword, expression, argumentList, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.newKeyword = newKeyword;
             this.expression = expression;
             this.argumentList = argumentList;
@@ -35966,7 +35975,7 @@ var TypeScript;
     var SwitchStatementSyntax = (function (_super) {
         __extends(SwitchStatementSyntax, _super);
         function SwitchStatementSyntax(switchKeyword, openParenToken, expression, closeParenToken, openBraceToken, switchClauses, closeBraceToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.switchKeyword = switchKeyword;
             this.openParenToken = openParenToken;
             this.expression = expression;
@@ -36069,7 +36078,7 @@ var TypeScript;
     var SwitchClauseSyntax = (function (_super) {
         __extends(SwitchClauseSyntax, _super);
         function SwitchClauseSyntax(colonToken, statements, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.colonToken = colonToken;
             this.statements = statements;
         }
@@ -36091,7 +36100,7 @@ var TypeScript;
     var CaseSwitchClauseSyntax = (function (_super) {
         __extends(CaseSwitchClauseSyntax, _super);
         function CaseSwitchClauseSyntax(caseKeyword, expression, colonToken, statements, parsedInStrictMode) {
-                _super.call(this, colonToken, statements, parsedInStrictMode);
+            _super.call(this, colonToken, statements, parsedInStrictMode);
             this.caseKeyword = caseKeyword;
             this.expression = expression;
         }
@@ -36168,7 +36177,7 @@ var TypeScript;
     var DefaultSwitchClauseSyntax = (function (_super) {
         __extends(DefaultSwitchClauseSyntax, _super);
         function DefaultSwitchClauseSyntax(defaultKeyword, colonToken, statements, parsedInStrictMode) {
-                _super.call(this, colonToken, statements, parsedInStrictMode);
+            _super.call(this, colonToken, statements, parsedInStrictMode);
             this.defaultKeyword = defaultKeyword;
         }
         DefaultSwitchClauseSyntax.prototype.accept = function (visitor) {
@@ -36236,7 +36245,7 @@ var TypeScript;
     var BreakStatementSyntax = (function (_super) {
         __extends(BreakStatementSyntax, _super);
         function BreakStatementSyntax(breakKeyword, identifier, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.breakKeyword = breakKeyword;
             this.identifier = identifier;
             this.semicolonToken = semicolonToken;
@@ -36304,7 +36313,7 @@ var TypeScript;
     var ContinueStatementSyntax = (function (_super) {
         __extends(ContinueStatementSyntax, _super);
         function ContinueStatementSyntax(continueKeyword, identifier, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.continueKeyword = continueKeyword;
             this.identifier = identifier;
             this.semicolonToken = semicolonToken;
@@ -36372,7 +36381,7 @@ var TypeScript;
     var IterationStatementSyntax = (function (_super) {
         __extends(IterationStatementSyntax, _super);
         function IterationStatementSyntax(openParenToken, closeParenToken, statement, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openParenToken = openParenToken;
             this.closeParenToken = closeParenToken;
             this.statement = statement;
@@ -36398,7 +36407,7 @@ var TypeScript;
     var BaseForStatementSyntax = (function (_super) {
         __extends(BaseForStatementSyntax, _super);
         function BaseForStatementSyntax(forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode) {
-                _super.call(this, openParenToken, closeParenToken, statement, parsedInStrictMode);
+            _super.call(this, openParenToken, closeParenToken, statement, parsedInStrictMode);
             this.forKeyword = forKeyword;
             this.variableDeclaration = variableDeclaration;
         }
@@ -36417,7 +36426,7 @@ var TypeScript;
     var ForStatementSyntax = (function (_super) {
         __extends(ForStatementSyntax, _super);
         function ForStatementSyntax(forKeyword, openParenToken, variableDeclaration, initializer, firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement, parsedInStrictMode) {
-                _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode);
+            _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode);
             this.initializer = initializer;
             this.firstSemicolonToken = firstSemicolonToken;
             this.condition = condition;
@@ -36531,7 +36540,7 @@ var TypeScript;
     var ForInStatementSyntax = (function (_super) {
         __extends(ForInStatementSyntax, _super);
         function ForInStatementSyntax(forKeyword, openParenToken, variableDeclaration, left, inKeyword, expression, closeParenToken, statement, parsedInStrictMode) {
-                _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode);
+            _super.call(this, forKeyword, openParenToken, variableDeclaration, closeParenToken, statement, parsedInStrictMode);
             this.left = left;
             this.inKeyword = inKeyword;
             this.expression = expression;
@@ -36630,7 +36639,7 @@ var TypeScript;
     var WhileStatementSyntax = (function (_super) {
         __extends(WhileStatementSyntax, _super);
         function WhileStatementSyntax(whileKeyword, openParenToken, condition, closeParenToken, statement, parsedInStrictMode) {
-                _super.call(this, openParenToken, closeParenToken, statement, parsedInStrictMode);
+            _super.call(this, openParenToken, closeParenToken, statement, parsedInStrictMode);
             this.whileKeyword = whileKeyword;
             this.condition = condition;
         }
@@ -36704,7 +36713,7 @@ var TypeScript;
     var WithStatementSyntax = (function (_super) {
         __extends(WithStatementSyntax, _super);
         function WithStatementSyntax(withKeyword, openParenToken, condition, closeParenToken, statement, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.withKeyword = withKeyword;
             this.openParenToken = openParenToken;
             this.condition = condition;
@@ -36787,7 +36796,7 @@ var TypeScript;
     var EnumDeclarationSyntax = (function (_super) {
         __extends(EnumDeclarationSyntax, _super);
         function EnumDeclarationSyntax(exportKeyword, enumKeyword, identifier, openBraceToken, enumElements, closeBraceToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.exportKeyword = exportKeyword;
             this.enumKeyword = enumKeyword;
             this.identifier = identifier;
@@ -36875,7 +36884,7 @@ var TypeScript;
     var EnumElementSyntax = (function (_super) {
         __extends(EnumElementSyntax, _super);
         function EnumElementSyntax(identifier, stringLiteral, colonValueClause, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.identifier = identifier;
             this.stringLiteral = stringLiteral;
             this.colonValueClause = colonValueClause;
@@ -36940,7 +36949,7 @@ var TypeScript;
     var CastExpressionSyntax = (function (_super) {
         __extends(CastExpressionSyntax, _super);
         function CastExpressionSyntax(lessThanToken, type, greaterThanToken, expression, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.lessThanToken = lessThanToken;
             this.type = type;
             this.greaterThanToken = greaterThanToken;
@@ -37011,7 +37020,7 @@ var TypeScript;
     var ObjectLiteralExpressionSyntax = (function (_super) {
         __extends(ObjectLiteralExpressionSyntax, _super);
         function ObjectLiteralExpressionSyntax(openBraceToken, propertyAssignments, closeBraceToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.openBraceToken = openBraceToken;
             this.propertyAssignments = propertyAssignments;
             this.closeBraceToken = closeBraceToken;
@@ -37087,7 +37096,7 @@ var TypeScript;
     var PropertyAssignmentSyntax = (function (_super) {
         __extends(PropertyAssignmentSyntax, _super);
         function PropertyAssignmentSyntax(propertyName, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.propertyName = propertyName;
         }
         PropertyAssignmentSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -37105,7 +37114,7 @@ var TypeScript;
     var SimplePropertyAssignmentSyntax = (function (_super) {
         __extends(SimplePropertyAssignmentSyntax, _super);
         function SimplePropertyAssignmentSyntax(propertyName, colonToken, expression, parsedInStrictMode) {
-                _super.call(this, propertyName, parsedInStrictMode);
+            _super.call(this, propertyName, parsedInStrictMode);
             this.colonToken = colonToken;
             this.expression = expression;
         }
@@ -37166,7 +37175,7 @@ var TypeScript;
     var AccessorPropertyAssignmentSyntax = (function (_super) {
         __extends(AccessorPropertyAssignmentSyntax, _super);
         function AccessorPropertyAssignmentSyntax(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode) {
-                _super.call(this, propertyName, parsedInStrictMode);
+            _super.call(this, propertyName, parsedInStrictMode);
             this.openParenToken = openParenToken;
             this.closeParenToken = closeParenToken;
             this.block = block;
@@ -37186,7 +37195,7 @@ var TypeScript;
     var GetAccessorPropertyAssignmentSyntax = (function (_super) {
         __extends(GetAccessorPropertyAssignmentSyntax, _super);
         function GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, parsedInStrictMode) {
-                _super.call(this, propertyName, openParenToken, closeParenToken, block, parsedInStrictMode);
+            _super.call(this, propertyName, openParenToken, closeParenToken, block, parsedInStrictMode);
             this.getKeyword = getKeyword;
             this.typeAnnotation = typeAnnotation;
         }
@@ -37268,7 +37277,7 @@ var TypeScript;
     var SetAccessorPropertyAssignmentSyntax = (function (_super) {
         __extends(SetAccessorPropertyAssignmentSyntax, _super);
         function SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block, parsedInStrictMode) {
-                _super.call(this, propertyName, openParenToken, closeParenToken, block, parsedInStrictMode);
+            _super.call(this, propertyName, openParenToken, closeParenToken, block, parsedInStrictMode);
             this.setKeyword = setKeyword;
             this.parameter = parameter;
         }
@@ -37347,7 +37356,7 @@ var TypeScript;
     var FunctionExpressionSyntax = (function (_super) {
         __extends(FunctionExpressionSyntax, _super);
         function FunctionExpressionSyntax(functionKeyword, identifier, callSignature, block, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.functionKeyword = functionKeyword;
             this.identifier = identifier;
             this.callSignature = callSignature;
@@ -37427,7 +37436,7 @@ var TypeScript;
     var EmptyStatementSyntax = (function (_super) {
         __extends(EmptyStatementSyntax, _super);
         function EmptyStatementSyntax(semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.semicolonToken = semicolonToken;
         }
         EmptyStatementSyntax.prototype.accept = function (visitor) {
@@ -37480,7 +37489,7 @@ var TypeScript;
     var TryStatementSyntax = (function (_super) {
         __extends(TryStatementSyntax, _super);
         function TryStatementSyntax(tryKeyword, block, catchClause, finallyClause, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.tryKeyword = tryKeyword;
             this.block = block;
             this.catchClause = catchClause;
@@ -37563,7 +37572,7 @@ var TypeScript;
     var CatchClauseSyntax = (function (_super) {
         __extends(CatchClauseSyntax, _super);
         function CatchClauseSyntax(catchKeyword, openParenToken, identifier, typeAnnotation, closeParenToken, block, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.catchKeyword = catchKeyword;
             this.openParenToken = openParenToken;
             this.identifier = identifier;
@@ -37649,7 +37658,7 @@ var TypeScript;
     var FinallyClauseSyntax = (function (_super) {
         __extends(FinallyClauseSyntax, _super);
         function FinallyClauseSyntax(finallyKeyword, block, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.finallyKeyword = finallyKeyword;
             this.block = block;
         }
@@ -37705,7 +37714,7 @@ var TypeScript;
     var LabeledStatementSyntax = (function (_super) {
         __extends(LabeledStatementSyntax, _super);
         function LabeledStatementSyntax(identifier, colonToken, statement, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.identifier = identifier;
             this.colonToken = colonToken;
             this.statement = statement;
@@ -37773,7 +37782,7 @@ var TypeScript;
     var DoStatementSyntax = (function (_super) {
         __extends(DoStatementSyntax, _super);
         function DoStatementSyntax(doKeyword, statement, whileKeyword, openParenToken, condition, closeParenToken, semicolonToken, parsedInStrictMode) {
-                _super.call(this, openParenToken, closeParenToken, statement, parsedInStrictMode);
+            _super.call(this, openParenToken, closeParenToken, statement, parsedInStrictMode);
             this.doKeyword = doKeyword;
             this.whileKeyword = whileKeyword;
             this.condition = condition;
@@ -37859,7 +37868,7 @@ var TypeScript;
     var TypeOfExpressionSyntax = (function (_super) {
         __extends(TypeOfExpressionSyntax, _super);
         function TypeOfExpressionSyntax(typeOfKeyword, expression, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.typeOfKeyword = typeOfKeyword;
             this.expression = expression;
         }
@@ -37921,7 +37930,7 @@ var TypeScript;
     var DeleteExpressionSyntax = (function (_super) {
         __extends(DeleteExpressionSyntax, _super);
         function DeleteExpressionSyntax(deleteKeyword, expression, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.deleteKeyword = deleteKeyword;
             this.expression = expression;
         }
@@ -37983,7 +37992,7 @@ var TypeScript;
     var VoidExpressionSyntax = (function (_super) {
         __extends(VoidExpressionSyntax, _super);
         function VoidExpressionSyntax(voidKeyword, expression, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.voidKeyword = voidKeyword;
             this.expression = expression;
         }
@@ -38045,7 +38054,7 @@ var TypeScript;
     var DebuggerStatementSyntax = (function (_super) {
         __extends(DebuggerStatementSyntax, _super);
         function DebuggerStatementSyntax(debuggerKeyword, semicolonToken, parsedInStrictMode) {
-                _super.call(this, parsedInStrictMode);
+            _super.call(this, parsedInStrictMode);
             this.debuggerKeyword = debuggerKeyword;
             this.semicolonToken = semicolonToken;
         }
@@ -39070,11 +39079,11 @@ var TypeScript;
                 if (tokenKind === 11 /* IdentifierName */ ) {
                     return true;
                 }
-                if (tokenKind >= 51 /* FirstFutureReservedStrictKeyword */ ) {
-                    if (tokenKind <= 59 /* LastFutureReservedStrictKeyword */ ) {
+                if (tokenKind >= TypeScript.SyntaxKind.FirstFutureReservedStrictKeyword) {
+                    if (tokenKind <= TypeScript.SyntaxKind.LastFutureReservedStrictKeyword) {
                         return !this.isInStrictMode;
                     }
-                    return tokenKind <= 69 /* LastTypeScriptKeyword */ ;
+                    return tokenKind <= TypeScript.SyntaxKind.LastTypeScriptKeyword;
                 }
                 return false;
             };
@@ -39136,12 +39145,12 @@ var TypeScript;
                 return this.eatToken(78 /* SemicolonToken */ );
             };
             ParserImpl.prototype.isKeyword = function (kind) {
-                if (kind >= 15 /* FirstKeyword */ ) {
-                    if (kind <= 50 /* LastFutureReservedKeyword */ ) {
+                if (kind >= TypeScript.SyntaxKind.FirstKeyword) {
+                    if (kind <= TypeScript.SyntaxKind.LastFutureReservedKeyword) {
                         return true;
                     }
                     if (this.isInStrictMode) {
-                        return kind <= 59 /* LastFutureReservedStrictKeyword */ ;
+                        return kind <= TypeScript.SyntaxKind.LastFutureReservedStrictKeyword;
                     }
                 }
                 return false;
@@ -41222,7 +41231,7 @@ var TypeScript;
             };
             ParserImpl.prototype.abortParsingListOrMoveToNextToken = function (currentListType, itemCount, items, skippedTokens) {
                 this.reportUnexpectedTokenDiagnostic(currentListType);
-                for(var state = 131072 /* LastListParsingState */ ; state >= 1 /* FirstListParsingState */ ; state >>= 1) {
+                for(var state = ListParsingState.LastListParsingState; state >= ListParsingState.FirstListParsingState; state >>= 1) {
                     if ((this.listParsingState & state) !== 0) {
                         if (this.isExpectedListTerminator(state, itemCount) || this.isExpectedListItem(state, true)) {
                             return true;
@@ -41930,7 +41939,7 @@ var TypeScript;
         var SubText = (function (_super) {
             __extends(SubText, _super);
             function SubText(text, span) {
-                        _super.call(this);
+                _super.call(this);
                 if (text === null) {
                     throw TypeScript.Errors.argumentNull("text");
                 }
@@ -41967,7 +41976,7 @@ var TypeScript;
         var StringText = (function (_super) {
             __extends(StringText, _super);
             function StringText(data) {
-                        _super.call(this);
+                _super.call(this);
                 this.source = null;
                 if (data === null) {
                     throw TypeScript.Errors.argumentNull("data");
@@ -42126,7 +42135,7 @@ var TypeScript;
     var PatchedDataMap = (function (_super) {
         __extends(PatchedDataMap, _super);
         function PatchedDataMap(parent) {
-                _super.call(this);
+            _super.call(this);
             this.parent = parent;
             this.diffs = {};
         }
@@ -42814,7 +42823,7 @@ var TypeScript;
     var PullSignatureSymbol = (function (_super) {
         __extends(PullSignatureSymbol, _super);
         function PullSignatureSymbol(kind) {
-                _super.call(this, "", kind);
+            _super.call(this, "", kind);
             this.parameterLinks = null;
             this.typeParameterLinks = null;
             this.returnTypeLink = null;
@@ -43795,7 +43804,7 @@ var TypeScript;
     var PullPrimitiveTypeSymbol = (function (_super) {
         __extends(PullPrimitiveTypeSymbol, _super);
         function PullPrimitiveTypeSymbol(name) {
-                _super.call(this, name, 4 /* Primitive */ );
+            _super.call(this, name, 4 /* Primitive */ );
         }
         PullPrimitiveTypeSymbol.prototype.isResolved = function () {
             return true;
@@ -43808,7 +43817,7 @@ var TypeScript;
     var PullClassTypeSymbol = (function (_super) {
         __extends(PullClassTypeSymbol, _super);
         function PullClassTypeSymbol(name) {
-                _super.call(this, name, 16 /* Class */ );
+            _super.call(this, name, 16 /* Class */ );
             this.constructorMethod = null;
             this.hasDefaultConstructor = false;
         }
@@ -43840,7 +43849,7 @@ var TypeScript;
     var PullContainerTypeSymbol = (function (_super) {
         __extends(PullContainerTypeSymbol, _super);
         function PullContainerTypeSymbol(name) {
-                _super.call(this, name, 8 /* Container */ );
+            _super.call(this, name, 8 /* Container */ );
             this.instanceSymbol = null;
         }
         PullContainerTypeSymbol.prototype.isContainer = function () {
@@ -43876,7 +43885,7 @@ var TypeScript;
     var PullFunctionTypeSymbol = (function (_super) {
         __extends(PullFunctionTypeSymbol, _super);
         function PullFunctionTypeSymbol() {
-                _super.call(this, "", 33554432 /* FunctionType */ );
+            _super.call(this, "", 33554432 /* FunctionType */ );
             this.definitionSignature = null;
         }
         PullFunctionTypeSymbol.prototype.isFunction = function () {
@@ -43907,7 +43916,7 @@ var TypeScript;
     var PullConstructorTypeSymbol = (function (_super) {
         __extends(PullConstructorTypeSymbol, _super);
         function PullConstructorTypeSymbol() {
-                _super.call(this, "", 67108864 /* ConstructorType */ );
+            _super.call(this, "", 67108864 /* ConstructorType */ );
             this.definitionSignature = null;
         }
         PullConstructorTypeSymbol.prototype.isFunction = function () {
@@ -43942,7 +43951,7 @@ var TypeScript;
     var PullTypeParameterSymbol = (function (_super) {
         __extends(PullTypeParameterSymbol, _super);
         function PullTypeParameterSymbol(name) {
-                _super.call(this, name, 16384 /* TypeParameter */ );
+            _super.call(this, name, 16384 /* TypeParameter */ );
             this.constraintLink = null;
         }
         PullTypeParameterSymbol.prototype.isTypeParameter = function () {
@@ -43976,7 +43985,7 @@ var TypeScript;
     var PullTypeVariableSymbol = (function (_super) {
         __extends(PullTypeVariableSymbol, _super);
         function PullTypeVariableSymbol(name) {
-                _super.call(this, name);
+            _super.call(this, name);
             this.tyvarID = TypeScript.globalTyvarID++;
         }
         PullTypeVariableSymbol.prototype.isTypeParameter = function () {
@@ -43991,7 +44000,7 @@ var TypeScript;
     var PullAccessorSymbol = (function (_super) {
         __extends(PullAccessorSymbol, _super);
         function PullAccessorSymbol(name) {
-                _super.call(this, name, 8192 /* Property */ );
+            _super.call(this, name, 8192 /* Property */ );
             this.getterSymbolLink = null;
             this.setterSymbolLink = null;
         }
@@ -44043,7 +44052,7 @@ var TypeScript;
     var PullArrayTypeSymbol = (function (_super) {
         __extends(PullArrayTypeSymbol, _super);
         function PullArrayTypeSymbol() {
-                _super.call(this, "Array", 256 /* Array */ );
+            _super.call(this, "Array", 256 /* Array */ );
             this.elementType = null;
         }
         PullArrayTypeSymbol.prototype.isArray = function () {
@@ -52402,7 +52411,7 @@ var TypeScript;
     var PullEmitter = (function (_super) {
         __extends(PullEmitter, _super);
         function PullEmitter(emittingFileName, outfile, emitOptions, errorReporter, semanticInfoChain) {
-                _super.call(this, null, emittingFileName, outfile, emitOptions, errorReporter);
+            _super.call(this, null, emittingFileName, outfile, emitOptions, errorReporter);
             this.semanticInfoChain = semanticInfoChain;
             this.locationInfo = null;
             this.pullTypeChecker = null;
@@ -52469,17 +52478,23 @@ var TypeScript;
             }
             return false;
         };
-        PullEmitter.prototype.getVarDeclFromIdentifier = function (ident) {
+        PullEmitter.prototype.getVarDeclFromIdentifier = function (boundDeclInfo) {
+            TypeScript.CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init && boundDeclInfo.boundDecl.init.nodeType == 25 /* Name */ , "The init expression of bound declaration when emitting as constant has to be indentifier");
+            var init = boundDeclInfo.boundDecl.init;
+            var ident = init;
             var resolvingContext = new TypeScript.PullTypeResolutionContext();
             this.setTypeCheckerUnit(this.locationInfo.fileName);
-            var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
+            var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), resolvingContext);
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
                     if (ast && ast.nodeType == 75 /* VarDecl */ ) {
-                        return ast;
+                        return {
+                            boundDecl: ast,
+                            pullDecl: pullDecl
+                        };
                     }
                 }
             }
@@ -52495,7 +52510,10 @@ var TypeScript;
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
                     if (ast && ast.nodeType == 75 /* VarDecl */ ) {
-                        return ast;
+                        return {
+                            boundDecl: ast,
+                            pullDecl: pullDecl
+                        };
                     }
                 }
             }
@@ -52875,7 +52893,7 @@ var TypeScript;
     var PullDeclarationEmitter = (function (_super) {
         __extends(PullDeclarationEmitter, _super);
         function PullDeclarationEmitter(semanticInfoChain, emitOptions, errorReporter) {
-                _super.call(this, null, emitOptions, errorReporter);
+            _super.call(this, null, emitOptions, errorReporter);
             this.semanticInfoChain = semanticInfoChain;
             this.locationInfo = null;
         }
@@ -52983,7 +53001,7 @@ var TypeScript;
     var SyntaxInformationMap = (function (_super) {
         __extends(SyntaxInformationMap, _super);
         function SyntaxInformationMap(trackParents, trackPreviousToken) {
-                _super.call(this);
+            _super.call(this);
             this.trackParents = trackParents;
             this.trackPreviousToken = trackPreviousToken;
             this.tokenToInformation = TypeScript.Collections.createHashTable(TypeScript.Collections.DefaultHashTableCapacity, TypeScript.Collections.identityHashCode);
@@ -53715,6 +53733,7 @@ var TypeScript;
                         }
                     }
                     members.append(member);
+                    memberNames.push(memberName);
                     member.varFlags |= 1 /* Exported */ ;
                 }
             }
