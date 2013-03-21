@@ -347,16 +347,6 @@ module TypeScript {
             });
         }
 
-        public reTypeCheck() {
-            return this.timeFunction("reTypeCheck()", () => {
-                CompilerDiagnostics.analysisPass++;
-                this.initTypeChecker(this.errorOutput);
-                this.persistentTypeState.setCollectionMode(TypeCheckCollectionMode.Transient);
-                this.cleanTypesForReTypeCheck();
-                return this.typeCheck();
-            });
-        }
-
         private isDynamicModuleCompilation() {
             var fileNames = this.fileNameToScript.getAllKeys();
             for (var i = 0, len = fileNames.length; i < len; i++) {
