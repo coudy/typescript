@@ -1284,7 +1284,6 @@ module Services {
             return references.getEntries();
         }
 
-
         private getReferencesForSourceLocation(context: GetReferencesContext, fileName: string, position: number): ReferenceEntry[] {
             var script = this.compilerState.getScript(fileName);
 
@@ -1344,7 +1343,6 @@ module Services {
             return write;
         }
 
-
         private getReferencesForSymbol(context: GetReferencesContext, sym: TypeScript.Symbol): ReferenceEntry[] {
             var collector = new OverridesCollector(this.getSymbolTree());
             var symbolSet = collector.findMemberOverrides(sym);
@@ -1388,27 +1386,8 @@ module Services {
         ///   the identifier at the caret location. This corresponds to the semantics of "complete word"
         ///   completion list.
         public getCompletionsAtPosition(fileName: string, pos: number, isMemberCompletion: bool): CompletionInfo {
-            //this.minimalRefresh();
-            this.refresh();
-
-            var result = new CompletionInfo();
-            result.maybeInaccurate = false;
-            result.isMemberCompletion = isMemberCompletion;
-
-            // Find the enclosing scope so we can parse the corresponding fragment
-            var script = this.compilerState.getScriptAST(fileName);
-            var sourceText = this.compilerState.getScriptSnapshot(fileName);
-            var enclosingScopeContext = TypeScript.findEnclosingScopeAt(this.logger, script, sourceText, pos, isMemberCompletion);
-            if (enclosingScopeContext === null) {
-                this.logger.log("No context found at the specified location.");
-                return result;
-            }
-            this.logger.log("Found scope context in up-to-date script AST: pos=" + pos + ", scopePos=" + enclosingScopeContext.getScopePosition());
-
-            // Compute completion entries
-            enclosingScopeContext.useFullAst = true;
-            this.getCompletionsFromEnclosingScopeContext(enclosingScopeContext, result);
-            return result;
+            // TODO: remove this when we switch to pull by default.
+            return null;
         }
 
         private getDocCommentOfSymbol(symbol: TypeScript.Symbol) {
@@ -1440,218 +1419,6 @@ module Services {
 
 
             return TypeScript.Comment.getDocCommentText(symbol.getDocComments());
-        }
-
-        private getCompletionsFromEnclosingScopeContext(enclosingScopeContext: TypeScript.EnclosingScopeContext, result: CompletionInfo): void {
-            var getCompletions = (isMemberCompletion: bool) => {
-                result.isMemberCompletion = isMemberCompletion;
-                enclosingScopeContext.isMemberCompletion = isMemberCompletion;
-
-                var entries = this.compilerState.getScopeEntries(enclosingScopeContext, true);
-                entries.forEach(x => {
-                    var entry = new CompletionEntry();
-                    entry.name = x.name;
-                    entry.type = x.type;
-                    entry.kind = this.getSymbolElementKind(x.sym, enclosingScopeContext.getScope(), true);
-                    entry.fullSymbolName = this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
-                    entry.docComment = this.getDocCommentOfSymbol(x.sym);
-                    entry.kindModifiers = this.getSymbolElementKindModifiers(x.sym);
-                    result.entries.push(entry);
-                });
-            };
-
-            // We have an enclosing scope context, we can now compute the completion list.
-            var scriptFragment = enclosingScopeContext.getScriptFragment();
-            try {
-                var path = this.getAstPathToPosition(scriptFragment,
-                    enclosingScopeContext.pos - enclosingScopeContext.getScriptFragmentPosition(),
-                    TypeScript.GetAstPathOptions.EdgeInclusive | TypeScript.GetAstPathOptions.DontPruneSearchBasedOnPosition);
-
-                if (this.isCompletionListBlocker(path)) { 
-                    this.logger.log("Returning an empty list because position is inside a comment");
-                }
-                // Special case for object literals
-                else if (this.isObjectLiteralMemberNameCompletion(enclosingScopeContext)) {
-                    this.logger.log("Completion list for members of object literal");
-                    return getCompletions(true);
-                }
-                // Ensure we are in a position where it is ok to provide a completion list
-                else if (enclosingScopeContext.isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
-                    return getCompletions(enclosingScopeContext.isMemberCompletion);
-                }
-                else {
-                    this.logger.log("Returning an empty list because position is not a valid position for displaying a completion list");
-                }
-            }
-            finally {
-                this.compilerState.cleanASTTypesForReTypeCheck(scriptFragment);
-            }
-        }
-
-        private isObjectLiteralMemberNameCompletion(enclosingScopeContext: TypeScript.EnclosingScopeContext): bool {
-            if (enclosingScopeContext.enclosingObjectLit === null)
-                return false;
-
-            if (enclosingScopeContext.isMemberCompletion)
-                return false;
-
-            var objectLit = enclosingScopeContext.enclosingObjectLit;
-            var script = enclosingScopeContext.script;
-            var pos = enclosingScopeContext.pos
-
-            // We want to show the list of object literal members if either
-            // 1) we are inside an empty object literal
-            // 2) we are on the name node of a member of an object literal
-            // 3) we are outside of any expression of any member of an object literal
-            if (!TypeScript.isValidAstNode(objectLit))
-                return false;
-
-            if (!TypeScript.isValidAstNode(objectLit.operand))
-                return false;
-
-            if (objectLit.operand.nodeType !== TypeScript.NodeType.List)
-                return false;
-
-            var memberList = <TypeScript.ASTList>objectLit.operand;
-            var isInsideList = (memberList.minChar < pos && pos < memberList.limChar);
-            if (!isInsideList)
-                return false;
-
-            // Empty list always means member completion
-            if (memberList.members.length === 0) {
-                return true;
-            }
-
-            var syntaxAST = new ScriptSyntaxAST(this.logger, script, enclosingScopeContext.text);
-            var tokenStream = new TokenStreamHelper(syntaxAST.getTokenStream(memberList.minChar, memberList.limChar));
-
-            var nameAreaMinChar = tokenStream.tokenEndPos();
-            var isNameArea = false;
-            var cancelSearch = false;
-
-            if (!tokenStream.expect(TypeScript.TokenID.OpenBrace))
-                return false;
-
-            memberList.members.forEach((x, i) => {
-                if (cancelSearch)
-                    return;
-
-                if (x.nodeType !== TypeScript.NodeType.Member) {
-                    nameAreaMinChar = -1;
-                    return;
-                }
-
-                var member = <TypeScript.BinaryExpression>x;
-                if (!TypeScript.isValidAstNode(member.operand1)) {
-                    nameAreaMinChar = -1;
-                    return;
-                }
-
-                if (nameAreaMinChar < 0)
-                    nameAreaMinChar = member.operand1.minChar;
-
-                if (!tokenStream.skipToOffset(member.operand1.limChar)) {
-                    nameAreaMinChar = -1;
-                    cancelSearch = true;
-                    return;
-                }
-
-                if (tokenStream.tokenId() !== TypeScript.TokenID.Colon) {
-                    nameAreaMinChar = -1;
-                    return;
-                }
-
-                if ((nameAreaMinChar) >= 0 && (nameAreaMinChar <= pos) && (pos <= tokenStream.tokenStartPos())) {
-                    isNameArea = true;
-                    cancelSearch = true;
-                    return;
-                }
-
-                // Reposition nameAreaMinChar to the end of the member expression
-                nameAreaMinChar = -1;
-                if (TypeScript.isValidAstNode(member.operand2)) {
-                    if (tokenStream.skipToOffset(member.operand2.limChar)) {
-                        if (tokenStream.tokenId() === TypeScript.TokenID.Comma) {
-                            nameAreaMinChar = tokenStream.tokenEndPos();
-                            tokenStream.moveNext(); // skip comma
-                        }
-                    }
-                }
-            });
-
-            if (nameAreaMinChar < 0)
-                return false;
-
-            if (isNameArea)
-                return true;
-
-            if (tokenStream.tokenId() !== TypeScript.TokenID.CloseBrace)
-                return false;
-
-            return (nameAreaMinChar <= pos) && (pos <= tokenStream.tokenStartPos());
-        }
-
-        private isCompletionListBlocker(path: TypeScript.AstPath): bool {
-            var asts = path.asts;
-
-            var isNodeType = (nodeType: TypeScript.NodeType) => {
-                return (path.count() >= 1) &&
-                    (path.ast().nodeType === nodeType);
-            };
-
-            if (isNodeType(TypeScript.NodeType.Comment)
-                || isNodeType(TypeScript.NodeType.Regex)
-                || isNodeType(TypeScript.NodeType.QString)
-                ) {
-                return true;
-            }
-
-            return false;
-        }
-
-        private isCompletionListTriggerPoint(path: TypeScript.AstPath): bool {
-            var asts = path.asts;
-
-            var isNodeType = (nodeType: TypeScript.NodeType) => {
-                return (path.count() >= 1) &&
-                    (path.ast().nodeType === nodeType);
-            };
-
-            var isDecl = (nodeType: TypeScript.NodeType) => {
-                if (isNodeType(nodeType))
-                    return true;
-
-                if (asts.length > 1 &&
-                    (asts[asts.length - 2].nodeType === nodeType) &&
-                    (asts[asts.length - 1].nodeType === TypeScript.NodeType.Name))
-                    return true;
-
-                return false;
-            };
-
-            if (path.isNameOfVariable() // var <here>
-                || path.isNameOfFunction() // function <here>
-                || path.isNameOfArgument() // function foo(a<here>
-                || path.isArgumentListOfFunction() // function foo(<here>
-                || path.isNameOfInterface() // interface <here>
-                || path.isNameOfClass() // class <here>
-                || path.isNameOfModule() // module <here>
-                ) {
-                return false;
-            }
-
-            if (isNodeType(TypeScript.NodeType.Member) // class C() { property <here>
-                || isNodeType(TypeScript.NodeType.TryCatch) // try { } catch(<here>
-                || isNodeType(TypeScript.NodeType.Catch) // try { } catch(<here>
-                //|| isNodeType(Tools.NodeType.Class) // doesn't work
-                || isNodeType(TypeScript.NodeType.Comment)
-                || isNodeType(TypeScript.NodeType.Regex)
-                || isNodeType(TypeScript.NodeType.QString)
-                ) {
-                return false
-            }
-
-            return true;
         }
 
         public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
