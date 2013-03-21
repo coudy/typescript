@@ -939,39 +939,42 @@ declare var JSON: JSON;
 /// ECMAScript Array API (specially handled by compiler)
 ////////////////
 
-interface Array {
+interface Array<T> {
     toString(): string;
     toLocaleString(): string;
-    concat(...items: _element[][]): _element[];
-    concat(...items: _element[]): _element[];
+    concat(...items: T[][]): T[]; // Note: This overload needs to be picked for arrays of arrays, even though both are applicable
+    concat(...items: T[]): T[];
     join(seperator?: string): string;
-    pop(): _element;
-    push(...items: _element[]): number;
-    reverse(): _element[];
-    shift(): _element;
-    slice(start: number, end?: number): _element[];
-    sort(compareFn?: (a: _element, b: _element) => number): _element[];
-    splice(start: number): _element[];
-    splice(start: number, deleteCount: number, ...items: _element[]): _element[];
-    unshift(...items: _element[]): number;
+    pop(): T;
+    push(...items: T[]): number;
+    reverse(): T[];
+    shift(): T;
+    slice(start: number, end?: number): T[];
+    sort(compareFn?: (a: T, b: T) => number): T[];
+    splice(start: number): T[];
+    splice(start: number, deleteCount: number, ...items: T[]): T[];
+    unshift(...items: T[]): number;
 
-    indexOf(searchElement: _element, fromIndex?: number): number;
-    lastIndexOf(searchElement: _element, fromIndex?: number): number;
-    every(callbackfn: (value: _element, index: number, array: _element[]) => bool, thisArg?: any): bool;
-    some(callbackfn: (value: _element, index: number, array: _element[]) => bool, thisArg?: any): bool;
-    forEach(callbackfn: (value: _element, index: number, array: _element[]) => void , thisArg?: any): void;
-    map(callbackfn: (value: _element, index: number, array: _element[]) => any, thisArg?: any): any[];
-    filter(callbackfn: (value: _element, index: number, array: _element[]) => bool, thisArg?: any): _element[];
-    reduce(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: _element[]) => any, initialValue?: any): any;
-    reduceRight(callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: _element[]) => any, initialValue?: any): any;
+    indexOf(searchElement: T, fromIndex?: number): number;
+    lastIndexOf(searchElement: T, fromIndex?: number): number;
+    every(callbackfn: (value: T, index: number, array: T[]) => bool, thisArg?: any): bool;
+    some(callbackfn: (value: T, index: number, array: T[]) => bool, thisArg?: any): bool;
+    forEach(callbackfn: (value: T, index: number, array: T[]) => void , thisArg?: any): void;
+    map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
+    filter(callbackfn: (value: T, index: number, array: T[]) => bool, thisArg?: any): T[];
+    reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue?: U): U;
+    reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue?: U): U;
 
     length: number;
+
 }
 declare var Array: {
-    new (...items: any[]): any[];
-    (...items: any[]): any[];
+    new <T>(...items: T[]): T[];
+    new <T>(arrayLength: number): T[];    
+    <T>(...items: T[]): T[];
+    <T>(arrayLength: number): T[];
     isArray(arg: any): bool;
-    prototype: Array;
+    prototype: Array; // Note: Implicitly Array<any>
 }
 
 ////////////////
@@ -7266,7 +7269,10 @@ interface IDBKeyRange {
     lowerBound(bound: any, open?: bool): IDBKeyRange;
     upperBound(bound: any, open?: bool): IDBKeyRange;
 }
-declare var IDBKeyRange: IDBKeyRange;
+declare var IDBKeyRange: {
+    prototype: IDBKeyRange;
+    new(): IDBKeyRange;
+}
 
 interface WindowConsole {
     console: Console;
@@ -7994,7 +8000,6 @@ interface FormData {
 declare var FormData: {
     prototype: FormData;
     new (): FormData;
-    new (form: HTMLFormElement): FormData;
 }
 
 interface MSHTMLImageElementExtensions {
@@ -8258,3 +8263,4 @@ declare var WScript : {
     ScriptFullName: string;
     Quit(exitCode?: number);
 }
+

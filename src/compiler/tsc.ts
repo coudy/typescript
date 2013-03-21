@@ -418,11 +418,11 @@ class BatchCompiler {
             }
         });
 
-        opts.flag('pull', {
-            usage: 'use "pull model" for typecheck operations',
+        opts.flag('nopull', {
+            usage: 'use the 0.8.3 parser, type checker and emitter',
             experimental: true,
             set: () => {
-                this.compilationSettings.usePull = true;
+                this.compilationSettings.usePull = false;
             }
         });
 
