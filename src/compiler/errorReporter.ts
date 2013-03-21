@@ -22,7 +22,7 @@ module TypeScript {
     }
 
     export class ErrorReporter {
-        public parser: Parser = null;
+        public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
         public checker: TypeChecker = null;
         public lineCol = { line: 0, character: 0 };
         public emitAsComments = true;
@@ -92,9 +92,9 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            if (ast && this.parser.errorCallback) {
+            if (ast && this.errorCallback) {
                 var len = (ast.limChar - ast.minChar);
-                this.parser.errorCallback(ast.minChar, len, message, this.checker.locationInfo.fileName, this.checker.locationInfo.lineMap);
+                this.errorCallback(ast.minChar, len, message, this.checker.locationInfo.fileName, this.checker.locationInfo.lineMap);
             }
             else {
                 this.writePrefix(ast);
@@ -109,8 +109,8 @@ module TypeScript {
             }
 
             this.hasErrors = true;
-            if (this.parser.errorCallback) {
-                this.parser.errorCallback(symbol.location, symbol.length, message, this.checker.locationInfo.fileName, this.checker.locationInfo.lineMap);
+            if (this.errorCallback) {
+                this.errorCallback(symbol.location, symbol.length, message, this.checker.locationInfo.fileName, this.checker.locationInfo.lineMap);
             }
             else {
                 this.writePrefixFromSym(symbol);

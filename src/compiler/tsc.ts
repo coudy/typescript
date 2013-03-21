@@ -156,7 +156,7 @@ class BatchCompiler {
             this.errorReporter, logger, this.compilationSettings, localizedDiagnosticMessages);
         compiler.setErrorOutput(this.errorReporter);
 
-        compiler.parser.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) => {
+        compiler.errorReporter.errorCallback = (minChar: number, charLen: number, message: string, fileName: string, lineMap: TypeScript.ILineMap) => {
             compiler.errorReporter.hasErrors = true;
             var lineCol = { line: -1, character: -1 };
             lineMap.fillLineAndCharacterFromPosition(minChar, lineCol);
@@ -184,8 +184,6 @@ class BatchCompiler {
                 }
 
                 if (code.content != null) {
-                    compiler.parser.setErrorRecovery(this.errorReporter);
-
                     compiler.addUnit(code.content, code.path, code.referencedFiles);
 
                     // TODO: remove this code.  This is not how we should be reporting errors.

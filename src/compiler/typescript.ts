@@ -122,7 +122,6 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public parser = new Parser();
         public typeChecker: TypeChecker;
         public typeFlow: TypeFlow = null;
         public errorReporter: ErrorReporter;
@@ -146,7 +145,6 @@ module TypeScript {
             this.errorReporter = new ErrorReporter(this.errorOutput);
             this.pullErrorReporter = new PullErrorReporter(this.errorOutput);
             this.persistentTypeState = new PersistentGlobalTypeState(this.errorReporter);
-            this.errorReporter.parser = this.parser;
             this.initTypeChecker(this.errorOutput);
 
             this.emitSettings = new EmitOptions(this.settings);
