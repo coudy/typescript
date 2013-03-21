@@ -16,21 +16,18 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
-    export interface ITextSnapshotLine {
-        snapshot(): ITextSnapshot;
+module TypeScript.Formatting {
+    export class Rule {
+        constructor(
+            public Descriptor: RuleDescriptor,
+            public Operation: RuleOperation,
+            public Flag: RuleFlags = RuleFlags.None) {
+        }
 
-        start(): SnapshotPoint;
-        startPosition(): number;
-
-        end(): SnapshotPoint;
-        endPosition(): number;
-
-        endIncludingLineBreak(): SnapshotPoint;
-        endIncludingLineBreakPosition(): number;
-
-        length(): number;
-        lineNumber(): number;
-        getText(): string;
+        public toString() {
+            return "[desc=" + this.Descriptor + "," +
+                "operation=" + this.Operation + "," +
+                "flag=" + this.Flag + "]";
+        }
     }
 }

@@ -15,7 +15,7 @@
 
 /// <references path="formatting.ts"/>
 
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class RulesProvider {
         private globalRules: Rules;
         private options: Services.FormatCodeOptions;

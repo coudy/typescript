@@ -15,7 +15,7 @@
 
 /// <references path="formatting.ts"/>
 
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class FormattingContext {
         public currentTokenSpan: TokenSpan = null;
         public nextTokenSpan: TokenSpan = null;

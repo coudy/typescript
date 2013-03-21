@@ -13,19 +13,15 @@
 // limitations under the License.
 //
 
-///<reference path='formatting.ts' />
+/// <references path="formatting.ts"/>
 
-
-module TypeScript.Formatting2 {
-
-    export class SnapshotPoint {
-        constructor(public snapshot: ITextSnapshot, public position: number) {
-        }
-        public getContainingLine(): ITextSnapshotLine {
-            return this.snapshot.getLineFromPosition(this.position);
-        }
-        public add(offset: number): SnapshotPoint {
-            return new SnapshotPoint(this.snapshot, this.position + offset);
-        }
+module TypeScript.Formatting {
+    export enum FormattingRequestKind {
+        FormatDocument,
+        FormatSelection,
+        FormatOnEnter,
+        FormatOnSemicolon,
+        FormatOnClosingCurlyBrace,
+        FormatOnPaste
     }
 }

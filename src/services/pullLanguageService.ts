@@ -9,13 +9,13 @@ module Services {
         private logger: TypeScript.ILogger;
         private pullCompilerState: PullCompilerState;
         private singleFileSyntaxTreeState: ScriptSyntaxASTState;
-        private formattingRulesProvider: TypeScript.Formatting2.RulesProvider;
+        private formattingRulesProvider: TypeScript.Formatting.RulesProvider;
 
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
             this.pullCompilerState = new PullCompilerState(this.host);
             this.singleFileSyntaxTreeState = new ScriptSyntaxASTState();
-            this.formattingRulesProvider = new TypeScript.Formatting2.RulesProvider(this.logger);
+            this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
         }
 
         public refresh(): void {
@@ -1089,9 +1089,9 @@ module Services {
             // Convert IScriptSnapshot to ITextSnapshot
             var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting2.TextSnapshot(segmentedScriptSnapshot);
+            var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
 
-            var manager = new TypeScript.Formatting2.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
+            var manager = new TypeScript.Formatting.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
 
             return manager;
         }
@@ -1114,10 +1114,10 @@ module Services {
 
             var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting2.TextSnapshot(segmentedScriptSnapshot);
+            var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
             var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
             
-            return TypeScript.Formatting2.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
+            return TypeScript.Formatting.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
         }
 
         // Given a script name and position in the script, return a pair of text range if the 

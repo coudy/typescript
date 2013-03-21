@@ -16,11 +16,11 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
-    export enum RuleAction {
-        Ignore,
-        Space,
-        NewLine,
-        Delete
+module TypeScript.Formatting {
+    export interface ITextSnapshot {
+        getText(span: TextSpan): string;
+        getLineNumberFromPosition(position: number): number;
+        getLineFromPosition(position: number): ITextSnapshotLine;
+        getLineFromLineNumber(lineNumber: number): ITextSnapshotLine;
     }
 }

@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class RuleDescriptor {
         constructor(public LeftTokenRange: Shared.TokenRange, public RightTokenRange: Shared.TokenRange) {
         }

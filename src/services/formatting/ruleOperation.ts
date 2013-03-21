@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class RuleOperation {
         public Context: RuleOperationContext;
         public Action: RuleAction;

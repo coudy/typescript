@@ -16,18 +16,9 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
-    export class Rule {
-        constructor(
-            public Descriptor: RuleDescriptor,
-            public Operation: RuleOperation,
-            public Flag: RuleFlags = RuleFlags.None) {
-        }
-
-        public toString() {
-            return "[desc=" + this.Descriptor + "," +
-                "operation=" + this.Operation + "," +
-                "flag=" + this.Flag + "]";
-        }
+module TypeScript.Formatting {
+    export enum RuleFlags {
+        None,
+        CanDeleteNewLines
     }
 }

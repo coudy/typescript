@@ -16,9 +16,11 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
-    export enum RuleFlags {
-        None,
-        CanDeleteNewLines
+module TypeScript.Formatting {
+    export enum RuleAction {
+        Ignore,
+        Space,
+        NewLine,
+        Delete
     }
 }

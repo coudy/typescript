@@ -16,11 +16,21 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
-    export interface ITextSnapshot {
-        getText(span: TextSpan): string;
-        getLineNumberFromPosition(position: number): number;
-        getLineFromPosition(position: number): ITextSnapshotLine;
-        getLineFromLineNumber(lineNumber: number): ITextSnapshotLine;
+module TypeScript.Formatting {
+    export interface ITextSnapshotLine {
+        snapshot(): ITextSnapshot;
+
+        start(): SnapshotPoint;
+        startPosition(): number;
+
+        end(): SnapshotPoint;
+        endPosition(): number;
+
+        endIncludingLineBreak(): SnapshotPoint;
+        endIncludingLineBreakPosition(): number;
+
+        length(): number;
+        lineNumber(): number;
+        getText(): string;
     }
 }

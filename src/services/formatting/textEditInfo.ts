@@ -13,15 +13,20 @@
 // limitations under the License.
 //
 
-/// <references path="formatting.ts"/>
+///<reference path='formatting.ts' />
 
-module TypeScript.Formatting2 {
-    export enum FormattingRequestKind {
-        FormatDocument,
-        FormatSelection,
-        FormatOnEnter,
-        FormatOnSemicolon,
-        FormatOnClosingCurlyBrace,
-        FormatOnPaste
+
+module TypeScript.Formatting {
+    export class TextEditInfo {
+
+        constructor(public position: number, public length: number, public replaceWith: string) {
+            if (!(length >= 0)) {
+                debugger;
+            }
+        }
+
+        public toString() {
+            return "[ position: " + this.position + ", length: " + this.length + ", replaceWith: '" + this.replaceWith + "' ]";
+        }
     }
 }

@@ -17,7 +17,7 @@
 
 
 //module EditorAbstractions {
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class RulesMap {
         public map: RulesBucket[];
         public mapRowLength: number;

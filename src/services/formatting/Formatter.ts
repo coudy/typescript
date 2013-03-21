@@ -15,8 +15,7 @@
 
 ///<reference path='formatting.ts' />
 
-
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class Formatter extends MultipleTokenIndenter {
         private previousTokenSpan: TokenSpan = null;
         private previousTokenParent: IndentationNodeContext = null;

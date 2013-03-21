@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class TokenSpan extends TextSpan {
         private _kind: SyntaxKind;
 

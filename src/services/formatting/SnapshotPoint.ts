@@ -16,17 +16,16 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
-    export class TextEditInfo {
+module TypeScript.Formatting {
 
-        constructor(public position: number, public length: number, public replaceWith: string) {
-            if (!(length >= 0)) {
-                debugger;
-            }
+    export class SnapshotPoint {
+        constructor(public snapshot: ITextSnapshot, public position: number) {
         }
-
-        public toString() {
-            return "[ position: " + this.position + ", length: " + this.length + ", replaceWith: '" + this.replaceWith + "' ]";
+        public getContainingLine(): ITextSnapshotLine {
+            return this.snapshot.getLineFromPosition(this.position);
+        }
+        public add(offset: number): SnapshotPoint {
+            return new SnapshotPoint(this.snapshot, this.position + offset);
         }
     }
 }

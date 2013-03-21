@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 
 
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class TextSnapshotLine implements ITextSnapshotLine {
         constructor(private _snapshot: ITextSnapshot, private _lineNumber: number, private _start: number, private _end: number, private _lineBreak: string) {
         }

@@ -15,8 +15,7 @@
 
 ///<reference path='formatting.ts' />
 
-
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class MultipleTokenIndenter extends IndentationTrackingWalker {
         private _edits: TextEditInfo[] = [];
         public options: FormattingOptions;

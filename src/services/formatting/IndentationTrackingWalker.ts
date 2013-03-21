@@ -16,7 +16,7 @@
 ///<reference path='formatting.ts' />
 ///<reference path='..\..\compiler\Syntax\Indentation.ts'/>
 
-module TypeScript.Formatting2 {
+module TypeScript.Formatting {
     export class IndentationTrackingWalker extends SyntaxWalker {
         private _position: number = 0;
         private _parent: IndentationNodeContext = null;
