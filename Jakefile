@@ -110,7 +110,6 @@ var servicesSources = [
 	"formatting/Formatter.ts", 
 	"classifier.ts",
 	"coreServices.ts",
-	"scriptSyntaxAST.ts",
 	"compilerState.ts",
 	"symbolSet.ts",
 	"symbolTree.ts",

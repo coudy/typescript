@@ -18,7 +18,6 @@
 ///<reference path='coreServices.ts' />
 ///<reference path='classifier.ts' />
 ///<reference path='CompilerState.ts' />
-///<reference path='scriptSyntaxAST.ts' />
 ///<reference path='symbolSet.ts' />
 ///<reference path='symbolTree.ts' />
 ///<reference path='overridesCollector.ts' />

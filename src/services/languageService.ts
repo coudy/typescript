@@ -313,13 +313,11 @@ module Services {
 
     export class ScriptSyntaxASTState {
         public version: number;
-        public syntaxAST: ScriptSyntaxAST;
         public syntaxTree: TypeScript.SyntaxTree;
         public fileName: string;
 
         constructor() {
             this.version = -1;
-            this.syntaxAST = null;
             this.fileName = null;
         }
     }

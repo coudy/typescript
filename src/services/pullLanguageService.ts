@@ -8,13 +8,15 @@ module Services {
     export class LanguageService implements ILanguageService {
         private logger: TypeScript.ILogger;
         private compilerState: CompilerState;
-        private singleFileSyntaxTreeState: ScriptSyntaxASTState;
         private formattingRulesProvider: TypeScript.Formatting.RulesProvider;
+
+        private currentFileName: string = "";
+        private currentFileVersion: number = -1;
+        private currentFileSyntaxTree: TypeScript.SyntaxTree = null;
 
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
             this.compilerState = new CompilerState(this.host);
-            this.singleFileSyntaxTreeState = new ScriptSyntaxASTState();
             this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
         }
 
@@ -1138,20 +1140,21 @@ module Services {
             var version = this.compilerState.getScriptVersion(fileName);
             var syntaxTree: TypeScript.SyntaxTree = null;
 
-            if (this.singleFileSyntaxTreeState.syntaxTree === null || this.singleFileSyntaxTreeState.fileName !== fileName) {
+            if (this.currentFileSyntaxTree === null || this.currentFileName !== fileName) {
                 syntaxTree = this.createSyntaxTree(fileName);
             }
-            else if (this.singleFileSyntaxTreeState.version !== version) {
-                syntaxTree = this.updateSyntaxTree(fileName, this.singleFileSyntaxTreeState.syntaxTree, this.singleFileSyntaxTreeState.version);
+            else if (this.currentFileVersion !== version) {
+                syntaxTree = this.updateSyntaxTree(fileName, this.currentFileSyntaxTree, this.currentFileVersion);
             }
 
             if (syntaxTree !== null) {
                 // All done, ensure state is up to date
-                this.singleFileSyntaxTreeState.version = version;
-                this.singleFileSyntaxTreeState.fileName = fileName;
-                this.singleFileSyntaxTreeState.syntaxTree = syntaxTree;
+                this.currentFileVersion = version;
+                this.currentFileName = fileName;
+                this.currentFileSyntaxTree = syntaxTree;
             }
-            return this.singleFileSyntaxTreeState.syntaxTree;
+
+            return this.currentFileSyntaxTree;
         }
 
         private createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
