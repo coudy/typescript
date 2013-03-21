@@ -287,10 +287,6 @@ module Services {
             return this.compiler.fileNameToLocationInfo.lookup(fileName).lineMap;
         }
 
-        public getScopeEntries(enclosingScopeContext: TypeScript.EnclosingScopeContext) {
-            return new TypeScript.ScopeTraversal(this.compiler).getScopeEntries(enclosingScopeContext);
-        }
-
         public pullGetErrorsForFile(fileName: string): TypeScript.SemanticError[] {
             return this.compiler.pullGetErrorsForFile(fileName);
         }
