@@ -7,32 +7,32 @@
 module Services {
     export class LanguageService implements ILanguageService {
         private logger: TypeScript.ILogger;
-        private pullCompilerState: PullCompilerState;
+        private compilerState: CompilerState;
         private singleFileSyntaxTreeState: ScriptSyntaxASTState;
         private formattingRulesProvider: TypeScript.Formatting.RulesProvider;
 
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
-            this.pullCompilerState = new PullCompilerState(this.host);
+            this.compilerState = new CompilerState(this.host);
             this.singleFileSyntaxTreeState = new ScriptSyntaxASTState();
             this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
         }
 
         public refresh(): void {
             TypeScript.timeFunction(this.logger, "refresh()", () => {
-                this.pullCompilerState.refresh();
+                this.compilerState.refresh();
             });
         }
 
         private minimalRefresh(): void {
             TypeScript.timeFunction(this.logger, "minimalRefresh()", () => {
-                this.pullCompilerState.minimalRefresh();
+                this.compilerState.minimalRefresh();
             });
         }
 
         public getSymbolTree(): ISymbolTree {
             this.refresh();
-            return this.pullCompilerState.getSymbolTree();
+            return this.compilerState.getSymbolTree();
         }
 
         public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
@@ -40,7 +40,7 @@ module Services {
 
             var result: ReferenceEntry[] = [];
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
               
             /// TODO: this does not allow getting references on "constructor"
 
@@ -50,7 +50,7 @@ module Services {
                 return result;
             }
 
-            var symbolInfoAtPosition = this.pullCompilerState.getSymbolInformationFromPath(path, script);
+            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, script);
             if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
                 this.logger.log("No symbol found at the given position");
                 return result;
@@ -58,7 +58,7 @@ module Services {
 
             var symbol = symbolInfoAtPosition.symbol;
             
-            var fileNames = this.pullCompilerState.getFileNames();
+            var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 result = result.concat(this.getReferencesInFile(fileNames[i], symbol));
             }
@@ -106,7 +106,7 @@ module Services {
             
             var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbol);
             if (possiblePositions && possiblePositions.length > 0) {
-                var searchScript = this.pullCompilerState.getScript(fileName);
+                var searchScript = this.compilerState.getScript(fileName);
 
                 possiblePositions.forEach(p => {
                     var path = this.getAstPathToPosition(searchScript, p);
@@ -114,7 +114,7 @@ module Services {
                         return;
                     }
 
-                    var searchSymbolInfoAtPosition = this.pullCompilerState.getSymbolInformationFromPath(path, searchScript);
+                    var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, searchScript);
                     if (searchSymbolInfoAtPosition !== null && searchSymbolInfoAtPosition.symbol === symbol) {
                         var isWriteAccess = false; // this.isWriteAccess(searchSymbolInfoAtPosition.ast, searchSymbolInfoAtPosition.parentAST);
                         result.push(new ReferenceEntry(fileName, searchSymbolInfoAtPosition.ast, isWriteAccess));
@@ -132,7 +132,7 @@ module Services {
             /// TODO: Cache symbol existence for files to save text search
             /// TODO: Use a smarter search mechanism to avoid picking up partial matches, matches in comments and in string literals
 
-            var sourceText = this.pullCompilerState.getScriptSnapshot(fileName);
+            var sourceText = this.compilerState.getScriptSnapshot(fileName);
             var text = sourceText.getText(0, sourceText.getLength());
             var symbolName = symbol.getName();
 
@@ -148,7 +148,7 @@ module Services {
         public getSignatureAtPosition(fileName: string, position: number): SignatureInfo {
             this.refresh();
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
 
             // If "pos" is the "EOF" position
             var atEOF = (position === script.limChar);
@@ -197,7 +197,7 @@ module Services {
             var isNew = (callExpression.nodeType === TypeScript.NodeType.New);
 
             // Resolve symbol
-            var callSymbolInfo = this.pullCompilerState.getCallInformationFromPath(path, script);
+            var callSymbolInfo = this.compilerState.getCallInformationFromPath(path, script);
             if (!callSymbolInfo || !callSymbolInfo.targetSymbol || !callSymbolInfo.resolvedSignatures) {
                 this.logger.log("Could not find symbol for call expression");
                 return null;
@@ -222,17 +222,17 @@ module Services {
             var result = new FormalSignatureInfo();
             result.isNew = isNew;
             result.name = symbol.getName();
-            result.docComment = this.pullCompilerState.getDocComments(symbol); 
+            result.docComment = this.compilerState.getDocComments(symbol); 
             result.openParen = "(";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "[" : "(");
             result.closeParen = ")";  //(group.flags & TypeScript.SignatureFlags.IsIndexer ? "]" : ")");
 
             var hasOverloads = signatures.length > 1;
             signatures
                 // Same test as in "typeFlow.str: resolveOverload()": filter out the definition signature if there are overloads
-                .filter(signature => !(hasOverloads && signature.isDefinition() && !this.pullCompilerState.compilationSettings().canCallDefinitionSignature))
+                .filter(signature => !(hasOverloads && signature.isDefinition() && !this.compilerState.compilationSettings().canCallDefinitionSignature))
                 .forEach(signature => {
                     var signatureGroupInfo = new FormalSignatureItemInfo();
-                    signatureGroupInfo.docComment = this.pullCompilerState.getDocComments(signature);
+                    signatureGroupInfo.docComment = this.compilerState.getDocComments(signature);
                     signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getScopedNameEx(enclosingScopeSymbol).toString();
                     var parameters = signature.getParameters();
                     parameters.forEach((p, i) => {
@@ -240,7 +240,7 @@ module Services {
                         signatureParameterInfo.isVariable = signature.hasVariableParamList() && (i === parameters.length - 1);
                         signatureParameterInfo.isOptional = p.getIsOptional();
                         signatureParameterInfo.name = p.getName();
-                        signatureParameterInfo.docComment = this.pullCompilerState.getDocComments(p);
+                        signatureParameterInfo.docComment = this.compilerState.getDocComments(p);
                         signatureParameterInfo.type = p.getTypeName(enclosingScopeSymbol);
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
                     });
@@ -282,14 +282,14 @@ module Services {
 
             var result: DefinitionInfo = null;
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
 
             var path = this.getAstPathToPosition(script, position);
             if (path.count() == 0) {
                 return null;
             }
 
-            var symbolInfo = this.pullCompilerState.getSymbolInformationFromPath(path, script);
+            var symbolInfo = this.compilerState.getSymbolInformationFromPath(path, script);
             if (symbolInfo == null || symbolInfo.symbol == null) {
                 this.logger.log("No identifier at the specified location.");
                 return result;
@@ -361,11 +361,11 @@ module Services {
             // Process all script ASTs and look for matchin symbols
             var len = 0;
             
-            var fileNames = this.pullCompilerState.getFileNames();
+            var fileNames = this.compilerState.getFileNames();
             for (i = 0, len = fileNames.length; i < len; i++) {
                 // Add the item for the script name if needed
                 var fileName = fileNames[i];
-                var script = this.pullCompilerState.getScript(fileName);
+                var script = this.compilerState.getScript(fileName);
 
                 var matchKind = match(null, script, fileName);
                 if (matchKind != null) {
@@ -390,22 +390,22 @@ module Services {
         public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
             this.refresh();
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
             return this.getASTItems(script.locationInfo.fileName, script, (name) => MatchKind.exact);
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
-            this.pullCompilerState.refresh();
+            this.compilerState.refresh();
 
-            var syntaxTree = this.pullCompilerState.getSyntaxTree(fileName);
+            var syntaxTree = this.compilerState.getSyntaxTree(fileName);
             return syntaxTree.diagnostics();
         }
 
         public getSemanticDiagnostics(fileName: string): TypeScript.IDiagnostic[] {
-            this.pullCompilerState.refresh();
+            this.compilerState.refresh();
 
             // JOE: Here is where you should call and get the right set of semantic errors for this file.
-            return this.pullCompilerState.pullGetErrorsForFile(fileName);
+            return this.compilerState.pullGetErrorsForFile(fileName);
         }
 
         public getEmitOutput(fileName: string): IOutputFile[] {
@@ -739,9 +739,9 @@ module Services {
         public getTypeAtPosition(fileName: string, pos: number): TypeInfo {
             this.refresh();
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
 
-            var typeInfoAtPosition = this.pullCompilerState.getPullTypeInfoAtPosition(pos, script);
+            var typeInfoAtPosition = this.compilerState.getPullTypeInfoAtPosition(pos, script);
             if (!typeInfoAtPosition.symbol) {
                 return null;
             }
@@ -769,7 +769,7 @@ module Services {
                 !!typeInfoAtPosition.callSignatures, typeInfoAtPosition.ast && typeInfoAtPosition.ast.nodeType == TypeScript.NodeType.New);
 
             var symbolForDocComment = typeInfoAtPosition.candidateSignature ? typeInfoAtPosition.candidateSignature : typeInfoAtPosition.symbol;
-            var docComment = this.pullCompilerState.getDocComments(symbolForDocComment, !typeInfoAtPosition.callSignatures);
+            var docComment = this.compilerState.getDocComments(symbolForDocComment, !typeInfoAtPosition.callSignatures);
             var symbolName = this.getFullNameOfSymbol(typeInfoAtPosition.symbol, typeInfoAtPosition.enclosingScopeSymbol);
 
             if (typeInfoAtPosition.ast) {
@@ -785,7 +785,7 @@ module Services {
 
             var completions = new CompletionInfo();
 
-            var script = this.pullCompilerState.getScriptAST(fileName);
+            var script = this.compilerState.getScriptAST(fileName);
             var path = this.getAstPathToPosition(script, position);
             if (this.isCompletionListBlocker(path)) {
                 this.logger.log("Returning an empty list because position is inside a comment, string or regular expression");
@@ -809,7 +809,7 @@ module Services {
             }
 
             if (isRightOfDot) {
-                var members = this.pullCompilerState.getVisibleMemberSymbolsFromPath(path, script);
+                var members = this.compilerState.getVisibleMemberSymbolsFromPath(path, script);
                 if (!members) {
                     return null;
                 }
@@ -820,7 +820,7 @@ module Services {
             else if (isMemberCompletion || this.isCompletionListTriggerPoint(path)) {
                 // Get scope memebers
                 completions.isMemberCompletion = false;
-                var symbols = this.pullCompilerState.getVisibleSymbolsFromPath(path, script);
+                var symbols = this.compilerState.getVisibleSymbolsFromPath(path, script);
                 completions.entries = this.getCompletionEntriesFromSymbols(symbols);
             }
 
@@ -836,7 +836,7 @@ module Services {
                 entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
                 entry.kind = this.mapPullElementKind(symbol, true);
                 entry.fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
-                entry.docComment = this.pullCompilerState.getDocComments(symbol, true);
+                entry.docComment = this.compilerState.getDocComments(symbol, true);
                 entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
                 result.push(entry);
             });
@@ -1087,7 +1087,7 @@ module Services {
             var syntaxTree = this.getSyntaxTree(fileName);
 
             // Convert IScriptSnapshot to ITextSnapshot
-            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
             var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
 
@@ -1112,7 +1112,7 @@ module Services {
 
             var syntaxTree = this.getSyntaxTree(fileName);
 
-            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
             var textSnapshot = new TypeScript.Formatting.TextSnapshot(segmentedScriptSnapshot);
             var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
@@ -1135,7 +1135,7 @@ module Services {
         // Manage Single file syntax tree state
         //
         private getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var version = this.pullCompilerState.getScriptVersion(fileName);
+            var version = this.compilerState.getScriptVersion(fileName);
             var syntaxTree: TypeScript.SyntaxTree = null;
 
             if (this.singleFileSyntaxTreeState.syntaxTree === null || this.singleFileSyntaxTreeState.fileName !== fileName) {
@@ -1155,7 +1155,7 @@ module Services {
         }
 
         private createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var scriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var segmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(scriptSnapshot);
 
             var syntaxTree = TypeScript.Parser1.parse(segmentedScriptSnapshot);
@@ -1164,7 +1164,7 @@ module Services {
         }
 
         private updateSyntaxTree(fileName: string, previousSyntaxTree: TypeScript.SyntaxTree, previousFileVersion: number): TypeScript.SyntaxTree {
-            var editRange = this.pullCompilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
+            var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
 
             // If "no changes", tree is good to go as is
             if (editRange === null) {
@@ -1173,7 +1173,7 @@ module Services {
 
             // Debug.assert(newLength >= 0);
 
-            var newScriptSnapshot = this.pullCompilerState.getScriptSnapshot(fileName);
+            var newScriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var newSegmentedScriptSnapshot = new TypeScript.ScriptSnapshotText(newScriptSnapshot);
 
             var nextSyntaxTree = TypeScript.Parser1.incrementalParse(

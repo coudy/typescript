@@ -17,7 +17,6 @@
 ///<reference path='..\compiler\typescript.ts' />
 ///<reference path='coreServices.ts' />
 ///<reference path='classifier.ts' />
-///<reference path='pullCompilerState.ts' />
 ///<reference path='CompilerState.ts' />
 ///<reference path='scriptSyntaxAST.ts' />
 ///<reference path='symbolSet.ts' />

@@ -112,7 +112,6 @@ var servicesSources = [
 	"coreServices.ts",
 	"scriptSyntaxAST.ts",
 	"compilerState.ts",
-	"pullCompilerState.ts",
 	"symbolSet.ts",
 	"symbolTree.ts",
 	"overridesCollector.ts",
