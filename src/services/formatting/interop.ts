@@ -2523,35 +2523,4 @@ module Formatting {
             }
         }
     }
-
-    export function getTokensInSpan(logger: TypeScript.ILogger, scriptSyntaxAST: Services.ScriptSyntaxAST, tokenKindMap: AuthorTokenKindMap, span: SnapshotSpan): IList_TokenSpan {
-        var tokens = new List_TokenSpan();
-
-        var tokenStream = scriptSyntaxAST.getTokenStream(span.startPosition());
-        while (tokenStream.moveNext()) {
-            if (logger.information()) {
-                var text = "token: " + (<any>TypeScript.TokenID)._map[tokenStream.tokenId()] + " - startPos=" + tokenStream.tokenStartPos() + ", pos=" + tokenStream.tokenEndPos();
-                logger.log(text);
-            }
-
-            var endPos = tokenStream.tokenEndPos();
-            // If we are before the span range, skip this token
-            if (endPos < span.startPosition()) {
-                continue;
-            }
-
-            var startPos = tokenStream.tokenStartPos();
-            // If we are past the span range, stop scanning
-            if (startPos > span.endPosition()) {
-                break;
-            }
-
-            var kind = tokenKindMap.getTokenKind(tokenStream.tokenId());
-            var tokenSpan = new TokenSpan(kind, tokenStream.tokenId(), new SnapshotSpan(span.snapshot, Span.FromBounds(startPos, endPos)))
-            tokens.add(tokenSpan);
-        }
-
-        logger.log("GetTokens([" + span.startPosition() + "," + span.endPosition() + "]): returned " + tokens.count() + " tokens from source text offset " + tokenStream.sourceTextOffset());
-        return tokens;
-    }
 }

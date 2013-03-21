@@ -39,114 +39,12 @@ module Services {
             return this.sourceText;
         }
 
-        public getTokenStream(minChar: number = 0, limChar?: number): TokenStream {
-            //REVIEW: This can be extremely inefficient if the span is large, but this is 
-            //        currently the only way since we don't store tokens in memory
-            if (minChar > 0) {
-                minChar = this.getTokenizationOffset(minChar);
-            }
-
-            if (!limChar) {
-                limChar = this.getScriptSnapshot().getLength();
-            }
-
-            var scannerSourceText = this.getScriptSnapshot();
-            if (minChar > 0 || limChar < scannerSourceText.getLength()) {
-                scannerSourceText = new TypeScript.StringScriptSnapshot(scannerSourceText.getText(minChar, limChar));
-            }
-
-            var scanner = new TypeScript.Scanner();
-            scanner.resetComments();
-            scanner.setSourceText(scannerSourceText, TypeScript.LexMode.File);
-            scanner.setScanComments(true);
-
-            var tokenStream = new TokenStream(scanner, minChar);
-            return tokenStream;
-        }
-
         public getTokenizationOffset(position: number): number {
             return TypeScript.getTokenizationOffset(this.script, position);
         }
 
         public getAstPathToPosition(pos: number, options = TypeScript.GetAstPathOptions.Default): TypeScript.AstPath {
             return TypeScript.getAstPathToPosition(this.script, pos, options);
-        }
-    }
-
-    export class TokenStream {
-        private currentToken: TypeScript.Token;
-
-        constructor(private scanner: TypeScript.Scanner, private offset: number) {
-            this.currentToken = null;
-        }
-
-        public moveNext(): bool {
-            this.currentToken = this.scanner.scan();
-            if (this.currentToken.tokenId === TypeScript.TokenID.EndOfFile) {
-                return false;
-            }
-            return true;
-        }
-
-        public sourceTextOffset() {
-            return this.offset;
-        }
-
-        public tokenId(): TypeScript.TokenID {
-            return this.currentToken.tokenId;
-        }
-
-        public tokenStartPos(): number {
-            return this.offset + this.scanner.startPos;
-        }
-
-        public tokenEndPos(): number {
-            return this.offset + this.scanner.pos;
-        }
-    }
-
-    export class TokenStreamHelper {
-        constructor (public stream: TokenStream) {
-            this.moveNext();
-        }
-
-        public moveNext(): bool {
-            do  {
-                if (!this.stream.moveNext())
-                    return false;
-            } while (this.tokenId() === TypeScript.TokenID.Comment)
-
-            return true;
-        }
-
-        public expect(token: TypeScript.TokenID): bool {
-            if (this.stream.tokenId() === token) {
-                this.moveNext();
-                return true;
-            }
-
-            return false;
-        }
-
-        public skipToOffset(pos: number): bool {
-            while (this.tokenStartPos() < pos) {
-                if (!this.moveNext())
-                    return false;
-            }
-
-            return true;
-        }
-
-        public tokenId(): TypeScript.TokenID {
-            return this.stream.tokenId();
-        }
-
-        public tokenStartPos(): number {
-            return this.stream.tokenStartPos();
-        }
-
-        public tokenEndPos(): number {
-            return this.stream.tokenEndPos();
         }
     }
 }
