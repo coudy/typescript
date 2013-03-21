@@ -48,7 +48,6 @@ module TypeScript {
         private anonId = new Identifier("_anonymous");
         public style_requireSemi = false;
         public style_funcInLoop = true;
-        private incremental = false;
         private errorRecovery = true;
         public outfile: ITextWriter = undefined;
         public errorCallback: (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap) => void = null;
