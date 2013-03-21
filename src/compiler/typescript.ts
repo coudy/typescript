@@ -894,6 +894,9 @@ module TypeScript {
                 return null;
             }
             var enlosingDecl = this.pullTypeChecker.resolver.getEnclosingDecl(decl);
+            if (ast.nodeType == NodeType.Member) {
+                return this.getSymbolOfDeclaration(enlosingDecl);
+            }
             var resolutionContext = new PullTypeResolutionContext();
             return this.pullTypeChecker.resolver.resolveDeclaration(ast, resolutionContext, enlosingDecl);
         }
@@ -1268,7 +1271,7 @@ module TypeScript {
             return { symbol: symbol, ast: path.ast() };
         }
 
-        public pullGetCallInformationFromPath(path: AstPath, script: Script, scriptName?: string): { targetSymbol: PullSymbol; resolvedSignatures: PullSignatureSymbol[]; candidateSignature: PullSignatureSymbol; ast: AST; } {
+        public pullGetCallInformationFromPath(path: AstPath, script: Script, scriptName?: string): { targetSymbol: PullSymbol; resolvedSignatures: PullSignatureSymbol[]; candidateSignature: PullSignatureSymbol; ast: AST; enclosingScopeSymbol: PullSymbol; } {
             // AST has to be a call expression
             if (path.ast().nodeType !== NodeType.Call && path.ast().nodeType !== NodeType.New) {
                 return null;
@@ -1285,7 +1288,8 @@ module TypeScript {
                 targetSymbol: null,
                 resolvedSignatures: null,
                 candidateSignature: null,
-                ast: path.ast()
+                ast: path.ast(),
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
 
             if (isNew) {
@@ -1294,7 +1298,6 @@ module TypeScript {
             else {
                 this.pullTypeChecker.resolver.resolveCallExpression(<CallExpression>path.ast(), context.isTypedAssignment, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
-
             return callResolutionResults;
         }
 

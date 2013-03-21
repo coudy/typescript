@@ -334,7 +334,7 @@ module Services {
             return docComments;
         }
 
-        public getDocComments(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool) {
+        public getDocComments(symbol: TypeScript.PullSymbol, useConstructorAsClass?: bool): string {
             if (!symbol) {
                 return "";
             }
@@ -369,7 +369,28 @@ module Services {
                     }
                     docComments = parameterComments.join("\n");
                 } else {
-                    docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
+                    var getSymbolComments = true;
+                    if (symbol.getKind() == TypeScript.PullElementKind.FunctionType) {
+                        var declarationList = symbol.findIncomingLinks(link => link.kind == TypeScript.SymbolLinkKind.TypedAs);
+                        if (declarationList.length > 0) {
+                            docComments = this.getDocComments(declarationList[0].start);
+                            getSymbolComments = false;
+                        }
+                    }
+                    if (getSymbolComments) {
+                        docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(symbol));
+                        if (docComments == "") {
+                            if (symbol.getKind() == TypeScript.PullElementKind.CallSignature) {
+                                var callList = symbol.findIncomingLinks(link => link.kind == TypeScript.SymbolLinkKind.CallSignature);
+                                if (callList.length == 1) {
+                                    var callTypeSymbol = <TypeScript.PullTypeSymbol>callList[0].start;
+                                    if (callTypeSymbol.getCallSignatures().length == 1) {
+                                        docComments = this.getDocComments(callTypeSymbol);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 symbol.docComments = docComments;
             }

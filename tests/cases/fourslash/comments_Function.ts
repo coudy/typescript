@@ -35,16 +35,20 @@
 ////    return lam/*31*/bdaVar("World") + /*32*/a;
 ////}
 
-//goTo.marker('1');
-//verify.currentSignatureHelpDocCommentIs("This comment should appear for foo");
+goTo.marker('1');
+verify.currentSignatureHelpDocCommentIs("This comment should appear for foo");
 
-//goTo.marker('2');
-//verify.currentSignatureHelpDocCommentIs("This is comment for function signature");
-//verify.currentParameterHelpArgumentDocCommentIs("this is comment about a");
+goTo.marker('2');
+verify.currentSignatureHelpDocCommentIs("This is comment for function signature");
+verify.currentParameterHelpArgumentDocCommentIs("this is comment about a");
 
-//goTo.marker('3');
-//verify.currentSignatureHelpDocCommentIs("This is comment for function signature");
-//verify.currentParameterHelpArgumentDocCommentIs("this is comment for b");
+goTo.marker('3');
+verify.currentSignatureHelpDocCommentIs("This is comment for function signature");
+verify.currentParameterHelpArgumentDocCommentIs("this is comment for b");
+
+goTo.marker('3');
+verify.currentSignatureHelpDocCommentIs("This is comment for function signature");
+verify.currentParameterHelpArgumentDocCommentIs("this is comment for b");
 
 //goTo.marker('4');
 //verify.completionListContains('foo', '() => void', 'This comment should appear for foo', "foo", "function");
@@ -64,7 +68,7 @@ verify.quickInfoIs("(a: string, b: number): void", "This is comment for function
 goTo.marker('9');
 verify.quickInfoIs("(a: string, b: number): void", "This is comment for function signature", "fooWithParameters", "function");
 
-goTo.marker('10');
+//goTo.marker('10');
 //verify.completionListContains('a', 'string', 'this is comment about a', "a", "parameter");
 //verify.completionListContains('b', 'number', 'this is comment for b', "b", "parameter");
 
@@ -78,29 +82,29 @@ verify.quickInfoIs("(a: number, b: number) => number", "", "lambddaNoVarComment"
 //verify.completionListContains('lambdaFoo', '(a: number, b: number) => number', 'lamdaFoo var comment', "lambdaFoo", "var");
 //verify.completionListContains('lambddaNoVarComment', '(a: number, b: number) => number', '', "lambddaNoVarComment", "var");
 
-//goTo.marker('14');
-//verify.currentSignatureHelpDocCommentIs("this is lambda comment");
-//verify.currentParameterHelpArgumentDocCommentIs("param a");
+goTo.marker('14');
+verify.currentSignatureHelpDocCommentIs("this is lambda comment");
+verify.currentParameterHelpArgumentDocCommentIs("param a");
 
-//goTo.marker('15');
-//verify.currentSignatureHelpDocCommentIs("this is lambda comment");
-//verify.currentParameterHelpArgumentDocCommentIs("param b");
+goTo.marker('15');
+verify.currentSignatureHelpDocCommentIs("this is lambda comment");
+verify.currentParameterHelpArgumentDocCommentIs("param b");
 
-//goTo.marker('16');
-//verify.currentSignatureHelpDocCommentIs("this is lambda multiplication");
-//verify.currentParameterHelpArgumentDocCommentIs("param a");
+goTo.marker('16');
+verify.currentSignatureHelpDocCommentIs("this is lambda multiplication");
+verify.currentParameterHelpArgumentDocCommentIs("param a");
 
-//goTo.marker('17');
-//verify.currentSignatureHelpDocCommentIs("this is lambda multiplication");
-//verify.currentParameterHelpArgumentDocCommentIs("param b");
+goTo.marker('17');
+verify.currentSignatureHelpDocCommentIs("this is lambda multiplication");
+verify.currentParameterHelpArgumentDocCommentIs("param b");
 
 //goTo.marker('18');
 //verify.completionListContains('a', 'number', 'param a', "a", "parameter");
 //verify.completionListContains('b', 'number', 'param b', "b", "parameter");
 
-//goTo.marker('19');
-//verify.currentSignatureHelpDocCommentIs("Does something");
-//verify.currentParameterHelpArgumentDocCommentIs("a string");
+goTo.marker('19');
+verify.currentSignatureHelpDocCommentIs("Does something");
+verify.currentParameterHelpArgumentDocCommentIs("a string");
 
 goTo.marker('20');
 verify.quickInfoIs('string', '', 'd', "local var");

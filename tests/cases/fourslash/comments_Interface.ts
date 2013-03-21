@@ -107,9 +107,9 @@ verify.quickInfoIs("(b: number) => string", "this is foo", "i2.foo", "property")
 goTo.marker('11');
 verify.quickInfoIs("string", "", "i2_i_foo_r", "var");
 
-//goTo.marker('12');
-//verify.currentSignatureHelpDocCommentIs("this is foo");
-//verify.currentParameterHelpArgumentDocCommentIs("param help");
+goTo.marker('12');
+verify.currentSignatureHelpDocCommentIs("this is foo");
+verify.currentParameterHelpArgumentDocCommentIs("param help");
 goTo.marker('12q');
 verify.quickInfoIs("(b: number) => string", "this is foo", "i2.foo", "property");
 
@@ -126,9 +126,9 @@ verify.quickInfoIs("i2", "", "i2_i", "var");
 goTo.marker('15');
 verify.quickInfoIs("any", "", "i2_i_n", "var");
 
-//goTo.marker('16');
-//verify.currentSignatureHelpDocCommentIs("new method");
-//verify.currentParameterHelpArgumentDocCommentIs("param");
+goTo.marker('16');
+verify.currentSignatureHelpDocCommentIs("new method");
+verify.currentParameterHelpArgumentDocCommentIs("param");
 goTo.marker('16q');
 verify.quickInfoIs("(i: i1): any", "new method", "i2", "constructor");
 
@@ -147,24 +147,24 @@ verify.quickInfoIs("(b: number) => string", "", "i2.nc_foo", "property");
 goTo.marker('21');
 verify.quickInfoIs("string", "", "i2_i_nc_foo_r", "var");
 
-//goTo.marker('22');
-//verify.currentSignatureHelpDocCommentIs("");
-//verify.currentParameterHelpArgumentDocCommentIs("");
+goTo.marker('22');
+verify.currentSignatureHelpDocCommentIs("");
+verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('22q');
 verify.quickInfoIs("(b: number) => string", "", "i2.nc_foo", "property");
 
 goTo.marker('23');
 verify.quickInfoIs("number", "", "i2_i_r", "var");
 
-//goTo.marker('24');
-//verify.currentSignatureHelpDocCommentIs("this is call signature");
-//verify.currentParameterHelpArgumentDocCommentIs("paramhelp a");
+goTo.marker('24');
+verify.currentSignatureHelpDocCommentIs("this is call signature");
+verify.currentParameterHelpArgumentDocCommentIs("paramhelp a");
 goTo.marker('24q');
 verify.quickInfoIs("(a: number, b: number): number", "this is call signature", "i2", "function");
 
-//goTo.marker('25');
-//verify.currentSignatureHelpDocCommentIs("this is call signature");
-//verify.currentParameterHelpArgumentDocCommentIs("paramhelp b");
+goTo.marker('25');
+verify.currentSignatureHelpDocCommentIs("this is call signature");
+verify.currentParameterHelpArgumentDocCommentIs("paramhelp b");
 
 goTo.marker('26');
 verify.quickInfoIs("(b: number) => string", "", "i2_i_fnfoo", "var");
@@ -175,9 +175,9 @@ verify.quickInfoIs("(b: number): string", "this is fnfoo", "i2.fnfoo", "method")
 goTo.marker('28');
 verify.quickInfoIs("string", "", "i2_i_fnfoo_r", "var");
 
-//goTo.marker('29');
-//verify.currentSignatureHelpDocCommentIs("this is fnfoo");
-//verify.currentParameterHelpArgumentDocCommentIs("param help");
+goTo.marker('29');
+verify.currentSignatureHelpDocCommentIs("this is fnfoo");
+verify.currentParameterHelpArgumentDocCommentIs("param help");
 goTo.marker('29q');
 verify.quickInfoIs("(b: number): string", "this is fnfoo", "i2.fnfoo", "method");
 
@@ -190,9 +190,9 @@ verify.quickInfoIs("(b: number): string", "", "i2.nc_fnfoo", "method");
 goTo.marker('32');
 verify.quickInfoIs("string", "", "i2_i_nc_fnfoo_r", "var");
 
-//goTo.marker('33');
-//verify.currentSignatureHelpDocCommentIs("");
-//verify.currentParameterHelpArgumentDocCommentIs("");
+goTo.marker('33');
+verify.currentSignatureHelpDocCommentIs("");
+verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('33q');
 verify.quickInfoIs("(b: number): string", "", "i2.nc_fnfoo", "method");
 
@@ -237,17 +237,9 @@ verify.quickInfoIs("(b: number): string", "", "i2.nc_fnfoo", "method");
 //verify.memberListContains("nc_l", "(b: number) => string", "", "i3.nc_l", "property");
 //verify.memberListContains("nc_x", "number", "", "i3.nc_x", "property");
 
-//goTo.marker('38');
-//verify.currentSignatureHelpDocCommentIs("Function i3 f");
-//verify.currentParameterHelpArgumentDocCommentIs("number parameter");
-
-//goTo.marker('39');
-//verify.currentSignatureHelpDocCommentIs("i3 l");
-//verify.currentParameterHelpArgumentDocCommentIs("comment i3 l b");
-
 goTo.marker('40q');
 verify.quickInfoIs("i3", "", "i3_i", "var");
-goTo.marker('40');
+//goTo.marker('40');
 //verify.completionListContains("i3", "i3", "", "i3", "interface");
 //verify.completionListContains("i3_i", "i3", "", "i3_i", "var");
 
@@ -260,24 +252,24 @@ verify.quickInfoIs("(a: number): string", "Function i3 f", "i3.f", "method");
 //verify.memberListContains("nc_l", "(b: number) => string", "", "i3.nc_l", "property");
 //verify.memberListContains("nc_x", "number", "", "i3.nc_x", "property");
 
-//goTo.marker('42');
-//verify.currentSignatureHelpDocCommentIs("Function i3 f");
-//verify.currentParameterHelpArgumentDocCommentIs("number parameter");
+goTo.marker('42');
+verify.currentSignatureHelpDocCommentIs("Function i3 f");
+verify.currentParameterHelpArgumentDocCommentIs("number parameter");
 
-//goTo.marker('43');
-//verify.currentSignatureHelpDocCommentIs("i3 l");
-//verify.currentParameterHelpArgumentDocCommentIs("comment i3 l b");
+goTo.marker('43');
+verify.currentSignatureHelpDocCommentIs("i3 l");
+verify.currentParameterHelpArgumentDocCommentIs("comment i3 l b");
 goTo.marker('43q');
 verify.quickInfoIs("(b: number) => string", "i3 l", "i3.l", "property");
 
-//goTo.marker('44');
-//verify.currentSignatureHelpDocCommentIs("");
-//verify.currentParameterHelpArgumentDocCommentIs("");
+goTo.marker('44');
+verify.currentSignatureHelpDocCommentIs("");
+verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('44q');
 verify.quickInfoIs("(a: number): string", "", "i3.nc_f", "method");
 
-//goTo.marker('45');
-//verify.currentSignatureHelpDocCommentIs("");
-//verify.currentParameterHelpArgumentDocCommentIs("");
+goTo.marker('45');
+verify.currentSignatureHelpDocCommentIs("");
+verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('45q');
 verify.quickInfoIs("(b: number) => string", "", "i3.nc_l", "property");

@@ -54,14 +54,13 @@ verify.quickInfoIs("number", "This is my variable", "myVariable", "var");
 //verify.completionListContains("foo", "() => void", "foos comment", "foo", "function");
 //verify.completionListContains("fooVar", "() => void", "fooVar comment", "fooVar", "var");
 
-//goTo.marker('5');
-//verify.currentSignatureHelpDocCommentIs("foos comment");
+goTo.marker('5');
+verify.currentSignatureHelpDocCommentIs("foos comment");
 goTo.marker('5q');
 verify.quickInfoIs("(): void", "foos comment", "foo", "function");
 
-//goTo.marker('6');
-//verify.currentSignatureHelpDocCommentIs("");
-//verify.currentSignatureHelpDocCommentIs("");
+goTo.marker('6');
+verify.currentSignatureHelpDocCommentIs("fooVar comment");
 goTo.marker('6q');
 verify.quickInfoIs("() => void", "fooVar comment", "fooVar", "var");
 
@@ -69,14 +68,13 @@ verify.quickInfoIs("() => void", "fooVar comment", "fooVar", "var");
 //verify.completionListContains("foo", "() => void", "foos comment", "foo", "function");
 //verify.completionListContains("fooVar", "() => void", "fooVar comment", "fooVar", "var");
 
-//goTo.marker('8');
-//verify.currentSignatureHelpDocCommentIs("foos comment");
+goTo.marker('8');
+verify.currentSignatureHelpDocCommentIs("foos comment");
 goTo.marker('8q');
 verify.quickInfoIs("(): void", "foos comment", "foo", "function");
 
-//goTo.marker('9');
-//verify.currentSignatureHelpDocCommentIs("fooVar comment");
-//verify.currentSignatureHelpDocCommentIs("");
+goTo.marker('9');
+verify.currentSignatureHelpDocCommentIs("fooVar comment");
 goTo.marker('9q');
 verify.quickInfoIs("() => void", "fooVar comment", "fooVar", "var");
 

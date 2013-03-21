@@ -213,7 +213,7 @@ module Services {
             // Build the result
             var result = new SignatureInfo();
 
-            result.formal = this.convertSignatureSymbolToSignatureInfo(callSymbolInfo.targetSymbol, isNew, callSymbolInfo.resolvedSignatures);
+            result.formal = this.convertSignatureSymbolToSignatureInfo(callSymbolInfo.targetSymbol, isNew, callSymbolInfo.resolvedSignatures, callSymbolInfo.enclosingScopeSymbol);
             result.actual = this.convertCallExprToActualSignatureInfo(callExpression, position, atEOF);
             result.activeFormal = (callSymbolInfo.resolvedSignatures && callSymbolInfo.candidateSignature) ? callSymbolInfo.resolvedSignatures.indexOf(callSymbolInfo.candidateSignature) : -1;
             
@@ -225,7 +225,7 @@ module Services {
             return result;
         }
 
-        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: bool, signatures: TypeScript.PullSignatureSymbol[]): FormalSignatureInfo {
+        private convertSignatureSymbolToSignatureInfo(symbol: TypeScript.PullSymbol, isNew: bool, signatures: TypeScript.PullSignatureSymbol[], enclosingScopeSymbol: TypeScript.PullSymbol): FormalSignatureInfo {
             var result = new FormalSignatureInfo();
             result.isNew = isNew;
             result.name = symbol.getName();
@@ -240,7 +240,7 @@ module Services {
                 .forEach(signature => {
                     var signatureGroupInfo = new FormalSignatureItemInfo();
                     signatureGroupInfo.docComment = this.pullCompilerState.getDocComments(signature);
-                    signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getName(); //signature.returnType.type.getScopedTypeName(enclosingScopeContext.getScope()));
+                    signatureGroupInfo.returnType = signature.getReturnType() === null ? "any" : signature.getReturnType().getScopedNameEx(enclosingScopeSymbol).toString();
                     var parameters = signature.getParameters();
                     parameters.forEach((p, i) => {
                         var signatureParameterInfo = new FormalParameterInfo();
@@ -248,7 +248,7 @@ module Services {
                         signatureParameterInfo.isOptional = p.getIsOptional();
                         signatureParameterInfo.name = p.getName();
                         signatureParameterInfo.docComment = this.pullCompilerState.getDocComments(p);
-                        signatureParameterInfo.type = p.getType() ? p.getType().getScopedName() : "";//.getScopedTypeName(enclosingScopeContext.getScope());
+                        signatureParameterInfo.type = p.getTypeName(enclosingScopeSymbol);
                         signatureGroupInfo.parameters.push(signatureParameterInfo);
                     });
                     result.signatureGroup.push(signatureGroupInfo);

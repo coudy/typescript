@@ -64,8 +64,8 @@ verify.quickInfoIs(undefined, "This is class c2 without constuctor", "c2", "clas
 goTo.marker('2');
 verify.quickInfoIs("c2", "", "i2", "var");
 
-//goTo.marker('3');
-//verify.currentSignatureHelpDocCommentIs("");
+goTo.marker('3');
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('4');
 verify.quickInfoIs("new() => c2", "", "i2_c", "var");
@@ -79,8 +79,8 @@ verify.quickInfoIs(undefined, "", "c3", "class");
 goTo.marker('7');
 verify.quickInfoIs("c3", "", "i3", "var");
 
-//goTo.marker('8');
-//verify.currentSignatureHelpDocCommentIs("Constructor comment");
+goTo.marker('8');
+verify.currentSignatureHelpDocCommentIs("Constructor comment");
 
 goTo.marker('9');
 verify.quickInfoIs("new() => c3", "", "i3_c", "var");
@@ -94,8 +94,8 @@ verify.quickInfoIs(undefined, "Class comment", "c4", "class");
 goTo.marker('12');
 verify.quickInfoIs("c4", "", "i4", "var");
 
-//goTo.marker('13');
-//verify.currentSignatureHelpDocCommentIs("Constructor comment");
+goTo.marker('13');
+verify.currentSignatureHelpDocCommentIs("Constructor comment");
 
 goTo.marker('14');
 verify.quickInfoIs("new() => c4", "", "i4_c", "var");
@@ -109,8 +109,8 @@ verify.quickInfoIs(undefined, "Class with statics", "c5", "class");
 goTo.marker('17');
 verify.quickInfoIs("c5", "", "i5", "var");
 
-//goTo.marker('18');
-//verify.currentSignatureHelpDocCommentIs("");
+goTo.marker('18');
+verify.currentSignatureHelpDocCommentIs("");
 
 goTo.marker('19');
 verify.quickInfoIs("{ s1: number; new(): c5; }", "", "i5_c", "var");
@@ -124,8 +124,8 @@ verify.quickInfoIs(undefined, "class with statics and constructor", "c6", "class
 goTo.marker('22');
 verify.quickInfoIs("c6", "", "i6", "var");
 
-//goTo.marker('23');
-//verify.currentSignatureHelpDocCommentIs("constructor comment");
+goTo.marker('23');
+verify.currentSignatureHelpDocCommentIs("constructor comment");
 
 goTo.marker('24');
 verify.quickInfoIs("{ s1: number; new(): c6; }", "", "i6_c", "var");
@@ -150,9 +150,9 @@ verify.quickInfoIs("{ s1: number; new(): c6; }", "class with statics and constru
 //verify.completionListContains("i6", "c6", "", "i6", "var");
 //verify.completionListContains("i6_c", "{ s1: number; new(): c6; }", "", "i6_c", "var");
 
-//goTo.marker('27');
-//verify.currentSignatureHelpDocCommentIs("constructor for a");
-//verify.currentParameterHelpArgumentDocCommentIs("this is my a");
+goTo.marker('27');
+verify.currentSignatureHelpDocCommentIs("constructor for a");
+verify.currentParameterHelpArgumentDocCommentIs("this is my a");
 
 goTo.marker('28');
 verify.quickInfoIs("(): c2", "", "c2", "constructor");
