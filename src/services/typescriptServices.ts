@@ -29,7 +29,6 @@
 ///<reference path='formatting\formatting.ts' />
 ///<reference path='outliningElementsCollector.ts' />
 ///<reference path='braceMatcher.ts' />
-///<reference path='syntaxNodeSerializer.ts' />
 ///<reference path='indenter.ts' />
 
 module Services {

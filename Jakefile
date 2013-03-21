@@ -121,7 +121,6 @@ var servicesSources = [
 	"shims.ts",
 	"outliningElementsCollector.ts",
 	"braceMatcher.ts",
-	"syntaxNodeSerializer.ts",
 	"indenter.ts",
 	"typescriptServices.ts"
 ].map(function (f) {

@@ -1131,16 +1131,6 @@ module Services {
             return BraceMatcher.getMatchSpans(syntaxTree, position);
         }
 
-        public logSyntaxTree(fileName: string): void {
-            this.minimalRefresh();
-
-            var syntaxTree = this.getSyntaxTree(fileName);
-
-            var serializedTree = SyntaxNodeSerializer.serialize(syntaxTree.sourceUnit());
-            this.logger.log("");
-            this.logger.log(serializedTree);
-        }
-
         //
         // Manage Single file syntax tree state
         //
