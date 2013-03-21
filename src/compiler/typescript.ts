@@ -1372,31 +1372,14 @@ module TypeScript {
 
         public pullUpdateUnit(sourceText: IScriptSnapshot, fileName: string): bool {
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
-                this.parser.setErrorRecovery(null);
-
                 var updateResult: UpdateUnitResult;
-
-                // Capture parsing errors for now
-                var parseErrors: ErrorEntry[] = [];
-                var errorCapture = (minChar: number, charLen: number, message: string, fileName: string, lineMap: ILineMap): void => {
-                    parseErrors.push(new ErrorEntry(fileName, minChar, minChar + charLen, message));
-                };
-                var svErrorCallback = this.parser.errorCallback;
-                if (svErrorCallback)
-                    this.parser.errorCallback = errorCapture;
 
                 var oldScript = <Script>this.fileNameToScript.lookup(fileName);
 
-                var text = new TypeScript.ScriptSnapshotText(sourceText);
-
-                var syntaxTree = Parser1.parse(text, LanguageVersion.EcmaScript5);
+                var syntaxTree = Parser1.parse(new TypeScript.ScriptSnapshotText(sourceText), LanguageVersion.EcmaScript5);
                 var newScript = SyntaxTreeToAstVisitor.visit(syntaxTree, fileName);
 
                 this.fileNameToSyntaxTree.addOrUpdate(fileName, syntaxTree);
-
-                if (svErrorCallback)
-                    this.parser.errorCallback = svErrorCallback;
-
                 this.fileNameToScript.addOrUpdate(fileName, newScript);
                 this.fileNameToLocationInfo.addOrUpdate(fileName, newScript.locationInfo);
 
