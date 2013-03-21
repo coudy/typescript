@@ -834,16 +834,16 @@ module Services {
             return completions;
         }
 
-        private getCompletionEntriesFromSymbols(symbols: TypeScript.PullSymbol[]): CompletionEntry[] {
+        private getCompletionEntriesFromSymbols(symbolInfo: TypeScript.PullVisibleSymbolsInfo): CompletionEntry[] {
             var result: CompletionEntry[] = [];
 
-            symbols.forEach((symbol) => {
+            symbolInfo.symbols.forEach((symbol) => {
                 var entry = new CompletionEntry();
                 entry.name = symbol.getName();
-                entry.type = symbol.getType() ? symbol.getType().toString() : "unkown type";
-                entry.kind = this.mapPullElementKind(symbol);
-                entry.fullSymbolName = entry.name;//this.getFullNameOfSymbol(x.sym, enclosingScopeContext);
-                entry.docComment = this.pullCompilerState.getDocComments(symbol);
+                entry.type = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
+                entry.kind = this.mapPullElementKind(symbol, true);
+                entry.fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
+                entry.docComment = this.pullCompilerState.getDocComments(symbol, true);
                 entry.kindModifiers = this.getScriptElementKindModifiers(symbol);
                 result.push(entry);
             });

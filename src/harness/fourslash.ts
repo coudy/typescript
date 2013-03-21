@@ -893,7 +893,7 @@ module FourSlash {
             if (items.length > 10) {
                 itemsString += ', ...';
             }
-            throw new Error('Expected "' + getItemString({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
+            throw new Error("Marker: " + currentTestState.lastKnownMarker + "\n" + 'Expected "' + getItemString({ name: name, type: type, docComment: docComment, fullSymbolName: fullSymbolName, kind: kind }) + '" to be in list [' + itemsString + ']');
         }
 
         private findFile(indexOrName: any) {

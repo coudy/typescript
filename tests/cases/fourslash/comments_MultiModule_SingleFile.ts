@@ -16,8 +16,8 @@
 ////new /*1*/mu/*4*/ltiM.b();
 ////new mu/*5*/ltiM.c();
 
-//goTo.marker('1');
-//verify.completionListContains("multiM", "multiM", "this is multi declare module\nthi is multi module 2", "multiM", "module");
+goTo.marker('1');
+verify.completionListContains("multiM", "multiM", "this is multi declare module\nthi is multi module 2", "multiM", "module");
 
 goTo.marker('2');
 verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2", "multiM", "module");

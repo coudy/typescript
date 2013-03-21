@@ -26,8 +26,8 @@
 ////}
 ////new /*7*/mu/*8*/ltiM.d();
 
-//goTo.marker('1');
-//verify.completionListContains("multiM", "multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
+goTo.marker('1');
+verify.completionListContains("multiM", "multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
 
 goTo.marker('2');
 verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
@@ -44,8 +44,8 @@ verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 
 goTo.marker('6');
 verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
 
-//goTo.marker('7');
-//verify.completionListContains("multiM", "multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
+goTo.marker('7');
+verify.completionListContains("multiM", "multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
 
 //goTo.marker('8');
 //verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");

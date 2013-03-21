@@ -300,21 +300,21 @@ goTo.marker('o16');
 verify.currentSignatureHelpDocCommentIs("this is signature 4 - with number parameter");
 verify.currentParameterHelpArgumentDocCommentIs("param a");
 
-//goTo.marker('17');
+goTo.marker('17');
 //verify.completionListContains('f1', '(a: number): number (+ 1 overload(s))', 'this is signature 1', "f1", "function");
 //verify.completionListContains('f2', '(a: number): number (+ 1 overload(s))', '', "f2", "function");
 //verify.completionListContains('f3', '(a: number): number (+ 1 overload(s))', '', "f3", "function");
 //verify.completionListContains('f4', '(a: number): number (+ 1 overload(s))', 'this is signature 4 - with number parameter', "f4", "function");
 
-//goTo.marker('18');
-//verify.completionListContains('i1', 'i1', '', "i1", "interface");
-//verify.completionListContains('i1_i', 'i1', '', "i1_i", "var");
-//verify.completionListContains('i2', 'i2', '', "i2", "interface");
-//verify.completionListContains('i2_i', 'i2', '', "i2_i", "var");
-//verify.completionListContains('i3', 'i3', '', "i3", "interface");
-//verify.completionListContains('i3_i', 'i3', '', "i3_i","var");
-//verify.completionListContains('i4', 'i4', '', "i4", "interface");
-//verify.completionListContains('i4_i', 'i4', '', "i4_i", "var");
+goTo.marker('18');
+verify.completionListContains('i1', 'i1', '', "i1", "interface");
+verify.completionListContains('i1_i', 'i1', '', "i1_i", "var");
+verify.completionListContains('i2', 'i2', '', "i2", "interface");
+verify.completionListContains('i2_i', 'i2', '', "i2_i", "var");
+verify.completionListContains('i3', 'i3', '', "i3", "interface");
+verify.completionListContains('i3_i', 'i3', '', "i3_i","var");
+verify.completionListContains('i4', 'i4', '', "i4", "interface");
+verify.completionListContains('i4_i', 'i4', '', "i4_i", "var");
 
 goTo.marker('19');
 verify.currentSignatureHelpDocCommentIs("");

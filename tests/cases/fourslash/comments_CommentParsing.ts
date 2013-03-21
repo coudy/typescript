@@ -272,8 +272,8 @@ verify.currentSignatureHelpDocCommentIs("");
 goTo.marker('14q');
 verify.quickInfoIs("(): void", "", "noHelpComment3", "function");
 
-//goTo.marker('15');
-//verify.completionListContains("sum", "(a: number, b: number) => number", "Adds two integers and returns the result", "sum", "function");
+goTo.marker('15');
+verify.completionListContains("sum", "(a: number, b: number) => number", "Adds two integers and returns the result", "sum", "function");
 
 goTo.marker('16');
 verify.currentSignatureHelpDocCommentIs("Adds two integers and returns the result");
@@ -287,8 +287,8 @@ verify.currentParameterHelpArgumentDocCommentIs("second number");
 
 goTo.marker('18');
 verify.quickInfoIs("number", "first number", "a", "parameter");
-//verify.completionListContains("a", "number", "first number", "a", "parameter");
-//verify.completionListContains("b", "number", "second number", "b", "parameter");
+verify.completionListContains("a", "number", "first number", "a", "parameter");
+verify.completionListContains("b", "number", "second number", "b", "parameter");
 
 goTo.marker('19');
 verify.currentSignatureHelpDocCommentIs("This is multiplication function\n@anotherTag\n@anotherTag");
@@ -312,9 +312,9 @@ goTo.marker('23');
 verify.currentSignatureHelpDocCommentIs("This is multiplication function\n@anotherTag\n@anotherTag");
 verify.currentParameterHelpArgumentDocCommentIs("LastParam ");
 
-//goTo.marker('24');
-//verify.completionListContains("aOrb", "any", "", "aOrb", "parameter");
-//verify.completionListContains("opt", "any", "optional parameter", "opt", "parameter");
+goTo.marker('24');
+verify.completionListContains("aOrb", "any", "", "aOrb", "parameter");
+verify.completionListContains("opt", "any", "optional parameter", "opt", "parameter");
 
 goTo.marker('25');
 verify.currentSignatureHelpDocCommentIs("fn f1 with number");
@@ -328,9 +328,9 @@ verify.currentParameterHelpArgumentDocCommentIs("");
 goTo.marker('26q');
 verify.quickInfoIs("(b: string): any (+ 1 overload(s))", "", "f1", "function");
 
-//goTo.marker('27');
-//verify.completionListContains("multiply", "(a: number, b: number, c?: number, d?: any, e?: any) => void", "This is multiplication function\n@anotherTag\n@anotherTag", "multiply", "function");
-//verify.completionListContains("f1", "(a: number) => any (+ 1 overload(s))", "fn f1 with number", "f1", "function");
+goTo.marker('27');
+verify.completionListContains("multiply", "(a: number, b: number, c?: number, d?: any, e?: any) => void", "This is multiplication function\n@anotherTag\n@anotherTag", "multiply", "function");
+verify.completionListContains("f1", "(a: number): any (+ 1 overload(s))", "fn f1 with number", "f1", "function");
 
 goTo.marker('28');
 verify.currentSignatureHelpDocCommentIs("This is subtract function");
@@ -384,11 +384,11 @@ goTo.marker('38');
 verify.currentSignatureHelpDocCommentIs("Function returns string concat of foo and bar");
 verify.currentParameterHelpArgumentDocCommentIs("is second string");
 
-//goTo.marker('39');
-//verify.completionListContains("a", "number", "it is first parameter\nthis is inline comment for a ", "a", "parameter");
-//verify.completionListContains("b", "number", "this is inline comment for b", "b", "parameter");
-//verify.completionListContains("c", "number", "it is third parameter", "c", "parameter");
-//verify.completionListContains("d", "number", "", "d", "parameter");
+goTo.marker('39');
+verify.completionListContains("a", "number", "it is first parameter\nthis is inline comment for a ", "a", "parameter");
+verify.completionListContains("b", "number", "this is inline comment for b", "b", "parameter");
+verify.completionListContains("c", "number", "it is third parameter", "c", "parameter");
+verify.completionListContains("d", "number", "", "d", "parameter");
 
 goTo.marker('40');
 verify.currentSignatureHelpDocCommentIs("this is jsdoc style function with param tag as well as inline parameter help");
@@ -408,10 +408,10 @@ goTo.marker('43');
 verify.currentSignatureHelpDocCommentIs("this is jsdoc style function with param tag as well as inline parameter help");
 verify.currentParameterHelpArgumentDocCommentIs("");
 
-//goTo.marker('44');
-//verify.completionListContains("jsDocParamTest", "(a: number, b: number, c: number, d: number) => number", "this is jsdoc style function with param tag as well as inline parameter help", "jsDocParamTest", "function");
-//verify.completionListContains("x", "any", "This is a comment ", "x", "var");
-//verify.completionListContains("y", "any", "This is a comment ", "y", "var");
+goTo.marker('44');
+verify.completionListContains("jsDocParamTest", "(a: number, b: number, c: number, d: number) => number", "this is jsdoc style function with param tag as well as inline parameter help", "jsDocParamTest", "function");
+verify.completionListContains("x", "any", "This is a comment ", "x", "var");
+verify.completionListContains("y", "any", "This is a comment ", "y", "var");
 
 goTo.marker('45');
 verify.currentSignatureHelpDocCommentIs("This is function comment\nAnd properly aligned comment ");

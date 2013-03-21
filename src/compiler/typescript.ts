@@ -112,12 +112,17 @@ module TypeScript {
         resolvePath(path: string): string;
     }
 
-    export interface PullTypeAtPositionInfo {
+    export interface PullTypeInfoAtPositionInfo {
         symbol: PullSymbol;
         ast: AST;
         enclosingScopeSymbol: PullSymbol;
         candidateSignature: PullSignatureSymbol;
         callSignatures: PullSignatureSymbol[];
+    }
+
+    export interface PullVisibleSymbolsInfo {
+        symbols: PullSymbol[];
+        enclosingScopeSymbol: PullSymbol;
     }
 
     export class TypeScriptCompiler {
@@ -901,7 +906,7 @@ module TypeScript {
             return this.pullTypeChecker.resolver.resolveDeclaration(ast, resolutionContext, enlosingDecl);
         }
         
-        public resolvePosition(pos: number, script: Script, scriptName?: string): PullTypeAtPositionInfo {
+        public resolvePosition(pos: number, script: Script, scriptName?: string): PullTypeInfoAtPositionInfo {
 
             // find the enclosing decl
             var declStack: PullDecl[] = [];
@@ -1301,26 +1306,41 @@ module TypeScript {
             return callResolutionResults;
         }
 
-        public pullGetVisibleMemberSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbol[] {
+        public pullGetVisibleMemberSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullVisibleSymbolsInfo {
             var context = this.extractResolutionContextFromPath(path, script, scriptName);
             if (!context) {
                 return null;
             }
 
-            return this.pullTypeChecker.resolver.getVisibleMembersFromExpresion(path.ast(), context.enclosingDecl, context.resolutionContext);
+            var symbols = this.pullTypeChecker.resolver.getVisibleMembersFromExpresion(path.ast(), context.enclosingDecl, context.resolutionContext);
+            if (!symbols) {
+                return null;
+            }
+            
+            return {
+                symbols: symbols,
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
+            };
         }
 
-        public pullGetVisibleSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullSymbol[] {
-
+        public pullGetVisibleSymbolsFromPath(path: AstPath, script: Script, scriptName?: string): PullVisibleSymbolsInfo {
             var context = this.extractResolutionContextFromPath(path, script, scriptName);
             if (!context) {
                 return null;
             }
 
-            return this.pullTypeChecker.resolver.getVisibleSymbols(context.enclosingDecl, context.resolutionContext);
+            var symbols = this.pullTypeChecker.resolver.getVisibleSymbols(context.enclosingDecl, context.resolutionContext);
+            if (!symbols) {
+                return null;
+            }
+
+            return {
+                symbols: symbols,
+                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
+            };
         }
 
-        public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): PullTypeAtPositionInfo {
+        public pullGetTypeInfoAtPosition(pos: number, script: Script, scriptName?: string): PullTypeInfoAtPositionInfo {
             return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", () => {
                 
                 var info = this.resolvePosition(pos, script, scriptName);

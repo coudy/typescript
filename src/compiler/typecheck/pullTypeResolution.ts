@@ -354,13 +354,13 @@ module TypeScript {
             return symbol;
         }
 
-        public getVisibleSymbolsFromDeclPath(declPath: PullDecl[], searchTypeSpace: bool): PullSymbol[] {
+        public getVisibleSymbolsFromDeclPath(declPath: PullDecl[]): PullSymbol[] {
             var symbols: PullSymbol[] = [];
 
             var decl: PullDecl = null;
             var childDecls: PullDecl[];
             var pathDeclKind: PullElementKind;
-            var declSearchKind: PullElementKind = searchTypeSpace ? PullElementKind.SomeType : PullElementKind.SomeValue;
+            var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeValue;
             var i = 0;
             var j = 0;
             var m = 0;
@@ -387,26 +387,27 @@ module TypeScript {
 
                     // Add members
                     var declSymbol = <PullTypeSymbol>decl.getSymbol();
-                    var searchSymbol: PullTypeSymbol = null;
-                    if (searchTypeSpace) {
+                    var members: PullSymbol[] = [];
+                    if (declSymbol) {
                         // Look up all symbols on the module type
-                        searchSymbol = declSymbol;
-                    }
-                    else {
-                        // Look up all symbols on the module instance type if it exists
-                        var instanceSymbol = (<PullContainerTypeSymbol > declSymbol).getInstanceSymbol();
-                        searchSymbol = instanceSymbol && instanceSymbol.getType();
+                        members = declSymbol.getMembers();
                     }
 
-                    if (searchSymbol) {
-                        var members = searchSymbol.getMembers();
-                        for (j = 0; j < members.length; j++) {
-                            // PULLTODO: declkind should equal declkind, or is it ok to just mask the value?
-                            if ((members[j].getKind() & declSearchKind) != 0) {
-                                symbols.push(members[j]);
-                            }
+                    // Look up all symbols on the module instance type if it exists
+                    var instanceSymbol = (<PullContainerTypeSymbol > declSymbol).getInstanceSymbol();
+                    var searchTypeSymbol = instanceSymbol && instanceSymbol.getType();
+
+                    if (searchTypeSymbol) {
+                        members = members.concat(searchTypeSymbol.getMembers());
+                    }
+
+                    for (j = 0; j < members.length; j++) {
+                        // PULLTODO: declkind should equal declkind, or is it ok to just mask the value?
+                        if ((members[j].getKind() & declSearchKind) != 0) {
+                            symbols.push(members[j]);
                         }
                     }
+                    
                 }
                 else /*if (pathDeclKind & DeclKind.Function)*/ {
                     addSymbolsFromDecls(decl.getChildDecls())
@@ -418,7 +419,7 @@ module TypeScript {
 
             for (i = 0, n = units.length; i < n; i++) {
                 var unit = units[i];
-                if (unit === this.currentUnit) {
+                if (unit === this.currentUnit && declPath.length != 0) {
                     // Current unit has already been processed. skip it.
                     continue;
                 }
@@ -444,7 +445,7 @@ module TypeScript {
                 declPath = [enclosingDecl];
             }
 
-            return this.getVisibleSymbolsFromDeclPath(declPath, context.searchTypeSpace);
+            return this.getVisibleSymbolsFromDeclPath(declPath);
         }
 
 
