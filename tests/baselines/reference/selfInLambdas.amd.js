@@ -1,6 +1,7 @@
 var o = {
     counter: 0,
     start: function () {
+        var _this = this;
         window.onmousemove = function () {
             console.log("iteration: " + _this.counter++);
             var f = function () {

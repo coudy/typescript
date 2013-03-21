@@ -93,6 +93,8 @@ module TypeScript {
         private cachedIArgumentsInterfaceType: PullTypeSymbol = null;
         private cachedRegExpInterfaceType: PullTypeSymbol = null;
 
+        private cachedFunctionArgumentsSymbol: PullSymbol = null;
+
         private assignableCache: any[] = <any>{};
         private subtypeCache: any[] = <any>{};
         private identicalCache: any[] = <any>{};
@@ -110,6 +112,10 @@ module TypeScript {
             this.cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface);
             this.cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface);
             this.cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
+
+            this.cachedFunctionArgumentsSymbol = new PullSymbol("arguments", PullElementKind.Variable);
+            this.cachedFunctionArgumentsSymbol.setType(this.cachedIArgumentsInterfaceType ? this.cachedIArgumentsInterfaceType : this.semanticInfoChain.anyTypeSymbol);
+            this.cachedFunctionArgumentsSymbol.setResolved();
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
@@ -851,12 +857,17 @@ module TypeScript {
 
                 var binder = new PullSymbolBinder(this.semanticInfoChain);
                 binder.setUnit(this.unitPath);
-                binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
+                if (functionDecl.getKind() == PullElementKind.ConstructorType) {
+                    binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
+                }
+                else {
+                    binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
+                }
 
                 funcDeclSymbol = <PullFunctionTypeSymbol>functionDecl.getSymbol();
             }
 
-            var signature = funcDeclSymbol.getCallSignatures()[0];
+            var signature = funcDeclSymbol.getKind() == PullElementKind.ConstructorType ?  funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
@@ -1862,6 +1873,10 @@ module TypeScript {
                 //    nameSymbol = null;
                 //}
             }
+
+            if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.getKind() & PullElementKind.SomeFunction)) {
+                nameSymbol = this.cachedFunctionArgumentsSymbol;
+            }            
 
             if (!nameSymbol) {
                 context.postError(nameAST.minChar, nameAST.getLength(), this.unitPath, "Could not find symbol '" + id + "'", enclosingDecl);

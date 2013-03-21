@@ -240,6 +240,19 @@ module TypeScript {
                 case NodeType.Case:
                     return this.typeCheckCaseStatement(ast, typeCheckContext);
 
+                // primitives
+                case NodeType.NumberLit:
+                    return this.semanticInfoChain.numberTypeSymbol;
+                case NodeType.QString:
+                    return this.semanticInfoChain.stringTypeSymbol;
+                case NodeType.Null:
+                    return this.semanticInfoChain.nullTypeSymbol;
+                case NodeType.True:
+                case NodeType.False:
+                    return this.semanticInfoChain.boolTypeSymbol;
+                case NodeType.Void:
+                    return this.semanticInfoChain.voidTypeSymbol;
+
                 default:
                     break;
             }
@@ -434,10 +447,10 @@ module TypeScript {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
-            var leftType = this.resolver.resolveAST(assignmentAST.operand1, false, enclosingDecl, this.context).getType();
+            var leftType = this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
 
             this.context.pushContextualType(leftType, this.context.inProvisionalResolution(), null);
-            var rightType = this.resolver.resolveAST(assignmentAST.operand2, true, enclosingDecl, this.context).getType();
+            var rightType = this.typeCheckAST(assignmentAST.operand2, typeCheckContext, true);
             this.context.popContextualType();
 
             var comparisonInfo = new TypeComparisonInfo();
@@ -472,16 +485,43 @@ module TypeScript {
         public typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inTypedAssignment = false): PullTypeSymbol {
             var objectLitAST = <UnaryExpression>ast;
 
+            // PULLTODO: We're really resolving these expressions twice - need a better way...
             var objectLitType = this.resolver.resolveAST(ast, inTypedAssignment, typeCheckContext.getEnclosingDecl(), this.context).getType();
             var memberDecls = <ASTList>objectLitAST.operand;
+
+            var contextualType = this.context.getContextualType();
 
             // PULLTODO: Contextually type the members
             if (memberDecls) {
                 var binex: BinaryExpression;
+                var text: string;
+                var member: PullSymbol = null;
+
                 for (var i = 0; i < memberDecls.members.length; i++) {
                     binex = <BinaryExpression>memberDecls.members[i];
 
-                    this.typeCheckAST(binex.operand2, typeCheckContext);
+                    if (contextualType) {
+                        if (binex.operand1.nodeType == NodeType.Name) {
+                            text = (<Identifier>binex.operand1).text;
+                        }
+                        else if (binex.operand1.nodeType == NodeType.QString) {
+                            text = (<StringLiteral>binex.operand1).text;
+                            text = text.substring(1, text.length - 1);
+                        }
+
+                        member = contextualType.findMember(text);
+
+                        if (member) {
+                            this.context.pushContextualType(member.getType(), this.context.inProvisionalResolution(), null);
+                        }
+                    }
+
+                    this.typeCheckAST(binex.operand2, typeCheckContext, member != null);
+
+                    if (member) {
+                        this.context.popContextualType();
+                        member = null;
+                    }
                 }
             }
 
@@ -552,7 +592,10 @@ module TypeScript {
         // validate:
         //  - the type assertion and the expression it's applied to are assignment compatible
         public typeCheckTypeAssertion(ast: AST, typeCheckContext: PullTypeCheckContext): PullTypeSymbol {
-            return this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            var returnType = this.resolver.resolveAST(ast, false, typeCheckContext.getEnclosingDecl(), this.context).getType();
+            this.typeCheckAST((<UnaryExpression>ast).operand, typeCheckContext);
+
+            return returnType;
         }
 
         // Logical operations
