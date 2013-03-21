@@ -2037,13 +2037,11 @@ module TypeScript {
                 result.fncFlags |= FncFlags.Signature;
             }
 
-            if (node.publicOrPrivateKeyword) {
-                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
-                    result.fncFlags |= FncFlags.Private;
-                }
-                else {
-                    result.fncFlags |= FncFlags.Public;
-                }
+            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
+                result.fncFlags |= FncFlags.Private;
+            }
+            else {
+                result.fncFlags |= FncFlags.Public;
             }
 
             if (node.staticKeyword) {
@@ -2089,13 +2087,11 @@ module TypeScript {
             result.variableArgList = this.hasDotDotDotParameter(node.parameterList.parameters);
             result.returnTypeAnnotation = returnType;
 
-            if (node.publicOrPrivateKeyword) {
-                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
-                    result.fncFlags |= FncFlags.Private;
-                }
-                else {
-                    result.fncFlags |= FncFlags.Public;
-                }
+            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
+                result.fncFlags |= FncFlags.Private;
+            }
+            else {
+                result.fncFlags |= FncFlags.Public;
             }
 
             if (node.staticKeyword) {
@@ -2156,13 +2152,11 @@ module TypeScript {
                 varDecl.varFlags |= VarFlags.Static;
             }
 
-            if (node.publicOrPrivateKeyword) {
-                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
-                    varDecl.varFlags |= VarFlags.Private;
-                }
-                else {
-                    varDecl.varFlags |= VarFlags.Public;
-                }
+            if (node.publicOrPrivateKeyword && node.publicOrPrivateKeyword.kind() === SyntaxKind.PrivateKeyword) {
+                varDecl.varFlags |= VarFlags.Private;
+            }
+            else {
+                varDecl.varFlags |= VarFlags.Public;
             }
 
             varDecl.varFlags |= VarFlags.ClassProperty;
