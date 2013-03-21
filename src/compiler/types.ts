@@ -74,11 +74,14 @@ module TypeScript {
                 return result;
             }
         }
+
+        constructor() {
+        }
     }
 
     export class MemberNameString extends MemberName {
         constructor (public text: string) {
-            super()
+            super();
         }
 
         public isString() { return true; }
@@ -98,6 +101,10 @@ module TypeScript {
             for (var i = 0 ; i < entries.length; i++) {
                 this.entries.push(entries[i]);
             }
+        }
+
+        constructor() {
+            super();
         }
     }
 

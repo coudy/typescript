@@ -930,6 +930,7 @@ module TypeScript {
                     }
 
                     members.append(member);
+                    memberNames.push(memberName);
                     // all enum members are exported
                     member.varFlags |= VarFlags.Exported;
                 }

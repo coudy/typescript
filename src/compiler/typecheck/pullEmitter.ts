@@ -115,17 +115,24 @@ module TypeScript {
             return false;
         }
 
-        public getVarDeclFromIdentifier(ident: Identifier) {
+        public getVarDeclFromIdentifier(boundDeclInfo: BoundDeclInfo): BoundDeclInfo {
+            CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init &&
+                boundDeclInfo.boundDecl.init.nodeType == NodeType.Name, 
+                "The init expression of bound declaration when emitting as constant has to be indentifier");
+
+            var init = boundDeclInfo.boundDecl.init;
+            var ident = <Identifier>init;
+
             var resolvingContext = new PullTypeResolutionContext();
             this.setTypeCheckerUnit(this.locationInfo.fileName);
-            var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(ident, this.getEnclosingDecl(), resolvingContext);
+            var pullSymbol = this.pullTypeChecker.resolver.resolveNameExpression(ident, boundDeclInfo.pullDecl.getParentDecl(), resolvingContext);
             if (pullSymbol) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length == 1) {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
                     if (ast && ast.nodeType == NodeType.VarDecl) {
-                        return <VarDecl>ast;
+                        return { boundDecl: <VarDecl>ast, pullDecl: pullDecl };
                     }
                 }
             }
@@ -133,7 +140,7 @@ module TypeScript {
             return null;
         }
 
-        public getConstantDecl(dotExpr: BinaryExpression) {
+        public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
             var resolvingContext = new PullTypeResolutionContext();
             this.setTypeCheckerUnit(this.locationInfo.fileName);
             var pullSymbol = this.pullTypeChecker.resolver.resolveDottedNameExpression(dotExpr, this.getEnclosingDecl(), resolvingContext);
@@ -143,7 +150,7 @@ module TypeScript {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl, pullDecl.getScriptName());
                     if (ast && ast.nodeType == NodeType.VarDecl) {
-                        return <VarDecl>ast;
+                        return { boundDecl: <VarDecl>ast, pullDecl: pullDecl };
                     }
                 }
             }

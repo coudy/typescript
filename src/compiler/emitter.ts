@@ -104,6 +104,11 @@ module TypeScript {
         }
     }
 
+    export interface BoundDeclInfo {
+        boundDecl: BoundDecl;
+        pullDecl: PullDecl;
+    }
+
     export class Emitter {
         public globalThisCapturePrologueEmitted = false;
         public extendsPrologueEmitted = false;
@@ -119,7 +124,7 @@ module TypeScript {
         public allSourceMappers: SourceMapper[] = [];
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
-        public varListCountStack: number[] = [0]; 
+        public varListCountStack: number[] = [0];
 
         constructor(public checker: TypeChecker, public emittingFileName: string, public outfile: ITextWriter, public emitOptions: EmitOptions, public errorReporter: ErrorReporter) {
         }
@@ -305,15 +310,22 @@ module TypeScript {
             }
         }
 
-        public getVarDeclFromIdentifier(ident: Identifier) {
+        public getVarDeclFromIdentifier(boundDeclInfo: BoundDeclInfo): BoundDeclInfo {
+            CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init &&
+                boundDeclInfo.boundDecl.init.nodeType == NodeType.Name,
+                "The init expression of bound declaration when emitting as constant has to be indentifier");
+
+            var init = boundDeclInfo.boundDecl.init;
+            var ident = <Identifier>init;
             if (ident.sym !== null && ident.sym.declAST.nodeType === NodeType.VarDecl) {
-                return <VarDecl>ident.sym.declAST;
+                return { boundDecl: <VarDecl>ident.sym.declAST, pullDecl: null };
             }
 
             return null;
         }
-        
-        private getConstantValue(init: AST): number {
+
+        private getConstantValue(boundDeclInfo: BoundDeclInfo): number {
+            var init = boundDeclInfo.boundDecl.init;
             if (init) {
                 if (init.nodeType === NodeType.NumberLit) {
                     var numLit = <NumberLiteral>init;
@@ -327,9 +339,9 @@ module TypeScript {
                     }
                 }
                 else if (init.nodeType === NodeType.Name) {
-                    var varDecl = this.getVarDeclFromIdentifier(<Identifier>init);
-                    if (varDecl) {
-                        return this.getConstantValue(varDecl.init);
+                    var varDeclInfo = this.getVarDeclFromIdentifier(boundDeclInfo);
+                    if (varDeclInfo) {
+                        return this.getConstantValue(varDeclInfo);
                     }
                 }
             }
@@ -337,13 +349,13 @@ module TypeScript {
             return null;
         }
 
-        public getConstantDecl(dotExpr: BinaryExpression) {
+        public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
             var propertyName = <Identifier>dotExpr.operand2;
             if (propertyName && propertyName.sym && propertyName.sym.isVariable()) {
                 if (hasFlag(propertyName.sym.flags, SymbolFlags.Constant)) {
                     if (propertyName.sym.declAST) {
                         var boundDecl = <BoundDecl>propertyName.sym.declAST;
-                        return boundDecl;
+                        return { boundDecl: boundDecl, pullDecl: null };
                     }
                 }
             }
@@ -356,9 +368,9 @@ module TypeScript {
                 return false;
             }
             var propertyName = <Identifier>dotExpr.operand2;
-            var boundDecl = this.getConstantDecl(dotExpr);
-            if (boundDecl) {
-                var value = this.getConstantValue(boundDecl.init);
+            var boundDeclInfo = this.getConstantDecl(dotExpr);
+            if (boundDeclInfo) {
+                var value = this.getConstantValue(boundDeclInfo);
                 if (value !== null) {
                     this.writeToOutput(value.toString());
                     var comment = " /* ";
