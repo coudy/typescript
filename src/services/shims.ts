@@ -71,8 +71,7 @@ module Services {
     }
 
     export interface ILanguageServiceShim extends IShim {
-        languageService: Services.ILanguageService;
-        pullLanguageService: Services.IPullLanguageService;
+        languageService: Services.IPullLanguageService;
 
         dispose(dummy: any): void;
 
@@ -262,8 +261,7 @@ module Services {
 
         constructor(factory: IShimFactory,
                     private host: ILanguageServiceShimHost,
-                    public languageService: Services.ILanguageService,
-                    public pullLanguageService: Services.IPullLanguageService) {
+                    public languageService: Services.IPullLanguageService) {
             super(factory);
             this.logger = this.host;
         }
@@ -282,7 +280,6 @@ module Services {
         public dispose(dummy: any): void {
             this.logger.log("dispose()")
             this.languageService = null;
-            this.pullLanguageService = null;
             this.logger = null;
 
             super.dispose(dummy);
@@ -311,7 +308,7 @@ module Services {
             return this.forwardJSONCall(
                 "getSyntacticDiagnostics(\"" + fileName + "\")",
                 () => {
-                    var errors = this.pullLanguageService.getSyntacticDiagnostics(fileName);
+                    var errors = this.languageService.getSyntacticDiagnostics(fileName);
                     return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }
@@ -320,7 +317,7 @@ module Services {
             return this.forwardJSONCall(
                 "getSemanticDiagnostics(\"" + fileName + "\")",
                 () => {
-                    var errors = this.pullLanguageService.getSemanticDiagnostics(fileName);
+                    var errors = this.languageService.getSemanticDiagnostics(fileName);
                     return _resultToJSON(errors.map(LanguageServiceShim.realizeDiagnostic));
                 });
         }

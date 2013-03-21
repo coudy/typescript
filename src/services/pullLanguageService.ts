@@ -1032,7 +1032,6 @@ module Services {
             return result.length > 0 ? result.join(',') : ScriptElementKindModifier.none;
         }
 
-
         // 
         // Syntactic Single-File features
         //
@@ -1138,7 +1137,6 @@ module Services {
 
             return BraceMatcher.getMatchSpans(syntaxTree, position);
         }
-
 
         public logSyntaxTree(fileName: string): void {
             this.minimalRefresh();
